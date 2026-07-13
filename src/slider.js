@@ -279,7 +279,9 @@ export class Slider {
   _rebuildDots() {
     if (!this.dots) return;
     const L = this.opts.labels, pages = this._pages(), total = this.slides.length;
-    if (this.dots.children.length !== pages.length) {
+    const key = `${this.perView}:${pages.join()}`;
+    if (this._dotsKey !== key) {
+      this._dotsKey = key;
       this.dots.textContent = '';
       pages.forEach((start) => {
         const from = start + 1, to = Math.min(start + this.perView, total);
@@ -319,7 +321,7 @@ export class Slider {
   }
 
   destroy() {
-    if (!this.track) return;
+    if (!this._ac) return;
     this._emit('cs:destroy', {});
     this._ac.abort();
     clearInterval(this._timer);
