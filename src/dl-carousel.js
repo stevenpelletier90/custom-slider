@@ -329,7 +329,7 @@ export class Slider {
     if (!(this.opts.autoplay > 0)) return;
     const sig = this._ac.signal;
     this._suspended = new Set();      // temporary holds: hover / hidden / offscreen
-    this._wasRotating = false;
+    this._wasRotating = null;
     // Reduced motion: rotation never starts at all (APG example behavior).
     this.rotating = !this._prm.matches;
     this.root.addEventListener('pointerenter', () => this._suspend('hover'), { signal: sig });
@@ -373,16 +373,16 @@ export class Slider {
     if (this.rotating && this._suspended.size === 0) {
       this._timer = setInterval(() => this.next(), this.opts.autoplay);
     }
-    // While rotating, announcements are off (constant chatter);
-    // when stopped, they're polite. (APG / WCAG 2.2.2)
+    // UI and events only on actual state change — rewriting the button's
+    // children on every hover suspend can drop an in-flight click.
+    if (this.rotating === this._wasRotating) return;
+    const first = this._wasRotating === null;
+    this._wasRotating = this.rotating;
     this.status.setAttribute('aria-live', this.rotating ? 'off' : 'polite');
     const L = this.opts.labels;
     this.pauseBtn.setAttribute('aria-label', this.rotating ? L.pause : L.play);
     this.pauseBtn.innerHTML = this.rotating ? ICONS.pause : ICONS.play;
-    if (this.rotating !== this._wasRotating) {
-      this._wasRotating = this.rotating;
-      this._emit(this.rotating ? 'dlc:autoplay-start' : 'dlc:autoplay-stop', {});
-    }
+    if (!first) this._emit(this.rotating ? 'dlc:autoplay-start' : 'dlc:autoplay-stop', {});
   }
 
   /* ---- misc ----------------------------------------------------------------- */
