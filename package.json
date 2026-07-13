@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild src/auto.js --bundle --format=iife --minify --outfile=dist/slider.min.js && esbuild src/slider.css --minify --outfile=dist/slider.min.css",
+    "build": "esbuild src/auto.js --bundle --format=iife --minify --outfile=dist/dl-carousel.js && esbuild src/dl-carousel.css --minify --outfile=dist/dl-carousel.css",
     "size": "npm run build && node scripts/size.mjs",
     "serve": "esbuild --servedir=. --serve=127.0.0.1:8137"
   },

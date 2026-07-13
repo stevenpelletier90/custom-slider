@@ -5,17 +5,17 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Custom Slider — demo</title>
 <meta name="description" content="Demo of the in-house dependency-free scroll-snap slider: multi-card, thumbnail gallery, and autoplay variations.">
-<link rel="stylesheet" href="../dist/slider.min.css">
-<script src="../dist/slider.min.js" defer></script>
+<link rel="stylesheet" href="../dist/dl-carousel.css">
+<script src="../dist/dl-carousel.js" defer></script>
 <style>
   /* Demo page chrome only — slider styling lives in the library CSS. */
   body { font-family: system-ui, sans-serif; margin: 0; color: #222; line-height: 1.5; }
   main { max-width: 72rem; margin: 0 auto; padding: 1rem; }
   .demo-section { margin-block: 3rem; }
   /* Slides-per-view is site configuration: plain media queries, no JS breakpoints. */
-  .demo-vehicles, .demo-reviews { --cs-per-view: 1; }
-  @media (min-width: 640px)  { .demo-vehicles, .demo-reviews { --cs-per-view: 2; } }
-  @media (min-width: 1024px) { .demo-vehicles, .demo-reviews { --cs-per-view: 3; } }
+  .demo-vehicles, .demo-reviews { --dlc-per-view: 1; }
+  @media (min-width: 640px)  { .demo-vehicles, .demo-reviews { --dlc-per-view: 2; } }
+  @media (min-width: 1024px) { .demo-vehicles, .demo-reviews { --dlc-per-view: 3; } }
   .demo-card { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; block-size: 100%; box-sizing: border-box; }
   .demo-card h3 { margin: 0.75rem 1rem 0.25rem; font-size: 1.05rem; }
   .demo-card p { margin: 0 1rem 0.5rem; color: #555; }
@@ -34,9 +34,9 @@
 
   <section class="demo-section" aria-labelledby="vehicles-h">
     <h2 id="vehicles-h">Featured vehicles</h2>
-    <div class="cs demo-vehicles" data-slider aria-labelledby="vehicles-h">
-      <ul class="cs-track">
-        <li class="cs-slide">
+    <div class="dl-carousel demo-vehicles" data-slider aria-labelledby="vehicles-h">
+      <ul class="dl-carousel-track">
+        <li class="dl-carousel-slide">
           <article class="demo-card">
             <img src="img/vehicle-1.svg" width="800" height="500" alt="Silver 2024 Honda Accord EX-L sedan" fetchpriority="high">
             <h3>2024 Honda Accord EX-L</h3>
@@ -44,7 +44,7 @@
             <a href="#vehicle-1">View details</a>
           </article>
         </li>
-        <li class="cs-slide">
+        <li class="dl-carousel-slide">
           <article class="demo-card">
             <img src="img/vehicle-2.svg" width="800" height="500" alt="Red 2023 Toyota RAV4 XLE SUV">
             <h3>2023 Toyota RAV4 XLE</h3>
@@ -52,7 +52,7 @@
             <a href="#vehicle-2">View details</a>
           </article>
         </li>
-        <li class="cs-slide">
+        <li class="dl-carousel-slide">
           <article class="demo-card">
             <img src="img/vehicle-3.svg" width="800" height="500" alt="Green 2025 Ford F-150 Lariat pickup">
             <h3>2025 Ford F-150 Lariat</h3>
@@ -60,7 +60,7 @@
             <a href="#vehicle-3">View details</a>
           </article>
         </li>
-        <li class="cs-slide">
+        <li class="dl-carousel-slide">
           <article class="demo-card">
             <img src="img/vehicle-4.svg" width="800" height="500" alt="Tan 2022 Chevrolet Equinox LT SUV" loading="lazy" decoding="async">
             <h3>2022 Chevrolet Equinox LT</h3>
@@ -68,7 +68,7 @@
             <a href="#vehicle-4">View details</a>
           </article>
         </li>
-        <li class="cs-slide">
+        <li class="dl-carousel-slide">
           <article class="demo-card">
             <img src="img/vehicle-5.svg" width="800" height="500" alt="Teal 2024 Hyundai Tucson SEL SUV" loading="lazy" decoding="async">
             <h3>2024 Hyundai Tucson SEL</h3>
@@ -76,7 +76,7 @@
             <a href="#vehicle-5">View details</a>
           </article>
         </li>
-        <li class="cs-slide">
+        <li class="dl-carousel-slide">
           <article class="demo-card">
             <img src="img/vehicle-6.svg" width="800" height="500" alt="Purple 2021 Jeep Grand Cherokee Limited SUV" loading="lazy" decoding="async">
             <h3>2021 Jeep Grand Cherokee Limited</h3>

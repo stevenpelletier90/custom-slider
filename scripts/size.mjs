@@ -3,7 +3,7 @@ import { readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 
 const BUDGET = 5120;
-const files = ['dist/slider.min.js', 'dist/slider.min.css'];
+const files = ['dist/dl-carousel.js', 'dist/dl-carousel.css'];
 let total = 0;
 for (const f of files) {
   const gz = gzipSync(readFileSync(f), { level: 9 }).length;

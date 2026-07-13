@@ -1,45 +1,45 @@
 /* ==========================================================================
-   Custom Slider — slider.css
+   Custom Slider — dl-carousel.css
    The CSS owns layout AND physics: the track is a native scroll container
    with scroll-snap, so the strip works (swipe, scroll, snap) before any JS
    runs. JS only adds controls into space this file has already reserved.
-   Every knob is a --cs-* custom property; override them on .cs or a wrapper.
+   Every knob is a --dlc-* custom property; override them on .dl-carousel or a wrapper.
    ========================================================================== */
 
-.cs {
+.dl-carousel {
   /* ---- knobs ---------------------------------------------------------- */
-  --cs-per-view: 1;          /* slides visible at once (integer; set per breakpoint) */
-  --cs-gap: 1rem;            /* space between slides */
-  --cs-peek: 0px;            /* sliver of next slide visible at the edges */
-  --cs-arrow-size: 44px;     /* prev/next tap target */
-  --cs-arrow-fg: #fff;
-  --cs-arrow-bg: rgb(0 0 0 / 55%);
-  --cs-dot-size: 12px;
-  --cs-dot-fg: #757575;      /* ≥3:1 on white (WCAG 1.4.11) */
-  --cs-dot-current: #333;
-  --cs-controls-space: 2.5rem; /* reserved dot-row height — keeps CLS at 0 */
-  --cs-thumb-w: 88px;
-  --cs-thumb-h: 56px;
-  --cs-focus: #1a5fb4;
+  --dlc-per-view: 1;          /* slides visible at once (integer; set per breakpoint) */
+  --dlc-gap: 1rem;            /* space between slides */
+  --dlc-peek: 0px;            /* sliver of next slide visible at the edges */
+  --dlc-arrow-size: 44px;     /* prev/next tap target */
+  --dlc-arrow-fg: #fff;
+  --dlc-arrow-bg: rgb(0 0 0 / 55%);
+  --dlc-dot-size: 12px;
+  --dlc-dot-fg: #757575;      /* ≥3:1 on white (WCAG 1.4.11) */
+  --dlc-dot-current: #333;
+  --dlc-controls-space: 2.5rem; /* reserved dot-row height — keeps CLS at 0 */
+  --dlc-thumb-w: 88px;
+  --dlc-thumb-h: 56px;
+  --dlc-focus: #1a5fb4;
 
   position: relative;
   /* Dots (or the gallery thumb strip) are injected later, absolutely
      positioned into this reserved space, so JS init shifts nothing. */
-  padding-bottom: var(--cs-controls-space);
+  padding-bottom: var(--dlc-controls-space);
 }
-.cs[data-gallery] { --cs-controls-space: calc(var(--cs-thumb-h) + 1rem); }
+.dl-carousel[data-gallery] { --dlc-controls-space: calc(var(--dlc-thumb-h) + 1rem); }
 
-.cs-track {
+.dl-carousel-track {
   position: relative;        /* slide offsets measured against the track */
   display: flex;
-  gap: var(--cs-gap);
+  gap: var(--dlc-gap);
   margin: 0;
-  padding: 0 var(--cs-peek);
+  padding: 0 var(--dlc-peek);
   list-style: none;
   overflow-x: auto;
   /* Snap on the track only — never the root scroller. */
   scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--cs-peek);
+  scroll-padding-inline: var(--dlc-peek);
   /* Edge overscroll must not chain into the page / back gesture. */
   overscroll-behavior-x: contain;
   /* Scrollbar hidden: arrows, dots, keyboard, and the peek remain as
@@ -47,42 +47,42 @@
      intended-instant programmatic scrolls; JS passes behavior per call. */
   scrollbar-width: none;
 }
-.cs-track::-webkit-scrollbar { display: none; }
+.dl-carousel-track::-webkit-scrollbar { display: none; }
 
-.cs-slide {
+.dl-carousel-slide {
   /* Explicit flex basis — Safari mis-sizes snap items without one. */
   flex: 0 0 calc(
-    (100% - (var(--cs-per-view) - 1) * var(--cs-gap)) / var(--cs-per-view)
+    (100% - (var(--dlc-per-view) - 1) * var(--dlc-gap)) / var(--dlc-per-view)
   );
   /* 'always' would block multi-slide flicks (and fed a Firefox bug). */
   scroll-snap-align: start;
   scroll-snap-stop: normal;
 }
-.cs-slide img { max-inline-size: 100%; block-size: auto; display: block; }
+.dl-carousel-slide img { max-inline-size: 100%; block-size: auto; display: block; }
 
 /* ---- generated controls (JS creates these; CSS already reserved room) -- */
 
-.cs button:focus-visible { outline: 3px solid var(--cs-focus); outline-offset: 2px; }
+.dl-carousel button:focus-visible { outline: 3px solid var(--dlc-focus); outline-offset: 2px; }
 
-.cs-arrow {
+.dl-carousel-arrow {
   position: absolute;
   z-index: 1;
-  top: calc((100% - var(--cs-controls-space)) / 2);
+  top: calc((100% - var(--dlc-controls-space)) / 2);
   transform: translateY(-50%);
-  inline-size: var(--cs-arrow-size);
-  block-size: var(--cs-arrow-size);
+  inline-size: var(--dlc-arrow-size);
+  block-size: var(--dlc-arrow-size);
   display: grid;
   place-items: center;
   border: 0;
   border-radius: 50%;
-  color: var(--cs-arrow-fg);
-  background: var(--cs-arrow-bg);
+  color: var(--dlc-arrow-fg);
+  background: var(--dlc-arrow-bg);
   cursor: pointer;
 }
-.cs-arrow--prev { inset-inline-start: 0.5rem; }
-.cs-arrow--next { inset-inline-end: 0.5rem; }
+.dl-carousel-arrow--prev { inset-inline-start: 0.5rem; }
+.dl-carousel-arrow--next { inset-inline-end: 0.5rem; }
 
-.cs-pause {
+.dl-carousel-pause {
   position: absolute;
   inset-block-start: 0.5rem;
   inset-inline-end: 0.5rem;
@@ -93,12 +93,12 @@
   place-items: center;
   border: 0;
   border-radius: 50%;
-  color: var(--cs-arrow-fg);
-  background: var(--cs-arrow-bg);
+  color: var(--dlc-arrow-fg);
+  background: var(--dlc-arrow-bg);
   cursor: pointer;
 }
 
-.cs-dots {
+.dl-carousel-dots {
   position: absolute;
   inset-block-end: 0;
   inset-inline: 0;
@@ -106,7 +106,7 @@
   justify-content: center;
   align-items: center;
 }
-.cs-dot {
+.dl-carousel-dot {
   /* 24px hit box (WCAG 2.5.8) around a smaller drawn dot */
   inline-size: 24px;
   block-size: 24px;
@@ -117,30 +117,30 @@
   place-items: center;
   cursor: pointer;
 }
-.cs-dot::after {
+.dl-carousel-dot::after {
   content: '';
-  inline-size: var(--cs-dot-size);
-  block-size: var(--cs-dot-size);
+  inline-size: var(--dlc-dot-size);
+  block-size: var(--dlc-dot-size);
   border-radius: 50%;
-  background: var(--cs-dot-fg);
+  background: var(--dlc-dot-fg);
 }
-.cs-dot--current::after { background: var(--cs-dot-current); }
+.dl-carousel-dot--current::after { background: var(--dlc-dot-current); }
 
 /* ---- gallery (tabbed) variant ------------------------------------------ */
 
-.cs-thumbs {
+.dl-carousel-thumbs {
   position: absolute;
   inset-block-end: 0;
   inset-inline: 0;
   display: flex;
   gap: 0.5rem;
-  block-size: var(--cs-thumb-h);
+  block-size: var(--dlc-thumb-h);
   overflow-x: auto;
   scrollbar-width: none;
 }
-.cs-thumbs::-webkit-scrollbar { display: none; }
-.cs-thumb {
-  flex: 0 0 var(--cs-thumb-w);
+.dl-carousel-thumbs::-webkit-scrollbar { display: none; }
+.dl-carousel-thumb {
+  flex: 0 0 var(--dlc-thumb-w);
   padding: 0;
   border: 2px solid transparent;
   border-radius: 4px;
@@ -148,12 +148,12 @@
   overflow: hidden;
   cursor: pointer;
 }
-.cs-thumb img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
-.cs-thumb[aria-selected="true"] { border-color: var(--cs-dot-current); }
+.dl-carousel-thumb img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
+.dl-carousel-thumb[aria-selected="true"] { border-color: var(--dlc-dot-current); }
 
 /* ---- visually hidden (status region) ----------------------------------- */
 
-.cs-sr-only {
+.dl-carousel-sr-only {
   position: absolute;
   inline-size: 1px;
   block-size: 1px;

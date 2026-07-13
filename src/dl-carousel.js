@@ -1,11 +1,11 @@
 /**
  * Custom Slider — dependency-free scroll-snap carousel engine.
  *
- * The CSS (slider.css) owns layout and physics: the track is a native
+ * The CSS (dl-carousel.css) owns layout and physics: the track is a native
  * scroll container with scroll-snap. This file only wires controls,
  * state, autoplay, and the gallery (tabbed) variant onto that.
  *
- * Markup contract (see README): .cs[data-slider] > .cs-track > .cs-slide+
+ * Markup contract (see README): .dl-carousel[data-slider] > .dl-carousel-track > .dl-carousel-slide+
  * Use <ul>/<li> for card carousels (list semantics announce counts),
  * plain <div>s for the gallery variant (slides become tabpanels).
  */
@@ -43,19 +43,19 @@ const ICONS = {
 export class Slider {
   constructor(root, options = {}) {
     this.root = root;
-    this.track = root.querySelector('.cs-track');
+    this.track = root.querySelector('.dl-carousel-track');
     if (!this.track) {
-      console.error('[custom-slider] missing required .cs-track element in', root);
+      console.error('[dl-carousel] missing required .dl-carousel-track element in', root);
       return;
     }
-    this.slides = [...this.track.querySelectorAll(':scope > .cs-slide')];
+    this.slides = [...this.track.querySelectorAll(':scope > .dl-carousel-slide')];
     if (!this.slides.length) {
-      console.error('[custom-slider] .cs-track has no .cs-slide children in', root);
+      console.error('[dl-carousel] .dl-carousel-track has no .dl-carousel-slide children in', root);
       return;
     }
 
     this._snapshot = root.innerHTML;   // destroy() restores this
-    this.uid = `cs-${++uidCounter}`;
+    this.uid = `dlc-${++uidCounter}`;
     this.opts = this._parseOptions(options);
     this.current = 0;
     this._target = null;               // pending goTo destination (rapid clicks)
@@ -68,12 +68,12 @@ export class Slider {
     this._buildControls();
     this._listen();
     this._commit();
-    root._csSlider = this;
+    root._dlCarousel = this;
   }
 
   static autoInit(scope = document) {
     return [...scope.querySelectorAll('[data-slider]')]
-      .filter((el) => !el._csSlider)
+      .filter((el) => !el._dlCarousel)
       .map((el) => new Slider(el));
   }
 
@@ -87,7 +87,7 @@ export class Slider {
     if (d.roledescription !== undefined) data.roledescription = d.roledescription;
     const opts = { ...DEFAULTS, ...data, ...js, labels: { ...DEFAULTS.labels, ...(js.labels || {}) } };
     if (opts.gallery && opts.autoplay) {
-      console.warn('[custom-slider] autoplay is ignored in gallery mode', this.root);
+      console.warn('[dl-carousel] autoplay is ignored in gallery mode', this.root);
       opts.autoplay = 0;
     }
     return opts;
@@ -104,7 +104,7 @@ export class Slider {
     if (this.root.tagName !== 'SECTION') this._setRootAttr('role', 'region');
     if (this.opts.roledescription) this._setRootAttr('aria-roledescription', this.opts.roledescription);
     if (!this.root.hasAttribute('aria-label') && !this.root.hasAttribute('aria-labelledby')) {
-      console.warn('[custom-slider] give the slider an aria-label or aria-labelledby', this.root);
+      console.warn('[dl-carousel] give the slider an aria-label or aria-labelledby', this.root);
     }
     if (this.opts.gallery) return; // gallery slides become tabpanels later
     // <ul>/<li> keeps list semantics (count announcements) — leave it alone.
@@ -140,15 +140,15 @@ export class Slider {
   _buildControls() {
     const L = this.opts.labels;
     const c = document.createElement('div');
-    c.className = 'cs-controls';
-    const prev = this._btn('cs-arrow cs-arrow--prev', L.prev, ICONS.prev);
+    c.className = 'dl-carousel-controls';
+    const prev = this._btn('dl-carousel-arrow dl-carousel-arrow--prev', L.prev, ICONS.prev);
     prev.addEventListener('click', () => this.prev(), { signal: this._ac.signal });
-    const next = this._btn('cs-arrow cs-arrow--next', L.next, ICONS.next);
+    const next = this._btn('dl-carousel-arrow dl-carousel-arrow--next', L.next, ICONS.next);
     next.addEventListener('click', () => this.next(), { signal: this._ac.signal });
     c.append(prev, next);
     if (!this.opts.gallery) {
       this.dots = document.createElement('div');
-      this.dots.className = 'cs-dots';
+      this.dots.className = 'dl-carousel-dots';
       this.dots.setAttribute('role', 'group');
       this.dots.setAttribute('aria-label', L.dots);
       c.append(this.dots);
@@ -156,7 +156,7 @@ export class Slider {
     // Terse hidden status ("Slides 4–6 of 12"). Separate region, NOT the
     // track: a live track would announce every card on multi-card moves.
     this.status = document.createElement('div');
-    this.status.className = 'cs-status cs-sr-only';
+    this.status.className = 'dl-carousel-status dl-carousel-sr-only';
     this.status.setAttribute('aria-live', 'polite');
     this.status.setAttribute('aria-atomic', 'false');
     c.append(this.status);
@@ -174,7 +174,7 @@ export class Slider {
     const r0 = s[0].getBoundingClientRect();
     this.stride = s.length > 1 ? s[1].getBoundingClientRect().left - r0.left : r0.width || 1;
     if (this.stride <= 0) this.stride = r0.width || 1; // LTR assumed (v1)
-    this.perView = Math.max(1, parseInt(getComputedStyle(this.root).getPropertyValue('--cs-per-view'), 10) || 1);
+    this.perView = Math.max(1, parseInt(getComputedStyle(this.root).getPropertyValue('--dlc-per-view'), 10) || 1);
   }
 
   _pages() {
@@ -256,7 +256,7 @@ export class Slider {
       cancelAnimationFrame(this._raf);
       this._raf = requestAnimationFrame(() => {
         this._measure();
-        this._rebuildDots(); // self-guarding: rebuilds only if page count changed
+        this._rebuildDots(); // self-guarding: rebuilds only when pages/labels actually change
         this.goTo(this.current, { behavior: 'auto' }); // re-align to a snap point
       });
     });
@@ -272,7 +272,7 @@ export class Slider {
     this._updateDots();
     this._updateStatus();
     if (changed) {
-      this._emit('cs:change', { index: idx, page: this._currentPage(), slidesInView: this.perView });
+      this._emit('dlc:change', { index: idx, page: this._currentPage(), slidesInView: this.perView });
     }
   }
 
@@ -286,7 +286,7 @@ export class Slider {
       pages.forEach((start) => {
         const from = start + 1, to = Math.min(start + this.perView, total);
         const label = this.perView > 1 ? fmt(L.gotoPage, { from, to }) : fmt(L.gotoSlide, { n: from });
-        const b = this._btn('cs-dot', label, '');
+        const b = this._btn('dl-carousel-dot', label, '');
         b.addEventListener('click', () => this.goTo(start), { signal: this._ac.signal });
         this.dots.append(b);
       });
@@ -298,7 +298,7 @@ export class Slider {
     if (!this.dots) return;
     const page = this._currentPage();
     [...this.dots.children].forEach((b, i) => {
-      b.classList.toggle('cs-dot--current', i === page);
+      b.classList.toggle('dl-carousel-dot--current', i === page);
       // aria-disabled (not disabled): the current dot stays focusable.
       if (i === page) b.setAttribute('aria-disabled', 'true');
       else b.removeAttribute('aria-disabled');
@@ -322,7 +322,7 @@ export class Slider {
 
   destroy() {
     if (!this._ac) return;
-    this._emit('cs:destroy', {});
+    this._emit('dlc:destroy', {});
     this._ac.abort();
     clearInterval(this._timer);
     clearTimeout(this._debounce);
@@ -331,6 +331,6 @@ export class Slider {
     this._io?.disconnect();
     this.root.innerHTML = this._snapshot;
     for (const a of this._addedRootAttrs) this.root.removeAttribute(a);
-    delete this.root._csSlider;
+    delete this.root._dlCarousel;
   }
 }
