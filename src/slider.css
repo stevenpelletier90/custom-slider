@@ -66,6 +66,7 @@
 
 .cs-arrow {
   position: absolute;
+  z-index: 1;
   top: calc((100% - var(--cs-controls-space)) / 2);
   transform: translateY(-50%);
   inline-size: var(--cs-arrow-size);
