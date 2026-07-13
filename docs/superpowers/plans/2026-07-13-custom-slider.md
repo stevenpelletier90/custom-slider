@@ -1005,6 +1005,20 @@ with:
   }
 ```
 
+- [ ] **Step 3b: Add the manual-init escape hatch to `autoInit`**
+
+In `src/dl-carousel.js`, `static autoInit`, replace:
+```js
+      .filter((el) => !el._dlCarousel)
+```
+with:
+```js
+      .filter((el) => !el._dlCarousel && el.dataset.init !== 'manual')
+```
+Advanced sliders can then opt out of auto-init (`data-init="manual"`) and be constructed
+from page script via `new window.DLCarousel(el, options)` with full JS options (custom
+labels, event callbacks) — the escape hatch for OEM-specific behavior.
+
 - [ ] **Step 4: Add the reviews section to `demo/index.html`** (insert before `</main>`)
 
 ```html
@@ -1083,6 +1097,7 @@ Playwright MCP, fresh navigate, 1280×900. Scroll the reviews section into view 
 5. Explicit restart: `browser_click` the pause/play button → label back to "Stop…", rotation resumes.
 6. Reduced motion: `browser_run_code_unsafe` → `emulateMedia({ reducedMotion: 'reduce' })`, reload, scroll reviews into view, wait 5.6 s → **no rotation ever starts**; pause button shows "Start automatic slide show". Reset emulation.
 7. Vehicles slider (no autoplay) still has NO `.dl-carousel-pause` button.
+8. Manual-init opt-out: `browser_evaluate`: `() => { const el = document.createElement('div'); el.className = 'dl-carousel'; el.dataset.slider = ''; el.dataset.init = 'manual'; el.innerHTML = '<ul class="dl-carousel-track"><li class="dl-carousel-slide">x</li></ul>'; document.body.append(el); const n = window.DLCarousel.autoInit().length; const skipped = !el._dlCarousel; el.remove(); return { n, skipped }; }` → `{ n: 0, skipped: true }`.
 
 - [ ] **Step 7: Commit**
 
@@ -1400,6 +1415,7 @@ JS options override data attributes, which override defaults.
 | `gallery` | `data-gallery` | `false` | Tabbed thumbnail gallery (thumbs generated from slide images) |
 | `roledescription` | `data-roledescription` | `"carousel"` | Empty string to omit |
 | `labels` | — (JS only) | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/dl-carousel.js` |
+| — | `data-init="manual"` | auto | Skip auto-init; construct via `new DLCarousel(el, opts)` from page script |
 
 ## CSS custom properties
 
@@ -1427,6 +1443,33 @@ Events (bubble from the root): `dlc:change` `{index, page, slidesInView}`,
   `prefers-reduced-motion`; status announcements are off while rotating.
 - Every programmatic scroll resolves smooth-vs-instant from
   `prefers-reduced-motion` at call time. Never add CSS `scroll-behavior`.
+
+## Advanced use (escape hatches)
+
+- **Manual init:** add `data-init="manual"` and construct from page script:
+  `new DLCarousel(el, { autoplay: 6000, labels: { next: 'Next vehicles' } })`.
+- **Custom callbacks:** listen for `dlc:change` on the root (bubbles) — e.g. update
+  a counter, lazy-init a map, sync anything to the current slide.
+- **Synchronized sliders:** wire two instances in page script:
+  `a.addEventListener('dlc:change', e => b._dlCarousel.goTo(e.detail.index))` —
+  `goTo` is idempotent, so feedback loops settle naturally.
+- **OEM styling:** override `--dlc-*` custom properties per site/brand — no engine edits.
+
+## Swapping the engine later (the dl-carousel contract)
+
+The HTML on the sites is the stable API; this engine is an implementation detail.
+Any future engine (third-party or rewrite) must honor the same contract, and then
+replacing it = replacing the contents of the two dist files, with zero site edits:
+
+1. Consume `.dl-carousel[data-slider] > .dl-carousel-track > .dl-carousel-slide+`
+   with all content authored in the HTML; generate its own controls (never require
+   control markup in the CMS).
+2. Honor the data attributes (`data-autoplay`, `data-gallery`, `data-roledescription`,
+   `data-init`) and the `--dlc-*` theming knobs.
+3. Emit the `dlc:*` events with the same payloads and expose
+   `goTo/next/prev/pause/play/destroy` + `DLCarousel.autoInit`.
+4. Keep the accessibility behaviors listed above — they are part of the contract,
+   not this engine's private choices.
 
 ## Development
 
