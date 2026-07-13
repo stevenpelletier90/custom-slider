@@ -67,13 +67,14 @@ export class Slider {
     this._setupAria();
     this._buildControls();
     this._listen();
+    this._setupAutoplay();
     this._commit();
     root._dlCarousel = this;
   }
 
   static autoInit(scope = document) {
     return [...scope.querySelectorAll('[data-slider]')]
-      .filter((el) => !el._dlCarousel)
+      .filter((el) => !el._dlCarousel && el.dataset.init !== 'manual')
       .map((el) => new Slider(el));
   }
 
@@ -141,6 +142,14 @@ export class Slider {
     const L = this.opts.labels;
     const c = document.createElement('div');
     c.className = 'dl-carousel-controls';
+    if (this.opts.autoplay > 0) {
+      // WCAG 2.2.2: a visible pause mechanism, FIRST in the tab sequence.
+      this.pauseBtn = this._btn('dl-carousel-pause', L.pause, ICONS.pause);
+      this.pauseBtn.addEventListener('click', () => {
+        this.rotating ? this.pause() : this.play();
+      }, { signal: this._ac.signal });
+      c.append(this.pauseBtn);
+    }
     const prev = this._btn('dl-carousel-arrow dl-carousel-arrow--prev', L.prev, ICONS.prev);
     prev.addEventListener('click', () => this.prev(), { signal: this._ac.signal });
     const next = this._btn('dl-carousel-arrow dl-carousel-arrow--next', L.next, ICONS.next);
@@ -312,6 +321,68 @@ export class Slider {
     this.status.textContent = this.perView > 1
       ? fmt(L.statusMulti, { from, to, total })
       : fmt(L.statusSingle, { n: from, total });
+  }
+
+  /* ---- autoplay --------------------------------------------------------- */
+
+  _setupAutoplay() {
+    if (!(this.opts.autoplay > 0)) return;
+    const sig = this._ac.signal;
+    this._suspended = new Set();      // temporary holds: hover / hidden / offscreen
+    this._wasRotating = false;
+    // Reduced motion: rotation never starts at all (APG example behavior).
+    this.rotating = !this._prm.matches;
+    this.root.addEventListener('pointerenter', () => this._suspend('hover'), { signal: sig });
+    this.root.addEventListener('pointerleave', () => this._unsuspend('hover'), { signal: sig });
+    // Keyboard focus anywhere in the carousel permanently stops rotation
+    // (APG) — except on the pause button itself, so tabbing to it doesn't
+    // flip the very state the user came to change.
+    this.root.addEventListener('focusin', (e) => {
+      if (this.pauseBtn.contains(e.target)) return;
+      this.pause();
+    }, { signal: sig });
+    document.addEventListener('visibilitychange', () => {
+      document.hidden ? this._suspend('hidden') : this._unsuspend('hidden');
+    }, { signal: sig });
+    this._io = new IntersectionObserver(([e]) => {
+      e.isIntersecting ? this._unsuspend('offscreen') : this._suspend('offscreen');
+    }, { threshold: 0.25 });
+    this._io.observe(this.root);
+    this._syncRotation();
+  }
+
+  /** Permanently stop rotation (only the pause/play button restarts it). */
+  pause() {
+    if (!this.rotating) return;
+    this.rotating = false;
+    this._syncRotation();
+  }
+
+  play() {
+    if (!(this.opts.autoplay > 0) || this.rotating) return;
+    this.rotating = true;
+    this._syncRotation();
+  }
+
+  _suspend(why) { this._suspended.add(why); this._syncRotation(); }
+
+  _unsuspend(why) { this._suspended.delete(why); this._syncRotation(); }
+
+  _syncRotation() {
+    clearInterval(this._timer);
+    if (this.rotating && this._suspended.size === 0) {
+      this._timer = setInterval(() => this.next(), this.opts.autoplay);
+    }
+    // While rotating, announcements are off (constant chatter);
+    // when stopped, they're polite. (APG / WCAG 2.2.2)
+    this.status.setAttribute('aria-live', this.rotating ? 'off' : 'polite');
+    const L = this.opts.labels;
+    this.pauseBtn.setAttribute('aria-label', this.rotating ? L.pause : L.play);
+    this.pauseBtn.innerHTML = this.rotating ? ICONS.pause : ICONS.play;
+    if (this.rotating !== this._wasRotating) {
+      this._wasRotating = this.rotating;
+      this._emit(this.rotating ? 'dlc:autoplay-start' : 'dlc:autoplay-stop', {});
+    }
   }
 
   /* ---- misc ----------------------------------------------------------------- */
