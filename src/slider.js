@@ -255,9 +255,8 @@ export class Slider {
     this._ro = new ResizeObserver(() => {
       cancelAnimationFrame(this._raf);
       this._raf = requestAnimationFrame(() => {
-        const before = this.perView;
         this._measure();
-        if (this.perView !== before) this._rebuildDots();
+        this._rebuildDots(); // self-guarding: rebuilds only if page count changed
         this.goTo(this.current, { behavior: 'auto' }); // re-align to a snap point
       });
     });
