@@ -66,6 +66,7 @@ export class Slider {
 
     this._setupAria();
     this._buildControls();
+    if (this.opts.gallery) this._buildGallery();
     this._listen();
     this._setupAutoplay();
     this._commit();
@@ -280,6 +281,7 @@ export class Slider {
     this.current = idx;
     this._updateDots();
     this._updateStatus();
+    if (this.opts.gallery) this._updateGallery();
     if (changed) {
       this._emit('dlc:change', { index: idx, page: this._currentPage(), slidesInView: this.perView });
     }
@@ -383,6 +385,74 @@ export class Slider {
     this.pauseBtn.setAttribute('aria-label', this.rotating ? L.pause : L.play);
     this.pauseBtn.innerHTML = this.rotating ? ICONS.pause : ICONS.play;
     if (!first) this._emit(this.rotating ? 'dlc:autoplay-start' : 'dlc:autoplay-stop', {});
+  }
+
+  /* ---- gallery (APG tabbed carousel) ------------------------------------ */
+
+  _buildGallery() {
+    const L = this.opts.labels, sig = this._ac.signal;
+    // Per APG tabbed-carousel: the panels wrapper is a polite live region.
+    this.track.setAttribute('aria-live', 'polite');
+    const list = document.createElement('div');
+    list.className = 'dl-carousel-thumbs';
+    list.setAttribute('role', 'tablist');
+    list.setAttribute('aria-label', L.thumbs);
+    this.tabs = this.slides.map((s, i) => {
+      const img = s.querySelector('img');
+      const name = (img && img.alt) || fmt(L.photo, { n: i + 1 });
+      s.id ||= `${this.uid}-panel-${i}`;
+      s.setAttribute('role', 'tabpanel');   // NO aria-roledescription="slide" here
+      s.setAttribute('aria-label', name);
+      const b = this._btn('dl-carousel-thumb', name, '');
+      b.id = `${this.uid}-tab-${i}`;
+      b.setAttribute('role', 'tab');
+      b.setAttribute('aria-controls', s.id);
+      if (img) {
+        const thumb = img.cloneNode();
+        thumb.alt = '';                     // decorative — the tab carries the name
+        thumb.loading = 'lazy';
+        thumb.removeAttribute('fetchpriority');
+        b.append(thumb);
+      }
+      b.addEventListener('click', () => this.goTo(i), { signal: sig });
+      list.append(b);
+      return b;
+    });
+    // Roving tabindex + automatic activation: arrow-focusing a tab shows it.
+    list.addEventListener('keydown', (e) => {
+      const n = this.tabs.length;
+      let i = this.tabs.indexOf(e.target);
+      if (i === -1) return;
+      if (e.key === 'ArrowRight') i = (i + 1) % n;
+      else if (e.key === 'ArrowLeft') i = (i - 1 + n) % n;
+      else if (e.key === 'Home') i = 0;
+      else if (e.key === 'End') i = n - 1;
+      else return;
+      e.preventDefault();
+      this.tabs[i].focus();
+      this.goTo(i);
+    }, { signal: sig });
+    this.root.append(list);
+    this.thumbsEl = list;
+  }
+
+  _updateGallery() {
+    this.slides.forEach((s, i) => {
+      const active = i === this.current;
+      // Never inert the panel holding focus — that would eject the user.
+      if (!active && s.contains(document.activeElement)) return;
+      s.inert = !active;
+    });
+    this.tabs.forEach((b, i) => {
+      b.setAttribute('aria-selected', String(i === this.current));
+      b.tabIndex = i === this.current ? 0 : -1;
+    });
+    // Keep the active thumb visible — strip-local math only; scrollIntoView
+    // could scroll the PAGE (e.g. on init when the strip is below the fold).
+    const strip = this.thumbsEl, b = this.tabs[this.current];
+    const br = b.getBoundingClientRect(), sr = strip.getBoundingClientRect();
+    if (br.left < sr.left) strip.scrollBy({ left: br.left - sr.left });
+    else if (br.right > sr.right) strip.scrollBy({ left: br.right - sr.right });
   }
 
   /* ---- misc ----------------------------------------------------------------- */
