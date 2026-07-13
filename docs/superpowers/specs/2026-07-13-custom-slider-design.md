@@ -147,15 +147,22 @@ customization without editing the engine. Public methods: `goTo(n)`, `next()`, `
   counts; focus natively scrolls cards into view). `scroll-padding-inline` ensures a
   focus-scrolled card clears the snap edge.
 - Dots: APG **Grouped** variant — `role="group" aria-label="Choose slide"` wrapping real
-  `<button>`s ("Go to slide N"); current dot `aria-disabled="true"` (stays focusable).
-  **Not** tablist semantics.
+  `<button>`s; current dot `aria-disabled="true"` (stays focusable). **Not** tablist
+  semantics. **One dot per page**, not per slide (page = `slidesInView` slides; page
+  count = `ceil(count / slidesInView)`, last page clamps to the track end). Button names
+  match the status wording: "Go to slides 4–6" (single-per-view: "Go to slide 4"). Dot
+  count recomputes when `--cs-per-view` changes across a breakpoint (ResizeObserver).
 - Track itself not focusable (it has focusable children; buttons satisfy WCAG 2.1.1).
 - Status region (hidden, terse: "Slides 4–6 of 12"), updated at the commit point;
   `aria-live="polite"` normally, `"off"` while auto-rotating, `aria-atomic="false"`.
 
 **Thumbnail gallery (variation 2) — APG Tabbed carousel, in full:**
-- Thumbnails: `role="tablist"` → `role="tab"` `<button>`s, roving tabindex (active 0,
-  rest −1), Left/Right/Home/End, `aria-selected`, `aria-controls`; automatic activation.
+- Authored markup stays one list (the main slides). Thumbnails are **JS-generated** from
+  each slide's first `<img>` (they are controls, like dots — not content, so nothing
+  indexable is duplicated): `role="tablist"` → `role="tab"` `<button>`s each containing a
+  copy of the image with empty `alt`, tab named from the source image's `alt` (fallback
+  "Photo N"). Roving tabindex (active 0, rest −1), Left/Right/Home/End, `aria-selected`,
+  `aria-controls`; automatic activation. Thumb strip space reserved in CSS (no CLS).
 - Main slides: `role="tabpanel"`, **no** `aria-roledescription="slide"`, one logically
   visible; non-visible panels get JS-managed HTML `inert` (never on a panel containing
   focus), applied at the same commit point. Wrapper `aria-live` toggling per APG.
