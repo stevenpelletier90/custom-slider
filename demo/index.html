@@ -104,9 +104,15 @@
         position: absolute;
         inset-inline: 0;
         inset-block-end: 0;
-        padding: 3rem 1rem 1rem;
-        background: linear-gradient(rgb(0 0 0 / 0%), rgb(0 0 0 / 78%) 70%);
+        padding: 4rem 1rem 1rem;
+        /* strong enough to hold white text over bright photos (sky, chrome) */
+        background: linear-gradient(
+          rgb(0 0 0 / 0%),
+          rgb(0 0 0 / 50%) 40%,
+          rgb(0 0 0 / 88%)
+        );
         color: #fff;
+        text-shadow: 0 1px 2px rgb(0 0 0 / 70%);
       }
       .demo-card-body h3 {
         margin: 0;
@@ -149,8 +155,8 @@
          centered arrows, and a solid progress bar that fills to the current
          position. Everything below is site CSS over stock dl-carousel — no
          library changes and no copied markup from the source site. */
-      .demo-models-section {
-        /* break out of the 72rem column to 1440px, centered */
+      /* break out of the 72rem column to 1440px, centered */
+      .demo-wide {
         position: relative;
         inset-inline-start: 50%;
         inline-size: min(1440px, 100vw - 2rem);
@@ -259,7 +265,7 @@
         content: "";
         position: absolute;
         inset: 0;
-        background: linear-gradient(rgb(0 0 0 / 0%) 55%, rgb(0 0 0 / 82%) 100%);
+        background: linear-gradient(rgb(0 0 0 / 0%) 45%, rgb(0 0 0 / 88%) 100%);
       }
       .demo-model-card h3 {
         position: absolute;
@@ -272,6 +278,7 @@
         text-transform: uppercase;
         letter-spacing: 0.04em;
         color: #fff;
+        text-shadow: 0 1px 2px rgb(0 0 0 / 70%);
       }
       /* inset ring — the track clips anything drawn outside the slide */
       .demo-model-card:focus-visible {
@@ -369,7 +376,7 @@
         disabled — every variation remains a readable, swipeable strip.
       </p>
 
-      <section class="demo-section" aria-labelledby="vehicles-h">
+      <section class="demo-section demo-wide" aria-labelledby="vehicles-h">
         <h2 id="vehicles-h">Featured vehicles</h2>
         <div
           class="dl-carousel demo-vehicles"
@@ -539,7 +546,7 @@
       </section>
 
       <section
-        class="demo-section demo-models-section"
+        class="demo-section demo-models-section demo-wide"
         aria-labelledby="models-h"
       >
         <h2 id="models-h">Explore Chevrolet Models</h2>
@@ -553,7 +560,7 @@
             <li class="dl-carousel-slide">
               <a class="demo-model-card" href="#silverado">
                 <img
-                  src="img/model-silverado.svg"
+                  src="img/model-silverado.jpg"
                   width="600"
                   height="1000"
                   alt=""
@@ -566,7 +573,7 @@
             <li class="dl-carousel-slide">
               <a class="demo-model-card" href="#equinox">
                 <img
-                  src="img/model-equinox.svg"
+                  src="img/model-equinox.jpg"
                   width="600"
                   height="1000"
                   alt=""
@@ -579,7 +586,7 @@
             <li class="dl-carousel-slide">
               <a class="demo-model-card" href="#tahoe">
                 <img
-                  src="img/model-tahoe.svg"
+                  src="img/model-tahoe.jpg"
                   width="600"
                   height="1000"
                   alt=""
@@ -590,35 +597,35 @@
               </a>
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-model-card" href="#traverse">
+              <a class="demo-model-card" href="#malibu">
                 <img
-                  src="img/model-traverse.svg"
+                  src="img/model-malibu.jpg"
                   width="600"
                   height="1000"
                   alt=""
                   loading="lazy"
                   decoding="async"
                 />
-                <h3>Traverse</h3>
+                <h3>Malibu</h3>
               </a>
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-model-card" href="#blazer">
+              <a class="demo-model-card" href="#camaro">
                 <img
-                  src="img/model-blazer.svg"
+                  src="img/model-camaro.jpg"
                   width="600"
                   height="1000"
                   alt=""
                   loading="lazy"
                   decoding="async"
                 />
-                <h3>Blazer</h3>
+                <h3>Camaro</h3>
               </a>
             </li>
             <li class="dl-carousel-slide">
               <a class="demo-model-card" href="#corvette">
                 <img
-                  src="img/model-corvette.svg"
+                  src="img/model-corvette.jpg"
                   width="600"
                   height="1000"
                   alt=""

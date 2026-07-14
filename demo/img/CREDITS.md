@@ -3,8 +3,8 @@
 Photos are from [Unsplash](https://unsplash.com) under the
 [Unsplash License](https://unsplash.com/license) (free to use, no attribution
 required — credited here anyway). Fetched via the Unsplash CDN with crop
-parameters; the `model-*.svg` files are generated placeholders (see repo
-history) awaiting official OEM assets.
+parameters. Model-card photos are visual stand-ins, not the named Chevrolet
+models (except the Camaro) — swap in official OEM assets for real use.
 
 | File | Unsplash photo ID |
 | --- | --- |
@@ -20,3 +20,9 @@ history) awaiting official OEM assets.
 | photo-4.jpg | photo-1493238792000-8113da705763 |
 | photo-5.jpg | photo-1487754180451-c456f719a1fc |
 | photo-6.jpg | photo-1526726538690-5cbf956ae2fd |
+| model-silverado.jpg | photo-1533473359331-0135ef1b58bf |
+| model-equinox.jpg | photo-1519641471654-76ce0107ad1b |
+| model-tahoe.jpg | photo-1590362891991-f776e747a588 |
+| model-malibu.jpg | photo-1571987502227-9231b837d92a |
+| model-camaro.jpg | photo-1552519507-da3b142c6e3d |
+| model-corvette.jpg | photo-1605559424843-9e4c228bf1c2 |
