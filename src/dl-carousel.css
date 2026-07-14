@@ -84,6 +84,8 @@
 }
 .dl-carousel-arrow--prev { inset-inline-start: 0.5rem; }
 .dl-carousel-arrow--next { inset-inline-end: 0.5rem; }
+/* rewind:false parks the end arrows on aria-disabled (still focusable) */
+.dl-carousel-arrow[aria-disabled="true"] { opacity: 0.35; cursor: default; }
 
 .dl-carousel-pause {
   position: absolute;

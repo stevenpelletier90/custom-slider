@@ -53,6 +53,7 @@ JS options override data attributes, which override defaults.
 | Option | Data attribute | Default | Effect |
 |---|---|---|---|
 | `autoplay` | `data-autoplay="4000"` | `0` | Advance every N ms; adds pause button (first in tab order) |
+| `rewind` | `data-rewind="false"` | `true` | Arrows wrap at the ends; `false` stops there and `aria-disable`s the end arrow (ignored with autoplay, which needs the wrap) |
 | `gallery` | `data-gallery` | `false` | Tabbed thumbnail gallery (thumbs generated from slide images) |
 | `roledescription` | `data-roledescription` | `"carousel"` | Empty string to omit |
 | `labels` | — (JS only) | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/dl-carousel.js` |
@@ -105,8 +106,8 @@ replacing it = replacing the contents of the two dist files, with zero site edit
 1. Consume `.dl-carousel[data-slider] > .dl-carousel-track > .dl-carousel-slide+`
    with all content authored in the HTML; generate its own controls (never require
    control markup in the CMS).
-2. Honor the data attributes (`data-autoplay`, `data-gallery`, `data-roledescription`,
-   `data-init`) and the `--dlc-*` theming knobs.
+2. Honor the data attributes (`data-autoplay`, `data-rewind`, `data-gallery`,
+   `data-roledescription`, `data-init`) and the `--dlc-*` theming knobs.
 3. Emit the `dlc:*` events with the same payloads and expose
    `goTo/next/prev/pause/play/destroy` + `DLCarousel.autoInit`.
 4. Keep the accessibility behaviors listed above — they are part of the contract,
@@ -138,7 +139,8 @@ Rebuild and re-commit `dist/` whenever `src/` changes.
 
 ## Known limitations (v1)
 
-- LTR only. No infinite loop (rewind by design). No fade mode. `gallery` +
-  `autoplay` together is unsupported (autoplay is ignored, console warning).
+- LTR only. No infinite loop — the ends rewind by default, or stop with
+  `data-rewind="false"`. No fade mode. `gallery` + `autoplay` together is
+  unsupported (autoplay is ignored, console warning).
 - iOS flicks advance ~one slide per gesture (WebKit limitation) — arrows/dots
   are the primary traversal there.

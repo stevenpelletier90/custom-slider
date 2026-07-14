@@ -419,6 +419,11 @@
               <td>Advance every N ms; adds a pause button</td>
             </tr>
             <tr>
+              <td><code>data-rewind="false"</code></td>
+              <td>rewind on</td>
+              <td>Stop at the ends instead of wrapping; end arrows disable</td>
+            </tr>
+            <tr>
               <td><code>data-gallery</code></td>
               <td>off</td>
               <td>Thumbnail-gallery (tabbed) variant</td>
@@ -437,7 +442,12 @@
         aria-labelledby="models-h"
       >
         <h2 id="models-h">Explore Chevrolet Models</h2>
-        <div class="dl-carousel demo-models" data-slider aria-labelledby="models-h">
+        <div
+          class="dl-carousel demo-models"
+          data-slider
+          data-rewind="false"
+          aria-labelledby="models-h"
+        >
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
               <a class="demo-model-card" href="#silverado">
@@ -528,7 +538,8 @@
             cards, and the dots restyled into one solid progress bar — the
             <code>--current ~</code> sibling selector paints segments after
             the current page as empty track, so the bar fills to the showing
-            position with no extra JS. No library changes.
+            position with no extra JS. <code>data-rewind="false"</code> stops
+            the carousel at the ends (the arrow disables) instead of wrapping.
           </p>
         </details>
       </section>

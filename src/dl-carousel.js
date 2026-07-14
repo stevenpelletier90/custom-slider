@@ -14,8 +14,15 @@ let uidCounter = 0;
 
 const fmt = (tpl, vals) => tpl.replace(/\{(\w+)\}/g, (_, k) => vals[k]);
 
+// aria-disabled (not disabled): current/end controls stay focusable.
+const setDisabled = (el, on) => {
+  if (on) el.setAttribute('aria-disabled', 'true');
+  else el.removeAttribute('aria-disabled');
+};
+
 const DEFAULTS = {
   autoplay: 0,                  // ms between advances; 0 = off
+  rewind: true,                 // arrows wrap at the ends; false stops there
   gallery: false,               // tabbed thumbnail-gallery variant
   roledescription: 'carousel',  // set '' to omit (localization concerns)
   labels: {
@@ -88,12 +95,17 @@ export class Slider {
     const d = this.root.dataset;
     const data = {};
     if (d.autoplay !== undefined) data.autoplay = parseInt(d.autoplay, 10) || 0;
+    if (d.rewind !== undefined) data.rewind = d.rewind !== 'false';
     if (d.gallery !== undefined) data.gallery = d.gallery !== 'false';
     if (d.roledescription !== undefined) data.roledescription = d.roledescription;
     const opts = { ...DEFAULTS, ...data, ...js, labels: { ...DEFAULTS.labels, ...(js.labels || {}) } };
     if (opts.gallery && opts.autoplay) {
       console.warn('[dl-carousel] autoplay is ignored in gallery mode', this.root);
       opts.autoplay = 0;
+    }
+    if (opts.autoplay && !opts.rewind) {
+      console.warn('[dl-carousel] rewind:false is ignored with autoplay', this.root);
+      opts.rewind = true;
     }
     return opts;
   }
@@ -154,9 +166,9 @@ export class Slider {
       }, { signal: this._ac.signal });
       c.append(this.pauseBtn);
     }
-    const prev = this._btn('dl-carousel-arrow dl-carousel-arrow--prev', L.prev, ICONS.prev);
+    const prev = this.prevBtn = this._btn('dl-carousel-arrow dl-carousel-arrow--prev', L.prev, ICONS.prev);
     prev.addEventListener('click', () => { this.pause(); this.prev(); }, { signal: this._ac.signal });
-    const next = this._btn('dl-carousel-arrow dl-carousel-arrow--next', L.next, ICONS.next);
+    const next = this.nextBtn = this._btn('dl-carousel-arrow dl-carousel-arrow--next', L.next, ICONS.next);
     next.addEventListener('click', () => { this.pause(); this.next(); }, { signal: this._ac.signal });
     c.append(prev, next);
     if (!this.opts.gallery) {
@@ -243,12 +255,20 @@ export class Slider {
 
   next() {
     const p = this._pages(), c = this._currentPage();
-    this.goTo(c >= p.length - 1 ? 0 : p[c + 1]); // rewind past the end
+    if (c >= p.length - 1) {
+      if (this.opts.rewind) this.goTo(0); // rewind past the end
+      return;
+    }
+    this.goTo(p[c + 1]);
   }
 
   prev() {
     const p = this._pages(), c = this._currentPage();
-    this.goTo(c <= 0 ? p[p.length - 1] : p[c - 1]); // rewind before the start
+    if (c <= 0) {
+      if (this.opts.rewind) this.goTo(p[p.length - 1]); // rewind before the start
+      return;
+    }
+    this.goTo(p[c - 1]);
   }
 
   /* ---- state: the single commit point -------------------------------------- */
@@ -295,8 +315,16 @@ export class Slider {
 
   _updateUI() {
     this._updateDots();
+    this._updateArrows();
     this._updateStatus();
     if (this.opts.gallery) this._updateGallery();
+  }
+
+  _updateArrows() {
+    if (this.opts.rewind) return; // wrapping arrows never disable
+    const page = this._currentPage(), last = this._pages().length - 1;
+    setDisabled(this.prevBtn, page <= 0);
+    setDisabled(this.nextBtn, page >= last);
   }
 
   _rebuildDots() {
@@ -322,9 +350,7 @@ export class Slider {
     const page = this._currentPage();
     [...this.dots.children].forEach((b, i) => {
       b.classList.toggle('dl-carousel-dot--current', i === page);
-      // aria-disabled (not disabled): the current dot stays focusable.
-      if (i === page) b.setAttribute('aria-disabled', 'true');
-      else b.removeAttribute('aria-disabled');
+      setDisabled(b, i === page);
     });
   }
 
