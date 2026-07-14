@@ -141,7 +141,7 @@
         --dlc-gap: 0px; /* keep units — an unitless 0 breaks the basis calc */
         --dlc-arrow-bg: transparent;
         --dlc-arrow-fg: #262626;
-        --dlc-dot-fg: #262626;
+        --dlc-dot-fg: #e0e0e0;
         --dlc-dot-current: #262626;
         --dlc-controls-space: 3rem;
         padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
@@ -174,9 +174,8 @@
       .demo-models .dl-carousel-arrow:hover {
         color: #000;
       }
-      /* Stock dots restyled into ONE solid progress bar that fills to the
-         current position: segments default to the fill color, and every
-         segment AFTER the current page is painted as empty track. Each
+      /* Stock dots restyled into one solid bar whose highlighted segment IS
+         the current page — it slides to the other side as you page. Each
          segment stays a real, labeled "go to page" button. */
       .demo-models .dl-carousel-dots {
         gap: 0;
@@ -199,9 +198,6 @@
       .demo-models .dl-carousel-dot:last-child::after {
         border-start-end-radius: 2px;
         border-end-end-radius: 2px;
-      }
-      .demo-models .dl-carousel-dot--current ~ .dl-carousel-dot::after {
-        background: #e0e0e0;
       }
       .demo-model-card {
         position: relative;
@@ -554,11 +550,12 @@
             Stock <code>dl-carousel</code> — every visual difference is site
             CSS: bare arrows repositioned into the gutters
             (<code>--dlc-arrow-bg: transparent</code>), portrait overlay
-            cards, and the dots restyled into one solid progress bar — the
-            <code>--current ~</code> sibling selector paints segments after
-            the current page as empty track, so the bar fills to the showing
-            position with no extra JS. <code>data-rewind="false"</code> stops
-            the carousel at the ends (the arrow disables) instead of wrapping.
+            cards, and the dots restyled into one solid bar whose dark
+            segment is the current page — plain
+            <code>--dlc-dot-fg</code>/<code>--dlc-dot-current</code> colors
+            plus a background-color transition, no extra JS.
+            <code>data-rewind="false"</code> stops the carousel at the ends
+            (the arrow disables) instead of wrapping.
           </p>
         </details>
       </section>
