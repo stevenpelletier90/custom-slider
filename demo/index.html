@@ -1,202 +1,446 @@
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Custom Slider — demo</title>
-<meta name="description" content="Demo of the in-house dependency-free scroll-snap slider: multi-card, thumbnail gallery, and autoplay variations.">
-<link rel="stylesheet" href="../dist/dl-carousel.css">
-<script src="../dist/dl-carousel.js" defer></script>
-<style>
-  /* Demo page chrome only — slider styling lives in the library CSS. */
-  body { font-family: system-ui, sans-serif; margin: 0; color: #222; line-height: 1.5; }
-  main { max-width: 72rem; margin: 0 auto; padding: 1rem; }
-  .demo-section { margin-block: 3rem; }
-  /* Slides-per-view is site configuration: plain media queries, no JS breakpoints. */
-  .demo-vehicles, .demo-reviews { --dlc-per-view: 1; }
-  @media (min-width: 640px)  { .demo-vehicles, .demo-reviews { --dlc-per-view: 2; } }
-  @media (min-width: 1024px) { .demo-vehicles, .demo-reviews { --dlc-per-view: 3; } }
-  .demo-card { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; block-size: 100%; box-sizing: border-box; }
-  .demo-card h3 { margin: 0.75rem 1rem 0.25rem; font-size: 1.05rem; }
-  .demo-card p { margin: 0 1rem 0.5rem; color: #555; }
-  .demo-card a { display: inline-block; margin: 0 1rem 1rem; }
-  details { margin-block-start: 1rem; }
-  pre { background: #f6f6f6; padding: 1rem; overflow-x: auto; border-radius: 6px; }
-  table { border-collapse: collapse; margin-block: 0.5rem; }
-  th, td { border: 1px solid #ccc; padding: 0.35rem 0.6rem; text-align: left; }
-  .demo-review { margin: 0; padding: 1rem; }
-  .demo-review blockquote { margin: 0; }
-  .demo-review figcaption { margin-block-start: 0.5rem; color: #555; }
-</style>
-</head>
-<body>
-<main>
-  <h1>Custom Slider</h1>
-  <p>Dependency-free scroll-snap slider. Try this page with JavaScript disabled —
-     every variation remains a readable, swipeable strip.</p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Custom Slider — demo</title>
+    <meta
+      name="description"
+      content="Demo of the in-house dependency-free scroll-snap slider: multi-card, thumbnail gallery, and autoplay variations."
+    />
+    <link rel="stylesheet" href="../dist/dl-carousel.css" />
+    <script src="../dist/dl-carousel.js" defer></script>
+    <style>
+      /* Demo page chrome only — slider styling lives in the library CSS. */
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 0;
+        color: #222;
+        line-height: 1.5;
+      }
+      main {
+        max-width: 72rem;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+      .demo-section {
+        margin-block: 3rem;
+      }
+      /* Slides-per-view is site configuration: plain media queries, no JS breakpoints. */
+      .demo-vehicles,
+      .demo-reviews {
+        --dlc-per-view: 1;
+      }
+      @media (min-width: 640px) {
+        .demo-vehicles,
+        .demo-reviews {
+          --dlc-per-view: 2;
+        }
+      }
+      @media (min-width: 1024px) {
+        .demo-vehicles,
+        .demo-reviews {
+          --dlc-per-view: 3;
+        }
+      }
+      .demo-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        block-size: 100%;
+        box-sizing: border-box;
+      }
+      .demo-card h3 {
+        margin: 0.75rem 1rem 0.25rem;
+        font-size: 1.05rem;
+      }
+      .demo-card p {
+        margin: 0 1rem 0.5rem;
+        color: #555;
+      }
+      .demo-card a {
+        display: inline-block;
+        margin: 0 1rem 1rem;
+      }
+      details {
+        margin-block-start: 1rem;
+      }
+      pre {
+        background: #f6f6f6;
+        padding: 1rem;
+        overflow-x: auto;
+        border-radius: 6px;
+      }
+      table {
+        border-collapse: collapse;
+        margin-block: 0.5rem;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 0.35rem 0.6rem;
+        text-align: left;
+      }
+      .demo-review {
+        margin: 0;
+        padding: 1rem;
+      }
+      .demo-review blockquote {
+        margin: 0;
+      }
+      .demo-review figcaption {
+        margin-block-start: 0.5rem;
+        color: #555;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Custom Slider</h1>
+      <p>
+        Dependency-free scroll-snap slider. Try this page with JavaScript
+        disabled — every variation remains a readable, swipeable strip.
+      </p>
 
-  <section class="demo-section" aria-labelledby="vehicles-h">
-    <h2 id="vehicles-h">Featured vehicles</h2>
-    <div class="dl-carousel demo-vehicles" data-slider aria-labelledby="vehicles-h">
-      <ul class="dl-carousel-track">
-        <li class="dl-carousel-slide">
-          <article class="demo-card">
-            <img src="img/vehicle-1.svg" width="800" height="500" alt="Silver 2024 Honda Accord EX-L sedan" fetchpriority="high">
-            <h3>2024 Honda Accord EX-L</h3>
-            <p>$31,990 · 12,400 mi</p>
-            <a href="#vehicle-1">View details</a>
-          </article>
-        </li>
-        <li class="dl-carousel-slide">
-          <article class="demo-card">
-            <img src="img/vehicle-2.svg" width="800" height="500" alt="Red 2023 Toyota RAV4 XLE SUV">
-            <h3>2023 Toyota RAV4 XLE</h3>
-            <p>$29,450 · 21,700 mi</p>
-            <a href="#vehicle-2">View details</a>
-          </article>
-        </li>
-        <li class="dl-carousel-slide">
-          <article class="demo-card">
-            <img src="img/vehicle-3.svg" width="800" height="500" alt="Green 2025 Ford F-150 Lariat pickup">
-            <h3>2025 Ford F-150 Lariat</h3>
-            <p>$54,899 · 3,100 mi</p>
-            <a href="#vehicle-3">View details</a>
-          </article>
-        </li>
-        <li class="dl-carousel-slide">
-          <article class="demo-card">
-            <img src="img/vehicle-4.svg" width="800" height="500" alt="Tan 2022 Chevrolet Equinox LT SUV" loading="lazy" decoding="async">
-            <h3>2022 Chevrolet Equinox LT</h3>
-            <p>$22,988 · 34,900 mi</p>
-            <a href="#vehicle-4">View details</a>
-          </article>
-        </li>
-        <li class="dl-carousel-slide">
-          <article class="demo-card">
-            <img src="img/vehicle-5.svg" width="800" height="500" alt="Teal 2024 Hyundai Tucson SEL SUV" loading="lazy" decoding="async">
-            <h3>2024 Hyundai Tucson SEL</h3>
-            <p>$27,325 · 9,800 mi</p>
-            <a href="#vehicle-5">View details</a>
-          </article>
-        </li>
-        <li class="dl-carousel-slide">
-          <article class="demo-card">
-            <img src="img/vehicle-6.svg" width="800" height="500" alt="Purple 2021 Jeep Grand Cherokee Limited SUV" loading="lazy" decoding="async">
-            <h3>2021 Jeep Grand Cherokee Limited</h3>
-            <p>$30,995 · 41,200 mi</p>
-            <a href="#vehicle-6">View details</a>
-          </article>
-        </li>
-      </ul>
-    </div>
-    <details>
-      <summary>Copy-paste HTML + options</summary>
-      <pre><code>&lt;div class="dl-carousel" data-slider aria-label="Featured vehicles"&gt;
+      <section class="demo-section" aria-labelledby="vehicles-h">
+        <h2 id="vehicles-h">Featured vehicles</h2>
+        <div
+          class="dl-carousel demo-vehicles"
+          data-slider
+          aria-labelledby="vehicles-h"
+        >
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img
+                  src="img/vehicle-1.svg"
+                  width="800"
+                  height="500"
+                  alt="Silver 2024 Honda Accord EX-L sedan"
+                  fetchpriority="high"
+                />
+                <h3>2024 Honda Accord EX-L</h3>
+                <p>$31,990 · 12,400 mi</p>
+                <a href="#vehicle-1">View details</a>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img
+                  src="img/vehicle-2.svg"
+                  width="800"
+                  height="500"
+                  alt="Red 2023 Toyota RAV4 XLE SUV"
+                />
+                <h3>2023 Toyota RAV4 XLE</h3>
+                <p>$29,450 · 21,700 mi</p>
+                <a href="#vehicle-2">View details</a>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img
+                  src="img/vehicle-3.svg"
+                  width="800"
+                  height="500"
+                  alt="Green 2025 Ford F-150 Lariat pickup"
+                />
+                <h3>2025 Ford F-150 Lariat</h3>
+                <p>$54,899 · 3,100 mi</p>
+                <a href="#vehicle-3">View details</a>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img
+                  src="img/vehicle-4.svg"
+                  width="800"
+                  height="500"
+                  alt="Tan 2022 Chevrolet Equinox LT SUV"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <h3>2022 Chevrolet Equinox LT</h3>
+                <p>$22,988 · 34,900 mi</p>
+                <a href="#vehicle-4">View details</a>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img
+                  src="img/vehicle-5.svg"
+                  width="800"
+                  height="500"
+                  alt="Teal 2024 Hyundai Tucson SEL SUV"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <h3>2024 Hyundai Tucson SEL</h3>
+                <p>$27,325 · 9,800 mi</p>
+                <a href="#vehicle-5">View details</a>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img
+                  src="img/vehicle-6.svg"
+                  width="800"
+                  height="500"
+                  alt="Purple 2021 Jeep Grand Cherokee Limited SUV"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <h3>2021 Jeep Grand Cherokee Limited</h3>
+                <p>$30,995 · 41,200 mi</p>
+                <a href="#vehicle-6">View details</a>
+              </article>
+            </li>
+          </ul>
+        </div>
+        <details>
+          <summary>Copy-paste HTML + options</summary>
+          <pre><code>&lt;div class="dl-carousel" data-slider aria-label="Featured vehicles"&gt;
   &lt;ul class="dl-carousel-track"&gt;
     &lt;li class="dl-carousel-slide"&gt;…card content…&lt;/li&gt;
     &lt;!-- more slides --&gt;
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
-      <p>Set slides-per-view in CSS (no JS breakpoints):</p>
-      <pre><code>.my-slider { --dlc-per-view: 1; }
+          <p>Set slides-per-view in CSS (no JS breakpoints):</p>
+          <pre><code>.my-slider { --dlc-per-view: 1; }
 @media (min-width: 640px)  { .my-slider { --dlc-per-view: 2; } }
 @media (min-width: 1024px) { .my-slider { --dlc-per-view: 3; } }</code></pre>
-      <table>
-        <caption>Data attributes</caption>
-        <tr><th>Attribute</th><th>Default</th><th>Effect</th></tr>
-        <tr><td><code>data-slider</code></td><td>—</td><td>Auto-initialize this element</td></tr>
-        <tr><td><code>data-autoplay="4000"</code></td><td>0 (off)</td><td>Advance every N ms; adds a pause button</td></tr>
-        <tr><td><code>data-gallery</code></td><td>off</td><td>Thumbnail-gallery (tabbed) variant</td></tr>
-        <tr><td><code>data-roledescription="…"</code></td><td>carousel</td><td>Screen-reader role description; empty string to omit</td></tr>
-      </table>
-    </details>
-  </section>
+          <table>
+            <caption>
+              Data attributes
+            </caption>
+            <tr>
+              <th>Attribute</th>
+              <th>Default</th>
+              <th>Effect</th>
+            </tr>
+            <tr>
+              <td><code>data-slider</code></td>
+              <td>—</td>
+              <td>Auto-initialize this element</td>
+            </tr>
+            <tr>
+              <td><code>data-autoplay="4000"</code></td>
+              <td>0 (off)</td>
+              <td>Advance every N ms; adds a pause button</td>
+            </tr>
+            <tr>
+              <td><code>data-gallery</code></td>
+              <td>off</td>
+              <td>Thumbnail-gallery (tabbed) variant</td>
+            </tr>
+            <tr>
+              <td><code>data-roledescription="…"</code></td>
+              <td>carousel</td>
+              <td>Screen-reader role description; empty string to omit</td>
+            </tr>
+          </table>
+        </details>
+      </section>
 
-  <section class="demo-section" aria-labelledby="gallery-h">
-    <h2 id="gallery-h">Vehicle photos</h2>
-    <div class="dl-carousel demo-gallery" data-slider data-gallery aria-labelledby="gallery-h">
-      <div class="dl-carousel-track">
-        <div class="dl-carousel-slide"><img src="img/photo-1.svg" width="1200" height="750" alt="Exterior front three-quarter view"></div>
-        <div class="dl-carousel-slide"><img src="img/photo-2.svg" width="1200" height="750" alt="Interior dashboard" loading="lazy" decoding="async"></div>
-        <div class="dl-carousel-slide"><img src="img/photo-3.svg" width="1200" height="750" alt="Rear cargo area" loading="lazy" decoding="async"></div>
-        <div class="dl-carousel-slide"><img src="img/photo-4.svg" width="1200" height="750" alt="Wheel and tire detail" loading="lazy" decoding="async"></div>
-        <div class="dl-carousel-slide"><img src="img/photo-5.svg" width="1200" height="750" alt="Back seat legroom" loading="lazy" decoding="async"></div>
-        <div class="dl-carousel-slide"><img src="img/photo-6.svg" width="1200" height="750" alt="Engine bay" loading="lazy" decoding="async"></div>
-      </div>
-    </div>
-    <details>
-      <summary>Copy-paste HTML + options</summary>
-      <pre><code>&lt;div class="dl-carousel" data-slider data-gallery aria-label="Vehicle photos"&gt;
+      <section class="demo-section" aria-labelledby="gallery-h">
+        <h2 id="gallery-h">Vehicle photos</h2>
+        <div
+          class="dl-carousel demo-gallery"
+          data-slider
+          data-gallery
+          aria-labelledby="gallery-h"
+        >
+          <div class="dl-carousel-track">
+            <div class="dl-carousel-slide">
+              <img
+                src="img/photo-1.svg"
+                width="1200"
+                height="750"
+                alt="Exterior front three-quarter view"
+              />
+            </div>
+            <div class="dl-carousel-slide">
+              <img
+                src="img/photo-2.svg"
+                width="1200"
+                height="750"
+                alt="Interior dashboard"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="dl-carousel-slide">
+              <img
+                src="img/photo-3.svg"
+                width="1200"
+                height="750"
+                alt="Rear cargo area"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="dl-carousel-slide">
+              <img
+                src="img/photo-4.svg"
+                width="1200"
+                height="750"
+                alt="Wheel and tire detail"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="dl-carousel-slide">
+              <img
+                src="img/photo-5.svg"
+                width="1200"
+                height="750"
+                alt="Back seat legroom"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+            <div class="dl-carousel-slide">
+              <img
+                src="img/photo-6.svg"
+                width="1200"
+                height="750"
+                alt="Engine bay"
+                loading="lazy"
+                decoding="async"
+              />
+            </div>
+          </div>
+        </div>
+        <details>
+          <summary>Copy-paste HTML + options</summary>
+          <pre><code>&lt;div class="dl-carousel" data-slider data-gallery aria-label="Vehicle photos"&gt;
   &lt;div class="dl-carousel-track"&gt;
     &lt;div class="dl-carousel-slide"&gt;&lt;img src="…" width="1200" height="750" alt="Describe the photo"&gt;&lt;/div&gt;
     &lt;!-- more photos; use divs (slides become tabpanels), not ul/li --&gt;
   &lt;/div&gt;
 &lt;/div&gt;</code></pre>
-      <p>Thumbnails are generated from each slide's image; the image <code>alt</code> names the thumbnail tab. Real photos should also carry <code>srcset</code>/<code>sizes</code> — size <code>sizes</code> to ONE slide's rendered width, never <code>100vw</code>.</p>
-    </details>
-  </section>
+          <p>
+            Thumbnails are generated from each slide's image; the image
+            <code>alt</code> names the thumbnail tab. Real photos should also
+            carry <code>srcset</code>/<code>sizes</code> — size
+            <code>sizes</code> to ONE slide's rendered width, never
+            <code>100vw</code>.
+          </p>
+        </details>
+      </section>
 
-  <section class="demo-section" aria-labelledby="reviews-h">
-    <h2 id="reviews-h">Customer reviews</h2>
-    <div class="dl-carousel demo-reviews" data-slider data-autoplay="5000" aria-labelledby="reviews-h">
-      <ul class="dl-carousel-track">
-        <li class="dl-carousel-slide">
-          <figure class="demo-card demo-review">
-            <blockquote><p>Painless from test drive to paperwork — in and out in two hours.</p></blockquote>
-            <figcaption>— Dana W.</figcaption>
-          </figure>
-        </li>
-        <li class="dl-carousel-slide">
-          <figure class="demo-card demo-review">
-            <blockquote><p>Fair trade-in value and no pressure. Second car we've bought here.</p></blockquote>
-            <figcaption>— Marcus T.</figcaption>
-          </figure>
-        </li>
-        <li class="dl-carousel-slide">
-          <figure class="demo-card demo-review">
-            <blockquote><p>Service department caught a recall I didn't know about. Honest people.</p></blockquote>
-            <figcaption>— Priya S.</figcaption>
-          </figure>
-        </li>
-        <li class="dl-carousel-slide">
-          <figure class="demo-card demo-review">
-            <blockquote><p>Found the exact trim I wanted and they delivered it to my office.</p></blockquote>
-            <figcaption>— Colin R.</figcaption>
-          </figure>
-        </li>
-        <li class="dl-carousel-slide">
-          <figure class="demo-card demo-review">
-            <blockquote><p>First-time buyer — they walked me through financing without the runaround.</p></blockquote>
-            <figcaption>— Aisha B.</figcaption>
-          </figure>
-        </li>
-        <li class="dl-carousel-slide">
-          <figure class="demo-card demo-review">
-            <blockquote><p>Five years of oil changes and never an upsell. That's why we come back.</p></blockquote>
-            <figcaption>— Gene &amp; Marta L.</figcaption>
-          </figure>
-        </li>
-      </ul>
-    </div>
-    <details>
-      <summary>Copy-paste HTML + options</summary>
-      <pre><code>&lt;div class="dl-carousel" data-slider data-autoplay="5000" aria-label="Customer reviews"&gt;
+      <section class="demo-section" aria-labelledby="reviews-h">
+        <h2 id="reviews-h">Customer reviews</h2>
+        <div
+          class="dl-carousel demo-reviews"
+          data-slider
+          data-autoplay="5000"
+          aria-labelledby="reviews-h"
+        >
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <figure class="demo-card demo-review">
+                <blockquote>
+                  <p>
+                    Painless from test drive to paperwork — in and out in two
+                    hours.
+                  </p>
+                </blockquote>
+                <figcaption>— Dana W.</figcaption>
+              </figure>
+            </li>
+            <li class="dl-carousel-slide">
+              <figure class="demo-card demo-review">
+                <blockquote>
+                  <p>
+                    Fair trade-in value and no pressure. Second car we've bought
+                    here.
+                  </p>
+                </blockquote>
+                <figcaption>— Marcus T.</figcaption>
+              </figure>
+            </li>
+            <li class="dl-carousel-slide">
+              <figure class="demo-card demo-review">
+                <blockquote>
+                  <p>
+                    Service department caught a recall I didn't know about.
+                    Honest people.
+                  </p>
+                </blockquote>
+                <figcaption>— Priya S.</figcaption>
+              </figure>
+            </li>
+            <li class="dl-carousel-slide">
+              <figure class="demo-card demo-review">
+                <blockquote>
+                  <p>
+                    Found the exact trim I wanted and they delivered it to my
+                    office.
+                  </p>
+                </blockquote>
+                <figcaption>— Colin R.</figcaption>
+              </figure>
+            </li>
+            <li class="dl-carousel-slide">
+              <figure class="demo-card demo-review">
+                <blockquote>
+                  <p>
+                    First-time buyer — they walked me through financing without
+                    the runaround.
+                  </p>
+                </blockquote>
+                <figcaption>— Aisha B.</figcaption>
+              </figure>
+            </li>
+            <li class="dl-carousel-slide">
+              <figure class="demo-card demo-review">
+                <blockquote>
+                  <p>
+                    Five years of oil changes and never an upsell. That's why we
+                    come back.
+                  </p>
+                </blockquote>
+                <figcaption>— Gene &amp; Marta L.</figcaption>
+              </figure>
+            </li>
+          </ul>
+        </div>
+        <details>
+          <summary>Copy-paste HTML + options</summary>
+          <pre><code>&lt;div class="dl-carousel" data-slider data-autoplay="5000" aria-label="Customer reviews"&gt;
   &lt;ul class="dl-carousel-track"&gt;
     &lt;li class="dl-carousel-slide"&gt;…review…&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
-      <p>Autoplay pauses on hover, stops permanently on keyboard focus or drag (the pause button restarts it), never starts under <code>prefers-reduced-motion</code>, and rewinds at the end — no cloned slides.</p>
-    </details>
-  </section>
+          <p>
+            Autoplay pauses on hover, stops permanently on keyboard focus or
+            drag (the pause button restarts it), never starts under
+            <code>prefers-reduced-motion</code>, and rewinds at the end — no
+            cloned slides.
+          </p>
+        </details>
+      </section>
 
-  <footer class="demo-section">
-    <h2>Notes</h2>
-    <ul>
-      <li><strong>No JavaScript?</strong> Every slider degrades to a swipeable snap strip; all content stays visible and indexable.</li>
-      <li><strong>SEO:</strong> all slides ship in the initial HTML, nothing is cloned — every heading and link exists exactly once.</li>
-      <li><strong>Include once per page:</strong> <code>dl-carousel.css</code> + <code>dl-carousel.js</code> (defer). See the <a href="../README.md">README</a> for the JS API and the verification checklist.</li>
-    </ul>
-  </footer>
-</main>
-</body>
+      <footer class="demo-section">
+        <h2>Notes</h2>
+        <ul>
+          <li>
+            <strong>No JavaScript?</strong> Every slider degrades to a swipeable
+            snap strip; all content stays visible and indexable.
+          </li>
+          <li>
+            <strong>SEO:</strong> all slides ship in the initial HTML, nothing
+            is cloned — every heading and link exists exactly once.
+          </li>
+          <li>
+            <strong>Include once per page:</strong>
+            <code>dl-carousel.css</code> + <code>dl-carousel.js</code> (defer).
+            See the <a href="../README.md">README</a> for the JS API and the
+            verification checklist.
+          </li>
+        </ul>
+      </footer>
+    </main>
+  </body>
 </html>
