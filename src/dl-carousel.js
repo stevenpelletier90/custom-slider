@@ -230,9 +230,14 @@ export class Slider {
       return;
     }
     this._target = n;
+    // Optimistic update: selection state (tabs, dots, status) moves at
+    // activation, per APG tabs — never after the scroll settles.
+    this._updateUI();
     t.scrollTo({
       left,
-      behavior: behavior ?? (this._prm.matches ? 'auto' : 'smooth'),
+      // Gallery switches photos instantly (APG tabbed carousel); smooth
+      // is for the card variants only, and never under reduced motion.
+      behavior: behavior ?? (this._prm.matches || this.opts.gallery ? 'auto' : 'smooth'),
     });
   }
 
@@ -282,12 +287,16 @@ export class Slider {
     const idx = Math.max(0, Math.min(this.slides.length - 1, Math.round(this.track.scrollLeft / this.stride)));
     const changed = idx !== this.current;
     this.current = idx;
-    this._updateDots();
-    this._updateStatus();
-    if (this.opts.gallery) this._updateGallery();
+    this._updateUI();
     if (changed) {
       this._emit('dlc:change', { index: idx, page: this._currentPage(), slidesInView: this.perView });
     }
+  }
+
+  _updateUI() {
+    this._updateDots();
+    this._updateStatus();
+    if (this.opts.gallery) this._updateGallery();
   }
 
   _rebuildDots() {
@@ -321,8 +330,9 @@ export class Slider {
 
   _updateStatus() {
     const L = this.opts.labels, total = this.slides.length;
-    const from = this.current + 1;
-    const to = Math.min(this.current + this.perView, total);
+    const cur = this._target ?? this.current;
+    const from = cur + 1;
+    const to = Math.min(cur + this.perView, total);
     this.status.textContent = this.perView > 1
       ? fmt(L.statusMulti, { from, to, total })
       : fmt(L.statusSingle, { n: from, total });
@@ -438,27 +448,40 @@ export class Slider {
       this.tabs[i].focus();
       this.goTo(i);
     }, { signal: sig });
+    // The strip scrolls with its scrollbar hidden — expose "more thumbs this
+    // way" via data-overflow so the CSS can fade the clipped edge instead of
+    // leaving thumbnails looking sliced off (mobile especially).
+    this._syncThumbFade = () => {
+      const max = list.scrollWidth - list.clientWidth - 1;
+      const start = list.scrollLeft > 0, end = list.scrollLeft < max;
+      list.setAttribute('data-overflow', start && end ? 'both' : end ? 'end' : start ? 'start' : 'none');
+    };
+    list.addEventListener('scroll', this._syncThumbFade, { passive: true, signal: sig });
     this.root.append(list);
     this.thumbsEl = list;
+    this._syncThumbFade();
   }
 
   _updateGallery() {
+    const cur = this._target ?? this.current;
     this.slides.forEach((s, i) => {
-      const active = i === this.current;
+      const active = i === cur;
       // Never inert the panel holding focus — that would eject the user.
       if (!active && s.contains(document.activeElement)) return;
       s.inert = !active;
     });
     this.tabs.forEach((b, i) => {
-      b.setAttribute('aria-selected', String(i === this.current));
-      b.tabIndex = i === this.current ? 0 : -1;
+      b.setAttribute('aria-selected', String(i === cur));
+      b.tabIndex = i === cur ? 0 : -1;
     });
     // Keep the active thumb visible — strip-local math only; scrollIntoView
     // could scroll the PAGE (e.g. on init when the strip is below the fold).
-    const strip = this.thumbsEl, b = this.tabs[this.current];
+    // The 40px margin clears the edge fade and peeks the neighboring thumb.
+    const strip = this.thumbsEl, b = this.tabs[cur], m = 40;
     const br = b.getBoundingClientRect(), sr = strip.getBoundingClientRect();
-    if (br.left < sr.left) strip.scrollBy({ left: br.left - sr.left });
-    else if (br.right > sr.right) strip.scrollBy({ left: br.right - sr.right });
+    if (br.left - m < sr.left) strip.scrollBy({ left: br.left - sr.left - m });
+    else if (br.right + m > sr.right) strip.scrollBy({ left: br.right - sr.right + m });
+    this._syncThumbFade();
   }
 
   /* ---- misc ----------------------------------------------------------------- */

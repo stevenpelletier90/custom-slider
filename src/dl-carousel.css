@@ -142,6 +142,13 @@
   scrollbar-width: none;
 }
 .dl-carousel-thumbs::-webkit-scrollbar { display: none; }
+/* JS keeps data-overflow current; fading the clipped edge signals "more
+   thumbs this way" since the scrollbar is hidden. LTR (v1, like the engine). */
+.dl-carousel-thumbs[data-overflow="start"] { mask-image: linear-gradient(to right, transparent, #000 32px); }
+.dl-carousel-thumbs[data-overflow="end"] { mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); }
+.dl-carousel-thumbs[data-overflow="both"] {
+  mask-image: linear-gradient(to right, transparent, #000 32px, #000 calc(100% - 32px), transparent);
+}
 .dl-carousel-thumb {
   flex: 0 0 var(--dlc-thumb-w);
   padding: 0;
@@ -153,6 +160,9 @@
 }
 .dl-carousel-thumb img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
 .dl-carousel-thumb[aria-selected="true"] { border-color: var(--dlc-dot-current); }
+/* The strip is a scroll container, so it clips anything drawn outside the
+   thumbs — draw their focus ring inset or it's invisible (WCAG 2.4.7). */
+.dl-carousel-thumb:focus-visible { outline-offset: -3px; }
 
 /* ---- visually hidden (status region) ----------------------------------- */
 
