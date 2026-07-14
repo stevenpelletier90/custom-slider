@@ -11,7 +11,7 @@ for (const f of files) {
   console.log(`${f}: ${gz} B gzip`);
 }
 console.log(`total: ${total} B gzip (budget ${BUDGET})`);
-if (total > BUDGET) {
-  console.error('FAIL: over the 5 KB gzip budget');
+if (total >= BUDGET) {
+  console.error('FAIL: at or over the 5 KB gzip budget');
   process.exit(1);
 }

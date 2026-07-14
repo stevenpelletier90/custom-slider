@@ -61,6 +61,9 @@ export class Slider {
     this._target = null;               // pending goTo destination (rapid clicks)
     this._pointerDown = false;
     this._addedRootAttrs = [];
+    // CSS reserves the thumb-strip space via [data-gallery] — mirror the JS
+    // option onto the attribute so manual construction lays out correctly.
+    if (this.opts.gallery) this._setRootAttr('data-gallery', '');
     this._prm = matchMedia('(prefers-reduced-motion: reduce)');
     this._ac = new AbortController();
 
@@ -152,9 +155,9 @@ export class Slider {
       c.append(this.pauseBtn);
     }
     const prev = this._btn('dl-carousel-arrow dl-carousel-arrow--prev', L.prev, ICONS.prev);
-    prev.addEventListener('click', () => this.prev(), { signal: this._ac.signal });
+    prev.addEventListener('click', () => { this.pause(); this.prev(); }, { signal: this._ac.signal });
     const next = this._btn('dl-carousel-arrow dl-carousel-arrow--next', L.next, ICONS.next);
-    next.addEventListener('click', () => this.next(), { signal: this._ac.signal });
+    next.addEventListener('click', () => { this.pause(); this.next(); }, { signal: this._ac.signal });
     c.append(prev, next);
     if (!this.opts.gallery) {
       this.dots = document.createElement('div');
@@ -298,7 +301,7 @@ export class Slider {
         const from = start + 1, to = Math.min(start + this.perView, total);
         const label = this.perView > 1 ? fmt(L.gotoPage, { from, to }) : fmt(L.gotoSlide, { n: from });
         const b = this._btn('dl-carousel-dot', label, '');
-        b.addEventListener('click', () => this.goTo(start), { signal: this._ac.signal });
+        b.addEventListener('click', () => { this.pause(); this.goTo(start); }, { signal: this._ac.signal });
         this.dots.append(b);
       });
     }
@@ -408,13 +411,16 @@ export class Slider {
       b.setAttribute('role', 'tab');
       b.setAttribute('aria-controls', s.id);
       if (img) {
-        const thumb = img.cloneNode();
+        // Fresh element — cloning would carry site ids/classes/srcset onto
+        // the thumb (duplicate-id and restyle hazards on consumer sites).
+        const thumb = document.createElement('img');
+        thumb.src = img.currentSrc || img.src;
         thumb.alt = '';                     // decorative — the tab carries the name
         thumb.loading = 'lazy';
-        thumb.removeAttribute('fetchpriority');
+        thumb.decoding = 'async';
         b.append(thumb);
       }
-      b.addEventListener('click', () => this.goTo(i), { signal: sig });
+      b.addEventListener('click', () => { this.pause(); this.goTo(i); }, { signal: sig });
       list.append(b);
       return b;
     });
