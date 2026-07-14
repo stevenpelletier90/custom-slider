@@ -96,7 +96,8 @@
         color: #fff;
       }
       /* Narrow screens: 16:10 is too short to hold the overlay — crop the
-         photo to 4:3 (object-fit) so the text sits in the lower third. */
+         photo taller (object-fit) so the text sits in the lower third and
+         the vertically-centered side arrows keep room to live. */
       @media (max-width: 767.98px) {
         .demo-vehicles .demo-card img {
           aspect-ratio: 4 / 3;
@@ -104,18 +105,120 @@
           object-fit: cover;
         }
       }
-      /* Phones: side gutters would squeeze the card, so the arrows move to
-         the bottom control row flanking the dots — still off the image. */
       @media (max-width: 639.98px) {
-        .demo-vehicles {
-          --dlc-controls-space: 52px;
-          padding-inline: 0;
+        .demo-vehicles .demo-card img {
+          aspect-ratio: 3 / 4;
         }
-        .demo-vehicles .dl-carousel-arrow {
-          top: auto;
-          inset-block-end: 4px;
-          transform: none;
+      }
+      /* "Explore Chevrolet models" — rebuild of the leadscience practice-area
+         carousel design: dark panel, portrait cards whose gradient fades into
+         the panel background, bare centered arrows, segmented-bar pagination.
+         Everything below is site CSS over stock dl-carousel — no library
+         changes and no copied markup from the source site. */
+      .demo-models-section {
+        background: #141414;
+        color: #fff;
+        padding: 2rem 1rem 1rem;
+        border-radius: 8px;
+      }
+      .demo-models-section h2 {
+        margin-block-start: 0;
+        text-align: center;
+        text-transform: uppercase;
+        letter-spacing: 0.06em;
+      }
+      .demo-models-section h2::after {
+        content: "";
+        display: block;
+        inline-size: 64px;
+        block-size: 4px;
+        margin: 0.5rem auto 0;
+        background: #cd9834;
+      }
+      .demo-models {
+        --dlc-per-view: 1;
+        --dlc-gap: 0.5rem;
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #fff;
+        --dlc-dot-fg: #757575;
+        --dlc-dot-current: #cd9834;
+        --dlc-focus: #cd9834;
+        --dlc-controls-space: 3rem;
+        padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+      }
+      @media (min-width: 640px) {
+        .demo-models {
+          --dlc-per-view: 2;
         }
+      }
+      @media (min-width: 1024px) {
+        .demo-models {
+          --dlc-per-view: 4;
+        }
+      }
+      .demo-models .dl-carousel-arrow--prev {
+        inset-inline-start: 0;
+      }
+      .demo-models .dl-carousel-arrow--next {
+        inset-inline-end: 0;
+      }
+      .demo-models .dl-carousel-arrow svg {
+        width: 28px;
+        height: 28px;
+      }
+      /* stock dots restyled into the reference's segmented bars */
+      .demo-models .dl-carousel-dots {
+        gap: 3px;
+        padding-inline: 1rem;
+      }
+      .demo-models .dl-carousel-dot {
+        flex: 1 1 auto;
+        max-inline-size: 72px;
+      }
+      .demo-models .dl-carousel-dot::after {
+        inline-size: 100%;
+        block-size: 4px;
+        border-radius: 2px;
+      }
+      .demo-model-card {
+        position: relative;
+        display: block;
+        overflow: hidden;
+        border-radius: 6px;
+        text-decoration: none;
+      }
+      .demo-model-card img {
+        inline-size: 100%;
+        block-size: auto;
+        display: block;
+      }
+      /* the gradient melts the card into the panel (the reference's trick) */
+      .demo-model-card::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        background: linear-gradient(rgb(20 20 20 / 0%) 55%, rgb(20 20 20 / 95%) 100%);
+      }
+      .demo-model-card h3 {
+        position: absolute;
+        inset-inline: 0;
+        inset-block-end: 0;
+        z-index: 1;
+        margin: 0;
+        padding: 1rem;
+        font-size: 1.35rem;
+        text-transform: uppercase;
+        letter-spacing: 0.04em;
+        color: #fff;
+      }
+      .demo-model-card:hover h3,
+      .demo-model-card:focus-visible h3 {
+        color: #cd9834;
+      }
+      /* inset ring — the track clips anything drawn outside the slide */
+      .demo-model-card:focus-visible {
+        outline: 3px solid #cd9834;
+        outline-offset: -3px;
       }
       .demo-card h3 {
         margin: 0.75rem 1rem 0.25rem;
@@ -318,6 +421,107 @@
               <td>Screen-reader role description; empty string to omit</td>
             </tr>
           </table>
+        </details>
+      </section>
+
+      <section
+        class="demo-section demo-models-section"
+        aria-labelledby="models-h"
+      >
+        <h2 id="models-h">Explore Chevrolet Models</h2>
+        <div class="dl-carousel demo-models" data-slider aria-labelledby="models-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="demo-model-card" href="#silverado">
+                <img
+                  src="img/model-silverado.svg"
+                  width="600"
+                  height="1000"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <h3>Silverado</h3>
+              </a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-model-card" href="#equinox">
+                <img
+                  src="img/model-equinox.svg"
+                  width="600"
+                  height="1000"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <h3>Equinox</h3>
+              </a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-model-card" href="#tahoe">
+                <img
+                  src="img/model-tahoe.svg"
+                  width="600"
+                  height="1000"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <h3>Tahoe</h3>
+              </a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-model-card" href="#traverse">
+                <img
+                  src="img/model-traverse.svg"
+                  width="600"
+                  height="1000"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <h3>Traverse</h3>
+              </a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-model-card" href="#blazer">
+                <img
+                  src="img/model-blazer.svg"
+                  width="600"
+                  height="1000"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <h3>Blazer</h3>
+              </a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-model-card" href="#corvette">
+                <img
+                  src="img/model-corvette.svg"
+                  width="600"
+                  height="1000"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <h3>Corvette</h3>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <details>
+          <summary>How this variant is built</summary>
+          <p>
+            Stock <code>dl-carousel</code> — every visual difference is site
+            CSS: bare arrows repositioned into the gutters
+            (<code>--dlc-arrow-bg: transparent</code>), the dots restyled into
+            segmented bars, brand colors via
+            <code>--dlc-dot-current</code>/<code>--dlc-focus</code>, and
+            portrait cards whose overlay gradient fades into the section
+            background. No library changes.
+          </p>
         </details>
       </section>
 
