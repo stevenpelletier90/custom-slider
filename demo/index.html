@@ -89,6 +89,27 @@
         </li>
       </ul>
     </div>
+    <details>
+      <summary>Copy-paste HTML + options</summary>
+      <pre><code>&lt;div class="dl-carousel" data-slider aria-label="Featured vehicles"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;…card content…&lt;/li&gt;
+    &lt;!-- more slides --&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+      <p>Set slides-per-view in CSS (no JS breakpoints):</p>
+      <pre><code>.my-slider { --dlc-per-view: 1; }
+@media (min-width: 640px)  { .my-slider { --dlc-per-view: 2; } }
+@media (min-width: 1024px) { .my-slider { --dlc-per-view: 3; } }</code></pre>
+      <table>
+        <caption>Data attributes</caption>
+        <tr><th>Attribute</th><th>Default</th><th>Effect</th></tr>
+        <tr><td><code>data-slider</code></td><td>—</td><td>Auto-initialize this element</td></tr>
+        <tr><td><code>data-autoplay="4000"</code></td><td>0 (off)</td><td>Advance every N ms; adds a pause button</td></tr>
+        <tr><td><code>data-gallery</code></td><td>off</td><td>Thumbnail-gallery (tabbed) variant</td></tr>
+        <tr><td><code>data-roledescription="…"</code></td><td>carousel</td><td>Screen-reader role description; empty string to omit</td></tr>
+      </table>
+    </details>
   </section>
 
   <section class="demo-section" aria-labelledby="gallery-h">
@@ -103,6 +124,16 @@
         <div class="dl-carousel-slide"><img src="img/photo-6.svg" width="1200" height="750" alt="Engine bay" loading="lazy" decoding="async"></div>
       </div>
     </div>
+    <details>
+      <summary>Copy-paste HTML + options</summary>
+      <pre><code>&lt;div class="dl-carousel" data-slider data-gallery aria-label="Vehicle photos"&gt;
+  &lt;div class="dl-carousel-track"&gt;
+    &lt;div class="dl-carousel-slide"&gt;&lt;img src="…" width="1200" height="750" alt="Describe the photo"&gt;&lt;/div&gt;
+    &lt;!-- more photos; use divs (slides become tabpanels), not ul/li --&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+      <p>Thumbnails are generated from each slide's image; the image <code>alt</code> names the thumbnail tab. Real photos should also carry <code>srcset</code>/<code>sizes</code> — size <code>sizes</code> to ONE slide's rendered width, never <code>100vw</code>.</p>
+    </details>
   </section>
 
   <section class="demo-section" aria-labelledby="reviews-h">
@@ -147,7 +178,25 @@
         </li>
       </ul>
     </div>
+    <details>
+      <summary>Copy-paste HTML + options</summary>
+      <pre><code>&lt;div class="dl-carousel" data-slider data-autoplay="5000" aria-label="Customer reviews"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;…review…&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+      <p>Autoplay pauses on hover, stops permanently on keyboard focus or drag (the pause button restarts it), never starts under <code>prefers-reduced-motion</code>, and rewinds at the end — no cloned slides.</p>
+    </details>
   </section>
+
+  <footer class="demo-section">
+    <h2>Notes</h2>
+    <ul>
+      <li><strong>No JavaScript?</strong> Every slider degrades to a swipeable snap strip; all content stays visible and indexable.</li>
+      <li><strong>SEO:</strong> all slides ship in the initial HTML, nothing is cloned — every heading and link exists exactly once.</li>
+      <li><strong>Include once per page:</strong> <code>dl-carousel.css</code> + <code>dl-carousel.js</code> (defer). See the <a href="../README.md">README</a> for the JS API and the verification checklist.</li>
+    </ul>
+  </footer>
 </main>
 </body>
 </html>
