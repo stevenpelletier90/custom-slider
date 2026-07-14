@@ -43,12 +43,79 @@
           --dlc-per-view: 3;
         }
       }
+      /* Vehicles: bare arrows in a gutter OUTSIDE the image — site-CSS
+         override of the generated controls (the documented escape hatch). */
+      .demo-vehicles {
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #333;
+        padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+      }
+      .demo-vehicles .dl-carousel-arrow--prev {
+        inset-inline-start: 0;
+      }
+      .demo-vehicles .dl-carousel-arrow--next {
+        inset-inline-end: 0;
+      }
+      .demo-vehicles .dl-carousel-arrow svg {
+        width: 28px;
+        height: 28px;
+      }
+      .demo-vehicles .dl-carousel-arrow:hover {
+        color: #000;
+      }
       .demo-card {
         border: 1px solid #ddd;
         border-radius: 8px;
         overflow: hidden;
         block-size: 100%;
         box-sizing: border-box;
+      }
+      /* Vehicles: one section — the photo IS the card, text overlaid on a
+         gradient (keeps the real <img> in the HTML for SEO/alt text). */
+      .demo-vehicles .demo-card {
+        position: relative;
+        border: 0;
+      }
+      .demo-card-body {
+        position: absolute;
+        inset-inline: 0;
+        inset-block-end: 0;
+        padding: 3rem 1rem 1rem;
+        background: linear-gradient(rgb(0 0 0 / 0%), rgb(0 0 0 / 78%) 70%);
+        color: #fff;
+      }
+      .demo-card-body h3 {
+        margin: 0;
+      }
+      .demo-card-body p {
+        margin: 0.15rem 0 0.5rem;
+        color: #f0f0f0;
+      }
+      .demo-card-body a {
+        margin: 0;
+        color: #fff;
+      }
+      /* Narrow screens: 16:10 is too short to hold the overlay — crop the
+         photo to 4:3 (object-fit) so the text sits in the lower third. */
+      @media (max-width: 767.98px) {
+        .demo-vehicles .demo-card img {
+          aspect-ratio: 4 / 3;
+          inline-size: 100%;
+          object-fit: cover;
+        }
+      }
+      /* Phones: side gutters would squeeze the card, so the arrows move to
+         the bottom control row flanking the dots — still off the image. */
+      @media (max-width: 639.98px) {
+        .demo-vehicles {
+          --dlc-controls-space: 52px;
+          padding-inline: 0;
+        }
+        .demo-vehicles .dl-carousel-arrow {
+          top: auto;
+          inset-block-end: 4px;
+          transform: none;
+        }
       }
       .demo-card h3 {
         margin: 0.75rem 1rem 0.25rem;
@@ -119,9 +186,11 @@
                   alt="Silver 2024 Honda Accord EX-L sedan"
                   fetchpriority="high"
                 />
-                <h3>2024 Honda Accord EX-L</h3>
-                <p>$31,990 · 12,400 mi</p>
-                <a href="#vehicle-1">View details</a>
+                <div class="demo-card-body">
+                  <h3>2024 Honda Accord EX-L</h3>
+                  <p>$31,990 · 12,400 mi</p>
+                  <a href="#vehicle-1">View details</a>
+                </div>
               </article>
             </li>
             <li class="dl-carousel-slide">
@@ -132,9 +201,11 @@
                   height="500"
                   alt="Red 2023 Toyota RAV4 XLE SUV"
                 />
-                <h3>2023 Toyota RAV4 XLE</h3>
-                <p>$29,450 · 21,700 mi</p>
-                <a href="#vehicle-2">View details</a>
+                <div class="demo-card-body">
+                  <h3>2023 Toyota RAV4 XLE</h3>
+                  <p>$29,450 · 21,700 mi</p>
+                  <a href="#vehicle-2">View details</a>
+                </div>
               </article>
             </li>
             <li class="dl-carousel-slide">
@@ -145,9 +216,11 @@
                   height="500"
                   alt="Green 2025 Ford F-150 Lariat pickup"
                 />
-                <h3>2025 Ford F-150 Lariat</h3>
-                <p>$54,899 · 3,100 mi</p>
-                <a href="#vehicle-3">View details</a>
+                <div class="demo-card-body">
+                  <h3>2025 Ford F-150 Lariat</h3>
+                  <p>$54,899 · 3,100 mi</p>
+                  <a href="#vehicle-3">View details</a>
+                </div>
               </article>
             </li>
             <li class="dl-carousel-slide">
@@ -160,9 +233,11 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <h3>2022 Chevrolet Equinox LT</h3>
-                <p>$22,988 · 34,900 mi</p>
-                <a href="#vehicle-4">View details</a>
+                <div class="demo-card-body">
+                  <h3>2022 Chevrolet Equinox LT</h3>
+                  <p>$22,988 · 34,900 mi</p>
+                  <a href="#vehicle-4">View details</a>
+                </div>
               </article>
             </li>
             <li class="dl-carousel-slide">
@@ -175,9 +250,11 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <h3>2024 Hyundai Tucson SEL</h3>
-                <p>$27,325 · 9,800 mi</p>
-                <a href="#vehicle-5">View details</a>
+                <div class="demo-card-body">
+                  <h3>2024 Hyundai Tucson SEL</h3>
+                  <p>$27,325 · 9,800 mi</p>
+                  <a href="#vehicle-5">View details</a>
+                </div>
               </article>
             </li>
             <li class="dl-carousel-slide">
@@ -190,9 +267,11 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <h3>2021 Jeep Grand Cherokee Limited</h3>
-                <p>$30,995 · 41,200 mi</p>
-                <a href="#vehicle-6">View details</a>
+                <div class="demo-card-body">
+                  <h3>2021 Jeep Grand Cherokee Limited</h3>
+                  <p>$30,995 · 41,200 mi</p>
+                  <a href="#vehicle-6">View details</a>
+                </div>
               </article>
             </li>
           </ul>
