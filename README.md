@@ -67,7 +67,7 @@ JS options override data attributes, which override defaults.
 ## JS API
 
 Methods: `goTo(n)`, `next()`, `prev()`, `pause()`, `play()`, `destroy()`,
-`Slider.autoInit(scope?)`. Instance is at `element._dlCarousel`.
+`DLCarousel.autoInit(scope?)` (classic script) / `Slider.autoInit(scope?)` (ES module). Instance is at `element._dlCarousel`.
 Events (bubble from the root): `dlc:change` `{index, page, slidesInView}`,
 `dlc:autoplay-start`, `dlc:autoplay-stop`, `dlc:destroy`.
 
