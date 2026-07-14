@@ -43,25 +43,48 @@
           --dlc-per-view: 3;
         }
       }
-      /* Vehicles: bare arrows in a gutter OUTSIDE the image — site-CSS
-         override of the generated controls (the documented escape hatch). */
-      .demo-vehicles {
+      /* All four carousels: bare arrows in a gutter OUTSIDE the content —
+         site-CSS override of the generated controls (the escape hatch). */
+      .demo-vehicles,
+      .demo-gallery,
+      .demo-reviews,
+      .demo-models {
         --dlc-arrow-bg: transparent;
-        --dlc-arrow-fg: #333;
+        --dlc-arrow-fg: #262626;
         padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
       }
-      .demo-vehicles .dl-carousel-arrow--prev {
+      .demo-vehicles .dl-carousel-arrow--prev,
+      .demo-gallery .dl-carousel-arrow--prev,
+      .demo-reviews .dl-carousel-arrow--prev,
+      .demo-models .dl-carousel-arrow--prev {
         inset-inline-start: 0;
       }
-      .demo-vehicles .dl-carousel-arrow--next {
+      .demo-vehicles .dl-carousel-arrow--next,
+      .demo-gallery .dl-carousel-arrow--next,
+      .demo-reviews .dl-carousel-arrow--next,
+      .demo-models .dl-carousel-arrow--next {
         inset-inline-end: 0;
       }
-      .demo-vehicles .dl-carousel-arrow svg {
+      .demo-vehicles .dl-carousel-arrow svg,
+      .demo-gallery .dl-carousel-arrow svg,
+      .demo-reviews .dl-carousel-arrow svg,
+      .demo-models .dl-carousel-arrow svg {
         width: 28px;
         height: 28px;
       }
-      .demo-vehicles .dl-carousel-arrow:hover {
+      .demo-vehicles .dl-carousel-arrow:hover,
+      .demo-gallery .dl-carousel-arrow:hover,
+      .demo-reviews .dl-carousel-arrow:hover,
+      .demo-models .dl-carousel-arrow:hover {
         color: #000;
+      }
+      /* keep the thumb strip aligned with the narrowed photo */
+      .demo-gallery .dl-carousel-thumbs {
+        inset-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+      }
+      /* keep the pause button over the cards, not in the gutter */
+      .demo-reviews .dl-carousel-pause {
+        inset-inline-end: calc(var(--dlc-arrow-size) + 0.5rem);
       }
       .demo-card {
         border: 1px solid #ddd;
@@ -146,16 +169,12 @@
         background: #262626;
       }
       .demo-models {
-        /* charcoal fill: ≥3:1 on white and against the empty track (1.4.11) */
         --dlc-per-view: 1;
         --dlc-gap: 0px; /* keep units — an unitless 0 breaks the basis calc */
-        --dlc-arrow-bg: transparent;
-        --dlc-arrow-fg: #262626;
         /* segments are all track — the sliding ::before thumb marks the page */
         --dlc-dot-fg: #e0e0e0;
         --dlc-dot-current: #e0e0e0;
         --dlc-controls-space: 3rem;
-        padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
       }
       @media (min-width: 640px) {
         .demo-models {
@@ -171,19 +190,6 @@
           width: 36px;
           height: 36px;
         }
-      }
-      .demo-models .dl-carousel-arrow--prev {
-        inset-inline-start: 0;
-      }
-      .demo-models .dl-carousel-arrow--next {
-        inset-inline-end: 0;
-      }
-      .demo-models .dl-carousel-arrow svg {
-        width: 28px;
-        height: 28px;
-      }
-      .demo-models .dl-carousel-arrow:hover {
-        color: #000;
       }
       /* Stock dots restyled into one solid bar with a SLIDING thumb: the
          segments are the track (each still a real, labeled "go to page"
