@@ -141,8 +141,9 @@
         --dlc-gap: 0px; /* keep units — an unitless 0 breaks the basis calc */
         --dlc-arrow-bg: transparent;
         --dlc-arrow-fg: #262626;
+        /* segments are all track — the sliding ::before thumb marks the page */
         --dlc-dot-fg: #e0e0e0;
-        --dlc-dot-current: #262626;
+        --dlc-dot-current: #e0e0e0;
         --dlc-controls-space: 3rem;
         padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
       }
@@ -174,12 +175,31 @@
       .demo-models .dl-carousel-arrow:hover {
         color: #000;
       }
-      /* Stock dots restyled into one solid bar whose highlighted segment IS
-         the current page — it slides to the other side as you page. Each
-         segment stays a real, labeled "go to page" button. */
+      /* Stock dots restyled into one solid bar with a SLIDING thumb: the
+         segments are the track (each still a real, labeled "go to page"
+         button); the thumb is a ::before whose translate follows
+         --bar-index/--bar-count, set by the small script at the end of the
+         page whenever the library moves its current-dot class. */
       .demo-models .dl-carousel-dots {
         gap: 0;
         inset-inline: 25%; /* the bar spans half the carousel, centered */
+      }
+      .demo-models .dl-carousel-dots::before {
+        content: "";
+        position: absolute;
+        inset-inline-start: 0;
+        inset-block-start: calc(50% - 2px);
+        inline-size: calc(100% / var(--bar-count, 1));
+        block-size: 4px;
+        border-radius: 2px;
+        background: #262626;
+        translate: calc(var(--bar-index, 0) * 100%);
+        pointer-events: none;
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .demo-models .dl-carousel-dots::before {
+          transition: translate 0.35s ease;
+        }
       }
       .demo-models .dl-carousel-dot {
         flex: 1 1 auto;
@@ -188,8 +208,6 @@
         inline-size: 100%;
         block-size: 4px;
         border-radius: 0;
-        /* color-only fade — safe under prefers-reduced-motion */
-        transition: background-color 0.3s ease;
       }
       .demo-models .dl-carousel-dot:first-child::after {
         border-start-start-radius: 2px;
@@ -550,10 +568,11 @@
             Stock <code>dl-carousel</code> — every visual difference is site
             CSS: bare arrows repositioned into the gutters
             (<code>--dlc-arrow-bg: transparent</code>), portrait overlay
-            cards, and the dots restyled into one solid bar whose dark
-            segment is the current page — plain
-            <code>--dlc-dot-fg</code>/<code>--dlc-dot-current</code> colors
-            plus a background-color transition, no extra JS.
+            cards, and the dots restyled into a bar with a sliding thumb: the
+            page script at the end of this file watches the library's
+            current-dot class and sets <code>--bar-index</code>/<code
+            >--bar-count</code>, which a <code>::before</code> translates
+            across — the "custom callback" escape hatch in action.
             <code>data-rewind="false"</code> stops the carousel at the ends
             (the arrow disables) instead of wrapping.
           </p>
@@ -760,5 +779,30 @@
         </ul>
       </footer>
     </main>
+    <script>
+      // Site-level enhancement (models carousel): drive the sliding bar
+      // thumb from the library's own state — no library changes needed.
+      addEventListener("DOMContentLoaded", () => {
+        const bar = document.querySelector(".demo-models .dl-carousel-dots");
+        if (!bar) return;
+        const sync = () => {
+          const dots = [...bar.children];
+          const i = dots.findIndex((d) =>
+            d.classList.contains("dl-carousel-dot--current"),
+          );
+          bar.style.setProperty("--bar-count", dots.length || 1);
+          bar.style.setProperty("--bar-index", Math.max(0, i));
+        };
+        // class flips on page change (instantly, on activation); children
+        // are rebuilt when a breakpoint changes the page count.
+        new MutationObserver(sync).observe(bar, {
+          subtree: true,
+          childList: true,
+          attributes: true,
+          attributeFilter: ["class"],
+        });
+        sync();
+      });
+    </script>
   </body>
 </html>
