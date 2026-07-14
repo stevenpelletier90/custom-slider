@@ -111,18 +111,11 @@
         }
       }
       /* "Explore Chevrolet models" — rebuild of the leadscience practice-area
-         carousel design: dark panel, portrait cards whose gradient fades into
-         the panel background, bare centered arrows, segmented-bar pagination.
-         Everything below is site CSS over stock dl-carousel — no library
-         changes and no copied markup from the source site. */
-      .demo-models-section {
-        background: #141414;
-        color: #fff;
-        padding: 2rem 1rem 1rem;
-        border-radius: 8px;
-      }
+         carousel design on the plain page: portrait overlay cards, bare
+         centered arrows, and a solid progress bar that fills to the current
+         position. Everything below is site CSS over stock dl-carousel — no
+         library changes and no copied markup from the source site. */
       .demo-models-section h2 {
-        margin-block-start: 0;
         text-align: center;
         text-transform: uppercase;
         letter-spacing: 0.06em;
@@ -136,13 +129,13 @@
         background: #cd9834;
       }
       .demo-models {
+        /* dark gold: ≥3:1 on white and against the empty track (WCAG 1.4.11) */
         --dlc-per-view: 1;
         --dlc-gap: 0.5rem;
         --dlc-arrow-bg: transparent;
-        --dlc-arrow-fg: #fff;
-        --dlc-dot-fg: #757575;
-        --dlc-dot-current: #cd9834;
-        --dlc-focus: #cd9834;
+        --dlc-arrow-fg: #333;
+        --dlc-dot-fg: #9a7000;
+        --dlc-dot-current: #9a7000;
         --dlc-controls-space: 3rem;
         padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
       }
@@ -166,19 +159,35 @@
         width: 28px;
         height: 28px;
       }
-      /* stock dots restyled into the reference's segmented bars */
+      .demo-models .dl-carousel-arrow:hover {
+        color: #000;
+      }
+      /* Stock dots restyled into ONE solid progress bar that fills to the
+         current position: segments default to the fill color, and every
+         segment AFTER the current page is painted as empty track. Each
+         segment stays a real, labeled "go to page" button. */
       .demo-models .dl-carousel-dots {
-        gap: 3px;
-        padding-inline: 1rem;
+        gap: 0;
+        inset-inline: 25%; /* the bar spans half the carousel, centered */
       }
       .demo-models .dl-carousel-dot {
         flex: 1 1 auto;
-        max-inline-size: 72px;
       }
       .demo-models .dl-carousel-dot::after {
         inline-size: 100%;
         block-size: 4px;
-        border-radius: 2px;
+        border-radius: 0;
+      }
+      .demo-models .dl-carousel-dot:first-child::after {
+        border-start-start-radius: 2px;
+        border-end-start-radius: 2px;
+      }
+      .demo-models .dl-carousel-dot:last-child::after {
+        border-start-end-radius: 2px;
+        border-end-end-radius: 2px;
+      }
+      .demo-models .dl-carousel-dot--current ~ .dl-carousel-dot::after {
+        background: #e0e0e0;
       }
       .demo-model-card {
         position: relative;
@@ -192,12 +201,11 @@
         block-size: auto;
         display: block;
       }
-      /* the gradient melts the card into the panel (the reference's trick) */
       .demo-model-card::after {
         content: "";
         position: absolute;
         inset: 0;
-        background: linear-gradient(rgb(20 20 20 / 0%) 55%, rgb(20 20 20 / 95%) 100%);
+        background: linear-gradient(rgb(0 0 0 / 0%) 55%, rgb(0 0 0 / 82%) 100%);
       }
       .demo-model-card h3 {
         position: absolute;
@@ -516,11 +524,11 @@
           <p>
             Stock <code>dl-carousel</code> — every visual difference is site
             CSS: bare arrows repositioned into the gutters
-            (<code>--dlc-arrow-bg: transparent</code>), the dots restyled into
-            segmented bars, brand colors via
-            <code>--dlc-dot-current</code>/<code>--dlc-focus</code>, and
-            portrait cards whose overlay gradient fades into the section
-            background. No library changes.
+            (<code>--dlc-arrow-bg: transparent</code>), portrait overlay
+            cards, and the dots restyled into one solid progress bar — the
+            <code>--current ~</code> sibling selector paints segments after
+            the current page as empty track, so the bar fills to the showing
+            position with no extra JS. No library changes.
           </p>
         </details>
       </section>
