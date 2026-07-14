@@ -81,6 +81,7 @@
       /* keep the thumb strip aligned with the narrowed photo */
       .demo-gallery .dl-carousel-thumbs {
         inset-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+        cursor: grab; /* the page script adds mouse drag-scrolling */
       }
       /* keep the pause button over the cards, not in the gutter */
       .demo-reviews .dl-carousel-pause {
@@ -959,6 +960,51 @@
           attributeFilter: ["class"],
         });
         sync();
+      });
+      // Mouse drag-scrolling for thumbnail strips (touch swiping is native
+      // scrolling already). A small threshold keeps plain clicks working;
+      // after a real drag the trailing click is swallowed so the thumb
+      // under the cursor isn't accidentally activated.
+      addEventListener("DOMContentLoaded", () => {
+        for (const strip of document.querySelectorAll(".dl-carousel-thumbs")) {
+          let startX = 0;
+          let startLeft = 0;
+          let dragging = false;
+          let moved = false;
+          strip.addEventListener("pointerdown", (e) => {
+            if (e.pointerType !== "mouse" || e.button !== 0) return;
+            dragging = true;
+            moved = false;
+            startX = e.clientX;
+            startLeft = strip.scrollLeft;
+          });
+          strip.addEventListener("pointermove", (e) => {
+            if (!dragging) return;
+            const dx = e.clientX - startX;
+            if (!moved && Math.abs(dx) > 4) {
+              moved = true;
+              strip.setPointerCapture(e.pointerId);
+            }
+            if (moved) strip.scrollLeft = startLeft - dx;
+          });
+          const end = () => {
+            dragging = false;
+          };
+          strip.addEventListener("pointerup", end);
+          strip.addEventListener("pointercancel", end);
+          strip.addEventListener("dragstart", (e) => e.preventDefault());
+          strip.addEventListener(
+            "click",
+            (e) => {
+              if (moved) {
+                e.preventDefault();
+                e.stopPropagation();
+                moved = false;
+              }
+            },
+            true,
+          );
+        }
       });
     </script>
   </body>
