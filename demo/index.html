@@ -115,6 +115,13 @@
          centered arrows, and a solid progress bar that fills to the current
          position. Everything below is site CSS over stock dl-carousel — no
          library changes and no copied markup from the source site. */
+      .demo-models-section {
+        /* break out of the 72rem column to 1440px, centered */
+        position: relative;
+        inset-inline-start: 50%;
+        inline-size: min(1440px, 100vw - 2rem);
+        transform: translateX(-50%);
+      }
       .demo-models-section h2 {
         text-align: center;
         text-transform: uppercase;
@@ -126,16 +133,16 @@
         inline-size: 64px;
         block-size: 4px;
         margin: 0.5rem auto 0;
-        background: #cd9834;
+        background: #262626;
       }
       .demo-models {
-        /* dark gold: ≥3:1 on white and against the empty track (WCAG 1.4.11) */
+        /* charcoal fill: ≥3:1 on white and against the empty track (1.4.11) */
         --dlc-per-view: 1;
-        --dlc-gap: 0.5rem;
+        --dlc-gap: 0px; /* keep units — an unitless 0 breaks the basis calc */
         --dlc-arrow-bg: transparent;
-        --dlc-arrow-fg: #333;
-        --dlc-dot-fg: #9a7000;
-        --dlc-dot-current: #9a7000;
+        --dlc-arrow-fg: #262626;
+        --dlc-dot-fg: #262626;
+        --dlc-dot-current: #262626;
         --dlc-controls-space: 3rem;
         padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
       }
@@ -147,6 +154,11 @@
       @media (min-width: 1024px) {
         .demo-models {
           --dlc-per-view: 4;
+          --dlc-arrow-size: 56px;
+        }
+        .demo-models .dl-carousel-arrow svg {
+          width: 36px;
+          height: 36px;
         }
       }
       .demo-models .dl-carousel-arrow--prev {
@@ -177,6 +189,8 @@
         inline-size: 100%;
         block-size: 4px;
         border-radius: 0;
+        /* color-only fade — safe under prefers-reduced-motion */
+        transition: background-color 0.3s ease;
       }
       .demo-models .dl-carousel-dot:first-child::after {
         border-start-start-radius: 2px;
@@ -193,13 +207,22 @@
         position: relative;
         display: block;
         overflow: hidden;
-        border-radius: 6px;
         text-decoration: none;
       }
       .demo-model-card img {
         inline-size: 100%;
         block-size: auto;
         display: block;
+      }
+      /* small hover: gentle zoom, same on keyboard focus, off under PRM */
+      .demo-model-card:hover img,
+      .demo-model-card:focus-visible img {
+        transform: scale(1.05);
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .demo-model-card img {
+          transition: transform 0.5s ease-out;
+        }
       }
       .demo-model-card::after {
         content: "";
@@ -219,13 +242,9 @@
         letter-spacing: 0.04em;
         color: #fff;
       }
-      .demo-model-card:hover h3,
-      .demo-model-card:focus-visible h3 {
-        color: #cd9834;
-      }
       /* inset ring — the track clips anything drawn outside the slide */
       .demo-model-card:focus-visible {
-        outline: 3px solid #cd9834;
+        outline: 3px solid var(--dlc-focus);
         outline-offset: -3px;
       }
       .demo-card h3 {
