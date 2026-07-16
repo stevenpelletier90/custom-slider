@@ -4,10 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Custom Slider — demo</title>
-    <meta
-      name="description"
-      content="Demo of the in-house dependency-free scroll-snap slider: multi-card, thumbnail gallery, and autoplay variations."
-    />
+    <meta name="description" content="Demo of the in-house dependency-free scroll-snap slider: multi-card, thumbnail gallery, and autoplay variations." />
     <link rel="stylesheet" href="../dist/dl-carousel.css" />
     <script src="../dist/dl-carousel.js" defer></script>
     <style>
@@ -106,11 +103,7 @@
         inset-block-end: 0;
         padding: 4rem 1rem 1rem;
         /* strong enough to hold white text over bright photos (sky, chrome) */
-        background: linear-gradient(
-          rgb(0 0 0 / 0%),
-          rgb(0 0 0 / 50%) 40%,
-          rgb(0 0 0 / 88%)
-        );
+        background: linear-gradient(rgb(0 0 0 / 0%), rgb(0 0 0 / 50%) 40%, rgb(0 0 0 / 88%));
         color: #fff;
         text-shadow: 0 1px 2px rgb(0 0 0 / 70%);
       }
@@ -168,7 +161,7 @@
         letter-spacing: 0.06em;
       }
       .demo-models-section h2::after {
-        content: "";
+        content: '';
         display: block;
         inline-size: 64px;
         block-size: 4px;
@@ -208,7 +201,7 @@
         inset-inline: 25%; /* the bar spans half the carousel, centered */
       }
       .demo-models .dl-carousel-dots::before {
-        content: "";
+        content: '';
         position: absolute;
         inset-inline-start: 0;
         inset-block-start: calc(50% - 2px);
@@ -262,7 +255,7 @@
         }
       }
       .demo-model-card::after {
-        content: "";
+        content: '';
         position: absolute;
         inset: 0;
         background: linear-gradient(rgb(0 0 0 / 0%) 45%, rgb(0 0 0 / 88%) 100%);
@@ -371,125 +364,69 @@
   <body>
     <main>
       <h1>Custom Slider</h1>
-      <p>
-        Dependency-free scroll-snap slider. Try this page with JavaScript
-        disabled — every variation remains a readable, swipeable strip.
-      </p>
+      <p>Dependency-free scroll-snap slider. Try this page with JavaScript disabled — every variation remains a readable, swipeable strip.</p>
 
       <section class="demo-section demo-wide" aria-labelledby="vehicles-h">
         <h2 id="vehicles-h">Featured vehicles</h2>
-        <div
-          class="dl-carousel demo-vehicles"
-          data-slider
-          aria-labelledby="vehicles-h"
-        >
+        <div class="dl-carousel demo-vehicles" data-slider aria-labelledby="vehicles-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
               <article class="demo-card">
-                <img
-                  src="img/vehicle-1.jpg"
-                  width="800"
-                  height="500"
-                  alt="Black Porsche Panamera driving on a highway, rear three-quarter view"
-                  fetchpriority="high"
-                />
+                <img src="img/vehicle-1.jpg" width="800" height="500" alt="Black Porsche Panamera driving on a highway, rear three-quarter view" fetchpriority="high" />
                 <div class="demo-card-body">
                   <h3>2021 Porsche Panamera</h3>
                   <p>$82,900 · 18,300 mi</p>
-                  <a href="#vehicle-1" aria-label="View details: 2021 Porsche Panamera"
-                    >View details</a
-                  >
+                  <a href="#vehicle-1" aria-label="View details: 2021 Porsche Panamera">View details</a>
                 </div>
               </article>
             </li>
             <li class="dl-carousel-slide">
               <article class="demo-card">
-                <img
-                  src="img/vehicle-2.jpg"
-                  width="800"
-                  height="500"
-                  alt="Blue BMW 4 Series coupe parked on a city street, side view"
-                />
+                <img src="img/vehicle-2.jpg" width="800" height="500" alt="Blue BMW 4 Series coupe parked on a city street, side view" />
                 <div class="demo-card-body">
                   <h3>2023 BMW 430i Coupe</h3>
                   <p>$42,750 · 9,100 mi</p>
-                  <a href="#vehicle-2" aria-label="View details: 2023 BMW 430i Coupe"
-                    >View details</a
-                  >
+                  <a href="#vehicle-2" aria-label="View details: 2023 BMW 430i Coupe">View details</a>
                 </div>
               </article>
             </li>
             <li class="dl-carousel-slide">
               <article class="demo-card">
-                <img
-                  src="img/vehicle-3.jpg"
-                  width="800"
-                  height="500"
-                  alt="White Ford Expedition on a desert road between red rock cliffs"
-                />
+                <img src="img/vehicle-3.jpg" width="800" height="500" alt="White Ford Expedition on a desert road between red rock cliffs" />
                 <div class="demo-card-body">
                   <h3>2022 Ford Expedition Limited</h3>
                   <p>$47,988 · 26,400 mi</p>
-                  <a href="#vehicle-3" aria-label="View details: 2022 Ford Expedition Limited"
-                    >View details</a
-                  >
+                  <a href="#vehicle-3" aria-label="View details: 2022 Ford Expedition Limited">View details</a>
                 </div>
               </article>
             </li>
             <li class="dl-carousel-slide">
               <article class="demo-card">
-                <img
-                  src="img/vehicle-4.jpg"
-                  width="800"
-                  height="500"
-                  alt="White Honda CR-V parked near snowy mountains"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <img src="img/vehicle-4.jpg" width="800" height="500" alt="White Honda CR-V parked near snowy mountains" loading="lazy" decoding="async" />
                 <div class="demo-card-body">
                   <h3>2023 Honda CR-V EX-L</h3>
                   <p>$33,450 · 12,900 mi</p>
-                  <a href="#vehicle-4" aria-label="View details: 2023 Honda CR-V EX-L"
-                    >View details</a
-                  >
+                  <a href="#vehicle-4" aria-label="View details: 2023 Honda CR-V EX-L">View details</a>
                 </div>
               </article>
             </li>
             <li class="dl-carousel-slide">
               <article class="demo-card">
-                <img
-                  src="img/vehicle-5.jpg"
-                  width="800"
-                  height="500"
-                  alt="White Nissan GT-R from behind on an open country road"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <img src="img/vehicle-5.jpg" width="800" height="500" alt="White Nissan GT-R from behind on an open country road" loading="lazy" decoding="async" />
                 <div class="demo-card-body">
                   <h3>2020 Nissan GT-R Premium</h3>
                   <p>$98,500 · 7,200 mi</p>
-                  <a href="#vehicle-5" aria-label="View details: 2020 Nissan GT-R Premium"
-                    >View details</a
-                  >
+                  <a href="#vehicle-5" aria-label="View details: 2020 Nissan GT-R Premium">View details</a>
                 </div>
               </article>
             </li>
             <li class="dl-carousel-slide">
               <article class="demo-card">
-                <img
-                  src="img/vehicle-6.jpg"
-                  width="800"
-                  height="500"
-                  alt="Light blue Fiat 500 parked beside a stone building, side view"
-                  loading="lazy"
-                  decoding="async"
-                />
+                <img src="img/vehicle-6.jpg" width="800" height="500" alt="Light blue Fiat 500 parked beside a stone building, side view" loading="lazy" decoding="async" />
                 <div class="demo-card-body">
                   <h3>2019 Fiat 500 Lounge</h3>
                   <p>$13,995 · 31,800 mi</p>
-                  <a href="#vehicle-6" aria-label="View details: 2019 Fiat 500 Lounge"
-                    >View details</a
-                  >
+                  <a href="#vehicle-6" aria-label="View details: 2019 Fiat 500 Lounge">View details</a>
                 </div>
               </article>
             </li>
@@ -545,93 +482,43 @@
         </details>
       </section>
 
-      <section
-        class="demo-section demo-models-section demo-wide"
-        aria-labelledby="models-h"
-      >
+      <section class="demo-section demo-models-section demo-wide" aria-labelledby="models-h">
         <h2 id="models-h">Explore Chevrolet Models</h2>
-        <div
-          class="dl-carousel demo-models"
-          data-slider
-          data-rewind="false"
-          aria-labelledby="models-h"
-        >
+        <div class="dl-carousel demo-models" data-slider data-rewind="false" aria-labelledby="models-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
               <a class="demo-model-card" href="#silverado">
-                <img
-                  src="img/model-silverado.jpg"
-                  width="600"
-                  height="1000"
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
+                <img src="img/model-silverado.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
                 <h3>Silverado</h3>
               </a>
             </li>
             <li class="dl-carousel-slide">
               <a class="demo-model-card" href="#equinox">
-                <img
-                  src="img/model-equinox.jpg"
-                  width="600"
-                  height="1000"
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
+                <img src="img/model-equinox.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
                 <h3>Equinox</h3>
               </a>
             </li>
             <li class="dl-carousel-slide">
               <a class="demo-model-card" href="#tahoe">
-                <img
-                  src="img/model-tahoe.jpg"
-                  width="600"
-                  height="1000"
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
+                <img src="img/model-tahoe.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
                 <h3>Tahoe</h3>
               </a>
             </li>
             <li class="dl-carousel-slide">
               <a class="demo-model-card" href="#malibu">
-                <img
-                  src="img/model-malibu.jpg"
-                  width="600"
-                  height="1000"
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
+                <img src="img/model-malibu.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
                 <h3>Malibu</h3>
               </a>
             </li>
             <li class="dl-carousel-slide">
               <a class="demo-model-card" href="#camaro">
-                <img
-                  src="img/model-camaro.jpg"
-                  width="600"
-                  height="1000"
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
+                <img src="img/model-camaro.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
                 <h3>Camaro</h3>
               </a>
             </li>
             <li class="dl-carousel-slide">
               <a class="demo-model-card" href="#corvette">
-                <img
-                  src="img/model-corvette.jpg"
-                  width="600"
-                  height="1000"
-                  alt=""
-                  loading="lazy"
-                  decoding="async"
-                />
+                <img src="img/model-corvette.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
                 <h3>Corvette</h3>
               </a>
             </li>
@@ -640,86 +527,35 @@
         <details>
           <summary>How this variant is built</summary>
           <p>
-            Stock <code>dl-carousel</code> — every visual difference is site
-            CSS: bare arrows repositioned into the gutters
-            (<code>--dlc-arrow-bg: transparent</code>), portrait overlay
-            cards, and the dots restyled into a bar with a sliding thumb: the
-            page script at the end of this file watches the library's
-            current-dot class and sets <code>--bar-index</code>/<code
-            >--bar-count</code>, which a <code>::before</code> translates
-            across — the "custom callback" escape hatch in action.
-            <code>data-rewind="false"</code> stops the carousel at the ends
-            (the arrow disables) instead of wrapping.
+            Stock <code>dl-carousel</code> — every visual difference is site CSS: bare arrows repositioned into the gutters (<code>--dlc-arrow-bg: transparent</code>), portrait overlay cards, and the
+            dots restyled into a bar with a sliding thumb: the page script at the end of this file watches the library's current-dot class and sets <code>--bar-index</code>/<code>--bar-count</code>,
+            which a <code>::before</code> translates across — the "custom callback" escape hatch in action. <code>data-rewind="false"</code> stops the carousel at the ends (the arrow disables) instead
+            of wrapping.
           </p>
         </details>
       </section>
 
       <section class="demo-section" aria-labelledby="gallery-h">
         <h2 id="gallery-h">Photo gallery</h2>
-        <div
-          class="dl-carousel demo-gallery"
-          data-slider
-          data-gallery
-          aria-labelledby="gallery-h"
-        >
+        <div class="dl-carousel demo-gallery" data-slider data-gallery aria-labelledby="gallery-h">
           <div class="dl-carousel-track">
             <div class="dl-carousel-slide">
-              <img
-                src="img/photo-1.jpg"
-                width="1200"
-                height="750"
-                alt="Blue Chevrolet Camaro in the desert at dusk"
-              />
+              <img src="img/photo-1.jpg" width="1200" height="750" alt="Blue Chevrolet Camaro in the desert at dusk" />
             </div>
             <div class="dl-carousel-slide">
-              <img
-                src="img/photo-2.jpg"
-                width="1200"
-                height="750"
-                alt="White Ford Mustang in a neon-lit parking garage"
-                loading="lazy"
-                decoding="async"
-              />
+              <img src="img/photo-2.jpg" width="1200" height="750" alt="White Ford Mustang in a neon-lit parking garage" loading="lazy" decoding="async" />
             </div>
             <div class="dl-carousel-slide">
-              <img
-                src="img/photo-3.jpg"
-                width="1200"
-                height="750"
-                alt="Hands on the steering wheel at dusk"
-                loading="lazy"
-                decoding="async"
-              />
+              <img src="img/photo-3.jpg" width="1200" height="750" alt="Hands on the steering wheel at dusk" loading="lazy" decoding="async" />
             </div>
             <div class="dl-carousel-slide">
-              <img
-                src="img/photo-4.jpg"
-                width="1200"
-                height="750"
-                alt="Audi R8 tail lights on a city street at sunset"
-                loading="lazy"
-                decoding="async"
-              />
+              <img src="img/photo-4.jpg" width="1200" height="750" alt="Audi R8 tail lights on a city street at sunset" loading="lazy" decoding="async" />
             </div>
             <div class="dl-carousel-slide">
-              <img
-                src="img/photo-5.jpg"
-                width="1200"
-                height="750"
-                alt="Technician topping up engine oil"
-                loading="lazy"
-                decoding="async"
-              />
+              <img src="img/photo-5.jpg" width="1200" height="750" alt="Technician topping up engine oil" loading="lazy" decoding="async" />
             </div>
             <div class="dl-carousel-slide">
-              <img
-                src="img/photo-6.jpg"
-                width="1200"
-                height="750"
-                alt="Classic BMW grilles lined up in a museum"
-                loading="lazy"
-                decoding="async"
-              />
+              <img src="img/photo-6.jpg" width="1200" height="750" alt="Classic BMW grilles lined up in a museum" loading="lazy" decoding="async" />
             </div>
           </div>
         </div>
@@ -733,9 +569,7 @@
 &lt;/div&gt;</code></pre>
           <p>
             Thumbnails are generated from each slide's image; the image
-            <code>alt</code> names the thumbnail tab. Real photos should also
-            carry <code>srcset</code>/<code>sizes</code> — size
-            <code>sizes</code> to ONE slide's rendered width, never
+            <code>alt</code> names the thumbnail tab. Real photos should also carry <code>srcset</code>/<code>sizes</code> — size <code>sizes</code> to ONE slide's rendered width, never
             <code>100vw</code>.
           </p>
         </details>
@@ -743,34 +577,18 @@
 
       <section class="demo-section" aria-labelledby="reviews-h">
         <h2 id="reviews-h">Customer reviews</h2>
-        <div
-          class="dl-carousel demo-reviews"
-          data-slider
-          data-autoplay="5000"
-          aria-labelledby="reviews-h"
-        >
+        <div class="dl-carousel demo-reviews" data-slider data-autoplay="5000" aria-labelledby="reviews-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
               <figure class="demo-review">
                 <figcaption>
-                  <span
-                    class="demo-review-avatar"
-                    aria-hidden="true"
-                    style="--avatar-bg: #7b1fa2"
-                    >D</span
-                  >
+                  <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #7b1fa2">D</span>
                   <span class="demo-review-byline">
                     <strong>Dana W.</strong>
                     <small>2 weeks ago</small>
                   </span>
                 </figcaption>
-                <p
-                  class="demo-review-stars"
-                  role="img"
-                  aria-label="Rated 5 out of 5"
-                >
-                  ★★★★★
-                </p>
+                <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
                 <blockquote>
                   <p>Painless from test drive to paperwork — in and out in two hours.</p>
                 </blockquote>
@@ -779,24 +597,13 @@
             <li class="dl-carousel-slide">
               <figure class="demo-review">
                 <figcaption>
-                  <span
-                    class="demo-review-avatar"
-                    aria-hidden="true"
-                    style="--avatar-bg: #1565c0"
-                    >M</span
-                  >
+                  <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #1565c0">M</span>
                   <span class="demo-review-byline">
                     <strong>Marcus T.</strong>
                     <small>a month ago</small>
                   </span>
                 </figcaption>
-                <p
-                  class="demo-review-stars"
-                  role="img"
-                  aria-label="Rated 5 out of 5"
-                >
-                  ★★★★★
-                </p>
+                <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
                 <blockquote>
                   <p>Fair trade-in value and no pressure. Second car we've bought here.</p>
                 </blockquote>
@@ -805,24 +612,13 @@
             <li class="dl-carousel-slide">
               <figure class="demo-review">
                 <figcaption>
-                  <span
-                    class="demo-review-avatar"
-                    aria-hidden="true"
-                    style="--avatar-bg: #00796b"
-                    >P</span
-                  >
+                  <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #00796b">P</span>
                   <span class="demo-review-byline">
                     <strong>Priya S.</strong>
                     <small>3 months ago</small>
                   </span>
                 </figcaption>
-                <p
-                  class="demo-review-stars"
-                  role="img"
-                  aria-label="Rated 5 out of 5"
-                >
-                  ★★★★★
-                </p>
+                <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
                 <blockquote>
                   <p>Service department caught a recall I didn't know about. Honest people.</p>
                 </blockquote>
@@ -831,24 +627,13 @@
             <li class="dl-carousel-slide">
               <figure class="demo-review">
                 <figcaption>
-                  <span
-                    class="demo-review-avatar"
-                    aria-hidden="true"
-                    style="--avatar-bg: #e65100"
-                    >C</span
-                  >
+                  <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #e65100">C</span>
                   <span class="demo-review-byline">
                     <strong>Colin R.</strong>
                     <small>3 weeks ago</small>
                   </span>
                 </figcaption>
-                <p
-                  class="demo-review-stars"
-                  role="img"
-                  aria-label="Rated 4 out of 5"
-                >
-                  ★★★★☆
-                </p>
+                <p class="demo-review-stars" role="img" aria-label="Rated 4 out of 5">★★★★☆</p>
                 <blockquote>
                   <p>Found the exact trim I wanted and they delivered it to my office.</p>
                 </blockquote>
@@ -857,24 +642,13 @@
             <li class="dl-carousel-slide">
               <figure class="demo-review">
                 <figcaption>
-                  <span
-                    class="demo-review-avatar"
-                    aria-hidden="true"
-                    style="--avatar-bg: #c2185b"
-                    >A</span
-                  >
+                  <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #c2185b">A</span>
                   <span class="demo-review-byline">
                     <strong>Aisha B.</strong>
                     <small>2 months ago</small>
                   </span>
                 </figcaption>
-                <p
-                  class="demo-review-stars"
-                  role="img"
-                  aria-label="Rated 5 out of 5"
-                >
-                  ★★★★★
-                </p>
+                <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
                 <blockquote>
                   <p>First-time buyer — they walked me through financing without the runaround.</p>
                 </blockquote>
@@ -883,24 +657,13 @@
             <li class="dl-carousel-slide">
               <figure class="demo-review">
                 <figcaption>
-                  <span
-                    class="demo-review-avatar"
-                    aria-hidden="true"
-                    style="--avatar-bg: #2e7d32"
-                    >G</span
-                  >
+                  <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #2e7d32">G</span>
                   <span class="demo-review-byline">
                     <strong>Gene &amp; Marta L.</strong>
                     <small>a week ago</small>
                   </span>
                 </figcaption>
-                <p
-                  class="demo-review-stars"
-                  role="img"
-                  aria-label="Rated 5 out of 5"
-                >
-                  ★★★★★
-                </p>
+                <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
                 <blockquote>
                   <p>Five years of oil changes and never an upsell. That's why we come back.</p>
                 </blockquote>
@@ -916,10 +679,8 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
           <p>
-            Autoplay pauses on hover, stops permanently on keyboard focus or
-            drag (the pause button restarts it), never starts under
-            <code>prefers-reduced-motion</code>, and rewinds at the end — no
-            cloned slides.
+            Autoplay pauses on hover, stops permanently on keyboard focus or drag (the pause button restarts it), never starts under
+            <code>prefers-reduced-motion</code>, and rewinds at the end — no cloned slides.
           </p>
         </details>
       </section>
@@ -927,19 +688,11 @@
       <footer class="demo-section">
         <h2>Notes</h2>
         <ul>
-          <li>
-            <strong>No JavaScript?</strong> Every slider degrades to a swipeable
-            snap strip; all content stays visible and indexable.
-          </li>
-          <li>
-            <strong>SEO:</strong> all slides ship in the initial HTML, nothing
-            is cloned — every heading and link exists exactly once.
-          </li>
+          <li><strong>No JavaScript?</strong> Every slider degrades to a swipeable snap strip; all content stays visible and indexable.</li>
+          <li><strong>SEO:</strong> all slides ship in the initial HTML, nothing is cloned — every heading and link exists exactly once.</li>
           <li>
             <strong>Include once per page:</strong>
-            <code>dl-carousel.css</code> + <code>dl-carousel.js</code> (defer).
-            See the <a href="../README.md">README</a> for the JS API and the
-            verification checklist.
+            <code>dl-carousel.css</code> + <code>dl-carousel.js</code> (defer). See the <a href="../README.md">README</a> for the JS API and the verification checklist.
           </li>
         </ul>
       </footer>
@@ -947,16 +700,14 @@
     <script>
       // Site-level enhancement (models carousel): drive the sliding bar
       // thumb from the library's own state — no library changes needed.
-      addEventListener("DOMContentLoaded", () => {
-        const bar = document.querySelector(".demo-models .dl-carousel-dots");
+      addEventListener('DOMContentLoaded', () => {
+        const bar = document.querySelector('.demo-models .dl-carousel-dots');
         if (!bar) return;
         const sync = () => {
           const dots = [...bar.children];
-          const i = dots.findIndex((d) =>
-            d.classList.contains("dl-carousel-dot--current"),
-          );
-          bar.style.setProperty("--bar-count", dots.length || 1);
-          bar.style.setProperty("--bar-index", Math.max(0, i));
+          const i = dots.findIndex((d) => d.classList.contains('dl-carousel-dot--current'));
+          bar.style.setProperty('--bar-count', dots.length || 1);
+          bar.style.setProperty('--bar-index', Math.max(0, i));
         };
         // class flips on page change (instantly, on activation); children
         // are rebuilt when a breakpoint changes the page count.
@@ -964,7 +715,7 @@
           subtree: true,
           childList: true,
           attributes: true,
-          attributeFilter: ["class"],
+          attributeFilter: ['class'],
         });
         sync();
       });
@@ -972,20 +723,20 @@
       // scrolling already). A small threshold keeps plain clicks working;
       // after a real drag the trailing click is swallowed so the thumb
       // under the cursor isn't accidentally activated.
-      addEventListener("DOMContentLoaded", () => {
-        for (const strip of document.querySelectorAll(".dl-carousel-thumbs")) {
+      addEventListener('DOMContentLoaded', () => {
+        for (const strip of document.querySelectorAll('.dl-carousel-thumbs')) {
           let startX = 0;
           let startLeft = 0;
           let dragging = false;
           let moved = false;
-          strip.addEventListener("pointerdown", (e) => {
-            if (e.pointerType !== "mouse" || e.button !== 0) return;
+          strip.addEventListener('pointerdown', (e) => {
+            if (e.pointerType !== 'mouse' || e.button !== 0) return;
             dragging = true;
             moved = false;
             startX = e.clientX;
             startLeft = strip.scrollLeft;
           });
-          strip.addEventListener("pointermove", (e) => {
+          strip.addEventListener('pointermove', (e) => {
             if (!dragging) return;
             const dx = e.clientX - startX;
             if (!moved && Math.abs(dx) > 4) {
@@ -997,11 +748,11 @@
           const end = () => {
             dragging = false;
           };
-          strip.addEventListener("pointerup", end);
-          strip.addEventListener("pointercancel", end);
-          strip.addEventListener("dragstart", (e) => e.preventDefault());
+          strip.addEventListener('pointerup', end);
+          strip.addEventListener('pointercancel', end);
+          strip.addEventListener('dragstart', (e) => e.preventDefault());
           strip.addEventListener(
-            "click",
+            'click',
             (e) => {
               if (moved) {
                 e.preventDefault();

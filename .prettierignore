@@ -1,0 +1,17 @@
+# Dependencies
+node_modules/
+
+# Build output — generated + minified by `npm run build`
+dist/
+
+# Generated files
+package-lock.json
+demo/img/
+.claude/
+
+# Agent-managed scratch (git-ignored; rewritten by tooling, so checking it
+# would fail the gate on files that aren't even in the repo)
+.superpowers/
+
+# Git
+.git/

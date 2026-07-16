@@ -1,0 +1,11 @@
+{
+  "extends": ["stylelint-config-standard", "stylelint-config-recess-order"],
+  "ignoreFiles": ["dist/**", "node_modules/**"],
+  "rules": {
+    "selector-class-pattern": ["^[a-z][a-z0-9]*([_-]+[a-z0-9]+)*$", { "message": "Expected class selector to be kebab-case (BEM `--` modifiers allowed, e.g. .dl-carousel-arrow--prev)" }],
+    "no-descending-specificity": null,
+    "no-duplicate-selectors": [true, { "disallowInList": false }],
+    "declaration-block-no-duplicate-properties": [true, { "ignore": ["consecutive-duplicates-with-different-values"] }],
+    "selector-max-compound-selectors": 5
+  }
+}

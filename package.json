@@ -6,9 +6,24 @@
   "scripts": {
     "build": "esbuild src/auto.js --bundle --format=iife --minify --outfile=dist/dl-carousel.js && esbuild src/dl-carousel.css --minify --outfile=dist/dl-carousel.css",
     "size": "npm run build && node scripts/size.mjs",
-    "serve": "esbuild --servedir=. --serve=127.0.0.1:8137"
+    "serve": "esbuild --servedir=. --serve=127.0.0.1:8137",
+    "lint:css": "npx stylelint \"src/**/*.css\"",
+    "lint:css:fix": "npx stylelint \"src/**/*.css\" --fix",
+    "lint:js": "npx eslint \"src/**/*.js\" \"scripts/**/*.{js,mjs}\"",
+    "lint:js:fix": "npx eslint \"src/**/*.js\" \"scripts/**/*.{js,mjs}\" --fix",
+    "format": "npx prettier --write .",
+    "format:check": "npx prettier --check .",
+    "validate": "npm run lint:css && npm run lint:js && npm run format:check"
   },
   "devDependencies": {
-    "esbuild": "^0.28.1"
+    "@eslint/js": "^10.0.1",
+    "esbuild": "^0.28.1",
+    "eslint": "^10.7.0",
+    "eslint-config-prettier": "^10.1.8",
+    "globals": "^17.7.0",
+    "prettier": "^3.9.5",
+    "stylelint": "^17.14.0",
+    "stylelint-config-recess-order": "^7.7.0",
+    "stylelint-config-standard": "^40.0.0"
   }
 }

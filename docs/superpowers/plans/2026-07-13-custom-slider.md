@@ -29,26 +29,28 @@ Every task implicitly includes these. Copied from the spec — do not relax them
 
 ## File Map
 
-| Path | Responsibility | Task |
-|---|---|---|
-| `package.json`, `.gitignore` | esbuild devDep; `build` / `size` / `serve` scripts | 1 |
-| `scripts/size.mjs` | gzip-size gate (< 5120 B total, exit 1 over) | 1 |
-| `src/dl-carousel.css` | ALL layout/physics/theme; `--dlc-*` knobs | 2 |
-| `scripts/make-placeholders.mjs` | writes `demo/img/*.svg` (12 files) | 2 |
-| `demo/index.html` | fixture + docs page; grows across tasks 2/4/5/6 | 2,4,5,6 |
-| `src/dl-carousel.js` | the engine (one ES module); grows across tasks 3/4/5 | 3,4,5 |
-| `src/auto.js` | CMS entry: DOMContentLoaded auto-init + `window.DLCarousel` | 3 |
-| `dist/*` | built, checked in; rebuilt whenever src changes | 1→ |
-| `README.md` | usage, options, a11y notes, verification checklist | 6 |
+| Path                            | Responsibility                                              | Task    |
+| ------------------------------- | ----------------------------------------------------------- | ------- |
+| `package.json`, `.gitignore`    | esbuild devDep; `build` / `size` / `serve` scripts          | 1       |
+| `scripts/size.mjs`              | gzip-size gate (< 5120 B total, exit 1 over)                | 1       |
+| `src/dl-carousel.css`           | ALL layout/physics/theme; `--dlc-*` knobs                   | 2       |
+| `scripts/make-placeholders.mjs` | writes `demo/img/*.svg` (12 files)                          | 2       |
+| `demo/index.html`               | fixture + docs page; grows across tasks 2/4/5/6             | 2,4,5,6 |
+| `src/dl-carousel.js`            | the engine (one ES module); grows across tasks 3/4/5        | 3,4,5   |
+| `src/auto.js`                   | CMS entry: DOMContentLoaded auto-init + `window.DLCarousel` | 3       |
+| `dist/*`                        | built, checked in; rebuilt whenever src changes             | 1→      |
+| `README.md`                     | usage, options, a11y notes, verification checklist          | 6       |
 
 ---
 
 ### Task 1: Scaffold, build pipeline, size gate
 
 **Files:**
+
 - Create: `package.json`, `.gitignore`, `scripts/size.mjs`, `src/dl-carousel.js` (stub), `src/auto.js` (stub), `src/dl-carousel.css` (stub)
 
 **Interfaces:**
+
 - Produces: `npm run build` (src → dist), `npm run size` (build + gzip gate), `npm run serve` (dev server on `127.0.0.1:8137` for Lighthouse in Task 7).
 
 - [ ] **Step 1: Create `.gitignore`**
@@ -141,9 +143,11 @@ git commit -m "Add build pipeline with esbuild and gzip size gate"
 ### Task 2: Library CSS + demo page with the multi-card variation (static)
 
 **Files:**
+
 - Create: `src/dl-carousel.css` (full, replaces stub), `scripts/make-placeholders.mjs`, `demo/img/*.svg` (generated), `demo/index.html`
 
 **Interfaces:**
+
 - Produces (markup contract consumed by all later tasks): root element `class="dl-carousel"` `[data-slider]`; child `.dl-carousel-track` (a `<ul>` for card carousels, `<div>` for gallery); children `.dl-carousel-slide`. CSS knobs: `--dlc-per-view`, `--dlc-gap`, `--dlc-peek`, `--dlc-arrow-size/fg/bg`, `--dlc-dot-size/fg/current`, `--dlc-controls-space`, `--dlc-thumb-w/h`, `--dlc-focus`. Generated-control classes styled here and created by JS in Tasks 3–5: `.dl-carousel-controls`, `.dl-carousel-arrow--prev/--next`, `.dl-carousel-pause`, `.dl-carousel-dots`/`.dl-carousel-dot`, `.dl-carousel-status`, `.dl-carousel-sr-only`, `.dl-carousel-thumbs`/`.dl-carousel-thumb`.
 - Produces: `demo/img/vehicle-1..6.svg` (800×500), `demo/img/photo-1..6.svg` (1200×750).
 
@@ -160,14 +164,14 @@ git commit -m "Add build pipeline with esbuild and gzip size gate"
 
 .dl-carousel {
   /* ---- knobs ---------------------------------------------------------- */
-  --dlc-per-view: 1;          /* slides visible at once (integer; set per breakpoint) */
-  --dlc-gap: 1rem;            /* space between slides */
-  --dlc-peek: 0px;            /* sliver of next slide visible at the edges */
-  --dlc-arrow-size: 44px;     /* prev/next tap target */
+  --dlc-per-view: 1; /* slides visible at once (integer; set per breakpoint) */
+  --dlc-gap: 1rem; /* space between slides */
+  --dlc-peek: 0px; /* sliver of next slide visible at the edges */
+  --dlc-arrow-size: 44px; /* prev/next tap target */
   --dlc-arrow-fg: #fff;
   --dlc-arrow-bg: rgb(0 0 0 / 55%);
   --dlc-dot-size: 12px;
-  --dlc-dot-fg: #757575;      /* ≥3:1 on white (WCAG 1.4.11) */
+  --dlc-dot-fg: #757575; /* ≥3:1 on white (WCAG 1.4.11) */
   --dlc-dot-current: #333;
   --dlc-controls-space: 2.5rem; /* reserved dot-row height — keeps CLS at 0 */
   --dlc-thumb-w: 88px;
@@ -179,10 +183,12 @@ git commit -m "Add build pipeline with esbuild and gzip size gate"
      positioned into this reserved space, so JS init shifts nothing. */
   padding-bottom: var(--dlc-controls-space);
 }
-.dl-carousel[data-gallery] { --dlc-controls-space: calc(var(--dlc-thumb-h) + 1rem); }
+.dl-carousel[data-gallery] {
+  --dlc-controls-space: calc(var(--dlc-thumb-h) + 1rem);
+}
 
 .dl-carousel-track {
-  position: relative;        /* slide offsets measured against the track */
+  position: relative; /* slide offsets measured against the track */
   display: flex;
   gap: var(--dlc-gap);
   margin: 0;
@@ -199,22 +205,29 @@ git commit -m "Add build pipeline with esbuild and gzip size gate"
      intended-instant programmatic scrolls; JS passes behavior per call. */
   scrollbar-width: none;
 }
-.dl-carousel-track::-webkit-scrollbar { display: none; }
+.dl-carousel-track::-webkit-scrollbar {
+  display: none;
+}
 
 .dl-carousel-slide {
   /* Explicit flex basis — Safari mis-sizes snap items without one. */
-  flex: 0 0 calc(
-    (100% - (var(--dlc-per-view) - 1) * var(--dlc-gap)) / var(--dlc-per-view)
-  );
+  flex: 0 0 calc((100% - (var(--dlc-per-view) - 1) * var(--dlc-gap)) / var(--dlc-per-view));
   /* 'always' would block multi-slide flicks (and fed a Firefox bug). */
   scroll-snap-align: start;
   scroll-snap-stop: normal;
 }
-.dl-carousel-slide img { max-inline-size: 100%; block-size: auto; display: block; }
+.dl-carousel-slide img {
+  max-inline-size: 100%;
+  block-size: auto;
+  display: block;
+}
 
 /* ---- generated controls (JS creates these; CSS already reserved room) -- */
 
-.dl-carousel button:focus-visible { outline: 3px solid var(--dlc-focus); outline-offset: 2px; }
+.dl-carousel button:focus-visible {
+  outline: 3px solid var(--dlc-focus);
+  outline-offset: 2px;
+}
 
 .dl-carousel-arrow {
   position: absolute;
@@ -230,8 +243,12 @@ git commit -m "Add build pipeline with esbuild and gzip size gate"
   background: var(--dlc-arrow-bg);
   cursor: pointer;
 }
-.dl-carousel-arrow--prev { inset-inline-start: 0.5rem; }
-.dl-carousel-arrow--next { inset-inline-end: 0.5rem; }
+.dl-carousel-arrow--prev {
+  inset-inline-start: 0.5rem;
+}
+.dl-carousel-arrow--next {
+  inset-inline-end: 0.5rem;
+}
 
 .dl-carousel-pause {
   position: absolute;
@@ -275,7 +292,9 @@ git commit -m "Add build pipeline with esbuild and gzip size gate"
   border-radius: 50%;
   background: var(--dlc-dot-fg);
 }
-.dl-carousel-dot--current::after { background: var(--dlc-dot-current); }
+.dl-carousel-dot--current::after {
+  background: var(--dlc-dot-current);
+}
 
 /* ---- gallery (tabbed) variant ------------------------------------------ */
 
@@ -289,7 +308,9 @@ git commit -m "Add build pipeline with esbuild and gzip size gate"
   overflow-x: auto;
   scrollbar-width: none;
 }
-.dl-carousel-thumbs::-webkit-scrollbar { display: none; }
+.dl-carousel-thumbs::-webkit-scrollbar {
+  display: none;
+}
 .dl-carousel-thumb {
   flex: 0 0 var(--dlc-thumb-w);
   padding: 0;
@@ -299,8 +320,15 @@ git commit -m "Add build pipeline with esbuild and gzip size gate"
   overflow: hidden;
   cursor: pointer;
 }
-.dl-carousel-thumb img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
-.dl-carousel-thumb[aria-selected="true"] { border-color: var(--dlc-dot-current); }
+.dl-carousel-thumb img {
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+  display: block;
+}
+.dl-carousel-thumb[aria-selected='true'] {
+  border-color: var(--dlc-dot-current);
+}
 
 /* ---- visually hidden (status region) ----------------------------------- */
 
@@ -332,10 +360,8 @@ const svg = (w, h, bg, label) =>
   <text x="50%" y="50%" fill="#fff" font-family="system-ui,sans-serif" font-size="${Math.round(h / 8)}" text-anchor="middle" dominant-baseline="middle">${label}</text>
 </svg>`;
 
-['#4a6fa5', '#a54a6f', '#6fa54a', '#a5864a', '#4aa596', '#7a4aa5'].forEach((c, i) =>
-  writeFileSync(new URL(`vehicle-${i + 1}.svg`, OUT), svg(800, 500, c, `Vehicle ${i + 1}`)));
-['#1f4e5f', '#2a637a', '#357895', '#408db0', '#2a7a5f', '#1f5f4e'].forEach((c, i) =>
-  writeFileSync(new URL(`photo-${i + 1}.svg`, OUT), svg(1200, 750, c, `Photo ${i + 1}`)));
+['#4a6fa5', '#a54a6f', '#6fa54a', '#a5864a', '#4aa596', '#7a4aa5'].forEach((c, i) => writeFileSync(new URL(`vehicle-${i + 1}.svg`, OUT), svg(800, 500, c, `Vehicle ${i + 1}`)));
+['#1f4e5f', '#2a637a', '#357895', '#408db0', '#2a7a5f', '#1f5f4e'].forEach((c, i) => writeFileSync(new URL(`photo-${i + 1}.svg`, OUT), svg(1200, 750, c, `Photo ${i + 1}`)));
 console.log('wrote 12 SVGs to demo/img/');
 ```
 
@@ -347,109 +373,163 @@ Expected: `wrote 12 SVGs to demo/img/`; 12 files exist.
 ```html
 <!doctype html>
 <html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Custom Slider — demo</title>
-<meta name="description" content="Demo of the in-house dependency-free scroll-snap slider: multi-card, thumbnail gallery, and autoplay variations.">
-<link rel="stylesheet" href="../dist/dl-carousel.css">
-<script src="../dist/dl-carousel.js" defer></script>
-<style>
-  /* Demo page chrome only — slider styling lives in the library CSS. */
-  body { font-family: system-ui, sans-serif; margin: 0; color: #222; line-height: 1.5; }
-  main { max-width: 72rem; margin: 0 auto; padding: 1rem; }
-  .demo-section { margin-block: 3rem; }
-  /* Slides-per-view is site configuration: plain media queries, no JS breakpoints. */
-  .demo-vehicles, .demo-reviews { --dlc-per-view: 1; }
-  @media (min-width: 640px)  { .demo-vehicles, .demo-reviews { --dlc-per-view: 2; } }
-  @media (min-width: 1024px) { .demo-vehicles, .demo-reviews { --dlc-per-view: 3; } }
-  .demo-card { border: 1px solid #ddd; border-radius: 8px; overflow: hidden; block-size: 100%; box-sizing: border-box; }
-  .demo-card h3 { margin: 0.75rem 1rem 0.25rem; font-size: 1.05rem; }
-  .demo-card p { margin: 0 1rem 0.5rem; color: #555; }
-  .demo-card a { display: inline-block; margin: 0 1rem 1rem; }
-  details { margin-block-start: 1rem; }
-  pre { background: #f6f6f6; padding: 1rem; overflow-x: auto; border-radius: 6px; }
-  table { border-collapse: collapse; margin-block: 0.5rem; }
-  th, td { border: 1px solid #ccc; padding: 0.35rem 0.6rem; text-align: left; }
-</style>
-</head>
-<body>
-<main>
-  <h1>Custom Slider</h1>
-  <p>Dependency-free scroll-snap slider. Try this page with JavaScript disabled —
-     every variation remains a readable, swipeable strip.</p>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Custom Slider — demo</title>
+    <meta name="description" content="Demo of the in-house dependency-free scroll-snap slider: multi-card, thumbnail gallery, and autoplay variations." />
+    <link rel="stylesheet" href="../dist/dl-carousel.css" />
+    <script src="../dist/dl-carousel.js" defer></script>
+    <style>
+      /* Demo page chrome only — slider styling lives in the library CSS. */
+      body {
+        font-family: system-ui, sans-serif;
+        margin: 0;
+        color: #222;
+        line-height: 1.5;
+      }
+      main {
+        max-width: 72rem;
+        margin: 0 auto;
+        padding: 1rem;
+      }
+      .demo-section {
+        margin-block: 3rem;
+      }
+      /* Slides-per-view is site configuration: plain media queries, no JS breakpoints. */
+      .demo-vehicles,
+      .demo-reviews {
+        --dlc-per-view: 1;
+      }
+      @media (min-width: 640px) {
+        .demo-vehicles,
+        .demo-reviews {
+          --dlc-per-view: 2;
+        }
+      }
+      @media (min-width: 1024px) {
+        .demo-vehicles,
+        .demo-reviews {
+          --dlc-per-view: 3;
+        }
+      }
+      .demo-card {
+        border: 1px solid #ddd;
+        border-radius: 8px;
+        overflow: hidden;
+        block-size: 100%;
+        box-sizing: border-box;
+      }
+      .demo-card h3 {
+        margin: 0.75rem 1rem 0.25rem;
+        font-size: 1.05rem;
+      }
+      .demo-card p {
+        margin: 0 1rem 0.5rem;
+        color: #555;
+      }
+      .demo-card a {
+        display: inline-block;
+        margin: 0 1rem 1rem;
+      }
+      details {
+        margin-block-start: 1rem;
+      }
+      pre {
+        background: #f6f6f6;
+        padding: 1rem;
+        overflow-x: auto;
+        border-radius: 6px;
+      }
+      table {
+        border-collapse: collapse;
+        margin-block: 0.5rem;
+      }
+      th,
+      td {
+        border: 1px solid #ccc;
+        padding: 0.35rem 0.6rem;
+        text-align: left;
+      }
+    </style>
+  </head>
+  <body>
+    <main>
+      <h1>Custom Slider</h1>
+      <p>Dependency-free scroll-snap slider. Try this page with JavaScript disabled — every variation remains a readable, swipeable strip.</p>
 
-  <section class="demo-section" aria-labelledby="vehicles-h">
-    <h2 id="vehicles-h">Featured vehicles</h2>
-    <div class="dl-carousel demo-vehicles" data-slider aria-labelledby="vehicles-h">
-      <ul class="dl-carousel-track">
-        <li class="dl-carousel-slide">
-          <article class="demo-card">
-            <img src="img/vehicle-1.svg" width="800" height="500" alt="Silver 2024 Honda Accord EX-L sedan" fetchpriority="high">
-            <h3>2024 Honda Accord EX-L</h3>
-            <p>$31,990 · 12,400 mi</p>
-            <a href="#vehicle-1">View details</a>
-          </article>
-        </li>
-        <li class="dl-carousel-slide">
-          <article class="demo-card">
-            <img src="img/vehicle-2.svg" width="800" height="500" alt="Red 2023 Toyota RAV4 XLE SUV">
-            <h3>2023 Toyota RAV4 XLE</h3>
-            <p>$29,450 · 21,700 mi</p>
-            <a href="#vehicle-2">View details</a>
-          </article>
-        </li>
-        <li class="dl-carousel-slide">
-          <article class="demo-card">
-            <img src="img/vehicle-3.svg" width="800" height="500" alt="Green 2025 Ford F-150 Lariat pickup">
-            <h3>2025 Ford F-150 Lariat</h3>
-            <p>$54,899 · 3,100 mi</p>
-            <a href="#vehicle-3">View details</a>
-          </article>
-        </li>
-        <li class="dl-carousel-slide">
-          <article class="demo-card">
-            <img src="img/vehicle-4.svg" width="800" height="500" alt="Tan 2022 Chevrolet Equinox LT SUV" loading="lazy" decoding="async">
-            <h3>2022 Chevrolet Equinox LT</h3>
-            <p>$22,988 · 34,900 mi</p>
-            <a href="#vehicle-4">View details</a>
-          </article>
-        </li>
-        <li class="dl-carousel-slide">
-          <article class="demo-card">
-            <img src="img/vehicle-5.svg" width="800" height="500" alt="Teal 2024 Hyundai Tucson SEL SUV" loading="lazy" decoding="async">
-            <h3>2024 Hyundai Tucson SEL</h3>
-            <p>$27,325 · 9,800 mi</p>
-            <a href="#vehicle-5">View details</a>
-          </article>
-        </li>
-        <li class="dl-carousel-slide">
-          <article class="demo-card">
-            <img src="img/vehicle-6.svg" width="800" height="500" alt="Purple 2021 Jeep Grand Cherokee Limited SUV" loading="lazy" decoding="async">
-            <h3>2021 Jeep Grand Cherokee Limited</h3>
-            <p>$30,995 · 41,200 mi</p>
-            <a href="#vehicle-6">View details</a>
-          </article>
-        </li>
-      </ul>
-    </div>
-  </section>
-</main>
-</body>
+      <section class="demo-section" aria-labelledby="vehicles-h">
+        <h2 id="vehicles-h">Featured vehicles</h2>
+        <div class="dl-carousel demo-vehicles" data-slider aria-labelledby="vehicles-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img src="img/vehicle-1.svg" width="800" height="500" alt="Silver 2024 Honda Accord EX-L sedan" fetchpriority="high" />
+                <h3>2024 Honda Accord EX-L</h3>
+                <p>$31,990 · 12,400 mi</p>
+                <a href="#vehicle-1">View details</a>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img src="img/vehicle-2.svg" width="800" height="500" alt="Red 2023 Toyota RAV4 XLE SUV" />
+                <h3>2023 Toyota RAV4 XLE</h3>
+                <p>$29,450 · 21,700 mi</p>
+                <a href="#vehicle-2">View details</a>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img src="img/vehicle-3.svg" width="800" height="500" alt="Green 2025 Ford F-150 Lariat pickup" />
+                <h3>2025 Ford F-150 Lariat</h3>
+                <p>$54,899 · 3,100 mi</p>
+                <a href="#vehicle-3">View details</a>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img src="img/vehicle-4.svg" width="800" height="500" alt="Tan 2022 Chevrolet Equinox LT SUV" loading="lazy" decoding="async" />
+                <h3>2022 Chevrolet Equinox LT</h3>
+                <p>$22,988 · 34,900 mi</p>
+                <a href="#vehicle-4">View details</a>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img src="img/vehicle-5.svg" width="800" height="500" alt="Teal 2024 Hyundai Tucson SEL SUV" loading="lazy" decoding="async" />
+                <h3>2024 Hyundai Tucson SEL</h3>
+                <p>$27,325 · 9,800 mi</p>
+                <a href="#vehicle-5">View details</a>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img src="img/vehicle-6.svg" width="800" height="500" alt="Purple 2021 Jeep Grand Cherokee Limited SUV" loading="lazy" decoding="async" />
+                <h3>2021 Jeep Grand Cherokee Limited</h3>
+                <p>$30,995 · 41,200 mi</p>
+                <a href="#vehicle-6">View details</a>
+              </article>
+            </li>
+          </ul>
+        </div>
+      </section>
+    </main>
+  </body>
 </html>
 ```
 
 - [ ] **Step 4: Verify the no-JS layout in the browser**
 
 Using Playwright MCP (`browser_navigate` to `file:///C:/Users/steve/Dev/custom-slider/demo/index.html`):
+
 1. `browser_resize` to 1280×900. `browser_evaluate`:
    ```js
    () => {
      const t = document.querySelector('.dl-carousel-track');
      const s = getComputedStyle(t);
-     const w = [...t.children].map(li => li.getBoundingClientRect().width);
+     const w = [...t.children].map((li) => li.getBoundingClientRect().width);
      return { overflow: s.overflowX, snap: s.scrollSnapType, widths: w.slice(0, 3), scrollable: t.scrollWidth > t.clientWidth };
-   }
+   };
    ```
    Expected: `overflow: "auto"`, `snap: "x mandatory"`, three roughly equal widths (~1/3 of track), `scrollable: true`.
 2. `browser_resize` to 375×812 → same evaluate → slide width ≈ full track width (per-view 1). 768×1024 → per-view 2.
@@ -464,16 +544,18 @@ git add -f dist/
 git commit -m "Add library CSS and demo page with static multi-card variation"
 ```
 
-*(Run `npm run build` before committing so dist/dl-carousel.css picks up the new CSS.)*
+_(Run `npm run build` before committing so dist/dl-carousel.css picks up the new CSS.)_
 
 ---
 
 ### Task 3: Engine core — multi-card navigation, dots, state, events
 
 **Files:**
+
 - Create: `src/dl-carousel.js` (complete rewrite of stub), `src/auto.js` (rewrite of stub)
 
 **Interfaces:**
+
 - Consumes: markup contract + control classes from Task 2.
 - Produces (relied on by Tasks 4–6):
   - `export class Slider` — `constructor(root, options = {})`, `goTo(n, {behavior}={})`, `next()`, `prev()`, `destroy()`, `static autoInit(scope = document)`.
@@ -503,9 +585,9 @@ let uidCounter = 0;
 const fmt = (tpl, vals) => tpl.replace(/\{(\w+)\}/g, (_, k) => vals[k]);
 
 const DEFAULTS = {
-  autoplay: 0,                  // ms between advances; 0 = off
-  gallery: false,               // tabbed thumbnail-gallery variant
-  roledescription: 'carousel',  // set '' to omit (localization concerns)
+  autoplay: 0, // ms between advances; 0 = off
+  gallery: false, // tabbed thumbnail-gallery variant
+  roledescription: 'carousel', // set '' to omit (localization concerns)
   labels: {
     prev: 'Previous slides',
     next: 'Next slides',
@@ -542,11 +624,11 @@ export class Slider {
       return;
     }
 
-    this._snapshot = root.innerHTML;   // destroy() restores this
+    this._snapshot = root.innerHTML; // destroy() restores this
     this.uid = `dlc-${++uidCounter}`;
     this.opts = this._parseOptions(options);
     this.current = 0;
-    this._target = null;               // pending goTo destination (rapid clicks)
+    this._target = null; // pending goTo destination (rapid clicks)
     this._pointerDown = false;
     this._addedRootAttrs = [];
     this._prm = matchMedia('(prefers-reduced-motion: reduce)');
@@ -560,9 +642,7 @@ export class Slider {
   }
 
   static autoInit(scope = document) {
-    return [...scope.querySelectorAll('[data-slider]')]
-      .filter((el) => !el._dlCarousel)
-      .map((el) => new Slider(el));
+    return [...scope.querySelectorAll('[data-slider]')].filter((el) => !el._dlCarousel).map((el) => new Slider(el));
   }
 
   /* ---- options ---------------------------------------------------------- */
@@ -668,7 +748,8 @@ export class Slider {
   _pages() {
     // Page start indexes, stepping by perView, last page clamped to the end.
     // n=7,v=3 → [0,3,4]; n=4,v=3 → [0,1]; n=6,v=3 → [0,3].
-    const n = this.slides.length, v = this.perView;
+    const n = this.slides.length,
+      v = this.perView;
     const last = Math.max(0, n - v);
     const starts = [];
     for (let i = 0; i < n; i += v) {
@@ -682,7 +763,9 @@ export class Slider {
     const ref = this._target ?? this.current;
     const p = this._pages();
     let best = 0;
-    p.forEach((s, i) => { if (Math.abs(s - ref) < Math.abs(p[best] - ref)) best = i; });
+    p.forEach((s, i) => {
+      if (Math.abs(s - ref) < Math.abs(p[best] - ref)) best = i;
+    });
     return best;
   }
 
@@ -695,11 +778,7 @@ export class Slider {
     // Compute the snap position ourselves — browsers (WebKit especially)
     // don't reliably re-snap after programmatic scrolls.
     const pad = parseFloat(getComputedStyle(t).scrollPaddingLeft) || 0;
-    const left = Math.max(0, Math.min(
-      this.slides[n].getBoundingClientRect().left - t.getBoundingClientRect().left
-        - t.clientLeft + t.scrollLeft - pad,
-      t.scrollWidth - t.clientWidth,
-    ));
+    const left = Math.max(0, Math.min(this.slides[n].getBoundingClientRect().left - t.getBoundingClientRect().left - t.clientLeft + t.scrollLeft - pad, t.scrollWidth - t.clientWidth));
     if (Math.abs(left - t.scrollLeft) < 1) {
       this._commit(); // already there — scrollend won't fire, commit directly
       return;
@@ -712,34 +791,57 @@ export class Slider {
   }
 
   next() {
-    const p = this._pages(), c = this._currentPage();
+    const p = this._pages(),
+      c = this._currentPage();
     this.goTo(c >= p.length - 1 ? 0 : p[c + 1]); // rewind past the end
   }
 
   prev() {
-    const p = this._pages(), c = this._currentPage();
+    const p = this._pages(),
+      c = this._currentPage();
     this.goTo(c <= 0 ? p[p.length - 1] : p[c - 1]); // rewind before the start
   }
 
   /* ---- state: the single commit point -------------------------------------- */
 
   _listen() {
-    const sig = this._ac.signal, t = this.track;
+    const sig = this._ac.signal,
+      t = this.track;
     if ('onscrollend' in window) {
       t.addEventListener('scrollend', () => this._commit(), { signal: sig });
     } else {
       // Fallback for engines without scrollend (e.g. iOS Safari < 26.2).
-      t.addEventListener('scroll', () => {
-        clearTimeout(this._debounce);
-        this._debounce = setTimeout(() => this._commit(), 150);
-      }, { passive: true, signal: sig });
+      t.addEventListener(
+        'scroll',
+        () => {
+          clearTimeout(this._debounce);
+          this._debounce = setTimeout(() => this._commit(), 150);
+        },
+        { passive: true, signal: sig },
+      );
     }
-    t.addEventListener('pointerdown', () => {
-      this._pointerDown = true;
-      this.pause?.(); // user drag permanently stops autoplay (Task 4)
-    }, { signal: sig });
-    addEventListener('pointerup', () => { this._pointerDown = false; }, { signal: sig });
-    addEventListener('pointercancel', () => { this._pointerDown = false; }, { signal: sig });
+    t.addEventListener(
+      'pointerdown',
+      () => {
+        this._pointerDown = true;
+        this.pause?.(); // user drag permanently stops autoplay (Task 4)
+      },
+      { signal: sig },
+    );
+    addEventListener(
+      'pointerup',
+      () => {
+        this._pointerDown = false;
+      },
+      { signal: sig },
+    );
+    addEventListener(
+      'pointercancel',
+      () => {
+        this._pointerDown = false;
+      },
+      { signal: sig },
+    );
     this._ro = new ResizeObserver(() => {
       cancelAnimationFrame(this._raf);
       this._raf = requestAnimationFrame(() => {
@@ -767,11 +869,14 @@ export class Slider {
 
   _rebuildDots() {
     if (!this.dots) return;
-    const L = this.opts.labels, pages = this._pages(), total = this.slides.length;
+    const L = this.opts.labels,
+      pages = this._pages(),
+      total = this.slides.length;
     if (this.dots.children.length !== pages.length) {
       this.dots.textContent = '';
       pages.forEach((start) => {
-        const from = start + 1, to = Math.min(start + this.perView, total);
+        const from = start + 1,
+          to = Math.min(start + this.perView, total);
         const label = this.perView > 1 ? fmt(L.gotoPage, { from, to }) : fmt(L.gotoSlide, { n: from });
         const b = this._btn('dl-carousel-dot', label, '');
         b.addEventListener('click', () => this.goTo(start), { signal: this._ac.signal });
@@ -793,12 +898,11 @@ export class Slider {
   }
 
   _updateStatus() {
-    const L = this.opts.labels, total = this.slides.length;
+    const L = this.opts.labels,
+      total = this.slides.length;
     const from = this.current + 1;
     const to = Math.min(this.current + this.perView, total);
-    this.status.textContent = this.perView > 1
-      ? fmt(L.statusMulti, { from, to, total })
-      : fmt(L.statusSingle, { n: from, total });
+    this.status.textContent = this.perView > 1 ? fmt(L.statusMulti, { from, to, total }) : fmt(L.statusSingle, { n: from, total });
   }
 
   /* ---- misc ----------------------------------------------------------------- */
@@ -860,12 +964,12 @@ Playwright MCP, navigate to `file:///C:/Users/steve/Dev/custom-slider/demo/index
        role: r.getAttribute('role'),
        roledesc: r.getAttribute('aria-roledescription'),
        arrows: r.querySelectorAll('.dl-carousel-arrow').length,
-       dots: [...r.querySelectorAll('.dl-carousel-dot')].map(d => d.getAttribute('aria-label')),
+       dots: [...r.querySelectorAll('.dl-carousel-dot')].map((d) => d.getAttribute('aria-label')),
        currentDot: r.querySelector('.dl-carousel-dot[aria-disabled="true"]')?.getAttribute('aria-label'),
        status: r.querySelector('.dl-carousel-status').textContent,
        slideAria: r.querySelector('.dl-carousel-slide').getAttribute('role'), // null — <li> keeps list semantics
      };
-   }
+   };
    ```
    Expected: `role: "region"`, `roledesc: "carousel"`, `arrows: 2`, dots = `["Go to slides 1–3", "Go to slides 4–6"]` (per-view 3 at this width), `currentDot: "Go to slides 1–3"`, `status: "Slides 1–3 of 6"`, `slideAria: null`.
 2. `browser_snapshot` — confirm the a11y tree shows: region "Featured vehicles" → buttons Previous/Next → group "Choose slide" with 2 buttons → list of 6 items, all six cards' links present (nothing hidden).
@@ -899,44 +1003,56 @@ git commit -m "Add slider engine with scroll-snap navigation, dots, and state tr
 ### Task 4: Autoplay + "Customer reviews" demo section
 
 **Files:**
+
 - Modify: `src/dl-carousel.js` (add pause button + autoplay methods; two splice edits shown below)
 - Modify: `demo/index.html` (add reviews section)
 
 **Interfaces:**
+
 - Consumes: `this._btn`, `ICONS.pause/play`, `this.status`, `this.opts.autoplay`, `this._ac.signal`, `this._prm`, `this.next()`, `this._emit` from Task 3.
 - Produces: `pause()` / `play()` public methods, `this.rotating` (bool), `this.pauseBtn`, events `dlc:autoplay-start` / `dlc:autoplay-stop`. `this.pause?.()` in the Task-3 pointerdown handler now resolves.
 
 - [ ] **Step 1: Add the pause button to `_buildControls`**
 
 In `src/dl-carousel.js`, immediately after the two lines
+
 ```js
-    const c = document.createElement('div');
-    c.className = 'dl-carousel-controls';
+const c = document.createElement('div');
+c.className = 'dl-carousel-controls';
 ```
+
 insert:
+
 ```js
-    if (this.opts.autoplay > 0) {
-      // WCAG 2.2.2: a visible pause mechanism, FIRST in the tab sequence.
-      this.pauseBtn = this._btn('dl-carousel-pause', L.pause, ICONS.pause);
-      this.pauseBtn.addEventListener('click', () => {
-        this.rotating ? this.pause() : this.play();
-      }, { signal: this._ac.signal });
-      c.append(this.pauseBtn);
-    }
+if (this.opts.autoplay > 0) {
+  // WCAG 2.2.2: a visible pause mechanism, FIRST in the tab sequence.
+  this.pauseBtn = this._btn('dl-carousel-pause', L.pause, ICONS.pause);
+  this.pauseBtn.addEventListener(
+    'click',
+    () => {
+      this.rotating ? this.pause() : this.play();
+    },
+    { signal: this._ac.signal },
+  );
+  c.append(this.pauseBtn);
+}
 ```
 
 - [ ] **Step 2: Wire autoplay setup into the constructor**
 
 Replace the constructor lines
+
 ```js
-    this._listen();
-    this._commit();
+this._listen();
+this._commit();
 ```
+
 with:
+
 ```js
-    this._listen();
-    this._setupAutoplay();
-    this._commit();
+this._listen();
+this._setupAutoplay();
+this._commit();
 ```
 
 - [ ] **Step 3: Add the autoplay section to the class** (insert the following methods after `_updateStatus()` and before `/* ---- misc ---- */`)
@@ -1008,13 +1124,17 @@ with:
 - [ ] **Step 3b: Add the manual-init escape hatch to `autoInit`**
 
 In `src/dl-carousel.js`, `static autoInit`, replace:
+
 ```js
       .filter((el) => !el._dlCarousel)
 ```
+
 with:
+
 ```js
       .filter((el) => !el._dlCarousel && el.dataset.init !== 'manual')
 ```
+
 Advanced sliders can then opt out of auto-init (`data-init="manual"`) and be constructed
 from page script via `new window.DLCarousel(el, options)` with full JS options (custom
 labels, event callbacks) — the escape hatch for OEM-specific behavior.
@@ -1022,56 +1142,65 @@ labels, event callbacks) — the escape hatch for OEM-specific behavior.
 - [ ] **Step 4: Add the reviews section to `demo/index.html`** (insert before `</main>`)
 
 ```html
-  <section class="demo-section" aria-labelledby="reviews-h">
-    <h2 id="reviews-h">Customer reviews</h2>
-    <div class="dl-carousel demo-reviews" data-slider data-autoplay="5000" aria-labelledby="reviews-h">
-      <ul class="dl-carousel-track">
-        <li class="dl-carousel-slide">
-          <figure class="demo-card demo-review">
-            <blockquote><p>Painless from test drive to paperwork — in and out in two hours.</p></blockquote>
-            <figcaption>— Dana W.</figcaption>
-          </figure>
-        </li>
-        <li class="dl-carousel-slide">
-          <figure class="demo-card demo-review">
-            <blockquote><p>Fair trade-in value and no pressure. Second car we've bought here.</p></blockquote>
-            <figcaption>— Marcus T.</figcaption>
-          </figure>
-        </li>
-        <li class="dl-carousel-slide">
-          <figure class="demo-card demo-review">
-            <blockquote><p>Service department caught a recall I didn't know about. Honest people.</p></blockquote>
-            <figcaption>— Priya S.</figcaption>
-          </figure>
-        </li>
-        <li class="dl-carousel-slide">
-          <figure class="demo-card demo-review">
-            <blockquote><p>Found the exact trim I wanted and they delivered it to my office.</p></blockquote>
-            <figcaption>— Colin R.</figcaption>
-          </figure>
-        </li>
-        <li class="dl-carousel-slide">
-          <figure class="demo-card demo-review">
-            <blockquote><p>First-time buyer — they walked me through financing without the runaround.</p></blockquote>
-            <figcaption>— Aisha B.</figcaption>
-          </figure>
-        </li>
-        <li class="dl-carousel-slide">
-          <figure class="demo-card demo-review">
-            <blockquote><p>Five years of oil changes and never an upsell. That's why we come back.</p></blockquote>
-            <figcaption>— Gene &amp; Marta L.</figcaption>
-          </figure>
-        </li>
-      </ul>
-    </div>
-  </section>
+<section class="demo-section" aria-labelledby="reviews-h">
+  <h2 id="reviews-h">Customer reviews</h2>
+  <div class="dl-carousel demo-reviews" data-slider data-autoplay="5000" aria-labelledby="reviews-h">
+    <ul class="dl-carousel-track">
+      <li class="dl-carousel-slide">
+        <figure class="demo-card demo-review">
+          <blockquote><p>Painless from test drive to paperwork — in and out in two hours.</p></blockquote>
+          <figcaption>— Dana W.</figcaption>
+        </figure>
+      </li>
+      <li class="dl-carousel-slide">
+        <figure class="demo-card demo-review">
+          <blockquote><p>Fair trade-in value and no pressure. Second car we've bought here.</p></blockquote>
+          <figcaption>— Marcus T.</figcaption>
+        </figure>
+      </li>
+      <li class="dl-carousel-slide">
+        <figure class="demo-card demo-review">
+          <blockquote><p>Service department caught a recall I didn't know about. Honest people.</p></blockquote>
+          <figcaption>— Priya S.</figcaption>
+        </figure>
+      </li>
+      <li class="dl-carousel-slide">
+        <figure class="demo-card demo-review">
+          <blockquote><p>Found the exact trim I wanted and they delivered it to my office.</p></blockquote>
+          <figcaption>— Colin R.</figcaption>
+        </figure>
+      </li>
+      <li class="dl-carousel-slide">
+        <figure class="demo-card demo-review">
+          <blockquote><p>First-time buyer — they walked me through financing without the runaround.</p></blockquote>
+          <figcaption>— Aisha B.</figcaption>
+        </figure>
+      </li>
+      <li class="dl-carousel-slide">
+        <figure class="demo-card demo-review">
+          <blockquote><p>Five years of oil changes and never an upsell. That's why we come back.</p></blockquote>
+          <figcaption>— Gene &amp; Marta L.</figcaption>
+        </figure>
+      </li>
+    </ul>
+  </div>
+</section>
 ```
 
 Also add to the demo `<style>` block:
+
 ```css
-  .demo-review { margin: 0; padding: 1rem; }
-  .demo-review blockquote { margin: 0; }
-  .demo-review figcaption { margin-block-start: 0.5rem; color: #555; }
+.demo-review {
+  margin: 0;
+  padding: 1rem;
+}
+.demo-review blockquote {
+  margin: 0;
+}
+.demo-review figcaption {
+  margin-block-start: 0.5rem;
+  color: #555;
+}
 ```
 
 - [ ] **Step 5: Build** — Run: `npm run size`. Expected: passes, still under budget.
@@ -1085,10 +1214,8 @@ Playwright MCP, fresh navigate, 1280×900. Scroll the reviews section into view 
    () => {
      const r = document.querySelector('.demo-reviews');
      const b = r.querySelector('.dl-carousel-pause');
-     return { first: r.querySelector('.dl-carousel-controls').firstElementChild === b,
-              label: b.getAttribute('aria-label'),
-              live: r.querySelector('.dl-carousel-status').getAttribute('aria-live') };
-   }
+     return { first: r.querySelector('.dl-carousel-controls').firstElementChild === b, label: b.getAttribute('aria-label'), live: r.querySelector('.dl-carousel-status').getAttribute('aria-live') };
+   };
    ```
    Expected: `first: true`, `label: "Stop automatic slide show"`, `live: "off"`.
 2. Advance: wait ~5.6 s (mouse NOT over the carousel) → `scrollLeft > 0` and status shows a later page.
@@ -1112,39 +1239,47 @@ git commit -m "Add autoplay with APG pause semantics and reviews demo section"
 ### Task 5: Thumbnail gallery (APG tabbed carousel) + demo section
 
 **Files:**
+
 - Modify: `src/dl-carousel.js` (gallery build/update methods; constructor + `_commit` splice edits)
 - Modify: `demo/index.html` (add gallery section)
 
 **Interfaces:**
+
 - Consumes: `this._btn`, `fmt`, `this.opts.labels.thumbs/photo`, `this.uid`, `this.goTo`, `this.current`, `this._ac.signal` from Task 3.
 - Produces: `.dl-carousel-thumbs[role=tablist] > .dl-carousel-thumb[role=tab]` DOM, slides upgraded to `role=tabpanel` with JS-managed `inert`, `this.tabs` (button array), `this.thumbsEl`.
 
 - [ ] **Step 1: Wire gallery into the constructor**
 
 Replace:
+
 ```js
-    this._setupAria();
-    this._buildControls();
+this._setupAria();
+this._buildControls();
 ```
+
 with:
+
 ```js
-    this._setupAria();
-    this._buildControls();
-    if (this.opts.gallery) this._buildGallery();
+this._setupAria();
+this._buildControls();
+if (this.opts.gallery) this._buildGallery();
 ```
 
 - [ ] **Step 2: Wire gallery into the commit point**
 
 In `_commit()`, replace:
+
 ```js
-    this._updateDots();
-    this._updateStatus();
+this._updateDots();
+this._updateStatus();
 ```
+
 with:
+
 ```js
-    this._updateDots();
-    this._updateStatus();
-    if (this.opts.gallery) this._updateGallery();
+this._updateDots();
+this._updateStatus();
+if (this.opts.gallery) this._updateGallery();
 ```
 
 - [ ] **Step 3: Add the gallery section to the class** (insert after the autoplay methods, before `/* ---- misc ---- */`)
@@ -1222,19 +1357,19 @@ with:
 - [ ] **Step 4: Add the gallery section to `demo/index.html`** (insert between the vehicles and reviews sections). Note: `<div>` track/slides here, not `<ul>` — the slides become tabpanels.
 
 ```html
-  <section class="demo-section" aria-labelledby="gallery-h">
-    <h2 id="gallery-h">Vehicle photos</h2>
-    <div class="dl-carousel demo-gallery" data-slider data-gallery aria-labelledby="gallery-h">
-      <div class="dl-carousel-track">
-        <div class="dl-carousel-slide"><img src="img/photo-1.svg" width="1200" height="750" alt="Exterior front three-quarter view"></div>
-        <div class="dl-carousel-slide"><img src="img/photo-2.svg" width="1200" height="750" alt="Interior dashboard" loading="lazy" decoding="async"></div>
-        <div class="dl-carousel-slide"><img src="img/photo-3.svg" width="1200" height="750" alt="Rear cargo area" loading="lazy" decoding="async"></div>
-        <div class="dl-carousel-slide"><img src="img/photo-4.svg" width="1200" height="750" alt="Wheel and tire detail" loading="lazy" decoding="async"></div>
-        <div class="dl-carousel-slide"><img src="img/photo-5.svg" width="1200" height="750" alt="Back seat legroom" loading="lazy" decoding="async"></div>
-        <div class="dl-carousel-slide"><img src="img/photo-6.svg" width="1200" height="750" alt="Engine bay" loading="lazy" decoding="async"></div>
-      </div>
+<section class="demo-section" aria-labelledby="gallery-h">
+  <h2 id="gallery-h">Vehicle photos</h2>
+  <div class="dl-carousel demo-gallery" data-slider data-gallery aria-labelledby="gallery-h">
+    <div class="dl-carousel-track">
+      <div class="dl-carousel-slide"><img src="img/photo-1.svg" width="1200" height="750" alt="Exterior front three-quarter view" /></div>
+      <div class="dl-carousel-slide"><img src="img/photo-2.svg" width="1200" height="750" alt="Interior dashboard" loading="lazy" decoding="async" /></div>
+      <div class="dl-carousel-slide"><img src="img/photo-3.svg" width="1200" height="750" alt="Rear cargo area" loading="lazy" decoding="async" /></div>
+      <div class="dl-carousel-slide"><img src="img/photo-4.svg" width="1200" height="750" alt="Wheel and tire detail" loading="lazy" decoding="async" /></div>
+      <div class="dl-carousel-slide"><img src="img/photo-5.svg" width="1200" height="750" alt="Back seat legroom" loading="lazy" decoding="async" /></div>
+      <div class="dl-carousel-slide"><img src="img/photo-6.svg" width="1200" height="750" alt="Engine bay" loading="lazy" decoding="async" /></div>
     </div>
-  </section>
+  </div>
+</section>
 ```
 
 - [ ] **Step 5: Build** — Run: `npm run size`. Expected: passes; if the total nears 5120 B, note the number in the task report (Task 6 gates it formally).
@@ -1253,11 +1388,11 @@ Playwright MCP, fresh navigate, 1280×900:
        panels: g.querySelectorAll('[role="tabpanel"]').length,
        inerted: g.querySelectorAll('[role="tabpanel"][inert]').length,
        selected: g.querySelector('[role="tab"][aria-selected="true"]').getAttribute('aria-label'),
-       tabindexes: [...g.querySelectorAll('[role="tab"]')].map(t => t.tabIndex),
+       tabindexes: [...g.querySelectorAll('[role="tab"]')].map((t) => t.tabIndex),
        noDots: !g.querySelector('.dl-carousel-dots'),
        trackLive: g.querySelector('.dl-carousel-track').getAttribute('aria-live'),
      };
-   }
+   };
    ```
    Expected: `tabs: 6`, `tablistLabel: "Choose photo"`, `panels: 6`, `inerted: 5`, `selected: "Exterior front three-quarter view"`, `tabindexes: [0,-1,-1,-1,-1,-1]`, `noDots: true`, `trackLive: "polite"`.
 2. Init must not scroll the page: after fresh load, `browser_evaluate` `() => scrollY` → `0`.
@@ -1280,78 +1415,114 @@ git commit -m "Add tabbed thumbnail gallery variant and demo section"
 ### Task 6: Usage docs — copy-paste snippets, options tables, README, size gate
 
 **Files:**
+
 - Modify: `demo/index.html` (add `<details>` snippet + options table per variation, footer)
 - Create: `README.md`
 
 **Interfaces:**
+
 - Consumes: everything shipped in Tasks 1–5.
 - Produces: the v1 deliverable — self-documenting demo + README with the verification checklist.
 
 - [ ] **Step 1: Add a copy-paste block after EACH demo slider** (inside each `<section>`, after the `.dl-carousel` div). All three shown; note the HTML inside `<code>` is entity-escaped.
 
 Vehicles section:
+
 ```html
-    <details>
-      <summary>Copy-paste HTML + options</summary>
-      <pre><code>&lt;div class="dl-carousel" data-slider aria-label="Featured vehicles"&gt;
+<details>
+  <summary>Copy-paste HTML + options</summary>
+  <pre><code>&lt;div class="dl-carousel" data-slider aria-label="Featured vehicles"&gt;
   &lt;ul class="dl-carousel-track"&gt;
     &lt;li class="dl-carousel-slide"&gt;…card content…&lt;/li&gt;
     &lt;!-- more slides --&gt;
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
-      <p>Set slides-per-view in CSS (no JS breakpoints):</p>
-      <pre><code>.my-slider { --dlc-per-view: 1; }
+  <p>Set slides-per-view in CSS (no JS breakpoints):</p>
+  <pre><code>.my-slider { --dlc-per-view: 1; }
 @media (min-width: 640px)  { .my-slider { --dlc-per-view: 2; } }
 @media (min-width: 1024px) { .my-slider { --dlc-per-view: 3; } }</code></pre>
-      <table>
-        <caption>Data attributes</caption>
-        <tr><th>Attribute</th><th>Default</th><th>Effect</th></tr>
-        <tr><td><code>data-slider</code></td><td>—</td><td>Auto-initialize this element</td></tr>
-        <tr><td><code>data-autoplay="4000"</code></td><td>0 (off)</td><td>Advance every N ms; adds a pause button</td></tr>
-        <tr><td><code>data-gallery</code></td><td>off</td><td>Thumbnail-gallery (tabbed) variant</td></tr>
-        <tr><td><code>data-roledescription="…"</code></td><td>carousel</td><td>Screen-reader role description; empty string to omit</td></tr>
-      </table>
-    </details>
+  <table>
+    <caption>
+      Data attributes
+    </caption>
+    <tr>
+      <th>Attribute</th>
+      <th>Default</th>
+      <th>Effect</th>
+    </tr>
+    <tr>
+      <td><code>data-slider</code></td>
+      <td>—</td>
+      <td>Auto-initialize this element</td>
+    </tr>
+    <tr>
+      <td><code>data-autoplay="4000"</code></td>
+      <td>0 (off)</td>
+      <td>Advance every N ms; adds a pause button</td>
+    </tr>
+    <tr>
+      <td><code>data-gallery</code></td>
+      <td>off</td>
+      <td>Thumbnail-gallery (tabbed) variant</td>
+    </tr>
+    <tr>
+      <td><code>data-roledescription="…"</code></td>
+      <td>carousel</td>
+      <td>Screen-reader role description; empty string to omit</td>
+    </tr>
+  </table>
+</details>
 ```
 
 Gallery section:
+
 ```html
-    <details>
-      <summary>Copy-paste HTML + options</summary>
-      <pre><code>&lt;div class="dl-carousel" data-slider data-gallery aria-label="Vehicle photos"&gt;
+<details>
+  <summary>Copy-paste HTML + options</summary>
+  <pre><code>&lt;div class="dl-carousel" data-slider data-gallery aria-label="Vehicle photos"&gt;
   &lt;div class="dl-carousel-track"&gt;
     &lt;div class="dl-carousel-slide"&gt;&lt;img src="…" width="1200" height="750" alt="Describe the photo"&gt;&lt;/div&gt;
     &lt;!-- more photos; use divs (slides become tabpanels), not ul/li --&gt;
   &lt;/div&gt;
 &lt;/div&gt;</code></pre>
-      <p>Thumbnails are generated from each slide's image; the image <code>alt</code> names the thumbnail tab. Real photos should also carry <code>srcset</code>/<code>sizes</code> — size <code>sizes</code> to ONE slide's rendered width, never <code>100vw</code>.</p>
-    </details>
+  <p>
+    Thumbnails are generated from each slide's image; the image <code>alt</code> names the thumbnail tab. Real photos should also carry <code>srcset</code>/<code>sizes</code> — size
+    <code>sizes</code> to ONE slide's rendered width, never <code>100vw</code>.
+  </p>
+</details>
 ```
 
 Reviews section:
+
 ```html
-    <details>
-      <summary>Copy-paste HTML + options</summary>
-      <pre><code>&lt;div class="dl-carousel" data-slider data-autoplay="5000" aria-label="Customer reviews"&gt;
+<details>
+  <summary>Copy-paste HTML + options</summary>
+  <pre><code>&lt;div class="dl-carousel" data-slider data-autoplay="5000" aria-label="Customer reviews"&gt;
   &lt;ul class="dl-carousel-track"&gt;
     &lt;li class="dl-carousel-slide"&gt;…review…&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
-      <p>Autoplay pauses on hover, stops permanently on keyboard focus or drag (the pause button restarts it), never starts under <code>prefers-reduced-motion</code>, and rewinds at the end — no cloned slides.</p>
-    </details>
+  <p>
+    Autoplay pauses on hover, stops permanently on keyboard focus or drag (the pause button restarts it), never starts under <code>prefers-reduced-motion</code>, and rewinds at the end — no cloned
+    slides.
+  </p>
+</details>
 ```
 
 - [ ] **Step 2: Add the demo footer** (before `</main>`)
 
 ```html
-  <footer class="demo-section">
-    <h2>Notes</h2>
-    <ul>
-      <li><strong>No JavaScript?</strong> Every slider degrades to a swipeable snap strip; all content stays visible and indexable.</li>
-      <li><strong>SEO:</strong> all slides ship in the initial HTML, nothing is cloned — every heading and link exists exactly once.</li>
-      <li><strong>Include once per page:</strong> <code>dl-carousel.css</code> + <code>dl-carousel.js</code> (defer). See the <a href="../README.md">README</a> for the JS API and the verification checklist.</li>
-    </ul>
-  </footer>
+<footer class="demo-section">
+  <h2>Notes</h2>
+  <ul>
+    <li><strong>No JavaScript?</strong> Every slider degrades to a swipeable snap strip; all content stays visible and indexable.</li>
+    <li><strong>SEO:</strong> all slides ship in the initial HTML, nothing is cloned — every heading and link exists exactly once.</li>
+    <li>
+      <strong>Include once per page:</strong> <code>dl-carousel.css</code> + <code>dl-carousel.js</code> (defer). See the <a href="../README.md">README</a> for the JS API and the verification
+      checklist.
+    </li>
+  </ul>
+</footer>
 ```
 
 - [ ] **Step 3: Write `README.md`**
@@ -1409,13 +1580,13 @@ JS options override data attributes, which override defaults.
 
 ## Options
 
-| Option | Data attribute | Default | Effect |
-|---|---|---|---|
-| `autoplay` | `data-autoplay="4000"` | `0` | Advance every N ms; adds pause button (first in tab order) |
-| `gallery` | `data-gallery` | `false` | Tabbed thumbnail gallery (thumbs generated from slide images) |
-| `roledescription` | `data-roledescription` | `"carousel"` | Empty string to omit |
-| `labels` | — (JS only) | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/dl-carousel.js` |
-| — | `data-init="manual"` | auto | Skip auto-init; construct via `new DLCarousel(el, opts)` from page script |
+| Option            | Data attribute         | Default         | Effect                                                                        |
+| ----------------- | ---------------------- | --------------- | ----------------------------------------------------------------------------- |
+| `autoplay`        | `data-autoplay="4000"` | `0`             | Advance every N ms; adds pause button (first in tab order)                    |
+| `gallery`         | `data-gallery`         | `false`         | Tabbed thumbnail gallery (thumbs generated from slide images)                 |
+| `roledescription` | `data-roledescription` | `"carousel"`    | Empty string to omit                                                          |
+| `labels`          | — (JS only)            | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/dl-carousel.js` |
+| —                 | `data-init="manual"`   | auto            | Skip auto-init; construct via `new DLCarousel(el, opts)` from page script     |
 
 ## CSS custom properties
 
@@ -1525,19 +1696,21 @@ git commit -m "Add usage docs, copy-paste snippets, and README"
 ### Task 7: Full verification sweep (Lighthouse, keyboard, screenshots, reduced motion)
 
 **Files:**
+
 - Modify: whatever the sweep flags (fix at root cause; never relax a check to pass).
 
 **Interfaces:**
+
 - Consumes: the complete demo + README.
 - Produces: evidence for the ship report — Lighthouse scores, CLS number, byte sizes, screenshot set.
 
 - [ ] **Step 1: Start the dev server** — Run `npm run serve` as a background task. URL: `http://127.0.0.1:8137/demo/index.html`.
 
 - [ ] **Step 2: Lighthouse** — chrome-devtools MCP `lighthouse_audit` on that URL (mobile defaults).
-Expected: **Accessibility = 100**; Performance ≥ 95 with **CLS = 0**; SEO ≥ 95. Anything lower: read the failing audits, fix at the source (CSS/engine/demo markup), rebuild, rerun.
+      Expected: **Accessibility = 100**; Performance ≥ 95 with **CLS = 0**; SEO ≥ 95. Anything lower: read the failing audits, fix at the source (CSS/engine/demo markup), rebuild, rerun.
 
 - [ ] **Step 3: Keyboard-only walkthrough** (Playwright MCP, 1280×900)
-Tab from the page top; verify encounter order in the reviews slider is pause → prev → next → dots → first card content; in the gallery it's prev → next → panels/tablist. Arrow/Home/End work in the tablist. `:focus-visible` ring is visible on every control (screenshot one). No focus trap; Shift+Tab walks back out cleanly.
+      Tab from the page top; verify encounter order in the reviews slider is pause → prev → next → dots → first card content; in the gallery it's prev → next → panels/tablist. Arrow/Home/End work in the tablist. `:focus-visible` ring is visible on every control (screenshot one). No focus trap; Shift+Tab walks back out cleanly.
 
 - [ ] **Step 4: Screenshot set** — `browser_take_screenshot` at 375×812, 768×1024, 1280×900 (full page). Slides-per-view = 1 / 2 / 3 respectively in vehicles + reviews; gallery always 1 + thumb strip. Save to the scratchpad and reference paths in the report.
 
@@ -1555,6 +1728,7 @@ Tab from the page top; verify encounter order in the reviews slider is pause →
 git add -A
 git commit -m "Fix issues found in verification sweep"
 ```
+
 (Skip the commit if the sweep found nothing — say so in the report.)
 
 ---

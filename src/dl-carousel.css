@@ -8,14 +8,14 @@
 
 .dl-carousel {
   /* ---- knobs ---------------------------------------------------------- */
-  --dlc-per-view: 1;          /* slides visible at once (integer; set per breakpoint) */
-  --dlc-gap: 1rem;            /* space between slides */
-  --dlc-peek: 0px;            /* sliver of next slide visible at the edges */
-  --dlc-arrow-size: 44px;     /* prev/next tap target */
+  --dlc-per-view: 1; /* slides visible at once (integer; set per breakpoint) */
+  --dlc-gap: 1rem; /* space between slides */
+  --dlc-peek: 0px; /* sliver of next slide visible at the edges */
+  --dlc-arrow-size: 44px; /* prev/next tap target */
   --dlc-arrow-fg: #fff;
   --dlc-arrow-bg: rgb(0 0 0 / 55%);
   --dlc-dot-size: 12px;
-  --dlc-dot-fg: #757575;      /* ≥3:1 on white (WCAG 1.4.11) */
+  --dlc-dot-fg: #757575; /* ≥3:1 on white (WCAG 1.4.11) */
   --dlc-dot-current: #333;
   --dlc-controls-space: 2.5rem; /* reserved dot-row height — keeps CLS at 0 */
   --dlc-thumb-w: 88px;
@@ -23,84 +23,111 @@
   --dlc-focus: #1a5fb4;
 
   position: relative;
+
   /* Dots (or the gallery thumb strip) are injected later, absolutely
      positioned into this reserved space, so JS init shifts nothing. */
   padding-bottom: var(--dlc-controls-space);
 }
-.dl-carousel[data-gallery] { --dlc-controls-space: calc(var(--dlc-thumb-h) + 1rem); }
+
+.dl-carousel[data-gallery] {
+  --dlc-controls-space: calc(var(--dlc-thumb-h) + 1rem);
+}
 
 .dl-carousel-track {
-  position: relative;        /* slide offsets measured against the track */
+  position: relative; /* slide offsets measured against the track */
   display: flex;
   gap: var(--dlc-gap);
-  margin: 0;
   padding: 0 var(--dlc-peek);
-  list-style: none;
+  margin: 0;
   overflow-x: auto;
+
+  /* Edge overscroll must not chain into the page / back gesture. */
+  overscroll-behavior-x: contain;
+  list-style: none;
+
   /* Snap on the track only — never the root scroller. */
   scroll-snap-type: x mandatory;
   scroll-padding-inline: var(--dlc-peek);
-  /* Edge overscroll must not chain into the page / back gesture. */
-  overscroll-behavior-x: contain;
+
   /* Scrollbar hidden: arrows, dots, keyboard, and the peek remain as
      affordances. NEVER set scroll-behavior here — Safari would hijack
      intended-instant programmatic scrolls; JS passes behavior per call. */
   scrollbar-width: none;
 }
-.dl-carousel-track::-webkit-scrollbar { display: none; }
+
+.dl-carousel-track::-webkit-scrollbar {
+  display: none;
+}
 
 .dl-carousel-slide {
   /* Explicit flex basis — Safari mis-sizes snap items without one. */
-  flex: 0 0 calc(
-    (100% - (var(--dlc-per-view) - 1) * var(--dlc-gap)) / var(--dlc-per-view)
-  );
+  flex: 0 0 calc((100% - (var(--dlc-per-view) - 1) * var(--dlc-gap)) / var(--dlc-per-view));
+
   /* 'always' would block multi-slide flicks (and fed a Firefox bug). */
   scroll-snap-align: start;
   scroll-snap-stop: normal;
 }
-.dl-carousel-slide img { max-inline-size: 100%; block-size: auto; display: block; }
+
+.dl-carousel-slide img {
+  display: block;
+  max-inline-size: 100%;
+  block-size: auto;
+}
 
 /* ---- generated controls (JS creates these; CSS already reserved room) -- */
 
 .dl-carousel-arrow:focus-visible,
 .dl-carousel-pause:focus-visible,
 .dl-carousel-dot:focus-visible,
-.dl-carousel-thumb:focus-visible { outline: 3px solid var(--dlc-focus); outline-offset: 2px; }
+.dl-carousel-thumb:focus-visible {
+  outline: 3px solid var(--dlc-focus);
+  outline-offset: 2px;
+}
 
 .dl-carousel-arrow {
   position: absolute;
-  z-index: 1;
   top: calc((100% - var(--dlc-controls-space)) / 2);
-  transform: translateY(-50%);
-  inline-size: var(--dlc-arrow-size);
-  block-size: var(--dlc-arrow-size);
+  z-index: 1;
   display: grid;
   place-items: center;
+  inline-size: var(--dlc-arrow-size);
+  block-size: var(--dlc-arrow-size);
+  color: var(--dlc-arrow-fg);
+  cursor: pointer;
+  background: var(--dlc-arrow-bg);
   border: 0;
   border-radius: 50%;
-  color: var(--dlc-arrow-fg);
-  background: var(--dlc-arrow-bg);
-  cursor: pointer;
+  transform: translateY(-50%);
 }
-.dl-carousel-arrow--prev { inset-inline-start: 0.5rem; }
-.dl-carousel-arrow--next { inset-inline-end: 0.5rem; }
+
+.dl-carousel-arrow--prev {
+  inset-inline-start: 0.5rem;
+}
+
+.dl-carousel-arrow--next {
+  inset-inline-end: 0.5rem;
+}
+
 /* rewind:false parks the end arrows on aria-disabled (still focusable) */
-.dl-carousel-arrow[aria-disabled="true"] { opacity: 0.35; cursor: default; }
+.dl-carousel-arrow[aria-disabled="true"] {
+  cursor: default;
+  opacity: 0.35;
+}
 
 .dl-carousel-pause {
   position: absolute;
   inset-block-start: 0.5rem;
   inset-inline-end: 0.5rem;
   z-index: 1;
-  inline-size: 36px;
-  block-size: 36px;
   display: grid;
   place-items: center;
+  inline-size: 36px;
+  block-size: 36px;
+  color: var(--dlc-arrow-fg);
+  cursor: pointer;
+  background: var(--dlc-arrow-bg);
   border: 0;
   border-radius: 50%;
-  color: var(--dlc-arrow-fg);
-  background: var(--dlc-arrow-bg);
-  cursor: pointer;
 }
 
 .dl-carousel-dots {
@@ -108,28 +135,34 @@
   inset-block-end: 0;
   inset-inline: 0;
   display: flex;
-  justify-content: center;
   align-items: center;
+  justify-content: center;
 }
+
 .dl-carousel-dot {
+  display: grid;
+  place-items: center;
+
   /* 24px hit box (WCAG 2.5.8) around a smaller drawn dot */
   inline-size: 24px;
   block-size: 24px;
   padding: 0;
-  border: 0;
-  background: transparent;
-  display: grid;
-  place-items: center;
   cursor: pointer;
+  background: transparent;
+  border: 0;
 }
+
 .dl-carousel-dot::after {
-  content: '';
   inline-size: var(--dlc-dot-size);
   block-size: var(--dlc-dot-size);
-  border-radius: 50%;
+  content: "";
   background: var(--dlc-dot-fg);
+  border-radius: 50%;
 }
-.dl-carousel-dot--current::after { background: var(--dlc-dot-current); }
+
+.dl-carousel-dot--current::after {
+  background: var(--dlc-dot-current);
+}
 
 /* ---- gallery (tabbed) variant ------------------------------------------ */
 
@@ -143,28 +176,51 @@
   overflow-x: auto;
   scrollbar-width: none;
 }
-.dl-carousel-thumbs::-webkit-scrollbar { display: none; }
+
+.dl-carousel-thumbs::-webkit-scrollbar {
+  display: none;
+}
+
 /* JS keeps data-overflow current; fading the clipped edge signals "more
    thumbs this way" since the scrollbar is hidden. LTR (v1, like the engine). */
-.dl-carousel-thumbs[data-overflow="start"] { mask-image: linear-gradient(to right, transparent, #000 32px); }
-.dl-carousel-thumbs[data-overflow="end"] { mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent); }
+.dl-carousel-thumbs[data-overflow="start"] {
+  mask-image: linear-gradient(to right, transparent, #000 32px);
+}
+
+.dl-carousel-thumbs[data-overflow="end"] {
+  mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
+}
+
 .dl-carousel-thumbs[data-overflow="both"] {
   mask-image: linear-gradient(to right, transparent, #000 32px, #000 calc(100% - 32px), transparent);
 }
+
 .dl-carousel-thumb {
   flex: 0 0 var(--dlc-thumb-w);
   padding: 0;
-  border: 2px solid transparent;
-  border-radius: 4px;
-  background: none;
   overflow: hidden;
   cursor: pointer;
+  background: none;
+  border: 2px solid transparent;
+  border-radius: 4px;
 }
-.dl-carousel-thumb img { inline-size: 100%; block-size: 100%; object-fit: cover; display: block; }
-.dl-carousel-thumb[aria-selected="true"] { border-color: var(--dlc-dot-current); }
+
+.dl-carousel-thumb img {
+  display: block;
+  inline-size: 100%;
+  block-size: 100%;
+  object-fit: cover;
+}
+
+.dl-carousel-thumb[aria-selected="true"] {
+  border-color: var(--dlc-dot-current);
+}
+
 /* The strip is a scroll container, so it clips anything drawn outside the
    thumbs — draw their focus ring inset or it's invisible (WCAG 2.4.7). */
-.dl-carousel-thumb:focus-visible { outline-offset: -3px; }
+.dl-carousel-thumb:focus-visible {
+  outline-offset: -3px;
+}
 
 /* ---- visually hidden (status region) ----------------------------------- */
 
@@ -172,10 +228,10 @@
   position: absolute;
   inline-size: 1px;
   block-size: 1px;
-  margin: -1px;
   padding: 0;
-  border: 0;
+  margin: -1px;
   overflow: hidden;
-  clip-path: inset(50%);
   white-space: nowrap;
+  border: 0;
+  clip-path: inset(50%);
 }

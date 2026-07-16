@@ -50,14 +50,14 @@ JS options override data attributes, which override defaults.
 
 ## Options
 
-| Option | Data attribute | Default | Effect |
-|---|---|---|---|
-| `autoplay` | `data-autoplay="4000"` | `0` | Advance every N ms; adds pause button (first in tab order) |
-| `rewind` | `data-rewind="false"` | `true` | Arrows wrap at the ends; `false` stops there and `aria-disable`s the end arrow (ignored with autoplay, which needs the wrap) |
-| `gallery` | `data-gallery` | `false` | Tabbed thumbnail gallery (thumbs generated from slide images) |
-| `roledescription` | `data-roledescription` | `"carousel"` | Empty string to omit |
-| `labels` | — (JS only) | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/dl-carousel.js` |
-| — | `data-init="manual"` | auto | Skip auto-init; construct via `new DLCarousel(el, opts)` from page script |
+| Option            | Data attribute         | Default         | Effect                                                                                                                       |
+| ----------------- | ---------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------- |
+| `autoplay`        | `data-autoplay="4000"` | `0`             | Advance every N ms; adds pause button (first in tab order)                                                                   |
+| `rewind`          | `data-rewind="false"`  | `true`          | Arrows wrap at the ends; `false` stops there and `aria-disable`s the end arrow (ignored with autoplay, which needs the wrap) |
+| `gallery`         | `data-gallery`         | `false`         | Tabbed thumbnail gallery (thumbs generated from slide images)                                                                |
+| `roledescription` | `data-roledescription` | `"carousel"`    | Empty string to omit                                                                                                         |
+| `labels`          | — (JS only)            | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/dl-carousel.js`                                                |
+| —                 | `data-init="manual"`   | auto            | Skip auto-init; construct via `new DLCarousel(el, opts)` from page script                                                    |
 
 ## CSS custom properties
 

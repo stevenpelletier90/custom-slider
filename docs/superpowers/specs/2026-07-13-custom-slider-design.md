@@ -35,18 +35,18 @@ mode, no grid, no video, no infinite loop), test framework.
 
 ## 3. Decisions made (with rationale)
 
-| Decision | Choice | Why |
-|---|---|---|
-| 3 demo variations | Multi-card carousel; thumbnail gallery; autoplay multi-card | User-selected; covers responsive per-view, sync, and autoplay — no fade/hero mode needed |
-| End-of-track behavior | **Rewind** (animate back to slide 1) | No cloned slides → clean SEO, sane screen readers, ~half the engine code |
-| Architecture | **CSS scroll-snap engine** | Browser owns physics (touch/drag/momentum/snap); JS only wires controls/state/sync/autoplay; scrollable without JS |
-| Packaging | `src/` ES module (canonical) + `dist/` minified classic script that auto-inits `[data-slider]` | CMS blocks need one self-contained file; devs get the module |
-| Responsive slides-per-view | CSS only: `--dlc-per-view` overridden in media queries | No JS breakpoint config, no resize listeners, no CLS |
-| Controls | JS-generated prev/next/dots/pause | No dead buttons without JS; arrows overlay the track and dot-row space is reserved in CSS → CLS 0.000 |
-| `aria-roledescription="carousel"` | Keep, overridable via option | APG-conformant; option allows localization or removal (Roselli's JAWS double-announce concern) |
-| Thumbnail activation | Automatic (arrow-focus switches photo) | Conventional for galleries; instant under reduced-motion |
-| Chromium-only platform features (`::scroll-marker`, `scrollsnapchange`, `scroll-state()`, `scrollIntoView({container})`) | **Not used** | Verified Chromium-only as of July 2026; core must be cross-engine |
-| `scroll-snap-stop` | `normal` (never `always`) | `always` blocks multi-slide flicks and was implicated in Firefox bug 1959811; adds no value (iOS already limits flicks) |
+| Decision                                                                                                                 | Choice                                                                                         | Why                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
+| 3 demo variations                                                                                                        | Multi-card carousel; thumbnail gallery; autoplay multi-card                                    | User-selected; covers responsive per-view, sync, and autoplay — no fade/hero mode needed                                |
+| End-of-track behavior                                                                                                    | **Rewind** (animate back to slide 1)                                                           | No cloned slides → clean SEO, sane screen readers, ~half the engine code                                                |
+| Architecture                                                                                                             | **CSS scroll-snap engine**                                                                     | Browser owns physics (touch/drag/momentum/snap); JS only wires controls/state/sync/autoplay; scrollable without JS      |
+| Packaging                                                                                                                | `src/` ES module (canonical) + `dist/` minified classic script that auto-inits `[data-slider]` | CMS blocks need one self-contained file; devs get the module                                                            |
+| Responsive slides-per-view                                                                                               | CSS only: `--dlc-per-view` overridden in media queries                                         | No JS breakpoint config, no resize listeners, no CLS                                                                    |
+| Controls                                                                                                                 | JS-generated prev/next/dots/pause                                                              | No dead buttons without JS; arrows overlay the track and dot-row space is reserved in CSS → CLS 0.000                   |
+| `aria-roledescription="carousel"`                                                                                        | Keep, overridable via option                                                                   | APG-conformant; option allows localization or removal (Roselli's JAWS double-announce concern)                          |
+| Thumbnail activation                                                                                                     | Automatic (arrow-focus switches photo)                                                         | Conventional for galleries; instant under reduced-motion                                                                |
+| Chromium-only platform features (`::scroll-marker`, `scrollsnapchange`, `scroll-state()`, `scrollIntoView({container})`) | **Not used**                                                                                   | Verified Chromium-only as of July 2026; core must be cross-engine                                                       |
+| `scroll-snap-stop`                                                                                                       | `normal` (never `always`)                                                                      | `always` blocks multi-slide flicks and was implicated in Firefox bug 1959811; adds no value (iOS already limits flicks) |
 
 ## 4. Repo layout
 
@@ -106,7 +106,7 @@ customization without editing the engine. Public methods: `goTo(n)`, `next()`, `
    `ResizeObserver`). All input paths (buttons, drag, autoplay, thumbs) converge here;
    `dlc:change`, dot state, disabled states, and status-region text update only here.
    Optional eager dot updates mid-drag via `IntersectionObserver {root: track,
-   threshold: 0.6}` — cosmetic only.
+threshold: 0.6}` — cosmetic only.
 4. **goTo(n)** — idempotent (`if n === current && settled, return` — `scrollend` never
    fires if position doesn't change). Computes its own snap target (never trusts browser
    re-snap after programmatic scroll — WebKit 160622):
@@ -127,7 +127,7 @@ customization without editing the engine. Public methods: `goTo(n)`, `next()`, `
 6. **gallery sync** — strictly one-directional: thumb activation → `main.goTo(i)`;
    main's `scrollend` commit → `aria-selected` + roving tabindex on thumbs + keep active
    thumb visible via strip-local scroll math (or `scrollIntoView({block:'nearest',
-   inline:'nearest'})` on the strip only). The strip's own scroll events drive nothing;
+inline:'nearest'})` on the strip only). The strip's own scroll events drive nothing;
    idempotent `goTo` is the structural feedback-loop breaker.
 
 `destroy()` removes listeners/observers/generated controls and restores original markup.
@@ -139,6 +139,7 @@ customization without editing the engine. Public methods: `goTo(n)`, `next()`, `
 ("Featured vehicles" — never the word "carousel" in the label).
 
 **Multi-card (variations 1 & 3):**
+
 - Slides: plain `<ul>/<li>` list semantics **or** `role="group"` +
   `aria-roledescription="slide"` on divs — never both on one element. Each labeled via
   `aria-labelledby` → card heading (fallback `aria-label="3 of 10"`).
@@ -157,6 +158,7 @@ customization without editing the engine. Public methods: `goTo(n)`, `next()`, `
   `aria-live="polite"` normally, `"off"` while auto-rotating, `aria-atomic="false"`.
 
 **Thumbnail gallery (variation 2) — APG Tabbed carousel, in full:**
+
 - Authored markup stays one list (the main slides). Thumbnails are **JS-generated** from
   each slide's first `<img>` (they are controls, like dots — not content, so nothing
   indexable is duplicated): `role="tablist"` → `role="tab"` `<button>`s each containing a
@@ -176,16 +178,17 @@ customization without editing the engine. Public methods: `goTo(n)`, `next()`, `
 .dl-carousel-track {
   display: flex;
   overflow-x: auto;
-  scroll-snap-type: x mandatory;        /* on the track, never the root scroller */
+  scroll-snap-type: x mandatory; /* on the track, never the root scroller */
   gap: var(--dlc-gap, 1rem);
   scroll-padding-inline: var(--dlc-peek, 0px);
-  overscroll-behavior-x: contain;        /* no scroll chaining / back-gesture */
+  overscroll-behavior-x: contain; /* no scroll chaining / back-gesture */
   scrollbar-width: none;
 }
-.dl-carousel-track::-webkit-scrollbar { display: none; }   /* older WebKit */
+.dl-carousel-track::-webkit-scrollbar {
+  display: none;
+} /* older WebKit */
 .dl-carousel-slide {
-  flex: 0 0 calc((100% - (var(--dlc-per-view) - 1) * var(--dlc-gap, 1rem))
-                 / var(--dlc-per-view));            /* explicit basis — Safari snap-item sizing */
+  flex: 0 0 calc((100% - (var(--dlc-per-view) - 1) * var(--dlc-gap, 1rem)) / var(--dlc-per-view)); /* explicit basis — Safari snap-item sizing */
   scroll-snap-align: start;
   scroll-snap-stop: normal;
 }
@@ -238,10 +241,10 @@ notes the no-JS behavior and links the README verification checklist.
 
 ## 12. Risks & mitigations
 
-| Risk | Mitigation |
-|---|---|
-| iOS flicks advance ~1 slide (WebKit 243582, open) | Buttons/dots are primary traversal, not decoration; modest slide counts in demo |
-| Safari re-snap after programmatic scroll | `goTo` computes exact snap position itself; `scrollend` is the only "done" signal |
-| Older-iOS dealer audience | Mandatory scrollend fallback; QA on one such device |
-| CMS strips attributes or reorders markup | Engine validates markup on init and fails loudly with a console message naming what's missing |
-| Future CSS carousel primitives go cross-engine | JS mirrors native semantics (button/dot state) so it could later delegate behind `@supports`; explicitly out of scope now |
+| Risk                                              | Mitigation                                                                                                                |
+| ------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------- |
+| iOS flicks advance ~1 slide (WebKit 243582, open) | Buttons/dots are primary traversal, not decoration; modest slide counts in demo                                           |
+| Safari re-snap after programmatic scroll          | `goTo` computes exact snap position itself; `scrollend` is the only "done" signal                                         |
+| Older-iOS dealer audience                         | Mandatory scrollend fallback; QA on one such device                                                                       |
+| CMS strips attributes or reorders markup          | Engine validates markup on init and fails loudly with a console message naming what's missing                             |
+| Future CSS carousel primitives go cross-engine    | JS mirrors native semantics (button/dot state) so it could later delegate behind `@supports`; explicitly out of scope now |

@@ -21,10 +21,10 @@ const setDisabled = (el, on) => {
 };
 
 const DEFAULTS = {
-  autoplay: 0,                  // ms between advances; 0 = off
-  rewind: true,                 // arrows wrap at the ends; false stops there
-  gallery: false,               // tabbed thumbnail-gallery variant
-  roledescription: 'carousel',  // set '' to omit (localization concerns)
+  autoplay: 0, // ms between advances; 0 = off
+  rewind: true, // arrows wrap at the ends; false stops there
+  gallery: false, // tabbed thumbnail-gallery variant
+  roledescription: 'carousel', // set '' to omit (localization concerns)
   labels: {
     prev: 'Previous slides',
     next: 'Next slides',
@@ -61,11 +61,11 @@ export class Slider {
       return;
     }
 
-    this._snapshot = root.innerHTML;   // destroy() restores this
+    this._snapshot = root.innerHTML; // destroy() restores this
     this.uid = `dlc-${++uidCounter}`;
     this.opts = this._parseOptions(options);
     this.current = 0;
-    this._target = null;               // pending goTo destination (rapid clicks)
+    this._target = null; // pending goTo destination (rapid clicks)
     this._pointerDown = false;
     this._addedRootAttrs = [];
     // CSS reserves the thumb-strip space via [data-gallery] — mirror the JS
@@ -84,9 +84,7 @@ export class Slider {
   }
 
   static autoInit(scope = document) {
-    return [...scope.querySelectorAll('[data-slider]')]
-      .filter((el) => !el._dlCarousel && el.dataset.init !== 'manual')
-      .map((el) => new Slider(el));
+    return [...scope.querySelectorAll('[data-slider]')].filter((el) => !el._dlCarousel && el.dataset.init !== 'manual').map((el) => new Slider(el));
   }
 
   /* ---- options ---------------------------------------------------------- */
@@ -161,15 +159,33 @@ export class Slider {
     if (this.opts.autoplay > 0) {
       // WCAG 2.2.2: a visible pause mechanism, FIRST in the tab sequence.
       this.pauseBtn = this._btn('dl-carousel-pause', L.pause, ICONS.pause);
-      this.pauseBtn.addEventListener('click', () => {
-        this.rotating ? this.pause() : this.play();
-      }, { signal: this._ac.signal });
+      this.pauseBtn.addEventListener(
+        'click',
+        () => {
+          this.rotating ? this.pause() : this.play();
+        },
+        { signal: this._ac.signal },
+      );
       c.append(this.pauseBtn);
     }
-    const prev = this.prevBtn = this._btn('dl-carousel-arrow dl-carousel-arrow--prev', L.prev, ICONS.prev);
-    prev.addEventListener('click', () => { this.pause(); this.prev(); }, { signal: this._ac.signal });
-    const next = this.nextBtn = this._btn('dl-carousel-arrow dl-carousel-arrow--next', L.next, ICONS.next);
-    next.addEventListener('click', () => { this.pause(); this.next(); }, { signal: this._ac.signal });
+    const prev = (this.prevBtn = this._btn('dl-carousel-arrow dl-carousel-arrow--prev', L.prev, ICONS.prev));
+    prev.addEventListener(
+      'click',
+      () => {
+        this.pause();
+        this.prev();
+      },
+      { signal: this._ac.signal },
+    );
+    const next = (this.nextBtn = this._btn('dl-carousel-arrow dl-carousel-arrow--next', L.next, ICONS.next));
+    next.addEventListener(
+      'click',
+      () => {
+        this.pause();
+        this.next();
+      },
+      { signal: this._ac.signal },
+    );
     c.append(prev, next);
     if (!this.opts.gallery) {
       this.dots = document.createElement('div');
@@ -205,7 +221,8 @@ export class Slider {
   _pages() {
     // Page start indexes, stepping by perView, last page clamped to the end.
     // n=7,v=3 → [0,3,4]; n=4,v=3 → [0,1]; n=6,v=3 → [0,3].
-    const n = this.slides.length, v = this.perView;
+    const n = this.slides.length,
+      v = this.perView;
     const last = Math.max(0, n - v);
     const starts = [];
     for (let i = 0; i < n; i += v) {
@@ -219,7 +236,9 @@ export class Slider {
     const ref = this._target ?? this.current;
     const p = this._pages();
     let best = 0;
-    p.forEach((s, i) => { if (Math.abs(s - ref) < Math.abs(p[best] - ref)) best = i; });
+    p.forEach((s, i) => {
+      if (Math.abs(s - ref) < Math.abs(p[best] - ref)) best = i;
+    });
     return best;
   }
 
@@ -232,11 +251,7 @@ export class Slider {
     // Compute the snap position ourselves — browsers (WebKit especially)
     // don't reliably re-snap after programmatic scrolls.
     const pad = parseFloat(getComputedStyle(t).scrollPaddingLeft) || 0;
-    const left = Math.max(0, Math.min(
-      this.slides[n].getBoundingClientRect().left - t.getBoundingClientRect().left
-        - t.clientLeft + t.scrollLeft - pad,
-      t.scrollWidth - t.clientWidth,
-    ));
+    const left = Math.max(0, Math.min(this.slides[n].getBoundingClientRect().left - t.getBoundingClientRect().left - t.clientLeft + t.scrollLeft - pad, t.scrollWidth - t.clientWidth));
     if (Math.abs(left - t.scrollLeft) < 1) {
       this._commit(); // already there — scrollend won't fire, commit directly
       return;
@@ -254,7 +269,8 @@ export class Slider {
   }
 
   next() {
-    const p = this._pages(), c = this._currentPage();
+    const p = this._pages(),
+      c = this._currentPage();
     if (c >= p.length - 1) {
       if (this.opts.rewind) this.goTo(0); // rewind past the end
       return;
@@ -263,7 +279,8 @@ export class Slider {
   }
 
   prev() {
-    const p = this._pages(), c = this._currentPage();
+    const p = this._pages(),
+      c = this._currentPage();
     if (c <= 0) {
       if (this.opts.rewind) this.goTo(p[p.length - 1]); // rewind before the start
       return;
@@ -274,22 +291,43 @@ export class Slider {
   /* ---- state: the single commit point -------------------------------------- */
 
   _listen() {
-    const sig = this._ac.signal, t = this.track;
+    const sig = this._ac.signal,
+      t = this.track;
     if ('onscrollend' in window) {
       t.addEventListener('scrollend', () => this._commit(), { signal: sig });
     } else {
       // Fallback for engines without scrollend (e.g. iOS Safari < 26.2).
-      t.addEventListener('scroll', () => {
-        clearTimeout(this._debounce);
-        this._debounce = setTimeout(() => this._commit(), 150);
-      }, { passive: true, signal: sig });
+      t.addEventListener(
+        'scroll',
+        () => {
+          clearTimeout(this._debounce);
+          this._debounce = setTimeout(() => this._commit(), 150);
+        },
+        { passive: true, signal: sig },
+      );
     }
-    t.addEventListener('pointerdown', () => {
-      this._pointerDown = true;
-      this.pause?.(); // user drag permanently stops autoplay (Task 4)
-    }, { signal: sig });
-    addEventListener('pointerup', () => { this._pointerDown = false; }, { signal: sig });
-    addEventListener('pointercancel', () => { this._pointerDown = false; }, { signal: sig });
+    t.addEventListener(
+      'pointerdown',
+      () => {
+        this._pointerDown = true;
+        this.pause?.(); // user drag permanently stops autoplay (Task 4)
+      },
+      { signal: sig },
+    );
+    addEventListener(
+      'pointerup',
+      () => {
+        this._pointerDown = false;
+      },
+      { signal: sig },
+    );
+    addEventListener(
+      'pointercancel',
+      () => {
+        this._pointerDown = false;
+      },
+      { signal: sig },
+    );
     this._ro = new ResizeObserver(() => {
       cancelAnimationFrame(this._raf);
       this._raf = requestAnimationFrame(() => {
@@ -322,23 +360,34 @@ export class Slider {
 
   _updateArrows() {
     if (this.opts.rewind) return; // wrapping arrows never disable
-    const page = this._currentPage(), last = this._pages().length - 1;
+    const page = this._currentPage(),
+      last = this._pages().length - 1;
     setDisabled(this.prevBtn, page <= 0);
     setDisabled(this.nextBtn, page >= last);
   }
 
   _rebuildDots() {
     if (!this.dots) return;
-    const L = this.opts.labels, pages = this._pages(), total = this.slides.length;
+    const L = this.opts.labels,
+      pages = this._pages(),
+      total = this.slides.length;
     const key = `${this.perView}:${pages.join()}`;
     if (this._dotsKey !== key) {
       this._dotsKey = key;
       this.dots.textContent = '';
       pages.forEach((start) => {
-        const from = start + 1, to = Math.min(start + this.perView, total);
+        const from = start + 1,
+          to = Math.min(start + this.perView, total);
         const label = this.perView > 1 ? fmt(L.gotoPage, { from, to }) : fmt(L.gotoSlide, { n: from });
         const b = this._btn('dl-carousel-dot', label, '');
-        b.addEventListener('click', () => { this.pause(); this.goTo(start); }, { signal: this._ac.signal });
+        b.addEventListener(
+          'click',
+          () => {
+            this.pause();
+            this.goTo(start);
+          },
+          { signal: this._ac.signal },
+        );
         this.dots.append(b);
       });
     }
@@ -355,13 +404,12 @@ export class Slider {
   }
 
   _updateStatus() {
-    const L = this.opts.labels, total = this.slides.length;
+    const L = this.opts.labels,
+      total = this.slides.length;
     const cur = this._target ?? this.current;
     const from = cur + 1;
     const to = Math.min(cur + this.perView, total);
-    this.status.textContent = this.perView > 1
-      ? fmt(L.statusMulti, { from, to, total })
-      : fmt(L.statusSingle, { n: from, total });
+    this.status.textContent = this.perView > 1 ? fmt(L.statusMulti, { from, to, total }) : fmt(L.statusSingle, { n: from, total });
   }
 
   /* ---- autoplay --------------------------------------------------------- */
@@ -369,7 +417,7 @@ export class Slider {
   _setupAutoplay() {
     if (!(this.opts.autoplay > 0)) return;
     const sig = this._ac.signal;
-    this._suspended = new Set();      // temporary holds: hover / hidden / offscreen
+    this._suspended = new Set(); // temporary holds: hover / hidden / offscreen
     this._wasRotating = null;
     // Reduced motion: rotation never starts at all (APG example behavior).
     this.rotating = !this._prm.matches;
@@ -378,16 +426,27 @@ export class Slider {
     // Keyboard focus anywhere in the carousel permanently stops rotation
     // (APG) — except on the pause button itself, so tabbing to it doesn't
     // flip the very state the user came to change.
-    this.root.addEventListener('focusin', (e) => {
-      if (this.pauseBtn.contains(e.target)) return;
-      this.pause();
-    }, { signal: sig });
-    document.addEventListener('visibilitychange', () => {
-      document.hidden ? this._suspend('hidden') : this._unsuspend('hidden');
-    }, { signal: sig });
-    this._io = new IntersectionObserver(([e]) => {
-      e.isIntersecting ? this._unsuspend('offscreen') : this._suspend('offscreen');
-    }, { threshold: 0.25 });
+    this.root.addEventListener(
+      'focusin',
+      (e) => {
+        if (this.pauseBtn.contains(e.target)) return;
+        this.pause();
+      },
+      { signal: sig },
+    );
+    document.addEventListener(
+      'visibilitychange',
+      () => {
+        document.hidden ? this._suspend('hidden') : this._unsuspend('hidden');
+      },
+      { signal: sig },
+    );
+    this._io = new IntersectionObserver(
+      ([e]) => {
+        e.isIntersecting ? this._unsuspend('offscreen') : this._suspend('offscreen');
+      },
+      { threshold: 0.25 },
+    );
     this._io.observe(this.root);
     this._syncRotation();
   }
@@ -405,9 +464,15 @@ export class Slider {
     this._syncRotation();
   }
 
-  _suspend(why) { this._suspended.add(why); this._syncRotation(); }
+  _suspend(why) {
+    this._suspended.add(why);
+    this._syncRotation();
+  }
 
-  _unsuspend(why) { this._suspended.delete(why); this._syncRotation(); }
+  _unsuspend(why) {
+    this._suspended.delete(why);
+    this._syncRotation();
+  }
 
   _syncRotation() {
     clearInterval(this._timer);
@@ -429,7 +494,8 @@ export class Slider {
   /* ---- gallery (APG tabbed carousel) ------------------------------------ */
 
   _buildGallery() {
-    const L = this.opts.labels, sig = this._ac.signal;
+    const L = this.opts.labels,
+      sig = this._ac.signal;
     // Per APG tabbed-carousel: the panels wrapper is a polite live region.
     this.track.setAttribute('aria-live', 'polite');
     const list = document.createElement('div');
@@ -440,7 +506,7 @@ export class Slider {
       const img = s.querySelector('img');
       const name = (img && img.alt) || fmt(L.photo, { n: i + 1 });
       s.id ||= `${this.uid}-panel-${i}`;
-      s.setAttribute('role', 'tabpanel');   // NO aria-roledescription="slide" here
+      s.setAttribute('role', 'tabpanel'); // NO aria-roledescription="slide" here
       s.setAttribute('aria-label', name);
       const b = this._btn('dl-carousel-thumb', name, '');
       b.id = `${this.uid}-tab-${i}`;
@@ -451,35 +517,47 @@ export class Slider {
         // the thumb (duplicate-id and restyle hazards on consumer sites).
         const thumb = document.createElement('img');
         thumb.src = img.currentSrc || img.src;
-        thumb.alt = '';                     // decorative — the tab carries the name
+        thumb.alt = ''; // decorative — the tab carries the name
         thumb.loading = 'lazy';
         thumb.decoding = 'async';
         b.append(thumb);
       }
-      b.addEventListener('click', () => { this.pause(); this.goTo(i); }, { signal: sig });
+      b.addEventListener(
+        'click',
+        () => {
+          this.pause();
+          this.goTo(i);
+        },
+        { signal: sig },
+      );
       list.append(b);
       return b;
     });
     // Roving tabindex + automatic activation: arrow-focusing a tab shows it.
-    list.addEventListener('keydown', (e) => {
-      const n = this.tabs.length;
-      let i = this.tabs.indexOf(e.target);
-      if (i === -1) return;
-      if (e.key === 'ArrowRight') i = (i + 1) % n;
-      else if (e.key === 'ArrowLeft') i = (i - 1 + n) % n;
-      else if (e.key === 'Home') i = 0;
-      else if (e.key === 'End') i = n - 1;
-      else return;
-      e.preventDefault();
-      this.tabs[i].focus();
-      this.goTo(i);
-    }, { signal: sig });
+    list.addEventListener(
+      'keydown',
+      (e) => {
+        const n = this.tabs.length;
+        let i = this.tabs.indexOf(e.target);
+        if (i === -1) return;
+        if (e.key === 'ArrowRight') i = (i + 1) % n;
+        else if (e.key === 'ArrowLeft') i = (i - 1 + n) % n;
+        else if (e.key === 'Home') i = 0;
+        else if (e.key === 'End') i = n - 1;
+        else return;
+        e.preventDefault();
+        this.tabs[i].focus();
+        this.goTo(i);
+      },
+      { signal: sig },
+    );
     // The strip scrolls with its scrollbar hidden — expose "more thumbs this
     // way" via data-overflow so the CSS can fade the clipped edge instead of
     // leaving thumbnails looking sliced off (mobile especially).
     this._syncThumbFade = () => {
       const max = list.scrollWidth - list.clientWidth - 1;
-      const start = list.scrollLeft > 0, end = list.scrollLeft < max;
+      const start = list.scrollLeft > 0,
+        end = list.scrollLeft < max;
       list.setAttribute('data-overflow', start && end ? 'both' : end ? 'end' : start ? 'start' : 'none');
     };
     list.addEventListener('scroll', this._syncThumbFade, { passive: true, signal: sig });
@@ -503,8 +581,11 @@ export class Slider {
     // Keep the active thumb visible — strip-local math only; scrollIntoView
     // could scroll the PAGE (e.g. on init when the strip is below the fold).
     // The 40px margin clears the edge fade and peeks the neighboring thumb.
-    const strip = this.thumbsEl, b = this.tabs[cur], m = 40;
-    const br = b.getBoundingClientRect(), sr = strip.getBoundingClientRect();
+    const strip = this.thumbsEl,
+      b = this.tabs[cur],
+      m = 40;
+    const br = b.getBoundingClientRect(),
+      sr = strip.getBoundingClientRect();
     if (br.left - m < sr.left) strip.scrollBy({ left: br.left - sr.left - m });
     else if (br.right + m > sr.right) strip.scrollBy({ left: br.right - sr.right + m });
     this._syncThumbFade();
