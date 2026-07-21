@@ -114,6 +114,11 @@
         margin: 0.15rem 0 0.5rem;
         color: #f0f0f0;
       }
+      /* the later .demo-card p rule (#555) ties on specificity and wins —
+         this outranks both so the overlay price stays white */
+      .demo-vehicles .demo-card-body p {
+        color: #fff;
+      }
       .demo-card-body a {
         margin: 0;
         color: #fff;
