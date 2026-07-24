@@ -12,6 +12,7 @@ demo/img/
 # Agent-managed scratch (git-ignored; rewritten by tooling, so checking it
 # would fail the gate on files that aren't even in the repo)
 .superpowers/
+.playwright-mcp/
 
 # Git
 .git/
