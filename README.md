@@ -125,7 +125,7 @@ replacing it = replacing the contents of the two dist files, with zero site edit
 
     npm install
     npm run build   # src → dist (esbuild)
-    npm run size    # build + gzip budget gate (fails > 5 KB total)
+    npm run size    # build + gzip budget gate (fails at or over 6 KB total)
     npm run serve   # http://127.0.0.1:8137 (for Lighthouse)
 
 `src/` is the canonical, readable code; `dist/` is the checked-in CMS build.

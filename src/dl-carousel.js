@@ -580,11 +580,16 @@ export class Slider {
 
   _updateGallery() {
     const cur = this._target ?? this.current;
+    const act = this.slides[cur];
+    act.inert = false; // un-inert FIRST — focus() is a no-op on an inert node
     this.slides.forEach((s, i) => {
-      const active = i === cur;
-      // Never inert the panel holding focus — that would eject the user.
-      if (!active && s.contains(document.activeElement)) return;
-      s.inert = !active;
+      if (i === cur) return;
+      // Inerting the panel that holds focus would eject the user to <body>.
+      // Hand focus to the panel that just became current instead: the ring
+      // follows the photo on screen, and this one stops being the exception
+      // that stays non-inert (two panels exposed to a screen reader at once).
+      if (s.contains(document.activeElement)) act.focus();
+      s.inert = true;
     });
     this.tabs.forEach((b, i) => {
       b.setAttribute('aria-selected', String(i === cur));

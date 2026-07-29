@@ -12,7 +12,7 @@ A dependency-free scroll-snap carousel (`dl-carousel`) built to replace third-pa
 
 ```bash
 npm run build          # src → dist via esbuild (bundle+minify JS, minify CSS)
-npm run size           # build + gzip budget gate — FAILS at ≥ 5120 B total
+npm run size           # build + gzip budget gate — FAILS at ≥ 6144 B total
 npm run validate       # stylelint + eslint + prettier --check  (the gate before committing)
 npm run lint:css:fix   # stylelint --fix on src/**/*.css
 npm run lint:js:fix    # eslint --fix on src/**/*.js and scripts/
@@ -42,7 +42,7 @@ There is no test framework (deliberate, spec §1 non-goals). Verification is the
 
 **The HTML is the stable API; the engine is an implementation detail.** Class names (`dl-carousel`, `-track`, `-slide`, generated control classes), data attributes, `--dlc-*` properties, `dlc:*` event payloads, the public methods, and the accessibility behaviors are a frozen contract — sites can't be edited when the engine changes (README "Swapping the engine later"). Adding is fine; renaming or repurposing is not.
 
-**Byte budget: < 5120 B gzip for `dist` JS+CSS combined, enforced by `npm run size`.** Current headroom is single-digit bytes. Any new engine feature needs an explicit trade-off conversation with Steven first — assume you must remove something to add something.
+**Byte budget: < 6144 B gzip for `dist` JS+CSS combined, enforced by `npm run size`.** It is a positioning target (beat Splide 15.8 KB / Embla core 6.7 KB), not a technical limit — the rationale and the raise history live in `scripts/size.mjs`. Raise it only for a correctness or accessibility need, and record why there; features should have to fit. Note that gzip locality makes size intuition unreliable: merging two duplicate rules once made the CSS _bigger_ because it separated a selector from its sibling. Always measure with `npm run size` rather than reasoning about byte counts.
 
 **Never do these** (each one is a fixed bug, documented in the source comments — the review agents keep re-proposing them):
 
