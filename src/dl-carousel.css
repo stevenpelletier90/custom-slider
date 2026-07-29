@@ -80,7 +80,8 @@
 .dl-carousel-arrow:focus-visible,
 .dl-carousel-pause:focus-visible,
 .dl-carousel-dot:focus-visible,
-.dl-carousel-thumb:focus-visible {
+.dl-carousel-thumb:focus-visible,
+.dl-carousel-track:focus-visible {
   outline: 3px solid var(--dlc-focus);
   outline-offset: 2px;
 }

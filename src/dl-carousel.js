@@ -77,6 +77,15 @@ export class Slider {
     this._setupAria();
     this._buildControls();
     if (this.opts.gallery) this._buildGallery();
+    // A scroll container holding nothing focusable is a keyboard dead end in
+    // Safari — Chrome 125+ and Firefox focus such scrollers implicitly, WebKit
+    // has no equivalent — and axe flags it (scrollable-region-focusable, WCAG
+    // 2.1.1). Text-only slides (a review, a quote) hit this; slides with a link
+    // never do. The stop goes on the TRACK, deliberately not on each slide the
+    // way the gallery does it: there, every panel but the current one is inert,
+    // so per-slide tabindex adds ONE stop, but card slides are never inert and
+    // the same treatment would add a stop for every card in the strip.
+    if (!this.track.querySelector('a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])')) this.track.tabIndex = 0;
     this._listen();
     this._setupAutoplay();
     this._commit();
