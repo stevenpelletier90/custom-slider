@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Custom Slider — demo</title>
     <meta name="description" content="Demo of the in-house dependency-free scroll-snap slider: multi-card, thumbnail gallery, and autoplay variations." />
+    <!-- inline so the page makes no request the repo can't serve (a missing favicon was a 404 in the console) -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23262626'/><rect x='5' y='11' width='14' height='10' rx='2' fill='%23fff'/><rect x='21' y='13' width='6' height='6' rx='2' fill='%23949494'/></svg>"
+    />
     <link rel="stylesheet" href="../dist/dl-carousel.css" />
     <script src="../dist/dl-carousel.js" defer></script>
     <style>
@@ -176,9 +181,12 @@
       .demo-models {
         --dlc-per-view: 1;
         --dlc-gap: 0px; /* keep units — an unitless 0 breaks the basis calc */
-        /* segments are all track — the sliding ::before thumb marks the page */
-        --dlc-dot-fg: #e0e0e0;
-        --dlc-dot-current: #e0e0e0;
+        /* Segments are all track — the sliding ::before thumb marks the page.
+           #949494 is 3.03:1 on white: the segments are real "go to page"
+           buttons, so their extent has to meet WCAG 1.4.11 (was #e0e0e0 at
+           1.32:1, which made the control invisible against the page). */
+        --dlc-dot-fg: #949494;
+        --dlc-dot-current: #949494;
         --dlc-controls-space: 3rem;
       }
       @media (min-width: 640px) {
@@ -371,7 +379,10 @@
       <h1>Custom Slider</h1>
       <p>Dependency-free scroll-snap slider. Try this page with JavaScript disabled — every variation remains a readable, swipeable strip.</p>
 
-      <section class="demo-section demo-wide" aria-labelledby="vehicles-h">
+      <!-- The carousel itself is the labelled landmark (role=region + aria-labelledby).
+           Naming this wrapper from the same heading would nest two identically-named
+           landmarks, so the wrapper stays an unnamed section. -->
+      <section class="demo-section demo-wide">
         <h2 id="vehicles-h">Featured vehicles</h2>
         <div class="dl-carousel demo-vehicles" data-slider aria-labelledby="vehicles-h">
           <ul class="dl-carousel-track">
@@ -445,6 +456,11 @@
     &lt;!-- more slides --&gt;
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
+          <p>
+            Card images need <code>width</code>/<code>height</code> (that is what holds CLS at 0) and, on a real site, <code>srcset</code>/<code>sizes</code> — size <code>sizes</code> to ONE slide's
+            rendered width, never <code>100vw</code>. The six photos on this page are single full-size JPEGs, which is why the demo weighs ~1.8&nbsp;MB; a responsive set is the single biggest
+            performance win when you implement.
+          </p>
           <p>Set slides-per-view in CSS (no JS breakpoints):</p>
           <pre><code>.my-slider { --dlc-per-view: 1; }
 @media (min-width: 640px)  { .my-slider { --dlc-per-view: 2; } }
@@ -487,7 +503,7 @@
         </details>
       </section>
 
-      <section class="demo-section demo-models-section demo-wide" aria-labelledby="models-h">
+      <section class="demo-section demo-models-section demo-wide">
         <h2 id="models-h">Explore Chevrolet Models</h2>
         <div class="dl-carousel demo-models" data-slider data-rewind="false" aria-labelledby="models-h">
           <ul class="dl-carousel-track">
@@ -537,10 +553,15 @@
             which a <code>::before</code> translates across — the "custom callback" escape hatch in action. <code>data-rewind="false"</code> stops the carousel at the ends (the arrow disables) instead
             of wrapping.
           </p>
+          <p>
+            <strong>Alt text on a real site:</strong> these photos are stand-ins, so they carry <code>alt=""</code> and the heading names the card. With real OEM photography, give the image a
+            descriptive <code>alt</code> (<code>alt="2026 Chevrolet Silverado 1500 LT in Summit White"</code>) for image search, and put an explicit <code>aria-label="Explore the Silverado"</code> on
+            the wrapping link so its accessible name stays short instead of concatenating the alt text and the heading.
+          </p>
         </details>
       </section>
 
-      <section class="demo-section" aria-labelledby="gallery-h">
+      <section class="demo-section">
         <h2 id="gallery-h">Photo gallery</h2>
         <div class="dl-carousel demo-gallery" data-slider data-gallery aria-labelledby="gallery-h">
           <div class="dl-carousel-track">
@@ -580,7 +601,7 @@
         </details>
       </section>
 
-      <section class="demo-section" aria-labelledby="reviews-h">
+      <section class="demo-section">
         <h2 id="reviews-h">Customer reviews</h2>
         <div class="dl-carousel demo-reviews" data-slider data-autoplay="5000" aria-labelledby="reviews-h">
           <ul class="dl-carousel-track">

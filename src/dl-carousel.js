@@ -122,9 +122,13 @@ export class Slider {
       console.warn('[dl-carousel] give the slider an aria-label or aria-labelledby', this.root);
     }
     if (this.opts.gallery) return; // gallery slides become tabpanels later
-    // <ul>/<li> keeps list semantics (count announcements) — leave it alone.
+    // <ul>/<li> carries the count announcements — but our own CSS sets
+    // list-style:none, and WebKit strips list semantics from an unmarkered
+    // list, so re-assert role="list" or Safari/VoiceOver announces nothing.
     // Non-list slides get the APG grouped-carousel treatment instead.
-    if (!/^(UL|OL)$/.test(this.track.tagName)) {
+    if (/^(UL|OL)$/.test(this.track.tagName)) {
+      this.track.setAttribute('role', 'list');
+    } else {
       this.slides.forEach((s, i) => {
         s.setAttribute('role', 'group');
         s.setAttribute('aria-roledescription', 'slide');
@@ -199,7 +203,6 @@ export class Slider {
     this.status = document.createElement('div');
     this.status.className = 'dl-carousel-status dl-carousel-sr-only';
     this.status.setAttribute('aria-live', 'polite');
-    this.status.setAttribute('aria-atomic', 'false');
     c.append(this.status);
     // DOM order = tab order: [pause] → prev → next → dots → track.
     this.root.insertBefore(c, this.track);
@@ -419,8 +422,11 @@ export class Slider {
     const sig = this._ac.signal;
     this._suspended = new Set(); // temporary holds: hover / hidden / offscreen
     this._wasRotating = null;
-    // Reduced motion: rotation never starts at all (APG example behavior).
+    // Reduced motion: rotation never starts at all (APG example behavior),
+    // and turning the OS setting on mid-session stops a rotation already
+    // running — otherwise it kept going until the next page load.
     this.rotating = !this._prm.matches;
+    this._prm.addEventListener('change', () => this._prm.matches && this.pause(), { signal: sig });
     this.root.addEventListener('pointerenter', () => this._suspend('hover'), { signal: sig });
     this.root.addEventListener('pointerleave', () => this._unsuspend('hover'), { signal: sig });
     // Keyboard focus anywhere in the carousel permanently stops rotation

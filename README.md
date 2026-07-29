@@ -76,13 +76,17 @@ Events (bubble from the root): `dlc:change` `{index, page, slidesInView}`,
 
 - Multi-card: ALL cards stay in the tab order and accessibility tree — no
   `inert`/`aria-hidden` on off-screen cards (hiding corrupts announced counts).
+- A `<ul>`/`<ol>` track gets `role="list"` re-applied at init. The library's own
+  `list-style: none` makes WebKit drop list semantics, which would silently kill
+  the "N of 6" count announcements in Safari/VoiceOver — don't remove it.
 - Dots are one per PAGE of slides, plain buttons (not tabs); current dot is
   `aria-disabled`, still focusable.
 - Gallery: full APG tabbed-carousel — thumbs are a `tablist` with roving
   tabindex and arrow keys; non-visible panels are `inert`.
 - Autoplay: pause button first in tab order; hover pauses temporarily; focus or
   drag stops permanently (only the button restarts); never starts under
-  `prefers-reduced-motion`; status announcements are off while rotating.
+  `prefers-reduced-motion`, and turning that setting on mid-session stops a
+  rotation already running; status announcements are off while rotating.
 - Every programmatic scroll resolves smooth-vs-instant from
   `prefers-reduced-motion` at call time. Never add CSS `scroll-behavior`.
 

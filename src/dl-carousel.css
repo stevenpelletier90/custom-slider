@@ -62,10 +62,11 @@
 .dl-carousel-slide {
   /* Explicit flex basis — Safari mis-sizes snap items without one. */
   flex: 0 0 calc((100% - (var(--dlc-per-view) - 1) * var(--dlc-gap)) / var(--dlc-per-view));
-
-  /* 'always' would block multi-slide flicks (and fed a Firefox bug). */
   scroll-snap-align: start;
-  scroll-snap-stop: normal;
+
+  /* scroll-snap-stop is deliberately left at its initial `normal`: 'always'
+     would block multi-slide flicks (and fed a Firefox bug). Declaring the
+     initial value shipped bytes for nothing, so the note carries the intent. */
 }
 
 .dl-carousel-slide img {
