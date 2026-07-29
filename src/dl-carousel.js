@@ -514,6 +514,12 @@ export class Slider {
       s.id ||= `${this.uid}-panel-${i}`;
       s.setAttribute('role', 'tabpanel'); // NO aria-roledescription="slide" here
       s.setAttribute('aria-label', name);
+      // A tabpanel holding no focusable content needs its own tab stop, or the
+      // photo is unreachable by keyboard. It also displaces the anonymous stop
+      // Chrome synthesises on a scroll container that has no focusable
+      // children — the track is one — so the strip announces its photo name
+      // instead of an unnamed region. (inert keeps the other panels out.)
+      s.tabIndex = 0;
       const b = this._btn('dl-carousel-thumb', name, '');
       b.id = `${this.uid}-tab-${i}`;
       b.setAttribute('role', 'tab');

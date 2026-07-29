@@ -82,7 +82,11 @@ Events (bubble from the root): `dlc:change` `{index, page, slidesInView}`,
 - Dots are one per PAGE of slides, plain buttons (not tabs); current dot is
   `aria-disabled`, still focusable.
 - Gallery: full APG tabbed-carousel — thumbs are a `tablist` with roving
-  tabindex and arrow keys; non-visible panels are `inert`.
+  tabindex and arrow keys; non-visible panels are `inert`. The visible panel
+  takes `tabindex="0"`: it holds no focusable content, and without it Chrome
+  puts an unnamed tab stop on the scrolling track instead (it does that for any
+  scroll container with no focusable children). Gallery tab order is
+  prev → next → panel → selected thumb.
 - Autoplay: pause button first in tab order; hover pauses temporarily; focus or
   drag stops permanently (only the button restarts); never starts under
   `prefers-reduced-motion`, and turning that setting on mid-session stops a
