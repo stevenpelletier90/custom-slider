@@ -217,9 +217,12 @@
   border-color: var(--dlc-dot-current);
 }
 
-/* The strip is a scroll container, so it clips anything drawn outside the
-   thumbs — draw their focus ring inset or it's invisible (WCAG 2.4.7). */
-.dl-carousel-thumb:focus-visible {
+/* Both sit flush inside a scroll container, which clips anything drawn outside
+   them — draw the ring inset or it's invisible (WCAG 2.4.7). The gallery
+   tabpanel is focusable, so it needs this as much as the thumbs do. */
+.dl-carousel-thumb:focus-visible,
+.dl-carousel-slide:focus-visible {
+  outline: 3px solid var(--dlc-focus);
   outline-offset: -3px;
 }
 
