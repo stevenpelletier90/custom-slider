@@ -18,6 +18,8 @@ configs), not inferred.
 
 ## 2. What the real examples actually do (research summary)
 
+Full per-site findings (exact slick/Splide/Bootstrap configs, card anatomy, breakpoint ladders, infrastructure hacks): [docs/research/2026-08-04-example-carousels.md](../../research/2026-08-04-example-carousels.md).
+
 - **forddemo1 model bar**: slick, `slidesToShow: 5 / 3 / 1`, **`slidesToScroll: 1`** (one card per click), arrows only, no dots, no autoplay, infinite via clones. Cards are OEM studio
   **transparent-PNG cutouts** at a uniform angle/scale, model name below, **whole card links** to inventory search. Hover zooms the cutout. Four body-style tabs each wrap their own
   carousel instance (with a `height: 0` hidden-tab hack so slick can measure).
