@@ -6,7 +6,8 @@ maintained in-house: the whole engine is one commented file, `src/dl-carousel.js
 
 The browser owns the physics (touch, drag, momentum, snapping — CSS
 `scroll-snap`); the JS only wires controls, state, autoplay, and the gallery
-variant. Rewind instead of infinite loop: no cloned slides, so no duplicate
+variant — plus the one physics gap browsers leave open: mouse drag-to-scroll
+(native scroll containers don't drag with a mouse; `data-drag="false"` opts out). Rewind instead of infinite loop: no cloned slides, so no duplicate
 content for SEO and no screen-reader confusion.
 
 The demo page (`demo/index.html`) doubles as the variation catalog — every
@@ -58,6 +59,7 @@ JS options override data attributes, which override defaults.
 | `autoplay`        | `data-autoplay="4000"` | `0`             | Advance every N ms; adds pause button (first in tab order)                                                                   |
 | `rewind`          | `data-rewind="false"`  | `true`          | Arrows wrap at the ends; `false` stops there and `aria-disable`s the end arrow (ignored with autoplay, which needs the wrap) |
 | `step`            | `data-step="slide"`    | `"page"`        | `"slide"` advances one card per arrow click / autoplay tick instead of a full page; dots still represent pages               |
+| `drag`            | `data-drag="false"`    | `true`          | Mouse drag-to-scroll on the track (click-through suppressed after a real drag); touch/pen swiping is native and unaffected   |
 | `gallery`         | `data-gallery`         | `false`         | Tabbed thumbnail gallery (thumbs generated from slide images)                                                                |
 | `roledescription` | `data-roledescription` | `"carousel"`    | Empty string to omit                                                                                                         |
 | `labels`          | — (JS only)            | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/dl-carousel.js`                                                |
@@ -119,7 +121,7 @@ replacing it = replacing the contents of the two dist files, with zero site edit
    with all content authored in the HTML; generate its own controls (never require
    control markup in the CMS).
 2. Honor the data attributes (`data-autoplay`, `data-rewind`, `data-step`,
-   `data-gallery`, `data-roledescription`, `data-init`) and the `--dlc-*` theming knobs.
+   `data-drag`, `data-gallery`, `data-roledescription`, `data-init`) and the `--dlc-*` theming knobs.
 3. Emit the `dlc:*` events with the same payloads and expose
    `goTo/next/prev/pause/play/destroy` + `DLCarousel.autoInit`.
 4. Keep the accessibility behaviors listed above — they are part of the contract,

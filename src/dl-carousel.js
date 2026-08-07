@@ -24,6 +24,7 @@ const DEFAULTS = {
   autoplay: 0, // ms between advances; 0 = off
   rewind: true, // arrows wrap at the ends; false stops there
   step: 'page', // 'slide' advances one card per arrow/autoplay tick (dealer model-bar feel); dots stay per-page either way
+  drag: true, // mouse drag-to-scroll on the track; touch/pen swiping is native scrolling and unaffected
   gallery: false, // tabbed thumbnail-gallery variant
   roledescription: 'carousel', // set '' to omit (localization concerns)
   labels: {
@@ -105,6 +106,7 @@ export class Slider {
     if (d.autoplay !== undefined) data.autoplay = parseInt(d.autoplay, 10) || 0;
     if (d.rewind !== undefined) data.rewind = d.rewind !== 'false';
     if (d.step !== undefined) data.step = d.step === 'slide' ? 'slide' : 'page';
+    if (d.drag !== undefined) data.drag = d.drag !== 'false';
     if (d.gallery !== undefined) data.gallery = d.gallery !== 'false';
     if (d.roledescription !== undefined) data.roledescription = d.roledescription;
     const opts = { ...DEFAULTS, ...data, ...js, labels: { ...DEFAULTS.labels, ...(js.labels || {}) } };
@@ -353,6 +355,7 @@ export class Slider {
       },
       { signal: sig },
     );
+    if (this.opts.drag) this._wireDrag();
     this._ro = new ResizeObserver(() => {
       cancelAnimationFrame(this._raf);
       this._raf = requestAnimationFrame(() => {
@@ -364,7 +367,81 @@ export class Slider {
     this._ro.observe(t);
   }
 
+  /* ---- mouse drag-to-scroll (touch/pen swiping is native scrolling) ------ */
+
+  _wireDrag() {
+    const sig = this._ac.signal,
+      t = this.track;
+    let startX = 0,
+      startLeft = 0;
+    t.style.cursor = 'grab';
+    t.addEventListener(
+      'pointerdown',
+      (e) => {
+        if (e.pointerType !== 'mouse' || e.button !== 0) return;
+        this._dragActive = true;
+        this._dragMoved = false;
+        startX = e.clientX;
+        startLeft = t.scrollLeft;
+      },
+      { signal: sig },
+    );
+    t.addEventListener(
+      'pointermove',
+      (e) => {
+        if (!this._dragActive) return;
+        const dx = e.clientX - startX;
+        // Small threshold keeps plain clicks (card links!) working; past it,
+        // capture the pointer, stop text selection, and turn snap off so the
+        // track follows the hand instead of fighting it. Snap is restored at
+        // _commit, when the settle scroll has landed ON a snap position —
+        // restoring it here would jump the track before the smooth settle.
+        if (!this._dragMoved && Math.abs(dx) > 4) {
+          this._dragMoved = true;
+          t.setPointerCapture(e.pointerId);
+          t.style.scrollSnapType = 'none';
+          t.style.userSelect = 'none';
+        }
+        if (this._dragMoved) t.scrollLeft = startLeft - dx;
+      },
+      { signal: sig },
+    );
+    const end = () => {
+      if (!this._dragActive) return;
+      this._dragActive = false;
+      if (!this._dragMoved) return;
+      t.style.userSelect = '';
+      // This pointerup reaches the track before the window listener flips
+      // _pointerDown, and goTo refuses to fight an "active" drag — clear it.
+      this._pointerDown = false;
+      this._measure();
+      this.goTo(Math.round(t.scrollLeft / this.stride)); // settle on the nearest slide
+    };
+    t.addEventListener('pointerup', end, { signal: sig });
+    t.addEventListener('pointercancel', end, { signal: sig });
+    // Browsers start a native HTML5 drag for images/links on mouse-move —
+    // only while our drag is live, or dragging an image out would still work.
+    t.addEventListener('dragstart', (e) => this._dragActive && e.preventDefault(), { signal: sig });
+    // After a real drag the browser still fires a click on whatever card is
+    // under the cursor — swallow that one click so links don't navigate.
+    t.addEventListener(
+      'click',
+      (e) => {
+        if (this._dragMoved) {
+          this._dragMoved = false;
+          e.preventDefault();
+          e.stopPropagation();
+        }
+      },
+      { capture: true, signal: sig },
+    );
+  }
+
   _commit() {
+    // Post-drag snap restore happens here: the settle scroll has finished on
+    // a snap position, so re-enabling snap cannot move the track. Never while
+    // a drag is still active — scrollend can fire mid-gesture in Chromium.
+    if (!this._dragActive && this.track.style.scrollSnapType) this.track.style.scrollSnapType = '';
     this._target = null;
     this._measure();
     const idx = Math.max(0, Math.min(this.slides.length - 1, Math.round(this.track.scrollLeft / this.stride)));

@@ -26,7 +26,7 @@ There is no test framework (deliberate, spec §1 non-goals). Verification is the
 
 ## Architecture
 
-**CSS owns layout and physics; JS only wires controls and state.** `src/dl-carousel.css` makes the track a native scroll container with `scroll-snap`, so swipe/drag/momentum/snapping work before any JS runs and still work with JS disabled. `src/dl-carousel.js` adds prev/next/dots/pause/thumbs into space the CSS already reserved (`--dlc-controls-space`) — that reservation is why CLS is 0. Don't move layout decisions into JS.
+**CSS owns layout and physics; JS only wires controls and state.** `src/dl-carousel.css` makes the track a native scroll container with `scroll-snap`, so swipe/drag/momentum/snapping work before any JS runs and still work with JS disabled. `src/dl-carousel.js` adds prev/next/dots/pause/thumbs into space the CSS already reserved (`--dlc-controls-space`) — that reservation is why CLS is 0. Don't move layout decisions into JS. One deliberate exception: `_wireDrag()` adds mouse drag-to-scroll (default on, `data-drag="false"` opts out) because native scroll containers never mouse-drag — it disables snap only during the gesture and restores it in `_commit()` at the settled snap position.
 
 **Two entry points, one class.** `src/dl-carousel.js` exports `Slider` (ES module consumers). `src/auto.js` is the CMS entry: it assigns `window.DLCarousel = Slider` and auto-inits on `DOMContentLoaded`. esbuild bundles `auto.js` → `dist/dl-carousel.js` as an IIFE. The class is `Slider` in source and `DLCarousel` on the page — both names are part of the documented API.
 

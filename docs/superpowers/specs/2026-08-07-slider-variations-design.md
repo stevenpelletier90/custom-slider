@@ -116,6 +116,14 @@ never plays inline — both triggers open a native `<dialog>` (page script; Esc 
 Deliberately no autoplay (the source rotates video cards every 3 s — fights the content; research doc §4). D3 note, same date: the peek section's arrows moved from an outer gutter
 onto the faded edge itself — at the ends the outer-gutter layout doubled up with the empty peek padding into dead space Steven flagged.
 
+### D10 — Mouse drag-to-scroll (added at James's request, 2026-08-07; Steven approved engine, default-on)
+
+James reported mobile swipe "left out" — disproved with an emulated-touch test (swipe moved the vehicles track 0→263 px, model bar 0→255 px; swiping is native CSS scroll and works
+with JS off). What he actually hit is that native scroll containers never mouse-drag on desktop — a gap in every version. Fixed in the engine: `_wireDrag()` (default on,
+`data-drag="false"` opts out) — mouse-only pointer drag with a 4 px click threshold, snap disabled only during the gesture and restored in `_commit()` at the settled snap position
+(no jump), trailing click suppressed after a real drag so card links don't fire, text selection suspended while dragging, `cursor: grab` cue. Measured cost 325 B gzip (5594/6144).
+Verified in-browser: drag settles snap-aligned, drag-over-a-link doesn't navigate, plain click still does.
+
 ## 4. Deliberately out of scope
 
 - **Fade transition mode** (Hoag quotes, Greer gallery, Ford hero) — v1 non-goal; substitution is slide-in-place. **2026-08-07 follow-up (Steven): Cliff's "faded images" ask likely
