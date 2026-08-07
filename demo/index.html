@@ -28,6 +28,12 @@
       .demo-section {
         margin-block: 3rem;
       }
+      .demo-toc {
+        margin-block: 1rem;
+      }
+      .demo-toc a {
+        color: #1a5fb4;
+      }
       /* Slides-per-view is site configuration: plain media queries, no JS breakpoints. */
       .demo-vehicles,
       .demo-reviews {
@@ -515,10 +521,15 @@
       <h1>Custom Slider</h1>
       <p>Dependency-free scroll-snap slider. Try this page with JavaScript disabled — every variation remains a readable, swipeable strip.</p>
 
+      <nav class="demo-toc" aria-label="On this page">
+        <a href="#vehicles">Featured vehicles</a> · <a href="#modelbar">Model bar</a> · <a href="#models">Model cards</a> · <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> ·
+        <a href="#gallery">Gallery</a> · <a href="#reviews">Reviews</a> · <a href="#stock">Stock look</a>
+      </nav>
+
       <!-- The carousel itself is the labelled landmark (role=region + aria-labelledby).
            Naming this wrapper from the same heading would nest two identically-named
            landmarks, so the wrapper stays an unnamed section. -->
-      <section class="demo-section demo-wide">
+      <section class="demo-section demo-wide" id="vehicles">
         <h2 id="vehicles-h">Featured vehicles</h2>
         <div class="dl-carousel demo-vehicles" data-slider aria-labelledby="vehicles-h">
           <ul class="dl-carousel-track">
@@ -631,6 +642,11 @@
               <td>Stop at the ends instead of wrapping; end arrows disable</td>
             </tr>
             <tr>
+              <td><code>data-step="slide"</code></td>
+              <td>page</td>
+              <td>Arrows/autoplay advance one card at a time (see the model bar)</td>
+            </tr>
+            <tr>
               <td><code>data-gallery</code></td>
               <td>off</td>
               <td>Thumbnail-gallery (tabbed) variant</td>
@@ -644,7 +660,7 @@
         </details>
       </section>
 
-      <section class="demo-section demo-models-section demo-wide">
+      <section class="demo-section demo-models-section demo-wide" id="models">
         <h2 id="models-h">Explore Chevrolet Models</h2>
         <div class="dl-carousel demo-models" data-slider data-rewind="false" aria-labelledby="models-h">
           <ul class="dl-carousel-track">
@@ -917,7 +933,7 @@
         </details>
       </section>
 
-      <section class="demo-section">
+      <section class="demo-section" id="gallery">
         <h2 id="gallery-h">Photo gallery</h2>
         <div class="dl-carousel demo-gallery" data-slider data-gallery aria-labelledby="gallery-h">
           <div class="dl-carousel-track">
@@ -957,7 +973,7 @@
         </details>
       </section>
 
-      <section class="demo-section">
+      <section class="demo-section" id="reviews">
         <h2 id="reviews-h">Customer reviews</h2>
         <div class="dl-carousel demo-reviews" data-slider data-autoplay="5000" aria-labelledby="reviews-h">
           <ul class="dl-carousel-track">
@@ -1064,6 +1080,50 @@
             Autoplay pauses on hover, stops permanently on keyboard focus or drag (the pause button restarts it), never starts under
             <code>prefers-reduced-motion</code>, and rewinds at the end — no cloned slides.
           </p>
+        </details>
+      </section>
+
+      <section class="demo-section" id="stock">
+        <h2 id="stock-h">Stock look — the base</h2>
+        <p>Everything above is site CSS over this. Untouched engine defaults: overlaid dark arrows, per-page dots in reserved space (CLS 0), snap scrolling.</p>
+        <div class="dl-carousel" data-slider aria-labelledby="stock-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <h3>Default controls</h3>
+                <p>Arrows overlay the content edges; dots live in space the CSS reserved before JS ran.</p>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <h3>One knob per look</h3>
+                <p>Every visual above this section is <code>--dlc-*</code> custom properties and plain site CSS.</p>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <h3>Works without JS</h3>
+                <p>The track is a native scroll-snap container — disable JavaScript and it still swipes.</p>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <h3>Start here</h3>
+                <p>Copy the markup below, add <code>--dlc-per-view</code> breakpoints, then restyle.</p>
+              </article>
+            </li>
+          </ul>
+        </div>
+        <details>
+          <summary>Copy-paste HTML — the base for every variation</summary>
+          <pre><code>&lt;link rel="stylesheet" href="dl-carousel.css"&gt;
+&lt;script src="dl-carousel.js" defer&gt;&lt;/script&gt;
+
+&lt;div class="dl-carousel my-slider" data-slider aria-label="Describe the strip"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;…card content…&lt;/li&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
         </details>
       </section>
 

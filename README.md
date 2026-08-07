@@ -9,6 +9,9 @@ The browser owns the physics (touch, drag, momentum, snapping — CSS
 variant. Rewind instead of infinite loop: no cloned slides, so no duplicate
 content for SEO and no screen-reader confusion.
 
+The demo page (`demo/index.html`) doubles as the variation catalog — every
+section is a copy-paste recipe over the same two files.
+
 ## Quick start (CMS / classic script)
 
     <link rel="stylesheet" href="dl-carousel.css">

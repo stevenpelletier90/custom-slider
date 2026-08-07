@@ -1,6 +1,7 @@
 # Slider variations — design
 
-Date: 2026-08-07 · Status: **awaiting Steven's review** — no implementation until approved.
+Date: 2026-08-07 · Status: **approved 2026-08-07** (Steven) — decisions: D6 approved (measured cost 148 B gzip, 5269/6144); model bar uses Chrome Photo Builder cutouts (Steven's call,
+supersedes the SVG-silhouette recommendation — sourced from a live DealerOn storefront's public Chrome paths); packaging = recipes only; D1 confirmed Featured Vehicles only.
 
 Inputs: 2026-08-04 team meeting + Slack follow-ups (Casey, Dylan, Cliff, Tony, Sarah), plus live-site research done for this spec: forddemo1.dealeron.com, legaldemo7.leadscience.com,
 client32811.leadscience.com (Skaug Law), bordaslaw.com, gregoryhoaglaw.com, michaelgreerpools.com — rendered markup scraped and runtime slider options read live (slick/Splide/Bootstrap
