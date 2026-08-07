@@ -128,6 +128,24 @@
         margin: 0;
         color: #fff;
       }
+      /* Whole card clickable (stretched link): the existing "View details" link
+         grows an ::after over the card. The overlay's containing block is the
+         absolutely-positioned card body (not the card), so the top offset
+         overshoots and the card's overflow: hidden trims the hit area to the
+         card box. Focus ring moves to the card via :has() — drawn inset
+         because the track clips outset rings (WCAG 2.4.7 kept). */
+      .demo-vehicles .demo-card-body a::after {
+        content: '';
+        position: absolute;
+        inset: -999px 0 0;
+      }
+      .demo-vehicles .demo-card-body a:focus-visible {
+        outline: none;
+      }
+      .demo-vehicles .demo-card:has(.demo-card-body a:focus-visible) {
+        outline: 3px solid var(--dlc-focus);
+        outline-offset: -3px;
+      }
       /* Round the moving children themselves: Chromium drops a parent's
          rounded overflow clip while the track is animating, which flashed
          square corners during arrow scrolls. */
@@ -518,6 +536,11 @@
             Card images need <code>width</code>/<code>height</code> (that is what holds CLS at 0) and, on a real site, <code>srcset</code>/<code>sizes</code> — size <code>sizes</code> to ONE slide's
             rendered width, never <code>100vw</code>. The six photos on this page are single full-size JPEGs, which is why the demo weighs ~1.8&nbsp;MB; a responsive set is the single biggest
             performance win when you implement.
+          </p>
+          <p>
+            The whole card is clickable via a stretched link: the card's "View details" <code>&lt;a&gt;</code> carries an <code>::after</code> overlay. Watch the containing block — here the link sits
+            inside the absolutely-positioned card body, so the overlay's top offset overshoots (<code>inset: -999px 0 0</code>) and the card's <code>overflow: hidden</code> trims the hit area to the
+            card box. Keep the link's <code>aria-label</code> short — it is the card's accessible name.
           </p>
           <p>Set slides-per-view in CSS (no JS breakpoints):</p>
           <pre><code>.my-slider { --dlc-per-view: 1; }
