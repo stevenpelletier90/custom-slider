@@ -34,7 +34,7 @@ There is no test framework (deliberate, spec §1 non-goals). Verification is the
 
 **One commit point for state.** `_commit()` (fired by `scrollend`, or a 150 ms debounced `scroll` fallback for pre-26.2 iOS Safari) is the only place `this.current` changes and the only place `dlc:change` is emitted. Selection UI updates _optimistically_ at activation via `this._target` + `_updateUI()`, so dots/tabs/status move on click, not ~900 ms later when the scroll settles; `_commit()` clears `_target`.
 
-**Pages, not slides.** Arrows and dots step by page. `_measure()` reads `--dlc-per-view` off computed style, `_pages()` derives page start indexes with the last page clamped to the end. Slides-per-view is CSS-only by design — never add a JS breakpoint option.
+**Pages, not slides.** Arrows and dots step by page by default; `data-step="slide"` switches arrows/autoplay to one-card steps (dots stay per-page). `_measure()` reads `--dlc-per-view` off computed style, `_pages()` derives page start indexes with the last page clamped to the end, `_stops()` is what the arrows walk. Slides-per-view is CSS-only by design — never add a JS breakpoint option.
 
 **Teardown.** All listeners are registered with `{ signal: this._ac.signal }` from one `AbortController`; `destroy()` aborts it, disconnects the observers, restores `this._snapshot` (root `innerHTML` captured at construction) and removes only the root attributes it added (`_addedRootAttrs`). Any new listener/observer/timer must join this scheme.
 

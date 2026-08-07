@@ -23,6 +23,7 @@ const setDisabled = (el, on) => {
 const DEFAULTS = {
   autoplay: 0, // ms between advances; 0 = off
   rewind: true, // arrows wrap at the ends; false stops there
+  step: 'page', // 'slide' advances one card per arrow/autoplay tick (dealer model-bar feel); dots stay per-page either way
   gallery: false, // tabbed thumbnail-gallery variant
   roledescription: 'carousel', // set '' to omit (localization concerns)
   labels: {
@@ -103,6 +104,7 @@ export class Slider {
     const data = {};
     if (d.autoplay !== undefined) data.autoplay = parseInt(d.autoplay, 10) || 0;
     if (d.rewind !== undefined) data.rewind = d.rewind !== 'false';
+    if (d.step !== undefined) data.step = d.step === 'slide' ? 'slide' : 'page';
     if (d.gallery !== undefined) data.gallery = d.gallery !== 'false';
     if (d.roledescription !== undefined) data.roledescription = d.roledescription;
     const opts = { ...DEFAULTS, ...data, ...js, labels: { ...DEFAULTS.labels, ...(js.labels || {}) } };
@@ -244,14 +246,25 @@ export class Slider {
     return starts;
   }
 
-  _currentPage() {
+  _stops() {
+    // What the arrows step through: page starts (default), or every reachable
+    // start index in slide mode (the last start is clamped like _pages does).
+    if (this.opts.step !== 'slide') return this._pages();
+    const last = Math.max(0, this.slides.length - this.perView);
+    return Array.from({ length: last + 1 }, (_, i) => i);
+  }
+
+  _nearest(arr) {
     const ref = this._target ?? this.current;
-    const p = this._pages();
     let best = 0;
-    p.forEach((s, i) => {
-      if (Math.abs(s - ref) < Math.abs(p[best] - ref)) best = i;
+    arr.forEach((s, i) => {
+      if (Math.abs(s - ref) < Math.abs(arr[best] - ref)) best = i;
     });
     return best;
+  }
+
+  _currentPage() {
+    return this._nearest(this._pages());
   }
 
   /* ---- navigation --------------------------------------------------------- */
@@ -281,8 +294,8 @@ export class Slider {
   }
 
   next() {
-    const p = this._pages(),
-      c = this._currentPage();
+    const p = this._stops(),
+      c = this._nearest(p);
     if (c >= p.length - 1) {
       if (this.opts.rewind) this.goTo(0); // rewind past the end
       return;
@@ -291,8 +304,8 @@ export class Slider {
   }
 
   prev() {
-    const p = this._pages(),
-      c = this._currentPage();
+    const p = this._stops(),
+      c = this._nearest(p);
     if (c <= 0) {
       if (this.opts.rewind) this.goTo(p[p.length - 1]); // rewind before the start
       return;
@@ -372,10 +385,10 @@ export class Slider {
 
   _updateArrows() {
     if (this.opts.rewind) return; // wrapping arrows never disable
-    const page = this._currentPage(),
-      last = this._pages().length - 1;
-    setDisabled(this.prevBtn, page <= 0);
-    setDisabled(this.nextBtn, page >= last);
+    const p = this._stops(),
+      c = this._nearest(p);
+    setDisabled(this.prevBtn, c <= 0);
+    setDisabled(this.nextBtn, c >= p.length - 1);
   }
 
   _rebuildDots() {
