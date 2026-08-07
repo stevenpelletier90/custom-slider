@@ -31,6 +31,12 @@
       .demo-toc {
         margin-block: 1rem;
       }
+      /* Stock section: the engine look is untouched — this pads the CARD text
+         clear of the default overlaid arrows (card styling, not engine CSS). */
+      .demo-stock .demo-card h3,
+      .demo-stock .demo-card p {
+        margin-inline: 4rem;
+      }
       .demo-toc a {
         color: #1a5fb4;
       }
@@ -373,6 +379,41 @@
         outline: 3px solid var(--dlc-focus);
         outline-offset: -3px;
       }
+      /* Model bar with tabs (Ford-style): each tab pane wraps its own
+         dl-carousel instance. Panes hide with [hidden] (display: none) — the
+         engine's ResizeObserver re-measures when a pane is revealed, so no
+         slick-style height: 0 hack is needed. Tabs are page script (APG). */
+      .demo-modelbar-tabs-section .demo-modelbar {
+        --dlc-per-view: 2;
+      }
+      @media (min-width: 640px) {
+        .demo-modelbar-tabs-section .demo-modelbar {
+          --dlc-per-view: 3;
+        }
+      }
+      .demo-tabs [role='tablist'] {
+        display: flex;
+        gap: 0.5rem;
+        justify-content: center;
+        margin-block-end: 1rem;
+      }
+      .demo-tabs [role='tab'] {
+        padding: 0.5rem 1.25rem;
+        font: inherit;
+        cursor: pointer;
+        background: transparent;
+        border: 1px solid #949494;
+        border-radius: 999px;
+      }
+      .demo-tabs [role='tab'][aria-selected='true'] {
+        color: #fff;
+        background: #262626;
+        border-color: #262626;
+      }
+      .demo-tabs [role='tab']:focus-visible {
+        outline: 3px solid var(--dlc-focus);
+        outline-offset: 2px;
+      }
       /* Faded peek — a sliver of the neighboring slides shows at each edge
          (--dlc-peek, stock engine knob) and fades out via a mask on the track:
          same technique the gallery thumb strip uses. At the ends the fade covers
@@ -522,8 +563,8 @@
       <p>Dependency-free scroll-snap slider. Try this page with JavaScript disabled — every variation remains a readable, swipeable strip.</p>
 
       <nav class="demo-toc" aria-label="On this page">
-        <a href="#vehicles">Featured vehicles</a> · <a href="#modelbar">Model bar</a> · <a href="#models">Model cards</a> · <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> ·
-        <a href="#gallery">Gallery</a> · <a href="#reviews">Reviews</a> · <a href="#stock">Stock look</a>
+        <a href="#vehicles">Featured vehicles</a> · <a href="#modelbar">Model bar</a> · <a href="#modelbar-tabs">Model bar (tabs)</a> · <a href="#models">Model cards</a> ·
+        <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> · <a href="#gallery">Gallery</a> · <a href="#reviews">Reviews</a> · <a href="#stock">Stock look</a>
       </nav>
 
       <!-- The carousel itself is the labelled landmark (role=region + aria-labelledby).
@@ -854,6 +895,156 @@
         </details>
       </section>
 
+      <section class="demo-section demo-modelbar-section demo-modelbar-tabs-section demo-wide" id="modelbar-tabs">
+        <h2 id="modelbar-tabs-h">Model bar with tabs</h2>
+        <div class="demo-tabs" data-tabs>
+          <div role="tablist" aria-labelledby="modelbar-tabs-h">
+            <button type="button" role="tab" id="tab-trucks" aria-controls="pane-trucks" aria-selected="true">Trucks &amp; full-size SUVs</button>
+            <button type="button" role="tab" id="tab-crossovers" aria-controls="pane-crossovers" aria-selected="false" tabindex="-1">Crossovers</button>
+          </div>
+          <div id="pane-trucks" role="tabpanel" aria-labelledby="tab-trucks">
+            <div class="dl-carousel demo-modelbar" data-slider data-step="slide" aria-label="Trucks and full-size SUVs">
+              <ul class="dl-carousel-track">
+                <li class="dl-carousel-slide">
+                  <a class="demo-modelbar-card" href="#silverado-1500" aria-label="Explore the Silverado 1500">
+                    <img
+                      src="img/chrome-silverado-1500.png"
+                      srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                      sizes="(min-width: 640px) 30vw, 45vw"
+                      width="320"
+                      height="240"
+                      alt="2026 Chevrolet Silverado 1500"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <p>Silverado 1500</p>
+                  </a>
+                </li>
+                <li class="dl-carousel-slide">
+                  <a class="demo-modelbar-card" href="#colorado" aria-label="Explore the Colorado">
+                    <img
+                      src="img/chrome-colorado.png"
+                      srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                      sizes="(min-width: 640px) 30vw, 45vw"
+                      width="320"
+                      height="240"
+                      alt="2025 Chevrolet Colorado"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <p>Colorado</p>
+                  </a>
+                </li>
+                <li class="dl-carousel-slide">
+                  <a class="demo-modelbar-card" href="#tahoe" aria-label="Explore the Tahoe">
+                    <img
+                      src="img/chrome-tahoe.png"
+                      srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                      sizes="(min-width: 640px) 30vw, 45vw"
+                      width="320"
+                      height="240"
+                      alt="2025 Chevrolet Tahoe"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <p>Tahoe</p>
+                  </a>
+                </li>
+                <li class="dl-carousel-slide">
+                  <a class="demo-modelbar-card" href="#suburban" aria-label="Explore the Suburban">
+                    <img
+                      src="img/chrome-suburban.png"
+                      srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                      sizes="(min-width: 640px) 30vw, 45vw"
+                      width="320"
+                      height="240"
+                      alt="2025 Chevrolet Suburban"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <p>Suburban</p>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+          <div id="pane-crossovers" role="tabpanel" aria-labelledby="tab-crossovers" hidden>
+            <div class="dl-carousel demo-modelbar" data-slider data-step="slide" aria-label="Crossover SUVs">
+              <ul class="dl-carousel-track">
+                <li class="dl-carousel-slide">
+                  <a class="demo-modelbar-card" href="#traverse" aria-label="Explore the Traverse">
+                    <img
+                      src="img/chrome-traverse.png"
+                      srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                      sizes="(min-width: 640px) 30vw, 45vw"
+                      width="320"
+                      height="240"
+                      alt="2025 Chevrolet Traverse"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <p>Traverse</p>
+                  </a>
+                </li>
+                <li class="dl-carousel-slide">
+                  <a class="demo-modelbar-card" href="#equinox" aria-label="Explore the Equinox">
+                    <img
+                      src="img/chrome-equinox.png"
+                      srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                      sizes="(min-width: 640px) 30vw, 45vw"
+                      width="320"
+                      height="240"
+                      alt="2025 Chevrolet Equinox"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <p>Equinox</p>
+                  </a>
+                </li>
+                <li class="dl-carousel-slide">
+                  <a class="demo-modelbar-card" href="#trailblazer" aria-label="Explore the Trailblazer">
+                    <img
+                      src="img/chrome-trailblazer.png"
+                      srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                      sizes="(min-width: 640px) 30vw, 45vw"
+                      width="320"
+                      height="240"
+                      alt="2025 Chevrolet Trailblazer"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <p>Trailblazer</p>
+                  </a>
+                </li>
+                <li class="dl-carousel-slide">
+                  <a class="demo-modelbar-card" href="#trax" aria-label="Explore the Trax">
+                    <img
+                      src="img/chrome-trax.png"
+                      srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                      sizes="(min-width: 640px) 30vw, 45vw"
+                      width="320"
+                      height="240"
+                      alt="2025 Chevrolet Trax"
+                      loading="lazy"
+                      decoding="async"
+                    />
+                    <p>Trax</p>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+        <details>
+          <summary>How this variant is built</summary>
+          <p>
+            The Ford-style tabbed model bar: each tab pane wraps its <em>own</em> carousel instance (same class, one selector). The tabs are the small APG page script at the end of this file — not the
+            engine. Hidden panes use the <code>hidden</code> attribute; the engine's ResizeObserver re-measures the strip when its pane is revealed, so no slick-style <code>height: 0</code> hack is
+            needed. Both instances share the model-bar recipe (<code>data-step="slide"</code>, hidden dots, whole-card links).
+          </p>
+        </details>
+      </section>
+
       <section class="demo-section demo-wide" id="peek">
         <h2 id="peek-h">Faded peek</h2>
         <div class="dl-carousel demo-peek" data-slider aria-labelledby="peek-h">
@@ -1086,7 +1277,7 @@
       <section class="demo-section" id="stock">
         <h2 id="stock-h">Stock look — the base</h2>
         <p>Everything above is site CSS over this. Untouched engine defaults: overlaid dark arrows, per-page dots in reserved space (CLS 0), snap scrolling.</p>
-        <div class="dl-carousel" data-slider aria-labelledby="stock-h">
+        <div class="dl-carousel demo-stock" data-slider aria-labelledby="stock-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
               <article class="demo-card">
@@ -1160,6 +1351,38 @@
           attributeFilter: ['class'],
         });
         sync();
+      });
+      // Site-level tabs (model bar with tabs): APG tabs pattern with automatic
+      // activation — arrow keys move focus AND selection, panes toggle via
+      // [hidden]. The carousels inside are untouched: each pane holds its own
+      // auto-inited instance, and the engine's ResizeObserver re-measures a
+      // strip when its pane is revealed.
+      addEventListener('DOMContentLoaded', () => {
+        for (const wrap of document.querySelectorAll('[data-tabs]')) {
+          const tabs = [...wrap.querySelectorAll('[role="tab"]')];
+          const panes = tabs.map((t) => document.getElementById(t.getAttribute('aria-controls')));
+          const select = (i) => {
+            tabs.forEach((t, j) => {
+              t.setAttribute('aria-selected', String(i === j));
+              t.tabIndex = i === j ? 0 : -1;
+              panes[j].hidden = i !== j;
+            });
+          };
+          tabs.forEach((t, i) => t.addEventListener('click', () => select(i)));
+          wrap.querySelector('[role="tablist"]').addEventListener('keydown', (e) => {
+            const i = tabs.indexOf(e.target);
+            if (i === -1) return;
+            let n = null;
+            if (e.key === 'ArrowRight') n = (i + 1) % tabs.length;
+            else if (e.key === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
+            else if (e.key === 'Home') n = 0;
+            else if (e.key === 'End') n = tabs.length - 1;
+            if (n === null) return;
+            e.preventDefault();
+            tabs[n].focus();
+            select(n);
+          });
+        }
       });
       // Mouse drag-scrolling for thumbnail strips (touch swiping is native
       // scrolling already). A small threshold keeps plain clicks working;

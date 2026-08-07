@@ -94,12 +94,18 @@ instead of page math; dots stay per-page (dealer implementations hide dots anywa
 `goTo(index ± 1)`), or simply accept page stepping. Recommendation: approve it, but it can also be deferred until the first real site needs it — nothing else in this spec depends on
 it.
 
+### D7 — Model bar with tabs (added mid-implementation at Steven's request, 2026-08-07)
+
+Originally deferred (see §4) pending a hidden-pane measuring test. Steven asked for it during implementation; the test was run and passed: a carousel auto-inited inside a `[hidden]`
+tab pane measures garbage (stride 1) at init and the engine's ResizeObserver re-measures on reveal (stride correct, arrows step correctly) — **no slick-style `height: 0` hack needed.**
+Shipped as a second demo section (`#modelbar-tabs`): APG tabs page script (automatic activation, arrow keys), two panes each wrapping their own `demo-modelbar` instance at 2/3 per view,
+reusing the same Chrome cutouts.
+
 ## 4. Deliberately out of scope
 
 - **Fade transition mode** (Hoag quotes, Greer gallery, Ford hero) — v1 non-goal; substitution is slide-in-place. Revisit only with a real client requirement.
 - **Center-mode snapping** (Skaug mobile) — engine scroll math assumes `start` alignment.
-- **Tabs wrapping multiple carousel instances** (Ford, Skaug, Hoag) — real pattern, but `_measure()` inside a hidden `display: none` / `height: 0` pane is untested and slick needed
-  hacks for it; test before offering as a recipe. Future candidate.
+- ~~**Tabs wrapping multiple carousel instances**~~ — moved into scope as D7 above.
 - **Video-modal card, live-review widgets (Trustindex), lightbox gallery** — page/site territory, not slider variations.
 - **Logo marquee** (Hoag/Greer) — already CSS-only on those sites; needs no carousel engine at all.
 - Autoplay on any new card section — no researched site does it, and the reviews section already demonstrates the capability.
