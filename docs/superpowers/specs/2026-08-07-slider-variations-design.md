@@ -103,6 +103,12 @@ tab pane measures garbage (stride 1) at init and the engine's ResizeObserver re-
 Shipped as a second demo section (`#modelbar-tabs`): APG tabs page script (automatic activation, arrow keys), two panes each wrapping their own `demo-modelbar` instance at 2/3 per view,
 reusing the same Chrome cutouts.
 
+### D8 — Service cards (added mid-implementation at Steven's request, 2026-08-07)
+
+Steven flagged the Skaug (client32811) practice-area carousel as "the model bar but with cards." Shipped as the `#cards` demo section: whole-card-link content cards (fixed-aspect
+cover image box, heading, copy, decorative "Read more" line), `data-step="slide"`, arrows only, dots hidden, 1/2/3 per view. Equal heights come free from the flex track plus
+`flex-grow` on the copy. The source site's mobile center-mode dim remains out of scope (§4 center-mode snapping).
+
 ## 4. Deliberately out of scope
 
 - **Fade transition mode** (Hoag quotes, Greer gallery, Ford hero) — v1 non-goal; substitution is slide-in-place. Revisit only with a real client requirement.

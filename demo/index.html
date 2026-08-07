@@ -474,6 +474,85 @@
         block-size: auto;
         object-fit: cover;
       }
+      /* Service cards — rebuild of the Skaug Law (client32811) practice-area
+         carousel: whole-card links, image in a fixed-aspect cover box,
+         equal-height cards (the track is flex; the copy flex-grows), one card
+         per arrow step, arrows only. */
+      .demo-cards {
+        --dlc-per-view: 1;
+        --dlc-controls-space: 0px; /* keep the unit — unitless 0 breaks the arrow-centering calc */
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #262626;
+        padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+      }
+      @media (min-width: 640px) {
+        .demo-cards {
+          --dlc-per-view: 2;
+        }
+      }
+      @media (min-width: 1024px) {
+        .demo-cards {
+          --dlc-per-view: 3;
+        }
+      }
+      .demo-cards .dl-carousel-dots {
+        display: none;
+      }
+      .demo-cards .dl-carousel-arrow--prev {
+        inset-inline-start: 0;
+      }
+      .demo-cards .dl-carousel-arrow--next {
+        inset-inline-end: 0;
+      }
+      .demo-service-card {
+        display: flex;
+        flex-direction: column;
+        box-sizing: border-box;
+        block-size: 100%;
+        overflow: hidden;
+        color: inherit;
+        text-decoration: none;
+        background: #fff;
+        border: 1px solid #ddd;
+        border-radius: 8px;
+      }
+      .demo-service-media {
+        aspect-ratio: 8 / 5;
+        overflow: hidden; /* clips the hover zoom, like the source site */
+      }
+      .demo-service-card img {
+        inline-size: 100%;
+        block-size: 100%;
+        object-fit: cover;
+      }
+      .demo-service-card h3 {
+        margin: 0.75rem 1rem 0.25rem;
+        font-size: 1.05rem;
+      }
+      .demo-service-card p {
+        flex-grow: 1;
+        margin: 0 1rem 0.5rem;
+        color: #555;
+      }
+      .demo-service-more {
+        margin: 0 1rem 1rem;
+        font-weight: 600;
+        color: #1a5fb4;
+      }
+      .demo-service-card:hover img,
+      .demo-service-card:focus-visible img {
+        transform: scale(1.06);
+      }
+      @media (prefers-reduced-motion: no-preference) {
+        .demo-service-card img {
+          transition: transform 0.4s ease-out;
+        }
+      }
+      /* inset ring — the track clips anything drawn outside the slide */
+      .demo-service-card:focus-visible {
+        outline: 3px solid var(--dlc-focus);
+        outline-offset: -3px;
+      }
       .demo-card h3 {
         margin: 0.75rem 1rem 0.25rem;
         font-size: 1.05rem;
@@ -564,7 +643,8 @@
 
       <nav class="demo-toc" aria-label="On this page">
         <a href="#vehicles">Featured vehicles</a> · <a href="#modelbar">Model bar</a> · <a href="#modelbar-tabs">Model bar (tabs)</a> · <a href="#models">Model cards</a> ·
-        <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> · <a href="#gallery">Gallery</a> · <a href="#reviews">Reviews</a> · <a href="#stock">Stock look</a>
+        <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> · <a href="#cards">Service cards</a> · <a href="#gallery">Gallery</a> · <a href="#reviews">Reviews</a> ·
+        <a href="#stock">Stock look</a>
       </nav>
 
       <!-- The carousel itself is the labelled landmark (role=region + aria-labelledby).
@@ -1120,6 +1200,71 @@
             Every card image gets <code>aspect-ratio: 4 / 3; inline-size: 100%; object-fit: cover;</code> — the box is fixed, the source fills it, and any upload dimensions render identically. Keep
             real <code>width</code>/<code>height</code> attributes (CLS stays 0) and prefer uniform assets anyway: cover-cropping costs edges, and consistent art always looks better than rescued art.
             Use <code>object-fit: contain</code> instead for cutouts and logos.
+          </p>
+        </details>
+      </section>
+
+      <section class="demo-section demo-wide" id="cards">
+        <h2 id="cards-h">Service cards</h2>
+        <div class="dl-carousel demo-cards" data-slider data-step="slide" aria-labelledby="cards-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="demo-service-card" href="#service" aria-label="Learn about the service center">
+                <div class="demo-service-media"><img src="img/photo-5.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" /></div>
+                <h3>Service Center</h3>
+                <p>Factory-trained technicians, genuine parts, and online scheduling for everything from oil changes to major repairs.</p>
+                <span class="demo-service-more" aria-hidden="true">Read more →</span>
+              </a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-service-card" href="#test-drive" aria-label="Learn about test drives">
+                <div class="demo-service-media"><img src="img/photo-3.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" /></div>
+                <h3>Test Drives</h3>
+                <p>Book a no-pressure drive online — we'll have the vehicle warmed up and out front when you arrive.</p>
+                <span class="demo-service-more" aria-hidden="true">Read more →</span>
+              </a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-service-card" href="#financing" aria-label="Learn about financing">
+                <div class="demo-service-media"><img src="img/vehicle-2.jpg" width="800" height="500" alt="" loading="lazy" decoding="async" /></div>
+                <h3>Financing</h3>
+                <p>Flexible terms, first-time buyer programs, and pre-approval in minutes without a hit to your credit score.</p>
+                <span class="demo-service-more" aria-hidden="true">Read more →</span>
+              </a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-service-card" href="#trade-in" aria-label="Learn about trade-in appraisals">
+                <div class="demo-service-media"><img src="img/vehicle-4.jpg" width="800" height="500" alt="" loading="lazy" decoding="async" /></div>
+                <h3>Trade-In Appraisal</h3>
+                <p>Get a real number for your current vehicle in minutes — good for seven days or 500 miles.</p>
+                <span class="demo-service-more" aria-hidden="true">Read more →</span>
+              </a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-service-card" href="#parts" aria-label="Learn about parts and accessories">
+                <div class="demo-service-media"><img src="img/photo-6.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" /></div>
+                <h3>Parts &amp; Accessories</h3>
+                <p>OEM parts counter, accessories, and installation — ordered to your VIN so it fits the first time.</p>
+                <span class="demo-service-more" aria-hidden="true">Read more →</span>
+              </a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-service-card" href="#body-shop" aria-label="Learn about the body shop">
+                <div class="demo-service-media"><img src="img/photo-2.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" /></div>
+                <h3>Body Shop &amp; Detailing</h3>
+                <p>Collision repair, paintless dent removal, and full detailing with insurance-claim assistance.</p>
+                <span class="demo-service-more" aria-hidden="true">Read more →</span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <details>
+          <summary>How this variant is built</summary>
+          <p>
+            The model-bar mechanics with full content cards — a rebuild of the Lead Science practice-area carousel (whole card is the link, <code>data-step="slide"</code> one-card advance, arrows
+            only). The image sits in a fixed-aspect cover box (any upload dimensions fit), and the cards stay equal height for free: the track is already flex, so slides stretch, and
+            <code>flex-grow</code> on the copy pushes every "Read more" to the same baseline. The "Read more" line is <code>aria-hidden</code> decoration — the link's short <code>aria-label</code> is
+            the card's accessible name.
           </p>
         </details>
       </section>
