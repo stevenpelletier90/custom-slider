@@ -59,6 +59,14 @@
   display: none;
 }
 
+/* JS sets data-dragging only while a mouse drag is live. The override must
+   reach every child: links resolve their own pointer cursor, so a cursor set
+   on the track alone never shows the closed hand over the cards themselves. */
+.dl-carousel-track[data-dragging],
+.dl-carousel-track[data-dragging] * {
+  cursor: grabbing !important;
+}
+
 .dl-carousel-slide {
   /* Explicit flex basis — Safari mis-sizes snap items without one. */
   flex: 0 0 calc((100% - (var(--dlc-per-view) - 1) * var(--dlc-gap)) / var(--dlc-per-view));

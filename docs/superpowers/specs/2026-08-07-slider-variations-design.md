@@ -121,8 +121,10 @@ onto the faded edge itself — at the ends the outer-gutter layout doubled up wi
 James reported mobile swipe "left out" — disproved with an emulated-touch test (swipe moved the vehicles track 0→263 px, model bar 0→255 px; swiping is native CSS scroll and works
 with JS off). What he actually hit is that native scroll containers never mouse-drag on desktop — a gap in every version. Fixed in the engine: `_wireDrag()` (default on,
 `data-drag="false"` opts out) — mouse-only pointer drag with a 4 px click threshold, snap disabled only during the gesture and restored in `_commit()` at the settled snap position
-(no jump), trailing click suppressed after a real drag so card links don't fire, text selection suspended while dragging, `cursor: grab` cue. Measured cost 325 B gzip (5594/6144).
-Verified in-browser: drag settles snap-aligned, drag-over-a-link doesn't navigate, plain click still does.
+(no jump), trailing click suppressed after a real drag so card links don't fire, text selection suspended while dragging. Cursor cues (James's follow-up, same date): `grab` on the
+strip at rest (links keep their pointer), `grabbing` over everything in the dragged track while the drag is live — via a `data-dragging` attribute + scoped `!important` CSS override,
+because links resolve their own pointer cursor and an inline cursor on the track alone never shows over the cards. Measured cost 376 B gzip total (5645/6144). Verified in-browser:
+drag settles snap-aligned, drag-over-a-link doesn't navigate, plain click still does, cursor states measured at rest / mid-drag / after release and scoped to the dragged track only.
 
 ## 4. Deliberately out of scope
 

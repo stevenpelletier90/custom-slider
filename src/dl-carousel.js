@@ -401,6 +401,7 @@ export class Slider {
           t.setPointerCapture(e.pointerId);
           t.style.scrollSnapType = 'none';
           t.style.userSelect = 'none';
+          t.setAttribute('data-dragging', ''); // closed-hand cursor via CSS — links keep their own pointer cursor, so an inline cursor on the track alone can't show it over cards
         }
         if (this._dragMoved) t.scrollLeft = startLeft - dx;
       },
@@ -411,6 +412,7 @@ export class Slider {
       this._dragActive = false;
       if (!this._dragMoved) return;
       t.style.userSelect = '';
+      t.removeAttribute('data-dragging');
       // This pointerup reaches the track before the window listener flips
       // _pointerDown, and goTo refuses to fight an "active" drag — clear it.
       this._pointerDown = false;
