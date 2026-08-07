@@ -367,6 +367,35 @@
         outline: 3px solid var(--dlc-focus);
         outline-offset: -3px;
       }
+      /* Faded peek — a sliver of the neighboring slides shows at each edge
+         (--dlc-peek, stock engine knob) and fades out via a mask on the track:
+         same technique the gallery thumb strip uses. At the ends the fade covers
+         empty peek padding, so nothing readable is ever lost. Pure CSS, no JS. */
+      .demo-peek {
+        --dlc-per-view: 1;
+        --dlc-peek: 12vw;
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #262626;
+        padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+      }
+      @media (min-width: 1024px) {
+        .demo-peek {
+          --dlc-per-view: 2;
+          --dlc-peek: 6rem;
+        }
+      }
+      .demo-peek .dl-carousel-arrow--prev {
+        inset-inline-start: 0;
+      }
+      .demo-peek .dl-carousel-arrow--next {
+        inset-inline-end: 0;
+      }
+      .demo-peek .dl-carousel-track {
+        mask-image: linear-gradient(to right, transparent, #000 var(--dlc-peek), #000 calc(100% - var(--dlc-peek)), transparent);
+      }
+      .demo-peek img {
+        border-radius: 8px;
+      }
       .demo-card h3 {
         margin: 0.75rem 1rem 0.25rem;
         font-size: 1.05rem;
@@ -774,6 +803,27 @@
             The dealer "model bar": <code>data-step="slide"</code> advances one card per arrow click (the slick <code>slidesToScroll: 1</code> feel), the whole card is the link, dots are hidden with
             site CSS (arrows + swipe remain — matching every production model bar we sampled). Images are ChromeData cutouts from the Chrome Photo Builder (angle 1, transparent PNG); on a DealerOn
             site reference them as <code>#CHROMEPHOTOPATH|StyleID|1|640p#</code> and re-theme with <code>--dlc-*</code> per OEM.
+          </p>
+        </details>
+      </section>
+
+      <section class="demo-section demo-wide" id="peek">
+        <h2 id="peek-h">Faded peek</h2>
+        <div class="dl-carousel demo-peek" data-slider aria-labelledby="peek-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide"><img src="img/photo-1.jpg" width="1200" height="750" alt="Blue Chevrolet Camaro in the desert at dusk" loading="lazy" decoding="async" /></li>
+            <li class="dl-carousel-slide"><img src="img/photo-2.jpg" width="1200" height="750" alt="White Ford Mustang in a neon-lit parking garage" loading="lazy" decoding="async" /></li>
+            <li class="dl-carousel-slide"><img src="img/photo-3.jpg" width="1200" height="750" alt="Hands on the steering wheel at dusk" loading="lazy" decoding="async" /></li>
+            <li class="dl-carousel-slide"><img src="img/photo-4.jpg" width="1200" height="750" alt="Audi R8 tail lights on a city street at sunset" loading="lazy" decoding="async" /></li>
+            <li class="dl-carousel-slide"><img src="img/photo-5.jpg" width="1200" height="750" alt="Technician topping up engine oil" loading="lazy" decoding="async" /></li>
+            <li class="dl-carousel-slide"><img src="img/photo-6.jpg" width="1200" height="750" alt="Classic BMW grilles lined up in a museum" loading="lazy" decoding="async" /></li>
+          </ul>
+        </div>
+        <details>
+          <summary>How this variant is built</summary>
+          <p>
+            Two stock knobs and one mask: <code>--dlc-peek</code> (engine CSS — pads the track and shifts the snap points so a sliver of each neighbor stays visible) plus a
+            <code>mask-image</code> gradient on the track whose fade width equals the peek. No page script, no engine changes, safe under reduced motion.
           </p>
         </details>
       </section>
