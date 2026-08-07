@@ -26,3 +26,11 @@ models (except the Camaro) — swap in official OEM assets for real use.
 | model-malibu.jpg | photo-1571987502227-9231b837d92a |
 | model-camaro.jpg | photo-1552519507-da3b142c6e3d |
 | model-corvette.jpg | photo-1605559424843-9e4c228bf1c2 |
+
+## Chrome model cutouts
+
+`chrome-*.png` are ChromeData (JD Power) licensed library renders served through
+the DealerOn platform (Chrome Photo Builder, angle 1, transparent PNG at 320/640),
+fetched from a live DealerOn storefront. Internal demo use for DealerOn team
+presentation; on a production DealerOn site reference them with
+`#CHROMEPHOTOPATH|StyleID|1|640p#` instead of copying files.
