@@ -396,6 +396,37 @@
       .demo-peek img {
         border-radius: 8px;
       }
+      /* Mixed image sizes — the default card recipe is indifferent to source
+         dimensions: a fixed aspect-ratio box + object-fit: cover normalizes
+         whatever the CMS user uploads (use contain for cutouts/logos). */
+      .demo-mixed {
+        --dlc-per-view: 1;
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #262626;
+        padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+      }
+      @media (min-width: 640px) {
+        .demo-mixed {
+          --dlc-per-view: 2;
+        }
+      }
+      @media (min-width: 1024px) {
+        .demo-mixed {
+          --dlc-per-view: 3;
+        }
+      }
+      .demo-mixed .dl-carousel-arrow--prev {
+        inset-inline-start: 0;
+      }
+      .demo-mixed .dl-carousel-arrow--next {
+        inset-inline-end: 0;
+      }
+      .demo-mixed .demo-card img {
+        aspect-ratio: 4 / 3;
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: cover;
+      }
       .demo-card h3 {
         margin: 0.75rem 1rem 0.25rem;
         font-size: 1.05rem;
@@ -824,6 +855,64 @@
           <p>
             Two stock knobs and one mask: <code>--dlc-peek</code> (engine CSS — pads the track and shifts the snap points so a sliver of each neighbor stays visible) plus a
             <code>mask-image</code> gradient on the track whose fade width equals the peek. No page script, no engine changes, safe under reduced motion.
+          </p>
+        </details>
+      </section>
+
+      <section class="demo-section demo-wide" id="mixed">
+        <h2 id="mixed-h">Mixed image sizes</h2>
+        <div class="dl-carousel demo-mixed" data-slider aria-labelledby="mixed-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img src="img/mixed-1.jpg" width="500" height="500" alt="Black Porsche Panamera, square crop" loading="lazy" decoding="async" />
+                <h3>500 × 500 source</h3>
+                <p>Square upload — cover-cropped to 4:3.</p>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img src="img/mixed-2.jpg" width="375" height="500" alt="Blue BMW 4 Series coupe, portrait crop" loading="lazy" decoding="async" />
+                <h3>375 × 500 source</h3>
+                <p>Portrait upload — same rendered box.</p>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img src="img/mixed-3.jpg" width="800" height="350" alt="White Ford Expedition on a desert road, wide crop" loading="lazy" decoding="async" />
+                <h3>800 × 350 source</h3>
+                <p>Wide banner upload — same rendered box.</p>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img src="img/mixed-4.jpg" width="640" height="480" alt="White Honda CR-V near snowy mountains, 4:3 crop" loading="lazy" decoding="async" />
+                <h3>640 × 480 source</h3>
+                <p>Already 4:3 — renders untouched.</p>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img src="img/mixed-5.jpg" width="300" height="500" alt="White Nissan GT-R, tall narrow crop" loading="lazy" decoding="async" />
+                <h3>300 × 500 source</h3>
+                <p>Tall narrow upload — same rendered box.</p>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-card">
+                <img src="img/vehicle-6.jpg" width="800" height="500" alt="Light blue Fiat 500 parked beside a stone building" loading="lazy" decoding="async" />
+                <h3>800 × 500 source</h3>
+                <p>Standard landscape upload.</p>
+              </article>
+            </li>
+          </ul>
+        </div>
+        <details>
+          <summary>The recipe (why nothing here breaks)</summary>
+          <p>
+            Every card image gets <code>aspect-ratio: 4 / 3; inline-size: 100%; object-fit: cover;</code> — the box is fixed, the source fills it, and any upload dimensions render identically. Keep
+            real <code>width</code>/<code>height</code> attributes (CLS stays 0) and prefer uniform assets anyway: cover-cropping costs edges, and consistent art always looks better than rescued art.
+            Use <code>object-fit: contain</code> instead for cutouts and logos.
           </p>
         </details>
       </section>

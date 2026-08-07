@@ -27,6 +27,9 @@ models (except the Camaro) — swap in official OEM assets for real use.
 | model-camaro.jpg | photo-1552519507-da3b142c6e3d |
 | model-corvette.jpg | photo-1605559424843-9e4c228bf1c2 |
 
+`mixed-*.jpg` are crops of the `vehicle-*.jpg` files above (same Unsplash sources),
+deliberately mismatched dimensions for the "Mixed image sizes" demo section.
+
 ## Chrome model cutouts
 
 `chrome-*.png` are ChromeData (JD Power) licensed library renders served through
