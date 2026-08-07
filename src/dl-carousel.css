@@ -59,9 +59,16 @@
   display: none;
 }
 
-/* JS sets data-dragging only while a mouse drag is live. The override must
-   reach every child: links resolve their own pointer cursor, so a cursor set
-   on the track alone never shows the closed hand over the cards themselves. */
+/* Cursor cues for mouse drag. JS marks a drag-enabled track data-draggable at
+   init and data-dragging only while a drag is live. Both rules must reach
+   every child: links carry their own pointer cursor, so a cursor set on the
+   track alone never shows the hand over the cards themselves — and the cards
+   cover most of the strip. */
+.dl-carousel-track[data-draggable],
+.dl-carousel-track[data-draggable] * {
+  cursor: grab;
+}
+
 .dl-carousel-track[data-dragging],
 .dl-carousel-track[data-dragging] * {
   cursor: grabbing !important;

@@ -374,7 +374,7 @@ export class Slider {
       t = this.track;
     let startX = 0,
       startLeft = 0;
-    t.style.cursor = 'grab';
+    t.setAttribute('data-draggable', ''); // grab-cursor hook — see the cursor rules in the CSS
     t.addEventListener(
       'pointerdown',
       (e) => {
