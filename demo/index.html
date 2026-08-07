@@ -417,13 +417,15 @@
       /* Faded peek — a sliver of the neighboring slides shows at each edge
          (--dlc-peek, stock engine knob) and fades out via a mask on the track:
          same technique the gallery thumb strip uses. At the ends the fade covers
-         empty peek padding, so nothing readable is ever lost. Pure CSS, no JS. */
+         empty peek padding, so nothing readable is ever lost. Pure CSS, no JS.
+         Arrows float OVER the faded edge (no outer gutter) — the fade zone is
+         near page-white under them, so a bare dark chevron stays legible and
+         there is no dead space beside the arrow at the ends. */
       .demo-peek {
         --dlc-per-view: 1;
         --dlc-peek: 12vw;
         --dlc-arrow-bg: transparent;
         --dlc-arrow-fg: #262626;
-        padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
       }
       @media (min-width: 1024px) {
         .demo-peek {
@@ -432,10 +434,10 @@
         }
       }
       .demo-peek .dl-carousel-arrow--prev {
-        inset-inline-start: 0;
+        inset-inline-start: 0.25rem;
       }
       .demo-peek .dl-carousel-arrow--next {
-        inset-inline-end: 0;
+        inset-inline-end: 0.25rem;
       }
       .demo-peek .dl-carousel-track {
         mask-image: linear-gradient(to right, transparent, #000 var(--dlc-peek), #000 calc(100% - var(--dlc-peek)), transparent);
@@ -553,6 +555,135 @@
         outline: 3px solid var(--dlc-focus);
         outline-offset: -3px;
       }
+      /* Video testimonials — rebuild of the Bordas video-scroller: dark band,
+         one slide per view (poster left, name + tagline + Click-to-Watch
+         right), video NEVER plays inline — posters open the <dialog> at the
+         end of the page (page script). No autoplay: the source site rotates
+         video cards every 3 s, which fights the content. */
+      .demo-video-section {
+        box-sizing: border-box; /* demo-wide sets the full width — padding must not add to it */
+        padding: 1.5rem 1rem 2rem;
+        background: #16324f;
+        border-radius: 8px;
+      }
+      .demo-video-section h2 {
+        color: #fff;
+        text-align: center;
+      }
+      .demo-video-section details {
+        color: #d8e2ec;
+      }
+      .demo-video {
+        --dlc-per-view: 1;
+        --dlc-controls-space: 0px; /* keep the unit — unitless 0 breaks the arrow-centering calc */
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #fff;
+        --dlc-focus: #fff; /* blue ring is invisible on the navy band */
+        padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+      }
+      .demo-video .dl-carousel-dots {
+        display: none;
+      }
+      .demo-video .dl-carousel-arrow--prev {
+        inset-inline-start: 0;
+      }
+      .demo-video .dl-carousel-arrow--next {
+        inset-inline-end: 0;
+      }
+      .demo-video-card {
+        display: grid;
+        gap: 1.5rem;
+        align-items: center;
+        color: #fff;
+      }
+      @media (min-width: 768px) {
+        .demo-video-card {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      .demo-video-poster {
+        position: relative;
+        display: block;
+        padding: 0;
+        cursor: pointer;
+        background: none;
+        border: 0;
+      }
+      .demo-video-poster img {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+        border-radius: 8px;
+      }
+      .demo-video-play {
+        position: absolute;
+        inset: 0;
+        display: grid;
+        place-items: center;
+      }
+      .demo-video-body h3 {
+        margin: 0 0 0.5rem;
+        font-size: 1.6rem;
+      }
+      .demo-video-body p {
+        margin: 0 0 1rem;
+        color: #d8e2ec;
+      }
+      .demo-video-open {
+        padding: 0 0 0.35rem;
+        font: inherit;
+        font-weight: 600;
+        color: #fff;
+        cursor: pointer;
+        background: none;
+        border: 0;
+        border-block-end: 1px solid rgb(255 255 255 / 45%);
+      }
+      .demo-video-poster:focus-visible,
+      .demo-video-open:focus-visible {
+        outline: 3px solid #fff;
+        outline-offset: -3px;
+      }
+      .demo-video-dialog {
+        inline-size: min(720px, 90vw);
+        padding: 1rem;
+        border: 0;
+        border-radius: 8px;
+      }
+      .demo-video-dialog::backdrop {
+        background: rgb(0 0 0 / 60%);
+      }
+      .demo-video-dialog-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 1rem;
+        margin-block-end: 0.75rem;
+      }
+      .demo-video-dialog-head h3 {
+        margin: 0;
+      }
+      .demo-video-close {
+        display: grid;
+        place-items: center;
+        inline-size: 36px;
+        block-size: 36px;
+        font-size: 1.25rem;
+        cursor: pointer;
+        background: #f0f0f0;
+        border: 0;
+        border-radius: 50%;
+      }
+      .demo-video-frame {
+        display: grid;
+        place-items: center;
+        aspect-ratio: 16 / 9;
+        padding: 1rem;
+        color: #eee;
+        text-align: center;
+        background: #111;
+        border-radius: 6px;
+      }
       .demo-card h3 {
         margin: 0.75rem 1rem 0.25rem;
         font-size: 1.05rem;
@@ -643,8 +774,8 @@
 
       <nav class="demo-toc" aria-label="On this page">
         <a href="#vehicles">Featured vehicles</a> · <a href="#modelbar">Model bar</a> · <a href="#modelbar-tabs">Model bar (tabs)</a> · <a href="#models">Model cards</a> ·
-        <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> · <a href="#cards">Service cards</a> · <a href="#gallery">Gallery</a> · <a href="#reviews">Reviews</a> ·
-        <a href="#stock">Stock look</a>
+        <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> · <a href="#cards">Service cards</a> · <a href="#video">Video testimonials</a> · <a href="#gallery">Gallery</a> ·
+        <a href="#reviews">Reviews</a> · <a href="#stock">Stock look</a>
       </nav>
 
       <!-- The carousel itself is the labelled landmark (role=region + aria-labelledby).
@@ -1269,6 +1400,77 @@
         </details>
       </section>
 
+      <section class="demo-section demo-video-section demo-wide" id="video">
+        <h2 id="video-h">Video testimonials</h2>
+        <div class="dl-carousel demo-video" data-slider aria-labelledby="video-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <article class="demo-video-card">
+                <button type="button" class="demo-video-poster" data-video-title="Dana's story" aria-label="Play video: Dana's story">
+                  <img src="img/photo-1.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" />
+                  <span class="demo-video-play" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="64" height="64">
+                      <circle cx="12" cy="12" r="11" fill="rgb(255 255 255 / 85%)" />
+                      <path d="M10 8l6 4-6 4z" fill="#16324f" />
+                    </svg>
+                  </span>
+                </button>
+                <div class="demo-video-body">
+                  <h3>Dana W.</h3>
+                  <p>Every customer has a story. Hear how Dana's Saturday-morning test drive turned into new keys by lunch.</p>
+                  <button type="button" class="demo-video-open" data-video-title="Dana's story">Click to watch</button>
+                </div>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-video-card">
+                <button type="button" class="demo-video-poster" data-video-title="Marcus's story" aria-label="Play video: Marcus's story">
+                  <img src="img/photo-4.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" />
+                  <span class="demo-video-play" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="64" height="64">
+                      <circle cx="12" cy="12" r="11" fill="rgb(255 255 255 / 85%)" />
+                      <path d="M10 8l6 4-6 4z" fill="#16324f" />
+                    </svg>
+                  </span>
+                </button>
+                <div class="demo-video-body">
+                  <h3>Marcus T.</h3>
+                  <p>A fair trade-in number over the phone, honored at the desk — Marcus explains why he came back a second time.</p>
+                  <button type="button" class="demo-video-open" data-video-title="Marcus's story">Click to watch</button>
+                </div>
+              </article>
+            </li>
+            <li class="dl-carousel-slide">
+              <article class="demo-video-card">
+                <button type="button" class="demo-video-poster" data-video-title="Gene and Marta's story" aria-label="Play video: Gene and Marta's story">
+                  <img src="img/vehicle-6.jpg" width="800" height="500" alt="" loading="lazy" decoding="async" />
+                  <span class="demo-video-play" aria-hidden="true">
+                    <svg viewBox="0 0 24 24" width="64" height="64">
+                      <circle cx="12" cy="12" r="11" fill="rgb(255 255 255 / 85%)" />
+                      <path d="M10 8l6 4-6 4z" fill="#16324f" />
+                    </svg>
+                  </span>
+                </button>
+                <div class="demo-video-body">
+                  <h3>Gene &amp; Marta L.</h3>
+                  <p>Five years of oil changes and never an upsell — the longtime service customers on why trust matters more than price.</p>
+                  <button type="button" class="demo-video-open" data-video-title="Gene and Marta's story">Click to watch</button>
+                </div>
+              </article>
+            </li>
+          </ul>
+        </div>
+        <details>
+          <summary>How this variant is built</summary>
+          <p>
+            Rebuild of the video-testimonial scroller pattern: one slide per view, poster + play button left, name and tagline right. The video <em>never</em> plays inline — both the poster and "Click
+            to watch" open the native <code>&lt;dialog&gt;</code> at the end of this page (page script; Esc and backdrop-click close for free). The dialog ships a placeholder frame — on a real site
+            drop your YouTube/Vimeo <code>&lt;iframe&gt;</code> in and remember to stop playback on close. No autoplay on this carousel: the reference site rotates video cards every 3 seconds, which
+            fights the content.
+          </p>
+        </details>
+      </section>
+
       <section class="demo-section" id="gallery">
         <h2 id="gallery-h">Photo gallery</h2>
         <div class="dl-carousel demo-gallery" data-slider data-gallery aria-labelledby="gallery-h">
@@ -1475,6 +1677,15 @@
         </ul>
       </footer>
     </main>
+    <dialog class="demo-video-dialog" id="video-dialog" aria-label="Video player">
+      <div class="demo-video-dialog-head">
+        <h3 class="demo-video-dialog-title">Video</h3>
+        <button type="button" class="demo-video-close" aria-label="Close video">✕</button>
+      </div>
+      <div class="demo-video-frame">
+        <p>Placeholder — on a real site your YouTube/Vimeo <code>&lt;iframe&gt;</code> goes here.</p>
+      </div>
+    </dialog>
     <script>
       // Site-level enhancement (models carousel): drive the sliding bar
       // thumb from the library's own state — no library changes needed.
@@ -1496,6 +1707,24 @@
           attributeFilter: ['class'],
         });
         sync();
+      });
+      // Video testimonial modal: native <dialog> — Esc closes and focus is
+      // trapped for free; backdrop click is the only wiring needed. The
+      // carousel is untouched (posters are plain buttons in authored HTML).
+      addEventListener('DOMContentLoaded', () => {
+        const dialog = document.getElementById('video-dialog');
+        if (!dialog) return;
+        const title = dialog.querySelector('.demo-video-dialog-title');
+        for (const btn of document.querySelectorAll('[data-video-title]')) {
+          btn.addEventListener('click', () => {
+            title.textContent = btn.dataset.videoTitle;
+            dialog.showModal();
+          });
+        }
+        dialog.querySelector('.demo-video-close').addEventListener('click', () => dialog.close());
+        dialog.addEventListener('click', (e) => {
+          if (e.target === dialog) dialog.close();
+        });
       });
       // Site-level tabs (model bar with tabs): APG tabs pattern with automatic
       // activation — arrow keys move focus AND selection, panes toggle via

@@ -109,9 +109,18 @@ Steven flagged the Skaug (client32811) practice-area carousel as "the model bar 
 cover image box, heading, copy, decorative "Read more" line), `data-step="slide"`, arrows only, dots hidden, 1/2/3 per view. Equal heights come free from the flex track plus
 `flex-grow` on the copy. The source site's mobile center-mode dim remains out of scope (§4 center-mode snapping).
 
+### D9 — Video testimonials (added mid-implementation at Steven's request, 2026-08-07)
+
+Rebuild of the Bordas video-scroller (`#video` demo section): dark full-width band, one slide per view, poster + play button left / name + tagline + "Click to watch" right. The video
+never plays inline — both triggers open a native `<dialog>` (page script; Esc + backdrop close, focus handling free) holding a placeholder 16:9 frame for the site's real embed.
+Deliberately no autoplay (the source rotates video cards every 3 s — fights the content; research doc §4). D3 note, same date: the peek section's arrows moved from an outer gutter
+onto the faded edge itself — at the ends the outer-gutter layout doubled up with the empty peek padding into dead space Steven flagged.
+
 ## 4. Deliberately out of scope
 
-- **Fade transition mode** (Hoag quotes, Greer gallery, Ford hero) — v1 non-goal; substitution is slide-in-place. Revisit only with a real client requirement.
+- **Fade transition mode** (Hoag quotes, Greer gallery, Ford hero) — v1 non-goal; substitution is slide-in-place. **2026-08-07 follow-up (Steven): Cliff's "faded images" ask likely
+  also meant a fade-transition option — this is now the first queued follow-up, but it stays unbuilt until it gets its own design + budget conversation: crossfade can't ride the
+  scroll-snap track (slides physically translate; scroll-driven-animation APIs are Chromium-only, banned), so it means a stacked-slides engine mode with real byte and a11y cost.**
 - **Center-mode snapping** (Skaug mobile) — engine scroll math assumes `start` alignment.
 - ~~**Tabs wrapping multiple carousel instances**~~ — moved into scope as D7 above.
 - **Video-modal card, live-review widgets (Trustindex), lightbox gallery** — page/site territory, not slider variations.
