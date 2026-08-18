@@ -575,7 +575,7 @@ git add demo/index.html && git commit -m "Add Kia Demo One tabbed model bar with
 
 **Nothing deploys this round** (spec D6, Steven 2026-08-18). This task writes the document only.
 
-- [ ] **Step 1: Write the document**
+- [x] **Step 1: Write the document**
 
 Cover, in this order:
 
@@ -589,11 +589,11 @@ Cover, in this order:
    no per-site engine forks
 ```
 
-- [ ] **Step 2: State the deployment status explicitly at the top**
+- [x] **Step 2: State the deployment status explicitly at the top**
 
 A reader must not mistake this for a live runbook. Open with a line saying the files are not on FTP yet and this documents the intended process.
 
-- [ ] **Step 3: Commit**
+- [x] **Step 3: Commit**
 
 ```bash
 npm run validate
