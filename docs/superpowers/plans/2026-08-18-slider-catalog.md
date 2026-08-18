@@ -422,21 +422,21 @@ git commit -m "Add fade mode for 1-up hero carousels"
 - Consumes: `data-fade`, `--dlc-fade-ms`, `.is-current` from Task 3
 - Produces: the `.demo-hero` recipe referenced by Task 7's docs
 
-- [ ] **Step 1: Build the section**
+- [x] **Step 1: Build the section**
 
 Full-bleed 1-up hero matching the estate anatomy (census §3): whole-slide link, `<picture>` with mobile/desktop `srcset`, `data-autoplay="5000"`, dots. Reuse existing `demo/img/photo-*.jpg` — no new assets.
 
 Place it **first** among the demo sections: it is the pattern 68/76 sites lead with, and the catalog should open with it.
 
-- [ ] **Step 2: Make the pause control genuinely compliant**
+- [x] **Step 2: Make the pause control genuinely compliant**
 
 The platform's is 16 × 6 px. Ours must be **at least 24 × 24 CSS px** (WCAG 2.5.8 AA) with a visible focus ring. Set this in the section CSS via the existing `--dlc-*` knobs; do not special-case it in the engine.
 
-- [ ] **Step 3: Add the comparison table to the details block**
+- [x] **Step 3: Add the comparison table to the details block**
 
 This section's teaching value is that it is an accessible replacement, so state what it fixes — pause button size, real `<button>` dots vs. `<li role="button">`, a terse status region vs. `aria-live="off"`, and reduced-motion handling. Cite the census doc.
 
-- [ ] **Step 4: Browser-verify**
+- [x] **Step 4: Browser-verify**
 
 ```
 - CLS = 0 on load (the grid-stacking claim, measured not assumed)
@@ -445,7 +445,7 @@ This section's teaching value is that it is an accessible replacement, so state 
 - with JS disabled, all hero slides are visible and readable as a stack
 ```
 
-- [ ] **Step 5: Add the TOC entry and commit**
+- [x] **Step 5: Add the TOC entry and commit**
 
 ```bash
 npm run validate
