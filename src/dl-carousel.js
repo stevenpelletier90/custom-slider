@@ -417,7 +417,18 @@ export class Slider {
       // _pointerDown, and goTo refuses to fight an "active" drag — clear it.
       this._pointerDown = false;
       this._measure();
-      this.goTo(Math.round(t.scrollLeft / this.stride)); // settle on the nearest slide
+      // Settling on the NEAREST slide alone needs the drag to clear half a
+      // stride. That is fine for narrow cards, but a 1-per-view strip has a
+      // stride as wide as the track (a 1056 px hero at 1200 px viewport), so
+      // no natural drag ever reaches it and the track always springs back.
+      // Mouse drag has no momentum to carry it over the midpoint the way a
+      // touch flick does, so a decisive gesture must count for a slide on its
+      // own — direction, not just distance travelled.
+      const from = Math.round(startLeft / this.stride);
+      let to = Math.round(t.scrollLeft / this.stride);
+      const moved = t.scrollLeft - startLeft;
+      if (to === from && Math.abs(moved) > this.stride * 0.15) to = from + Math.sign(moved);
+      this.goTo(to);
     };
     t.addEventListener('pointerup', end, { signal: sig });
     t.addEventListener('pointercancel', end, { signal: sig });
