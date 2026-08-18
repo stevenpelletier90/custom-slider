@@ -830,6 +830,46 @@
         background: #fff;
         border-radius: 4px;
       }
+      .code-label {
+        margin: 0.9rem 0 0.3rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-transform: uppercase;
+        color: #5f6368;
+      }
+      .copy-lead {
+        margin-block-start: 1rem;
+      }
+      /* The copy button sits over its own <pre>; the wrapper is added by script
+         so the markup stays clean for anyone reading the source. */
+      .code-wrap {
+        position: relative;
+      }
+      .code-copy {
+        position: absolute;
+        inset-block-start: 0.5rem;
+        inset-inline-end: 0.5rem;
+        padding: 0.35rem 0.7rem;
+        font: inherit;
+        font-size: 0.8rem;
+        color: #16324f;
+        cursor: pointer;
+        background: #fff;
+        border: 1px solid #c4ced8;
+        border-radius: 4px;
+      }
+      .code-copy:hover {
+        background: #eef2f6;
+      }
+      .code-copy:focus-visible {
+        outline: 3px solid #16324f;
+        outline-offset: 2px;
+      }
+      .code-copy[data-copied] {
+        color: #1f6f4a;
+        border-color: #1f6f4a;
+      }
       .demo-ladder-table {
         inline-size: 100%;
         margin-block: 0.75rem;
@@ -980,6 +1020,34 @@
             All 76 demo homepages were checked for this, and the banner behaviour was confirmed by watching the real pages rather than reading their code — the pause button, for instance, does not
             appear in the page source at all, because it is added after the page loads. Full write-up in <code>docs/research/2026-08-18-oem-demo-slider-census.md</code>.
           </p>
+          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box.</p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-hero dl-carousel" data-slider data-fade data-autoplay="5000" aria-label="Featured offers"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;
+      &lt;a href="/specials/" aria-label="Summer Sales Event - shop current offers"&gt;
+        &lt;picture&gt;
+          &lt;source media="(max-width: 768px)" srcset="#MISCPATH#hero-summer-mobile.jpg"&gt;
+          &lt;img src="#MISCPATH#hero-summer.jpg" width="1900" height="712" alt=""&gt;
+        &lt;/picture&gt;
+        &lt;span class="my-hero-copy"&gt;
+          &lt;strong&gt;Summer Sales Event&lt;/strong&gt;
+          &lt;span&gt;Shop current offers&lt;/span&gt;
+        &lt;/span&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;!-- repeat the &lt;li&gt; for each banner --&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>.my-hero { --dlc-per-view: 1; --dlc-fade-ms: 600ms; overflow: hidden; border-radius: 8px; }
+.my-hero .dl-carousel-slide { position: relative; }
+.my-hero a { display: block; color: inherit; text-decoration: none; }
+.my-hero img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 2; object-fit: cover; }
+@media (min-width: 769px) { .my-hero img { aspect-ratio: 16 / 6; } }
+.my-hero-copy { position: absolute; inset-block-end: 0; inline-size: 100%; padding: 2.5rem 1.25rem 1.25rem; color: #fff; background: linear-gradient(to top, rgb(0 0 0 / 78%), rgb(0 0 0 / 0%)); }
+.my-hero-copy strong { display: block; font-size: clamp(1.25rem, 3.2vw, 2rem); }
+.my-hero-copy span { display: inline-block; margin-block-start: 0.6rem; padding: 0.45rem 1rem; font-weight: 600; color: #16324f; background: #fff; border-radius: 4px; }</code></pre>
         </details>
       </section>
 
@@ -1181,6 +1249,26 @@
             the image properly (<code>alt="2026 Chevrolet Silverado 1500 LT in Summit White"</code>) so it can turn up in image search — and then give the link that wraps the card a short label of its
             own, like <code>aria-label="Explore the Silverado"</code>. Otherwise a screen reader reads the full photo description and the heading together every time, which gets tiring fast.
           </p>
+          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box.</p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-models dl-carousel" data-slider data-rewind="false" aria-label="Explore our models"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;
+      &lt;a class="my-model-card" href="/new-inventory/index.htm?model=Silverado" aria-label="Explore the Silverado"&gt;
+        &lt;img src="#MISCPATH#model-silverado.jpg" width="600" height="1000" alt="2026 Chevrolet Silverado 1500 LT in Summit White"&gt;
+        &lt;h3&gt;Silverado&lt;/h3&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;!-- repeat the &lt;li&gt; for each model --&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>.my-models { --dlc-per-view: 1; --dlc-gap: 1rem; }
+@media (min-width: 640px)  { .my-models { --dlc-per-view: 2; } }
+@media (min-width: 1024px) { .my-models { --dlc-per-view: 4; } }
+.my-model-card { position: relative; display: block; color: #fff; text-decoration: none; }
+.my-model-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; border-radius: 6px; }
+.my-model-card h3 { position: absolute; inset-block-end: 0; inline-size: 100%; margin: 0; padding: 2rem 1rem 1rem; font-size: 1.1rem; background: linear-gradient(to top, rgb(0 0 0 / 75%), rgb(0 0 0 / 0%)); }</code></pre>
         </details>
       </section>
 
@@ -1411,6 +1499,33 @@
           <pre><code>.my-modelbar { --dlc-per-view: 2; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 5; } }</code></pre>
+          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box.</p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Explore our lineup"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;
+      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=Silverado" aria-label="Explore the Silverado 1500"&gt;
+        &lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Chevrolet Silverado 1500"&gt;
+        &lt;p&gt;Silverado 1500&lt;/p&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;!-- repeat the &lt;li&gt; for each model --&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>/* Cards per view: use YOUR brand's row from the table above. This is the
+   most common one (13 sites). */
+.my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+@media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
+@media (min-width: 769px) { .my-modelbar { --dlc-per-view: 5; } }
+
+/* Arrows only - hide the dots and reclaim the space they reserved. */
+.my-modelbar .dl-carousel-dots { display: none; }
+.my-modelbar { --dlc-controls-space: 0px; }
+
+.my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
+.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
+.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
         </details>
       </section>
 
@@ -1674,6 +1789,65 @@
               </tr>
             </tbody>
           </table>
+          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box.</p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-tabs" data-tabs&gt;
+  &lt;div role="tablist" aria-label="Shop by type"&gt;
+    &lt;button type="button" role="tab" id="tab-trucks" aria-controls="pane-trucks" aria-selected="true"&gt;Trucks&lt;/button&gt;
+    &lt;button type="button" role="tab" id="tab-suvs" aria-controls="pane-suvs" aria-selected="false" tabindex="-1"&gt;SUVs&lt;/button&gt;
+  &lt;/div&gt;
+
+  &lt;div id="pane-trucks" role="tabpanel" aria-labelledby="tab-trucks"&gt;
+    &lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Trucks"&gt;
+      &lt;ul class="dl-carousel-track"&gt;
+        &lt;li class="dl-carousel-slide"&gt;...model card...&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+
+  &lt;div id="pane-suvs" role="tabpanel" aria-labelledby="tab-suvs" hidden&gt;
+    &lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="SUVs"&gt;
+      &lt;ul class="dl-carousel-track"&gt;
+        &lt;li class="dl-carousel-slide"&gt;...model card...&lt;/li&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  // Tab switching. Each pane holds its own slider; they look after themselves.
+  addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-tabs]').forEach(function (wrap) {
+      var tabs = Array.prototype.slice.call(wrap.querySelectorAll('[role="tab"]'));
+      var panes = tabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
+      function select(i) {
+        tabs.forEach(function (t, j) {
+          t.setAttribute('aria-selected', String(i === j));
+          t.tabIndex = i === j ? 0 : -1;
+          panes[j].hidden = i !== j;
+        });
+        wrap.dataset.tab = i;
+      }
+      tabs.forEach(function (t, i) { t.addEventListener('click', function () { select(i); }); });
+      wrap.querySelector('[role="tablist"]').addEventListener('keydown', function (e) {
+        var i = tabs.indexOf(e.target); if (i === -1) return;
+        var n = e.key === 'ArrowRight' ? (i + 1) % tabs.length : e.key === 'ArrowLeft' ? (i - 1 + tabs.length) % tabs.length : null;
+        if (n === null) return;
+        e.preventDefault(); tabs[n].focus(); select(n);
+      });
+      select(0);
+    });
+  });
+&lt;/script&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>/* The model bar inside each pane uses the same CSS as the plain model bar. */
+.my-tabs { padding: 1rem; background-color: #eef2f6; border-radius: 8px; transition: background-color 500ms ease; }
+.my-tabs[data-tab="1"] { background-color: #e8eee9; }
+@media (prefers-reduced-motion: reduce) { .my-tabs { transition: none; } }
+
+.my-tabs [role="tablist"] { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-block-end: 1rem; }
+.my-tabs [role="tab"] { padding: 0.5rem 1rem; cursor: pointer; background: #fff; border: 1px solid #c4ced8; border-radius: 999px; }
+.my-tabs [role="tab"][aria-selected="true"] { color: #fff; background: #16324f; border-color: #16324f; }</code></pre>
         </details>
       </section>
 
@@ -1700,6 +1874,25 @@
             softens instead of being cut off. Both are CSS. Nothing is added to the page, nothing changes in the slider, and it behaves correctly for people who have asked their device to reduce
             motion.
           </p>
+          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box.</p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-peek dl-carousel" data-slider aria-label="Gallery"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;
+      &lt;img src="#MISCPATH#photo-1.jpg" width="1200" height="750" alt="Describe the photo"&gt;
+    &lt;/li&gt;
+    &lt;!-- repeat the &lt;li&gt; for each photo --&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>.my-peek { --dlc-per-view: 1; --dlc-peek: 48px; --dlc-gap: 1rem; }
+@media (min-width: 1024px) { .my-peek { --dlc-per-view: 3; } }
+.my-peek img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; }
+
+/* Fade the peeking slivers at both edges. The fade width matches --dlc-peek. */
+.my-peek .dl-carousel-track {
+  mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent);
+}</code></pre>
         </details>
       </section>
 
@@ -1843,6 +2036,37 @@ object-fit: cover;</code></pre>
             fine where the only visible text is a heading — the model bar cards are a good example, where "Explore the Silverado 1500" does contain "Silverado 1500". Automated checks do flag this, but
             it does not count towards the score, so the page can report a perfect 100 while still failing it.
           </p>
+          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box.</p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-cards dl-carousel" data-slider data-step="slide" aria-label="Our services"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;
+      &lt;a class="my-card" href="/service/"&gt;
+        &lt;span class="my-card-media"&gt;
+          &lt;img src="#MISCPATH#service-center.jpg" width="800" height="500" alt=""&gt;
+        &lt;/span&gt;
+        &lt;span class="my-card-body"&gt;
+          &lt;strong&gt;Service Center&lt;/strong&gt;
+          &lt;span&gt;Factory-trained technicians, genuine parts, and online scheduling.&lt;/span&gt;
+          &lt;span class="my-card-more" aria-hidden="true"&gt;Read more&lt;/span&gt;
+        &lt;/span&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;!-- repeat the &lt;li&gt; for each card --&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>.my-cards { --dlc-per-view: 1; --dlc-gap: 1rem; }
+@media (min-width: 640px)  { .my-cards { --dlc-per-view: 2; } }
+@media (min-width: 1024px) { .my-cards { --dlc-per-view: 3; } }
+
+/* Equal heights come free: the row is already flex, so the card stretches
+   and flex-grow on the copy pushes every "Read more" to the same line. */
+.my-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-decoration: none; background: #fff; border: 1px solid #dde3e9; border-radius: 6px; overflow: hidden; }
+.my-card-media img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
+.my-card-body { display: flex; flex-direction: column; flex-grow: 1; gap: 0.5rem; padding: 1rem; }
+.my-card-body strong { font-size: 1.1rem; }
+.my-card-more { margin-block-start: auto; font-weight: 600; color: #16324f; }</code></pre>
         </details>
       </section>
 
@@ -1926,6 +2150,71 @@ object-fit: cover;</code></pre>
             so there is no copyrighted footage sitting in a public demo. The cards themselves do not rotate on their own — the site we based this on flips through them every 3 seconds, which fights
             you when you are trying to read one.
           </p>
+          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box.</p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;!-- The cards --&gt;
+&lt;div class="my-videos dl-carousel" data-slider aria-label="Customer stories"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;
+      &lt;article class="my-video-card"&gt;
+        &lt;button type="button" class="my-video-poster" data-video-title="Dana's story" data-video-id="YOUR_YOUTUBE_ID" aria-label="Play video: Dana's story"&gt;
+          &lt;img src="#MISCPATH#dana-poster.jpg" width="1200" height="750" alt=""&gt;
+        &lt;/button&gt;
+        &lt;div&gt;
+          &lt;h3&gt;Dana W.&lt;/h3&gt;
+          &lt;p&gt;Hear how Dana's Saturday test drive turned into new keys by lunch.&lt;/p&gt;
+          &lt;button type="button" data-video-title="Dana's story" data-video-id="YOUR_YOUTUBE_ID"&gt;Click to watch&lt;/button&gt;
+        &lt;/div&gt;
+      &lt;/article&gt;
+    &lt;/li&gt;
+    &lt;!-- repeat the &lt;li&gt; for each testimonial --&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;
+
+&lt;!-- The pop-up player, once per page --&gt;
+&lt;dialog class="my-video-dialog" id="video-dialog" aria-label="Video player"&gt;
+  &lt;div class="my-video-head"&gt;
+    &lt;h3 class="my-video-title"&gt;Video&lt;/h3&gt;
+    &lt;button type="button" class="my-video-close" aria-label="Close video"&gt;&amp;#10005;&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class="my-video-frame"&gt;
+    &lt;iframe class="my-video-embed" title="Video player" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen&gt;&lt;/iframe&gt;
+  &lt;/div&gt;
+&lt;/dialog&gt;
+
+&lt;script&gt;
+  // Opens the pop-up and - the important half - stops the video on close.
+  addEventListener('DOMContentLoaded', function () {
+    var dialog = document.getElementById('video-dialog');
+    if (!dialog) return;
+    var title = dialog.querySelector('.my-video-title');
+    var embed = dialog.querySelector('.my-video-embed');
+    document.querySelectorAll('[data-video-id]').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        title.textContent = btn.dataset.videoTitle;
+        embed.src = 'https://www.youtube-nocookie.com/embed/' + btn.dataset.videoId + '?autoplay=1&amp;rel=0';
+        dialog.showModal();
+      });
+    });
+    dialog.querySelector('.my-video-close').addEventListener('click', function () { dialog.close(); });
+    dialog.addEventListener('click', function (e) { if (e.target === dialog) dialog.close(); });
+    // Listen for the dialog CLOSING, not for the X being clicked - otherwise
+    // Esc and clicking outside leave the audio playing.
+    dialog.addEventListener('close', function () { embed.removeAttribute('src'); });
+  });
+&lt;/script&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>.my-videos { --dlc-per-view: 1; }
+.my-video-card { display: grid; gap: 1rem; align-items: center; }
+@media (min-width: 768px) { .my-video-card { grid-template-columns: 1fr 1fr; } }
+.my-video-poster { display: block; padding: 0; cursor: pointer; background: none; border: 0; }
+.my-video-poster img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; }
+
+.my-video-dialog { inline-size: min(900px, 92vw); padding: 0; border: 0; border-radius: 8px; }
+.my-video-dialog::backdrop { background: rgb(0 0 0 / 65%); }
+.my-video-head { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; }
+.my-video-frame { aspect-ratio: 16 / 9; background: #111; }
+.my-video-embed { inline-size: 100%; block-size: 100%; border: 0; }</code></pre>
         </details>
       </section>
 
@@ -2200,6 +2489,51 @@ object-fit: cover;</code></pre>
         dialog.addEventListener('close', () => {
           embed.removeAttribute('src');
         });
+      });
+      // Copy buttons on every code sample. Added by script so the authored
+      // markup stays clean, and so a reader with JS off just sees normal code
+      // they can select by hand.
+      addEventListener('DOMContentLoaded', () => {
+        for (const pre of document.querySelectorAll('details pre')) {
+          const wrap = document.createElement('div');
+          wrap.className = 'code-wrap';
+          pre.parentNode.insertBefore(wrap, pre);
+          wrap.appendChild(pre);
+
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'code-copy';
+          btn.textContent = 'Copy';
+          // Name it by what it copies, so a screen reader user hears
+          // "Copy HTML" rather than six identical "Copy" buttons.
+          const label = pre.previousElementSibling?.classList.contains('code-label') ? pre.previousElementSibling.textContent.trim() : 'code';
+          btn.setAttribute('aria-label', `Copy ${label}`);
+          wrap.appendChild(btn);
+
+          btn.addEventListener('click', async () => {
+            const text = pre.textContent;
+            try {
+              await navigator.clipboard.writeText(text);
+            } catch {
+              // Clipboard API needs a secure context; fall back for file:// and http://
+              const ta = document.createElement('textarea');
+              ta.value = text;
+              ta.style.position = 'fixed';
+              ta.style.opacity = '0';
+              document.body.appendChild(ta);
+              ta.select();
+              document.execCommand('copy');
+              ta.remove();
+            }
+            btn.textContent = 'Copied';
+            btn.dataset.copied = '';
+            clearTimeout(btn._t);
+            btn._t = setTimeout(() => {
+              btn.textContent = 'Copy';
+              delete btn.dataset.copied;
+            }, 1600);
+          });
+        }
       });
       // Site-level tabs (model bar with tabs): APG tabs pattern with automatic
       // activation — arrow keys move focus AND selection, panes toggle via
