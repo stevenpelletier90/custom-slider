@@ -607,6 +607,7 @@ git add docs/cms-implementation.md && git commit -m "Add CMS implementation inst
 **Files:**
 
 - Create: scratchpad HTML (not committed), published via the Artifact tool
+- **Published:** https://claude.ai/code/artifact/88715cca-344b-4643-be15-20c82a0860c8
 
 **Interfaces:**
 
@@ -615,11 +616,11 @@ git add docs/cms-implementation.md && git commit -m "Add CMS implementation inst
 
 **REQUIRED SUB-SKILL:** Load `artifact-design` before writing the page.
 
-- [ ] **Step 1: Build the catalog page**
+- [x] **Step 1: Build the catalog page**
 
 Present, from the census: the 5 selectors, the fade-hero finding, the 14 ladders keyed by OEM, the accessibility comparison, and a support-status column (supported / new this round / out of scope). This is the "cataloguing and organizing ones that are the same for diff OEMs" the team asked for.
 
-- [ ] **Step 2: Publish and hand over the link**
+- [x] **Step 2: Publish and hand over the link**
 
 The markdown census stays the source of truth; the Artifact is its presentation layer. Do not create a second copy of the data in `demo/` — that page is the copy-paste recipe catalog and must stay that.
 
