@@ -790,12 +790,20 @@
         color: inherit;
         text-decoration: none;
       }
+      /* Mobile gets a taller crop, like the estate's own banners: dealers ship
+         a 600x400 mobile asset against a 1920x776 desktop one. At 16/6 on a
+         phone the band is so short the arrows land on the headline. */
       .demo-hero img {
         display: block;
         inline-size: 100%;
         block-size: auto;
-        aspect-ratio: 16 / 6;
+        aspect-ratio: 3 / 2;
         object-fit: cover;
+      }
+      @media (min-width: 769px) {
+        .demo-hero img {
+          aspect-ratio: 16 / 6;
+        }
       }
       /* Copy sits on a scrim, never straight on the photo — text contrast has
          to survive whatever image the dealer uploads. */

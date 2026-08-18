@@ -12,3 +12,10 @@ node_modules/
 .claude/settings.local.json
 .claude/scheduled_tasks.lock
 .claude/worktrees/
+
+# Browser-automation and verification scratch. Both were committed by a stray
+# `git add -A` on 2026-08-18 before these rules existed:
+#   .playwright-mcp/  — snapshot/console dumps written by the Playwright MCP server
+#   demo/_*.html      — cache-busted / no-JS copies of the demo used for testing
+.playwright-mcp/
+demo/_*.html
