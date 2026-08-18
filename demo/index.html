@@ -891,6 +891,10 @@
         padding: 0.5rem 0.9rem;
         font-size: 0.95rem;
       }
+      .file-link {
+        margin-inline-start: 0.75rem;
+        font-size: 0.9rem;
+      }
       .demo-ladder-table {
         inline-size: 100%;
         margin-block: 0.75rem;
@@ -1086,10 +1090,19 @@
           <p>Nothing is on the server yet, so the slider travels with the page. Two pastes, into two different boxes in the page's <strong>Custom HTML</strong> panel.</p>
           <p class="code-label">1. Styling &mdash; paste into "Style Only, Head Section"</p>
           <p class="copy-note">Raw CSS, no <code>&lt;style&gt;</code> tags &mdash; the platform adds those itself.</p>
-          <p><button type="button" class="code-copy code-copy--file" data-copy-src="../dist/dl-carousel.css" data-copy-what="the slider styling">Copy the slider CSS</button></p>
+          <p>
+            <button type="button" class="code-copy code-copy--file" data-copy-src="../dist/dl-carousel.css" data-copy-what="the slider styling">Copy the slider CSS</button>
+            <a class="file-link" href="../dist/dl-carousel.css">or open the file</a>
+          </p>
           <p class="code-label">2. The slider &mdash; paste into "Body Section, Bottom"</p>
           <p class="copy-note">This one already includes its <code>&lt;script&gt;</code> tags.</p>
-          <p><button type="button" class="code-copy code-copy--file" data-copy-src="../dist/dl-carousel.js" data-copy-wrap="script" data-copy-what="the slider itself">Copy the slider JS</button></p>
+          <p>
+            <button type="button" class="code-copy code-copy--file" data-copy-src="../dist/dl-carousel.js" data-copy-wrap="script" data-copy-what="the slider itself">Copy the slider JS</button>
+            <a class="file-link" href="../dist/dl-carousel.js">or open the file</a>
+          </p>
+          <p class="copy-note">
+            If you open the file instead of using the button, wrap what you copy in <code>&lt;script&gt;</code> and <code>&lt;/script&gt;</code> yourself &mdash; the button adds those for you.
+          </p>
           <p class="copy-note">
             Worth knowing: pasted like this, the slider lives on that one page. If you later change something, every page you pasted it into needs re-pasting &mdash; which is exactly what hosting the
             files fixes.
