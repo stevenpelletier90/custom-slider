@@ -55,7 +55,7 @@ Scratch verification pages live in the scratchpad directory, **never committed**
 - Consumes: nothing
 - Produces: nothing consumed by later tasks. Independent — ships first so it is not blocked behind the catalog work.
 
-- [ ] **Step 1: Reproduce before theorizing**
+- [x] **Step 1: Reproduce before theorizing**
 
 Serve the demo and drag the `#video` section specifically, comparing against a known-good section (`#vehicles`). Sweep these conditions — the bug was reported on the video section, which differs from other sections in that its slides contain two nested `<button>`s:
 
@@ -69,7 +69,7 @@ Serve the demo and drag the `#video` section specifically, comparing against a k
 
 Record for each: does the track move, does the dialog open when it should not, does the cursor stay `grabbing` after release, does the click get suppressed when it should not.
 
-- [ ] **Step 2: Write the diagnosis down before fixing**
+- [x] **Step 2: Write the diagnosis down before fixing**
 
 State the root cause in one sentence, naming the exact line. Prime suspects, in order — the video section is the only one whose slides are entirely covered by buttons:
 
@@ -79,11 +79,11 @@ State the root cause in one sentence, naming the exact line. Prime suspects, in 
 
 If the reproduction shows none of these, the diagnosis is whatever it actually shows — do not force it into this list.
 
-- [ ] **Step 3: Fix the root cause, not the symptom**
+- [x] **Step 3: Fix the root cause, not the symptom**
 
 Fix at the line named in Step 2. Do not add a `data-drag="false"` opt-out to the video section — that hides the bug, and per the census the same nested-button anatomy will recur in any card carousel whose whole card is interactive.
 
-- [ ] **Step 4: Verify the fix and the non-regression**
+- [x] **Step 4: Verify the fix and the non-regression**
 
 Re-run every condition from Step 1. Then confirm the behaviors the drag feature exists to protect, on `#vehicles` and `#cards`:
 
@@ -94,7 +94,7 @@ Re-run every condition from Step 1. Then confirm the behaviors the drag feature 
 - cursor is `grab` at rest, `grabbing` mid-drag, `grab` after release
 ```
 
-- [ ] **Step 5: Validate, rebuild if src changed, commit**
+- [x] **Step 5: Validate, rebuild if src changed, commit**
 
 ```bash
 npm run validate
