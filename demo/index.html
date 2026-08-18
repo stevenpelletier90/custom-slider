@@ -830,6 +830,20 @@
         background: #fff;
         border-radius: 4px;
       }
+      .demo-start {
+        padding: 1.25rem 1.5rem;
+        background: #eef2f6;
+        border: 1px solid #c4ced8;
+        border-radius: 8px;
+      }
+      .demo-start h2 {
+        margin-block-start: 0;
+      }
+      .copy-note {
+        margin: 0.35rem 0 0.75rem;
+        font-size: 0.9rem;
+        color: #3c4043;
+      }
       .code-label {
         margin: 0.9rem 0 0.3rem;
         font-size: 0.75rem;
@@ -869,6 +883,13 @@
       .code-copy[data-copied] {
         color: #1f6f4a;
         border-color: #1f6f4a;
+      }
+      /* Must come after .code-copy — same specificity, so order decides. These
+         buttons sit in the flow of the Start-here box, not pinned over a <pre>. */
+      .code-copy--file {
+        position: static;
+        padding: 0.5rem 0.9rem;
+        font-size: 0.95rem;
       }
       .demo-ladder-table {
         inline-size: 100%;
@@ -928,9 +949,9 @@
       <p>Dependency-free scroll-snap slider. Try this page with JavaScript disabled — every variation remains a readable, swipeable strip.</p>
 
       <nav class="demo-toc" aria-label="On this page">
-        <a href="#hero">Hero banner</a> · <a href="#vehicles">Featured vehicles</a> · <a href="#modelbar">Model bar</a> · <a href="#modelbar-tabs">Model bar (tabs)</a> ·
-        <a href="#models">Model cards</a> · <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> · <a href="#cards">Service cards</a> · <a href="#video">Video testimonials</a> ·
-        <a href="#gallery">Gallery</a> · <a href="#reviews">Reviews</a> · <a href="#stock">Stock look</a>
+        <a href="#start">Start here</a> · <a href="#hero">Hero banner</a> · <a href="#vehicles">Featured vehicles</a> · <a href="#modelbar">Model bar</a> ·
+        <a href="#modelbar-tabs">Model bar (tabs)</a> · <a href="#models">Model cards</a> · <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> ·
+        <a href="#cards">Service cards</a> · <a href="#video">Video testimonials</a> · <a href="#gallery">Gallery</a> · <a href="#reviews">Reviews</a> · <a href="#stock">Stock look</a>
       </nav>
 
       <section class="demo-section demo-hero-section demo-wide" id="hero">
@@ -1020,7 +1041,10 @@
             All 76 demo homepages were checked for this, and the banner behaviour was confirmed by watching the real pages rather than reading their code — the pause button, for instance, does not
             appear in the page source at all, because it is added after the page loads. Full write-up in <code>docs/research/2026-08-18-oem-demo-slider-census.md</code>.
           </p>
-          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box.</p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
           <p class="code-label">HTML</p>
           <pre><code>&lt;div class="my-hero dl-carousel" data-slider data-fade data-autoplay="5000" aria-label="Featured offers"&gt;
   &lt;ul class="dl-carousel-track"&gt;
@@ -1048,6 +1072,34 @@
 .my-hero-copy { position: absolute; inset-block-end: 0; inline-size: 100%; padding: 2.5rem 1.25rem 1.25rem; color: #fff; background: linear-gradient(to top, rgb(0 0 0 / 78%), rgb(0 0 0 / 0%)); }
 .my-hero-copy strong { display: block; font-size: clamp(1.25rem, 3.2vw, 2rem); }
 .my-hero-copy span { display: inline-block; margin-block-start: 0.6rem; padding: 0.45rem 1rem; font-weight: 600; color: #16324f; background: #fff; border-radius: 4px; }</code></pre>
+        </details>
+      </section>
+
+      <section class="demo-section demo-start" id="start">
+        <h2 id="start-h">Start here &mdash; add the slider to your page</h2>
+        <p>
+          Every example below needs the slider itself on the page first. You only do this <strong>once per page</strong>, however many sliders that page ends up having. After that, any example below
+          is a straight copy and paste.
+        </p>
+        <details open>
+          <summary>The files aren't hosted yet &mdash; paste them in (do this for now)</summary>
+          <p>Nothing is on the server yet, so the slider travels with the page. Two pastes, into two different boxes in the page's <strong>Custom HTML</strong> panel.</p>
+          <p class="code-label">1. Styling &mdash; paste into "Style Only, Head Section"</p>
+          <p class="copy-note">Raw CSS, no <code>&lt;style&gt;</code> tags &mdash; the platform adds those itself.</p>
+          <p><button type="button" class="code-copy code-copy--file" data-copy-src="../dist/dl-carousel.css" data-copy-what="the slider styling">Copy the slider CSS</button></p>
+          <p class="code-label">2. The slider &mdash; paste into "Body Section, Bottom"</p>
+          <p class="copy-note">This one already includes its <code>&lt;script&gt;</code> tags.</p>
+          <p><button type="button" class="code-copy code-copy--file" data-copy-src="../dist/dl-carousel.js" data-copy-wrap="script" data-copy-what="the slider itself">Copy the slider JS</button></p>
+          <p class="copy-note">
+            Worth knowing: pasted like this, the slider lives on that one page. If you later change something, every page you pasted it into needs re-pasting &mdash; which is exactly what hosting the
+            files fixes.
+          </p>
+        </details>
+        <details>
+          <summary>Once the files are hosted (later)</summary>
+          <p>Two lines in the page head instead, and you can delete both pastes above. Nothing about your slider markup or CSS changes.</p>
+          <pre><code>&lt;link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/dl-carousel/dl-carousel.css"&gt;
+&lt;script src="/assets/shared/CustomHTMLFiles/dl-carousel/dl-carousel.js" defer&gt;&lt;/script&gt;</code></pre>
         </details>
       </section>
 
@@ -1249,7 +1301,10 @@
             the image properly (<code>alt="2026 Chevrolet Silverado 1500 LT in Summit White"</code>) so it can turn up in image search — and then give the link that wraps the card a short label of its
             own, like <code>aria-label="Explore the Silverado"</code>. Otherwise a screen reader reads the full photo description and the heading together every time, which gets tiring fast.
           </p>
-          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box.</p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
           <p class="code-label">HTML</p>
           <pre><code>&lt;div class="my-models dl-carousel" data-slider data-rewind="false" aria-label="Explore our models"&gt;
   &lt;ul class="dl-carousel-track"&gt;
@@ -1499,7 +1554,10 @@
           <pre><code>.my-modelbar { --dlc-per-view: 2; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 5; } }</code></pre>
-          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box.</p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
           <p class="code-label">HTML</p>
           <pre><code>&lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Explore our lineup"&gt;
   &lt;ul class="dl-carousel-track"&gt;
@@ -1789,7 +1847,10 @@
               </tr>
             </tbody>
           </table>
-          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box.</p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
           <p class="code-label">HTML</p>
           <pre><code>&lt;div class="my-tabs" data-tabs&gt;
   &lt;div role="tablist" aria-label="Shop by type"&gt;
@@ -1874,7 +1935,10 @@
             softens instead of being cut off. Both are CSS. Nothing is added to the page, nothing changes in the slider, and it behaves correctly for people who have asked their device to reduce
             motion.
           </p>
-          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box.</p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
           <p class="code-label">HTML</p>
           <pre><code>&lt;div class="my-peek dl-carousel" data-slider aria-label="Gallery"&gt;
   &lt;ul class="dl-carousel-track"&gt;
@@ -2036,7 +2100,10 @@ object-fit: cover;</code></pre>
             fine where the only visible text is a heading — the model bar cards are a good example, where "Explore the Silverado 1500" does contain "Silverado 1500". Automated checks do flag this, but
             it does not count towards the score, so the page can report a perfect 100 while still failing it.
           </p>
-          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box.</p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
           <p class="code-label">HTML</p>
           <pre><code>&lt;div class="my-cards dl-carousel" data-slider data-step="slide" aria-label="Our services"&gt;
   &lt;ul class="dl-carousel-track"&gt;
@@ -2150,7 +2217,10 @@ object-fit: cover;</code></pre>
             so there is no copyrighted footage sitting in a public demo. The cards themselves do not rotate on their own — the site we based this on flips through them every 3 seconds, which fights
             you when you are trying to read one.
           </p>
-          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box.</p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
           <p class="code-label">HTML</p>
           <pre><code>&lt;!-- The cards --&gt;
 &lt;div class="my-videos dl-carousel" data-slider aria-label="Customer stories"&gt;
@@ -2493,6 +2563,34 @@ object-fit: cover;</code></pre>
       // Copy buttons on every code sample. Added by script so the authored
       // markup stays clean, and so a reader with JS off just sees normal code
       // they can select by hand.
+      // Buttons that copy a whole file (the engine CSS/JS) rather than a code
+      // sample. Fetched at click time from the same files this page already
+      // loads, so what lands on the clipboard can never drift from what is
+      // shipping — and the page does not carry 15 KB of duplicated source.
+      addEventListener('DOMContentLoaded', () => {
+        for (const btn of document.querySelectorAll('.code-copy--file')) {
+          btn.addEventListener('click', async () => {
+            const original = btn.textContent;
+            btn.textContent = 'Copying…';
+            try {
+              const res = await fetch(btn.dataset.copySrc, { cache: 'no-store' });
+              if (!res.ok) throw new Error(res.status);
+              const body = (await res.text()).trim();
+              const text = btn.dataset.copyWrap === 'script' ? `<script>\n${body}\n<\/script>` : body;
+              await navigator.clipboard.writeText(text);
+              btn.textContent = 'Copied ' + btn.dataset.copyWhat;
+              btn.dataset.copied = '';
+            } catch {
+              btn.textContent = 'Could not copy — open the file instead';
+            }
+            clearTimeout(btn._t);
+            btn._t = setTimeout(() => {
+              btn.textContent = original;
+              delete btn.dataset.copied;
+            }, 2200);
+          });
+        }
+      });
       addEventListener('DOMContentLoaded', () => {
         for (const pre of document.querySelectorAll('details pre')) {
           const wrap = document.createElement('div');
