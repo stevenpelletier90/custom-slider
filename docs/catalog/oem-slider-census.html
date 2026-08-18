@@ -1,0 +1,1064 @@
+<title>OEM Slider Census</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link
+  rel="stylesheet"
+  href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&display=swap"
+/>
+
+<style>
+  :root {
+    --ground: #f7f8fa;
+    --surface: #ffffff;
+    --surface-sunk: #eef1f5;
+    --ink: #10161d;
+    --ink-soft: #3d4854;
+    --steel: #5a6672;
+    --rule: #dde3e9;
+    --rule-strong: #c4ced8;
+    --accent: #1f5c8b;
+    --accent-soft: #e7eef5;
+    --ok: #1f6f4a;
+    --ok-soft: #e3f0e9;
+    --gap: #b4690e;
+    --gap-soft: #faeedd;
+    --off: #6b7682;
+    --off-soft: #eceff2;
+    --shadow: 0 1px 2px rgb(16 22 29 / 6%), 0 4px 16px rgb(16 22 29 / 4%);
+
+    --step-0: 0.9375rem;
+    --step-1: 1.0625rem;
+    --step-2: 1.375rem;
+    --step-3: 1.875rem;
+    --step-4: 2.75rem;
+
+    --sans: 'IBM Plex Sans', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --cond: 'IBM Plex Sans Condensed', 'IBM Plex Sans', ui-sans-serif, system-ui, sans-serif;
+    --mono: 'IBM Plex Mono', ui-monospace, 'SFMono-Regular', Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme='light']) {
+      --ground: #0e1216;
+      --surface: #161c22;
+      --surface-sunk: #1b232a;
+      --ink: #e6ebf0;
+      --ink-soft: #c2ccd6;
+      --steel: #93a1ad;
+      --rule: #2a333c;
+      --rule-strong: #3a4650;
+      --accent: #6fa8d6;
+      --accent-soft: #1a2836;
+      --ok: #4fb286;
+      --ok-soft: #14261f;
+      --gap: #e0a249;
+      --gap-soft: #2b2113;
+      --off: #8b96a1;
+      --off-soft: #1e252b;
+      --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 16px rgb(0 0 0 / 26%);
+    }
+  }
+
+  :root[data-theme='dark'] {
+    --ground: #0e1216;
+    --surface: #161c22;
+    --surface-sunk: #1b232a;
+    --ink: #e6ebf0;
+    --ink-soft: #c2ccd6;
+    --steel: #93a1ad;
+    --rule: #2a333c;
+    --rule-strong: #3a4650;
+    --accent: #6fa8d6;
+    --accent-soft: #1a2836;
+    --ok: #4fb286;
+    --ok-soft: #14261f;
+    --gap: #e0a249;
+    --gap-soft: #2b2113;
+    --off: #8b96a1;
+    --off-soft: #1e252b;
+    --shadow: 0 1px 2px rgb(0 0 0 / 40%), 0 4px 16px rgb(0 0 0 / 26%);
+  }
+
+  * {
+    box-sizing: border-box;
+  }
+
+  body {
+    margin: 0;
+    padding: clamp(1.25rem, 3vw, 3rem) clamp(1rem, 4vw, 2rem) 5rem;
+    font-family: var(--sans);
+    font-size: var(--step-0);
+    line-height: 1.6;
+    color: var(--ink);
+    background: var(--ground);
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .sheet {
+    display: flex;
+    flex-direction: column;
+    gap: 3rem;
+    max-width: 68rem;
+    margin: 0 auto;
+  }
+
+  /* ---------- masthead ---------- */
+
+  .masthead {
+    display: flex;
+    flex-direction: column;
+    gap: 0.9rem;
+    padding-bottom: 1.75rem;
+    border-bottom: 2px solid var(--rule-strong);
+  }
+
+  .eyebrow {
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--steel);
+  }
+
+  h1 {
+    margin: 0;
+    font-family: var(--cond);
+    font-size: var(--step-4);
+    font-weight: 700;
+    line-height: 1.04;
+    letter-spacing: -0.015em;
+    text-wrap: balance;
+  }
+
+  .standfirst {
+    max-width: 58ch;
+    margin: 0;
+    font-size: var(--step-1);
+    color: var(--ink-soft);
+  }
+
+  /* ---------- stat band ---------- */
+
+  .stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 1px;
+    overflow: hidden;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+  }
+
+  .stat {
+    display: flex;
+    flex-direction: column;
+    gap: 0.15rem;
+    padding: 1rem 1.1rem;
+    background: var(--surface);
+  }
+
+  .stat b {
+    font-family: var(--cond);
+    font-size: var(--step-3);
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    line-height: 1;
+    color: var(--ink);
+  }
+
+  .stat span {
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    color: var(--steel);
+  }
+
+  /* ---------- sections ---------- */
+
+  section {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  h2 {
+    margin: 0;
+    font-family: var(--cond);
+    font-size: var(--step-2);
+    font-weight: 600;
+    letter-spacing: -0.005em;
+    text-wrap: balance;
+  }
+
+  p {
+    max-width: 68ch;
+    margin: 0;
+    color: var(--ink-soft);
+  }
+
+  a {
+    color: var(--accent);
+    text-underline-offset: 2px;
+  }
+
+  a:focus-visible,
+  summary:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+
+  code {
+    padding: 0.1em 0.34em;
+    font-family: var(--mono);
+    font-size: 0.86em;
+    color: var(--ink);
+    background: var(--surface-sunk);
+    border-radius: 2px;
+  }
+
+  /* ---------- the headline finding ---------- */
+
+  .finding {
+    display: flex;
+    flex-direction: column;
+    gap: 0.7rem;
+    padding: 1.35rem 1.5rem;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-left: 4px solid var(--gap);
+    border-radius: 3px;
+    box-shadow: var(--shadow);
+  }
+
+  .finding .lede {
+    max-width: none;
+    font-family: var(--cond);
+    font-size: var(--step-2);
+    font-weight: 600;
+    line-height: 1.25;
+    color: var(--ink);
+  }
+
+  /* ---------- tables ---------- */
+
+  .scroller {
+    overflow-x: auto;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+  }
+
+  table {
+    inline-size: 100%;
+    min-inline-size: 34rem;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+  }
+
+  thead th {
+    position: sticky;
+    inset-block-start: 0;
+    padding: 0.7rem 1rem;
+    font-family: var(--mono);
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.07em;
+    text-transform: uppercase;
+    text-align: start;
+    white-space: nowrap;
+    color: var(--steel);
+    background: var(--surface-sunk);
+    border-block-end: 1px solid var(--rule-strong);
+  }
+
+  tbody td {
+    padding: 0.7rem 1rem;
+    vertical-align: top;
+    border-block-end: 1px solid var(--rule);
+  }
+
+  tbody tr:last-child td {
+    border-block-end: 0;
+  }
+
+  .num {
+    font-family: var(--mono);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .ladder {
+    font-family: var(--mono);
+    font-size: 0.8rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--ink-soft);
+  }
+
+  .oems {
+    font-size: 0.85rem;
+    color: var(--ink-soft);
+  }
+
+  /* ---------- status chips ---------- */
+
+  .chip {
+    display: inline-block;
+    padding: 0.14rem 0.5rem;
+    font-family: var(--mono);
+    font-size: 0.68rem;
+    font-weight: 500;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    border-radius: 2px;
+  }
+
+  .chip--have {
+    color: var(--ok);
+    background: var(--ok-soft);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ok) 28%, transparent);
+  }
+
+  .chip--new {
+    color: var(--accent);
+    background: var(--accent-soft);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 30%, transparent);
+  }
+
+  .chip--gap {
+    color: var(--gap);
+    background: var(--gap-soft);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--gap) 30%, transparent);
+  }
+
+  .chip--off {
+    color: var(--off);
+    background: var(--off-soft);
+    box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--off) 26%, transparent);
+  }
+
+  /* ---------- comparison ---------- */
+
+  .versus td:first-child {
+    color: var(--ink-soft);
+  }
+
+  .versus td:last-child {
+    color: var(--ink);
+  }
+
+  /* ---------- prevalence bars ---------- */
+
+  .bars {
+    display: flex;
+    flex-direction: column;
+    gap: 0.55rem;
+    padding: 1.25rem 1.4rem;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+  }
+
+  .bar {
+    display: grid;
+    grid-template-columns: minmax(7.5rem, 12rem) 1fr auto;
+    gap: 0.85rem;
+    align-items: center;
+  }
+
+  .bar-label {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    color: var(--ink-soft);
+  }
+
+  .bar-track {
+    block-size: 0.55rem;
+    background: var(--surface-sunk);
+    border-radius: 1px;
+  }
+
+  .bar-fill {
+    display: block;
+    block-size: 100%;
+    background: var(--accent);
+    border-radius: 1px;
+  }
+
+  .bar-fill--gap {
+    background: var(--gap);
+  }
+
+  .bar-val {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    font-variant-numeric: tabular-nums;
+    color: var(--steel);
+  }
+
+  /* ---------- method ---------- */
+
+  details {
+    padding: 0.9rem 1.2rem;
+    background: var(--surface);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+  }
+
+  summary {
+    font-family: var(--cond);
+    font-size: var(--step-1);
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--ink);
+  }
+
+  details[open] summary {
+    margin-block-end: 0.7rem;
+  }
+
+  details ul {
+    margin: 0;
+    padding-inline-start: 1.1rem;
+    color: var(--ink-soft);
+  }
+
+  details li + li {
+    margin-block-start: 0.4rem;
+  }
+
+  .roster {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(13rem, 1fr));
+    gap: 1px;
+    overflow: hidden;
+    background: var(--rule);
+    border: 1px solid var(--rule);
+    border-radius: 3px;
+  }
+
+  .roster-brand {
+    display: flex;
+    gap: 0.6rem;
+    align-items: baseline;
+    justify-content: space-between;
+    padding: 0.5rem 0.85rem;
+    background: var(--surface);
+  }
+
+  .roster-name {
+    font-size: 0.86rem;
+    color: var(--ink);
+  }
+
+  .roster-links {
+    display: flex;
+    gap: 0.3rem;
+    align-items: baseline;
+    font-family: var(--mono);
+    font-size: 0.8rem;
+  }
+
+  .roster-links a {
+    padding: 0 0.15rem;
+    text-decoration: none;
+    border-block-end: 1px solid color-mix(in srgb, var(--accent) 40%, transparent);
+  }
+
+  .roster-links a:hover {
+    border-block-end-color: var(--accent);
+  }
+
+  .sep {
+    color: var(--rule-strong);
+  }
+
+  .live {
+    font-family: var(--mono);
+    font-size: 0.78rem;
+    white-space: nowrap;
+  }
+
+  footer {
+    padding-block-start: 1.5rem;
+    font-family: var(--mono);
+    font-size: 0.75rem;
+    color: var(--steel);
+    border-block-start: 1px solid var(--rule);
+  }
+
+  @media (max-width: 34rem) {
+    .bar {
+      grid-template-columns: 1fr auto;
+    }
+    .bar-track {
+      grid-column: 1 / -1;
+      grid-row: 2;
+    }
+  }
+</style>
+
+<div class="sheet">
+  <header class="masthead">
+    <div class="eyebrow">DealerOn · Creative Solutions · 18 Aug 2026</div>
+    <h1>What the OEM demo sliders actually are</h1>
+    <p class="standfirst">
+      Every one of the 76 DealerOn OEM demo homepages was fingerprinted and the results clustered. The variety is mostly skin: five slider types account for the entire estate, and the one we cannot
+      build is the most common of all.
+    </p>
+  </header>
+
+  <div class="stats">
+    <div class="stat"><b>76</b><span>demo sites</span></div>
+    <div class="stat"><b>32</b><span>OEM brands</span></div>
+    <div class="stat"><b>5</b><span>slider types</span></div>
+    <div class="stat"><b>14</b><span>breakpoint ladders</span></div>
+    <div class="stat"><b>80</b><span>slick instances</span></div>
+  </div>
+
+  <section>
+    <h2>The finding that changed our plan</h2>
+    <div class="finding">
+      <p class="lede">68 of 76 sites run a fading hero banner — and until this week our slider could not do it at all.</p>
+      <p>
+        That makes the fade hero more widespread than the model bar. Earlier research missed it because it is a Bootstrap <code>carousel-fade</code>, not slick: the word <code>fade</code> appears in
+        <strong>0 of 55</strong> slick configs. Every one of them rotates on a 5-second timer, which we confirmed by watching a live page advance rather than trusting the markup.
+      </p>
+      <p>Fade mode shipped on 18 Aug. The gap is closed.</p>
+    </div>
+  </section>
+
+  <section>
+    <h2>Five types, and where we stand</h2>
+    <p>Counted by distinct sites. The "same across OEMs" question resolves here: one pattern covers 55 of the 76.</p>
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Sites</th>
+            <th scope="col">Pattern</th>
+            <th scope="col">What it is</th>
+            <th scope="col">See it live</th>
+            <th scope="col">Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="num">68</td>
+            <td><code>carousel-fade</code></td>
+            <td>Full-bleed hero banner, 1-up, autoplays every 5s</td>
+            <td class="live"><a href="https://bmwdemo1.dealeron.com/" target="_blank" rel="noopener">bmw 1</a></td>
+            <td><span class="chip chip--new">New — shipped</span></td>
+          </tr>
+          <tr>
+            <td class="num">55</td>
+            <td><code>.modelBarS</code></td>
+            <td>Model bar — cutouts, arrows only, one card per click</td>
+            <td class="live"><a href="https://acurademo1.dealeron.com/" target="_blank" rel="noopener">acura 1</a></td>
+            <td><span class="chip chip--have">Supported</span></td>
+          </tr>
+          <tr>
+            <td class="num">30</td>
+            <td><span class="oems">— of those, tabbed</span></td>
+            <td>Model bars grouped by body style, 3–5 groups</td>
+            <td class="live"><a href="https://chevroletdemo1.dealeron.com/" target="_blank" rel="noopener">chevrolet 1</a></td>
+            <td><span class="chip chip--have">Supported</span></td>
+          </tr>
+          <tr>
+            <td class="num">3</td>
+            <td><code>.corpcell-slider</code></td>
+            <td>Subaru 3-up card strip, steps a page at a time</td>
+            <td class="live"><a href="https://subarudemo1.dealeron.com/" target="_blank" rel="noopener">subaru 1</a></td>
+            <td><span class="chip chip--have">Supported</span></td>
+          </tr>
+          <tr>
+            <td class="num">2</td>
+            <td><code>.quick-nav-5</code> · <code>.galleryS</code></td>
+            <td>Lexus centre-mode quick-nav and gallery</td>
+            <td class="live"><a href="https://lexusdemo2.dealeron.com/" target="_blank" rel="noopener">lexus 2</a></td>
+            <td><span class="chip chip--off">Out of scope</span></td>
+          </tr>
+          <tr>
+            <td class="num">2</td>
+            <td><code>.filtering</code></td>
+            <td>Mazda filter UI — not a content slider</td>
+            <td class="live"><a href="https://mazdademo1.dealeron.com/" target="_blank" rel="noopener">mazda 1</a></td>
+            <td><span class="chip chip--off">Not a slider</span></td>
+          </tr>
+          <tr>
+            <td class="num">1</td>
+            <td><code>rows: 2</code></td>
+            <td>Hyundai two-row grid — a different layout primitive</td>
+            <td class="live"><a href="https://hyundaidemo1.dealeron.com/" target="_blank" rel="noopener">hyundai 1</a></td>
+            <td><span class="chip chip--off">Out of scope</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>The model bar is one design, not fifty-five</h2>
+    <p>Every model bar in the estate shares an anatomy. These are the option settings, counted across all 55:</p>
+    <div class="bars">
+      <div class="bar">
+        <span class="bar-label">arrows: true</span>
+        <span class="bar-track"><span class="bar-fill" style="inline-size: 100%"></span></span>
+        <span class="bar-val">55/55</span>
+      </div>
+      <div class="bar">
+        <span class="bar-label">autoplay: false</span>
+        <span class="bar-track"><span class="bar-fill" style="inline-size: 100%"></span></span>
+        <span class="bar-val">55/55</span>
+      </div>
+      <div class="bar">
+        <span class="bar-label">swipeToSlide: true</span>
+        <span class="bar-track"><span class="bar-fill" style="inline-size: 100%"></span></span>
+        <span class="bar-val">55/55</span>
+      </div>
+      <div class="bar">
+        <span class="bar-label">slidesToScroll: 1</span>
+        <span class="bar-track"><span class="bar-fill" style="inline-size: 96.4%"></span></span>
+        <span class="bar-val">53/55</span>
+      </div>
+      <div class="bar">
+        <span class="bar-label">centerPadding: 60px</span>
+        <span class="bar-track"><span class="bar-fill" style="inline-size: 96.4%"></span></span>
+        <span class="bar-val">53/55</span>
+      </div>
+      <div class="bar">
+        <span class="bar-label">dots: absent</span>
+        <span class="bar-track"><span class="bar-fill" style="inline-size: 94.5%"></span></span>
+        <span class="bar-val">52/55</span>
+      </div>
+      <div class="bar">
+        <span class="bar-label">fade: absent</span>
+        <span class="bar-track"><span class="bar-fill bar-fill--gap" style="inline-size: 100%"></span></span>
+        <span class="bar-val">55/55</span>
+      </div>
+    </div>
+    <p>
+      Three of those settle open questions for us:
+      <code>slidesToScroll: 1</code> is exactly what <code>data-step="slide"</code> reproduces, <code>centerPadding: 60px</code> is our <code>--dlc-peek</code>, and
+      <strong>not one model bar in the estate autoplays</strong> — which is why no card strip in our library ever will.
+    </p>
+  </section>
+
+  <section>
+    <h2>The only thing that differs per brand</h2>
+    <p>
+      Breakpoints. Fourteen ladders cover all 55 sites. slick counts breakpoints as <em>max</em>-width and our <code>--dlc-per-view</code> queries are <em>min</em>-width, so these are already
+      converted — copy them rather than re-deriving, because that inversion is where a hand build goes wrong.
+    </p>
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Sites</th>
+            <th scope="col">OEM demos</th>
+            <th scope="col">Cards per view</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="num">13</td>
+            <td class="oems">acura 1–3, ford 2–3, gmc 1–2, honda 2–3, kia 2–3, mitsubishi 1–2</td>
+            <td class="ladder">2 → 461px 3 → 769px 5</td>
+          </tr>
+          <tr>
+            <td class="num">11</td>
+            <td class="oems">cadillac 1–3, chevrolet 1–3, subaru 1–3, volvo 1–2</td>
+            <td class="ladder">2 → 540px 3 → 992px 4 → 1200px 5</td>
+          </tr>
+          <tr>
+            <td class="num">6</td>
+            <td class="oems">lexus 1–3, nissan 2–3, toyota 1</td>
+            <td class="ladder">1 → 401px 2 → 601px 3 → 992px 5</td>
+          </tr>
+          <tr>
+            <td class="num">5</td>
+            <td class="oems">buick 1–2, jaguar 1, landrover 1 &amp; 3</td>
+            <td class="ladder">2 → 461px 3 → 769px 4</td>
+          </tr>
+          <tr>
+            <td class="num">5</td>
+            <td class="oems">genesis 1–3, vw 1–2</td>
+            <td class="ladder">1 → 541px 2 → 993px 3 → 1201px 4</td>
+          </tr>
+          <tr>
+            <td class="num">3</td>
+            <td class="oems">lincoln 1–3</td>
+            <td class="ladder">2 → 461px 3 → 993px 4</td>
+          </tr>
+          <tr>
+            <td class="num">2</td>
+            <td class="oems">ford 1, honda 1</td>
+            <td class="ladder">1 → 461px 3 → 992px 5</td>
+          </tr>
+          <tr>
+            <td class="num">2</td>
+            <td class="oems">hyundai 2–3</td>
+            <td class="ladder">1 → 461px 3 → 993px 4 → 1201px 5</td>
+          </tr>
+          <tr>
+            <td class="num">2</td>
+            <td class="oems">mazda 1–2</td>
+            <td class="ladder">1 → 769px 2 → 992px 3</td>
+          </tr>
+          <tr>
+            <td class="num">2</td>
+            <td class="oems">toyota 2–3</td>
+            <td class="ladder">1 → 541px 2</td>
+          </tr>
+          <tr>
+            <td class="num">1</td>
+            <td class="oems">alfa romeo 1</td>
+            <td class="ladder">1 → 541px 2 → 993px 3 → 1201px 4 → 1801px 6</td>
+          </tr>
+          <tr>
+            <td class="num">1</td>
+            <td class="oems">audi 1</td>
+            <td class="ladder">1 → 361px 2 → 769px 3 → 993px 4 → 1201px 6</td>
+          </tr>
+          <tr>
+            <td class="num">1</td>
+            <td class="oems">kia 1</td>
+            <td class="ladder">1 → 769px 3</td>
+          </tr>
+          <tr>
+            <td class="num">1</td>
+            <td class="oems">hyundai 1</td>
+            <td class="ladder">two-row grid — out of scope</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Tabbed model bars are the norm, not a Kia quirk</h2>
+    <p>
+      30 of the 55 model-bar sites group several model bars under tabs, keyed by body style or fuel type. Chevrolet, Subaru and Toyota run five groups; Kia's three is on the low end. One trap when
+      reading the source: nearly every site also carries a separate
+      <strong>Buy / Finance / Lease</strong> tablist for payments, which is a different widget entirely.
+    </p>
+    <div class="scroller">
+      <table>
+        <thead>
+          <tr>
+            <th scope="col">Groups</th>
+            <th scope="col">OEMs</th>
+            <th scope="col">Tab labels</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="num">5</td>
+            <td class="oems">Chevrolet, Subaru, Toyota</td>
+            <td class="oems">Trucks · Electric · Crossovers/SUVs · Performance · Commercial</td>
+          </tr>
+          <tr>
+            <td class="num">5</td>
+            <td class="oems">Toyota</td>
+            <td class="oems">Popular · Cars &amp; Minivan · Trucks · Crossovers &amp; SUVs · Electrified</td>
+          </tr>
+          <tr>
+            <td class="num">4</td>
+            <td class="oems">Ford, Honda, Lexus, Nissan</td>
+            <td class="oems">SUVs &amp; Crossovers · Trucks &amp; Vans · All Electric · Cars</td>
+          </tr>
+          <tr>
+            <td class="num">3</td>
+            <td class="oems">Genesis, VW</td>
+            <td class="oems">SUV · Sedan · Electric (VW: Bus)</td>
+          </tr>
+          <tr>
+            <td class="num">3</td>
+            <td class="oems">Kia, Cadillac, Hyundai, Volvo</td>
+            <td class="oems">SUV/CUV/MPV · Hybrid/Electric · Sedan</td>
+          </tr>
+          <tr>
+            <td class="num">1</td>
+            <td class="oems">the other 25 sites</td>
+            <td class="oems">a single ungrouped model bar</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>What the platform hero gets wrong</h2>
+    <p>Checked on the running page, not the markup. These are the reasons a replacement is worth doing, and they are all things the ADA scanner would reasonably flag.</p>
+    <div class="scroller">
+      <table class="versus">
+        <thead>
+          <tr>
+            <th scope="col">Platform hero — 68 sites</th>
+            <th scope="col">dl-carousel</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              Pause control renders at <strong>16 × 6 px</strong>, id
+              <code>hiddenPlayPauseControl</code>
+            </td>
+            <td><strong>36 × 36</strong>, above the WCAG 2.5.8 AA minimum, first in tab order</td>
+          </tr>
+          <tr>
+            <td>Dots are <code>&lt;li role="button" tabindex="0"&gt;</code></td>
+            <td>Real <code>&lt;button&gt;</code> elements, one per slide</td>
+          </tr>
+          <tr>
+            <td><code>aria-live="off"</code> on the track</td>
+            <td>A terse status region, silent while rotating</td>
+          </tr>
+          <tr>
+            <td>No reduced-motion handling observed</td>
+            <td>Never starts rotating under reduced motion; the crossfade is dropped too</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Open the originals</h2>
+    <p>
+      All 76 demo homepages, so nothing here has to be taken on trust. Numbers are the demo index — <code>&lt;brand&gt;demo&lt;N&gt;.dealeron.com</code>. These are internal DealerOn demo sites, not
+      client sites: safe to open, click around, and screenshot for design review.
+    </p>
+    <div class="roster">
+      <div class="roster-brand">
+        <span class="roster-name">Acura</span
+        ><span class="roster-links"
+          ><a href="https://acurademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://acurademo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://acurademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Alfa Romeo</span><span class="roster-links"><a href="https://alfaromeodemo1.dealeron.com/" target="_blank" rel="noopener">1</a></span>
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Audi</span><span class="roster-links"><a href="https://audidemo1.dealeron.com/" target="_blank" rel="noopener">1</a></span>
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">BMW</span
+        ><span class="roster-links"
+          ><a href="https://bmwdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://bmwdemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://bmwdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Buick</span
+        ><span class="roster-links"
+          ><a href="https://buickdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span
+          ><a href="https://buickdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Cadillac</span
+        ><span class="roster-links"
+          ><a href="https://cadillacdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://cadillacdemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://cadillacdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Chevrolet</span
+        ><span class="roster-links"
+          ><a href="https://chevroletdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span
+          ><a href="https://chevroletdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">·</span
+          ><a href="https://chevroletdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Chrysler</span><span class="roster-links"><a href="https://chryslerdemo1.dealeron.com/" target="_blank" rel="noopener">1</a></span>
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Dodge</span><span class="roster-links"><a href="https://dodgedemo1.dealeron.com/" target="_blank" rel="noopener">1</a></span>
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Fiat</span><span class="roster-links"><a href="https://fiatdemo1.dealeron.com/" target="_blank" rel="noopener">1</a></span>
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Ford</span
+        ><span class="roster-links"
+          ><a href="https://forddemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://forddemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://forddemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Genesis</span
+        ><span class="roster-links"
+          ><a href="https://genesisdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://genesisdemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://genesisdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">GMC</span
+        ><span class="roster-links"
+          ><a href="https://gmcdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://gmcdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Honda</span
+        ><span class="roster-links"
+          ><a href="https://hondademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://hondademo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://hondademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Hyundai</span
+        ><span class="roster-links"
+          ><a href="https://hyundaidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://hyundaidemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://hyundaidemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Infiniti</span
+        ><span class="roster-links"
+          ><a href="https://infinitidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span
+          ><a href="https://infinitidemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Jaguar</span><span class="roster-links"><a href="https://jaguardemo1.dealeron.com/" target="_blank" rel="noopener">1</a></span>
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Jeep</span
+        ><span class="roster-links"
+          ><a href="https://jeepdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://jeepdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Kia</span
+        ><span class="roster-links"
+          ><a href="https://kiademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://kiademo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://kiademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Land Rover</span
+        ><span class="roster-links"
+          ><a href="https://landroverdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span
+          ><a href="https://landroverdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">·</span
+          ><a href="https://landroverdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Lexus</span
+        ><span class="roster-links"
+          ><a href="https://lexusdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://lexusdemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://lexusdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Lincoln</span
+        ><span class="roster-links"
+          ><a href="https://lincolndemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://lincolndemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://lincolndemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Mazda</span
+        ><span class="roster-links"
+          ><a href="https://mazdademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span
+          ><a href="https://mazdademo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">MINI</span
+        ><span class="roster-links"
+          ><a href="https://minidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://minidemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://minidemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Mitsubishi</span
+        ><span class="roster-links"
+          ><a href="https://mitsubishidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span
+          ><a href="https://mitsubishidemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">·</span
+          ><a href="https://mitsubishidemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Nissan</span
+        ><span class="roster-links"
+          ><a href="https://nissandemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://nissandemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://nissandemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Porsche</span
+        ><span class="roster-links"
+          ><a href="https://porschedemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://porschedemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://porschedemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">RAM</span
+        ><span class="roster-links"
+          ><a href="https://ramdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://ramdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Subaru</span
+        ><span class="roster-links"
+          ><a href="https://subarudemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://subarudemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://subarudemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Toyota</span
+        ><span class="roster-links"
+          ><a href="https://toyotademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://toyotademo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">·</span><a href="https://toyotademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Volkswagen</span
+        ><span class="roster-links"
+          ><a href="https://vwdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://vwdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
+        >
+      </div>
+      <div class="roster-brand">
+        <span class="roster-name">Volvo</span
+        ><span class="roster-links"
+          ><a href="https://volvodemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span
+          ><a href="https://volvodemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
+        >
+      </div>
+    </div>
+  </section>
+
+  <section>
+    <h2>How this was counted</h2>
+    <details>
+      <summary>Method, and the two things it got wrong first</summary>
+      <ul>
+        <li>
+          The roster came from probing the
+          <code>&lt;oem&gt;demo&lt;N&gt;.dealeron.com</code> convention, since the Salesforce Knowledge article needs a login. 76 hosts across 32 brands responded. <code>chevydemo*</code> is not the
+          convention — <code>chevroletdemo*</code> is.
+        </li>
+        <li>
+          All 76 homepages were fetched and parsed with balanced-delimiter extraction of every slick init and its config.
+          <code>&lt;style&gt;</code> blocks are stripped first — the platform bundles Bootstrap's CSS everywhere, which otherwise reports a carousel on all 76 sites whether or not one exists.
+        </li>
+        <li>
+          <strong>Corrected once:</strong> the first pass counted slick <em>init calls</em>, but one <code>$('.modelBarS').slick()</code> initialises every matching element. Counting elements instead
+          is what revealed that 30 sites run multiple grouped model bars.
+        </li>
+        <li>
+          <strong>Corrected again:</strong> the pause control appears in <em>zero</em> of the 76 HTML sources, which looked like it was simply missing. It is injected at runtime — visible only on the
+          live page. Anything behaviour-dependent here was checked in a real browser for that reason.
+        </li>
+      </ul>
+    </details>
+  </section>
+
+  <footer>Source of truth: docs/research/2026-08-18-oem-demo-slider-census.md · homepages only · fingerprinted 18 Aug 2026</footer>
+</div>
