@@ -192,7 +192,7 @@ git add -A && git commit -m "Add real video to testimonials demo and stop playba
 
 A working prototype of this task measured **+263 B gzip (5913/6144)** and passed core browser checks. The code below is that prototype.
 
-- [ ] **Step 1: Record the baseline**
+- [x] **Step 1: Record the baseline**
 
 ```bash
 npm run size    # expect: total: 5650 B gzip (budget 6144)
@@ -200,7 +200,7 @@ npm run size    # expect: total: 5650 B gzip (budget 6144)
 
 Write the number down. Step 8 compares against it.
 
-- [ ] **Step 2: Add the option**
+- [x] **Step 2: Add the option**
 
 In `DEFAULTS`, after the `gallery` line:
 
@@ -221,7 +221,7 @@ In the constructor, after the `data-gallery` mirror:
 if (this.opts.fade) this._setRootAttr('data-fade', '');
 ```
 
-- [ ] **Step 3: Short-circuit the scroll geometry**
+- [x] **Step 3: Short-circuit the scroll geometry**
 
 `_measure()` — fade has no scroll geometry at all:
 
@@ -249,7 +249,7 @@ if (this.opts.fade) this._setRootAttr('data-fade', '');
     if (this.opts.step !== 'slide') return this._pages();
 ```
 
-- [ ] **Step 4: Make `goTo()` commit inline**
+- [x] **Step 4: Make `goTo()` commit inline**
 
 This is the one deliberate exception to "`_commit()` is the only place `this.current` changes" — in fade nothing scrolls, so `scrollend` never fires and `_commit()` would never run. Insert immediately after the `n = Math.max(...)` clamp in `goTo()`:
 
@@ -276,7 +276,7 @@ if (this.opts.fade) {
 }
 ```
 
-- [ ] **Step 5: Skip scroll and drag wiring**
+- [x] **Step 5: Skip scroll and drag wiring**
 
 At the top of `_listen()`, after `const sig = ..., t = ...`:
 
@@ -291,7 +291,7 @@ if (this.opts.fade) {
 
 The observer still joins the existing teardown scheme — `destroy()` already disconnects `this._ro`.
 
-- [ ] **Step 6: Add `_updateFade()` and hook it up**
+- [x] **Step 6: Add `_updateFade()` and hook it up**
 
 In `_updateUI()`, after the gallery line:
 
@@ -315,7 +315,7 @@ New method, placed immediately before `_updateArrows()`:
   }
 ```
 
-- [ ] **Step 7: Add the CSS**
+- [x] **Step 7: Add the CSS**
 
 Append to `src/dl-carousel.css`:
 
@@ -349,7 +349,7 @@ Append to `src/dl-carousel.css`:
 }
 ```
 
-- [ ] **Step 8: Warn on the unsupported combination**
+- [x] **Step 8: Warn on the unsupported combination**
 
 Fade is 1-up only. In the constructor, next to the existing gallery/autoplay conflict warning:
 
@@ -357,7 +357,7 @@ Fade is 1-up only. In the constructor, next to the existing gallery/autoplay con
 if (this.opts.fade && this.opts.gallery) console.warn('[dl-carousel] data-fade is ignored in gallery mode');
 ```
 
-- [ ] **Step 9: Build and check the budget**
+- [x] **Step 9: Build and check the budget**
 
 ```bash
 npm run size
@@ -365,7 +365,7 @@ npm run size
 
 Expected: `total: 5913 B gzip (budget 6144)`. **If it exceeds 6144, stop** — do not raise the gate; surface it per Global Constraints.
 
-- [ ] **Step 10: Browser-verify**
+- [x] **Step 10: Browser-verify**
 
 Build a scratch page (scratchpad, not committed) with a 3-slide `data-fade` carousel carrying `data-autoplay="1000"` and a link inside each slide. Assert:
 
@@ -382,7 +382,7 @@ Build a scratch page (scratchpad, not committed) with a 3-slide `data-fade` caro
 
 Then re-check under emulated `prefers-reduced-motion: reduce`: no auto-rotation, no opacity transition.
 
-- [ ] **Step 11: Document it in the README**
+- [x] **Step 11: Document it in the README**
 
 Add to the options table:
 
@@ -400,7 +400,7 @@ Add `--dlc-fade-ms` to the CSS custom properties list. Add to "Accessibility beh
 
 Add `data-fade` to the "Swapping the engine later" attribute list, since it is now part of the frozen contract.
 
-- [ ] **Step 12: Validate and commit**
+- [x] **Step 12: Validate and commit**
 
 ```bash
 npm run validate
