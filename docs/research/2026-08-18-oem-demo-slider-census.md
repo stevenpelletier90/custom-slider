@@ -6,8 +6,14 @@ runtime verification in a real browser on representative sites.
 Prompted by the 2026-08-11 Creative Solutions sync: "here is a link to a bunch we might need
 to start cataloguing and organizing ones that are the same both for diff OEMs etc."
 
-**Shareable version:** [docs/catalog/oem-slider-census.html](../catalog/oem-slider-census.html),
-published at <https://claude.ai/code/artifact/88715cca-344b-4643-be15-20c82a0860c8>.
+**Shareable versions** (both in [docs/catalog/](../catalog/)):
+
+- **[Model Bar Library](https://claude.ai/code/artifact/72367577-3336-4f58-abc1-5b0beb64ac08)** —
+  screenshots of every distinct model bar, captured live at 1280px, each with its
+  breakpoint ladder and the CSS to rebuild it. This is the one to open if you want to
+  _see_ the variants.
+- **[OEM Slider Census](https://claude.ai/code/artifact/88715cca-344b-4643-be15-20c82a0860c8)** —
+  the numbers behind this document.
 
 ## 1. Method
 

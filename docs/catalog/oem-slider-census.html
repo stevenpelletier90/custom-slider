@@ -502,7 +502,7 @@
 
 <div class="sheet">
   <header class="masthead">
-    <div class="eyebrow">DealerOn · Creative Solutions · 18 Aug 2026</div>
+    <div class="eyebrow">DealerOn &#183; Creative Solutions &#183; 18 Aug 2026</div>
     <h1>What the OEM demo sliders actually are</h1>
     <p class="standfirst">
       Every one of the 76 DealerOn OEM demo homepages was fingerprinted and the results clustered. The variety is mostly skin: five slider types account for the entire estate, and the one we cannot
@@ -521,7 +521,7 @@
   <section>
     <h2>The finding that changed our plan</h2>
     <div class="finding">
-      <p class="lede">68 of 76 sites run a fading hero banner — and until this week our slider could not do it at all.</p>
+      <p class="lede">68 of 76 sites run a fading hero banner &#8212; and until this week our slider could not do it at all.</p>
       <p>
         That makes the fade hero more widespread than the model bar. Earlier research missed it because it is a Bootstrap <code>carousel-fade</code>, not slick: the word <code>fade</code> appears in
         <strong>0 of 55</strong> slick configs. Every one of them rotates on a 5-second timer, which we confirmed by watching a live page advance rather than trusting the markup.
@@ -550,19 +550,19 @@
             <td><code>carousel-fade</code></td>
             <td>Full-bleed hero banner, 1-up, autoplays every 5s</td>
             <td class="live"><a href="https://bmwdemo1.dealeron.com/" target="_blank" rel="noopener">bmw 1</a></td>
-            <td><span class="chip chip--new">New — shipped</span></td>
+            <td><span class="chip chip--new">New &#8212; shipped</span></td>
           </tr>
           <tr>
             <td class="num">55</td>
             <td><code>.modelBarS</code></td>
-            <td>Model bar — cutouts, arrows only, one card per click</td>
+            <td>Model bar &#8212; cutouts, arrows only, one card per click</td>
             <td class="live"><a href="https://acurademo1.dealeron.com/" target="_blank" rel="noopener">acura 1</a></td>
             <td><span class="chip chip--have">Supported</span></td>
           </tr>
           <tr>
             <td class="num">30</td>
-            <td><span class="oems">— of those, tabbed</span></td>
-            <td>Model bars grouped by body style, 3–5 groups</td>
+            <td><span class="oems">&#8212; of those, tabbed</span></td>
+            <td>Model bars grouped by body style, 3&#8211;5 groups</td>
             <td class="live"><a href="https://chevroletdemo1.dealeron.com/" target="_blank" rel="noopener">chevrolet 1</a></td>
             <td><span class="chip chip--have">Supported</span></td>
           </tr>
@@ -575,7 +575,7 @@
           </tr>
           <tr>
             <td class="num">2</td>
-            <td><code>.quick-nav-5</code> · <code>.galleryS</code></td>
+            <td><code>.quick-nav-5</code> &#183; <code>.galleryS</code></td>
             <td>Lexus centre-mode quick-nav and gallery</td>
             <td class="live"><a href="https://lexusdemo2.dealeron.com/" target="_blank" rel="noopener">lexus 2</a></td>
             <td><span class="chip chip--off">Out of scope</span></td>
@@ -583,14 +583,14 @@
           <tr>
             <td class="num">2</td>
             <td><code>.filtering</code></td>
-            <td>Mazda filter UI — not a content slider</td>
+            <td>Mazda filter UI &#8212; not a content slider</td>
             <td class="live"><a href="https://mazdademo1.dealeron.com/" target="_blank" rel="noopener">mazda 1</a></td>
             <td><span class="chip chip--off">Not a slider</span></td>
           </tr>
           <tr>
             <td class="num">1</td>
             <td><code>rows: 2</code></td>
-            <td>Hyundai two-row grid — a different layout primitive</td>
+            <td>Hyundai two-row grid &#8212; a different layout primitive</td>
             <td class="live"><a href="https://hyundaidemo1.dealeron.com/" target="_blank" rel="noopener">hyundai 1</a></td>
             <td><span class="chip chip--off">Out of scope</span></td>
           </tr>
@@ -642,7 +642,7 @@
     <p>
       Three of those settle open questions for us:
       <code>slidesToScroll: 1</code> is exactly what <code>data-step="slide"</code> reproduces, <code>centerPadding: 60px</code> is our <code>--dlc-peek</code>, and
-      <strong>not one model bar in the estate autoplays</strong> — which is why no card strip in our library ever will.
+      <strong>not one model bar in the estate autoplays</strong> &#8212; which is why no card strip in our library ever will.
     </p>
   </section>
 
@@ -650,7 +650,7 @@
     <h2>The only thing that differs per brand</h2>
     <p>
       Breakpoints. Fourteen ladders cover all 55 sites. slick counts breakpoints as <em>max</em>-width and our <code>--dlc-per-view</code> queries are <em>min</em>-width, so these are already
-      converted — copy them rather than re-deriving, because that inversion is where a hand build goes wrong.
+      converted &#8212; copy them rather than re-deriving, because that inversion is where a hand build goes wrong.
     </p>
     <div class="scroller">
       <table>
@@ -664,73 +664,73 @@
         <tbody>
           <tr>
             <td class="num">13</td>
-            <td class="oems">acura 1–3, ford 2–3, gmc 1–2, honda 2–3, kia 2–3, mitsubishi 1–2</td>
-            <td class="ladder">2 → 461px 3 → 769px 5</td>
+            <td class="oems">acura 1&#8211;3, ford 2&#8211;3, gmc 1&#8211;2, honda 2&#8211;3, kia 2&#8211;3, mitsubishi 1&#8211;2</td>
+            <td class="ladder">2 &#8594; 461px 3 &#8594; 769px 5</td>
           </tr>
           <tr>
             <td class="num">11</td>
-            <td class="oems">cadillac 1–3, chevrolet 1–3, subaru 1–3, volvo 1–2</td>
-            <td class="ladder">2 → 540px 3 → 992px 4 → 1200px 5</td>
+            <td class="oems">cadillac 1&#8211;3, chevrolet 1&#8211;3, subaru 1&#8211;3, volvo 1&#8211;2</td>
+            <td class="ladder">2 &#8594; 540px 3 &#8594; 992px 4 &#8594; 1200px 5</td>
           </tr>
           <tr>
             <td class="num">6</td>
-            <td class="oems">lexus 1–3, nissan 2–3, toyota 1</td>
-            <td class="ladder">1 → 401px 2 → 601px 3 → 992px 5</td>
+            <td class="oems">lexus 1&#8211;3, nissan 2&#8211;3, toyota 1</td>
+            <td class="ladder">1 &#8594; 401px 2 &#8594; 601px 3 &#8594; 992px 5</td>
           </tr>
           <tr>
             <td class="num">5</td>
-            <td class="oems">buick 1–2, jaguar 1, landrover 1 &amp; 3</td>
-            <td class="ladder">2 → 461px 3 → 769px 4</td>
+            <td class="oems">buick 1&#8211;2, jaguar 1, landrover 1 &amp; 3</td>
+            <td class="ladder">2 &#8594; 461px 3 &#8594; 769px 4</td>
           </tr>
           <tr>
             <td class="num">5</td>
-            <td class="oems">genesis 1–3, vw 1–2</td>
-            <td class="ladder">1 → 541px 2 → 993px 3 → 1201px 4</td>
+            <td class="oems">genesis 1&#8211;3, vw 1&#8211;2</td>
+            <td class="ladder">1 &#8594; 541px 2 &#8594; 993px 3 &#8594; 1201px 4</td>
           </tr>
           <tr>
             <td class="num">3</td>
-            <td class="oems">lincoln 1–3</td>
-            <td class="ladder">2 → 461px 3 → 993px 4</td>
+            <td class="oems">lincoln 1&#8211;3</td>
+            <td class="ladder">2 &#8594; 461px 3 &#8594; 993px 4</td>
           </tr>
           <tr>
             <td class="num">2</td>
             <td class="oems">ford 1, honda 1</td>
-            <td class="ladder">1 → 461px 3 → 992px 5</td>
+            <td class="ladder">1 &#8594; 461px 3 &#8594; 992px 5</td>
           </tr>
           <tr>
             <td class="num">2</td>
-            <td class="oems">hyundai 2–3</td>
-            <td class="ladder">1 → 461px 3 → 993px 4 → 1201px 5</td>
+            <td class="oems">hyundai 2&#8211;3</td>
+            <td class="ladder">1 &#8594; 461px 3 &#8594; 993px 4 &#8594; 1201px 5</td>
           </tr>
           <tr>
             <td class="num">2</td>
-            <td class="oems">mazda 1–2</td>
-            <td class="ladder">1 → 769px 2 → 992px 3</td>
+            <td class="oems">mazda 1&#8211;2</td>
+            <td class="ladder">1 &#8594; 769px 2 &#8594; 992px 3</td>
           </tr>
           <tr>
             <td class="num">2</td>
-            <td class="oems">toyota 2–3</td>
-            <td class="ladder">1 → 541px 2</td>
+            <td class="oems">toyota 2&#8211;3</td>
+            <td class="ladder">1 &#8594; 541px 2</td>
           </tr>
           <tr>
             <td class="num">1</td>
             <td class="oems">alfa romeo 1</td>
-            <td class="ladder">1 → 541px 2 → 993px 3 → 1201px 4 → 1801px 6</td>
+            <td class="ladder">1 &#8594; 541px 2 &#8594; 993px 3 &#8594; 1201px 4 &#8594; 1801px 6</td>
           </tr>
           <tr>
             <td class="num">1</td>
             <td class="oems">audi 1</td>
-            <td class="ladder">1 → 361px 2 → 769px 3 → 993px 4 → 1201px 6</td>
+            <td class="ladder">1 &#8594; 361px 2 &#8594; 769px 3 &#8594; 993px 4 &#8594; 1201px 6</td>
           </tr>
           <tr>
             <td class="num">1</td>
             <td class="oems">kia 1</td>
-            <td class="ladder">1 → 769px 3</td>
+            <td class="ladder">1 &#8594; 769px 3</td>
           </tr>
           <tr>
             <td class="num">1</td>
             <td class="oems">hyundai 1</td>
-            <td class="ladder">two-row grid — out of scope</td>
+            <td class="ladder">two-row grid &#8212; out of scope</td>
           </tr>
         </tbody>
       </table>
@@ -757,27 +757,27 @@
           <tr>
             <td class="num">5</td>
             <td class="oems">Chevrolet, Subaru, Toyota</td>
-            <td class="oems">Trucks · Electric · Crossovers/SUVs · Performance · Commercial</td>
+            <td class="oems">Trucks &#183; Electric &#183; Crossovers/SUVs &#183; Performance &#183; Commercial</td>
           </tr>
           <tr>
             <td class="num">5</td>
             <td class="oems">Toyota</td>
-            <td class="oems">Popular · Cars &amp; Minivan · Trucks · Crossovers &amp; SUVs · Electrified</td>
+            <td class="oems">Popular &#183; Cars &amp; Minivan &#183; Trucks &#183; Crossovers &amp; SUVs &#183; Electrified</td>
           </tr>
           <tr>
             <td class="num">4</td>
             <td class="oems">Ford, Honda, Lexus, Nissan</td>
-            <td class="oems">SUVs &amp; Crossovers · Trucks &amp; Vans · All Electric · Cars</td>
+            <td class="oems">SUVs &amp; Crossovers &#183; Trucks &amp; Vans &#183; All Electric &#183; Cars</td>
           </tr>
           <tr>
             <td class="num">3</td>
             <td class="oems">Genesis, VW</td>
-            <td class="oems">SUV · Sedan · Electric (VW: Bus)</td>
+            <td class="oems">SUV &#183; Sedan &#183; Electric (VW: Bus)</td>
           </tr>
           <tr>
             <td class="num">3</td>
             <td class="oems">Kia, Cadillac, Hyundai, Volvo</td>
-            <td class="oems">SUV/CUV/MPV · Hybrid/Electric · Sedan</td>
+            <td class="oems">SUV/CUV/MPV &#183; Hybrid/Electric &#183; Sedan</td>
           </tr>
           <tr>
             <td class="num">1</td>
@@ -796,17 +796,17 @@
       <table class="versus">
         <thead>
           <tr>
-            <th scope="col">Platform hero — 68 sites</th>
+            <th scope="col">Platform hero &#8212; 68 sites</th>
             <th scope="col">dl-carousel</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td>
-              Pause control renders at <strong>16 × 6 px</strong>, id
+              Pause control renders at <strong>16 &#215; 6 px</strong>, id
               <code>hiddenPlayPauseControl</code>
             </td>
-            <td><strong>36 × 36</strong>, above the WCAG 2.5.8 AA minimum, first in tab order</td>
+            <td><strong>36 &#215; 36</strong>, above the WCAG 2.5.8 AA minimum, first in tab order</td>
           </tr>
           <tr>
             <td>Dots are <code>&lt;li role="button" tabindex="0"&gt;</code></td>
@@ -828,15 +828,16 @@
   <section>
     <h2>Open the originals</h2>
     <p>
-      All 76 demo homepages, so nothing here has to be taken on trust. Numbers are the demo index — <code>&lt;brand&gt;demo&lt;N&gt;.dealeron.com</code>. These are internal DealerOn demo sites, not
-      client sites: safe to open, click around, and screenshot for design review.
+      Screenshots of each distinct model bar are in the <a href="https://claude.ai/code/artifact/72367577-3336-4f58-abc1-5b0beb64ac08">Model Bar Library</a>. All 76 demo homepages below, so nothing
+      here has to be taken on trust. Numbers are the demo index &#8212; <code>&lt;brand&gt;demo&lt;N&gt;.dealeron.com</code>. These are internal DealerOn demo sites, not client sites: safe to open,
+      click around, and screenshot for design review.
     </p>
     <div class="roster">
       <div class="roster-brand">
         <span class="roster-name">Acura</span
         ><span class="roster-links"
-          ><a href="https://acurademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://acurademo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://acurademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://acurademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span><a href="https://acurademo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">&#183;</span><a href="https://acurademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
@@ -848,29 +849,30 @@
       <div class="roster-brand">
         <span class="roster-name">BMW</span
         ><span class="roster-links"
-          ><a href="https://bmwdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://bmwdemo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://bmwdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://bmwdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span><a href="https://bmwdemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">&#183;</span><a href="https://bmwdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Buick</span
         ><span class="roster-links"
-          ><a href="https://buickdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span
+          ><a href="https://buickdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
           ><a href="https://buickdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Cadillac</span
         ><span class="roster-links"
-          ><a href="https://cadillacdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://cadillacdemo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://cadillacdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://cadillacdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+          ><a href="https://cadillacdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
+          ><a href="https://cadillacdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Chevrolet</span
         ><span class="roster-links"
-          ><a href="https://chevroletdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span
-          ><a href="https://chevroletdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">·</span
+          ><a href="https://chevroletdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+          ><a href="https://chevroletdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
           ><a href="https://chevroletdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
@@ -886,41 +888,44 @@
       <div class="roster-brand">
         <span class="roster-name">Ford</span
         ><span class="roster-links"
-          ><a href="https://forddemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://forddemo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://forddemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://forddemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span><a href="https://forddemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">&#183;</span><a href="https://forddemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Genesis</span
         ><span class="roster-links"
-          ><a href="https://genesisdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://genesisdemo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://genesisdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://genesisdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+          ><a href="https://genesisdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
+          ><a href="https://genesisdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">GMC</span
         ><span class="roster-links"
-          ><a href="https://gmcdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://gmcdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
+          ><a href="https://gmcdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+          ><a href="https://gmcdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Honda</span
         ><span class="roster-links"
-          ><a href="https://hondademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://hondademo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://hondademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://hondademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span><a href="https://hondademo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">&#183;</span><a href="https://hondademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Hyundai</span
         ><span class="roster-links"
-          ><a href="https://hyundaidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://hyundaidemo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://hyundaidemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://hyundaidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+          ><a href="https://hyundaidemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
+          ><a href="https://hyundaidemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Infiniti</span
         ><span class="roster-links"
-          ><a href="https://infinitidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span
+          ><a href="https://infinitidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
           ><a href="https://infinitidemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
         >
       </div>
@@ -930,104 +935,111 @@
       <div class="roster-brand">
         <span class="roster-name">Jeep</span
         ><span class="roster-links"
-          ><a href="https://jeepdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://jeepdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
+          ><a href="https://jeepdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+          ><a href="https://jeepdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Kia</span
         ><span class="roster-links"
-          ><a href="https://kiademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://kiademo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://kiademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://kiademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span><a href="https://kiademo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">&#183;</span><a href="https://kiademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Land Rover</span
         ><span class="roster-links"
-          ><a href="https://landroverdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span
-          ><a href="https://landroverdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">·</span
+          ><a href="https://landroverdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+          ><a href="https://landroverdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
           ><a href="https://landroverdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Lexus</span
         ><span class="roster-links"
-          ><a href="https://lexusdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://lexusdemo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://lexusdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://lexusdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span><a href="https://lexusdemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">&#183;</span><a href="https://lexusdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Lincoln</span
         ><span class="roster-links"
-          ><a href="https://lincolndemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://lincolndemo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://lincolndemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://lincolndemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+          ><a href="https://lincolndemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
+          ><a href="https://lincolndemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Mazda</span
         ><span class="roster-links"
-          ><a href="https://mazdademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span
+          ><a href="https://mazdademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
           ><a href="https://mazdademo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">MINI</span
         ><span class="roster-links"
-          ><a href="https://minidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://minidemo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://minidemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://minidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span><a href="https://minidemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+          ><span class="sep">&#183;</span><a href="https://minidemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Mitsubishi</span
         ><span class="roster-links"
-          ><a href="https://mitsubishidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span
-          ><a href="https://mitsubishidemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">·</span
+          ><a href="https://mitsubishidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+          ><a href="https://mitsubishidemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
           ><a href="https://mitsubishidemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Nissan</span
         ><span class="roster-links"
-          ><a href="https://nissandemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://nissandemo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://nissandemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://nissandemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+          ><a href="https://nissandemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
+          ><a href="https://nissandemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Porsche</span
         ><span class="roster-links"
-          ><a href="https://porschedemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://porschedemo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://porschedemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://porschedemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+          ><a href="https://porschedemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
+          ><a href="https://porschedemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">RAM</span
         ><span class="roster-links"
-          ><a href="https://ramdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://ramdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
+          ><a href="https://ramdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+          ><a href="https://ramdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Subaru</span
         ><span class="roster-links"
-          ><a href="https://subarudemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://subarudemo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://subarudemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://subarudemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+          ><a href="https://subarudemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
+          ><a href="https://subarudemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Toyota</span
         ><span class="roster-links"
-          ><a href="https://toyotademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://toyotademo2.dealeron.com/" target="_blank" rel="noopener">2</a
-          ><span class="sep">·</span><a href="https://toyotademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+          ><a href="https://toyotademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+          ><a href="https://toyotademo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
+          ><a href="https://toyotademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Volkswagen</span
         ><span class="roster-links"
-          ><a href="https://vwdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span><a href="https://vwdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
+          ><a href="https://vwdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span><a href="https://vwdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
         >
       </div>
       <div class="roster-brand">
         <span class="roster-name">Volvo</span
         ><span class="roster-links"
-          ><a href="https://volvodemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">·</span
+          ><a href="https://volvodemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
           ><a href="https://volvodemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
         >
       </div>
@@ -1042,23 +1054,23 @@
         <li>
           The roster came from probing the
           <code>&lt;oem&gt;demo&lt;N&gt;.dealeron.com</code> convention, since the Salesforce Knowledge article needs a login. 76 hosts across 32 brands responded. <code>chevydemo*</code> is not the
-          convention — <code>chevroletdemo*</code> is.
+          convention &#8212; <code>chevroletdemo*</code> is.
         </li>
         <li>
           All 76 homepages were fetched and parsed with balanced-delimiter extraction of every slick init and its config.
-          <code>&lt;style&gt;</code> blocks are stripped first — the platform bundles Bootstrap's CSS everywhere, which otherwise reports a carousel on all 76 sites whether or not one exists.
+          <code>&lt;style&gt;</code> blocks are stripped first &#8212; the platform bundles Bootstrap's CSS everywhere, which otherwise reports a carousel on all 76 sites whether or not one exists.
         </li>
         <li>
           <strong>Corrected once:</strong> the first pass counted slick <em>init calls</em>, but one <code>$('.modelBarS').slick()</code> initialises every matching element. Counting elements instead
           is what revealed that 30 sites run multiple grouped model bars.
         </li>
         <li>
-          <strong>Corrected again:</strong> the pause control appears in <em>zero</em> of the 76 HTML sources, which looked like it was simply missing. It is injected at runtime — visible only on the
-          live page. Anything behaviour-dependent here was checked in a real browser for that reason.
+          <strong>Corrected again:</strong> the pause control appears in <em>zero</em> of the 76 HTML sources, which looked like it was simply missing. It is injected at runtime &#8212; visible only
+          on the live page. Anything behaviour-dependent here was checked in a real browser for that reason.
         </li>
       </ul>
     </details>
   </section>
 
-  <footer>Source of truth: docs/research/2026-08-18-oem-demo-slider-census.md · homepages only · fingerprinted 18 Aug 2026</footer>
+  <footer>Source of truth: docs/research/2026-08-18-oem-demo-slider-census.md &#183; homepages only &#183; fingerprinted 18 Aug 2026</footer>
 </div>
