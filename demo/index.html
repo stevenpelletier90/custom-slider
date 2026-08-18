@@ -28,6 +28,15 @@
       .demo-section {
         margin-block: 3rem;
       }
+      .demo-lede {
+        max-width: 68ch;
+        margin: 0.75rem 0;
+      }
+      .demo-sub {
+        max-width: 68ch;
+        margin: 0.35rem 0 1rem;
+        color: #3c4043;
+      }
       .demo-toc {
         margin-block: 1rem;
       }
@@ -985,16 +994,26 @@
     <main>
       <h1>Custom Slider</h1>
       <p>Dependency-free scroll-snap slider. Try this page with JavaScript disabled — every variation remains a readable, swipeable strip.</p>
+      <p class="demo-lede">
+        <strong>How to use this page:</strong> find the look you want below, open the panel underneath it, and copy the HTML and the CSS. Do <a href="#start">Start here</a> once per page first — that
+        is what puts the slider on the page at all.
+      </p>
+      <p class="demo-lede">
+        One engine, one stylesheet — <strong>5.9 KB gzipped together</strong>, no dependencies and no build step. Only two of the looks below are separate engine modes (<code>data-fade</code> and
+        <code>data-gallery</code>); every other one is the same carousel with different site CSS. With JavaScript off, every strip stays a swipeable scroller with all its content readable — you lose
+        the arrows, dots, autoplay and the gallery's thumbnails.
+      </p>
 
       <nav class="demo-toc" aria-label="On this page">
         <a href="#hero">Hero banner</a> · <a href="#start">Start here</a> · <a href="#vehicles">Featured vehicles</a> · <a href="#models">Model cards</a> · <a href="#modelbar">Model bar</a> ·
-        <a href="#modelbar-tabs">Model bar (tabs)</a> · <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> · <a href="#cards">Service cards</a> ·
-        <a href="#video">Video testimonials</a> · <a href="#grid">Two-row grid</a> · <a href="#gallery">Gallery</a> · <a href="#reviews">Reviews</a> ·
+        <a href="#modelbar-tabs">Model bar (tabs)</a> · <a href="#peek">Peek at the next card</a> · <a href="#mixed">Mixed image sizes</a> · <a href="#cards">Service cards</a> ·
+        <a href="#video">Video testimonials</a> · <a href="#grid">Two-row grid</a> · <a href="#gallery">Photo gallery</a> · <a href="#reviews">Customer reviews</a> ·
         <a href="#stock">Stock look</a>
       </nav>
 
       <section class="demo-section demo-hero-section demo-wide" id="hero">
-        <h2 id="hero-h">Hero banner</h2>
+        <h2 id="hero-h">Hero banner — crossfade</h2>
+        <p class="demo-sub">One image at a time, each fading into the next. Autoplays every 5&nbsp;seconds with a pause button. <strong>Engine mode:</strong> <code>data-fade</code>.</p>
         <div class="dl-carousel demo-hero" data-slider data-fade data-autoplay="5000" aria-labelledby="hero-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
@@ -1156,6 +1175,7 @@
            landmarks, so the wrapper stays an unnamed section. -->
       <section class="demo-section demo-wide" id="vehicles">
         <h2 id="vehicles-h">Featured vehicles</h2>
+        <p class="demo-sub">The everyday card strip — photo, price, a link, and the whole card is clickable. This is the plain slider with nothing switched on.</p>
         <div class="dl-carousel demo-vehicles" data-slider aria-labelledby="vehicles-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
@@ -1316,7 +1336,8 @@
       </section>
 
       <section class="demo-section demo-models-section demo-wide" id="models">
-        <h2 id="models-h">Explore Chevrolet Models</h2>
+        <h2 id="models-h">Model cards — tall photos</h2>
+        <p class="demo-sub">Tall photo cards with the name over the image, for browsing a lineup. Stops at the last card instead of looping round: <code>data-rewind="false"</code>.</p>
         <div class="dl-carousel demo-models" data-slider data-rewind="false" aria-labelledby="models-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
@@ -1401,7 +1422,8 @@
       </section>
 
       <section class="demo-section demo-modelbar-section demo-wide" id="modelbar">
-        <h2 id="modelbar-h">Chevrolet model bar</h2>
+        <h2 id="modelbar-h">Model bar — cutout tiles</h2>
+        <p class="demo-sub">The row of vehicle cutouts nearly every dealer homepage has. Moves one card per arrow click: <code>data-step="slide"</code>.</p>
         <div class="dl-carousel demo-modelbar" data-slider data-step="slide" aria-labelledby="modelbar-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
@@ -1662,6 +1684,7 @@
 
       <section class="demo-section demo-modelbar-section demo-modelbar-tabs-section demo-wide" id="modelbar-tabs">
         <h2 id="modelbar-tabs-h">Model bar with tabs</h2>
+        <p class="demo-sub">The same model bar split into groups by body style. The tab switcher is page script, not the library — each pane holds its own slider.</p>
         <div class="demo-tabs" data-tabs>
           <div role="tablist" aria-labelledby="modelbar-tabs-h">
             <button type="button" role="tab" id="tab-popular" aria-controls="pane-popular" aria-selected="true">Popular</button>
@@ -1996,7 +2019,8 @@
       </section>
 
       <section class="demo-section demo-wide" id="peek">
-        <h2 id="peek-h">Faded peek</h2>
+        <h2 id="peek-h">Peek at the next card</h2>
+        <p class="demo-sub">A sliver of the next card stays visible at each edge and fades out. CSS only: <code>--dlc-peek</code> plus a mask. Turn the peek right up and you get a centred card.</p>
         <div class="dl-carousel demo-peek" data-slider aria-labelledby="peek-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide"><img src="img/photo-1.jpg" width="1200" height="750" alt="Blue Chevrolet Camaro in the desert at dusk" loading="lazy" decoding="async" /></li>
@@ -2049,6 +2073,7 @@
 
       <section class="demo-section demo-wide" id="mixed">
         <h2 id="mixed-h">Mixed image sizes</h2>
+        <p class="demo-sub">Every photo here is a different shape and the row still looks tidy. CSS only — a fixed frame that the image is trimmed to fill.</p>
         <div class="dl-carousel demo-mixed" data-slider aria-labelledby="mixed-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
@@ -2151,6 +2176,7 @@ object-fit: cover;</code></pre>
 
       <section class="demo-section demo-wide" id="cards">
         <h2 id="cards-h">Service cards</h2>
+        <p class="demo-sub">Content cards with a picture, a heading and a sentence. Equal heights come free. Moves one card per click: <code>data-step="slide"</code>.</p>
         <div class="dl-carousel demo-cards" data-slider data-step="slide" aria-labelledby="cards-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
@@ -2262,6 +2288,7 @@ object-fit: cover;</code></pre>
 
       <section class="demo-section demo-video-section demo-wide" id="video">
         <h2 id="video-h">Video testimonials</h2>
+        <p class="demo-sub">Poster and play button; the video opens in a pop-up rather than playing inside the card. Page script — and it stops the video when the pop-up closes.</p>
         <div class="dl-carousel demo-video" data-slider aria-labelledby="video-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
@@ -2413,6 +2440,7 @@ object-fit: cover;</code></pre>
 
       <section class="demo-section demo-wide" id="grid">
         <h2 id="grid-h">Two-row grid</h2>
+        <p class="demo-sub">The same lineup folded into two rows, so twice as many fit before you scroll. CSS only — the engine is untouched.</p>
         <div class="dl-carousel demo-grid" data-slider aria-labelledby="grid-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
@@ -2579,7 +2607,8 @@ object-fit: cover;</code></pre>
       </section>
 
       <section class="demo-section" id="gallery">
-        <h2 id="gallery-h">Photo gallery</h2>
+        <h2 id="gallery-h">Photo gallery with thumbnails</h2>
+        <p class="demo-sub">A big photo with a strip of thumbnails under it; click one to jump. <strong>Engine mode:</strong> <code>data-gallery</code> — the library builds the thumbnails itself.</p>
         <div class="dl-carousel demo-gallery" data-slider data-gallery aria-labelledby="gallery-h">
           <div class="dl-carousel-track">
             <div class="dl-carousel-slide">
@@ -2643,6 +2672,7 @@ object-fit: cover;</code></pre>
 
       <section class="demo-section" id="reviews">
         <h2 id="reviews-h">Customer reviews</h2>
+        <p class="demo-sub">Short quote cards that rotate on their own, with a pause button: <code>data-autoplay="5000"</code>. The only card strip here that moves by itself.</p>
         <div class="dl-carousel demo-reviews" data-slider data-autoplay="5000" aria-labelledby="reviews-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
@@ -2791,6 +2821,7 @@ object-fit: cover;</code></pre>
 
       <section class="demo-section" id="stock">
         <h2 id="stock-h">Stock look — the base</h2>
+        <p class="demo-sub">The slider with no styling at all — what you get before any site CSS touches it. Start from this when building something new.</p>
         <p>Everything above is site CSS over this. Untouched engine defaults: overlaid dark arrows, per-page dots in reserved space (CLS 0), snap scrolling.</p>
         <div class="dl-carousel demo-stock" data-slider aria-labelledby="stock-h">
           <ul class="dl-carousel-track">
