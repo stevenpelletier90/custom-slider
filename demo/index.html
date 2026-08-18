@@ -1211,13 +1211,7 @@
           </ul>
         </div>
         <details>
-          <summary>Copy-paste HTML + options</summary>
-          <pre><code>&lt;div class="dl-carousel" data-slider aria-label="Featured vehicles"&gt;
-  &lt;ul class="dl-carousel-track"&gt;
-    &lt;li class="dl-carousel-slide"&gt;…card content…&lt;/li&gt;
-    &lt;!-- more slides --&gt;
-  &lt;/ul&gt;
-&lt;/div&gt;</code></pre>
+          <summary>What this is, and how to build it</summary>
           <p>
             Card images need <code>width</code>/<code>height</code> (that is what holds CLS at 0) and, on a real site, <code>srcset</code>/<code>sizes</code> — size <code>sizes</code> to ONE slide's
             rendered width, never <code>100vw</code>. The six photos on this page are single full-size JPEGs, which is why the demo weighs ~1.8&nbsp;MB; a responsive set is the single biggest
@@ -1229,9 +1223,6 @@
             card box. Keep the link's <code>aria-label</code> short — it is the card's accessible name.
           </p>
           <p>Set slides-per-view in CSS (no JS breakpoints):</p>
-          <pre><code>.my-slider { --dlc-per-view: 1; }
-@media (min-width: 640px)  { .my-slider { --dlc-per-view: 2; } }
-@media (min-width: 1024px) { .my-slider { --dlc-per-view: 3; } }</code></pre>
           <table>
             <caption>
               Data attributes
@@ -1277,6 +1268,40 @@
               <td>Screen-reader role description; empty string to omit</td>
             </tr>
           </table>
+
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-vehicles dl-carousel" data-slider aria-label="Featured vehicles"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;
+      &lt;article class="my-vehicle"&gt;
+        &lt;img src="#MISCPATH#vehicle-1.jpg" width="800" height="500" alt="2021 Porsche Panamera, rear three-quarter view"&gt;
+        &lt;h3&gt;2021 Porsche Panamera&lt;/h3&gt;
+        &lt;p&gt;$82,900 &amp;middot; 18,300 mi&lt;/p&gt;
+        &lt;a href="/used-inventory/index.htm" aria-label="View details on the 2021 Porsche Panamera"&gt;View details&lt;/a&gt;
+      &lt;/article&gt;
+    &lt;/li&gt;
+    &lt;!-- repeat the &lt;li&gt; for each vehicle --&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>.my-vehicles { --dlc-per-view: 1; --dlc-gap: 1rem; }
+@media (min-width: 640px)  { .my-vehicles { --dlc-per-view: 2; } }
+@media (min-width: 1024px) { .my-vehicles { --dlc-per-view: 3; } }
+
+.my-vehicle { position: relative; block-size: 100%; background: #fff; border: 1px solid #dde3e9; border-radius: 6px; overflow: hidden; }
+.my-vehicle img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 8 / 5; object-fit: cover; }
+.my-vehicle h3 { margin: 0.75rem 1rem 0.25rem; font-size: 1.05rem; }
+.my-vehicle p { margin: 0 1rem 0.5rem; color: #5f6368; }
+.my-vehicle a { display: inline-block; margin: 0 1rem 1rem; font-weight: 600; }
+
+/* Makes the WHOLE card clickable without nesting links: the one real link
+   stretches an invisible layer over the card. */
+.my-vehicle a::after { content: ""; position: absolute; inset: 0; }
+.my-vehicle:focus-within { outline: 3px solid var(--dlc-focus, #16324f); outline-offset: 2px; }</code></pre>
         </details>
       </section>
 
@@ -1939,7 +1964,17 @@
   });
 &lt;/script&gt;</code></pre>
           <p class="code-label">CSS</p>
-          <pre><code>/* The model bar inside each pane uses the same CSS as the plain model bar. */
+          <pre><code>/* The model bar inside each pane. Same recipe as the plain model bar - use
+   YOUR brand's row from the ladder table in that section. */
+.my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; --dlc-controls-space: 0px; }
+@media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
+@media (min-width: 769px) { .my-modelbar { --dlc-per-view: 5; } }
+.my-modelbar .dl-carousel-dots { display: none; }
+.my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
+.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
+.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
+
+/* The tabs themselves */
 .my-tabs { padding: 1rem; background-color: #eef2f6; border-radius: 8px; transition: background-color 500ms ease; }
 .my-tabs[data-tab="1"] { background-color: #e8eee9; }
 @media (prefers-reduced-motion: reduce) { .my-tabs { transition: none; } }
@@ -2065,6 +2100,42 @@ object-fit: cover;</code></pre>
             rescued artwork, so use consistent sizes when you can. And for cutouts or logos, swap <code>cover</code> for <code>contain</code>: those need to sit whole inside the box, not be trimmed.
             Keep the <code>width</code> and <code>height</code> on every image either way, so the page does not jump around while it loads.
           </p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-mixed dl-carousel" data-slider aria-label="Featured vehicles"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;
+      &lt;article class="my-mixed-card"&gt;
+        &lt;img src="#MISCPATH#any-size-photo.jpg" width="800" height="500" alt="Describe the vehicle"&gt;
+        &lt;h3&gt;2021 Porsche Panamera&lt;/h3&gt;
+        &lt;p&gt;$82,900 &amp;middot; 18,300 mi&lt;/p&gt;
+      &lt;/article&gt;
+    &lt;/li&gt;
+    &lt;!-- repeat the &lt;li&gt; for each vehicle; the photos do NOT have to match --&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>.my-mixed { --dlc-per-view: 1; --dlc-gap: 1rem; }
+@media (min-width: 640px)  { .my-mixed { --dlc-per-view: 2; } }
+@media (min-width: 1024px) { .my-mixed { --dlc-per-view: 3; } }
+
+.my-mixed-card { background: #fff; border: 1px solid #dde3e9; border-radius: 6px; overflow: hidden; }
+.my-mixed-card h3 { margin: 0.75rem 1rem 0.25rem; font-size: 1.05rem; }
+.my-mixed-card p { margin: 0 1rem 1rem; color: #5f6368; }
+
+/* This is the bit that makes any upload size work. The frame is fixed and the
+   photo is trimmed to fill it. Use `contain` instead for cutouts and logos,
+   which need to sit whole inside the box rather than be trimmed. */
+.my-mixed-card img {
+  display: block;
+  inline-size: 100%;
+  block-size: auto;
+  aspect-ratio: 4 / 3;
+  object-fit: cover;
+}</code></pre>
         </details>
       </section>
 
@@ -2523,17 +2594,40 @@ object-fit: cover;</code></pre>
         </div>
         <details>
           <summary>Copy-paste HTML + options</summary>
-          <pre><code>&lt;div class="dl-carousel" data-slider data-gallery aria-label="Vehicle photos"&gt;
-  &lt;div class="dl-carousel-track"&gt;
-    &lt;div class="dl-carousel-slide"&gt;&lt;img src="…" width="1200" height="750" alt="Describe the photo"&gt;&lt;/div&gt;
-    &lt;!-- more photos; use divs (slides become tabpanels), not ul/li --&gt;
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
           <p>
             Thumbnails are generated from each slide's image; the image
             <code>alt</code> names the thumbnail tab. Real photos should also carry <code>srcset</code>/<code>sizes</code> — size <code>sizes</code> to ONE slide's rendered width, never
             <code>100vw</code>.
           </p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-gallery dl-carousel" data-slider data-gallery aria-label="Vehicle photos"&gt;
+  &lt;div class="dl-carousel-track"&gt;
+    &lt;div class="dl-carousel-slide"&gt;
+      &lt;img src="#MISCPATH#photo-1.jpg" width="1200" height="750" alt="Describe the photo"&gt;
+    &lt;/div&gt;
+    &lt;!-- repeat the &lt;div&gt; for each photo. Use divs here, not ul/li - each slide
+         becomes a tab panel, and the thumbnails are built from these images. --&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>.my-gallery {
+  --dlc-per-view: 1;
+  --dlc-thumb-w: 96px;
+  --dlc-thumb-h: 64px;
+  /* Bare arrows tucked into the margins rather than sitting on the photo. */
+  --dlc-arrow-bg: transparent;
+  --dlc-arrow-fg: #262626;
+  padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+}
+.my-gallery .dl-carousel-arrow--prev { inset-inline-start: 0; }
+.my-gallery .dl-carousel-arrow--next { inset-inline-end: 0; }
+.my-gallery .dl-carousel-thumbs { inset-inline: calc(var(--dlc-arrow-size) + 0.25rem); }
+
+.my-gallery img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; }</code></pre>
         </details>
       </section>
 
@@ -2635,15 +2729,53 @@ object-fit: cover;</code></pre>
         </div>
         <details>
           <summary>Copy-paste HTML + options</summary>
-          <pre><code>&lt;div class="dl-carousel" data-slider data-autoplay="5000" aria-label="Customer reviews"&gt;
-  &lt;ul class="dl-carousel-track"&gt;
-    &lt;li class="dl-carousel-slide"&gt;…review…&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/div&gt;</code></pre>
           <p>
             Autoplay pauses on hover, stops permanently on keyboard focus or drag (the pause button restarts it), never starts under
             <code>prefers-reduced-motion</code>, and rewinds at the end — no cloned slides.
           </p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-reviews dl-carousel" data-slider data-autoplay="5000" aria-label="Customer reviews"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;
+      &lt;article class="my-review"&gt;
+        &lt;div class="my-review-head"&gt;
+          &lt;span class="my-review-avatar" aria-hidden="true"&gt;DW&lt;/span&gt;
+          &lt;span class="my-review-byline"&gt;&lt;strong&gt;Dana W.&lt;/strong&gt;&lt;small&gt;2 weeks ago&lt;/small&gt;&lt;/span&gt;
+        &lt;/div&gt;
+        &lt;p class="my-review-stars" aria-label="Rated 5 out of 5"&gt;&amp;#9733;&amp;#9733;&amp;#9733;&amp;#9733;&amp;#9733;&lt;/p&gt;
+        &lt;blockquote&gt;&lt;p&gt;Straightforward from start to finish. No pressure, no surprises on the paperwork.&lt;/p&gt;&lt;/blockquote&gt;
+      &lt;/article&gt;
+    &lt;/li&gt;
+    &lt;!-- repeat the &lt;li&gt; for each review --&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>.my-reviews { --dlc-per-view: 1; --dlc-gap: 1rem; }
+@media (min-width: 640px)  { .my-reviews { --dlc-per-view: 2; } }
+@media (min-width: 1024px) { .my-reviews { --dlc-per-view: 3; } }
+
+/* Bare arrows in the margins, and the pause button moved clear of them. */
+.my-reviews {
+  --dlc-arrow-bg: transparent;
+  --dlc-arrow-fg: #262626;
+  padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+}
+.my-reviews .dl-carousel-arrow--prev { inset-inline-start: 0; }
+.my-reviews .dl-carousel-arrow--next { inset-inline-end: 0; }
+.my-reviews .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size) + 0.5rem); }
+
+.my-review { block-size: 100%; padding: 1rem; background: #fff; border: 1px solid #dde3e9; border-radius: 6px; }
+.my-review-head { display: flex; gap: 0.6rem; align-items: center; }
+.my-review-avatar { display: grid; place-items: center; inline-size: 40px; block-size: 40px; font-weight: 500; color: #fff; background: #16324f; border-radius: 50%; }
+.my-review-byline { display: flex; flex-direction: column; line-height: 1.35; }
+.my-review-byline small { color: #5f6368; }
+/* The rating is carried by the aria-label; the glyphs just need enough contrast. */
+.my-review-stars { margin: 0.6rem 0 0.3rem; color: #c77800; letter-spacing: 2px; }
+.my-review blockquote, .my-review blockquote p { margin: 0; }</code></pre>
         </details>
       </section>
 
@@ -2680,14 +2812,30 @@ object-fit: cover;</code></pre>
         </div>
         <details>
           <summary>Copy-paste HTML — the base for every variation</summary>
-          <pre><code>&lt;link rel="stylesheet" href="dl-carousel.css"&gt;
-&lt;script src="dl-carousel.js" defer&gt;&lt;/script&gt;
-
-&lt;div class="dl-carousel my-slider" data-slider aria-label="Describe the strip"&gt;
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-slider dl-carousel" data-slider aria-label="Describe the strip"&gt;
   &lt;ul class="dl-carousel-track"&gt;
-    &lt;li class="dl-carousel-slide"&gt;…card content…&lt;/li&gt;
+    &lt;li class="dl-carousel-slide"&gt;...anything you like...&lt;/li&gt;
+    &lt;li class="dl-carousel-slide"&gt;...anything you like...&lt;/li&gt;
+    &lt;li class="dl-carousel-slide"&gt;...anything you like...&lt;/li&gt;
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>/* The only setting most sliders need: how many cards show at each width. */
+.my-slider { --dlc-per-view: 1; --dlc-gap: 1rem; }
+@media (min-width: 640px)  { .my-slider { --dlc-per-view: 2; } }
+@media (min-width: 1024px) { .my-slider { --dlc-per-view: 3; } }
+
+/* Everything else is optional. A few you are most likely to want:
+   --dlc-peek        a sliver of the next card showing at the edges
+   --dlc-arrow-bg    arrow background (transparent for bare arrows)
+   --dlc-arrow-fg    arrow colour
+   --dlc-dot-current colour of the current dot
+   --dlc-focus       the keyboard focus ring                                */</code></pre>
         </details>
       </section>
 
