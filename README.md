@@ -138,6 +138,13 @@ replacing it = replacing the contents of the two dist files, with zero site edit
 4. Keep the accessibility behaviors listed above — they are part of the contract,
    not this engine's private choices.
 
+## Putting it on a DealerOn site
+
+[docs/cms-implementation.md](docs/cms-implementation.md) — where the files go,
+the markup contract, replacement codes, per-OEM theming, and the ladder for each
+brand's model bar. Nothing is deployed yet; that doc records the intended
+process and the one open question (shared path vs. per-dealer upload).
+
 ## Development
 
     npm install
