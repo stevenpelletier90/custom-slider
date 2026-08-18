@@ -678,10 +678,15 @@
         display: grid;
         place-items: center;
         aspect-ratio: 16 / 9;
-        padding: 1rem;
         color: #eee;
         text-align: center;
         background: #111;
+        border-radius: 6px;
+      }
+      .demo-video-embed {
+        inline-size: 100%;
+        block-size: 100%;
+        border: 0;
         border-radius: 6px;
       }
       .demo-card h3 {
@@ -1411,7 +1416,7 @@
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
               <article class="demo-video-card">
-                <button type="button" class="demo-video-poster" data-video-title="Dana's story" aria-label="Play video: Dana's story">
+                <button type="button" class="demo-video-poster" data-video-title="Dana's story" data-video-id="aqz-KE-bpKQ" aria-label="Play video: Dana's story">
                   <img src="img/photo-1.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" />
                   <span class="demo-video-play" aria-hidden="true">
                     <svg viewBox="0 0 24 24" width="64" height="64">
@@ -1423,13 +1428,13 @@
                 <div class="demo-video-body">
                   <h3>Dana W.</h3>
                   <p>Every customer has a story. Hear how Dana's Saturday-morning test drive turned into new keys by lunch.</p>
-                  <button type="button" class="demo-video-open" data-video-title="Dana's story">Click to watch</button>
+                  <button type="button" class="demo-video-open" data-video-title="Dana's story" data-video-id="aqz-KE-bpKQ">Click to watch</button>
                 </div>
               </article>
             </li>
             <li class="dl-carousel-slide">
               <article class="demo-video-card">
-                <button type="button" class="demo-video-poster" data-video-title="Marcus's story" aria-label="Play video: Marcus's story">
+                <button type="button" class="demo-video-poster" data-video-title="Marcus's story" data-video-id="aqz-KE-bpKQ" aria-label="Play video: Marcus's story">
                   <img src="img/photo-4.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" />
                   <span class="demo-video-play" aria-hidden="true">
                     <svg viewBox="0 0 24 24" width="64" height="64">
@@ -1441,13 +1446,13 @@
                 <div class="demo-video-body">
                   <h3>Marcus T.</h3>
                   <p>A fair trade-in number over the phone, honored at the desk — Marcus explains why he came back a second time.</p>
-                  <button type="button" class="demo-video-open" data-video-title="Marcus's story">Click to watch</button>
+                  <button type="button" class="demo-video-open" data-video-title="Marcus's story" data-video-id="aqz-KE-bpKQ">Click to watch</button>
                 </div>
               </article>
             </li>
             <li class="dl-carousel-slide">
               <article class="demo-video-card">
-                <button type="button" class="demo-video-poster" data-video-title="Gene and Marta's story" aria-label="Play video: Gene and Marta's story">
+                <button type="button" class="demo-video-poster" data-video-title="Gene and Marta's story" data-video-id="aqz-KE-bpKQ" aria-label="Play video: Gene and Marta's story">
                   <img src="img/vehicle-6.jpg" width="800" height="500" alt="" loading="lazy" decoding="async" />
                   <span class="demo-video-play" aria-hidden="true">
                     <svg viewBox="0 0 24 24" width="64" height="64">
@@ -1459,7 +1464,7 @@
                 <div class="demo-video-body">
                   <h3>Gene &amp; Marta L.</h3>
                   <p>Five years of oil changes and never an upsell — the longtime service customers on why trust matters more than price.</p>
-                  <button type="button" class="demo-video-open" data-video-title="Gene and Marta's story">Click to watch</button>
+                  <button type="button" class="demo-video-open" data-video-title="Gene and Marta's story" data-video-id="aqz-KE-bpKQ">Click to watch</button>
                 </div>
               </article>
             </li>
@@ -1470,8 +1475,10 @@
           <p>
             Rebuild of the video-testimonial scroller pattern: one slide per view, poster + play button left, name and tagline right. The video <em>never</em> plays inline — both the poster and "Click
             to watch" open the native <code>&lt;dialog&gt;</code> at the end of this page (page script; Esc and backdrop-click close for free). The dialog ships a placeholder frame — on a real site
-            drop your YouTube/Vimeo <code>&lt;iframe&gt;</code> in and remember to stop playback on close. No autoplay on this carousel: the reference site rotates video cards every 3 seconds, which
-            fights the content.
+            holds a real <code>youtube-nocookie</code> <code>&lt;iframe&gt;</code> whose <code>src</code> is set on open and <strong>removed on the dialog's <code>close</code> event</strong> — that is
+            the whole stop-on-close recipe. There is no cross-origin pause API without loading the vendor's player SDK, so clearing <code>src</code> is the reliable stop, and listening for
+            <code>close</code> (rather than the close button's click) is what makes Esc and backdrop-click stop the audio too. No autoplay on the carousel itself: the reference site rotates video
+            cards every 3 seconds, which fights the content.
           </p>
         </details>
       </section>
@@ -1688,7 +1695,15 @@
         <button type="button" class="demo-video-close" aria-label="Close video">✕</button>
       </div>
       <div class="demo-video-frame">
-        <p>Placeholder — on a real site your YouTube/Vimeo <code>&lt;iframe&gt;</code> goes here.</p>
+        <!-- src is set on open and REMOVED on close: there is no cross-origin
+             pause API without the vendor SDK, so clearing src is the stop. -->
+        <iframe
+          class="demo-video-embed"
+          title="Video player"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen
+        ></iframe>
       </div>
     </dialog>
     <script>
@@ -1720,15 +1735,24 @@
         const dialog = document.getElementById('video-dialog');
         if (!dialog) return;
         const title = dialog.querySelector('.demo-video-dialog-title');
+        const embed = dialog.querySelector('.demo-video-embed');
         for (const btn of document.querySelectorAll('[data-video-title]')) {
           btn.addEventListener('click', () => {
             title.textContent = btn.dataset.videoTitle;
+            // youtube-nocookie: no tracking cookie until playback actually starts.
+            // autoplay is user-initiated here — the click IS the play request.
+            embed.src = `https://www.youtube-nocookie.com/embed/${btn.dataset.videoId}?autoplay=1&rel=0`;
             dialog.showModal();
           });
         }
         dialog.querySelector('.demo-video-close').addEventListener('click', () => dialog.close());
         dialog.addEventListener('click', (e) => {
           if (e.target === dialog) dialog.close();
+        });
+        // `close` covers EVERY exit — the button, Esc, and backdrop click. Wiring
+        // this to the close button alone is the bug: Esc would leave audio playing.
+        dialog.addEventListener('close', () => {
+          embed.removeAttribute('src');
         });
       });
       // Site-level tabs (model bar with tabs): APG tabs pattern with automatic

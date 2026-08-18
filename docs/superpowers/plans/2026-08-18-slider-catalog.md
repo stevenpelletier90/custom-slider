@@ -108,7 +108,7 @@ If `src/` changed, `dist/` must be in the same commit.
 
 ### Task 2: Video testimonials — real video and stop-on-close
 
-**BLOCKED pending Steven's answer** to spec open question 2: a YouTube/Vimeo URL, or a self-hosted file added to `demo/`. `ffmpeg` is not installed on this machine, so a clip cannot be generated locally, and downloading one requires explicit permission. **Implement the stop-on-close logic first (steps 1–3) — that is not blocked. Only the asset swap in step 4 waits.**
+**RESOLVED 2026-08-18 (Steven): YouTube demo video.** Original blocker text: to spec open question 2: a YouTube/Vimeo URL, or a self-hosted file added to `demo/`. `ffmpeg` is not installed on this machine, so a clip cannot be generated locally, and downloading one requires explicit permission. **Implement the stop-on-close logic first (steps 1–3) — that is not blocked. Only the asset swap in step 4 waits.**
 
 **Files:**
 
@@ -119,11 +119,11 @@ If `src/` changed, `dist/` must be in the same commit.
 - Consumes: nothing
 - Produces: nothing consumed by later tasks
 
-- [ ] **Step 1: Make the dialog handle both embed types**
+- [x] **Step 1: Make the dialog handle both embed types**
 
 Replace the placeholder `<div class="demo-video-frame">` contents so the dialog can hold either an `<iframe>` (YouTube/Vimeo) or a `<video>`. Keep the existing `.demo-video-frame` aspect box.
 
-- [ ] **Step 2: Stop playback on close — the actual deliverable**
+- [x] **Step 2: Stop playback on close — the actual deliverable**
 
 Tony's report is that video keeps playing after the modal closes. Both paths must be handled, because the recipe sites copy is the iframe one:
 
@@ -149,7 +149,7 @@ dialog.addEventListener('close', stopPlayback);
 
 Wire the open handler to restore `src` from `dataset.src` before `showModal()`.
 
-- [ ] **Step 3: Browser-verify the iframe path (not blocked on the asset)**
+- [x] **Step 3: Browser-verify the iframe path (not blocked on the asset)**
 
 Serve the demo, open the dialog, then close it three ways — close button, Esc, backdrop click — asserting after each:
 
@@ -161,11 +161,11 @@ Serve the demo, open the dialog, then close it three ways — close button, Esc,
 
 Then reopen and assert `src` is restored. **Assert all three close paths** — a `click`-only handler passes the button test and fails Esc, which is exactly the reported bug.
 
-- [ ] **Step 4: Swap in the real asset (after Steven answers)**
+- [x] **Step 4: Swap in the real asset (after Steven answers)**
 
 Drop in the chosen embed. If self-hosted, add the file under `demo/` and credit it in `demo/img/CREDITS.md`. Re-verify with the real asset that playback actually starts and actually stops — with a `<video>`, assert `video.paused === true` and `video.currentTime === 0` after close, having confirmed it was playing first (an assertion against a non-playing video is vacuous).
 
-- [ ] **Step 5: Update the details block and commit**
+- [x] **Step 5: Update the details block and commit**
 
 The section's "How this variant is built" text currently says the dialog ships a placeholder and tells readers to "remember to stop playback on close." Replace that with the implemented recipe.
 
