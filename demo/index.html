@@ -1158,17 +1158,21 @@
           </ul>
         </div>
         <details>
-          <summary>How this variant is built</summary>
+          <summary>What this is, and how to build it</summary>
           <p>
-            Stock <code>dl-carousel</code> — every visual difference is site CSS: bare arrows repositioned into the gutters (<code>--dlc-arrow-bg: transparent</code>), portrait overlay cards, and the
-            dots restyled into a bar with a sliding thumb: the page script at the end of this file watches the library's current-dot class and sets <code>--bar-index</code>/<code>--bar-count</code>,
-            which a <code>::before</code> translates across — the "custom callback" escape hatch in action. <code>data-rewind="false"</code> stops the carousel at the ends (the arrow disables) instead
-            of wrapping.
+            Tall photo cards with the model name over the image — good for a "browse the lineup" row when you want photography rather than cutouts. It stops at the last card instead of looping back to
+            the start, so the arrow greys out when you reach the end.
           </p>
           <p>
-            <strong>Alt text on a real site:</strong> these photos are stand-ins, so they carry <code>alt=""</code> and the heading names the card. With real OEM photography, give the image a
-            descriptive <code>alt</code> (<code>alt="2026 Chevrolet Silverado 1500 LT in Summit White"</code>) for image search, and put an explicit <code>aria-label="Explore the Silverado"</code> on
-            the wrapping link so its accessible name stays short instead of concatenating the alt text and the heading.
+            <strong>This is the plain slider underneath.</strong> Nothing here is a special mode — every difference you can see is ordinary CSS on top: the arrows are moved out into the margins and
+            made see-through, the cards are portrait instead of landscape, and the row of dots is restyled into a bar with a marker that slides along it. That sliding marker is the one clever bit: a
+            small script on this page watches which dot the slider marks as current and moves the bar to match. If you want something similar, that pattern is the way to do it — you never have to
+            change the slider itself.
+          </p>
+          <p>
+            <strong>One thing to get right on a real site.</strong> These photos are placeholders, so they have empty alt text and the heading does the naming. With real vehicle photography, describe
+            the image properly (<code>alt="2026 Chevrolet Silverado 1500 LT in Summit White"</code>) so it can turn up in image search — and then give the link that wraps the card a short label of its
+            own, like <code>aria-label="Explore the Silverado"</code>. Otherwise a screen reader reads the full photo description and the heading together every time, which gets tiring fast.
           </p>
         </details>
       </section>
@@ -1300,21 +1304,20 @@
           </ul>
         </div>
         <details>
-          <summary>How this variant is built</summary>
+          <summary>What this is, and how to build it</summary>
           <p>
-            The dealer "model bar": <code>data-step="slide"</code> advances one card per arrow click (the slick <code>slidesToScroll: 1</code> feel), the whole card is the link, dots are hidden with
-            site CSS (arrows + swipe remain — matching every production model bar we sampled). Images are ChromeData cutouts from the Chrome Photo Builder (angle 1, transparent PNG); on a DealerOn
-            site reference them as <code>#CHROMEPHOTOPATH|StyleID|1|640p#</code> and re-theme with <code>--dlc-*</code> per OEM.
+            The row of vehicle cutouts nearly every dealer homepage has. Click a model, land on that model's inventory. It moves one card at a time rather than jumping a whole screenful, the entire
+            card is the link, and there are no dots — just arrows and swipe.
           </p>
           <p>
-            <strong>The census settles the anatomy.</strong> All 55 OEM demo sites that run a model bar use the same one: <code>slidesToScroll: 1</code> on 53 of 55 (which is what
-            <code>data-step="slide"</code> reproduces), <code>arrows: true</code> and <code>swipeToSlide: true</code> on 55 of 55, <code>centerPadding: 60px</code> on 53 of 55 (that is
-            <code>--dlc-peek</code>), dots absent on 52 of 55, and <code>autoplay: false</code> on <strong>55 of 55</strong> — which is why no card strip in this library ever auto-rotates. Full
-            findings in <code>docs/research/2026-08-18-oem-demo-slider-census.md</code>.
+            <strong>You do not have to guess at any of this.</strong> We looked at all 76 OEM demo sites. Fifty-five of them have a model bar, and they are all built the same way: arrows always on,
+            swipe always on, dots almost never, a sliver of the next card peeking at the edge — and <strong>not one of them rotates on its own</strong>. That last one is why nothing in this library
+            auto-advances except the homepage banner. If a model bar moved by itself while someone was reading it, it would be working against them.
           </p>
           <p>
-            <strong>The only thing that differs per OEM is the breakpoint ladder</strong>, and there are just fourteen across the whole estate. Start from the row for the brand you are building. slick
-            counts breakpoints as <em>max</em>-width and <code>--dlc-per-view</code> media queries are <em>min</em>-width, so these are already inverted — copy them, do not re-derive them.
+            <strong>The only thing that changes brand to brand is how many cards show at each screen size</strong> — and there are just fourteen combinations across all 55 sites. Find your brand in
+            the table and copy its row. Do not work the numbers out yourself: the original sites count their screen sizes downwards and we count upwards, so the figures here are already flipped for
+            you, and re-deriving them by hand is the easiest way to get it wrong.
           </p>
           <table class="demo-ladder-table">
             <thead>
@@ -1397,7 +1400,7 @@
               </tr>
             </tbody>
           </table>
-          <p>The top row written out in full — every other row is the same shape with different numbers:</p>
+          <p>Here is the top row written out in full. Every other row is the same three lines with different numbers:</p>
           <pre><code>.my-modelbar { --dlc-per-view: 2; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 5; } }</code></pre>
@@ -1675,10 +1678,15 @@
           </ul>
         </div>
         <details>
-          <summary>How this variant is built</summary>
+          <summary>What this is, and how to build it</summary>
           <p>
-            Two stock knobs and one mask: <code>--dlc-peek</code> (engine CSS — pads the track and shifts the snap points so a sliver of each neighbor stays visible) plus a
-            <code>mask-image</code> gradient on the track whose fade width equals the peek. No page script, no engine changes, safe under reduced motion.
+            A sliver of the next card stays visible at each edge, fading out as it goes. It is the clearest way to tell someone there is more to scroll without adding anything to the page — people
+            reach for a strip that visibly continues.
+          </p>
+          <p>
+            <strong>Two settings, no code.</strong> <code>--dlc-peek</code> decides how much of the neighbouring card peeks out, and a fade is layered over each edge at the same width so the sliver
+            softens instead of being cut off. Both are CSS. Nothing is added to the page, nothing changes in the slider, and it behaves correctly for people who have asked their device to reduce
+            motion.
           </p>
         </details>
       </section>
@@ -1732,11 +1740,19 @@
           </ul>
         </div>
         <details>
-          <summary>The recipe (why nothing here breaks)</summary>
+          <summary>Why the mismatched images still line up</summary>
           <p>
-            Every card image gets <code>aspect-ratio: 4 / 3; inline-size: 100%; object-fit: cover;</code> — the box is fixed, the source fills it, and any upload dimensions render identically. Keep
-            real <code>width</code>/<code>height</code> attributes (CLS stays 0) and prefer uniform assets anyway: cover-cropping costs edges, and consistent art always looks better than rescued art.
-            Use <code>object-fit: contain</code> instead for cutouts and logos.
+            Every image above is a different shape — tall, wide, square — and the row still looks tidy. That is deliberate: dealers upload whatever they have, and the layout should not fall apart
+            because one photo came in portrait.
+          </p>
+          <p><strong>The trick is to fix the frame, not the photo.</strong> Each card gets a fixed-shape box, and the image fills it and is trimmed at the edges to fit:</p>
+          <pre><code>aspect-ratio: 4 / 3;
+inline-size: 100%;
+object-fit: cover;</code></pre>
+          <p>
+            Two things worth knowing. Trimming to fit means the edges of an off-shape photo get cropped, so a subject right at the edge can lose its head — matching artwork still looks better than
+            rescued artwork, so use consistent sizes when you can. And for cutouts or logos, swap <code>cover</code> for <code>contain</code>: those need to sit whole inside the box, not be trimmed.
+            Keep the <code>width</code> and <code>height</code> on every image either way, so the page does not jump around while it loads.
           </p>
         </details>
       </section>
