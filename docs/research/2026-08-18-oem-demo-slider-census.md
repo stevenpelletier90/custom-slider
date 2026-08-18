@@ -168,8 +168,8 @@ real `<button>` dots, a terse dedicated status region, and reduced-motion resolv
    from the right one, not guess.
 3. **The model bar needs no rework.** The census validates it as shipped — but the demo's
    tabbed variant should show 3-5 groups, not 2, since that is the real shape (§4.1).
-4. **Center-mode remains low priority.** 3 instances estate-wide.
-5. **Unsupported edge case:** `rows: 2` (hyundaidemo1) — a two-row grid slider.
+4. **Center-mode and the two-row grid turned out to be buildable** — see §8. Both were filed
+   as out of scope on the assumption they needed engine work. Tested, neither does.
 
 ## 7. The roster — every site, linked
 
@@ -226,3 +226,46 @@ word for it. Numbers are the demo index (`<brand>demo<N>.dealeron.com`).
 
 These are internal DealerOn demo sites, not client sites — safe to open, click
 around, and screenshot for design review.
+
+## 8. The "out of scope" patterns, re-tested (2026-08-18)
+
+Center-mode and the two-row grid were both filed as out of scope on the assumption they
+needed engine changes. Tested rather than assumed, neither does — **the estate is fully
+covered with no engine work**.
+
+### Centre-mode
+
+| Site                 | slick config                | Reproducible?                         |
+| -------------------- | --------------------------- | ------------------------------------- |
+| lexusdemo2 gallery   | 1 up, `centerPadding: 20%`  | **Exactly** — measured 0px off centre |
+| kiademo1 model bar   | 3 up, `centerPadding: 10px` | **Visually yes**, see caveat          |
+| lexusdemo2 quick-nav | 3 up, `centerPadding: 9%`   | **Visually yes**, see caveat          |
+
+`--dlc-peek` already pads both edges and shifts the snap points, so at **one card per view** a
+large peek puts the active card dead centre with slices of its neighbours either side —
+measured at exactly 0px off centre. That is slick's centre mode, reproduced with a CSS custom
+property we already ship.
+
+**Caveat above one card per view:** the look is reproducible, but slick treats the _middle_
+visible card as current whereas we treat the _leftmost_ as current. Neither Kia's model bar
+nor Lexus's quick-nav visually marks a current card, so on those two the difference is
+invisible. It would matter on a design that highlights the centred card.
+
+### Two-row grid (hyundaidemo1, `rows: 2`)
+
+CSS only — the track becomes a two-row grid with columns flowing across. Shipped as the
+`#grid` demo section.
+
+**The one thing to get right:** the engine counts _cards_, not columns, and in two rows the
+next card along is the one directly underneath. So `--dlc-per-view` must be the number of
+cards on screen (columns × 2), with a separate `--dlc-cols` sizing the columns. Get that
+pairing wrong and an arrow click moves half a screen or nothing at all — which is exactly what
+happened on the first attempt, before it was measured.
+
+With the pairing right, one arrow click moves one full screen and the dot count is correct:
+verified at 1280px (4 columns, 3 visible, 2 dots) and 700px (4 columns, 2 visible, 2 dots).
+
+### Coverage
+
+Every slider pattern in the estate is now buildable. The only entry that stays out is Mazda's
+`.filtering`, which is a filter UI and not a carousel at all.

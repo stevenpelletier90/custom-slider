@@ -830,6 +830,30 @@
         background: #fff;
         border-radius: 4px;
       }
+      /* Two-row grid. --dlc-cols is how many columns are on screen; per-view is
+         how many CARDS that is (columns x 2 rows) — the slider counts cards, so
+         telling it the true number is what makes one arrow click move one full
+         screen and the dots come out right. */
+      .demo-grid {
+        --dlc-cols: 2;
+        --dlc-per-view: 4;
+        --dlc-gap: 1rem;
+      }
+      @media (min-width: 769px) {
+        .demo-grid {
+          --dlc-cols: 3;
+          --dlc-per-view: 6;
+        }
+      }
+      .demo-grid .dl-carousel-track {
+        display: grid;
+        grid-auto-flow: column;
+        grid-template-rows: repeat(2, auto);
+        grid-auto-columns: calc((100% - (var(--dlc-cols) - 1) * var(--dlc-gap)) / var(--dlc-cols));
+      }
+      .demo-grid .dl-carousel-slide {
+        flex: none;
+      }
       .demo-start {
         padding: 1.25rem 1.5rem;
         background: #eef2f6;
@@ -955,7 +979,8 @@
       <nav class="demo-toc" aria-label="On this page">
         <a href="#start">Start here</a> · <a href="#hero">Hero banner</a> · <a href="#vehicles">Featured vehicles</a> · <a href="#modelbar">Model bar</a> ·
         <a href="#modelbar-tabs">Model bar (tabs)</a> · <a href="#models">Model cards</a> · <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> ·
-        <a href="#cards">Service cards</a> · <a href="#video">Video testimonials</a> · <a href="#gallery">Gallery</a> · <a href="#reviews">Reviews</a> · <a href="#stock">Stock look</a>
+        <a href="#cards">Service cards</a> · <a href="#video">Video testimonials</a> · <a href="#grid">Two-row grid</a> · <a href="#gallery">Gallery</a> · <a href="#reviews">Reviews</a> ·
+        <a href="#stock">Stock look</a>
       </nav>
 
       <section class="demo-section demo-hero-section demo-wide" id="hero">
@@ -1944,6 +1969,10 @@
             reach for a strip that visibly continues.
           </p>
           <p>
+            <strong>Turn the peek right up and you get a centred card.</strong> With one card per view and a large peek &mdash; say <code>--dlc-peek: 20%</code> &mdash; the active card sits dead
+            centre with a slice of the previous and next either side. That is the "centre mode" look some OEM sites use for galleries, and it needs nothing beyond the setting below.
+          </p>
+          <p>
             <strong>Two settings, no code.</strong> <code>--dlc-peek</code> decides how much of the neighbouring card peeks out, and a fade is layered over each edge at the same width so the sliver
             softens instead of being cut off. Both are CSS. Nothing is added to the page, nothing changes in the slider, and it behaves correctly for people who have asked their device to reduce
             motion.
@@ -2298,6 +2327,173 @@ object-fit: cover;</code></pre>
 .my-video-head { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; }
 .my-video-frame { aspect-ratio: 16 / 9; background: #111; }
 .my-video-embed { inline-size: 100%; block-size: 100%; border: 0; }</code></pre>
+        </details>
+      </section>
+
+      <section class="demo-section demo-wide" id="grid">
+        <h2 id="grid-h">Two-row grid</h2>
+        <div class="dl-carousel demo-grid" data-slider aria-labelledby="grid-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="demo-modelbar-card" href="#silverado-1500" aria-label="Explore the Silverado 1500"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Silverado 1500"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-modelbar-card" href="#colorado" aria-label="Explore the Colorado"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Colorado"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-modelbar-card" href="#tahoe" aria-label="Explore the Tahoe"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Tahoe"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-modelbar-card" href="#suburban" aria-label="Explore the Suburban"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Suburban"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-modelbar-card" href="#traverse" aria-label="Explore the Traverse"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Traverse"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-modelbar-card" href="#equinox" aria-label="Explore the Equinox"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Equinox"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-modelbar-card" href="#trailblazer" aria-label="Explore the Trailblazer"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Trailblazer"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="demo-modelbar-card" href="#trax" aria-label="Explore the Trax"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Trax"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+        <details>
+          <summary>What this is, and how to build it</summary>
+          <p>
+            The same lineup in two rows instead of one, so twice as many models fit before anyone has to scroll. One OEM demo site does it this way. Cards fill top-to-bottom and then move to the next
+            column, so reading order stays sensible.
+          </p>
+          <p><strong>This is CSS only</strong> &mdash; the slider is untouched. The row of cards becomes a grid two rows deep, and the arrows move one column at a time as usual.</p>
+          <p>
+            <strong>One number to get right.</strong> The slider counts cards, not columns &mdash; so tell it how many cards are on screen, which in two rows is columns &times; 2. Set
+            <code>--dlc-cols</code> to the columns you want and <code>--dlc-per-view</code> to double it. Get that pairing wrong and an arrow click moves half a screen, or nothing at all, because the
+            next card along is the one directly underneath.
+          </p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-grid dl-carousel" data-slider data-step="slide" aria-label="Our lineup"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;...card...&lt;/li&gt;
+    &lt;li class="dl-carousel-slide"&gt;...card...&lt;/li&gt;
+    &lt;!-- cards fill top-to-bottom, then move to the next column --&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>/* --dlc-cols = columns on screen. --dlc-per-view = cards on screen, which in
+   two rows is columns x 2. The slider counts cards, so this pairing is what
+   makes one arrow click move exactly one screen. */
+.my-grid { --dlc-cols: 2; --dlc-per-view: 4; --dlc-gap: 1rem; }
+@media (min-width: 769px) { .my-grid { --dlc-cols: 3; --dlc-per-view: 6; } }
+
+.my-grid .dl-carousel-track {
+  display: grid;
+  grid-auto-flow: column;
+  grid-template-rows: repeat(2, auto);
+  grid-auto-columns: calc((100% - (var(--dlc-cols) - 1) * var(--dlc-gap)) / var(--dlc-cols));
+}
+.my-grid .dl-carousel-slide { flex: none; }</code></pre>
         </details>
       </section>
 
