@@ -936,13 +936,20 @@
           </ul>
         </div>
         <details>
-          <summary>How this variant is built — and what it fixes</summary>
+          <summary>What this is, and why we rebuilt it</summary>
           <p>
-            The pattern <strong>68 of 76</strong> DealerOn OEM demo sites lead with, rebuilt on <code>data-fade</code>: one slide per view, whole-slide link, 5 s rotation (the estate's own
-            <code>data-interval="5000"</code>), dots. Slides stack in a single CSS grid cell, so the tallest defines the box and CLS stays 0 — no absolute positioning, no collapsed height. Alt text is
-            empty because the link's <code>aria-label</code> already names the destination; a decorative banner photo announced twice is noise.
+            The big rotating banner at the top of a homepage. Instead of sliding sideways, each image dissolves into the next. This is the most common slider on our demo sites by a distance —
+            <strong>68 of the 76</strong> have one — and until now our library could not do it at all.
           </p>
-          <p>The platform's own hero has four accessibility problems this one does not. That is the point of the section:</p>
+          <p>
+            <strong>How it is set up.</strong> One image at a time, the whole banner is a link, it changes every 5 seconds, and there are dots to jump between them. The 5 seconds is not a guess: it is
+            what every one of those 68 sites already uses. The images sit stacked on top of each other in one space, so the tallest one sets the height and the page never jumps around as it changes.
+          </p>
+          <p>
+            <strong>Why the alt text is empty.</strong> The link already says where it goes ("Summer Sales Event — shop current offers"), so describing the photo as well would make a screen reader
+            announce the same banner twice.
+          </p>
+          <p><strong>The reason this was worth rebuilding rather than leaving alone:</strong> the version on those 68 sites has four accessibility problems, and this one has none of them.</p>
           <table class="demo-hero-table">
             <thead>
               <tr>
@@ -952,26 +959,26 @@
             </thead>
             <tbody>
               <tr>
-                <td>Pause button renders at <strong>16 × 6 px</strong>, id <code>hiddenPlayPauseControl</code></td>
-                <td><strong>36 × 36</strong> by default — over the WCAG 2.5.8 (AA) 24 × 24 minimum, and first in tab order</td>
+                <td>The pause button is <strong>16 × 6 pixels</strong> — smaller than the accessibility guidelines allow, and named "hidden" in the code</td>
+                <td>A <strong>36 × 36</strong> button, comfortably above the minimum, and the first thing you reach with the Tab key</td>
               </tr>
               <tr>
-                <td>Dots are <code>&lt;li role="button" tabindex="0"&gt;</code></td>
-                <td>Real <code>&lt;button&gt;</code> elements, one per slide</td>
+                <td>The dots are list items pretending to be buttons</td>
+                <td>Actual buttons, one per banner</td>
               </tr>
               <tr>
-                <td><code>aria-live="off"</code> on the track</td>
-                <td>Terse <code>.dl-carousel-status</code> region, silent while rotating</td>
+                <td>Screen-reader announcements are switched off on the banner</td>
+                <td>A short announcement of which banner you are on — and silence while it is rotating on its own, so it does not chatter</td>
               </tr>
               <tr>
-                <td>No <code>prefers-reduced-motion</code> handling observed</td>
-                <td>Never starts rotating under reduced motion; crossfade transition removed too</td>
+                <td>No handling for people who ask their device to reduce motion</td>
+                <td>It simply does not rotate for them, and the dissolve is dropped too</td>
               </tr>
             </tbody>
           </table>
           <p>
-            Findings from <code>docs/research/2026-08-18-oem-demo-slider-census.md</code> — all 76 demo homepages fingerprinted, the hero behaviour verified live in a browser rather than inferred from
-            markup.
+            All 76 demo homepages were checked for this, and the banner behaviour was confirmed by watching the real pages rather than reading their code — the pause button, for instance, does not
+            appear in the page source at all, because it is added after the page loads. Full write-up in <code>docs/research/2026-08-18-oem-demo-slider-census.md</code>.
           </p>
         </details>
       </section>
@@ -1615,17 +1622,23 @@
           </div>
         </div>
         <details>
-          <summary>How this variant is built</summary>
+          <summary>What this is, and how to build it</summary>
           <p>
-            The Ford-style tabbed model bar: each tab pane wraps its <em>own</em> carousel instance (same class, one selector). The tabs are the small APG page script at the end of this file — not the
-            engine. Hidden panes use the <code>hidden</code> attribute; the engine's ResizeObserver re-measures the strip when its pane is revealed, so no slick-style <code>height: 0</code> hack is
-            needed. All three instances share the model-bar recipe (<code>data-step="slide"</code>, hidden dots, whole-card links). The band colour transitions on tab change — the Kia Demo One touch —
-            with page script setting <code>data-tab</code> and CSS owning the colour and the fade, so the engine stays out of it. The transition is removed under <code>prefers-reduced-motion</code>.
+            The same model bar, split into groups you switch between — trucks, SUVs, electric, and so on. Use it when a lineup is too long for one row, or when people shop by body style rather than by
+            model name. The background colour shifts as you move between tabs, which is a nice touch borrowed from the Kia demo.
           </p>
           <p>
-            <strong>This is not a one-OEM flourish.</strong> The census found <strong>30 of the 55</strong> model-bar sites run more than one model bar grouped under tabs — three to five groups, keyed
-            by body style or fuel type. (Careful reading the source: nearly every site also has a separate <em>Buy / Finance / Lease</em> tablist for payments, which is a different widget.) The real
-            groupings:
+            <strong>Each tab holds its own separate slider.</strong> Add or remove tabs freely — the page works out how many there are. The tabs themselves are a small piece of code on this page, not
+            part of the slider library, so you can restyle them however you like.
+          </p>
+          <p>
+            One thing that usually causes trouble elsewhere and does not here: a slider inside a hidden tab cannot measure itself, because it has no size yet. Ours notices the moment its tab is shown
+            and measures then, so there is none of the propping-open trickery older slider libraries need.
+          </p>
+          <p>
+            <strong>This is the normal shape, not a Kia quirk.</strong> Of the 55 sites with a model bar, <strong>30 group theirs under tabs</strong> — usually three to five groups, by body style or
+            fuel type. One warning if you go looking at the originals: nearly every site also has a <em>Buy / Finance / Lease</em> switcher for payments, which is a completely different thing and easy
+            to mistake for these. The real groupings:
           </p>
           <table class="demo-ladder-table">
             <thead>
@@ -1661,7 +1674,6 @@
               </tr>
             </tbody>
           </table>
-          <p>Add or remove panes freely — each one is an independent instance, and the page script adapts to however many tabs it finds.</p>
         </details>
       </section>
 
@@ -1812,16 +1824,24 @@ object-fit: cover;</code></pre>
           </ul>
         </div>
         <details>
-          <summary>How this variant is built</summary>
+          <summary>What this is, and how to build it</summary>
           <p>
-            The model-bar mechanics with full content cards — a rebuild of the Lead Science practice-area carousel (whole card is the link, <code>data-step="slide"</code> one-card advance, arrows
-            only). The image sits in a fixed-aspect cover box (any upload dimensions fit), and the cards stay equal height for free: the track is already flex, so slides stretch, and
-            <code>flex-grow</code> on the copy pushes every "Read more" to the same baseline. The "Read more" line is <code>aria-hidden</code> decoration, and the card's accessible name is simply its
-            visible text — <strong>no <code>aria-label</code> at all</strong>. An earlier version put a short one here ("Learn about the service center") and that was a WCAG 2.5.3 failure (Label in
-            Name, Level A): the accessible name has to contain the visible text so a speech-input user saying what they can see gets a match. Because the body copy sits <em>inside</em> the link, no
-            short label can ever contain it — the fix is to drop the label, not reword it. A short <code>aria-label</code> is only safe where the visible text is just a heading, as on the model-bar
-            cards ("Explore the Silverado 1500" contains "Silverado 1500"). Lighthouse's <code>label-content-name-mismatch</code> audit catches this, and it carries no weight in the score — the
-            category reads 100 with the failure still present.
+            The model bar's behaviour with proper content cards — a picture, a heading, a line of copy. Good for services, departments, or anything that needs a sentence of explanation rather than
+            just a name. The whole card is clickable and it moves one card at a time.
+          </p>
+          <p>
+            <strong>The cards match heights on their own.</strong> You do not have to set a height or trim your copy — a short card stretches to match the tallest one in the row, and every "Read more"
+            still lines up along the bottom. Images go in a fixed-shape frame, so any upload size fits without you cropping anything first.
+          </p>
+          <p>
+            <strong>A mistake worth knowing about, because it is easy to repeat.</strong> These cards used to carry a short hidden label — "Learn about the service center" — while the visible text
+            said "Service Center" and then a sentence about it. That fails an accessibility rule: someone using voice control says what they can see, and if the hidden label does not contain those
+            words, nothing happens when they say it.
+          </p>
+          <p>
+            The fix is to remove the hidden label, not to reword it. The card's description sits inside the link, so no short label could ever contain everything you can see. A short hidden label is
+            fine where the only visible text is a heading — the model bar cards are a good example, where "Explore the Silverado 1500" does contain "Silverado 1500". Automated checks do flag this, but
+            it does not count towards the score, so the page can report a perfect 100 while still failing it.
           </p>
         </details>
       </section>
@@ -1887,14 +1907,24 @@ object-fit: cover;</code></pre>
           </ul>
         </div>
         <details>
-          <summary>How this variant is built</summary>
+          <summary>What this is, and how to build it</summary>
           <p>
-            Rebuild of the video-testimonial scroller pattern: one slide per view, poster + play button left, name and tagline right. The video <em>never</em> plays inline — both the poster and "Click
-            to watch" open the native <code>&lt;dialog&gt;</code> at the end of this page (page script; Esc and backdrop-click close for free). The dialog ships a placeholder frame — on a real site
-            holds a real <code>youtube-nocookie</code> <code>&lt;iframe&gt;</code> whose <code>src</code> is set on open and <strong>removed on the dialog's <code>close</code> event</strong> — that is
-            the whole stop-on-close recipe. There is no cross-origin pause API without loading the vendor's player SDK, so clearing <code>src</code> is the reliable stop, and listening for
-            <code>close</code> (rather than the close button's click) is what makes Esc and backdrop-click stop the audio too. No autoplay on the carousel itself: the reference site rotates video
-            cards every 3 seconds, which fights the content.
+            Customer video testimonials — a still frame with a play button on the left, the person's name and their story on the right. The video never plays in the card itself. Clicking either the
+            picture or "Click to watch" opens it in a pop-up over the page, which you close with the ✕, the Esc key, or by clicking the dark area around it.
+          </p>
+          <p>
+            <strong>Making the video actually stop.</strong> This is the part that catches people out. Closing the pop-up hides the video but does not stop it, so you get a voice still talking from
+            nowhere. There is no way to press pause on a YouTube video from outside it without loading YouTube's own extra code, so instead we take the video address away when the pop-up closes, which
+            stops it dead.
+          </p>
+          <p>
+            The other half matters just as much: we listen for the pop-up <em>closing</em>, rather than for the ✕ being clicked. Wire it to the ✕ alone and it looks fine in testing — but pressing Esc
+            or clicking outside leaves the audio playing, which is exactly the bug that was reported.
+          </p>
+          <p>
+            <strong>Swapping in your own video:</strong> change the video id on the two buttons in each card. Nothing else needs touching. The demo uses Big Buck Bunny, an openly licensed short film,
+            so there is no copyrighted footage sitting in a public demo. The cards themselves do not rotate on their own — the site we based this on flips through them every 3 seconds, which fights
+            you when you are trying to read one.
           </p>
         </details>
       </section>
