@@ -332,12 +332,12 @@
         --dlc-arrow-fg: #262626;
         padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
       }
-      @media (min-width: 640px) {
+      @media (min-width: 461px) {
         .demo-modelbar {
           --dlc-per-view: 3;
         }
       }
-      @media (min-width: 1024px) {
+      @media (min-width: 769px) {
         .demo-modelbar {
           --dlc-per-view: 5;
         }
@@ -592,6 +592,10 @@
       .demo-video-section details {
         color: #d8e2ec;
       }
+      /* #5f6368 on the navy band is 2.17:1 — the markers need a pale tone. */
+      .demo-video-section .code-label {
+        color: #cbd6e2;
+      }
       .demo-video {
         --dlc-per-view: 1;
         --dlc-controls-space: 0px; /* keep the unit — unitless 0 breaks the arrow-centering calc */
@@ -724,9 +728,15 @@
         margin-block-start: 1rem;
       }
       pre {
-        background: #f6f6f6;
+        /* Colour belongs here, not only on the light sections: <pre> has a light
+           background of its own, so a dark band setting pale text would inherit
+           it into the code and drop to ~1.2:1. These sit inside a closed
+           <details>, so axe treats them as hidden and Lighthouse still reports
+           100 — the gate cannot catch this one. */
         padding: 1rem;
         overflow-x: auto;
+        color: #222;
+        background: #f6f6f6;
         border-radius: 6px;
       }
       table {
@@ -977,9 +987,9 @@
       <p>Dependency-free scroll-snap slider. Try this page with JavaScript disabled — every variation remains a readable, swipeable strip.</p>
 
       <nav class="demo-toc" aria-label="On this page">
-        <a href="#start">Start here</a> · <a href="#hero">Hero banner</a> · <a href="#vehicles">Featured vehicles</a> · <a href="#modelbar">Model bar</a> ·
-        <a href="#modelbar-tabs">Model bar (tabs)</a> · <a href="#models">Model cards</a> · <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> ·
-        <a href="#cards">Service cards</a> · <a href="#video">Video testimonials</a> · <a href="#grid">Two-row grid</a> · <a href="#gallery">Gallery</a> · <a href="#reviews">Reviews</a> ·
+        <a href="#hero">Hero banner</a> · <a href="#start">Start here</a> · <a href="#vehicles">Featured vehicles</a> · <a href="#models">Model cards</a> · <a href="#modelbar">Model bar</a> ·
+        <a href="#modelbar-tabs">Model bar (tabs)</a> · <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> · <a href="#cards">Service cards</a> ·
+        <a href="#video">Video testimonials</a> · <a href="#grid">Two-row grid</a> · <a href="#gallery">Gallery</a> · <a href="#reviews">Reviews</a> ·
         <a href="#stock">Stock look</a>
       </nav>
 
@@ -1613,7 +1623,7 @@
               </tr>
             </tbody>
           </table>
-          <p>Here is the top row written out in full. Every other row is the same three lines with different numbers:</p>
+          <p>Here is the top row written out in full. Every other row is the same shape &mdash; one line per step in your brand&rsquo;s row:</p>
           <pre><code>.my-modelbar { --dlc-per-view: 2; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 5; } }</code></pre>
@@ -2950,6 +2960,11 @@ object-fit: cover;</code></pre>
       });
       addEventListener('DOMContentLoaded', () => {
         for (const pre of document.querySelectorAll('details pre')) {
+          // Read the label FIRST: once the <pre> is moved inside the wrapper it
+          // is an only child, so previousElementSibling is null and every button
+          // ends up named "Copy code".
+          const label = pre.previousElementSibling?.classList.contains('code-label') ? pre.previousElementSibling.textContent.trim() : 'code';
+
           const wrap = document.createElement('div');
           wrap.className = 'code-wrap';
           pre.parentNode.insertBefore(wrap, pre);
@@ -2959,9 +2974,8 @@ object-fit: cover;</code></pre>
           btn.type = 'button';
           btn.className = 'code-copy';
           btn.textContent = 'Copy';
-          // Name it by what it copies, so a screen reader user hears
-          // "Copy HTML" rather than six identical "Copy" buttons.
-          const label = pre.previousElementSibling?.classList.contains('code-label') ? pre.previousElementSibling.textContent.trim() : 'code';
+          // Named by what it copies, so a screen reader hears "Copy HTML"
+          // rather than twenty-nine identical "Copy" buttons.
           btn.setAttribute('aria-label', `Copy ${label}`);
           wrap.appendChild(btn);
 

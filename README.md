@@ -1,6 +1,6 @@
 # Custom Slider
 
-Dependency-free scroll-snap slider/carousel. ~4.7 KB gzip total (JS+CSS), no build
+Dependency-free scroll-snap slider/carousel. ~5.9 KB gzip total (JS+CSS), no build
 step required to use, themed entirely with CSS custom properties. Built to be
 maintained in-house: the whole engine is one commented file, `src/dl-carousel.js`.
 
