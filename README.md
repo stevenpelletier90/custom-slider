@@ -103,6 +103,11 @@ Events (bubble from the root): `dlc:change` `{index, page, slidesInView}`,
   "never inert off-screen cards" rule does not apply here (fade is 1-up, so no
   count is corrupted). A slide containing focus is never inerted. Fade never
   scrolls, so `goTo()` is its commit point instead of `scrollend`.
+- Fade's stacking CSS is keyed to `data-fade-on`, which **the engine sets at
+  init** — never to the authored `data-fade`. JS decides which slide is visible,
+  so if the stacking applied without JS every slide would sit at opacity 0 and
+  the whole carousel would vanish. With JS off the track stays an ordinary
+  scrollable strip with all slides visible. `destroy()` removes the marker.
 - Every programmatic scroll resolves smooth-vs-instant from
   `prefers-reduced-motion` at call time. Never add CSS `scroll-behavior`.
 

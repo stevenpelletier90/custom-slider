@@ -745,6 +745,76 @@
         color: #fff;
         font-weight: 500;
       }
+      /* ---- Hero (fade) -------------------------------------------------
+         Rebuild of the pattern 68 of 76 OEM demo sites lead with: full-bleed
+         1-up banner, 5 s rotation, dots. The fade itself is the engine's
+         data-fade; everything here is skin. */
+      .demo-hero-section {
+        box-sizing: border-box;
+        padding: 0 0 0.5rem;
+      }
+      .demo-hero {
+        --dlc-fade-ms: 600ms;
+        --dlc-per-view: 1;
+        --dlc-controls-space: 2rem;
+        --dlc-arrow-bg: rgb(0 0 0 / 55%);
+        --dlc-arrow-fg: #fff;
+        --dlc-dot-current: #16324f;
+        overflow: hidden;
+        border-radius: 8px;
+      }
+      .demo-hero .dl-carousel-slide {
+        position: relative;
+      }
+      .demo-hero a {
+        display: block;
+        color: inherit;
+        text-decoration: none;
+      }
+      .demo-hero img {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+        aspect-ratio: 16 / 6;
+        object-fit: cover;
+      }
+      /* Copy sits on a scrim, never straight on the photo — text contrast has
+         to survive whatever image the dealer uploads. */
+      .demo-hero-copy {
+        position: absolute;
+        inset-block-end: 0;
+        inline-size: 100%;
+        padding: 2.5rem 1.25rem 1.25rem;
+        color: #fff;
+        background: linear-gradient(to top, rgb(0 0 0 / 78%), rgb(0 0 0 / 0%));
+      }
+      .demo-hero-copy strong {
+        display: block;
+        font-size: clamp(1.25rem, 3.2vw, 2rem);
+        line-height: 1.15;
+      }
+      .demo-hero-copy span {
+        display: inline-block;
+        margin-block-start: 0.6rem;
+        padding: 0.45rem 1rem;
+        font-size: 0.95rem;
+        font-weight: 600;
+        color: #16324f;
+        background: #fff;
+        border-radius: 4px;
+      }
+      .demo-hero-table {
+        inline-size: 100%;
+        margin-block-start: 0.75rem;
+        border-collapse: collapse;
+      }
+      .demo-hero-table th,
+      .demo-hero-table td {
+        padding: 0.4rem 0.6rem;
+        font-size: 0.9rem;
+        text-align: start;
+        border-block-end: 1px solid #d7dbe0;
+      }
       .demo-review-byline {
         display: flex;
         flex-direction: column;
@@ -778,10 +848,93 @@
       <p>Dependency-free scroll-snap slider. Try this page with JavaScript disabled — every variation remains a readable, swipeable strip.</p>
 
       <nav class="demo-toc" aria-label="On this page">
-        <a href="#vehicles">Featured vehicles</a> · <a href="#modelbar">Model bar</a> · <a href="#modelbar-tabs">Model bar (tabs)</a> · <a href="#models">Model cards</a> ·
-        <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> · <a href="#cards">Service cards</a> · <a href="#video">Video testimonials</a> · <a href="#gallery">Gallery</a> ·
-        <a href="#reviews">Reviews</a> · <a href="#stock">Stock look</a>
+        <a href="#hero">Hero banner</a> · <a href="#vehicles">Featured vehicles</a> · <a href="#modelbar">Model bar</a> · <a href="#modelbar-tabs">Model bar (tabs)</a> ·
+        <a href="#models">Model cards</a> · <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> · <a href="#cards">Service cards</a> · <a href="#video">Video testimonials</a> ·
+        <a href="#gallery">Gallery</a> · <a href="#reviews">Reviews</a> · <a href="#stock">Stock look</a>
       </nav>
+
+      <section class="demo-section demo-hero-section demo-wide" id="hero">
+        <h2 id="hero-h">Hero banner</h2>
+        <div class="dl-carousel demo-hero" data-slider data-fade data-autoplay="5000" aria-labelledby="hero-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a href="#hero" aria-label="Shop the summer sales event">
+                <picture>
+                  <source media="(max-width: 768px)" srcset="img/photo-1.jpg" />
+                  <img src="img/photo-1.jpg" width="1200" height="450" alt="" fetchpriority="high" />
+                </picture>
+                <span class="demo-hero-copy">
+                  <strong>Summer Sales Event</strong>
+                  <span>Shop current offers</span>
+                </span>
+              </a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a href="#hero" aria-label="Value your trade in minutes">
+                <picture>
+                  <source media="(max-width: 768px)" srcset="img/photo-4.jpg" />
+                  <img src="img/photo-4.jpg" width="1200" height="450" alt="" loading="lazy" decoding="async" />
+                </picture>
+                <span class="demo-hero-copy">
+                  <strong>Know What Your Trade Is Worth</strong>
+                  <span>Get your value</span>
+                </span>
+              </a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a href="#hero" aria-label="Schedule factory-certified service">
+                <picture>
+                  <source media="(max-width: 768px)" srcset="img/photo-5.jpg" />
+                  <img src="img/photo-5.jpg" width="1200" height="450" alt="" loading="lazy" decoding="async" />
+                </picture>
+                <span class="demo-hero-copy">
+                  <strong>Factory-Certified Service</strong>
+                  <span>Schedule now</span>
+                </span>
+              </a>
+            </li>
+          </ul>
+        </div>
+        <details>
+          <summary>How this variant is built — and what it fixes</summary>
+          <p>
+            The pattern <strong>68 of 76</strong> DealerOn OEM demo sites lead with, rebuilt on <code>data-fade</code>: one slide per view, whole-slide link, 5 s rotation (the estate's own
+            <code>data-interval="5000"</code>), dots. Slides stack in a single CSS grid cell, so the tallest defines the box and CLS stays 0 — no absolute positioning, no collapsed height. Alt text is
+            empty because the link's <code>aria-label</code> already names the destination; a decorative banner photo announced twice is noise.
+          </p>
+          <p>The platform's own hero has four accessibility problems this one does not. That is the point of the section:</p>
+          <table class="demo-hero-table">
+            <thead>
+              <tr>
+                <th scope="col">Platform hero (68 sites)</th>
+                <th scope="col">This one</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>Pause button renders at <strong>16 × 6 px</strong>, id <code>hiddenPlayPauseControl</code></td>
+                <td><strong>36 × 36</strong> by default — over the WCAG 2.5.8 (AA) 24 × 24 minimum, and first in tab order</td>
+              </tr>
+              <tr>
+                <td>Dots are <code>&lt;li role="button" tabindex="0"&gt;</code></td>
+                <td>Real <code>&lt;button&gt;</code> elements, one per slide</td>
+              </tr>
+              <tr>
+                <td><code>aria-live="off"</code> on the track</td>
+                <td>Terse <code>.dl-carousel-status</code> region, silent while rotating</td>
+              </tr>
+              <tr>
+                <td>No <code>prefers-reduced-motion</code> handling observed</td>
+                <td>Never starts rotating under reduced motion; crossfade transition removed too</td>
+              </tr>
+            </tbody>
+          </table>
+          <p>
+            Findings from <code>docs/research/2026-08-18-oem-demo-slider-census.md</code> — all 76 demo homepages fingerprinted, the hero behaviour verified live in a browser rather than inferred from
+            markup.
+          </p>
+        </details>
+      </section>
 
       <!-- The carousel itself is the labelled landmark (role=region + aria-labelledby).
            Naming this wrapper from the same heading would nest two identically-named

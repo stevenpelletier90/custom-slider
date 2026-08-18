@@ -74,8 +74,11 @@ export class Slider {
     // CSS reserves the thumb-strip space via [data-gallery] — mirror the JS
     // option onto the attribute so manual construction lays out correctly.
     if (this.opts.gallery) this._setRootAttr('data-gallery', '');
-    // Fade stacks the slides; CSS needs the attribute before first paint.
-    if (this.opts.fade) this._setRootAttr('data-fade', '');
+    // Fade stacks the slides into one grid cell and JS owns which one is
+    // visible — so the stacking CSS must key off an attribute only the ENGINE
+    // sets, never the authored data-fade. Keyed off the authored one, a
+    // no-JS visitor gets every slide at opacity 0 and the hero disappears.
+    if (this.opts.fade) this._setRootAttr('data-fade-on', '');
     this._prm = matchMedia('(prefers-reduced-motion: reduce)');
     this._ac = new AbortController();
 
