@@ -1,7 +1,32 @@
-import { chromium } from 'playwright-core';
+// No dependency is added to this repo for this script — custom-slider ships zero
+// runtime dependencies and this is one-off research tooling, not part of the build.
+// dealeron-design-tooling already depends on playwright, so we borrow its copy.
+// Override with PLAYWRIGHT_FROM=/path/to/a/repo/that/has/it.
+import { createRequire } from 'node:module';
 import fs from 'node:fs';
+import path from 'node:path';
 
-const EXEC = process.env.HOME + '/Library/Caches/ms-playwright/chromium-1187/chrome-mac/Chromium.app/Contents/MacOS/Chromium';
+const require = createRequire(import.meta.url);
+const CANDIDATES = [process.env.PLAYWRIGHT_FROM, path.join(process.env.HOME, 'Developer/dealeron-design-tooling'), process.cwd()].filter(Boolean);
+
+function loadChromium() {
+  for (const base of CANDIDATES) {
+    for (const pkg of ['playwright', 'playwright-core']) {
+      try {
+        return require(require.resolve(pkg, { paths: [base] })).chromium;
+      } catch {
+        /* try the next one */
+      }
+    }
+  }
+  throw new Error(
+    'playwright not found. It is deliberately NOT a dependency of this repo.\n' +
+      'Run this from a checkout that has it (dealeron-design-tooling does), or:\n' +
+      '  PLAYWRIGHT_FROM=/path/to/that/repo node capture.mjs ./shots',
+  );
+}
+
+const chromium = loadChromium();
 const OUT = process.argv[2];
 
 // one representative per distinct ladder, plus the composition outliers
@@ -26,7 +51,43 @@ const TARGETS = [
   { host: 'lexusdemo2', brand: 'Lexus', note: 'quick-nav · centerMode 9%' },
 ];
 
-const browser = await chromium.launch({ executablePath: EXEC });
+// Borrowing another repo's playwright means its bundled-browser version may not
+// match what is in the shared ms-playwright cache (seen in practice: the package
+// wanted build 1234, the cache held 1187). Try its own browser, then the system
+// Chrome, then any chromium already in the cache.
+async function launch() {
+  const attempts = [
+    ['bundled chromium', {}],
+    ['system Chrome', { channel: 'chrome' }],
+  ];
+  for (const [what, opts] of attempts) {
+    try {
+      const b = await chromium.launch(opts);
+      console.log(`browser: ${what}`);
+      return b;
+    } catch {
+      /* try the next one */
+    }
+  }
+  const cache = path.join(process.env.HOME, 'Library/Caches/ms-playwright');
+  const build =
+    fs.existsSync(cache) &&
+    fs
+      .readdirSync(cache)
+      .filter((d) => d.startsWith('chromium-'))
+      .sort()
+      .pop();
+  if (build) {
+    const exe = path.join(cache, build, 'chrome-mac/Chromium.app/Contents/MacOS/Chromium');
+    if (fs.existsSync(exe)) {
+      console.log(`browser: cached ${build}`);
+      return chromium.launch({ executablePath: exe });
+    }
+  }
+  throw new Error('no usable browser: install one with `npx playwright install chromium`, or install Google Chrome');
+}
+
+const browser = await launch();
 const ctx = await browser.newContext({ viewport: { width: 1280, height: 900 }, deviceScaleFactor: 1 });
 const results = [];
 

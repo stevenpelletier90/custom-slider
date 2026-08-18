@@ -5,6 +5,10 @@
 > and so the questions get settled before anything ships — not a runbook for
 > work you can do today.
 
+> **No hosted files yet?** You do not have to wait — the whole engine can be
+> pasted into a page today. See [cms-no-hosting.md](cms-no-hosting.md). Your
+> markup and CSS do not change when the hosted files land.
+
 ## 1. What ships
 
 Two files, no dependencies, no build step on the site side:
