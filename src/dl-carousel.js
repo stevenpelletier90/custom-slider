@@ -417,6 +417,10 @@ export class Slider {
         this._dragMoved = false;
         startX = e.clientX;
         startLeft = t.scrollLeft;
+        // Closed hand from the instant the button goes down, not once the drag
+        // threshold trips — pressing and holding without moving still has to
+        // look grabbed, or the strip feels dead under the cursor.
+        t.setAttribute('data-dragging', '');
       },
       { signal: sig },
     );
@@ -435,7 +439,6 @@ export class Slider {
           t.setPointerCapture(e.pointerId);
           t.style.scrollSnapType = 'none';
           t.style.userSelect = 'none';
-          t.setAttribute('data-dragging', ''); // closed-hand cursor via CSS — links keep their own pointer cursor, so an inline cursor on the track alone can't show it over cards
         }
         if (this._dragMoved) t.scrollLeft = startLeft - dx;
       },
@@ -444,9 +447,11 @@ export class Slider {
     const end = () => {
       if (!this._dragActive) return;
       this._dragActive = false;
+      // Before the early return: a press that never became a drag still put the
+      // closed hand up, so it still has to come back down.
+      t.removeAttribute('data-dragging');
       if (!this._dragMoved) return;
       t.style.userSelect = '';
-      t.removeAttribute('data-dragging');
       // This pointerup reaches the track before the window listener flips
       // _pointerDown, and goTo refuses to fight an "active" drag — clear it.
       this._pointerDown = false;
@@ -466,6 +471,7 @@ export class Slider {
     };
     t.addEventListener('pointerup', end, { signal: sig });
     t.addEventListener('pointercancel', end, { signal: sig });
+    addEventListener('pointerup', end, { signal: sig });
     // Browsers start a native HTML5 drag for images/links on mouse-move —
     // only while our drag is live, or dragging an image out would still work.
     t.addEventListener('dragstart', (e) => this._dragActive && e.preventDefault(), { signal: sig });
