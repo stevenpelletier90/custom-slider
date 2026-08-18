@@ -465,7 +465,7 @@ git add demo/index.html && git commit -m "Add accessible fade hero demo section"
 - Consumes: nothing
 - Produces: the ladder table referenced by Task 7's CMS docs
 
-- [ ] **Step 1: Add the ladder table**
+- [x] **Step 1: Add the ladder table**
 
 slick breakpoints are max-width; `--dlc-per-view` media queries are min-width. **These are the inverted values — use them verbatim; re-deriving them by hand is where this goes wrong.**
 
@@ -485,7 +485,7 @@ slick breakpoints are max-width; `--dlc-per-view` media queries are min-width. *
 | 1     | audi1                                                      | base 1; ≥361px 2; ≥769px 3; ≥993px 4; ≥1201px 6  |
 | 1     | kia1                                                       | base 1; ≥769px 3                                 |
 
-- [ ] **Step 2: Show one worked example in full**
+- [x] **Step 2: Show one worked example in full**
 
 Give the top ladder (13 sites) as complete copy-paste CSS so the pattern is unambiguous:
 
@@ -505,11 +505,11 @@ Give the top ladder (13 sites) as complete copy-paste CSS so the pattern is unam
 }
 ```
 
-- [ ] **Step 3: Record what the census validated**
+- [x] **Step 3: Record what the census validated**
 
 One short paragraph: `slidesToScroll: 1` on 53/55 sites is what `data-step="slide"` reproduces; `centerPadding: 60px` on 53/55 is `--dlc-peek`; `autoplay: false` on 55/55 is why no card strip in this library auto-rotates. Link the census doc.
 
-- [ ] **Step 4: Commit**
+- [x] **Step 4: Commit**
 
 ```bash
 npm run validate
@@ -518,7 +518,7 @@ git add demo/index.html && git commit -m "Document the 14 OEM model-bar breakpoi
 
 ---
 
-### Task 6: Kia Demo One model bar
+### Task 6: Tabbed model bar (generalised from Kia Demo One)
 
 **Files:**
 
@@ -529,23 +529,23 @@ git add demo/index.html && git commit -m "Document the 14 OEM model-bar breakpoi
 - Consumes: the existing `[data-tabs]` APG tabs page script (lines ~1737+), the existing `.demo-modelbar` recipe
 - Produces: nothing
 
-- [ ] **Step 1: Build the three tabbed strips**
+- [x] **Step 1: Build the three tabbed strips**
 
 kiademo1 runs **3 `.modelBarS` instances, one per body-style tab**: SUV/CUV/MPV, Hybrid/Electric, Sedan. The existing tabbed model bar already proves carousels auto-init correctly inside `[hidden]` panes (prior spec D7) — reuse that page script, do not write a second one.
 
 Use the kia1 ladder from Task 5: base 1; ≥769px 3.
 
-- [ ] **Step 2: Add the background transition**
+- [x] **Step 2: Add the background transition**
 
 Cross-fade the section background when the tab changes. Per the house rule this is **page script, not engine** — listen for the tab change in the existing tabs script and swap a class on the section.
 
 Guard it with `prefers-reduced-motion` — under reduce, swap instantly with no transition.
 
-- [ ] **Step 3: Note what was deliberately not copied**
+- [x] **Step 3: Note what was deliberately not copied**
 
 kiademo1's own model bar uses `centerMode: true`, which is out of scope (spec D9). The rebuild approximates its edge treatment with `--dlc-peek`. Say so in the details block so the difference is not read as a bug.
 
-- [ ] **Step 4: Browser-verify**
+- [x] **Step 4: Browser-verify**
 
 ```
 - each tab's strip measures correctly when revealed (arrows step by one card)
@@ -553,7 +553,7 @@ kiademo1's own model bar uses `centerMode: true`, which is out of scope (spec D9
 - background transition does not animate under prefers-reduced-motion
 ```
 
-- [ ] **Step 5: Commit**
+- [x] **Step 5: Commit**
 
 ```bash
 npm run validate
