@@ -26,6 +26,7 @@ const DEFAULTS = {
   step: 'page', // 'slide' advances one card per arrow/autoplay tick (dealer model-bar feel); dots stay per-page either way
   drag: true, // mouse drag-to-scroll on the track; touch/pen swiping is native scrolling and unaffected
   gallery: false, // tabbed thumbnail-gallery variant
+  fade: false, // stacked crossfade instead of a scrolling track (1-up hero); ignores drag/peek
   roledescription: 'carousel', // set '' to omit (localization concerns)
   labels: {
     prev: 'Previous slides',
@@ -73,6 +74,8 @@ export class Slider {
     // CSS reserves the thumb-strip space via [data-gallery] — mirror the JS
     // option onto the attribute so manual construction lays out correctly.
     if (this.opts.gallery) this._setRootAttr('data-gallery', '');
+    // Fade stacks the slides; CSS needs the attribute before first paint.
+    if (this.opts.fade) this._setRootAttr('data-fade', '');
     this._prm = matchMedia('(prefers-reduced-motion: reduce)');
     this._ac = new AbortController();
 
@@ -108,11 +111,16 @@ export class Slider {
     if (d.step !== undefined) data.step = d.step === 'slide' ? 'slide' : 'page';
     if (d.drag !== undefined) data.drag = d.drag !== 'false';
     if (d.gallery !== undefined) data.gallery = d.gallery !== 'false';
+    if (d.fade !== undefined) data.fade = d.fade !== 'false';
     if (d.roledescription !== undefined) data.roledescription = d.roledescription;
     const opts = { ...DEFAULTS, ...data, ...js, labels: { ...DEFAULTS.labels, ...(js.labels || {}) } };
     if (opts.gallery && opts.autoplay) {
       console.warn('[dl-carousel] autoplay is ignored in gallery mode', this.root);
       opts.autoplay = 0;
+    }
+    if (opts.fade && opts.gallery) {
+      console.warn('[dl-carousel] fade is ignored in gallery mode', this.root);
+      opts.fade = false;
     }
     if (opts.autoplay && !opts.rewind) {
       console.warn('[dl-carousel] rewind:false is ignored with autoplay', this.root);
@@ -227,6 +235,12 @@ export class Slider {
   /* ---- geometry ---------------------------------------------------------- */
 
   _measure() {
+    // Stacked fade has no scroll geometry: one slide shown, stride unused.
+    if (this.opts.fade) {
+      this.stride = 1;
+      this.perView = 1;
+      return;
+    }
     const s = this.slides;
     const r0 = s[0].getBoundingClientRect();
     this.stride = s.length > 1 ? s[1].getBoundingClientRect().left - r0.left : r0.width || 1;
@@ -235,6 +249,7 @@ export class Slider {
   }
 
   _pages() {
+    if (this.opts.fade) return this.slides.map((_, i) => i);
     // Page start indexes, stepping by perView, last page clamped to the end.
     // n=7,v=3 → [0,3,4]; n=4,v=3 → [0,1]; n=6,v=3 → [0,3].
     const n = this.slides.length,
@@ -251,6 +266,7 @@ export class Slider {
   _stops() {
     // What the arrows step through: page starts (default), or every reachable
     // start index in slide mode (the last start is clamped like _pages does).
+    if (this.opts.fade) return this.slides.map((_, i) => i); // every slide is its own stop
     if (this.opts.step !== 'slide') return this._pages();
     const last = Math.max(0, this.slides.length - this.perView);
     return Array.from({ length: last + 1 }, (_, i) => i);
@@ -274,6 +290,15 @@ export class Slider {
   goTo(n, { behavior } = {}) {
     if (this._pointerDown) return; // never fight an active drag
     n = Math.max(0, Math.min(this.slides.length - 1, n));
+    // Fade mode never scrolls, so scrollend never fires — commit inline.
+    if (this.opts.fade) {
+      const moved = n !== this.current;
+      this.current = n;
+      this._target = null;
+      this._updateUI();
+      if (moved) this._emit('dlc:change', { index: n, page: n, slidesInView: 1 });
+      return;
+    }
     const t = this.track;
     // Compute the snap position ourselves — browsers (WebKit especially)
     // don't reliably re-snap after programmatic scrolls.
@@ -320,6 +345,12 @@ export class Slider {
   _listen() {
     const sig = this._ac.signal,
       t = this.track;
+    // Fade never scrolls: no scrollend/scroll commit, no drag gesture.
+    if (this.opts.fade) {
+      this._ro = new ResizeObserver(() => this._updateUI());
+      this._ro.observe(t);
+      return;
+    }
     if ('onscrollend' in window) {
       t.addEventListener('scrollend', () => this._commit(), { signal: sig });
     } else {
@@ -451,6 +482,12 @@ export class Slider {
   }
 
   _commit() {
+    // Fade has no scroll position to read state from; goTo is the commit point.
+    if (this.opts.fade) {
+      this._measure();
+      this._updateUI();
+      return;
+    }
     // Post-drag snap restore happens here: the settle scroll has finished on
     // a snap position, so re-enabling snap cannot move the track. Never while
     // a drag is still active — scrollend can fire mid-gesture in Chromium.
@@ -471,6 +508,19 @@ export class Slider {
     this._updateArrows();
     this._updateStatus();
     if (this.opts.gallery) this._updateGallery();
+    if (this.opts.fade) this._updateFade();
+  }
+
+  _updateFade() {
+    // Stacked slides overlap, so every non-current one must leave the tab order
+    // and the a11y tree — the one place hiding slides is correct outside gallery
+    // mode. Never inert a slide holding focus (it would strand the caret).
+    this.slides.forEach((sl, i) => {
+      const on = i === this.current;
+      sl.classList.toggle('is-current', on);
+      if (on || sl.contains(document.activeElement)) sl.removeAttribute('inert');
+      else sl.setAttribute('inert', '');
+    });
   }
 
   _updateArrows() {

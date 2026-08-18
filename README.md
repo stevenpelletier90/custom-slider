@@ -60,6 +60,7 @@ JS options override data attributes, which override defaults.
 | `rewind`          | `data-rewind="false"`  | `true`          | Arrows wrap at the ends; `false` stops there and `aria-disable`s the end arrow (ignored with autoplay, which needs the wrap) |
 | `step`            | `data-step="slide"`    | `"page"`        | `"slide"` advances one card per arrow click / autoplay tick instead of a full page; dots still represent pages               |
 | `drag`            | `data-drag="false"`    | `true`          | Mouse drag-to-scroll on the track (click-through suppressed after a real drag); touch/pen swiping is native and unaffected   |
+| `fade`            | `data-fade`            | `false`         | Stacked crossfade instead of a scrolling track — 1-up heroes; no drag/peek, ignored with `gallery`                           |
 | `gallery`         | `data-gallery`         | `false`         | Tabbed thumbnail gallery (thumbs generated from slide images)                                                                |
 | `roledescription` | `data-roledescription` | `"carousel"`    | Empty string to omit                                                                                                         |
 | `labels`          | — (JS only)            | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/dl-carousel.js`                                                |
@@ -69,7 +70,7 @@ JS options override data attributes, which override defaults.
 
 `--dlc-per-view`, `--dlc-gap`, `--dlc-peek` (edge sliver of the next slide),
 `--dlc-arrow-size/fg/bg`, `--dlc-dot-size/fg/current`, `--dlc-controls-space`,
-`--dlc-thumb-w/h`, `--dlc-focus`. Set them on the `.dl-carousel` element or any wrapper.
+`--dlc-thumb-w/h`, `--dlc-focus`, `--dlc-fade-ms` (crossfade duration in fade mode). Set them on the `.dl-carousel` element or any wrapper.
 
 ## JS API
 
@@ -97,6 +98,11 @@ Events (bubble from the root): `dlc:change` `{index, page, slidesInView}`,
   drag stops permanently (only the button restarts); never starts under
   `prefers-reduced-motion`, and turning that setting on mid-session stops a
   rotation already running; status announcements are off while rotating.
+- Fade: slides are stacked in one grid cell, so every non-current slide is
+  `inert` — the same carve-out `gallery` mode has, and the reason the multi-card
+  "never inert off-screen cards" rule does not apply here (fade is 1-up, so no
+  count is corrupted). A slide containing focus is never inerted. Fade never
+  scrolls, so `goTo()` is its commit point instead of `scrollend`.
 - Every programmatic scroll resolves smooth-vs-instant from
   `prefers-reduced-motion` at call time. Never add CSS `scroll-behavior`.
 
@@ -121,7 +127,7 @@ replacing it = replacing the contents of the two dist files, with zero site edit
    with all content authored in the HTML; generate its own controls (never require
    control markup in the CMS).
 2. Honor the data attributes (`data-autoplay`, `data-rewind`, `data-step`,
-   `data-drag`, `data-gallery`, `data-roledescription`, `data-init`) and the `--dlc-*` theming knobs.
+   `data-drag`, `data-fade`, `data-gallery`, `data-roledescription`, `data-init`) and the `--dlc-*` theming knobs.
 3. Emit the `dlc:*` events with the same payloads and expose
    `goTo/next/prev/pause/play/destroy` + `DLCarousel.autoInit`.
 4. Keep the accessibility behaviors listed above — they are part of the contract,
@@ -154,7 +160,7 @@ Rebuild and re-commit `dist/` whenever `src/` changes.
 ## Known limitations (v1)
 
 - LTR only. No infinite loop — the ends rewind by default, or stop with
-  `data-rewind="false"`. No fade mode. `gallery` + `autoplay` together is
+  `data-rewind="false"`. `gallery` + `autoplay` together is
   unsupported (autoplay is ignored, console warning).
 - iOS flicks advance ~one slide per gesture (WebKit limitation) — arrows/dots
   are the primary traversal there.
