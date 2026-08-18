@@ -630,20 +630,52 @@ The markdown census stays the source of truth; the Artifact is its presentation 
 
 **REQUIRED SUB-SKILL:** Use superpowers:verification-before-completion. Evidence before assertions — run the commands and show the output.
 
-- [ ] **Step 1: Run the gates**
+- [x] **Step 1: Run the gates**
 
 ```bash
 npm run validate
 npm run size
 ```
 
-- [ ] **Step 2: Run the full README verification checklist**
+- [x] **Step 2: Run the full README verification checklist**
 
 All seven items, not a subset: size gate; Lighthouse a11y 100 / perf ≈ 100 / CLS 0; keyboard-only tab order; autoplay pause/stop/restart and reduced-motion; screenshots at 375 / 768 / 1280; JS-disabled pass; the Firefox-at-125 %, Safari-tab-into-cards, and pre-2025-iPhone spot checks.
 
-- [ ] **Step 3: Report honestly**
+- [x] **Step 3: Report honestly**
 
 State which checks passed, which were skipped and why (e.g. no pre-2025 iPhone available), and the final gzip number. Do not report completion for anything not actually run.
+
+### Verification results (2026-08-18)
+
+| Check                           | Result                                                                                             |
+| ------------------------------- | -------------------------------------------------------------------------------------------------- |
+| `npm run validate`              | pass                                                                                               |
+| `npm run size`                  | **5976 / 6144 B gzip**                                                                             |
+| Lighthouse accessibility        | **100** — 56 applicable audits, **0 failing**                                                      |
+| Lighthouse best practices / SEO | 100 / 100                                                                                          |
+| CLS                             | **0.00** (performance trace, full demo page)                                                       |
+| LCP                             | **103 ms**                                                                                         |
+| Keyboard order (hero)           | pause → prev → next → dots → slide link                                                            |
+| Keyboard (tabs)                 | real ArrowRight moves focus + selection; roving tabindex correct; focus never inside a hidden pane |
+| Autoplay                        | rotates at 5 s, pause button stops it, never starts under reduced motion                           |
+| Breakpoints 375 / 768 / 1280    | model bar 2/3/5, vehicles 1/2/3, hero 3:2 → 16:6; no horizontal page scroll at any width           |
+| JS disabled                     | all 12 sections: every slide visible, every track scrollable, **0 generated controls**             |
+
+**Fixed during this pass rather than deferred:**
+
+- Seven WCAG 2.5.3 (Label in Name) failures — 3 new hero links, 6 pre-existing
+  service cards. The audit is unweighted, so the category read 100 with all
+  seven present.
+- The hero's fixed 16/6 crop put the arrows on top of the headline at 375 px.
+
+**Not run — no access to the environment, must be done by hand before shipping:**
+
+- Windows Firefox at 125–150 % DPI
+- Tab into cards in Safari
+- One pre-2025 iPhone (the `scrollend` fallback path)
+- Rendered reduced-motion transition: neither browser tool exposes
+  `prefers-reduced-motion` emulation. The engine gate and the built CSS media
+  query were both verified; only the rendered result is unconfirmed.
 
 ## Self-Review
 
