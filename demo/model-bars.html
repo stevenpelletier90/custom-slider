@@ -4,7 +4,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title>Custom Slider — model bar library</title>
-    <meta name="description" content="Every distinct OEM model bar breakpoint ladder rendered live with the dependency-free scroll-snap slider, each with copy-paste code." />
+    <meta name="description" content="Every distinct OEM model bar — each breakpoint ladder and each look — rendered live with the dependency-free scroll-snap slider, with copy-paste code." />
     <!-- inline so the page makes no request the repo can't serve (a missing favicon was a 404 in the console) -->
     <link
       rel="icon"
@@ -35,6 +35,16 @@
       .demo-sub {
         max-width: 68ch;
         margin: 0.35rem 0 1rem;
+        color: #3c4043;
+      }
+      .strip-label {
+        margin: 2rem 0 0.75rem;
+        font-size: 1.05rem;
+      }
+      .strip-note {
+        max-width: 68ch;
+        margin: 0.35rem 0 0.75rem;
+        font-size: 0.9rem;
         color: #3c4043;
       }
       .demo-toc {
@@ -95,225 +105,683 @@
         color: #1f6f4a;
         border-color: #1f6f4a;
       }
-      /* The live skin is the copy-paste recipe verbatim (renamed .demo-mb so
-         this page's chrome can't leak into anyone's paste) — what renders is
-         what the panel teaches, nothing more. */
-      .demo-mb {
+      /* Every strip below is its copy panel's CSS verbatim, class-renamed by
+         the generator — what renders is exactly what the panel teaches. */
+      .mbx-acura {
+        --dlc-per-view: 2;
         --dlc-peek: 60px;
         --dlc-gap: 0.5rem;
       }
-      .demo-mb--nodots .dl-carousel-dots {
+      @media (min-width: 461px) {
+        .mbx-acura {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 769px) {
+        .mbx-acura {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .mbx-acura .dl-carousel-dots {
         display: none;
       }
-      .demo-mb--nodots {
+      .mbx-acura {
         --dlc-controls-space: 0px;
       }
-      .demo-mb-card {
+
+      .mbx-acura-card {
         display: block;
         color: inherit;
         text-align: center;
         text-decoration: none;
       }
-      .demo-mb-card img {
+      .mbx-acura-card img {
         inline-size: 100%;
         block-size: auto;
         object-fit: contain;
       }
-      .demo-mb-card p {
+      .mbx-acura-card p {
         margin: 0.25rem 0 0;
         font-weight: 600;
       }
-      /* One ladder per variant — the same rows the copy panels teach. */
-      .mb-acura {
+
+      .mbx-chevrolet-0 {
         --dlc-per-view: 2;
-      }
-      @media (min-width: 461px) {
-        .mb-acura {
-          --dlc-per-view: 3;
-        }
-      }
-      @media (min-width: 769px) {
-        .mb-acura {
-          --dlc-per-view: 5;
-        }
-      }
-      .mb-chevrolet {
-        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
       }
       @media (min-width: 540px) {
-        .mb-chevrolet {
+        .mbx-chevrolet-0 {
           --dlc-per-view: 3;
         }
       }
       @media (min-width: 992px) {
-        .mb-chevrolet {
+        .mbx-chevrolet-0 {
           --dlc-per-view: 4;
         }
       }
       @media (min-width: 1200px) {
-        .mb-chevrolet {
+        .mbx-chevrolet-0 {
           --dlc-per-view: 5;
         }
       }
-      .mb-lexus {
+
+      .mbx-chevrolet-0 .dl-carousel-dots {
+        display: none;
+      }
+      .mbx-chevrolet-0 {
+        --dlc-controls-space: 0px;
+      }
+
+      .mbx-chevrolet-0-card {
+        display: block;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .mbx-chevrolet-0-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .mbx-chevrolet-0-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .mbx-chevrolet-1 {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 540px) {
+        .mbx-chevrolet-1 {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 992px) {
+        .mbx-chevrolet-1 {
+          --dlc-per-view: 4;
+        }
+      }
+      @media (min-width: 1200px) {
+        .mbx-chevrolet-1 {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .mbx-chevrolet-1 .dl-carousel-dots {
+        display: none;
+      }
+      .mbx-chevrolet-1 {
+        --dlc-controls-space: 0px;
+      }
+
+      .mbx-chevrolet-1 {
+        padding-block: 1.75rem;
+        background: #101010;
+      }
+      .mbx-chevrolet-1 {
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #fff;
+      }
+      .mbx-chevrolet-1-card {
+        display: block;
+        color: #fff;
+        text-align: center;
+        text-decoration: none;
+      }
+      .mbx-chevrolet-1-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .mbx-chevrolet-1-card p {
+        margin: 0.5rem 0 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .mbx-lexus {
         --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
       }
       @media (min-width: 401px) {
-        .mb-lexus {
+        .mbx-lexus {
           --dlc-per-view: 2;
         }
       }
       @media (min-width: 601px) {
-        .mb-lexus {
+        .mbx-lexus {
           --dlc-per-view: 3;
         }
       }
       @media (min-width: 992px) {
-        .mb-lexus {
+        .mbx-lexus {
           --dlc-per-view: 5;
         }
       }
-      .mb-buick {
+
+      .mbx-lexus .dl-carousel-dots {
+        display: none;
+      }
+      .mbx-lexus {
+        --dlc-controls-space: 0px;
+      }
+
+      .mbx-lexus {
+        padding-block: 1.5rem;
+        background: linear-gradient(#e9e9e9, #f9f9f9);
+      }
+      .mbx-lexus-card {
+        display: block;
+        color: #222;
+        text-align: center;
+        text-decoration: none;
+      }
+      .mbx-lexus-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .mbx-lexus-card p {
+        margin: 0.25rem 0 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .mbx-buick {
         --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
-        .mb-buick {
+        .mbx-buick {
           --dlc-per-view: 3;
         }
       }
       @media (min-width: 769px) {
-        .mb-buick {
+        .mbx-buick {
           --dlc-per-view: 4;
         }
       }
-      .mb-genesis {
+
+      .mbx-buick .dl-carousel-dots {
+        display: none;
+      }
+      .mbx-buick {
+        --dlc-controls-space: 0px;
+      }
+
+      .mbx-buick-card {
+        display: block;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .mbx-buick-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .mbx-buick-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .mbx-genesis-0 {
         --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
       }
       @media (min-width: 541px) {
-        .mb-genesis {
+        .mbx-genesis-0 {
           --dlc-per-view: 2;
         }
       }
       @media (min-width: 993px) {
-        .mb-genesis {
+        .mbx-genesis-0 {
           --dlc-per-view: 3;
         }
       }
       @media (min-width: 1201px) {
-        .mb-genesis {
+        .mbx-genesis-0 {
           --dlc-per-view: 4;
         }
       }
-      .mb-lincoln {
+
+      .mbx-genesis-0 .dl-carousel-dots {
+        display: none;
+      }
+      .mbx-genesis-0 {
+        --dlc-controls-space: 0px;
+      }
+
+      .mbx-genesis-0-card {
+        display: block;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .mbx-genesis-0-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .mbx-genesis-0-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+      .mbx-genesis-0-card small {
+        display: block;
+        color: #5f6368;
+      }
+
+      .mbx-genesis-1 {
+        --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 541px) {
+        .mbx-genesis-1 {
+          --dlc-per-view: 2;
+        }
+      }
+      @media (min-width: 993px) {
+        .mbx-genesis-1 {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 1201px) {
+        .mbx-genesis-1 {
+          --dlc-per-view: 4;
+        }
+      }
+
+      .mbx-genesis-1 .dl-carousel-dots {
+        display: none;
+      }
+      .mbx-genesis-1 {
+        --dlc-controls-space: 0px;
+      }
+
+      .mbx-genesis-1 {
+        --dlc-gap: 1rem;
+      }
+      .mbx-genesis-1-card {
+        display: block;
+        color: #0b2a5b;
+        text-align: center;
+        text-decoration: none;
+      }
+      .mbx-genesis-1-tile {
+        display: block;
+        padding: 8% 6%;
+        background: #e2e6ea;
+      }
+      .mbx-genesis-1-card--feature .mbx-genesis-1-tile {
+        background: #0b2a5b;
+      }
+      .mbx-genesis-1-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .mbx-genesis-1-card p {
+        margin: 0.4rem 0 0;
+        font-weight: 700;
+      }
+
+      .mbx-lincoln {
         --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
-        .mb-lincoln {
+        .mbx-lincoln {
           --dlc-per-view: 3;
         }
       }
       @media (min-width: 993px) {
-        .mb-lincoln {
+        .mbx-lincoln {
           --dlc-per-view: 4;
         }
       }
-      .mb-ford {
+
+      .mbx-lincoln .dl-carousel-dots {
+        display: none;
+      }
+      .mbx-lincoln {
+        --dlc-controls-space: 0px;
+      }
+
+      .mbx-lincoln {
+        padding-block: 1.5rem;
+        background: #f2f2f2;
+      }
+      .mbx-lincoln-card {
+        display: block;
+        color: #444649;
+        text-align: center;
+        text-decoration: none;
+      }
+      .mbx-lincoln-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .mbx-lincoln-card p {
+        margin: 0.5rem 0 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .mbx-ford {
         --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
-        .mb-ford {
+        .mbx-ford {
           --dlc-per-view: 3;
         }
       }
       @media (min-width: 992px) {
-        .mb-ford {
+        .mbx-ford {
           --dlc-per-view: 5;
         }
       }
-      .mb-hyundai {
+
+      .mbx-ford .dl-carousel-dots {
+        display: none;
+      }
+      .mbx-ford {
+        --dlc-controls-space: 0px;
+      }
+
+      .mbx-ford-card {
+        display: block;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .mbx-ford-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .mbx-ford-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .mbx-hyundai {
         --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
-        .mb-hyundai {
+        .mbx-hyundai {
           --dlc-per-view: 3;
         }
       }
       @media (min-width: 993px) {
-        .mb-hyundai {
+        .mbx-hyundai {
           --dlc-per-view: 4;
         }
       }
       @media (min-width: 1201px) {
-        .mb-hyundai {
+        .mbx-hyundai {
           --dlc-per-view: 5;
         }
       }
-      .mb-mazda {
+
+      .mbx-hyundai .dl-carousel-dots {
+        display: none;
+      }
+      .mbx-hyundai {
+        --dlc-controls-space: 0px;
+      }
+
+      .mbx-hyundai-card {
+        display: block;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .mbx-hyundai-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .mbx-hyundai-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .mbx-mazda {
         --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
       }
       @media (min-width: 769px) {
-        .mb-mazda {
+        .mbx-mazda {
           --dlc-per-view: 2;
         }
       }
       @media (min-width: 992px) {
-        .mb-mazda {
+        .mbx-mazda {
           --dlc-per-view: 3;
         }
       }
-      .mb-toyota {
+
+      .mbx-mazda-card {
+        display: flex;
+        flex-direction: column;
+        color: #222;
+        text-align: center;
+        text-decoration: none;
+      }
+      .mbx-mazda-card p {
+        order: -1;
+        margin: 0 0 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .mbx-mazda-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .mbx-mazda-card small {
+        align-self: center;
+        margin-block-start: 0.75rem;
+        padding: 0.35rem 0.9rem;
+        font-size: 0.7rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        background: #ececec;
+      }
+
+      .mbx-toyota {
         --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
       }
       @media (min-width: 541px) {
-        .mb-toyota {
+        .mbx-toyota {
           --dlc-per-view: 2;
         }
       }
-      .mb-alfaromeo {
+
+      .mbx-toyota .dl-carousel-dots {
+        display: none;
+      }
+      .mbx-toyota {
+        --dlc-controls-space: 0px;
+      }
+
+      .mbx-toyota {
+        --dlc-gap: 1rem;
+      }
+      .mbx-toyota-card {
+        display: block;
+        overflow: hidden;
+        color: #fff;
+        text-decoration: none;
+        background: #2a2a2a;
+        border-radius: 8px;
+      }
+      .mbx-toyota-card img {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+      }
+      .mbx-toyota-copy {
+        padding: 0.9rem 1rem 1.1rem;
+      }
+      .mbx-toyota-copy small {
+        color: #c9c9c9;
+      }
+      .mbx-toyota-copy h3 {
+        margin: 0.15rem 0 0;
+        font-size: 1.05rem;
+      }
+
+      .mbx-alfaromeo {
         --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
       }
       @media (min-width: 541px) {
-        .mb-alfaromeo {
+        .mbx-alfaromeo {
           --dlc-per-view: 2;
         }
       }
       @media (min-width: 993px) {
-        .mb-alfaromeo {
+        .mbx-alfaromeo {
           --dlc-per-view: 3;
         }
       }
       @media (min-width: 1201px) {
-        .mb-alfaromeo {
+        .mbx-alfaromeo {
           --dlc-per-view: 4;
         }
       }
       @media (min-width: 1801px) {
-        .mb-alfaromeo {
+        .mbx-alfaromeo {
           --dlc-per-view: 6;
         }
       }
-      .mb-audi {
+
+      .mbx-alfaromeo .dl-carousel-dots {
+        display: none;
+      }
+      .mbx-alfaromeo {
+        --dlc-controls-space: 0px;
+      }
+
+      .mbx-alfaromeo {
+        --dlc-gap: 1.25rem;
+        padding: 1.5rem;
+        background: #14161b;
+      }
+      .mbx-alfaromeo {
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #fff;
+      }
+      .mbx-alfaromeo-card {
+        display: block;
+        color: #fff;
+        text-align: center;
+        text-decoration: none;
+      }
+      .mbx-alfaromeo-name {
+        margin: 0 0 0.5rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-align: start;
+        text-transform: uppercase;
+      }
+      .mbx-alfaromeo-card img {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+        aspect-ratio: 3 / 5;
+        object-fit: cover;
+      }
+      .mbx-alfaromeo-cta {
+        display: inline-block;
+        margin-block-start: 0.75rem;
+        padding: 0.6rem 1.4rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: #14161b;
+        background: #fff;
+      }
+
+      .mbx-audi {
         --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
       }
       @media (min-width: 361px) {
-        .mb-audi {
+        .mbx-audi {
           --dlc-per-view: 2;
         }
       }
       @media (min-width: 769px) {
-        .mb-audi {
+        .mbx-audi {
           --dlc-per-view: 3;
         }
       }
       @media (min-width: 993px) {
-        .mb-audi {
+        .mbx-audi {
           --dlc-per-view: 4;
         }
       }
       @media (min-width: 1201px) {
-        .mb-audi {
+        .mbx-audi {
           --dlc-per-view: 6;
         }
+      }
+
+      .mbx-audi .dl-carousel-dots {
+        display: none;
+      }
+      .mbx-audi {
+        --dlc-controls-space: 0px;
+      }
+
+      .mbx-audi-card {
+        display: block;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .mbx-audi-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .mbx-audi-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
       }
     </style>
   </head>
@@ -321,13 +789,14 @@
     <main>
       <h1>Model bar library</h1>
       <p class="demo-lede">
-        <strong>All 55 model bars across the 76 OEM demo sites are one design</strong> &mdash; arrows, swipe, one card per step, a sliver of the next card peeking, and never autoplay. The only
-        brand-to-brand difference is how many cards show at each width. Every strip below is that one design running live on a different brand&rsquo;s ladder; resize the window and watch the counts
-        change.
+        <strong>All 55 model bars across the 76 OEM demo sites are one design</strong> &mdash; arrows, swipe, one card per step, a sliver of the next card peeking, and never autoplay. Brands differ in
+        two ways only: the <em>ladder</em> (how many cards show at each width) and the <em>look</em> (what the cards wear &mdash; plain white, a gray or black band, a colour tile behind each car,
+        photo cards). Every strip below runs live on a different brand&rsquo;s ladder wearing that brand&rsquo;s look; resize the window and watch the counts change.
       </p>
       <p class="demo-lede">
-        Each section carries its complete copy-paste pair. Do the <a href="index.html#start">Start here</a> step from the main demo once per page first. For screenshots of the real sites instead, see
-        the <a href="../docs/catalog/model-bar-library.html">screenshot library</a> and the <a href="../docs/catalog/oem-slider-census.html">census</a>.
+        Where one ladder ships with two looks in the estate, both are shown &mdash; same breakpoints, different clothes, same engine. Each strip carries its complete copy-paste pair. Do the
+        <a href="index.html#start">Start here</a> step from the main demo once per page first. For screenshots of the real sites, see the
+        <a href="../docs/catalog/model-bar-library.html">screenshot library</a> and the <a href="../docs/catalog/oem-slider-census.html">census</a>.
       </p>
 
       <nav class="demo-toc" aria-label="On this page">
@@ -342,11 +811,12 @@
         <p class="demo-sub">
           The most common ladder in the estate. Runs on acura 1-3, ford 2-3, gmc 1-2, honda 2-3, kia 2-3, mitsubishi 1-2. Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;769px 5.
         </p>
-        <div class="dl-carousel demo-mb demo-mb--nodots mb-acura" data-slider data-step="slide" aria-labelledby="acura-h">
+        <p class="strip-note">Plain white, name below — how all 13 ship it.</p>
+        <div class="dl-carousel mbx-acura" data-slider data-step="slide" aria-labelledby="acura-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500">
-                <img
+              <a class="mbx-acura-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
                   src="img/chrome-silverado-1500.png"
                   srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -356,12 +826,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Silverado 1500</p>
-              </a>
+                <p>Silverado 1500</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Colorado">
-                <img
+              <a class="mbx-acura-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
                   src="img/chrome-colorado.png"
                   srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -371,12 +841,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Colorado</p>
-              </a>
+                <p>Colorado</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Tahoe">
-                <img
+              <a class="mbx-acura-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
                   src="img/chrome-tahoe.png"
                   srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -386,12 +856,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Tahoe</p>
-              </a>
+                <p>Tahoe</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Suburban">
-                <img
+              <a class="mbx-acura-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
                   src="img/chrome-suburban.png"
                   srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -401,12 +871,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Suburban</p>
-              </a>
+                <p>Suburban</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Traverse">
-                <img
+              <a class="mbx-acura-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
                   src="img/chrome-traverse.png"
                   srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -416,12 +886,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Traverse</p>
-              </a>
+                <p>Traverse</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Equinox">
-                <img
+              <a class="mbx-acura-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
                   src="img/chrome-equinox.png"
                   srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -431,12 +901,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Equinox</p>
-              </a>
+                <p>Equinox</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trailblazer">
-                <img
+              <a class="mbx-acura-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
                   src="img/chrome-trailblazer.png"
                   srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -446,12 +916,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trailblazer</p>
-              </a>
+                <p>Trailblazer</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trax">
-                <img
+              <a class="mbx-acura-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
                   src="img/chrome-trax.png"
                   srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -461,13 +931,13 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trax</p>
-              </a>
+                <p>Trax</p></a
+              >
             </li>
           </ul>
         </div>
         <details>
-          <summary>Copy this ladder</summary>
+          <summary>Copy this look</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
             once per page.
@@ -503,14 +973,15 @@
       <section class="demo-section demo-wide" id="chevrolet">
         <h2 id="chevrolet-h">The Chevrolet ladder &mdash; 11 sites</h2>
         <p class="demo-sub">
-          The GM ladder — an extra rung smooths the climb to five-up. Runs on cadillac 1-3, chevrolet 1-3, subaru 1-3, volvo 1-2. Cards per view: base 2 &middot; &ge;540px 3 &middot; &ge;992px 4
-          &middot; &ge;1200px 5.
+          The GM ladder — and proof a ladder is not a look: Chevrolet runs it plain, Cadillac runs it on a black band. Runs on cadillac 1-3, chevrolet 1-3, subaru 1-3, volvo 1-2. Cards per view: base
+          2 &middot; &ge;540px 3 &middot; &ge;992px 4 &middot; &ge;1200px 5.
         </p>
-        <div class="dl-carousel demo-mb demo-mb--nodots mb-chevrolet" data-slider data-step="slide" aria-labelledby="chevrolet-h">
+        <h3 id="mbx-chevrolet-0-h" class="strip-label">As Chevrolet ships it</h3>
+        <div class="dl-carousel mbx-chevrolet-0" data-slider data-step="slide" aria-labelledby="mbx-chevrolet-0-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500">
-                <img
+              <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
                   src="img/chrome-silverado-1500.png"
                   srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -520,12 +991,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Silverado 1500</p>
-              </a>
+                <p>Silverado 1500</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Colorado">
-                <img
+              <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
                   src="img/chrome-colorado.png"
                   srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -535,12 +1006,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Colorado</p>
-              </a>
+                <p>Colorado</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Tahoe">
-                <img
+              <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
                   src="img/chrome-tahoe.png"
                   srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -550,12 +1021,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Tahoe</p>
-              </a>
+                <p>Tahoe</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Suburban">
-                <img
+              <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
                   src="img/chrome-suburban.png"
                   srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -565,12 +1036,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Suburban</p>
-              </a>
+                <p>Suburban</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Traverse">
-                <img
+              <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
                   src="img/chrome-traverse.png"
                   srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -580,12 +1051,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Traverse</p>
-              </a>
+                <p>Traverse</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Equinox">
-                <img
+              <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
                   src="img/chrome-equinox.png"
                   srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -595,12 +1066,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Equinox</p>
-              </a>
+                <p>Equinox</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trailblazer">
-                <img
+              <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
                   src="img/chrome-trailblazer.png"
                   srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -610,12 +1081,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trailblazer</p>
-              </a>
+                <p>Trailblazer</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trax">
-                <img
+              <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
                   src="img/chrome-trax.png"
                   srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -625,13 +1096,13 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trax</p>
-              </a>
+                <p>Trax</p></a
+              >
             </li>
           </ul>
         </div>
         <details>
-          <summary>Copy this ladder</summary>
+          <summary>Copy this look</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
             once per page.
@@ -663,18 +1134,12 @@
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
         </details>
-      </section>
-
-      <section class="demo-section demo-wide" id="lexus">
-        <h2 id="lexus-h">The Lexus ladder &mdash; 6 sites</h2>
-        <p class="demo-sub">
-          Drops to a single card on the narrowest phones. Runs on lexus 1-3, nissan 2-3, toyota 1. Cards per view: base 1 &middot; &ge;401px 2 &middot; &ge;601px 3 &middot; &ge;992px 5.
-        </p>
-        <div class="dl-carousel demo-mb demo-mb--nodots mb-lexus" data-slider data-step="slide" aria-labelledby="lexus-h">
+        <h3 id="mbx-chevrolet-1-h" class="strip-label">Same ladder as Cadillac ships it — a dark band and spaced capitals</h3>
+        <div class="dl-carousel mbx-chevrolet-1" data-slider data-step="slide" aria-labelledby="mbx-chevrolet-1-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500">
-                <img
+              <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
                   src="img/chrome-silverado-1500.png"
                   srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -684,12 +1149,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Silverado 1500</p>
-              </a>
+                <p>Silverado 1500</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Colorado">
-                <img
+              <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
                   src="img/chrome-colorado.png"
                   srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -699,12 +1164,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Colorado</p>
-              </a>
+                <p>Colorado</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Tahoe">
-                <img
+              <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
                   src="img/chrome-tahoe.png"
                   srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -714,12 +1179,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Tahoe</p>
-              </a>
+                <p>Tahoe</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Suburban">
-                <img
+              <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
                   src="img/chrome-suburban.png"
                   srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -729,12 +1194,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Suburban</p>
-              </a>
+                <p>Suburban</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Traverse">
-                <img
+              <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
                   src="img/chrome-traverse.png"
                   srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -744,12 +1209,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Traverse</p>
-              </a>
+                <p>Traverse</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Equinox">
-                <img
+              <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
                   src="img/chrome-equinox.png"
                   srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -759,12 +1224,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Equinox</p>
-              </a>
+                <p>Equinox</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trailblazer">
-                <img
+              <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
                   src="img/chrome-trailblazer.png"
                   srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -774,12 +1239,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trailblazer</p>
-              </a>
+                <p>Trailblazer</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trax">
-                <img
+              <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
                   src="img/chrome-trax.png"
                   srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -789,13 +1254,13 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trax</p>
-              </a>
+                <p>Trax</p></a
+              >
             </li>
           </ul>
         </div>
         <details>
-          <summary>Copy this ladder</summary>
+          <summary>Copy this look</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
             once per page.
@@ -804,9 +1269,176 @@
           <pre><code>&lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Explore our lineup"&gt;
   &lt;ul class="dl-carousel-track"&gt;
     &lt;li class="dl-carousel-slide"&gt;
-      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=Silverado" aria-label="Explore the Silverado 1500"&gt;
-        &lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Chevrolet Silverado 1500"&gt;
-        &lt;p&gt;Silverado 1500&lt;/p&gt;
+      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=LYRIQ" aria-label="Explore the LYRIQ"&gt;
+        &lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Cadillac LYRIQ"&gt;
+        &lt;p&gt;LYRIQ&lt;/p&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;!-- repeat the &lt;li&gt; for each model --&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>/* Chevrolet ladder - 11 sites run exactly this. */
+.my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+@media (min-width: 540px) { .my-modelbar { --dlc-per-view: 3; } }
+@media (min-width: 992px) { .my-modelbar { --dlc-per-view: 4; } }
+@media (min-width: 1200px) { .my-modelbar { --dlc-per-view: 5; } }
+
+/* Arrows only - hide the dots and reclaim the space they reserved. */
+.my-modelbar .dl-carousel-dots { display: none; }
+.my-modelbar { --dlc-controls-space: 0px; }
+
+.my-modelbar { padding-block: 1.75rem; background: #101010; }
+.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+.my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
+.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }</code></pre>
+        </details>
+      </section>
+
+      <section class="demo-section demo-wide" id="lexus">
+        <h2 id="lexus-h">The Lexus ladder &mdash; 6 sites</h2>
+        <p class="demo-sub">
+          Drops to a single card on the narrowest phones. Runs on lexus 1-3, nissan 2-3, toyota 1. Cards per view: base 1 &middot; &ge;401px 2 &middot; &ge;601px 3 &middot; &ge;992px 5.
+        </p>
+        <p class="strip-note">On a soft gray gradient band, spaced capitals.</p>
+        <div class="dl-carousel mbx-lexus" data-slider data-step="slide" aria-labelledby="lexus-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="mbx-lexus-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Silverado 1500"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-lexus-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Colorado"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-lexus-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Tahoe"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-lexus-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Suburban"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-lexus-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Traverse"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-lexus-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Equinox"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-lexus-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trailblazer"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-lexus-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trax"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+        <details>
+          <summary>Copy this look</summary>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
+            once per page.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Explore our lineup"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;
+      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=NX" aria-label="Explore the NX"&gt;
+        &lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Lexus NX"&gt;
+        &lt;p&gt;NX&lt;/p&gt;
       &lt;/a&gt;
     &lt;/li&gt;
     &lt;!-- repeat the &lt;li&gt; for each model --&gt;
@@ -823,9 +1455,10 @@
 .my-modelbar .dl-carousel-dots { display: none; }
 .my-modelbar { --dlc-controls-space: 0px; }
 
-.my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
+.my-modelbar { padding-block: 1.5rem; background: linear-gradient(#e9e9e9, #f9f9f9); }
+.my-modelbar-card { display: block; color: #222; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar-card p { margin: 0.25rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }</code></pre>
         </details>
       </section>
 
@@ -834,11 +1467,12 @@
         <p class="demo-sub">
           Four-up ceiling — roomier cards than the five-up brands. Runs on buick 1-2, jaguar 1, landrover 1, landrover 3. Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;769px 4.
         </p>
-        <div class="dl-carousel demo-mb demo-mb--nodots mb-buick" data-slider data-step="slide" aria-labelledby="buick-h">
+        <p class="strip-note">Plain white, name below.</p>
+        <div class="dl-carousel mbx-buick" data-slider data-step="slide" aria-labelledby="buick-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500">
-                <img
+              <a class="mbx-buick-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
                   src="img/chrome-silverado-1500.png"
                   srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -848,12 +1482,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Silverado 1500</p>
-              </a>
+                <p>Silverado 1500</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Colorado">
-                <img
+              <a class="mbx-buick-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
                   src="img/chrome-colorado.png"
                   srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -863,12 +1497,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Colorado</p>
-              </a>
+                <p>Colorado</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Tahoe">
-                <img
+              <a class="mbx-buick-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
                   src="img/chrome-tahoe.png"
                   srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -878,12 +1512,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Tahoe</p>
-              </a>
+                <p>Tahoe</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Suburban">
-                <img
+              <a class="mbx-buick-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
                   src="img/chrome-suburban.png"
                   srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -893,12 +1527,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Suburban</p>
-              </a>
+                <p>Suburban</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Traverse">
-                <img
+              <a class="mbx-buick-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
                   src="img/chrome-traverse.png"
                   srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -908,12 +1542,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Traverse</p>
-              </a>
+                <p>Traverse</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Equinox">
-                <img
+              <a class="mbx-buick-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
                   src="img/chrome-equinox.png"
                   srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -923,12 +1557,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Equinox</p>
-              </a>
+                <p>Equinox</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trailblazer">
-                <img
+              <a class="mbx-buick-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
                   src="img/chrome-trailblazer.png"
                   srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -938,12 +1572,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trailblazer</p>
-              </a>
+                <p>Trailblazer</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trax">
-                <img
+              <a class="mbx-buick-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
                   src="img/chrome-trax.png"
                   srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -953,13 +1587,13 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trax</p>
-              </a>
+                <p>Trax</p></a
+              >
             </li>
           </ul>
         </div>
         <details>
-          <summary>Copy this ladder</summary>
+          <summary>Copy this look</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
             once per page.
@@ -994,12 +1628,16 @@
 
       <section class="demo-section demo-wide" id="genesis">
         <h2 id="genesis-h">The Genesis ladder &mdash; 5 sites</h2>
-        <p class="demo-sub">A gentle four-step climb, one card at a time. Runs on genesis 1-3, vw 1-2. Cards per view: base 1 &middot; &ge;541px 2 &middot; &ge;993px 3 &middot; &ge;1201px 4.</p>
-        <div class="dl-carousel demo-mb demo-mb--nodots mb-genesis" data-slider data-step="slide" aria-labelledby="genesis-h">
+        <p class="demo-sub">
+          A gentle four-step climb — shipped two ways: Genesis plain with inventory counts, Volkswagen with a colour tile behind every car. Runs on genesis 1-3, vw 1-2. Cards per view: base 1 &middot;
+          &ge;541px 2 &middot; &ge;993px 3 &middot; &ge;1201px 4.
+        </p>
+        <h3 id="mbx-genesis-0-h" class="strip-label">As Genesis ships it — inventory count under each name</h3>
+        <div class="dl-carousel mbx-genesis-0" data-slider data-step="slide" aria-labelledby="mbx-genesis-0-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500">
-                <img
+              <a class="mbx-genesis-0-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-silverado-1500.png"
                   srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1010,11 +1648,12 @@
                   decoding="async"
                 />
                 <p>Silverado 1500</p>
-              </a>
+                <small>23 Available</small></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Colorado">
-                <img
+              <a class="mbx-genesis-0-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-colorado.png"
                   srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1025,11 +1664,12 @@
                   decoding="async"
                 />
                 <p>Colorado</p>
-              </a>
+                <small>8 Available</small></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Tahoe">
-                <img
+              <a class="mbx-genesis-0-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-tahoe.png"
                   srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1040,11 +1680,12 @@
                   decoding="async"
                 />
                 <p>Tahoe</p>
-              </a>
+                <small>14 Available</small></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Suburban">
-                <img
+              <a class="mbx-genesis-0-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-suburban.png"
                   srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1055,11 +1696,12 @@
                   decoding="async"
                 />
                 <p>Suburban</p>
-              </a>
+                <small>5 Available</small></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Traverse">
-                <img
+              <a class="mbx-genesis-0-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-traverse.png"
                   srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1070,11 +1712,12 @@
                   decoding="async"
                 />
                 <p>Traverse</p>
-              </a>
+                <small>11 Available</small></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Equinox">
-                <img
+              <a class="mbx-genesis-0-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-equinox.png"
                   srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1085,11 +1728,12 @@
                   decoding="async"
                 />
                 <p>Equinox</p>
-              </a>
+                <small>17 Available</small></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trailblazer">
-                <img
+              <a class="mbx-genesis-0-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-trailblazer.png"
                   srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1100,11 +1744,12 @@
                   decoding="async"
                 />
                 <p>Trailblazer</p>
-              </a>
+                <small>9 Available</small></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trax">
-                <img
+              <a class="mbx-genesis-0-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-trax.png"
                   srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1115,12 +1760,13 @@
                   decoding="async"
                 />
                 <p>Trax</p>
-              </a>
+                <small>32 Available</small></a
+              >
             </li>
           </ul>
         </div>
         <details>
-          <summary>Copy this ladder</summary>
+          <summary>Copy this look</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
             once per page.
@@ -1129,9 +1775,10 @@
           <pre><code>&lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Explore our lineup"&gt;
   &lt;ul class="dl-carousel-track"&gt;
     &lt;li class="dl-carousel-slide"&gt;
-      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=Silverado" aria-label="Explore the Silverado 1500"&gt;
-        &lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Chevrolet Silverado 1500"&gt;
-        &lt;p&gt;Silverado 1500&lt;/p&gt;
+      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=GV70"&gt;
+        &lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Genesis GV70"&gt;
+        &lt;p&gt;GV70&lt;/p&gt;
+        &lt;small&gt;198 Available&lt;/small&gt;
       &lt;/a&gt;
     &lt;/li&gt;
     &lt;!-- repeat the &lt;li&gt; for each model --&gt;
@@ -1150,18 +1797,190 @@
 
 .my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
+.my-modelbar-card small { display: block; color: #5f6368; }</code></pre>
+        </details>
+        <h3 id="mbx-genesis-1-h" class="strip-label">Same ladder as Volkswagen ships it — a tile of colour behind each car, one featured in navy</h3>
+        <div class="dl-carousel mbx-genesis-1" data-slider data-step="slide" aria-labelledby="mbx-genesis-1-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-1-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><span class="mbx-genesis-1-tile"
+                  ><img
+                    src="img/chrome-silverado-1500.png"
+                    srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Silverado 1500"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-1-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><span class="mbx-genesis-1-tile"
+                  ><img
+                    src="img/chrome-colorado.png"
+                    srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2025 Chevrolet Colorado"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-1-card mbx-genesis-1-card--feature" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><span class="mbx-genesis-1-tile"
+                  ><img
+                    src="img/chrome-tahoe.png"
+                    srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2025 Chevrolet Tahoe"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-1-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><span class="mbx-genesis-1-tile"
+                  ><img
+                    src="img/chrome-suburban.png"
+                    srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2025 Chevrolet Suburban"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-1-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><span class="mbx-genesis-1-tile"
+                  ><img
+                    src="img/chrome-traverse.png"
+                    srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2025 Chevrolet Traverse"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-1-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><span class="mbx-genesis-1-tile"
+                  ><img
+                    src="img/chrome-equinox.png"
+                    srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2025 Chevrolet Equinox"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-1-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><span class="mbx-genesis-1-tile"
+                  ><img
+                    src="img/chrome-trailblazer.png"
+                    srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2025 Chevrolet Trailblazer"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-1-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><span class="mbx-genesis-1-tile"
+                  ><img
+                    src="img/chrome-trax.png"
+                    srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2025 Chevrolet Trax"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+        <details>
+          <summary>Copy this look</summary>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
+            once per page.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Explore our lineup"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;
+      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=Atlas" aria-label="Explore the Atlas"&gt;
+        &lt;span class="my-modelbar-tile"&gt;&lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Volkswagen Atlas"&gt;&lt;/span&gt;
+        &lt;p&gt;Atlas&lt;/p&gt;
+      &lt;/a&gt;
+      &lt;!-- add my-modelbar-card--feature to the card you want on the navy tile --&gt;
+    &lt;/li&gt;
+    &lt;!-- repeat the &lt;li&gt; for each model --&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>/* Genesis ladder - 5 sites run exactly this. */
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+@media (min-width: 541px) { .my-modelbar { --dlc-per-view: 2; } }
+@media (min-width: 993px) { .my-modelbar { --dlc-per-view: 3; } }
+@media (min-width: 1201px) { .my-modelbar { --dlc-per-view: 4; } }
+
+/* Arrows only - hide the dots and reclaim the space they reserved. */
+.my-modelbar .dl-carousel-dots { display: none; }
+.my-modelbar { --dlc-controls-space: 0px; }
+
+.my-modelbar { --dlc-gap: 1rem; }
+.my-modelbar-card { display: block; color: #0b2a5b; text-align: center; text-decoration: none; }
+.my-modelbar-tile { display: block; padding: 8% 6%; background: #e2e6ea; }
+.my-modelbar-card--feature .my-modelbar-tile { background: #0b2a5b; }
+.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
+.my-modelbar-card p { margin: 0.4rem 0 0; font-weight: 700; }</code></pre>
         </details>
       </section>
 
       <section class="demo-section demo-wide" id="lincoln">
         <h2 id="lincoln-h">The Lincoln ladder &mdash; 3 sites</h2>
         <p class="demo-sub">Holds three cards across a wide tablet range. Runs on lincoln 1-3. Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;993px 4.</p>
-        <div class="dl-carousel demo-mb demo-mb--nodots mb-lincoln" data-slider data-step="slide" aria-labelledby="lincoln-h">
+        <p class="strip-note">On a flat light-gray band, spaced capitals.</p>
+        <div class="dl-carousel mbx-lincoln" data-slider data-step="slide" aria-labelledby="lincoln-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500">
-                <img
+              <a class="mbx-lincoln-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
                   src="img/chrome-silverado-1500.png"
                   srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1171,12 +1990,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Silverado 1500</p>
-              </a>
+                <p>Silverado 1500</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Colorado">
-                <img
+              <a class="mbx-lincoln-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
                   src="img/chrome-colorado.png"
                   srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1186,12 +2005,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Colorado</p>
-              </a>
+                <p>Colorado</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Tahoe">
-                <img
+              <a class="mbx-lincoln-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
                   src="img/chrome-tahoe.png"
                   srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1201,12 +2020,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Tahoe</p>
-              </a>
+                <p>Tahoe</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Suburban">
-                <img
+              <a class="mbx-lincoln-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
                   src="img/chrome-suburban.png"
                   srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1216,12 +2035,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Suburban</p>
-              </a>
+                <p>Suburban</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Traverse">
-                <img
+              <a class="mbx-lincoln-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
                   src="img/chrome-traverse.png"
                   srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1231,12 +2050,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Traverse</p>
-              </a>
+                <p>Traverse</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Equinox">
-                <img
+              <a class="mbx-lincoln-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
                   src="img/chrome-equinox.png"
                   srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1246,12 +2065,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Equinox</p>
-              </a>
+                <p>Equinox</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trailblazer">
-                <img
+              <a class="mbx-lincoln-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
                   src="img/chrome-trailblazer.png"
                   srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1261,12 +2080,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trailblazer</p>
-              </a>
+                <p>Trailblazer</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trax">
-                <img
+              <a class="mbx-lincoln-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
                   src="img/chrome-trax.png"
                   srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1276,13 +2095,13 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trax</p>
-              </a>
+                <p>Trax</p></a
+              >
             </li>
           </ul>
         </div>
         <details>
-          <summary>Copy this ladder</summary>
+          <summary>Copy this look</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
             once per page.
@@ -1291,9 +2110,9 @@
           <pre><code>&lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Explore our lineup"&gt;
   &lt;ul class="dl-carousel-track"&gt;
     &lt;li class="dl-carousel-slide"&gt;
-      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=Silverado" aria-label="Explore the Silverado 1500"&gt;
-        &lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Chevrolet Silverado 1500"&gt;
-        &lt;p&gt;Silverado 1500&lt;/p&gt;
+      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=Navigator" aria-label="Explore the Navigator"&gt;
+        &lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Lincoln Navigator"&gt;
+        &lt;p&gt;Navigator&lt;/p&gt;
       &lt;/a&gt;
     &lt;/li&gt;
     &lt;!-- repeat the &lt;li&gt; for each model --&gt;
@@ -1309,20 +2128,22 @@
 .my-modelbar .dl-carousel-dots { display: none; }
 .my-modelbar { --dlc-controls-space: 0px; }
 
-.my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
+.my-modelbar { padding-block: 1.5rem; background: #f2f2f2; }
+.my-modelbar-card { display: block; color: #444649; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }</code></pre>
         </details>
       </section>
 
       <section class="demo-section demo-wide" id="ford">
         <h2 id="ford-h">The Ford ladder &mdash; 2 sites</h2>
         <p class="demo-sub">Jumps 1 → 3 in one step; no two-up state at all. Runs on ford 1, honda 1. Cards per view: base 1 &middot; &ge;461px 3 &middot; &ge;992px 5.</p>
-        <div class="dl-carousel demo-mb demo-mb--nodots mb-ford" data-slider data-step="slide" aria-labelledby="ford-h">
+        <p class="strip-note">Plain white, name below.</p>
+        <div class="dl-carousel mbx-ford" data-slider data-step="slide" aria-labelledby="ford-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500">
-                <img
+              <a class="mbx-ford-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
                   src="img/chrome-silverado-1500.png"
                   srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1332,12 +2153,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Silverado 1500</p>
-              </a>
+                <p>Silverado 1500</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Colorado">
-                <img
+              <a class="mbx-ford-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
                   src="img/chrome-colorado.png"
                   srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1347,12 +2168,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Colorado</p>
-              </a>
+                <p>Colorado</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Tahoe">
-                <img
+              <a class="mbx-ford-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
                   src="img/chrome-tahoe.png"
                   srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1362,12 +2183,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Tahoe</p>
-              </a>
+                <p>Tahoe</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Suburban">
-                <img
+              <a class="mbx-ford-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
                   src="img/chrome-suburban.png"
                   srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1377,12 +2198,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Suburban</p>
-              </a>
+                <p>Suburban</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Traverse">
-                <img
+              <a class="mbx-ford-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
                   src="img/chrome-traverse.png"
                   srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1392,12 +2213,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Traverse</p>
-              </a>
+                <p>Traverse</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Equinox">
-                <img
+              <a class="mbx-ford-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
                   src="img/chrome-equinox.png"
                   srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1407,12 +2228,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Equinox</p>
-              </a>
+                <p>Equinox</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trailblazer">
-                <img
+              <a class="mbx-ford-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
                   src="img/chrome-trailblazer.png"
                   srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1422,12 +2243,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trailblazer</p>
-              </a>
+                <p>Trailblazer</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trax">
-                <img
+              <a class="mbx-ford-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
                   src="img/chrome-trax.png"
                   srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1437,13 +2258,13 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trax</p>
-              </a>
+                <p>Trax</p></a
+              >
             </li>
           </ul>
         </div>
         <details>
-          <summary>Copy this ladder</summary>
+          <summary>Copy this look</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
             once per page.
@@ -1479,11 +2300,12 @@
       <section class="demo-section demo-wide" id="hyundai">
         <h2 id="hyundai-h">The Hyundai ladder &mdash; 2 sites</h2>
         <p class="demo-sub">Also skips two-up on the way from phone to tablet. Runs on hyundai 2-3. Cards per view: base 1 &middot; &ge;461px 3 &middot; &ge;993px 4 &middot; &ge;1201px 5.</p>
-        <div class="dl-carousel demo-mb demo-mb--nodots mb-hyundai" data-slider data-step="slide" aria-labelledby="hyundai-h">
+        <p class="strip-note">Plain white, name below.</p>
+        <div class="dl-carousel mbx-hyundai" data-slider data-step="slide" aria-labelledby="hyundai-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500">
-                <img
+              <a class="mbx-hyundai-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
                   src="img/chrome-silverado-1500.png"
                   srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1493,12 +2315,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Silverado 1500</p>
-              </a>
+                <p>Silverado 1500</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Colorado">
-                <img
+              <a class="mbx-hyundai-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
                   src="img/chrome-colorado.png"
                   srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1508,12 +2330,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Colorado</p>
-              </a>
+                <p>Colorado</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Tahoe">
-                <img
+              <a class="mbx-hyundai-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
                   src="img/chrome-tahoe.png"
                   srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1523,12 +2345,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Tahoe</p>
-              </a>
+                <p>Tahoe</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Suburban">
-                <img
+              <a class="mbx-hyundai-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
                   src="img/chrome-suburban.png"
                   srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1538,12 +2360,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Suburban</p>
-              </a>
+                <p>Suburban</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Traverse">
-                <img
+              <a class="mbx-hyundai-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
                   src="img/chrome-traverse.png"
                   srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1553,12 +2375,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Traverse</p>
-              </a>
+                <p>Traverse</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Equinox">
-                <img
+              <a class="mbx-hyundai-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
                   src="img/chrome-equinox.png"
                   srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1568,12 +2390,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Equinox</p>
-              </a>
+                <p>Equinox</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trailblazer">
-                <img
+              <a class="mbx-hyundai-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
                   src="img/chrome-trailblazer.png"
                   srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1583,12 +2405,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trailblazer</p>
-              </a>
+                <p>Trailblazer</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trax">
-                <img
+              <a class="mbx-hyundai-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
                   src="img/chrome-trax.png"
                   srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1598,13 +2420,13 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trax</p>
-              </a>
+                <p>Trax</p></a
+              >
             </li>
           </ul>
         </div>
         <details>
-          <summary>Copy this ladder</summary>
+          <summary>Copy this look</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
             once per page.
@@ -1641,11 +2463,12 @@
       <section class="demo-section demo-wide" id="mazda">
         <h2 id="mazda-h">The Mazda ladder &mdash; 2 sites</h2>
         <p class="demo-sub">One of only three model bars in the estate that shows dots. Runs on mazda 1-2. Cards per view: base 1 &middot; &ge;769px 2 &middot; &ge;992px 3.</p>
-        <div class="dl-carousel demo-mb demo-mb--dots mb-mazda" data-slider data-step="slide" aria-labelledby="mazda-h">
+        <p class="strip-note">Name above the car, inventory chip below — and it keeps its dots.</p>
+        <div class="dl-carousel mbx-mazda" data-slider data-step="slide" aria-labelledby="mazda-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500">
-                <img
+              <a class="mbx-mazda-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-silverado-1500.png"
                   srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1656,11 +2479,12 @@
                   decoding="async"
                 />
                 <p>Silverado 1500</p>
-              </a>
+                <small>23 Available</small></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Colorado">
-                <img
+              <a class="mbx-mazda-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-colorado.png"
                   srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1671,11 +2495,12 @@
                   decoding="async"
                 />
                 <p>Colorado</p>
-              </a>
+                <small>8 Available</small></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Tahoe">
-                <img
+              <a class="mbx-mazda-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-tahoe.png"
                   srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1686,11 +2511,12 @@
                   decoding="async"
                 />
                 <p>Tahoe</p>
-              </a>
+                <small>14 Available</small></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Suburban">
-                <img
+              <a class="mbx-mazda-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-suburban.png"
                   srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1701,11 +2527,12 @@
                   decoding="async"
                 />
                 <p>Suburban</p>
-              </a>
+                <small>5 Available</small></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Traverse">
-                <img
+              <a class="mbx-mazda-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-traverse.png"
                   srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1716,11 +2543,12 @@
                   decoding="async"
                 />
                 <p>Traverse</p>
-              </a>
+                <small>11 Available</small></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Equinox">
-                <img
+              <a class="mbx-mazda-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-equinox.png"
                   srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1731,11 +2559,12 @@
                   decoding="async"
                 />
                 <p>Equinox</p>
-              </a>
+                <small>17 Available</small></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trailblazer">
-                <img
+              <a class="mbx-mazda-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-trailblazer.png"
                   srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1746,11 +2575,12 @@
                   decoding="async"
                 />
                 <p>Trailblazer</p>
-              </a>
+                <small>9 Available</small></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trax">
-                <img
+              <a class="mbx-mazda-card" href="index.html#modelbar"
+                ><img
                   src="img/chrome-trax.png"
                   srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -1761,12 +2591,13 @@
                   decoding="async"
                 />
                 <p>Trax</p>
-              </a>
+                <small>32 Available</small></a
+              >
             </li>
           </ul>
         </div>
         <details>
-          <summary>Copy this ladder</summary>
+          <summary>Copy this look</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
             once per page.
@@ -1775,9 +2606,10 @@
           <pre><code>&lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Explore our lineup"&gt;
   &lt;ul class="dl-carousel-track"&gt;
     &lt;li class="dl-carousel-slide"&gt;
-      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=Silverado" aria-label="Explore the Silverado 1500"&gt;
-        &lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Chevrolet Silverado 1500"&gt;
-        &lt;p&gt;Silverado 1500&lt;/p&gt;
+      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=CX-5"&gt;
+        &lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Mazda CX-5"&gt;
+        &lt;p&gt;Mazda CX-5&lt;/p&gt;
+        &lt;small&gt;108 Available&lt;/small&gt;
       &lt;/a&gt;
     &lt;/li&gt;
     &lt;!-- repeat the &lt;li&gt; for each model --&gt;
@@ -1791,141 +2623,74 @@
 
 /* This bar is one of the three in the estate that keeps its dots - nothing to hide. */
 
-.my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
+.my-modelbar-card { display: flex; flex-direction: column; color: #222; text-align: center; text-decoration: none; }
+.my-modelbar-card p { order: -1; margin: 0 0 0.5rem; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar-card small { align-self: center; margin-block-start: 0.75rem; padding: 0.35rem 0.9rem; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; background: #ececec; }</code></pre>
         </details>
       </section>
 
       <section class="demo-section demo-wide" id="toyota">
         <h2 id="toyota-h">The Toyota ladder &mdash; 2 sites</h2>
         <p class="demo-sub">The largest cards anywhere — never more than two across. Runs on toyota 2-3. Cards per view: base 1 &middot; &ge;541px 2.</p>
-        <div class="dl-carousel demo-mb demo-mb--nodots mb-toyota" data-slider data-step="slide" aria-labelledby="toyota-h">
+        <p class="strip-note">Big dark photo cards rather than cutouts.</p>
+        <div class="dl-carousel mbx-toyota" data-slider data-step="slide" aria-labelledby="toyota-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500">
-                <img
-                  src="img/chrome-silverado-1500.png"
-                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2026 Chevrolet Silverado 1500"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Silverado 1500</p>
-              </a>
+              <a class="mbx-toyota-card" href="index.html#vehicles"
+                ><img src="img/vehicle-1.jpg" width="800" height="500" alt="Black Porsche Panamera driving on a highway, rear three-quarter view" loading="lazy" decoding="async" /><span
+                  class="mbx-toyota-copy"
+                  ><small>2 Available</small>
+                  <h3>2021 Porsche Panamera</h3></span
+                ></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Colorado">
-                <img
-                  src="img/chrome-colorado.png"
-                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Colorado"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Colorado</p>
-              </a>
+              <a class="mbx-toyota-card" href="index.html#vehicles"
+                ><img src="img/vehicle-2.jpg" width="800" height="500" alt="Blue BMW 4 Series coupe parked on a city street, side view" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
+                  ><small>4 Available</small>
+                  <h3>2023 BMW 430i Coupe</h3></span
+                ></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Tahoe">
-                <img
-                  src="img/chrome-tahoe.png"
-                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Tahoe"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Tahoe</p>
-              </a>
+              <a class="mbx-toyota-card" href="index.html#vehicles"
+                ><img src="img/vehicle-3.jpg" width="800" height="500" alt="White Ford Expedition on a desert road between red rock cliffs" loading="lazy" decoding="async" /><span
+                  class="mbx-toyota-copy"
+                  ><small>3 Available</small>
+                  <h3>2022 Ford Expedition Limited</h3></span
+                ></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Suburban">
-                <img
-                  src="img/chrome-suburban.png"
-                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Suburban"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Suburban</p>
-              </a>
+              <a class="mbx-toyota-card" href="index.html#vehicles"
+                ><img src="img/vehicle-4.jpg" width="800" height="500" alt="White Honda CR-V parked near snowy mountains" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
+                  ><small>6 Available</small>
+                  <h3>2023 Honda CR-V EX-L</h3></span
+                ></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Traverse">
-                <img
-                  src="img/chrome-traverse.png"
-                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Traverse"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Traverse</p>
-              </a>
+              <a class="mbx-toyota-card" href="index.html#vehicles"
+                ><img src="img/vehicle-5.jpg" width="800" height="500" alt="White Nissan GT-R from behind on an open country road" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
+                  ><small>1 Available</small>
+                  <h3>2020 Nissan GT-R Premium</h3></span
+                ></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Equinox">
-                <img
-                  src="img/chrome-equinox.png"
-                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Equinox"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Equinox</p>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trailblazer">
-                <img
-                  src="img/chrome-trailblazer.png"
-                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Trailblazer"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Trailblazer</p>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trax">
-                <img
-                  src="img/chrome-trax.png"
-                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Trax"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Trax</p>
-              </a>
+              <a class="mbx-toyota-card" href="index.html#vehicles"
+                ><img src="img/vehicle-6.jpg" width="800" height="500" alt="Light blue Fiat 500 parked beside a stone building, side view" loading="lazy" decoding="async" /><span
+                  class="mbx-toyota-copy"
+                  ><small>2 Available</small>
+                  <h3>2019 Fiat 500 Lounge</h3></span
+                ></a
+              >
             </li>
           </ul>
         </div>
         <details>
-          <summary>Copy this ladder</summary>
+          <summary>Copy this look</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
             once per page.
@@ -1934,9 +2699,9 @@
           <pre><code>&lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Explore our lineup"&gt;
   &lt;ul class="dl-carousel-track"&gt;
     &lt;li class="dl-carousel-slide"&gt;
-      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=Silverado" aria-label="Explore the Silverado 1500"&gt;
-        &lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Chevrolet Silverado 1500"&gt;
-        &lt;p&gt;Silverado 1500&lt;/p&gt;
+      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=Highlander"&gt;
+        &lt;img src="#MISCPATH#/highlander.jpg" width="800" height="500" alt="Blue Toyota Highlander on a forest road"&gt;
+        &lt;span class="my-modelbar-copy"&gt;&lt;small&gt;4 Available&lt;/small&gt;&lt;h3&gt;Highlander&lt;/h3&gt;&lt;/span&gt;
       &lt;/a&gt;
     &lt;/li&gt;
     &lt;!-- repeat the &lt;li&gt; for each model --&gt;
@@ -1951,9 +2716,12 @@
 .my-modelbar .dl-carousel-dots { display: none; }
 .my-modelbar { --dlc-controls-space: 0px; }
 
-.my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
-.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar { --dlc-gap: 1rem; }
+.my-modelbar-card { display: block; overflow: hidden; color: #fff; text-decoration: none; background: #2a2a2a; border-radius: 8px; }
+.my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
+.my-modelbar-copy { padding: 0.9rem 1rem 1.1rem; }
+.my-modelbar-copy small { color: #c9c9c9; }
+.my-modelbar-copy h3 { margin: 0.15rem 0 0; font-size: 1.05rem; }</code></pre>
         </details>
       </section>
 
@@ -1963,132 +2731,49 @@
           Six-up, but only past 1800px — the widest breakpoint in the estate. Runs on alfaromeo 1. Cards per view: base 1 &middot; &ge;541px 2 &middot; &ge;993px 3 &middot; &ge;1201px 4 &middot;
           &ge;1801px 6.
         </p>
-        <div class="dl-carousel demo-mb demo-mb--nodots mb-alfaromeo" data-slider data-step="slide" aria-labelledby="alfaromeo-h">
+        <p class="strip-note">Tall dark tiles with a browse button — the most styled bar in the estate.</p>
+        <div class="dl-carousel mbx-alfaromeo" data-slider data-step="slide" aria-labelledby="alfaromeo-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500">
-                <img
-                  src="img/chrome-silverado-1500.png"
-                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2026 Chevrolet Silverado 1500"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Silverado 1500</p>
-              </a>
+              <a class="mbx-alfaromeo-card" href="index.html#models"
+                ><p class="mbx-alfaromeo-name">Camaro</p>
+                <img src="img/model-camaro.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" /><span class="mbx-alfaromeo-cta">Browse inventory</span></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Colorado">
-                <img
-                  src="img/chrome-colorado.png"
-                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Colorado"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Colorado</p>
-              </a>
+              <a class="mbx-alfaromeo-card" href="index.html#models"
+                ><p class="mbx-alfaromeo-name">Corvette</p>
+                <img src="img/model-corvette.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" /><span class="mbx-alfaromeo-cta">Browse inventory</span></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Tahoe">
-                <img
-                  src="img/chrome-tahoe.png"
-                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Tahoe"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Tahoe</p>
-              </a>
+              <a class="mbx-alfaromeo-card" href="index.html#models"
+                ><p class="mbx-alfaromeo-name">Equinox</p>
+                <img src="img/model-equinox.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" /><span class="mbx-alfaromeo-cta">Browse inventory</span></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Suburban">
-                <img
-                  src="img/chrome-suburban.png"
-                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Suburban"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Suburban</p>
-              </a>
+              <a class="mbx-alfaromeo-card" href="index.html#models"
+                ><p class="mbx-alfaromeo-name">Malibu</p>
+                <img src="img/model-malibu.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" /><span class="mbx-alfaromeo-cta">Browse inventory</span></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Traverse">
-                <img
-                  src="img/chrome-traverse.png"
-                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Traverse"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Traverse</p>
-              </a>
+              <a class="mbx-alfaromeo-card" href="index.html#models"
+                ><p class="mbx-alfaromeo-name">Silverado</p>
+                <img src="img/model-silverado.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" /><span class="mbx-alfaromeo-cta">Browse inventory</span></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Equinox">
-                <img
-                  src="img/chrome-equinox.png"
-                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Equinox"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Equinox</p>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trailblazer">
-                <img
-                  src="img/chrome-trailblazer.png"
-                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Trailblazer"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Trailblazer</p>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trax">
-                <img
-                  src="img/chrome-trax.png"
-                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Trax"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Trax</p>
-              </a>
+              <a class="mbx-alfaromeo-card" href="index.html#models"
+                ><p class="mbx-alfaromeo-name">Tahoe</p>
+                <img src="img/model-tahoe.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" /><span class="mbx-alfaromeo-cta">Browse inventory</span></a
+              >
             </li>
           </ul>
         </div>
         <details>
-          <summary>Copy this ladder</summary>
+          <summary>Copy this look</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
             once per page.
@@ -2097,9 +2782,10 @@
           <pre><code>&lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Explore our lineup"&gt;
   &lt;ul class="dl-carousel-track"&gt;
     &lt;li class="dl-carousel-slide"&gt;
-      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=Silverado" aria-label="Explore the Silverado 1500"&gt;
-        &lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Chevrolet Silverado 1500"&gt;
-        &lt;p&gt;Silverado 1500&lt;/p&gt;
+      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=Giulia"&gt;
+        &lt;p class="my-modelbar-name"&gt;Giulia&lt;/p&gt;
+        &lt;img src="#MISCPATH#/giulia-tall.jpg" width="600" height="1000" alt=""&gt;
+        &lt;span class="my-modelbar-cta"&gt;Browse inventory&lt;/span&gt;
       &lt;/a&gt;
     &lt;/li&gt;
     &lt;!-- repeat the &lt;li&gt; for each model --&gt;
@@ -2117,9 +2803,12 @@
 .my-modelbar .dl-carousel-dots { display: none; }
 .my-modelbar { --dlc-controls-space: 0px; }
 
-.my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
-.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar { --dlc-gap: 1.25rem; padding: 1.5rem; background: #14161b; }
+.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+.my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
+.my-modelbar-name { margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.06em; text-align: start; text-transform: uppercase; }
+.my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; }
+.my-modelbar-cta { display: inline-block; margin-block-start: 0.75rem; padding: 0.6rem 1.4rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #14161b; background: #fff; }</code></pre>
         </details>
       </section>
 
@@ -2128,11 +2817,12 @@
         <p class="demo-sub">
           Five rungs, the most granular ladder anywhere. Runs on audi 1. Cards per view: base 1 &middot; &ge;361px 2 &middot; &ge;769px 3 &middot; &ge;993px 4 &middot; &ge;1201px 6.
         </p>
-        <div class="dl-carousel demo-mb demo-mb--nodots mb-audi" data-slider data-step="slide" aria-labelledby="audi-h">
+        <p class="strip-note">Plain white, name below.</p>
+        <div class="dl-carousel mbx-audi" data-slider data-step="slide" aria-labelledby="audi-h">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500">
-                <img
+              <a class="mbx-audi-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
                   src="img/chrome-silverado-1500.png"
                   srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -2142,12 +2832,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Silverado 1500</p>
-              </a>
+                <p>Silverado 1500</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Colorado">
-                <img
+              <a class="mbx-audi-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
                   src="img/chrome-colorado.png"
                   srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -2157,12 +2847,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Colorado</p>
-              </a>
+                <p>Colorado</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Tahoe">
-                <img
+              <a class="mbx-audi-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
                   src="img/chrome-tahoe.png"
                   srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -2172,12 +2862,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Tahoe</p>
-              </a>
+                <p>Tahoe</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Suburban">
-                <img
+              <a class="mbx-audi-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
                   src="img/chrome-suburban.png"
                   srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -2187,12 +2877,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Suburban</p>
-              </a>
+                <p>Suburban</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Traverse">
-                <img
+              <a class="mbx-audi-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
                   src="img/chrome-traverse.png"
                   srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -2202,12 +2892,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Traverse</p>
-              </a>
+                <p>Traverse</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Equinox">
-                <img
+              <a class="mbx-audi-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
                   src="img/chrome-equinox.png"
                   srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -2217,12 +2907,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Equinox</p>
-              </a>
+                <p>Equinox</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trailblazer">
-                <img
+              <a class="mbx-audi-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
                   src="img/chrome-trailblazer.png"
                   srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -2232,12 +2922,12 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trailblazer</p>
-              </a>
+                <p>Trailblazer</p></a
+              >
             </li>
             <li class="dl-carousel-slide">
-              <a class="demo-mb-card" href="index.html#modelbar" aria-label="Explore the Trax">
-                <img
+              <a class="mbx-audi-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
                   src="img/chrome-trax.png"
                   srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
                   sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
@@ -2247,13 +2937,13 @@
                   loading="lazy"
                   decoding="async"
                 />
-                <p>Trax</p>
-              </a>
+                <p>Trax</p></a
+              >
             </li>
           </ul>
         </div>
         <details>
-          <summary>Copy this ladder</summary>
+          <summary>Copy this look</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
             once per page.
