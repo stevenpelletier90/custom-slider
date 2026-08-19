@@ -361,6 +361,49 @@
         font-weight: 700;
       }
 
+      .mbx-genesis-2 {
+        --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 600px) {
+        .mbx-genesis-2 {
+          --dlc-per-view: 2;
+        }
+      }
+      @media (min-width: 991px) {
+        .mbx-genesis-2 {
+          --dlc-per-view: 3;
+        }
+      }
+
+      .mbx-genesis-2 .dl-carousel-dots {
+        display: none;
+      }
+      .mbx-genesis-2 {
+        --dlc-controls-space: 0px;
+      }
+
+      .mbx-genesis-2-card {
+        display: block;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .mbx-genesis-2-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .mbx-genesis-2-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+      .mbx-genesis-2-card small {
+        display: block;
+        color: #5f6368;
+      }
+
       .mbx-lincoln {
         --dlc-per-view: 2;
         --dlc-peek: 60px;
@@ -1105,6 +1148,129 @@
         color: #fff;
         background: #1a5fb4;
       }
+      /* The non-slider family — same rendered-equals-taught rule. */
+      .sb-tilegrid {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 2%;
+      }
+      .sb-tile {
+        position: relative;
+        inline-size: 49%;
+        overflow: hidden;
+        border-radius: 10px;
+      }
+      @media (min-width: 540px) {
+        .sb-tile {
+          inline-size: 32%;
+        }
+      }
+      @media (min-width: 992px) {
+        .sb-tile {
+          inline-size: 15%;
+        }
+      }
+      .sb-tile img {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+        aspect-ratio: 1;
+        object-fit: cover;
+      }
+
+      .sb-tile-cover {
+        display: flex;
+        flex-direction: column;
+        gap: 0.25rem;
+        align-items: center;
+        padding: 0.5rem;
+        text-align: center;
+      }
+      .sb-tile-cover p {
+        margin: 0;
+        font-weight: 700;
+      }
+      .sb-tile-cover a {
+        font-size: 0.9rem;
+      }
+      @media (min-width: 992px) {
+        .sb-tile-cover {
+          position: absolute;
+          inset: 0;
+          justify-content: center;
+          color: #fff;
+          background: rgb(0 0 0 / 55%);
+          border-radius: 10px;
+          opacity: 0;
+          transition: opacity 0.25s;
+        }
+        .sb-tile-cover a {
+          color: #fff;
+          transition: transform 0.25s;
+          transform: translateY(10px);
+        }
+        .sb-tile-cover a + a {
+          transition-delay: 0.07s;
+        }
+        .sb-tile:hover .sb-tile-cover,
+        .sb-tile:focus-within .sb-tile-cover {
+          opacity: 1;
+        }
+        .sb-tile:hover .sb-tile-cover a,
+        .sb-tile:focus-within .sb-tile-cover a {
+          transform: none;
+        }
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .sb-tile-cover,
+        .sb-tile-cover a {
+          transition: none;
+        }
+      }
+
+      .sb-tilewide {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 1rem 2%;
+      }
+      .sb-tilewide-unit {
+        position: relative;
+        inline-size: 49%;
+        overflow: hidden;
+      }
+      @media (min-width: 992px) {
+        .sb-tilewide-unit {
+          inline-size: 32%;
+        }
+      }
+      .sb-tilewide-unit img {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+        aspect-ratio: 16 / 7;
+        object-fit: cover;
+      }
+
+      .sb-tilewide-cover {
+        position: absolute;
+        inset: 0;
+        display: flex;
+        flex-direction: column;
+        gap: 0.15rem;
+        justify-content: flex-end;
+        padding: 0.6rem 0.8rem;
+        color: #fff;
+        background: rgb(0 0 0 / 40%);
+      }
+      .sb-tilewide-cover p {
+        margin: 0;
+        font-weight: 700;
+      }
+      .sb-tilewide-cover a {
+        align-self: flex-start;
+        font-size: 0.85rem;
+        color: #fff;
+      }
     </style>
   </head>
   <body>
@@ -1138,15 +1304,16 @@
         <a href="#mazda">Mazda (2)</a> &middot; <a href="#toyota">Toyota (2)</a> &middot; <a href="#alfaromeo">Alfa Romeo (1)</a> &middot; <a href="#audi">Audi (1)</a> &middot;
         <a href="#cdjr">CDJR (4)</a> &middot; <a href="#powersports-cat">Powersports categories (1)</a> &middot; <a href="#powersports-brands">Powersports brands (1)</a> &middot;
         <a href="#ferrari">Ferrari (1)</a> &middot; <a href="#ferrari-photo">Ferrari photo cards (1)</a> &middot; <a href="#maserati">Maserati spotlight (1)</a> &middot;
-        <a href="#group">Group-site strips (1)</a> &middot;
+        <a href="#group">Group-site strips (1)</a> &middot; <a href="#static-bars">Not sliders</a> &middot;
         <a href="#outliers">The outliers</a>
       </nav>
 
       <section class="demo-section demo-wide" id="acura">
         <h2 id="acura-h">The Acura ladder &mdash; 19 sites</h2>
         <p class="demo-sub">
-          The most common ladder in the estate — tied with the Chevrolet tiers at 19 sites apiece. Runs on acura 1-4, ford 2-4, gmc 1-2, honda 2-5, kia 2-3, mitsubishi 1-2, mitsubishi 4, toyota 9.
-          Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;769px 5.
+          The most common ladder in the estate — tied with the Chevrolet tiers at 19 sites apiece. The same tiers also ship branded as Lexus on live client sites: a centered underlined heading and
+          small cutouts that scale up a touch on hover. Runs on acura 1-4, ford 2-4, gmc 1-2, honda 2-5, kia 2-3, mitsubishi 1-2, mitsubishi 4, toyota 9. Cards per view: base 2 &middot; &ge;461px 3
+          &middot; &ge;769px 5.
         </p>
         <p class="strip-note">Plain white, name below — how all 19 ship it.</p>
         <div class="dl-carousel mbx-acura" data-slider data-step="slide" aria-labelledby="acura-h">
@@ -2308,11 +2475,183 @@
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.4rem 0 0; font-weight: 700; }</code></pre>
         </details>
+        <h3 id="mbx-genesis-2-h" class="strip-label">
+          The new-platform ladder (base 1 &middot; &ge;600px 2 &middot; &ge;991px 3) — the newest platform generation runs this shorter climb, and hides its arrows when every model already fits
+        </h3>
+        <div class="dl-carousel mbx-genesis-2" data-slider data-step="slide" aria-labelledby="mbx-genesis-2-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-2-card" href="index.html#modelbar"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Silverado 1500"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p>
+                <small>23 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-2-card" href="index.html#modelbar"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Colorado"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p>
+                <small>8 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-2-card" href="index.html#modelbar"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Tahoe"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p>
+                <small>14 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-2-card" href="index.html#modelbar"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Suburban"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p>
+                <small>5 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-2-card" href="index.html#modelbar"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Traverse"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p>
+                <small>11 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-2-card" href="index.html#modelbar"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Equinox"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p>
+                <small>17 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-2-card" href="index.html#modelbar"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trailblazer"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p>
+                <small>9 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="mbx-genesis-2-card" href="index.html#modelbar"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trax"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p>
+                <small>32 Available</small></a
+              >
+            </li>
+          </ul>
+        </div>
+        <details>
+          <summary>Copy this look</summary>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
+            once per page.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Explore our lineup"&gt;
+  &lt;ul class="dl-carousel-track"&gt;
+    &lt;li class="dl-carousel-slide"&gt;
+      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=GV70"&gt;
+        &lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Genesis GV70"&gt;
+        &lt;p&gt;GV70&lt;/p&gt;
+        &lt;small&gt;198 Available&lt;/small&gt;
+      &lt;/a&gt;
+    &lt;/li&gt;
+    &lt;!-- repeat the &lt;li&gt; for each model --&gt;
+  &lt;/ul&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>/* Genesis new-platform ladder - 5 sites run exactly this. */
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+@media (min-width: 600px) { .my-modelbar { --dlc-per-view: 2; } }
+@media (min-width: 991px) { .my-modelbar { --dlc-per-view: 3; } }
+
+/* Arrows only - hide the dots and reclaim the space they reserved. */
+.my-modelbar .dl-carousel-dots { display: none; }
+.my-modelbar { --dlc-controls-space: 0px; }
+
+.my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
+.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
+.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
+.my-modelbar-card small { display: block; color: #5f6368; }</code></pre>
+        </details>
       </section>
 
       <section class="demo-section demo-wide" id="lincoln">
         <h2 id="lincoln-h">The Lincoln ladder &mdash; 4 sites</h2>
-        <p class="demo-sub">Holds three cards across a wide tablet range. Runs on lincoln 1-4. Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;993px 4.</p>
+        <p class="demo-sub">
+          Holds three cards across a wide tablet range. Client builds sometimes cut the 4-up tier at 992px instead of 993 — one pixel, same ladder. Runs on lincoln 1-4. Cards per view: base 2 &middot;
+          &ge;461px 3 &middot; &ge;993px 4.
+        </p>
         <p class="strip-note">On a flat light-gray band, spaced capitals.</p>
         <div class="dl-carousel mbx-lincoln" data-slider data-step="slide" aria-labelledby="lincoln-h">
           <ul class="dl-carousel-track">
@@ -3319,8 +3658,8 @@
       <section class="demo-section demo-wide" id="cdjr">
         <h2 id="cdjr-h">The CDJR ladder &mdash; 4 sites</h2>
         <p class="demo-sub">
-          The only six-up ladder that gets there in three rungs — and the only ladder from the 19 Aug sweep worn by more than one site. Runs on cdjr 1-4. Cards per view: base 2 &middot; &ge;461px 3
-          &middot; &ge;992px 6.
+          The only six-up ladder that gets there in three rungs — and the only ladder from the 19 Aug sweep worn by more than one site. A Fiat-including client variant drops the colored band, uses
+          pipe-divider tabs, and starts at one card — moot, since that variant hides the whole bar below 768px. Runs on cdjr 1-4. Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;992px 6.
         </p>
         <p class="strip-note">
           The dark #212121 band with white model names under transparent cutouts — shown here minus the brand-logo tabs: the real sites wrap four or five of these bars (Chrysler, Dodge, Jeep, Ram,
@@ -4462,6 +4801,160 @@
         </details>
       </section>
 
+      <section class="demo-section demo-wide" id="static-bars">
+        <h2 id="static-bars-h">Model bars that are not sliders</h2>
+        <p class="demo-sub">
+          A recurring official family, not a one-off: several OEMs ship their model bar as a static grid or tab panes with no carousel at all. Porsche and INFINITI run hover-reveal tile grids, one
+          Ford variant is a plain CSS grid (<a href="index.html#modelbar">see the main page's ladder table</a>), BMW's is tab panes with a text rail &mdash; one pane per model, and on phones it simply
+          becomes a stacked list (the <a href="index.html#modelbar-tabs">tabs demo</a> shows the wiring). And clients drift here too: one Nissan store replaced its slider with a tabbed static grid. If
+          a request says &ldquo;model bar&rdquo;, check which family before reaching for the slider.
+        </p>
+        <h3 id="sb-tilegrid-h" class="strip-label">Hover-reveal tile grid</h3>
+        <p class="strip-note">
+          As the Porsche demo ships it: square photo tiles, two across on phones, six across on desktop. At rest a tile is just the photo; hover (or keyboard focus) darkens it and slides up the name
+          with Search New / Search Used links. Below 992px the label and links simply sit under the photo &mdash; no hover choreography on touch.
+        </p>
+        <div class="sb-tilegrid">
+          <div class="sb-tile">
+            <img src="img/model-camaro.jpg" width="640" height="640" alt="" loading="lazy" decoding="async" />
+            <div class="sb-tile-cover">
+              <p>Camaro</p>
+              <a href="index.html#modelbar">Search New</a><a href="index.html#modelbar">Search Used</a>
+            </div>
+          </div>
+          <div class="sb-tile">
+            <img src="img/model-corvette.jpg" width="640" height="640" alt="" loading="lazy" decoding="async" />
+            <div class="sb-tile-cover">
+              <p>Corvette</p>
+              <a href="index.html#modelbar">Search New</a><a href="index.html#modelbar">Search Used</a>
+            </div>
+          </div>
+          <div class="sb-tile">
+            <img src="img/model-equinox.jpg" width="640" height="640" alt="" loading="lazy" decoding="async" />
+            <div class="sb-tile-cover">
+              <p>Equinox</p>
+              <a href="index.html#modelbar">Search New</a><a href="index.html#modelbar">Search Used</a>
+            </div>
+          </div>
+          <div class="sb-tile">
+            <img src="img/model-malibu.jpg" width="640" height="640" alt="" loading="lazy" decoding="async" />
+            <div class="sb-tile-cover">
+              <p>Malibu</p>
+              <a href="index.html#modelbar">Search New</a><a href="index.html#modelbar">Search Used</a>
+            </div>
+          </div>
+          <div class="sb-tile">
+            <img src="img/model-silverado.jpg" width="640" height="640" alt="" loading="lazy" decoding="async" />
+            <div class="sb-tile-cover">
+              <p>Silverado</p>
+              <a href="index.html#modelbar">Search New</a><a href="index.html#modelbar">Search Used</a>
+            </div>
+          </div>
+          <div class="sb-tile">
+            <img src="img/model-tahoe.jpg" width="640" height="640" alt="" loading="lazy" decoding="async" />
+            <div class="sb-tile-cover">
+              <p>Tahoe</p>
+              <a href="index.html#modelbar">Search New</a><a href="index.html#modelbar">Search Used</a>
+            </div>
+          </div>
+        </div>
+        <details>
+          <summary>Copy this look</summary>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. No slider install needed &mdash; this one is pure CSS.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-tilegrid"&gt;
+  &lt;div class="my-tile"&gt;
+    &lt;img src="#MISCPATH#macan.jpg" width="640" height="640" alt=""&gt;
+    &lt;div class="my-tile-cover"&gt;
+      &lt;p&gt;Macan&lt;/p&gt;
+      &lt;a href="/new-inventory/index.htm?model=Macan"&gt;Search New&lt;/a&gt;
+      &lt;a href="/used-inventory/index.htm?model=Macan"&gt;Search Used&lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;!-- repeat the tile for each model. The photo is decorative (alt="") -
+       the cover carries the name and the links. --&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>/* Hover-reveal tile grid - 2-across base, 3 at 540px, 6 at 992px. */
+.my-tilegrid { display: flex; flex-wrap: wrap; gap: 1rem 2%; }
+.my-tile { position: relative; inline-size: 49%; overflow: hidden; border-radius: 10px; }
+@media (min-width: 540px) { .my-tile { inline-size: 32%; } }
+@media (min-width: 992px) { .my-tile { inline-size: 15%; } }
+.my-tile img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 1; object-fit: cover; }
+
+/* The cover: static under the photo on small screens, an overlay on desktop. */
+.my-tile-cover { display: flex; flex-direction: column; gap: 0.25rem; align-items: center; padding: 0.5rem; text-align: center; }
+.my-tile-cover p { margin: 0; font-weight: 700; }
+.my-tile-cover a { font-size: 0.9rem; }
+@media (min-width: 992px) {
+  .my-tile-cover { position: absolute; inset: 0; justify-content: center; color: #fff; background: rgb(0 0 0 / 55%); border-radius: 10px; opacity: 0; transition: opacity 0.25s; }
+  .my-tile-cover a { color: #fff; transition: transform 0.25s; transform: translateY(10px); }
+  .my-tile-cover a + a { transition-delay: 0.07s; }
+  .my-tile:hover .my-tile-cover, .my-tile:focus-within .my-tile-cover { opacity: 1; }
+  .my-tile:hover .my-tile-cover a, .my-tile:focus-within .my-tile-cover a { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .my-tile-cover, .my-tile-cover a { transition: none; } }</code></pre>
+        </details>
+        <h3 id="sb-tilewide-h" class="strip-label">Tile grid, landscape variant</h3>
+        <p class="strip-note">
+          The same skeleton as the INFINITI demo ships it: landscape photos, two across until desktop, three past 992px, square corners, and a permanent dark wash with the name always on the tile. A
+          client variant flips the photos portrait into a full-bleed mosaic (two across, ~112% tall) &mdash; same CSS with the aspect ratio and widths changed.
+        </p>
+        <div class="sb-tilewide">
+          <div class="sb-tilewide-unit">
+            <img src="img/vehicle-1.jpg" width="800" height="500" alt="" loading="lazy" decoding="async" />
+            <div class="sb-tilewide-cover">
+              <p>Porsche Panamera</p>
+              <a href="index.html#modelbar">Explore</a>
+            </div>
+          </div>
+          <div class="sb-tilewide-unit">
+            <img src="img/vehicle-2.jpg" width="800" height="500" alt="" loading="lazy" decoding="async" />
+            <div class="sb-tilewide-cover">
+              <p>BMW 430i Coupe</p>
+              <a href="index.html#modelbar">Explore</a>
+            </div>
+          </div>
+          <div class="sb-tilewide-unit">
+            <img src="img/vehicle-3.jpg" width="800" height="500" alt="" loading="lazy" decoding="async" />
+            <div class="sb-tilewide-cover">
+              <p>Ford Expedition Limited</p>
+              <a href="index.html#modelbar">Explore</a>
+            </div>
+          </div>
+        </div>
+        <details>
+          <summary>Copy this look</summary>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. No slider install needed &mdash; this one is pure CSS.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-tilewide"&gt;
+  &lt;div class="my-tilewide-unit"&gt;
+    &lt;img src="#MISCPATH#qx60.jpg" width="800" height="350" alt=""&gt;
+    &lt;div class="my-tilewide-cover"&gt;
+      &lt;p&gt;QX60&lt;/p&gt;
+      &lt;a href="/new-inventory/index.htm?model=QX60"&gt;Explore&lt;/a&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;!-- repeat the unit for each model --&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>/* Landscape tile grid - 2-across until 992px, then 3. */
+.my-tilewide { display: flex; flex-wrap: wrap; gap: 1rem 2%; }
+.my-tilewide-unit { position: relative; inline-size: 49%; overflow: hidden; }
+@media (min-width: 992px) { .my-tilewide-unit { inline-size: 32%; } }
+.my-tilewide-unit img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 7; object-fit: cover; }
+
+/* Permanent wash; the name sits on the photo at every width. */
+.my-tilewide-cover { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 0.15rem; justify-content: flex-end; padding: 0.6rem 0.8rem; color: #fff; background: rgb(0 0 0 / 40%); }
+.my-tilewide-cover p { margin: 0; font-weight: 700; }
+.my-tilewide-cover a { align-self: flex-start; font-size: 0.85rem; color: #fff; }</code></pre>
+        </details>
+      </section>
+
       <section class="demo-section" id="outliers">
         <h2>The outliers &mdash; not this design</h2>
         <p class="demo-sub">A few census entries are not the standard model bar. Each one is already demonstrated live on the main page.</p>
@@ -4474,8 +4967,8 @@
           <li><strong>Hyundai demo 1</strong> folds the lineup into two rows &mdash; the <a href="index.html#grid">two-row grid</a>.</li>
           <li><strong>Subaru&rsquo;s strip</strong> is content cards stepping a whole page at a time &mdash; the default behaviour shown by <a href="index.html#vehicles">featured vehicles</a>.</li>
           <li>
-            <strong>Ford demo 5</strong> has no slider at all: a static flex-wrap grid of models, six across on desktop down to two on phones. Proof the bar is optional &mdash; nothing to copy from
-            this library.
+            <strong>Ford demo 5</strong> has no slider at all: a static flex-wrap grid of models, six across on desktop down to two on phones. Once a one-off, now a documented family &mdash; see
+            <a href="#static-bars">model bars that are not sliders</a> above.
           </li>
         </ul>
       </section>

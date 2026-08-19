@@ -324,7 +324,7 @@ const VARIANTS = [
       [461, 3],
       [769, 5],
     ],
-    why: 'The most common ladder in the estate — tied with the Chevrolet tiers at 19 sites apiece.',
+    why: 'The most common ladder in the estate — tied with the Chevrolet tiers at 19 sites apiece. The same tiers also ship branded as Lexus on live client sites: a centered underlined heading and small cutouts that scale up a touch on hover.',
     strips: [{ skin: 'white', label: 'Plain white, name below — how all 19 ship it' }],
   },
   {
@@ -386,6 +386,17 @@ const VARIANTS = [
     strips: [
       { skin: 'counts', label: 'As Genesis ships it — inventory count under each name' },
       { skin: 'tile', label: 'Same ladder as Volkswagen ships it — a tile of colour behind each car, one featured in navy' },
+      {
+        skin: 'counts',
+        recipeName: 'Genesis new-platform ladder',
+        ladder: [
+          [0, 1],
+          [600, 2],
+          [991, 3],
+        ],
+        label:
+          'The new-platform ladder (base 1 &middot; &ge;600px 2 &middot; &ge;991px 3) — the newest platform generation runs this shorter climb, and hides its arrows when every model already fits',
+      },
     ],
   },
   {
@@ -398,7 +409,7 @@ const VARIANTS = [
       [461, 3],
       [993, 4],
     ],
-    why: 'Holds three cards across a wide tablet range.',
+    why: 'Holds three cards across a wide tablet range. Client builds sometimes cut the 4-up tier at 992px instead of 993 — one pixel, same ladder.',
     strips: [{ skin: 'band-flat', label: 'On a flat light-gray band, spaced capitals' }],
   },
   {
@@ -494,7 +505,7 @@ const VARIANTS = [
       [461, 3],
       [992, 6],
     ],
-    why: 'The only six-up ladder that gets there in three rungs — and the only ladder from the 19 Aug sweep worn by more than one site.',
+    why: 'The only six-up ladder that gets there in three rungs — and the only ladder from the 19 Aug sweep worn by more than one site. A Fiat-including client variant drops the colored band, uses pipe-divider tabs, and starts at one card — moot, since that variant hides the whole bar below 768px.',
     strips: [
       {
         skin: 'cdjr-dark',
@@ -618,6 +629,124 @@ const VARIANTS = [
 
 const ladderText = (l) => l.map(([bp, n], i) => (i === 0 ? `base ${n}` : `&ge;${bp}px ${n}`)).join(' &middot; ');
 
+// ---- the non-slider model bars ---------------------------------------------
+// Verified on the live sites, 19 Aug 2026: several OEMs ship a model bar that
+// is not a slider at all — hover-reveal tile grids and tab panes. Same
+// rendered-equals-taught rule as the strips: each demo's CSS is one string,
+// class-renamed for the live block and verbatim in the copy panel.
+const STATICS = [
+  {
+    key: 'tilegrid',
+    title: 'Hover-reveal tile grid',
+    note: 'As the Porsche demo ships it: square photo tiles, two across on phones, six across on desktop. At rest a tile is just the photo; hover (or keyboard focus) darkens it and slides up the name with Search New / Search Used links. Below 992px the label and links simply sit under the photo &mdash; no hover choreography on touch.',
+    css: `/* Hover-reveal tile grid - 2-across base, 3 at 540px, 6 at 992px. */
+.my-tilegrid { display: flex; flex-wrap: wrap; gap: 1rem 2%; }
+.my-tile { position: relative; inline-size: 49%; overflow: hidden; border-radius: 10px; }
+@media (min-width: 540px) { .my-tile { inline-size: 32%; } }
+@media (min-width: 992px) { .my-tile { inline-size: 15%; } }
+.my-tile img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 1; object-fit: cover; }
+
+/* The cover: static under the photo on small screens, an overlay on desktop. */
+.my-tile-cover { display: flex; flex-direction: column; gap: 0.25rem; align-items: center; padding: 0.5rem; text-align: center; }
+.my-tile-cover p { margin: 0; font-weight: 700; }
+.my-tile-cover a { font-size: 0.9rem; }
+@media (min-width: 992px) {
+  .my-tile-cover { position: absolute; inset: 0; justify-content: center; color: #fff; background: rgb(0 0 0 / 55%); border-radius: 10px; opacity: 0; transition: opacity 0.25s; }
+  .my-tile-cover a { color: #fff; transition: transform 0.25s; transform: translateY(10px); }
+  .my-tile-cover a + a { transition-delay: 0.07s; }
+  .my-tile:hover .my-tile-cover, .my-tile:focus-within .my-tile-cover { opacity: 1; }
+  .my-tile:hover .my-tile-cover a, .my-tile:focus-within .my-tile-cover a { transform: none; }
+}
+@media (prefers-reduced-motion: reduce) { .my-tile-cover, .my-tile-cover a { transition: none; } }`,
+    rootClass: 'my-tilegrid',
+    liveUnits: TALL_TILES.slice(0, 6).map(
+      ([slug, name]) => `<div class="my-tile"><img src="img/${slug}.jpg" width="640" height="640" alt="" loading="lazy" decoding="async" />
+              <div class="my-tile-cover"><p>${name}</p><a href="index.html#modelbar">Search New</a><a href="index.html#modelbar">Search Used</a></div></div>`,
+    ),
+    snippetHtml: `<div class="my-tilegrid">
+  <div class="my-tile">
+    <img src="#MISCPATH#macan.jpg" width="640" height="640" alt="">
+    <div class="my-tile-cover">
+      <p>Macan</p>
+      <a href="/new-inventory/index.htm?model=Macan">Search New</a>
+      <a href="/used-inventory/index.htm?model=Macan">Search Used</a>
+    </div>
+  </div>
+  <!-- repeat the tile for each model. The photo is decorative (alt="") -
+       the cover carries the name and the links. -->
+</div>`,
+  },
+  {
+    key: 'tilewide',
+    title: 'Tile grid, landscape variant',
+    note: 'The same skeleton as the INFINITI demo ships it: landscape photos, two across until desktop, three past 992px, square corners, and a permanent dark wash with the name always on the tile. A client variant flips the photos portrait into a full-bleed mosaic (two across, ~112% tall) &mdash; same CSS with the aspect ratio and widths changed.',
+    css: `/* Landscape tile grid - 2-across until 992px, then 3. */
+.my-tilewide { display: flex; flex-wrap: wrap; gap: 1rem 2%; }
+.my-tilewide-unit { position: relative; inline-size: 49%; overflow: hidden; }
+@media (min-width: 992px) { .my-tilewide-unit { inline-size: 32%; } }
+.my-tilewide-unit img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 7; object-fit: cover; }
+
+/* Permanent wash; the name sits on the photo at every width. */
+.my-tilewide-cover { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 0.15rem; justify-content: flex-end; padding: 0.6rem 0.8rem; color: #fff; background: rgb(0 0 0 / 40%); }
+.my-tilewide-cover p { margin: 0; font-weight: 700; }
+.my-tilewide-cover a { align-self: flex-start; font-size: 0.85rem; color: #fff; }`,
+    rootClass: 'my-tilewide',
+    liveUnits: PHOTO_CARDS.slice(0, 3).map(
+      ([slug, name]) => `<div class="my-tilewide-unit"><img src="img/${slug}.jpg" width="800" height="500" alt="" loading="lazy" decoding="async" />
+              <div class="my-tilewide-cover"><p>${name.replace(/^\d{4} /, '')}</p><a href="index.html#modelbar">Explore</a></div></div>`,
+    ),
+    snippetHtml: `<div class="my-tilewide">
+  <div class="my-tilewide-unit">
+    <img src="#MISCPATH#qx60.jpg" width="800" height="350" alt="">
+    <div class="my-tilewide-cover">
+      <p>QX60</p>
+      <a href="/new-inventory/index.htm?model=QX60">Explore</a>
+    </div>
+  </div>
+  <!-- repeat the unit for each model -->
+</div>`,
+  },
+];
+
+const staticSection = () => {
+  const demos = STATICS.map((d) => {
+    const cls = `sb-${d.key}`;
+    // rendered = taught with my- renamed sb- (markup and CSS alike)
+    const live = d.liveUnits.map((u) => `            ${u.replaceAll('my-', 'sb-')}`).join('\n');
+    return `        <h3 id="${cls}-h" class="strip-label">${d.title}</h3>
+        <p class="strip-note">${d.note}</p>
+        <div class="${d.rootClass.replaceAll('my-', 'sb-')}">
+${live}
+        </div>
+        <details>
+          <summary>Copy this look</summary>
+          <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. No slider install needed &mdash; this one is pure CSS.</p>
+          <p class="code-label">HTML</p>
+          <pre><code>${esc(d.snippetHtml)}</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>${esc(d.css)}</code></pre>
+        </details>`;
+  }).join('\n');
+  return `      <section class="demo-section demo-wide" id="static-bars">
+        <h2 id="static-bars-h">Model bars that are not sliders</h2>
+        <p class="demo-sub">
+          A recurring official family, not a one-off: several OEMs ship their model bar as a static grid or tab panes with no carousel at all. Porsche and INFINITI run hover-reveal tile grids, one
+          Ford variant is a plain CSS grid (<a href="index.html#modelbar">see the main page's ladder table</a>), BMW's is tab panes with a text rail &mdash; one pane per model, and on phones it
+          simply becomes a stacked list (the <a href="index.html#modelbar-tabs">tabs demo</a> shows the wiring). And clients drift here too: one Nissan store replaced its slider with a tabbed
+          static grid. If a request says &ldquo;model bar&rdquo;, check which family before reaching for the slider.
+        </p>
+${demos}
+      </section>`;
+};
+
+const staticCss = STATICS.map((d) =>
+  d.css
+    .split('\n')
+    .filter((line) => !line.trimStart().startsWith('/*'))
+    .join('\n')
+    .replaceAll('.my-', '.sb-'),
+).join('\n\n');
+
 // The complete copy-paste CSS for one strip: ladder + dots + skin. This exact
 // string, class-renamed, is also the live CSS — rendered and taught are one.
 // A strip may carry its own ladder/autoplay (the group-site rails); a variant
@@ -726,6 +855,11 @@ ${liveCss
   .split('\n')
   .map((l) => (l ? `      ${l}` : ''))
   .join('\n')}
+      /* The non-slider family — same rendered-equals-taught rule. */
+${staticCss
+  .split('\n')
+  .map((l) => (l ? `      ${l}` : ''))
+  .join('\n')}
     </style>
   </head>
   <body>
@@ -755,10 +889,13 @@ ${liveCss
 
       <nav class="demo-toc" aria-label="On this page">
 ${VARIANTS.map((v) => `        <a href="#${v.key}">${v.toc} (${v.sites})</a> &middot;`).join('\n')}
+        <a href="#static-bars">Not sliders</a> &middot;
         <a href="#outliers">The outliers</a>
       </nav>
 
 ${VARIANTS.map(section).join('\n\n')}
+
+${staticSection()}
 
       <section class="demo-section" id="outliers">
         <h2>The outliers &mdash; not this design</h2>
@@ -767,7 +904,7 @@ ${VARIANTS.map(section).join('\n\n')}
           <li><strong>Kia demo 1</strong> and the <strong>Lexus and Nissan quick-navs</strong> are centre-mode: the active card sits centred with neighbours peeking. That is the <a href="index.html#peek">peek pattern</a> with the peek turned right up &mdash; and it now has company as a model bar proper: the <a href="#maserati">Maserati spotlight</a> above is the same recipe.</li>
           <li><strong>Hyundai demo 1</strong> folds the lineup into two rows &mdash; the <a href="index.html#grid">two-row grid</a>.</li>
           <li><strong>Subaru&rsquo;s strip</strong> is content cards stepping a whole page at a time &mdash; the default behaviour shown by <a href="index.html#vehicles">featured vehicles</a>.</li>
-          <li><strong>Ford demo 5</strong> has no slider at all: a static flex-wrap grid of models, six across on desktop down to two on phones. Proof the bar is optional &mdash; nothing to copy from this library.</li>
+          <li><strong>Ford demo 5</strong> has no slider at all: a static flex-wrap grid of models, six across on desktop down to two on phones. Once a one-off, now a documented family &mdash; see <a href="#static-bars">model bars that are not sliders</a> above.</li>
         </ul>
       </section>
 
