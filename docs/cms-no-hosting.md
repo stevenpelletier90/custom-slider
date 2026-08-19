@@ -59,7 +59,7 @@ Model bars: start from your OEM's ladder — the fourteen are tabulated in the
 |                            | Gzip over the wire                                       |
 | -------------------------- | -------------------------------------------------------- |
 | CSS in `styleCode`         | ~1.2 KB, merged into the site's existing head stylesheet |
-| Engine in `bodyBottomCode` | ~4.7 KB                                                  |
+| Engine in `bodyBottomCode` | ~4.8 KB                                                  |
 
 Inline code is not separately cacheable the way a hosted file is, so a repeat
 visitor re-downloads it with the page. At ~6 KB total that is acceptable for a
@@ -71,6 +71,14 @@ Delete both pastes and add the two `<link>`/`<script>` lines from
 [cms-implementation.md](cms-implementation.md). **Nothing about your slider markup
 or CSS changes** — that is the point of the frozen HTML contract. The engine
 becomes an implementation detail served from elsewhere.
+
+The hosted setup also has a **conditional loader** for sitewide includes — a
+small inline script that injects the two tags only on pages that actually
+contain a slider (see "Load it only on pages that use it" in
+[cms-implementation.md](cms-implementation.md)). That option does not apply
+here: the pasted code _is_ the page, so there is nothing to load conditionally —
+a page without the pastes carries no slider bytes, and a page with them always
+pays.
 
 ## Checks before you call it done
 

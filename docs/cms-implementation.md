@@ -46,6 +46,70 @@ is not available, and it should be treated as temporary.
 `defer` matters: the engine auto-initializes on `DOMContentLoaded`, and the CSS
 already reserves the control space, so nothing shifts when the JS lands (CLS 0).
 
+### Load it only on pages that use it
+
+The two tags above are cheap (~6.0 KB gzip for both files, cached after the
+first page), so on a page or template you **know** contains a slider, link them
+directly and be done. The question only gets interesting when the natural place
+to load the engine is a **sitewide include** — then most pages on the site have
+no slider and would pay for the files anyway. For that case, paste this once
+into the sitewide Body Section, Bottom (or the footer include) instead of the
+two tags:
+
+    <script>
+      (function () {
+        var boot = function () {
+          if (!document.querySelector('.dl-carousel')) return;
+          var css = document.createElement('link');
+          css.rel = 'stylesheet';
+          css.href = '/assets/shared/CustomHTMLFiles/dl-carousel/dl-carousel.css';
+          document.head.appendChild(css);
+          var js = document.createElement('script');
+          js.src = '/assets/shared/CustomHTMLFiles/dl-carousel/dl-carousel.js';
+          document.head.appendChild(js);
+        };
+        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+        else boot();
+      })();
+    </script>
+
+It looks for a `.dl-carousel` on the page and injects the stylesheet and script
+only if it finds one. Pages with no slider load zero slider bytes.
+
+Injecting the engine this late is fine because its entry point does not blindly
+wait for `DOMContentLoaded`: it checks `document.readyState` and initializes
+**immediately** when the document has already finished parsing (see
+`src/auto.js`). A script tag added after the page loaded therefore still
+auto-inits every `[data-slider]` — there is no event it sits waiting for.
+
+**The trade-off is real.** On pages that _do_ have a slider, the CSS now starts
+downloading only after the DOM is parsed — one extra round-trip — so the
+un-upgraded stacked list can show briefly before the styles land. That is a
+small layout shift the direct `<link>` + `defer` approach never has: its CSS
+arrives before first paint and reserves the control space, which is why CLS
+stays 0.
+
+So: **direct tags on pages and templates known to contain a slider** (CLS 0,
+no flash); **the conditional loader for the sitewide-include case**, where it
+turns "every page pays ~6 KB" into "only slider pages pay, slightly later".
+
+### What about autoplay and fade?
+
+There is nothing further to conditionally load. Autoplay and fade are not
+separate resources or plugins — both ship inside the same two files
+(~4.8 KB JS + ~1.2 KB CSS gzip, just under 6 KB combined), and both are gated
+at runtime:
+
+- Autoplay setup early-returns before creating any timer or observer when
+  `data-autoplay` is absent, so a page without it executes essentially none of
+  the autoplay code.
+- The fade transition CSS applies only under the `data-fade-on` attribute,
+  which the engine sets only when a block opts in with `data-fade`. Without it
+  the rules never match and the transition is inert.
+
+A page that uses neither pays for neither beyond the bytes already counted
+above. The conditional loader is the whole story.
+
 ## 2. The markup contract
 
 Everything the engine needs, and nothing it generates for you:
