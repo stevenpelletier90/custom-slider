@@ -976,6 +976,32 @@ ${G.keys.map((k) => section(byKey[k])).join('\n\n')}
       </section>`,
 ).join('\n\n');
 
+// Shared resource footer — one string, emitted onto both generated pages
+// (demo/index.html carries its own copy with an extra Notes column).
+const FOOT = `    <footer class="demo-foot">
+      <div class="demo-foot-inner">
+        <div>
+          <h2>This library</h2>
+          <ul>
+            <li><a href="index.html">Examples &mdash; every pattern, live</a></li>
+            <li><a href="model-bars.html">Model bar library &mdash; every ladder and look</a></li>
+            <li><a href="brands.html">Find your brand &mdash; the OEM directory</a></li>
+            <li><a href="index.html#options">Options reference</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Research &amp; docs</h2>
+          <ul>
+            <li><a href="../docs/catalog/oem-slider-census.html">The OEM slider census</a></li>
+            <li><a href="../docs/catalog/model-bar-library.html">Screenshot library of the real sites</a></li>
+            <li><a href="https://github.com/stevenpelletier90/custom-slider#readme">README &mdash; full API and verification checklist</a></li>
+            <li><a href="https://github.com/stevenpelletier90/custom-slider/blob/master/docs/cms-implementation.md">CMS install notes + conditional loader</a></li>
+          </ul>
+          <p><a class="demo-top" href="#main">Back to top &#8593;</a></p>
+        </div>
+      </div>
+    </footer>`;
+
 const page = `<!doctype html>
 <html lang="en">
   <head>
@@ -1074,7 +1100,8 @@ ${staticSection()}
 
       <p>Back to <a href="index.html">the main demo</a>. Ladder data: <a href="https://github.com/stevenpelletier90/custom-slider/blob/master/docs/research/2026-08-18-oem-demo-slider-census.md">the OEM demo slider census</a>, fingerprinted 18&ndash;19 Aug 2026.</p>
     </main>
-    <!-- Copy buttons and the TOC scrollspy come from assets/demo.js, shared with the main demo page. -->
+${FOOT}
+    <!-- Copy buttons, the section jump, and the scrollspy come from assets/demo.js, shared with the main demo page. -->
   </body>
 </html>
 `;
@@ -1316,6 +1343,7 @@ ${brandRows}
         are internal demo sites, safe to open and compare against.
       </p>
     </main>
+${FOOT}
     <script>
       // Type-to-filter: hides rows whose text doesn't match; announces the
       // count to screen readers. With JS off the full table simply stands.

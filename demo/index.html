@@ -1334,13 +1334,6 @@
         border: 1px solid #c4ced8;
         border-radius: 8px;
       }
-      /* the footer sits outside <main> (a real contentinfo landmark), so it
-         carries main's column geometry itself */
-      .demo-notes-inner {
-        max-width: 72rem;
-        margin: 0 auto;
-        padding: 0 1rem;
-      }
       .demo-start h3 {
         margin-block-start: 0;
       }
@@ -1434,6 +1427,10 @@
       <p class="demo-lede">
         <strong>How to use this page:</strong> find the look you want below, open the panel underneath it, and copy the HTML and the CSS. Do <a href="#start">Start here</a> once per page first — that
         is what puts the slider on the page at all.
+      </p>
+      <p class="demo-lede">
+        <strong>Three pages, one system:</strong> this page holds every <em>pattern</em>; the <a href="model-bars.html">model bar library</a> runs every OEM's ladder and look live; and
+        <a href="brands.html">Find your brand</a> is the directory when you already know whose site you're on.
       </p>
       <p class="demo-lede">
         One engine, one stylesheet — <strong>5.9 KB gzipped together</strong>, no dependencies and no build step. Only two of the looks below are separate engine modes (<code>data-fade</code> and
@@ -3927,19 +3924,35 @@ object-fit: cover;</code></pre>
         </section>
       </section>
     </main>
-    <footer class="demo-section" id="notes">
-      <div class="demo-notes-inner">
-        <h2 id="notes-h">Notes</h2>
-        <ul>
-          <li><strong>No JavaScript?</strong> Every slider degrades to a swipeable snap strip; all content stays visible and indexable.</li>
-          <li><strong>SEO:</strong> all slides ship in the initial HTML, nothing is cloned — every heading and link exists exactly once.</li>
-          <li>
-            <strong>Include once per page:</strong>
-            <code>dl-carousel.css</code> + <code>dl-carousel.js</code> (defer). See <a href="https://github.com/stevenpelletier90/custom-slider#readme">the README</a> for the JS API and the
-            verification checklist.
-          </li>
-        </ul>
-        <a class="demo-top" href="#main">Back to top ↑</a>
+    <footer class="demo-foot" id="notes">
+      <div class="demo-foot-inner">
+        <div>
+          <h2 id="notes-h">Notes</h2>
+          <ul>
+            <li><strong>No JavaScript?</strong> Every slider degrades to a swipeable snap strip; all content stays visible and indexable.</li>
+            <li><strong>SEO:</strong> all slides ship in the initial HTML, nothing is cloned — every heading and link exists exactly once.</li>
+            <li><strong>Include once per page:</strong> <code>dl-carousel.css</code> + <code>dl-carousel.js</code> (defer) — the <a href="#start">Start here</a> step.</li>
+          </ul>
+        </div>
+        <div>
+          <h2>This library</h2>
+          <ul>
+            <li><a href="index.html">Examples — every pattern, live</a></li>
+            <li><a href="model-bars.html">Model bar library — every ladder and look</a></li>
+            <li><a href="brands.html">Find your brand — the OEM directory</a></li>
+            <li><a href="index.html#options">Options reference</a></li>
+          </ul>
+        </div>
+        <div>
+          <h2>Research &amp; docs</h2>
+          <ul>
+            <li><a href="../docs/catalog/oem-slider-census.html">The OEM slider census</a></li>
+            <li><a href="../docs/catalog/model-bar-library.html">Screenshot library of the real sites</a></li>
+            <li><a href="https://github.com/stevenpelletier90/custom-slider#readme">README — full API and verification checklist</a></li>
+            <li><a href="https://github.com/stevenpelletier90/custom-slider/blob/master/docs/cms-implementation.md">CMS install notes + conditional loader</a></li>
+          </ul>
+          <p><a class="demo-top" href="#main">Back to top ↑</a></p>
+        </div>
       </div>
     </footer>
     <dialog class="demo-video-dialog" id="video-dialog" aria-label="Video player">

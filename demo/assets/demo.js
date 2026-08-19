@@ -68,25 +68,73 @@ addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Floating section jump: a pill pinned bottom-right opening this page's own
+// section list, built from the grouped structure so mid-page jumps never
+// require scrolling back to the table of contents. Runs before the scrollspy
+// wires up, so its links get spy highlighting too.
+addEventListener('DOMContentLoaded', () => {
+  const groups = document.querySelectorAll('.demo-group');
+  if (!groups.length) return;
+  const jump = document.createElement('details');
+  jump.className = 'demo-jump';
+  const summary = document.createElement('summary');
+  summary.textContent = 'Sections';
+  const panel = document.createElement('nav');
+  panel.className = 'demo-jump-panel';
+  panel.setAttribute('aria-label', 'Jump to section');
+  for (const g of groups) {
+    const title = g.querySelector('.demo-group-head h2');
+    if (title) {
+      const label = document.createElement('p');
+      label.textContent = title.textContent;
+      panel.append(label);
+    }
+    for (const sec of g.querySelectorAll(':scope > section.demo-section[id]')) {
+      const h = sec.querySelector('h3');
+      if (!h) continue;
+      const a = document.createElement('a');
+      a.href = `#${sec.id}`;
+      // trim the em-dash tail ("— 19 sites") so the list stays scannable
+      a.textContent = h.textContent.split('—')[0].trim();
+      panel.append(a);
+    }
+  }
+  jump.append(summary, panel);
+  document.body.append(jump);
+  // close on a jump or on Escape, so the pill never covers the target
+  panel.addEventListener('click', (e) => {
+    if (e.target.closest('a')) jump.open = false;
+  });
+  jump.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape' && jump.open) {
+      jump.open = false;
+      summary.focus();
+    }
+  });
+});
+
 // TOC scrollspy: mark the section currently on screen with
-// aria-current="true" so a long page keeps its sense of place. Progressive
+// aria-current="true" so a long page keeps its sense of place — in the
+// table of contents AND the floating section jump. Progressive
 // enhancement — with JS off the TOC is still a plain list of links.
 addEventListener('DOMContentLoaded', () => {
-  const links = document.querySelectorAll('.demo-toc a[href^="#"]');
+  const links = document.querySelectorAll('.demo-toc a[href^="#"], .demo-jump-panel a[href^="#"]');
   const byTarget = new Map();
   for (const a of links) {
     const target = document.getElementById(decodeURIComponent(a.hash.slice(1)));
-    if (target) byTarget.set(target, a);
+    if (!target) continue;
+    if (!byTarget.has(target)) byTarget.set(target, []);
+    byTarget.get(target).push(a);
   }
   if (!byTarget.size) return;
-  let current = null;
+  let current = [];
   const io = new IntersectionObserver(
     (entries) => {
       for (const e of entries) {
         if (!e.isIntersecting) continue;
-        current?.removeAttribute('aria-current');
-        current = byTarget.get(e.target);
-        current?.setAttribute('aria-current', 'true');
+        for (const a of current) a.removeAttribute('aria-current');
+        current = byTarget.get(e.target) ?? [];
+        for (const a of current) a.setAttribute('aria-current', 'true');
       }
     },
     // A thin band just above centre screen decides "where you are" —
