@@ -64,6 +64,113 @@ const TALL_TILES = [
   ['model-tahoe', 'Tahoe'],
 ];
 
+// Brand-correct model images, harvested 19 Aug 2026 from each strip's own
+// demo site (sources in demo/img/CREDITS.md). Counts on Genesis are the
+// source site's live inventory figures; Mazda/Toyota counts are sample data.
+const R = {
+  acura: [
+    { file: 'img/oem/acura/integra.png', w: 320, h: 240, name: 'Integra', alt: '2026 Acura Integra' },
+    { file: 'img/oem/acura/tlx.png', w: 320, h: 240, name: 'TLX', alt: '2026 Acura TLX' },
+    { file: 'img/oem/acura/adx.png', w: 320, h: 240, name: 'ADX', alt: '2026 Acura ADX' },
+    { file: 'img/oem/acura/rdx.png', w: 320, h: 240, name: 'RDX', alt: '2026 Acura RDX' },
+    { file: 'img/oem/acura/zdx.png', w: 480, h: 300, name: 'ZDX', alt: '2024 Acura ZDX' },
+    { file: 'img/oem/acura/mdx.png', w: 320, h: 240, name: 'MDX', alt: '2026 Acura MDX' },
+  ],
+  lexus: [
+    { file: 'img/oem/lexus/ux-hybrid.png', w: 240, h: 140, name: 'UX Hybrid', alt: '2026 Lexus UX Hybrid' },
+    { file: 'img/oem/lexus/nx.png', w: 240, h: 140, name: 'NX', alt: '2026 Lexus NX' },
+    { file: 'img/oem/lexus/nx-hybrid.png', w: 240, h: 140, name: 'NX Hybrid', alt: '2026 Lexus NX Hybrid' },
+    { file: 'img/oem/lexus/rz.png', w: 240, h: 140, name: 'RZ', alt: '2026 Lexus RZ' },
+    { file: 'img/oem/lexus/rx.png', w: 240, h: 140, name: 'RX', alt: '2026 Lexus RX' },
+    { file: 'img/oem/lexus/gx.png', w: 240, h: 140, name: 'GX', alt: '2026 Lexus GX' },
+  ],
+  buick: [
+    { file: 'img/oem/buick/envista.png', w: 320, h: 240, name: 'Envista', alt: '2026 Buick Envista' },
+    { file: 'img/oem/buick/encore-gx.png', w: 320, h: 240, name: 'Encore GX', alt: '2026 Buick Encore GX' },
+    { file: 'img/oem/buick/envision.png', w: 320, h: 240, name: 'Envision', alt: '2026 Buick Envision' },
+    { file: 'img/oem/buick/enclave.png', w: 320, h: 240, name: 'Enclave', alt: '2026 Buick Enclave' },
+  ],
+  audi: [
+    { file: 'img/oem/audi/e-tron-gt.webp', w: 420, h: 180, name: 'e-tron GT', alt: '2026 Audi e-tron GT' },
+    { file: 'img/oem/audi/q4-e-tron.webp', w: 420, h: 180, name: 'Q4 e-tron', alt: '2026 Audi Q4 e-tron' },
+    { file: 'img/oem/audi/q6-e-tron.webp', w: 420, h: 180, name: 'Q6 e-tron', alt: '2026 Audi Q6 e-tron' },
+    { file: 'img/oem/audi/q3.webp', w: 420, h: 180, name: 'Q3', alt: '2026 Audi Q3' },
+    { file: 'img/oem/audi/q5.webp', w: 420, h: 180, name: 'Q5', alt: '2026 Audi Q5' },
+    { file: 'img/oem/audi/q7.webp', w: 420, h: 180, name: 'Q7', alt: '2026 Audi Q7' },
+  ],
+  genesis: [
+    { file: 'img/oem/genesis/g70.png', w: 400, h: 225, name: 'G70', alt: '2026 Genesis G70', count: 53 },
+    { file: 'img/oem/genesis/g80.png', w: 400, h: 225, name: 'G80', alt: '2026 Genesis G80', count: 28 },
+    { file: 'img/oem/genesis/g90.png', w: 400, h: 225, name: 'G90', alt: '2026 Genesis G90', count: 8 },
+    { file: 'img/oem/genesis/gv60.png', w: 640, h: 360, name: 'GV60', alt: '2026 Genesis GV60', count: 5 },
+    { file: 'img/oem/genesis/gv70.png', w: 400, h: 225, name: 'GV70', alt: '2026 Genesis GV70', count: 198 },
+    { file: 'img/oem/genesis/gv80.png', w: 400, h: 225, name: 'GV80', alt: '2026 Genesis GV80', count: 134 },
+  ],
+  lincoln: [
+    { file: 'img/oem/lincoln/navigator.png', w: 320, h: 240, name: 'Navigator', alt: '2026 Lincoln Navigator' },
+    { file: 'img/oem/lincoln/aviator.png', w: 320, h: 240, name: 'Aviator', alt: '2026 Lincoln Aviator' },
+    { file: 'img/oem/lincoln/nautilus.png', w: 320, h: 240, name: 'Nautilus', alt: '2026 Lincoln Nautilus' },
+    { file: 'img/oem/lincoln/corsair.png', w: 320, h: 240, name: 'Corsair', alt: '2026 Lincoln Corsair' },
+  ],
+  ford: [
+    { file: 'img/oem/ford/mustang.png', w: 320, h: 240, name: 'Mustang', alt: '2026 Ford Mustang' },
+    { file: 'img/oem/ford/mach-e.png', w: 320, h: 240, name: 'Mach-E', alt: '2026 Ford Mach-E' },
+    { file: 'img/oem/ford/escape.png', w: 320, h: 240, name: 'Escape', alt: '2026 Ford Escape' },
+    { file: 'img/oem/ford/explorer.png', w: 320, h: 240, name: 'Explorer', alt: '2026 Ford Explorer' },
+    { file: 'img/oem/ford/bronco.png', w: 320, h: 240, name: 'Bronco', alt: '2026 Ford Bronco' },
+    { file: 'img/oem/ford/f-150.png', w: 320, h: 240, name: 'F-150', alt: '2026 Ford F-150' },
+  ],
+  hyundai: [
+    { file: 'img/oem/hyundai/kona.png', w: 420, h: 260, name: 'Kona', alt: '2024 Hyundai Kona' },
+    { file: 'img/oem/hyundai/tucson.png', w: 420, h: 260, name: 'Tucson', alt: '2024 Hyundai Tucson' },
+    { file: 'img/oem/hyundai/santa-fe.png', w: 320, h: 240, name: 'Santa Fe', alt: '2023 Hyundai Santa Fe' },
+    { file: 'img/oem/hyundai/palisade.png', w: 320, h: 240, name: 'Palisade', alt: '2024 Hyundai Palisade' },
+    { file: 'img/oem/hyundai/ioniq-5.png', w: 420, h: 260, name: 'IONIQ 5', alt: '2024 Hyundai IONIQ 5' },
+    { file: 'img/oem/hyundai/elantra.png', w: 420, h: 260, name: 'Elantra', alt: '2024 Hyundai Elantra' },
+  ],
+  mazda: [
+    { file: 'img/oem/mazda/cx-30.png', w: 480, h: 209, name: 'CX-30', alt: '2026 Mazda CX-30', count: 12 },
+    { file: 'img/oem/mazda/cx-5.png', w: 480, h: 209, name: 'CX-5', alt: '2026 Mazda CX-5', count: 7 },
+    { file: 'img/oem/mazda/cx-50.png', w: 480, h: 209, name: 'CX-50', alt: '2026 Mazda CX-50', count: 19 },
+    { file: 'img/oem/mazda/cx-90.png', w: 480, h: 209, name: 'CX-90', alt: '2026 Mazda CX-90', count: 4 },
+    { file: 'img/oem/mazda/mazda3-sedan.png', w: 480, h: 209, name: 'Mazda3 Sedan', alt: '2026 Mazda Mazda3 Sedan', count: 9 },
+    { file: 'img/oem/mazda/mx-5-miata.png', w: 480, h: 209, name: 'MX-5 Miata', alt: '2026 Mazda MX-5 Miata', count: 15 },
+  ],
+  toyota: [
+    { file: 'img/oem/toyota/camry.jpg', w: 800, h: 747, name: 'Camry', alt: '2026 Toyota Camry', count: 6 },
+    { file: 'img/oem/toyota/corolla.jpg', w: 800, h: 744, name: 'Corolla', alt: '2026 Toyota Corolla', count: 11 },
+    { file: 'img/oem/toyota/rav4.jpg', w: 800, h: 744, name: 'RAV4', alt: '2026 Toyota RAV4', count: 4 },
+    { file: 'img/oem/toyota/tacoma.jpg', w: 800, h: 744, name: 'Tacoma', alt: '2026 Toyota Tacoma', count: 9 },
+    { file: 'img/oem/toyota/tundra.jpg', w: 800, h: 744, name: 'Tundra', alt: '2026 Toyota Tundra', count: 3 },
+    { file: 'img/oem/toyota/4runner.jpg', w: 800, h: 744, name: '4Runner', alt: '2026 Toyota 4Runner', count: 7 },
+  ],
+  alfaromeo: [
+    { file: 'img/oem/alfaromeo/tonale.jpg', w: 300, h: 500, name: 'Tonale', alt: '2026 Alfa Romeo Tonale' },
+    { file: 'img/oem/alfaromeo/tonale-hybrid.jpg', w: 300, h: 500, name: 'Tonale Hybrid', alt: '2025 Alfa Romeo Tonale Hybrid' },
+    { file: 'img/oem/alfaromeo/giulia.jpg', w: 300, h: 500, name: 'Giulia', alt: '2025 Alfa Romeo Giulia' },
+    { file: 'img/oem/alfaromeo/stelvio.jpg', w: 300, h: 500, name: 'Stelvio', alt: '2025 Alfa Romeo Stelvio' },
+    { file: 'img/oem/alfaromeo/giulia-quadrifoglio.jpg', w: 300, h: 500, name: 'Giulia Quadrifoglio', alt: '2025 Alfa Romeo Giulia Quadrifoglio' },
+    { file: 'img/oem/alfaromeo/stelvio-quadrifoglio.jpg', w: 300, h: 500, name: 'Stelvio Quadrifoglio', alt: '2025 Alfa Romeo Stelvio Quadrifoglio' },
+  ],
+  cdjr: [
+    { file: 'img/oem/cdjr/chrysler-pacifica.png', w: 480, h: 360, name: 'Pacifica', alt: '2026 Chrysler Pacifica' },
+    { file: 'img/oem/cdjr/chrysler-voyager.png', w: 480, h: 360, name: 'Voyager', alt: '2026 Chrysler Voyager' },
+    { file: 'img/oem/cdjr/dodge-charger.png', w: 480, h: 360, name: 'Charger', alt: '2026 Dodge Charger' },
+    { file: 'img/oem/cdjr/dodge-durango.png', w: 480, h: 360, name: 'Durango', alt: '2026 Dodge Durango' },
+    { file: 'img/oem/cdjr/jeep-wrangler.png', w: 480, h: 360, name: 'Wrangler', alt: '2026 Jeep Wrangler' },
+    { file: 'img/oem/cdjr/jeep-grand-cherokee.png', w: 480, h: 360, name: 'Grand Cherokee', alt: '2026 Jeep Grand Cherokee' },
+    { file: 'img/oem/cdjr/ram-1500.png', w: 480, h: 360, name: 'Ram 1500', alt: '2026 Ram 1500' },
+    { file: 'img/oem/cdjr/ram-2500.png', w: 480, h: 360, name: 'Ram 2500', alt: '2026 Ram 2500' },
+  ],
+};
+
+// One image tag for either source: the Chevrolet srcset cutouts (slug) or a
+// harvested single-size brand image (file). altOverride: pass '' when the
+// card's text already names the model and the photo is decorative.
+const imgTag = (e, altOverride) =>
+  e.slug !== undefined ? cutoutImg(e.slug, altOverride ?? e.alt) : `<img src="${e.file}" width="${e.w}" height="${e.h}" alt="${altOverride ?? e.alt}" loading="lazy" decoding="async" />`;
+const CHEVY = CUTOUTS.map(([slug, name, alt, count]) => ({ slug, name, alt, count }));
+
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 const cutoutImg = (slug, alt) =>
@@ -74,13 +181,15 @@ const cutoutImg = (slug, alt) =>
 // and snippetHtml are the same markup — real sources vs. platform tokens.
 const SKINS = {
   white: {
-    cardCss: `.my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
+    cardCss: `/* Flex column grounded at the bottom: cards whose photos have different
+   aspect ratios still align their captions, and the cars share a ground line. */
+.my-modelbar-card { display: flex; flex-direction: column; justify-content: flex-end; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }`,
-    liveSlides: () => CUTOUTS.map(([slug, name, alt]) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${name}">${cutoutImg(slug, alt)}<p>${name}</p></a>`),
-    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Silverado" aria-label="Explore the Silverado 1500">
-        <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Chevrolet Silverado 1500">
-        <p>Silverado 1500</p>
+    liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${e.name}">${imgTag(e)}<p>${e.name}</p></a>`),
+    snippetHtml: (r) => `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=${r[0].name}" aria-label="Explore the ${r[0].name}">
+        <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="${r[0].alt}">
+        <p>${r[0].name}</p>
       </a>`,
   },
   'band-gray': {
@@ -88,10 +197,10 @@ const SKINS = {
 .my-modelbar-card { display: block; color: #222; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }`,
-    liveSlides: () => CUTOUTS.map(([slug, name, alt]) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${name}">${cutoutImg(slug, alt)}<p>${name}</p></a>`),
-    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=NX" aria-label="Explore the NX">
-        <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Lexus NX">
-        <p>NX</p>
+    liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${e.name}">${imgTag(e)}<p>${e.name}</p></a>`),
+    snippetHtml: (r) => `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=${r[0].name}" aria-label="Explore the ${r[0].name}">
+        <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="${r[0].alt}">
+        <p>${r[0].name}</p>
       </a>`,
   },
   'band-flat': {
@@ -99,10 +208,10 @@ const SKINS = {
 .my-modelbar-card { display: block; color: #444649; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }`,
-    liveSlides: () => CUTOUTS.map(([slug, name, alt]) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${name}">${cutoutImg(slug, alt)}<p>${name}</p></a>`),
-    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Navigator" aria-label="Explore the Navigator">
-        <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Lincoln Navigator">
-        <p>Navigator</p>
+    liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${e.name}">${imgTag(e)}<p>${e.name}</p></a>`),
+    snippetHtml: (r) => `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=${r[0].name}" aria-label="Explore the ${r[0].name}">
+        <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="${r[0].alt}">
+        <p>${r[0].name}</p>
       </a>`,
   },
   counts: {
@@ -110,11 +219,11 @@ const SKINS = {
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
 .my-modelbar-card small { display: block; color: #5f6368; }`,
-    liveSlides: () => CUTOUTS.map(([slug, name, alt, n]) => `<a class="my-modelbar-card" href="index.html#modelbar">${cutoutImg(slug, alt)}<p>${name}</p><small>${n} Available</small></a>`),
-    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=GV70">
-        <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Genesis GV70">
-        <p>GV70</p>
-        <small>198 Available</small>
+    liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar">${imgTag(e)}<p>${e.name}</p><small>${e.count ?? 12} Available</small></a>`),
+    snippetHtml: (r) => `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=${r[0].name}">
+        <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="${r[0].alt}">
+        <p>${r[0].name}</p>
+        <small>${r[0].count ?? 12} Available</small>
       </a>`,
   },
   tile: {
@@ -152,7 +261,7 @@ const SKINS = {
 .my-modelbar-card p { order: -1; margin: 0 0 0.5rem; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card small { align-self: center; margin-block-start: 0.75rem; padding: 0.35rem 0.9rem; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; background: #ececec; }`,
-    liveSlides: () => CUTOUTS.map(([slug, name, alt, n]) => `<a class="my-modelbar-card" href="index.html#modelbar">${cutoutImg(slug, alt)}<p>${name}</p><small>${n} Available</small></a>`),
+    liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar">${imgTag(e)}<p>${e.name}</p><small>${e.count ?? 9} Available</small></a>`),
     snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=CX-5">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Mazda CX-5">
         <p>Mazda CX-5</p>
@@ -166,11 +275,8 @@ const SKINS = {
 .my-modelbar-copy { padding: 0.9rem 1rem 1.1rem; }
 .my-modelbar-copy small { color: #c9c9c9; }
 .my-modelbar-copy h3 { margin: 0.15rem 0 0; font-size: 1.05rem; }`,
-    liveSlides: () =>
-      PHOTO_CARDS.map(
-        ([slug, name, alt, n]) =>
-          `<a class="my-modelbar-card" href="index.html#vehicles"><img src="img/${slug}.jpg" width="800" height="500" alt="${alt}" loading="lazy" decoding="async" /><span class="my-modelbar-copy"><small>${n} Available</small><h3>${name}</h3></span></a>`,
-      ),
+    liveSlides: (r) =>
+      r.map((e) => `<a class="my-modelbar-card" href="index.html#vehicles">${imgTag(e)}<span class="my-modelbar-copy"><small>${e.count ?? 5} Available</small><h3>${e.name}</h3></span></a>`),
     snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Highlander">
         <img src="#MISCPATH#/highlander.jpg" width="800" height="500" alt="Blue Toyota Highlander on a forest road">
         <span class="my-modelbar-copy"><small>4 Available</small><h3>Highlander</h3></span>
@@ -183,11 +289,8 @@ const SKINS = {
 .my-modelbar-name { margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.06em; text-align: start; text-transform: uppercase; }
 .my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; }
 .my-modelbar-cta { display: inline-block; margin-block-start: 0.75rem; padding: 0.6rem 1.4rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #14161b; background: #fff; }`,
-    liveSlides: () =>
-      TALL_TILES.map(
-        ([slug, name]) =>
-          `<a class="my-modelbar-card" href="index.html#models"><p class="my-modelbar-name">${name}</p><img src="img/${slug}.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" /><span class="my-modelbar-cta">Browse inventory</span></a>`,
-      ),
+    liveSlides: (r) =>
+      r.map((e) => `<a class="my-modelbar-card" href="index.html#models"><p class="my-modelbar-name">${e.name}</p>${imgTag(e, '')}<span class="my-modelbar-cta">Browse inventory</span></a>`),
     snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Giulia">
         <p class="my-modelbar-name">Giulia</p>
         <img src="#MISCPATH#/giulia-tall.jpg" width="600" height="1000" alt="">
@@ -201,7 +304,7 @@ const SKINS = {
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.2s; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.1); }
 .my-modelbar-card p { margin: 0.5rem 0 0; font-weight: 600; }`,
-    liveSlides: () => CUTOUTS.map(([slug, name, alt]) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${name}">${cutoutImg(slug, alt)}<p>${name}</p></a>`),
+    liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${e.name}">${imgTag(e)}<p>${e.name}</p></a>`),
     snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Wrangler" aria-label="Explore the Wrangler">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Jeep Wrangler">
         <p>Wrangler</p>
@@ -316,6 +419,7 @@ const SKINS = {
 const VARIANTS = [
   {
     key: 'acura',
+    roster: R.acura,
     toc: 'Acura',
     sites: 19,
     demos: 'acura 1-4, ford 2-4, gmc 1-2, honda 2-5, kia 2-3, mitsubishi 1-2, mitsubishi 4, toyota 9',
@@ -329,6 +433,7 @@ const VARIANTS = [
   },
   {
     key: 'chevrolet',
+    roster: CHEVY,
     toc: 'Chevrolet',
     sites: 19,
     demos: 'buickgmc 1-4, cadillac 1-3, chevrolet 1-4, ford 6-7, subaru 1-4, volvo 1-2',
@@ -346,6 +451,7 @@ const VARIANTS = [
   },
   {
     key: 'lexus',
+    roster: R.lexus,
     toc: 'Lexus',
     sites: 14,
     demos: 'lexus 1-4, lexus 7, nissan 2-5, toyota 1, toyota 4-7',
@@ -360,6 +466,7 @@ const VARIANTS = [
   },
   {
     key: 'buick',
+    roster: R.buick,
     toc: 'Buick',
     sites: 7,
     demos: 'buick 1-2, jaguar 1, jaguar 3, landrover 1, landrover 3-4',
@@ -373,6 +480,7 @@ const VARIANTS = [
   },
   {
     key: 'genesis',
+    roster: R.genesis,
     toc: 'Genesis',
     sites: 5,
     demos: 'genesis 1-3, vw 1-2',
@@ -401,6 +509,7 @@ const VARIANTS = [
   },
   {
     key: 'lincoln',
+    roster: R.lincoln,
     toc: 'Lincoln',
     sites: 4,
     demos: 'lincoln 1-4',
@@ -414,6 +523,7 @@ const VARIANTS = [
   },
   {
     key: 'ford',
+    roster: R.ford,
     toc: 'Ford',
     sites: 2,
     demos: 'ford 1, honda 1',
@@ -427,6 +537,7 @@ const VARIANTS = [
   },
   {
     key: 'hyundai',
+    roster: R.hyundai,
     toc: 'Hyundai',
     sites: 3,
     demos: 'hyundai 2-4',
@@ -441,6 +552,7 @@ const VARIANTS = [
   },
   {
     key: 'mazda',
+    roster: R.mazda,
     toc: 'Mazda',
     sites: 2,
     demos: 'mazda 1-2',
@@ -455,6 +567,7 @@ const VARIANTS = [
   },
   {
     key: 'toyota',
+    roster: R.toyota,
     toc: 'Toyota',
     sites: 2,
     demos: 'toyota 2-3',
@@ -467,6 +580,7 @@ const VARIANTS = [
   },
   {
     key: 'alfaromeo',
+    roster: R.alfaromeo,
     toc: 'Alfa Romeo',
     sites: 1,
     demos: 'alfaromeo 1',
@@ -482,6 +596,7 @@ const VARIANTS = [
   },
   {
     key: 'audi',
+    roster: R.audi,
     toc: 'Audi',
     sites: 1,
     demos: 'audi 1',
@@ -497,6 +612,7 @@ const VARIANTS = [
   },
   {
     key: 'cdjr',
+    roster: R.cdjr,
     toc: 'CDJR',
     sites: 4,
     demos: 'cdjr 1-4',
@@ -713,7 +829,7 @@ const staticSection = () => {
     const cls = `sb-${d.key}`;
     // rendered = taught with my- renamed sb- (markup and CSS alike)
     const live = d.liveUnits.map((u) => `            ${u.replaceAll('my-', 'sb-')}`).join('\n');
-    return `        <h3 id="${cls}-h" class="strip-label">${d.title}</h3>
+    return `        <h4 id="${cls}-h" class="strip-label">${d.title}</h4>
         <p class="strip-note">${d.note}</p>
         <div class="${d.rootClass.replaceAll('my-', 'sb-')}">
 ${live}
@@ -728,7 +844,7 @@ ${live}
         </details>`;
   }).join('\n');
   return `      <section class="demo-section demo-wide" id="static-bars">
-        <h2 id="static-bars-h">Model bars that are not sliders</h2>
+        <h3 id="static-bars-h">Model bars that are not sliders</h3>
         <p class="demo-sub">
           A recurring official family, not a one-off: several OEMs ship their model bar as a static grid or tab panes with no carousel at all. Porsche and INFINITI run hover-reveal tile grids, one
           Ford variant is a plain CSS grid (<a href="index.html#modelbar">see the main page's ladder table</a>), BMW's is tab panes with a text rail &mdash; one pane per model, and on phones it
@@ -780,12 +896,14 @@ const liveCss = VARIANTS.flatMap((v) =>
 const strip = (v, s, i) => {
   const id = stripId(v, i);
   const labelId = `${id}-h`;
-  const heading = v.strips.length === 1 ? '' : `        <h3 id="${labelId}" class="strip-label">${s.label}</h3>\n`;
+  const heading = v.strips.length === 1 ? '' : `        <h4 id="${labelId}" class="strip-label">${s.label}</h4>\n`;
   const note = v.strips.length === 1 ? `        <p class="strip-note">${s.label}.</p>\n` : '';
   const aria = v.strips.length === 1 ? `aria-labelledby="${v.key}-h"` : `aria-labelledby="${labelId}"`;
   const attrs = `data-slider data-step="slide"${s.autoplay ? ` data-autoplay="${s.autoplay}"` : ''}`;
+  const roster = s.roster ?? v.roster ?? CHEVY;
+  const snippetHtml = typeof SKINS[s.skin].snippetHtml === 'function' ? SKINS[s.skin].snippetHtml(roster) : SKINS[s.skin].snippetHtml;
   const slides = SKINS[s.skin]
-    .liveSlides()
+    .liveSlides(roster)
     .map((a) => `            <li class="dl-carousel-slide">${a.replaceAll('my-modelbar', id)}</li>`)
     .join('\n');
   return `${heading}${note}        <div class="dl-carousel ${id}" ${attrs} ${aria}>
@@ -803,7 +921,7 @@ ${slides}
           <pre><code>${esc(`<div class="my-modelbar dl-carousel" ${attrs} aria-label="${SKINS[s.skin].snippetLabel ?? 'Explore our lineup'}">
   <ul class="dl-carousel-track">
     <li class="dl-carousel-slide">
-      ${SKINS[s.skin].snippetHtml}
+      ${snippetHtml}
     </li>
     <!-- repeat the <li> for each model -->
   </ul>
@@ -814,10 +932,45 @@ ${slides}
 };
 
 const section = (v) => `      <section class="demo-section demo-wide" id="${v.key}">
-        <h2 id="${v.key}-h">${v.heading ?? `The ${v.toc} ladder`} &mdash; ${v.sites === 1 ? '1 site' : `${v.sites} sites`}</h2>
+        <h3 id="${v.key}-h">${v.heading ?? `The ${v.toc} ladder`} &mdash; ${v.sites === 1 ? '1 site' : `${v.sites} sites`}</h3>
         <p class="demo-sub">${v.why} Runs on ${esc(v.demos)}.${v.ladder ? ` Cards per view: ${ladderText(v.ladder)}.` : ''}</p>
 ${v.strips.map((s, i) => strip(v, s, i)).join('\n')}
       </section>`;
+
+// The page's bands: same grouped-architecture chrome the main demo uses
+// (assets/demo.css), one navy rule per band. Groups take the h2 slot;
+// sections sit at h3, strip labels at h4.
+const PAGE_GROUPS = [
+  {
+    g: 'shared',
+    title: 'The shared ladders',
+    desc: 'Worn by two sites or more &mdash; find your brand here first. Ordered by how many sites run each ladder.',
+    keys: ['acura', 'chevrolet', 'lexus', 'buick', 'genesis', 'lincoln', 'cdjr', 'hyundai', 'ford', 'mazda', 'toyota'],
+  },
+  {
+    g: 'single',
+    title: 'The one-site ladders',
+    desc: 'Each of these runs on exactly one demo &mdash; the niche brands and the newest arrivals.',
+    keys: ['alfaromeo', 'audi', 'powersports-cat', 'powersports-brands', 'ferrari', 'ferrari-photo'],
+  },
+  {
+    g: 'special',
+    title: 'The specialty strips',
+    desc: 'Centre-mode worn as a model bar, and the rails a multi-rooftop group site runs instead of one.',
+    keys: ['maserati', 'group'],
+  },
+];
+const byKey = Object.fromEntries(VARIANTS.map((v) => [v.key, v]));
+const groupedSections = PAGE_GROUPS.map(
+  (G) => `      <section class="demo-group" aria-labelledby="g-${G.g}-h">
+        <header class="demo-group-head">
+          <h2 id="g-${G.g}-h">${G.title}</h2>
+          <p>${G.desc}</p>
+        </header>
+
+${G.keys.map((k) => section(byKey[k])).join('\n\n')}
+      </section>`,
+).join('\n\n');
 
 const page = `<!doctype html>
 <html lang="en">
@@ -888,17 +1041,22 @@ ${staticCss
       </p>
 
       <nav class="demo-toc" aria-label="On this page">
-${VARIANTS.map((v) => `        <a href="#${v.key}">${v.toc} (${v.sites})</a> &middot;`).join('\n')}
-        <a href="#static-bars">Not sliders</a> &middot;
-        <a href="#outliers">The outliers</a>
+${PAGE_GROUPS.map((G) => `        <p class="demo-toc-group"><strong>${G.title}:</strong> ${G.keys.map((k) => `<a href="#${k}">${byKey[k].toc} (${byKey[k].sites})</a>`).join(' &middot; ')}</p>`).join('\n')}
+        <p class="demo-toc-group"><strong>Not the standard design:</strong> <a href="#static-bars">Not sliders</a> &middot; <a href="#outliers">The outliers</a></p>
       </nav>
 
-${VARIANTS.map(section).join('\n\n')}
+${groupedSections}
+
+      <section class="demo-group" aria-labelledby="g-beyond-h">
+        <header class="demo-group-head">
+          <h2 id="g-beyond-h">Not the standard design</h2>
+          <p>The official non-slider family, and the census entries whose live builds sit on the main demo page.</p>
+        </header>
 
 ${staticSection()}
 
       <section class="demo-section" id="outliers">
-        <h2>The outliers &mdash; not this design</h2>
+        <h3>The outliers &mdash; not this design</h3>
         <p class="demo-sub">A few census entries are not the standard model bar. Each one is already demonstrated live on the main page.</p>
         <ul>
           <li><strong>Kia demo 1</strong> and the <strong>Lexus and Nissan quick-navs</strong> are centre-mode: the active card sits centred with neighbours peeking. That is the <a href="index.html#peek">peek pattern</a> with the peek turned right up &mdash; and it now has company as a model bar proper: the <a href="#maserati">Maserati spotlight</a> above is the same recipe.</li>
@@ -906,6 +1064,7 @@ ${staticSection()}
           <li><strong>Subaru&rsquo;s strip</strong> is content cards stepping a whole page at a time &mdash; the default behaviour shown by <a href="index.html#vehicles">featured vehicles</a>.</li>
           <li><strong>Ford demo 5</strong> has no slider at all: a static flex-wrap grid of models, six across on desktop down to two on phones. Once a one-off, now a documented family &mdash; see <a href="#static-bars">model bars that are not sliders</a> above.</li>
         </ul>
+      </section>
       </section>
 
       <p>Back to <a href="index.html">the main demo</a>. Ladder data: <a href="https://github.com/stevenpelletier90/custom-slider/blob/master/docs/research/2026-08-18-oem-demo-slider-census.md">the OEM demo slider census</a>, fingerprinted 18&ndash;19 Aug 2026.</p>

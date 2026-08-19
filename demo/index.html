@@ -18,54 +18,9 @@
       /* Page-specific chrome only — the chrome both demo pages share lives in
          assets/demo.css, and slider styling lives in the library CSS. */
 
-      /* ---- group architecture ------------------------------------------- */
-      /* Five labeled bands. Each group's accent is a wayfinding thread only —
-         it colors the band rule and the picker's group dot, never text. */
-      [data-g='setup'] {
-        --g-accent: #16324f;
-      }
-      [data-g='home'] {
-        --g-accent: #8a6a1c;
-      }
-      [data-g='inner'] {
-        --g-accent: #1f6f6f;
-      }
-      [data-g='content'] {
-        --g-accent: #6b4a7a;
-      }
-      [data-g='base'] {
-        --g-accent: #5f6368;
-      }
-      .demo-group {
-        margin-block: 4.5rem;
-      }
-      .demo-group-head {
-        padding-block-start: 0.9rem;
-        border-block-start: 4px solid var(--g-accent, #16324f);
-      }
-      .demo-group-head h2 {
-        margin: 0;
-        font-size: 0.85rem;
-        font-weight: 700;
-        letter-spacing: 0.14em;
-        text-transform: uppercase;
-        color: #3c4043;
-      }
-      .demo-group-head p {
-        max-width: 68ch;
-        margin: 0.3rem 0 0;
-        color: #5f6368;
-      }
-      /* section titles moved from h2 to h3 when groups took the h2 slot —
-         keep their visual scale */
-      .demo-section > h3 {
-        margin: 0 0 0.35rem;
-        font-size: 1.5rem;
-        line-height: 1.25;
-      }
-      .demo-section h4 {
-        font-size: 1.1rem;
-      }
+      /* The group-band chrome ([data-g] accents, .demo-group, .demo-group-head,
+         section-title scale) is shared with the model bar library — it lives
+         in assets/demo.css. */
 
       /* ---- pattern picker ----------------------------------------------- */
       /* The TOC as a card grid: every pattern drawn as a tiny diagram of

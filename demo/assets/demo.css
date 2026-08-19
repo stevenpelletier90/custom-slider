@@ -183,9 +183,80 @@ pre {
   color: #16324f;
 }
 
+/* ---- group architecture --------------------------------------------------- */
+
+/* Labeled bands, shared by both pages. A group's accent is a wayfinding
+   thread only — it colors the band rule and the picker's group dot, never
+   text. Pages without per-group accents get the navy default. */
+[data-g="setup"] {
+  --g-accent: #16324f;
+}
+
+[data-g="home"] {
+  --g-accent: #8a6a1c;
+}
+
+[data-g="inner"] {
+  --g-accent: #1f6f6f;
+}
+
+[data-g="content"] {
+  --g-accent: #6b4a7a;
+}
+
+[data-g="base"] {
+  --g-accent: #5f6368;
+}
+
+.demo-group {
+  margin-block: 4.5rem;
+}
+
+.demo-group-head {
+  padding-block-start: 0.9rem;
+  border-block-start: 4px solid var(--g-accent, #16324f);
+}
+
+.demo-group-head h2 {
+  margin: 0;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #3c4043;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
+}
+
+.demo-group-head p {
+  max-width: 68ch;
+  margin: 0.3rem 0 0;
+  color: #5f6368;
+}
+
+/* section titles sit at h3 under the group h2s — keep their visual scale */
+.demo-section > h3 {
+  margin: 0 0 0.35rem;
+  font-size: 1.5rem;
+  line-height: 1.25;
+}
+
+.demo-section h4 {
+  font-size: 1.1rem;
+}
+
 /* Grouped table of contents; the scrollspy in demo.js sets aria-current. */
 .demo-toc {
   margin-block: 1rem;
+}
+
+.demo-toc-group {
+  margin: 0.35rem 0;
+}
+
+.demo-toc-group strong {
+  font-size: 0.78rem;
+  color: #5f6368;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
 }
 
 .demo-toc p {

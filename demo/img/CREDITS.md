@@ -48,3 +48,14 @@ downloaded into this repo; the embed is a third-party iframe.
 
 On a production site, swap the `data-video-id` on each trigger for the dealer's
 own video. The stop-on-close wiring does not care which id it is.
+
+## oem/ — brand-correct model images (added 19 Aug 2026)
+
+`oem/<brand>/*.{png,webp,jpg}` are the OEM model-bar images each library strip's
+own source demo site serves — DealerOn-licensed ColorMatched/stock cutouts
+(`/assets/stock/…`) and OEM-syndicated model-bar art (`/static/brand-*/…`),
+harvested one size per model from: acurademo1, lexusdemo1, buickdemo1,
+audidemo1, genesisdemo1, lincolndemo1, forddemo2, hyundaidemo2, mazdademo1,
+toyotademo2, alfaromeodemo1, and cdjrdemo1. Same asset class and license as the
+`chrome-*.png` Chevrolet cutouts above. Internal demo use only — these are OEM
+marketing assets, not freely redistributable imagery.
