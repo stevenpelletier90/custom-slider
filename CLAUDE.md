@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A dependency-free scroll-snap carousel (`dl-carousel`) built to replace third-party slider libraries on DealerOn CMS sites. Two shipped files, no runtime dependencies, ~5 KB gzip total.
+A dependency-free scroll-snap carousel (`dl-carousel`) built to replace third-party slider libraries on DealerOn CMS sites. Two shipped files, no runtime dependencies, just under 6 KB gzip total.
 
 `README.md` is the public API reference (markup contract, options, CSS custom properties, JS API, accessibility behaviors, verification checklist) — read it before changing anything user-facing. The design rationale behind each decision is in `docs/superpowers/specs/2026-07-13-custom-slider-design.md`; the per-task build log and the triaged backlog of known non-blocking issues are in `.superpowers/sdd/progress.md` (git-ignored).
 
@@ -14,8 +14,8 @@ A dependency-free scroll-snap carousel (`dl-carousel`) built to replace third-pa
 npm run build          # src → dist via esbuild (bundle+minify JS, minify CSS)
 npm run size           # build + gzip budget gate — FAILS at ≥ 6144 B total
 npm run validate       # stylelint + eslint + prettier --check  (the gate before committing)
-npm run lint:css:fix   # stylelint --fix on src/**/*.css
-npm run lint:js:fix    # eslint --fix on src/**/*.js and scripts/
+npm run lint:css:fix   # stylelint --fix on src/**/*.css and demo/assets/*.css
+npm run lint:js:fix    # eslint --fix on src/**/*.js, demo/assets/*.js and scripts/
 npm run format         # prettier --write .
 npm run serve          # esbuild static server on http://127.0.0.1:8137 (for Lighthouse/demo)
 ```
@@ -31,6 +31,8 @@ There is no test framework (deliberate, spec §1 non-goals). Verification is the
 **Two entry points, one class.** `src/dl-carousel.js` exports `Slider` (ES module consumers). `src/auto.js` is the CMS entry: it assigns `window.DLCarousel = Slider` and auto-inits on `DOMContentLoaded`. esbuild bundles `auto.js` → `dist/dl-carousel.js` as an IIFE. The class is `Slider` in source and `DLCarousel` on the page — both names are part of the documented API.
 
 **`dist/` is checked into git** even though it's in `.prettierignore`. Rebuild and commit `dist/` in the same commit whenever `src/` changes, or the demo and every consuming site keep running the old engine. `demo/index.html` loads `../dist/*`, so a demo check after a `src/` edit is meaningless without a build.
+
+**Demo chrome is shared, and one demo page is generated.** `demo/assets/demo.css` + `demo/assets/demo.js` hold the chrome both demo pages use (page shell, sticky cross-page nav, copy buttons, TOC scrollspy) — edit them, not per-page copies. `demo/model-bars.html` is emitted by `scripts/build-model-bars.mjs`; never hand-edit it — change the generator and re-run it (then Prettier).
 
 **One commit point for state.** `_commit()` (fired by `scrollend`, or a 150 ms debounced `scroll` fallback for pre-26.2 iOS Safari) is the only place `this.current` changes and the only place `dlc:change` is emitted. Selection UI updates _optimistically_ at activation via `this._target` + `_updateUI()`, so dots/tabs/status move on click, not ~900 ms later when the scroll settles; `_commit()` clears `_target`.
 
@@ -54,7 +56,7 @@ There is no test framework (deliberate, spec §1 non-goals). Verification is the
 - Never inject slide content. The engine generates controls only — all headings, links, and images come from the authored HTML (SEO + no-JS requirement). Thumbs build a fresh `<img>` rather than cloning, so site ids/srcset don't leak.
 - Never `scrollIntoView()` a thumb; use strip-local `scrollBy` math, or init below the fold scrolls the whole page.
 
-**v1 scope limits:** LTR only, no infinite loop (rewind or stop), no fade mode, `gallery` + `autoplay` unsupported (autoplay ignored with a console warning).
+**v1 scope limits:** LTR only, no infinite loop (rewind or stop), `gallery` + `autoplay` unsupported (autoplay ignored with a console warning), `gallery` + `fade` unsupported (fade ignored with a console warning; fade itself shipped 2026-08-18 — a 1-up stacked crossfade, see README `data-fade`).
 
 ## Conventions
 

@@ -433,32 +433,13 @@ const page = `<!doctype html>
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23262626'/><rect x='5' y='11' width='14' height='10' rx='2' fill='%23fff'/><rect x='21' y='13' width='6' height='6' rx='2' fill='%23949494'/></svg>"
     />
     <link rel="stylesheet" href="../dist/dl-carousel.css" />
+    <link rel="stylesheet" href="assets/demo.css" />
     <script src="../dist/dl-carousel.js" defer></script>
+    <script src="assets/demo.js" defer></script>
     <style>
-      /* Page chrome matches demo/index.html — slider styling lives in the library CSS. */
-      body {
-        font-family: system-ui, sans-serif;
-        margin: 0;
-        color: #222;
-        line-height: 1.5;
-      }
-      main {
-        max-width: 72rem;
-        margin: 0 auto;
-        padding: 1rem;
-      }
-      .demo-section {
-        margin-block: 3rem;
-      }
-      .demo-lede {
-        max-width: 68ch;
-        margin: 0.75rem 0;
-      }
-      .demo-sub {
-        max-width: 68ch;
-        margin: 0.35rem 0 1rem;
-        color: #3c4043;
-      }
+      /* Page chrome shared with demo/index.html lives in assets/demo.css;
+         slider styling lives in the library CSS. Only this page's own rules
+         are inline. */
       .strip-label {
         margin: 2rem 0 0.75rem;
         font-size: 1.05rem;
@@ -469,64 +450,6 @@ const page = `<!doctype html>
         font-size: 0.9rem;
         color: #3c4043;
       }
-      .demo-toc {
-        margin-block: 1rem;
-      }
-      .demo-toc a,
-      main a {
-        color: #1a5fb4;
-      }
-      .demo-wide {
-        position: relative;
-        inset-inline-start: 50%;
-        inline-size: min(1440px, 100vw - 2rem);
-        transform: translateX(-50%);
-      }
-      pre {
-        padding: 1rem;
-        overflow-x: auto;
-        color: #222;
-        background: #f6f6f6;
-        border-radius: 6px;
-      }
-      .copy-lead {
-        margin-block-start: 1rem;
-      }
-      .code-label {
-        margin: 0.9rem 0 0.3rem;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: #5f6368;
-      }
-      .code-wrap {
-        position: relative;
-      }
-      .code-copy {
-        position: absolute;
-        inset-block-start: 0.5rem;
-        inset-inline-end: 0.5rem;
-        padding: 0.35rem 0.7rem;
-        font: inherit;
-        font-size: 0.8rem;
-        color: #16324f;
-        cursor: pointer;
-        background: #fff;
-        border: 1px solid #c4ced8;
-        border-radius: 4px;
-      }
-      .code-copy:hover {
-        background: #eef2f6;
-      }
-      .code-copy:focus-visible {
-        outline: 3px solid #16324f;
-        outline-offset: 2px;
-      }
-      .code-copy[data-copied] {
-        color: #1f6f4a;
-        border-color: #1f6f4a;
-      }
       /* Every strip below is its copy panel's CSS verbatim, class-renamed by
          the generator — what renders is exactly what the panel teaches. */
 ${liveCss
@@ -536,7 +459,17 @@ ${liveCss
     </style>
   </head>
   <body>
-    <main>
+    <a class="demo-skip" href="#main">Skip to content</a>
+    <header class="demo-sitenav">
+      <nav aria-label="Slider library">
+        <strong class="demo-sitenav-title">Custom Slider</strong>
+        <a href="index.html">Examples</a>
+        <a href="index.html#start">Start here</a>
+        <a href="index.html#options">Options</a>
+        <a href="model-bars.html" aria-current="page">Model bar library</a>
+      </nav>
+    </header>
+    <main id="main">
       <h1>Model bar library</h1>
       <p class="demo-lede">
         <strong>All 55 model bars across the 76 OEM demo sites are one design</strong> &mdash; arrows, swipe, one card per step, a sliver of the next card peeking, and never autoplay. Brands differ in
@@ -558,7 +491,7 @@ ${VARIANTS.map(section).join('\n\n')}
 
       <section class="demo-section" id="outliers">
         <h2>The outliers &mdash; not this design</h2>
-        <p class="demo-sub">Four census entries are not the standard model bar. Each one is already demonstrated live on the main page.</p>
+        <p class="demo-sub">Four census entries are not the standard model bar (two of them share the centre-mode pattern). Each one is already demonstrated live on the main page.</p>
         <ul>
           <li><strong>Kia demo 1</strong> and the <strong>Lexus quick-nav</strong> are centre-mode: the active card sits centred with neighbours peeking. That is the <a href="index.html#peek">peek pattern</a> with the peek turned right up.</li>
           <li><strong>Hyundai demo 1</strong> folds the lineup into two rows &mdash; the <a href="index.html#grid">two-row grid</a>.</li>
@@ -568,55 +501,7 @@ ${VARIANTS.map(section).join('\n\n')}
 
       <p>Back to <a href="index.html">the main demo</a>. Ladder data: <a href="https://github.com/stevenpelletier90/custom-slider/blob/master/docs/research/2026-08-18-oem-demo-slider-census.md">the OEM demo slider census</a>, fingerprinted 18 Aug 2026.</p>
     </main>
-    <script>
-      // Copy buttons on every code sample — same behaviour as the main demo:
-      // added by script so the authored markup stays clean, and a reader with
-      // JS off just sees normal code they can select by hand.
-      addEventListener('DOMContentLoaded', () => {
-        for (const pre of document.querySelectorAll('details pre')) {
-          // Read the label FIRST: once the <pre> is moved inside the wrapper it
-          // is an only child, so previousElementSibling is null and every button
-          // ends up named "Copy code".
-          const label = pre.previousElementSibling?.classList.contains('code-label') ? pre.previousElementSibling.textContent.trim() : 'code';
-
-          const wrap = document.createElement('div');
-          wrap.className = 'code-wrap';
-          pre.parentNode.insertBefore(wrap, pre);
-          wrap.appendChild(pre);
-
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'code-copy';
-          btn.textContent = 'Copy';
-          btn.setAttribute('aria-label', \`Copy \${label}\`);
-          wrap.appendChild(btn);
-
-          btn.addEventListener('click', async () => {
-            const text = pre.textContent;
-            try {
-              await navigator.clipboard.writeText(text);
-            } catch {
-              // Clipboard API needs a secure context; fall back for file:// and http://
-              const ta = document.createElement('textarea');
-              ta.value = text;
-              ta.style.position = 'fixed';
-              ta.style.opacity = '0';
-              document.body.appendChild(ta);
-              ta.select();
-              document.execCommand('copy');
-              ta.remove();
-            }
-            btn.textContent = 'Copied';
-            btn.dataset.copied = '';
-            clearTimeout(btn._t);
-            btn._t = setTimeout(() => {
-              btn.textContent = 'Copy';
-              delete btn.dataset.copied;
-            }, 1600);
-          });
-        }
-      });
-    </script>
+    <!-- Copy buttons and the TOC scrollspy come from assets/demo.js, shared with the main demo page. -->
   </body>
 </html>
 `;

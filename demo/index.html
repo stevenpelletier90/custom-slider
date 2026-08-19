@@ -11,43 +11,17 @@
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23262626'/><rect x='5' y='11' width='14' height='10' rx='2' fill='%23fff'/><rect x='21' y='13' width='6' height='6' rx='2' fill='%23949494'/></svg>"
     />
     <link rel="stylesheet" href="../dist/dl-carousel.css" />
+    <link rel="stylesheet" href="assets/demo.css" />
     <script src="../dist/dl-carousel.js" defer></script>
+    <script src="assets/demo.js" defer></script>
     <style>
-      /* Demo page chrome only — slider styling lives in the library CSS. */
-      body {
-        font-family: system-ui, sans-serif;
-        margin: 0;
-        color: #222;
-        line-height: 1.5;
-      }
-      main {
-        max-width: 72rem;
-        margin: 0 auto;
-        padding: 1rem;
-      }
-      .demo-section {
-        margin-block: 3rem;
-      }
-      .demo-lede {
-        max-width: 68ch;
-        margin: 0.75rem 0;
-      }
-      .demo-sub {
-        max-width: 68ch;
-        margin: 0.35rem 0 1rem;
-        color: #3c4043;
-      }
-      .demo-toc {
-        margin-block: 1rem;
-      }
+      /* Page-specific chrome only — the chrome both demo pages share lives in
+         assets/demo.css, and slider styling lives in the library CSS. */
       /* Stock section: the engine look is untouched — this pads the CARD text
          clear of the default overlaid arrows (card styling, not engine CSS). */
       .demo-stock .demo-card h3,
       .demo-stock .demo-card p {
         margin-inline: 4rem;
-      }
-      .demo-toc a {
-        color: #1a5fb4;
       }
       /* Slides-per-view is site configuration: plain media queries, no JS breakpoints. */
       .demo-vehicles,
@@ -197,13 +171,6 @@
          centered arrows, and a solid progress bar that fills to the current
          position. Everything below is site CSS over stock dl-carousel — no
          library changes and no copied markup from the source site. */
-      /* break out of the 72rem column to 1440px, centered */
-      .demo-wide {
-        position: relative;
-        inset-inline-start: 50%;
-        inline-size: min(1440px, 100vw - 2rem);
-        transform: translateX(-50%);
-      }
       .demo-models-section h2 {
         text-align: center;
         text-transform: uppercase;
@@ -737,21 +704,6 @@
         display: inline-block;
         margin: 0 1rem 1rem;
       }
-      details {
-        margin-block-start: 1rem;
-      }
-      pre {
-        /* Colour belongs here, not only on the light sections: <pre> has a light
-           background of its own, so a dark band setting pale text would inherit
-           it into the code and drop to ~1.2:1. These sit inside a closed
-           <details>, so axe treats them as hidden and Lighthouse still reports
-           100 — the gate cannot catch this one. */
-        padding: 1rem;
-        overflow-x: auto;
-        color: #222;
-        background: #f6f6f6;
-        border-radius: 6px;
-      }
       table {
         border-collapse: collapse;
         margin-block: 0.5rem;
@@ -877,11 +829,246 @@
       .demo-grid .dl-carousel-slide {
         flex: none;
       }
+      /* Vehicle cards with a mini gallery: the grid is plain CSS; each card
+         holds its own one-up instance. The counter chip is aria-hidden — the
+         engine's own status region already announces position. */
+      .demo-cardgrid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 1rem;
+      }
+      @media (min-width: 640px) {
+        .demo-cardgrid {
+          grid-template-columns: 1fr 1fr;
+        }
+      }
+      @media (min-width: 1024px) {
+        .demo-cardgrid {
+          grid-template-columns: 1fr 1fr 1fr;
+        }
+      }
+      .demo-cardgal-card {
+        overflow: hidden;
+        background: #fff;
+        border: 1px solid #dde3e9;
+        border-radius: 6px;
+      }
+      .demo-cardgal-card h3 {
+        margin: 0.75rem 1rem 0.25rem;
+        font-size: 1.05rem;
+      }
+      .demo-cardgal-card p {
+        margin: 0 1rem 0.5rem;
+        color: #5f6368;
+      }
+      .demo-cardgal-card > a {
+        display: inline-block;
+        margin: 0 1rem 1rem;
+        font-weight: 600;
+      }
+      .demo-cardgal-media {
+        position: relative;
+      }
+      .demo-cardgal {
+        --dlc-per-view: 1;
+        --dlc-gap: 0px;
+        --dlc-controls-space: 0px;
+        --dlc-arrow-size: 32px;
+      }
+      .demo-cardgal .dl-carousel-dots {
+        display: none;
+      }
+      .demo-cardgal img {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+        aspect-ratio: 8 / 5;
+        object-fit: cover;
+      }
+      .demo-cardgal-count {
+        position: absolute;
+        inset-block-end: 0.5rem;
+        inset-inline-end: 0.5rem;
+        padding: 0.15rem 0.5rem;
+        font-size: 0.8rem;
+        color: #fff;
+        background: rgb(0 0 0 / 65%);
+        border-radius: 999px;
+      }
+      /* Filterable gallery: pill buttons drive a destroy → prune → re-init
+         cycle in page script. destroy() restores the untouched original
+         markup, so every filter starts from the complete slide set. */
+      .demo-filterbar {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin-block-end: 0.75rem;
+      }
+      .demo-filter {
+        padding: 0.35rem 0.9rem;
+        font: inherit;
+        font-size: 0.9rem;
+        color: #16324f;
+        cursor: pointer;
+        background: #fff;
+        border: 1px solid #c4ced8;
+        border-radius: 999px;
+      }
+      .demo-filter:hover {
+        background: #eef2f6;
+      }
+      .demo-filter:focus-visible {
+        outline: 3px solid #16324f;
+        outline-offset: 2px;
+      }
+      .demo-filter[aria-pressed='true'] {
+        color: #fff;
+        background: #16324f;
+        border-color: #16324f;
+      }
+      /* The three gallery variants share the main gallery's bare-gutter look. */
+      .demo-fgallery,
+      .demo-mgallery,
+      .demo-lbgallery {
+        --dlc-per-view: 1;
+        --dlc-thumb-w: 96px;
+        --dlc-thumb-h: 64px;
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #262626;
+        padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+      }
+      .demo-fgallery .dl-carousel-arrow--prev,
+      .demo-mgallery .dl-carousel-arrow--prev,
+      .demo-lbgallery .dl-carousel-arrow--prev {
+        inset-inline-start: 0;
+      }
+      .demo-fgallery .dl-carousel-arrow--next,
+      .demo-mgallery .dl-carousel-arrow--next,
+      .demo-lbgallery .dl-carousel-arrow--next {
+        inset-inline-end: 0;
+      }
+      .demo-fgallery .dl-carousel-arrow svg,
+      .demo-mgallery .dl-carousel-arrow svg,
+      .demo-lbgallery .dl-carousel-arrow svg {
+        width: 28px;
+        height: 28px;
+      }
+      .demo-fgallery .dl-carousel-thumbs,
+      .demo-mgallery .dl-carousel-thumbs,
+      .demo-lbgallery .dl-carousel-thumbs {
+        inset-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+      }
+      .demo-fgallery img,
+      .demo-mgallery img,
+      .demo-lbgallery img {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+        border-radius: 6px;
+      }
+      /* Video slide: the poster is a button (opens the shared video dialog);
+         the play badge is decorative — the button's img alt names it. */
+      .demo-mgallery-video {
+        position: relative;
+        display: block;
+        inline-size: 100%;
+        padding: 0;
+        cursor: pointer;
+        background: none;
+        border: 0;
+      }
+      .demo-mgallery-video:focus-visible {
+        outline: 3px solid var(--dlc-focus, #16324f);
+        outline-offset: 2px;
+      }
+      .demo-mgallery-play {
+        position: absolute;
+        inset-block-start: 50%;
+        inset-inline-start: 50%;
+        display: grid;
+        place-items: center;
+        inline-size: 64px;
+        block-size: 64px;
+        font-size: 1.4rem;
+        color: #fff;
+        background: rgb(0 0 0 / 60%);
+        border-radius: 50%;
+        transform: translate(-50%, -50%);
+      }
+      /* Lightbox: a native <dialog> — Esc and focus containment come free.
+         The gallery inside is data-init="manual", initialized on first open
+         while the dialog is visible so its measurements are real. */
+      .demo-lightbox-open {
+        position: relative;
+        display: block;
+        max-inline-size: 480px;
+        padding: 0;
+        cursor: pointer;
+        background: none;
+        border: 0;
+      }
+      .demo-lightbox-open img {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+        border-radius: 6px;
+      }
+      .demo-lightbox-open span {
+        position: absolute;
+        inset-block-end: 0.5rem;
+        inset-inline-start: 0.5rem;
+        padding: 0.25rem 0.7rem;
+        font-size: 0.9rem;
+        color: #fff;
+        background: rgb(0 0 0 / 65%);
+        border-radius: 999px;
+      }
+      .demo-lightbox-open:focus-visible {
+        outline: 3px solid #16324f;
+        outline-offset: 2px;
+      }
+      .demo-lightbox {
+        inline-size: min(90vw, 60rem);
+        padding: 1rem;
+        border: 0;
+        border-radius: 8px;
+      }
+      .demo-lightbox::backdrop {
+        background: rgb(0 0 0 / 70%);
+      }
+      .demo-lightbox-head {
+        display: flex;
+        justify-content: flex-end;
+        margin-block-end: 0.5rem;
+      }
+      .demo-lightbox-close {
+        padding: 0.35rem 0.7rem;
+        font: inherit;
+        cursor: pointer;
+        background: #fff;
+        border: 1px solid #c4ced8;
+        border-radius: 4px;
+      }
+      .demo-lightbox-close:focus-visible {
+        outline: 3px solid #16324f;
+        outline-offset: 2px;
+      }
       .demo-start {
         padding: 1.25rem 1.5rem;
         background: #eef2f6;
         border: 1px solid #c4ced8;
         border-radius: 8px;
+      }
+      /* the footer sits outside <main> (a real contentinfo landmark), so it
+         carries main's column geometry itself */
+      .demo-notes-inner {
+        max-width: 72rem;
+        margin: 0 auto;
+        padding: 0 1rem;
       }
       .demo-start h2 {
         margin-block-start: 0;
@@ -891,48 +1078,9 @@
         font-size: 0.9rem;
         color: #3c4043;
       }
-      .code-label {
-        margin: 0.9rem 0 0.3rem;
-        font-size: 0.75rem;
-        font-weight: 700;
-        letter-spacing: 0.06em;
-        text-transform: uppercase;
-        color: #5f6368;
-      }
-      .copy-lead {
-        margin-block-start: 1rem;
-      }
-      /* The copy button sits over its own <pre>; the wrapper is added by script
-         so the markup stays clean for anyone reading the source. */
-      .code-wrap {
-        position: relative;
-      }
-      .code-copy {
-        position: absolute;
-        inset-block-start: 0.5rem;
-        inset-inline-end: 0.5rem;
-        padding: 0.35rem 0.7rem;
-        font: inherit;
-        font-size: 0.8rem;
-        color: #16324f;
-        cursor: pointer;
-        background: #fff;
-        border: 1px solid #c4ced8;
-        border-radius: 4px;
-      }
-      .code-copy:hover {
-        background: #eef2f6;
-      }
-      .code-copy:focus-visible {
-        outline: 3px solid #16324f;
-        outline-offset: 2px;
-      }
-      .code-copy[data-copied] {
-        color: #1f6f4a;
-        border-color: #1f6f4a;
-      }
-      /* Must come after .code-copy — same specificity, so order decides. These
-         buttons sit in the flow of the Start-here box, not pinned over a <pre>. */
+      /* Same specificity as assets/demo.css's .code-copy — this inline block
+         loads after it, so order decides. These buttons sit in the flow of the
+         Start-here box, not pinned over a <pre>. */
       .code-copy--file {
         position: static;
         padding: 0.5rem 0.9rem;
@@ -995,9 +1143,22 @@
     </style>
   </head>
   <body>
-    <main>
+    <a class="demo-skip" href="#main">Skip to content</a>
+    <header class="demo-sitenav">
+      <nav aria-label="Slider library">
+        <strong class="demo-sitenav-title">Custom Slider</strong>
+        <a href="index.html" aria-current="page">Examples</a>
+        <a href="#start">Start here</a>
+        <a href="#options">Options</a>
+        <a href="model-bars.html">Model bar library</a>
+      </nav>
+    </header>
+    <main id="main">
       <h1>Custom Slider</h1>
-      <p>Dependency-free scroll-snap slider. Try this page with JavaScript disabled — every variation remains a readable, swipeable strip.</p>
+      <p>
+        Dependency-free scroll-snap slider. Try this page with JavaScript disabled — every variation remains a readable, swipeable strip (the one exception is the fullscreen lightbox, which is modal
+        by nature).
+      </p>
       <p class="demo-lede">
         <strong>How to use this page:</strong> find the look you want below, open the panel underneath it, and copy the HTML and the CSS. Do <a href="#start">Start here</a> once per page first — that
         is what puts the slider on the page at all.
@@ -1009,11 +1170,130 @@
       </p>
 
       <nav class="demo-toc" aria-label="On this page">
-        <a href="#hero">Hero banner</a> · <a href="#start">Start here</a> · <a href="#vehicles">Featured vehicles</a> · <a href="#models">Model cards</a> · <a href="#modelbar">Model bar</a> ·
-        <a href="#modelbar-tabs">Model bar (tabs)</a> · <a href="#peek">Peek at the next card</a> · <a href="#mixed">Mixed image sizes</a> · <a href="#cards">Service cards</a> ·
-        <a href="#video">Video testimonials</a> · <a href="#grid">Two-row grid</a> · <a href="#gallery">Photo gallery</a> · <a href="#reviews">Customer reviews</a> ·
-        <a href="#stock">Stock look</a>
+        <p><strong>Get set up:</strong> <a href="#start">Start here</a> · <a href="#options">Options reference</a></p>
+        <p>
+          <strong>Seen on the OEM homepages:</strong> <a href="#hero">Hero banner</a> · <a href="#modelbar">Model bar</a> · <a href="#modelbar-tabs">Model bar (tabs)</a> ·
+          <a href="#grid">Two-row grid</a> · <a href="#peek">Peek / centre mode</a> · <a href="model-bars.html">every OEM's model bar, live →</a>
+        </p>
+        <p>
+          <strong>Seen on their inner pages:</strong> <a href="#card-gallery">Vehicle cards + mini gallery</a> · <a href="#gallery">Photo gallery</a> ·
+          <a href="#gallery-filter">Filterable gallery</a> · <a href="#media-gallery">Photos + video</a> · <a href="#lightbox">Fullscreen lightbox</a>
+        </p>
+        <p>
+          <strong>Content patterns:</strong> <a href="#vehicles">Featured vehicles</a> · <a href="#models">Model cards</a> · <a href="#mixed">Mixed image sizes</a> ·
+          <a href="#cards">Service cards</a> · <a href="#video">Video testimonials</a> · <a href="#reviews">Customer reviews</a>
+        </p>
+        <p><strong>The base:</strong> <a href="#stock">Stock look</a> · <a href="#notes">Notes</a></p>
       </nav>
+
+      <section class="demo-section demo-start" id="start">
+        <h2 id="start-h">Start here &mdash; add the slider to your page</h2>
+        <p>
+          Every example below needs the slider itself on the page first. You only do this <strong>once per page</strong>, however many sliders that page ends up having. After that, any example below
+          is a straight copy and paste.
+        </p>
+        <details open>
+          <summary>The files aren't hosted yet &mdash; paste them in (do this for now)</summary>
+          <p>Nothing is on the server yet, so the slider travels with the page. Two pastes, into two different boxes in the page's <strong>Custom HTML</strong> panel.</p>
+          <p class="code-label">1. Styling &mdash; paste into "Style Only, Head Section"</p>
+          <p class="copy-note">Raw CSS, no <code>&lt;style&gt;</code> tags &mdash; the platform adds those itself.</p>
+          <p>
+            <button type="button" class="code-copy code-copy--file" data-copy-src="../dist/dl-carousel.css" data-copy-what="the slider styling">Copy the slider CSS</button>
+            <a class="file-link" href="../dist/dl-carousel.css">or open the file</a>
+          </p>
+          <p class="code-label">2. The slider &mdash; paste into "Body Section, Bottom"</p>
+          <p class="copy-note">This one already includes its <code>&lt;script&gt;</code> tags.</p>
+          <p>
+            <button type="button" class="code-copy code-copy--file" data-copy-src="../dist/dl-carousel.js" data-copy-wrap="script" data-copy-what="the slider itself">Copy the slider JS</button>
+            <a class="file-link" href="../dist/dl-carousel.js">or open the file</a>
+          </p>
+          <p class="copy-note">
+            If you open the file instead of using the button, wrap what you copy in <code>&lt;script&gt;</code> and <code>&lt;/script&gt;</code> yourself &mdash; the button adds those for you.
+          </p>
+          <p class="copy-note">
+            Worth knowing: pasted like this, the slider lives on that one page. If you later change something, every page you pasted it into needs re-pasting &mdash; which is exactly what hosting the
+            files fixes.
+          </p>
+        </details>
+        <details>
+          <summary>Once the files are hosted (later)</summary>
+          <p>Two lines in the page head instead, and you can delete both pastes above. Nothing about your slider markup or CSS changes.</p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/dl-carousel/dl-carousel.css"&gt;
+&lt;script src="/assets/shared/CustomHTMLFiles/dl-carousel/dl-carousel.js" defer&gt;&lt;/script&gt;</code></pre>
+          <p class="copy-note">
+            Adding sliders to many pages via a sitewide include? There is a small conditional loader that skips both files on pages with no slider at all &mdash; see "Load it only on pages that use
+            it" in <a href="https://github.com/stevenpelletier90/custom-slider/blob/master/docs/cms-implementation.md">the CMS implementation notes</a>.
+          </p>
+        </details>
+      </section>
+
+      <section class="demo-section" id="options">
+        <h2 id="options-h">Options reference</h2>
+        <p class="demo-sub">
+          Everything you can switch on is a data attribute on the slider's root element; everything visual is plain CSS. Slides-per-view is CSS too &mdash; <code>--dlc-per-view</code> inside your own
+          media queries, no JS breakpoints anywhere.
+        </p>
+        <table>
+          <caption>
+            Data attributes
+          </caption>
+          <tr>
+            <th>Attribute</th>
+            <th>Default</th>
+            <th>Effect</th>
+          </tr>
+          <tr>
+            <td><code>data-slider</code></td>
+            <td>—</td>
+            <td>Auto-initialize this element</td>
+          </tr>
+          <tr>
+            <td><code>data-autoplay="4000"</code></td>
+            <td>0 (off)</td>
+            <td>Advance every N ms; adds a pause button</td>
+          </tr>
+          <tr>
+            <td><code>data-rewind="false"</code></td>
+            <td>rewind on</td>
+            <td>Stop at the ends instead of wrapping; end arrows disable</td>
+          </tr>
+          <tr>
+            <td><code>data-step="slide"</code></td>
+            <td>page</td>
+            <td>Arrows/autoplay advance one card at a time (see the model bar)</td>
+          </tr>
+          <tr>
+            <td><code>data-fade</code></td>
+            <td>off</td>
+            <td>Crossfade instead of sliding — one slide at a time (see the hero)</td>
+          </tr>
+          <tr>
+            <td><code>data-drag="false"</code></td>
+            <td>drag on</td>
+            <td>Opt out of mouse drag-to-scroll (touch swiping is native either way)</td>
+          </tr>
+          <tr>
+            <td><code>data-gallery</code></td>
+            <td>off</td>
+            <td>Thumbnail-gallery (tabbed) variant</td>
+          </tr>
+          <tr>
+            <td><code>data-init="manual"</code></td>
+            <td>auto</td>
+            <td>Skip auto-init; construct with <code>new DLCarousel(el)</code> from page script (see the <a href="#lightbox">lightbox</a>)</td>
+          </tr>
+          <tr>
+            <td><code>data-roledescription="…"</code></td>
+            <td>carousel</td>
+            <td>Screen-reader role description; empty string to omit</td>
+          </tr>
+        </table>
+        <p>
+          The most-used <code>--dlc-*</code> CSS knobs are listed in the <a href="#stock">stock look's</a> copy block; the full list, the events and the JS API are in
+          <a href="https://github.com/stevenpelletier90/custom-slider#readme">the README</a>.
+        </p>
+      </section>
 
       <section class="demo-section demo-hero-section demo-wide" id="hero">
         <h2 id="hero-h">Hero banner — crossfade</h2>
@@ -1059,7 +1339,7 @@
           </ul>
         </div>
         <details>
-          <summary>What this is, and why we rebuilt it</summary>
+          <summary>What this is, and how to build it</summary>
           <p>
             The big rotating banner at the top of a homepage. Instead of sliding sideways, each image dissolves into the next. This is the most common slider on our demo sites by a distance —
             <strong>68 of the 76</strong> have one — and until now our library could not do it at all.
@@ -1134,43 +1414,6 @@
 .my-hero-copy { position: absolute; inset-block-end: 0; inline-size: 100%; padding: 2.5rem 1.25rem 1.25rem; color: #fff; background: linear-gradient(to top, rgb(0 0 0 / 78%), rgb(0 0 0 / 0%)); }
 .my-hero-copy strong { display: block; font-size: clamp(1.25rem, 3.2vw, 2rem); }
 .my-hero-copy span { display: inline-block; margin-block-start: 0.6rem; padding: 0.45rem 1rem; font-weight: 600; color: #16324f; background: #fff; border-radius: 4px; }</code></pre>
-        </details>
-      </section>
-
-      <section class="demo-section demo-start" id="start">
-        <h2 id="start-h">Start here &mdash; add the slider to your page</h2>
-        <p>
-          Every example below needs the slider itself on the page first. You only do this <strong>once per page</strong>, however many sliders that page ends up having. After that, any example below
-          is a straight copy and paste.
-        </p>
-        <details open>
-          <summary>The files aren't hosted yet &mdash; paste them in (do this for now)</summary>
-          <p>Nothing is on the server yet, so the slider travels with the page. Two pastes, into two different boxes in the page's <strong>Custom HTML</strong> panel.</p>
-          <p class="code-label">1. Styling &mdash; paste into "Style Only, Head Section"</p>
-          <p class="copy-note">Raw CSS, no <code>&lt;style&gt;</code> tags &mdash; the platform adds those itself.</p>
-          <p>
-            <button type="button" class="code-copy code-copy--file" data-copy-src="../dist/dl-carousel.css" data-copy-what="the slider styling">Copy the slider CSS</button>
-            <a class="file-link" href="../dist/dl-carousel.css">or open the file</a>
-          </p>
-          <p class="code-label">2. The slider &mdash; paste into "Body Section, Bottom"</p>
-          <p class="copy-note">This one already includes its <code>&lt;script&gt;</code> tags.</p>
-          <p>
-            <button type="button" class="code-copy code-copy--file" data-copy-src="../dist/dl-carousel.js" data-copy-wrap="script" data-copy-what="the slider itself">Copy the slider JS</button>
-            <a class="file-link" href="../dist/dl-carousel.js">or open the file</a>
-          </p>
-          <p class="copy-note">
-            If you open the file instead of using the button, wrap what you copy in <code>&lt;script&gt;</code> and <code>&lt;/script&gt;</code> yourself &mdash; the button adds those for you.
-          </p>
-          <p class="copy-note">
-            Worth knowing: pasted like this, the slider lives on that one page. If you later change something, every page you pasted it into needs re-pasting &mdash; which is exactly what hosting the
-            files fixes.
-          </p>
-        </details>
-        <details>
-          <summary>Once the files are hosted (later)</summary>
-          <p>Two lines in the page head instead, and you can delete both pastes above. Nothing about your slider markup or CSS changes.</p>
-          <pre><code>&lt;link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/dl-carousel/dl-carousel.css"&gt;
-&lt;script src="/assets/shared/CustomHTMLFiles/dl-carousel/dl-carousel.js" defer&gt;&lt;/script&gt;</code></pre>
         </details>
       </section>
 
@@ -1256,52 +1499,7 @@
             inside the absolutely-positioned card body, so the overlay's top offset overshoots (<code>inset: -999px 0 0</code>) and the card's <code>overflow: hidden</code> trims the hit area to the
             card box. Keep the link's <code>aria-label</code> short — it is the card's accessible name.
           </p>
-          <p>Set slides-per-view in CSS (no JS breakpoints):</p>
-          <table>
-            <caption>
-              Data attributes
-            </caption>
-            <tr>
-              <th>Attribute</th>
-              <th>Default</th>
-              <th>Effect</th>
-            </tr>
-            <tr>
-              <td><code>data-slider</code></td>
-              <td>—</td>
-              <td>Auto-initialize this element</td>
-            </tr>
-            <tr>
-              <td><code>data-autoplay="4000"</code></td>
-              <td>0 (off)</td>
-              <td>Advance every N ms; adds a pause button</td>
-            </tr>
-            <tr>
-              <td><code>data-rewind="false"</code></td>
-              <td>rewind on</td>
-              <td>Stop at the ends instead of wrapping; end arrows disable</td>
-            </tr>
-            <tr>
-              <td><code>data-step="slide"</code></td>
-              <td>page</td>
-              <td>Arrows/autoplay advance one card at a time (see the model bar)</td>
-            </tr>
-            <tr>
-              <td><code>data-drag="false"</code></td>
-              <td>drag on</td>
-              <td>Opt out of mouse drag-to-scroll (touch swiping is native either way)</td>
-            </tr>
-            <tr>
-              <td><code>data-gallery</code></td>
-              <td>off</td>
-              <td>Thumbnail-gallery (tabbed) variant</td>
-            </tr>
-            <tr>
-              <td><code>data-roledescription="…"</code></td>
-              <td>carousel</td>
-              <td>Screen-reader role description; empty string to omit</td>
-            </tr>
-          </table>
+          <p>Set slides-per-view in CSS (no JS breakpoints), and switch behavior on with data attributes &mdash; the full table is in the <a href="#options">options reference</a>.</p>
 
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
@@ -1336,6 +1534,134 @@
    stretches an invisible layer over the card. */
 .my-vehicle a::after { content: ""; position: absolute; inset: 0; }
 .my-vehicle:focus-within { outline: 3px solid var(--dlc-focus, #16324f); outline-offset: 2px; }</code></pre>
+        </details>
+      </section>
+
+      <section class="demo-section demo-wide" id="card-gallery">
+        <h2 id="card-gallery-h">Vehicle cards with a mini gallery</h2>
+        <p class="demo-sub">
+          The inventory-results pattern: a plain CSS grid of cards, and each card carries its own little photo swiper with an image counter. Every SRP card on the platform works this way.
+        </p>
+        <div class="demo-cardgrid">
+          <article class="demo-cardgal-card">
+            <div class="demo-cardgal-media">
+              <div class="dl-carousel demo-cardgal" data-slider aria-label="Photos of the 2021 Porsche Panamera">
+                <ul class="dl-carousel-track">
+                  <li class="dl-carousel-slide">
+                    <img src="img/vehicle-1.jpg" width="800" height="500" alt="Black Porsche Panamera driving on a highway, rear three-quarter view" loading="lazy" decoding="async" />
+                  </li>
+                  <li class="dl-carousel-slide"><img src="img/mixed-1.jpg" width="500" height="500" alt="Black Porsche Panamera, front view" loading="lazy" decoding="async" /></li>
+                </ul>
+              </div>
+              <span class="demo-cardgal-count" aria-hidden="true"></span>
+            </div>
+            <h3>2021 Porsche Panamera</h3>
+            <p>$82,900 · 18,300 mi</p>
+            <a href="#vehicle-1" aria-label="View details: 2021 Porsche Panamera">View details</a>
+          </article>
+          <article class="demo-cardgal-card">
+            <div class="demo-cardgal-media">
+              <div class="dl-carousel demo-cardgal" data-slider aria-label="Photos of the 2023 BMW 430i Coupe">
+                <ul class="dl-carousel-track">
+                  <li class="dl-carousel-slide">
+                    <img src="img/vehicle-2.jpg" width="800" height="500" alt="Blue BMW 4 Series coupe parked on a city street, side view" loading="lazy" decoding="async" />
+                  </li>
+                  <li class="dl-carousel-slide"><img src="img/mixed-2.jpg" width="375" height="500" alt="Blue BMW 4 Series coupe, front three-quarter view" loading="lazy" decoding="async" /></li>
+                </ul>
+              </div>
+              <span class="demo-cardgal-count" aria-hidden="true"></span>
+            </div>
+            <h3>2023 BMW 430i Coupe</h3>
+            <p>$42,750 · 9,100 mi</p>
+            <a href="#vehicle-2" aria-label="View details: 2023 BMW 430i Coupe">View details</a>
+          </article>
+          <article class="demo-cardgal-card">
+            <div class="demo-cardgal-media">
+              <div class="dl-carousel demo-cardgal" data-slider aria-label="Photos of the 2020 Nissan GT-R">
+                <ul class="dl-carousel-track">
+                  <li class="dl-carousel-slide">
+                    <img src="img/vehicle-5.jpg" width="800" height="500" alt="White Nissan GT-R from behind on an open country road" loading="lazy" decoding="async" />
+                  </li>
+                  <li class="dl-carousel-slide"><img src="img/mixed-5.jpg" width="300" height="500" alt="White Nissan GT-R, front view" loading="lazy" decoding="async" /></li>
+                </ul>
+              </div>
+              <span class="demo-cardgal-count" aria-hidden="true"></span>
+            </div>
+            <h3>2020 Nissan GT-R</h3>
+            <p>$118,500 · 6,900 mi</p>
+            <a href="#vehicle-5" aria-label="View details: 2020 Nissan GT-R">View details</a>
+          </article>
+        </div>
+        <details>
+          <summary>What this is, and how to build it</summary>
+          <p>
+            The most common slider on the platform's inner pages: every inventory-results card has one. The card grid is ordinary CSS &mdash; no slider involved &mdash; and each card holds its own
+            independent one-photo-at-a-time instance. Auto-init picks up every <code>data-slider</code> on the page, so twenty cards are twenty instances with no extra wiring.
+          </p>
+          <p>
+            The image counter is a page script listening for <code>dlc:change</code> &mdash; the standard way to extend the slider without touching the engine. The chip is <code>aria-hidden</code>:
+            the slider already tells screen readers where it is, so the chip is a visual duplicate.
+          </p>
+          <p>
+            One caution: do not stretch a whole-card link over a card that contains its own controls &mdash; the invisible overlay would sit on top of the arrows and swallow their clicks. Keep the
+            card's link a plain link, and let the photos swipe.
+          </p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-cardgrid"&gt;
+  &lt;article class="my-vcard"&gt;
+    &lt;div class="my-vcard-media"&gt;
+      &lt;div class="my-cardgal dl-carousel" data-slider aria-label="Photos of the 2021 Porsche Panamera"&gt;
+        &lt;ul class="dl-carousel-track"&gt;
+          &lt;li class="dl-carousel-slide"&gt;
+            &lt;img src="#MISCPATH#panamera-1.jpg" width="800" height="500" alt="2021 Porsche Panamera, rear three-quarter view"&gt;
+          &lt;/li&gt;
+          &lt;!-- repeat the &lt;li&gt; for each photo of this vehicle --&gt;
+        &lt;/ul&gt;
+      &lt;/div&gt;
+      &lt;span class="my-cardgal-count" aria-hidden="true"&gt;&lt;/span&gt;
+    &lt;/div&gt;
+    &lt;h3&gt;2021 Porsche Panamera&lt;/h3&gt;
+    &lt;p&gt;$82,900 &amp;middot; 18,300 mi&lt;/p&gt;
+    &lt;a href="/used-inventory/index.htm" aria-label="View details on the 2021 Porsche Panamera"&gt;View details&lt;/a&gt;
+  &lt;/article&gt;
+  &lt;!-- repeat the &lt;article&gt; for each vehicle --&gt;
+&lt;/div&gt;
+
+&lt;!-- The counter: one small page script for every card on the page. --&gt;
+&lt;script&gt;
+  addEventListener('DOMContentLoaded', () =&gt; {
+    for (const media of document.querySelectorAll('.my-vcard-media')) {
+      const root = media.querySelector('.dl-carousel');
+      const out = media.querySelector('.my-cardgal-count');
+      if (!root || !out) continue;
+      const total = root.querySelectorAll('.dl-carousel-slide').length;
+      const set = (i) =&gt; (out.textContent = i + 1 + ' / ' + total);
+      set(0);
+      root.addEventListener('dlc:change', (e) =&gt; set(e.detail.index));
+    }
+  });
+&lt;/script&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>.my-cardgrid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
+@media (min-width: 640px)  { .my-cardgrid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 1024px) { .my-cardgrid { grid-template-columns: 1fr 1fr 1fr; } }
+
+.my-vcard { overflow: hidden; background: #fff; border: 1px solid #dde3e9; border-radius: 6px; }
+.my-vcard h3 { margin: 0.75rem 1rem 0.25rem; font-size: 1.05rem; }
+.my-vcard p { margin: 0 1rem 0.5rem; color: #5f6368; }
+.my-vcard &gt; a { display: inline-block; margin: 0 1rem 1rem; font-weight: 600; }
+.my-vcard-media { position: relative; }
+
+/* One photo at a time, no dots — the counter chip plays their role. */
+.my-cardgal { --dlc-per-view: 1; --dlc-gap: 0px; --dlc-controls-space: 0px; --dlc-arrow-size: 32px; }
+.my-cardgal .dl-carousel-dots { display: none; }
+.my-cardgal img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 8 / 5; object-fit: cover; }
+
+.my-cardgal-count { position: absolute; inset-block-end: 0.5rem; inset-inline-end: 0.5rem; padding: 0.15rem 0.5rem; font-size: 0.8rem; color: #fff; background: rgb(0 0 0 / 65%); border-radius: 999px; }</code></pre>
         </details>
       </section>
 
@@ -1654,6 +1980,7 @@
             </tbody>
           </table>
           <p>Here is the top row written out in full. Every other row is the same shape &mdash; one line per step in your brand&rsquo;s row:</p>
+          <p class="code-label">CSS</p>
           <pre><code>.my-modelbar { --dlc-per-view: 2; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 5; } }</code></pre>
@@ -2129,12 +2456,13 @@
           </ul>
         </div>
         <details>
-          <summary>Why the mismatched images still line up</summary>
+          <summary>What this is, and how to build it</summary>
           <p>
             Every image above is a different shape — tall, wide, square — and the row still looks tidy. That is deliberate: dealers upload whatever they have, and the layout should not fall apart
             because one photo came in portrait.
           </p>
           <p><strong>The trick is to fix the frame, not the photo.</strong> Each card gets a fixed-shape box, and the image fills it and is trimmed at the edges to fit:</p>
+          <p class="code-label">CSS</p>
           <pre><code>aspect-ratio: 4 / 3;
 inline-size: 100%;
 object-fit: cover;</code></pre>
@@ -2579,7 +2907,10 @@ object-fit: cover;</code></pre>
             The same lineup in two rows instead of one, so twice as many models fit before anyone has to scroll. One OEM demo site does it this way. Cards fill top-to-bottom and then move to the next
             column, so reading order stays sensible.
           </p>
-          <p><strong>This is CSS only</strong> &mdash; the slider is untouched. The row of cards becomes a grid two rows deep, and the arrows move one column at a time as usual.</p>
+          <p>
+            <strong>This is CSS only</strong> &mdash; the slider is untouched. The row of cards becomes a grid two rows deep, and an arrow click moves one full screen at a time as usual. (Leave
+            <code>data-step="slide"</code> off here: the "next card" is the one directly underneath, at the same horizontal position, so a one-card step has nowhere to scroll.)
+          </p>
           <p>
             <strong>One number to get right.</strong> The slider counts cards, not columns &mdash; so tell it how many cards are on screen, which in two rows is columns &times; 2. Set
             <code>--dlc-cols</code> to the columns you want and <code>--dlc-per-view</code> to double it. Get that pairing wrong and an arrow click moves half a screen, or nothing at all, because the
@@ -2590,7 +2921,7 @@ object-fit: cover;</code></pre>
             page.
           </p>
           <p class="code-label">HTML</p>
-          <pre><code>&lt;div class="my-grid dl-carousel" data-slider data-step="slide" aria-label="Our lineup"&gt;
+          <pre><code>&lt;div class="my-grid dl-carousel" data-slider aria-label="Our lineup"&gt;
   &lt;ul class="dl-carousel-track"&gt;
     &lt;li class="dl-carousel-slide"&gt;...card...&lt;/li&gt;
     &lt;li class="dl-carousel-slide"&gt;...card...&lt;/li&gt;
@@ -2640,7 +2971,7 @@ object-fit: cover;</code></pre>
           </div>
         </div>
         <details>
-          <summary>Copy-paste HTML + options</summary>
+          <summary>What this is, and how to build it</summary>
           <p>
             Thumbnails are generated from each slide's image; the image
             <code>alt</code> names the thumbnail tab. Real photos should also carry <code>srcset</code>/<code>sizes</code> — size <code>sizes</code> to ONE slide's rendered width, never
@@ -2675,6 +3006,270 @@ object-fit: cover;</code></pre>
 .my-gallery .dl-carousel-thumbs { inset-inline: calc(var(--dlc-arrow-size) + 0.25rem); }
 
 .my-gallery img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; }</code></pre>
+        </details>
+      </section>
+
+      <section class="demo-section" id="gallery-filter">
+        <h2 id="gallery-filter-h">Filterable gallery</h2>
+        <p class="demo-sub">The same thumbnail gallery with category buttons above it &mdash; click one and the gallery narrows to that set. All page script, no engine changes.</p>
+        <div class="demo-filterbar" role="group" aria-label="Filter photos">
+          <button type="button" class="demo-filter" data-filter="" aria-pressed="true">All</button>
+          <button type="button" class="demo-filter" data-filter="exterior" aria-pressed="false">Exterior</button>
+          <button type="button" class="demo-filter" data-filter="interior" aria-pressed="false">Interior</button>
+          <button type="button" class="demo-filter" data-filter="scenes" aria-pressed="false">Behind the scenes</button>
+        </div>
+        <div class="dl-carousel demo-fgallery" data-slider data-gallery aria-labelledby="gallery-filter-h">
+          <div class="dl-carousel-track">
+            <div class="dl-carousel-slide" data-tag="exterior">
+              <img src="img/photo-1.jpg" width="1200" height="750" alt="Blue Chevrolet Camaro in the desert at dusk" loading="lazy" decoding="async" />
+            </div>
+            <div class="dl-carousel-slide" data-tag="exterior">
+              <img src="img/photo-2.jpg" width="1200" height="750" alt="White Ford Mustang in a neon-lit parking garage" loading="lazy" decoding="async" />
+            </div>
+            <div class="dl-carousel-slide" data-tag="interior">
+              <img src="img/photo-3.jpg" width="1200" height="750" alt="Hands on the steering wheel at dusk" loading="lazy" decoding="async" />
+            </div>
+            <div class="dl-carousel-slide" data-tag="exterior">
+              <img src="img/photo-4.jpg" width="1200" height="750" alt="Audi R8 tail lights on a city street at sunset" loading="lazy" decoding="async" />
+            </div>
+            <div class="dl-carousel-slide" data-tag="scenes">
+              <img src="img/photo-5.jpg" width="1200" height="750" alt="Technician topping up engine oil" loading="lazy" decoding="async" />
+            </div>
+            <div class="dl-carousel-slide" data-tag="scenes">
+              <img src="img/photo-6.jpg" width="1200" height="750" alt="Classic BMW grilles lined up in a museum" loading="lazy" decoding="async" />
+            </div>
+          </div>
+        </div>
+        <details>
+          <summary>What this is, and how to build it</summary>
+          <p>
+            One OEM model page runs six of these &mdash; a photo gallery a visitor can narrow by category. Here it is three moving parts: a <code>data-tag</code> on each slide, a row of
+            <code>aria-pressed</code> pill buttons, and a page script that rebuilds the gallery on each click.
+          </p>
+          <p>
+            The rebuild leans on the public API. <code>destroy()</code> puts the slider's markup back exactly as it was written &mdash; every slide present again &mdash; so the script starts from the
+            full set each time: destroy, remove the slides that don't match, and let <code>DLCarousel.autoInit()</code> rebuild the gallery (thumbnails included) from what is left.
+          </p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-filterbar" role="group" aria-label="Filter photos"&gt;
+  &lt;button type="button" class="my-filter" data-filter="" aria-pressed="true"&gt;All&lt;/button&gt;
+  &lt;button type="button" class="my-filter" data-filter="exterior" aria-pressed="false"&gt;Exterior&lt;/button&gt;
+  &lt;button type="button" class="my-filter" data-filter="interior" aria-pressed="false"&gt;Interior&lt;/button&gt;
+&lt;/div&gt;
+&lt;div class="my-fgallery dl-carousel" data-slider data-gallery aria-label="Vehicle photos"&gt;
+  &lt;div class="dl-carousel-track"&gt;
+    &lt;div class="dl-carousel-slide" data-tag="exterior"&gt;
+      &lt;img src="#MISCPATH#photo-1.jpg" width="1200" height="750" alt="Describe the photo"&gt;
+    &lt;/div&gt;
+    &lt;!-- repeat per photo; data-tag matches a button's data-filter --&gt;
+  &lt;/div&gt;
+&lt;/div&gt;
+
+&lt;script&gt;
+  addEventListener('DOMContentLoaded', () =&gt; {
+    const bar = document.querySelector('.my-filterbar');
+    const root = document.querySelector('.my-fgallery');
+    if (!bar || !root) return;
+    let pristine = null;
+    bar.addEventListener('click', (e) =&gt; {
+      const btn = e.target.closest('.my-filter');
+      if (!btn) return;
+      for (const b of bar.querySelectorAll('.my-filter')) b.setAttribute('aria-pressed', String(b === btn));
+      // destroy() restores the markup ITS instance was built from — after a
+      // filter that is the pruned set — so capture the full authored markup
+      // once (the first destroy restores it) and rebuild from that copy.
+      root._dlCarousel?.destroy();
+      pristine ??= root.innerHTML;
+      root.innerHTML = pristine;
+      const tag = btn.dataset.filter;
+      if (tag) for (const s of root.querySelectorAll('.dl-carousel-slide')) if (s.dataset.tag !== tag) s.remove();
+      DLCarousel.autoInit(root.parentElement);
+    });
+  });
+&lt;/script&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>.my-filterbar { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-block-end: 0.75rem; }
+.my-filter { padding: 0.35rem 0.9rem; font: inherit; font-size: 0.9rem; color: #16324f; cursor: pointer; background: #fff; border: 1px solid #c4ced8; border-radius: 999px; }
+.my-filter:hover { background: #eef2f6; }
+.my-filter:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }
+.my-filter[aria-pressed="true"] { color: #fff; background: #16324f; border-color: #16324f; }
+
+/* The gallery itself is the standard thumbnail-gallery recipe. */
+.my-fgallery { --dlc-per-view: 1; --dlc-thumb-w: 96px; --dlc-thumb-h: 64px; }
+.my-fgallery img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; }</code></pre>
+        </details>
+      </section>
+
+      <section class="demo-section" id="media-gallery">
+        <h2 id="media-gallery-h">Gallery with photos and video</h2>
+        <p class="demo-sub">A thumbnail gallery where one slide is a video &mdash; its poster opens the same modal player the testimonials use. The play badge marks it in the strip.</p>
+        <div class="dl-carousel demo-mgallery" data-slider data-gallery aria-labelledby="media-gallery-h">
+          <div class="dl-carousel-track">
+            <div class="dl-carousel-slide">
+              <img src="img/photo-1.jpg" width="1200" height="750" alt="Blue Chevrolet Camaro in the desert at dusk" loading="lazy" decoding="async" />
+            </div>
+            <div class="dl-carousel-slide">
+              <button type="button" class="demo-mgallery-video" data-video-title="A look inside the cabin" data-video-id="aqz-KE-bpKQ">
+                <img src="img/photo-3.jpg" width="1200" height="750" alt="Video: a look inside the cabin" loading="lazy" decoding="async" />
+                <span class="demo-mgallery-play" aria-hidden="true">▶</span>
+              </button>
+            </div>
+            <div class="dl-carousel-slide">
+              <img src="img/photo-2.jpg" width="1200" height="750" alt="White Ford Mustang in a neon-lit parking garage" loading="lazy" decoding="async" />
+            </div>
+            <div class="dl-carousel-slide">
+              <img src="img/photo-6.jpg" width="1200" height="750" alt="Classic BMW grilles lined up in a museum" loading="lazy" decoding="async" />
+            </div>
+          </div>
+        </div>
+        <details>
+          <summary>What this is, and how to build it</summary>
+          <p>
+            The platform's vehicle galleries mix photos and video in one strip, and this is the same idea: photo slides hold an <code>&lt;img&gt;</code>, the video slide holds a
+            <code>&lt;button&gt;</code> with a poster image inside it. The thumbnails are still generated from each slide's image &mdash; the poster covers the video slide &mdash; and the poster's
+            <code>alt</code> starting with "Video:" is what names it for a screen reader.
+          </p>
+          <p>
+            The button reuses the testimonials' modal player wiring (<code>data-video-title</code>/<code>data-video-id</code> and the shared <code>&lt;dialog&gt;</code>) &mdash; copy that dialog and
+            its script from the <a href="#video">video testimonials</a> panel if the page doesn't have it yet. The play badge is decorative and <code>aria-hidden</code>.
+          </p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first, and the video dialog
+            from the testimonials panel &mdash; each once per page.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;div class="my-mgallery dl-carousel" data-slider data-gallery aria-label="Photos and video"&gt;
+  &lt;div class="dl-carousel-track"&gt;
+    &lt;div class="dl-carousel-slide"&gt;
+      &lt;img src="#MISCPATH#photo-1.jpg" width="1200" height="750" alt="Describe the photo"&gt;
+    &lt;/div&gt;
+    &lt;div class="dl-carousel-slide"&gt;
+      &lt;button type="button" class="my-mgallery-video" data-video-title="A look inside the cabin" data-video-id="VIDEO_ID"&gt;
+        &lt;img src="#MISCPATH#video-poster.jpg" width="1200" height="750" alt="Video: a look inside the cabin"&gt;
+        &lt;span class="my-mgallery-play" aria-hidden="true"&gt;&amp;#9654;&lt;/span&gt;
+      &lt;/button&gt;
+    &lt;/div&gt;
+    &lt;!-- repeat per photo or video --&gt;
+  &lt;/div&gt;
+&lt;/div&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>.my-mgallery { --dlc-per-view: 1; --dlc-thumb-w: 96px; --dlc-thumb-h: 64px; }
+.my-mgallery img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; }
+
+.my-mgallery-video { position: relative; display: block; inline-size: 100%; padding: 0; cursor: pointer; background: none; border: 0; }
+.my-mgallery-video:focus-visible { outline: 3px solid var(--dlc-focus, #16324f); outline-offset: 2px; }
+.my-mgallery-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.4rem; color: #fff; background: rgb(0 0 0 / 60%); border-radius: 50%; transform: translate(-50%, -50%); }</code></pre>
+        </details>
+      </section>
+
+      <section class="demo-section" id="lightbox">
+        <h2 id="lightbox-h">Fullscreen gallery in a dialog</h2>
+        <p class="demo-sub">The VDP pattern: a small opener on the page, the full gallery in a modal. The gallery initializes on first open, while the dialog is visible.</p>
+        <button type="button" class="demo-lightbox-open">
+          <img src="img/photo-2.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" />
+          <span>View all 6 photos</span>
+        </button>
+        <dialog class="demo-lightbox" aria-label="Photo gallery">
+          <div class="demo-lightbox-head">
+            <button type="button" class="demo-lightbox-close" aria-label="Close gallery">✕</button>
+          </div>
+          <div class="dl-carousel demo-lbgallery" data-slider data-gallery data-init="manual" aria-label="Vehicle photos">
+            <div class="dl-carousel-track">
+              <div class="dl-carousel-slide">
+                <img src="img/photo-2.jpg" width="1200" height="750" alt="White Ford Mustang in a neon-lit parking garage" loading="lazy" decoding="async" />
+              </div>
+              <div class="dl-carousel-slide">
+                <img src="img/photo-1.jpg" width="1200" height="750" alt="Blue Chevrolet Camaro in the desert at dusk" loading="lazy" decoding="async" />
+              </div>
+              <div class="dl-carousel-slide">
+                <img src="img/photo-3.jpg" width="1200" height="750" alt="Hands on the steering wheel at dusk" loading="lazy" decoding="async" />
+              </div>
+              <div class="dl-carousel-slide">
+                <img src="img/photo-4.jpg" width="1200" height="750" alt="Audi R8 tail lights on a city street at sunset" loading="lazy" decoding="async" />
+              </div>
+              <div class="dl-carousel-slide">
+                <img src="img/photo-5.jpg" width="1200" height="750" alt="Technician topping up engine oil" loading="lazy" decoding="async" />
+              </div>
+              <div class="dl-carousel-slide">
+                <img src="img/photo-6.jpg" width="1200" height="750" alt="Classic BMW grilles lined up in a museum" loading="lazy" decoding="async" />
+              </div>
+            </div>
+          </div>
+        </dialog>
+        <details>
+          <summary>What this is, and how to build it</summary>
+          <p>
+            Every vehicle detail page opens its photos in a fullscreen viewer, and this is that shape: a native <code>&lt;dialog&gt;</code> (Esc and focus containment come free, exactly like the video
+            modal) with a thumbnail gallery inside it.
+          </p>
+          <p>
+            The one new idea is <code>data-init="manual"</code>. A closed dialog is <code>display: none</code>, so a gallery built at page load would measure a box that isn't there. The attribute
+            tells auto-init to skip it; the open button calls <code>new DLCarousel(root)</code> on first open, after <code>showModal()</code>, so every measurement is taken while the dialog is
+            visible. From the second open onward the instance already exists and nothing re-initializes.
+          </p>
+          <p>
+            One honest caveat: this is the only pattern on this page that needs JavaScript to show its content at all &mdash; with JS off, the opener does nothing and the dialog stays closed. The
+            photos still ship in the HTML (search engines see them), but a no-JS visitor cannot. Keep a lightbox for extra photos, never for the only copy of something.
+          </p>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
+            page.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>&lt;button type="button" class="my-lightbox-open"&gt;
+  &lt;img src="#MISCPATH#photo-2.jpg" width="1200" height="750" alt=""&gt;
+  &lt;span&gt;View all 6 photos&lt;/span&gt;
+&lt;/button&gt;
+
+&lt;dialog class="my-lightbox" aria-label="Photo gallery"&gt;
+  &lt;div class="my-lightbox-head"&gt;
+    &lt;button type="button" class="my-lightbox-close" aria-label="Close gallery"&gt;&amp;#10005;&lt;/button&gt;
+  &lt;/div&gt;
+  &lt;div class="my-lbgallery dl-carousel" data-slider data-gallery data-init="manual" aria-label="Vehicle photos"&gt;
+    &lt;div class="dl-carousel-track"&gt;
+      &lt;div class="dl-carousel-slide"&gt;
+        &lt;img src="#MISCPATH#photo-1.jpg" width="1200" height="750" alt="Describe the photo"&gt;
+      &lt;/div&gt;
+      &lt;!-- repeat per photo --&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+&lt;/dialog&gt;
+
+&lt;script&gt;
+  addEventListener('DOMContentLoaded', () =&gt; {
+    const dlg = document.querySelector('.my-lightbox');
+    const open = document.querySelector('.my-lightbox-open');
+    if (!dlg || !open) return;
+    open.addEventListener('click', () =&gt; {
+      dlg.showModal();
+      // First open only: init while the dialog is visible so measurements are real.
+      const root = dlg.querySelector('[data-slider]');
+      if (!root._dlCarousel) new DLCarousel(root);
+    });
+    dlg.querySelector('.my-lightbox-close').addEventListener('click', () =&gt; dlg.close());
+    dlg.addEventListener('click', (e) =&gt; {
+      if (e.target === dlg) dlg.close();
+    });
+  });
+&lt;/script&gt;</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>.my-lightbox-open { position: relative; display: block; max-inline-size: 480px; padding: 0; cursor: pointer; background: none; border: 0; }
+.my-lightbox-open img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; }
+.my-lightbox-open span { position: absolute; inset-block-end: 0.5rem; inset-inline-start: 0.5rem; padding: 0.25rem 0.7rem; font-size: 0.9rem; color: #fff; background: rgb(0 0 0 / 65%); border-radius: 999px; }
+.my-lightbox-open:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }
+
+.my-lightbox { inline-size: min(90vw, 60rem); padding: 1rem; border: 0; border-radius: 8px; }
+.my-lightbox::backdrop { background: rgb(0 0 0 / 70%); }
+.my-lightbox-head { display: flex; justify-content: flex-end; margin-block-end: 0.5rem; }
+.my-lightbox-close { padding: 0.35rem 0.7rem; font: inherit; cursor: pointer; background: #fff; border: 1px solid #c4ced8; border-radius: 4px; }
+.my-lightbox-close:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }
+
+.my-lbgallery { --dlc-per-view: 1; --dlc-thumb-w: 96px; --dlc-thumb-h: 64px; }
+.my-lbgallery img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; }</code></pre>
         </details>
       </section>
 
@@ -2776,7 +3371,7 @@ object-fit: cover;</code></pre>
           </ul>
         </div>
         <details>
-          <summary>Copy-paste HTML + options</summary>
+          <summary>What this is, and how to build it</summary>
           <p>
             Autoplay pauses on hover, stops permanently on keyboard focus or drag (the pause button restarts it), never starts under
             <code>prefers-reduced-motion</code>, and rewinds at the end — no cloned slides.
@@ -2860,7 +3455,7 @@ object-fit: cover;</code></pre>
           </ul>
         </div>
         <details>
-          <summary>Copy-paste HTML — the base for every variation</summary>
+          <summary>What this is, and how to build it</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
             page.
@@ -2887,19 +3482,22 @@ object-fit: cover;</code></pre>
    --dlc-focus       the keyboard focus ring                                */</code></pre>
         </details>
       </section>
-
-      <footer class="demo-section">
-        <h2>Notes</h2>
+    </main>
+    <footer class="demo-section" id="notes">
+      <div class="demo-notes-inner">
+        <h2 id="notes-h">Notes</h2>
         <ul>
           <li><strong>No JavaScript?</strong> Every slider degrades to a swipeable snap strip; all content stays visible and indexable.</li>
           <li><strong>SEO:</strong> all slides ship in the initial HTML, nothing is cloned — every heading and link exists exactly once.</li>
           <li>
             <strong>Include once per page:</strong>
-            <code>dl-carousel.css</code> + <code>dl-carousel.js</code> (defer). See the <a href="../README.md">README</a> for the JS API and the verification checklist.
+            <code>dl-carousel.css</code> + <code>dl-carousel.js</code> (defer). See <a href="https://github.com/stevenpelletier90/custom-slider#readme">the README</a> for the JS API and the
+            verification checklist.
           </li>
         </ul>
-      </footer>
-    </main>
+        <a class="demo-top" href="#main">Back to top ↑</a>
+      </div>
+    </footer>
     <dialog class="demo-video-dialog" id="video-dialog" aria-label="Video player">
       <div class="demo-video-dialog-head">
         <h3 class="demo-video-dialog-title">Video</h3>
@@ -2966,13 +3564,12 @@ object-fit: cover;</code></pre>
           embed.removeAttribute('src');
         });
       });
-      // Copy buttons on every code sample. Added by script so the authored
-      // markup stays clean, and so a reader with JS off just sees normal code
-      // they can select by hand.
       // Buttons that copy a whole file (the engine CSS/JS) rather than a code
-      // sample. Fetched at click time from the same files this page already
-      // loads, so what lands on the clipboard can never drift from what is
-      // shipping — and the page does not carry 15 KB of duplicated source.
+      // sample — the per-sample copy buttons live in assets/demo.js, shared
+      // with the model bar library page. Fetched at click time from the same
+      // files this page already loads, so what lands on the clipboard can
+      // never drift from what is shipping — and the page does not carry 15 KB
+      // of duplicated source.
       addEventListener('DOMContentLoaded', () => {
         for (const btn of document.querySelectorAll('.code-copy--file')) {
           btn.addEventListener('click', async () => {
@@ -2994,52 +3591,6 @@ object-fit: cover;</code></pre>
               btn.textContent = original;
               delete btn.dataset.copied;
             }, 2200);
-          });
-        }
-      });
-      addEventListener('DOMContentLoaded', () => {
-        for (const pre of document.querySelectorAll('details pre')) {
-          // Read the label FIRST: once the <pre> is moved inside the wrapper it
-          // is an only child, so previousElementSibling is null and every button
-          // ends up named "Copy code".
-          const label = pre.previousElementSibling?.classList.contains('code-label') ? pre.previousElementSibling.textContent.trim() : 'code';
-
-          const wrap = document.createElement('div');
-          wrap.className = 'code-wrap';
-          pre.parentNode.insertBefore(wrap, pre);
-          wrap.appendChild(pre);
-
-          const btn = document.createElement('button');
-          btn.type = 'button';
-          btn.className = 'code-copy';
-          btn.textContent = 'Copy';
-          // Named by what it copies, so a screen reader hears "Copy HTML"
-          // rather than twenty-nine identical "Copy" buttons.
-          btn.setAttribute('aria-label', `Copy ${label}`);
-          wrap.appendChild(btn);
-
-          btn.addEventListener('click', async () => {
-            const text = pre.textContent;
-            try {
-              await navigator.clipboard.writeText(text);
-            } catch {
-              // Clipboard API needs a secure context; fall back for file:// and http://
-              const ta = document.createElement('textarea');
-              ta.value = text;
-              ta.style.position = 'fixed';
-              ta.style.opacity = '0';
-              document.body.appendChild(ta);
-              ta.select();
-              document.execCommand('copy');
-              ta.remove();
-            }
-            btn.textContent = 'Copied';
-            btn.dataset.copied = '';
-            clearTimeout(btn._t);
-            btn._t = setTimeout(() => {
-              btn.textContent = 'Copy';
-              delete btn.dataset.copied;
-            }, 1600);
           });
         }
       });
@@ -3082,9 +3633,11 @@ object-fit: cover;</code></pre>
       // Mouse drag-scrolling for thumbnail strips (touch swiping is native
       // scrolling already). A small threshold keeps plain clicks working;
       // after a real drag the trailing click is swallowed so the thumb
-      // under the cursor isn't accidentally activated.
-      addEventListener('DOMContentLoaded', () => {
-        for (const strip of document.querySelectorAll('.dl-carousel-thumbs')) {
+      // under the cursor isn't accidentally activated. Exposed as a function
+      // because a re-inited gallery (the filter demo) and a late-inited one
+      // (the lightbox) build FRESH strips that need wiring again.
+      function wireThumbDrag(strip) {
+        {
           let startX = 0;
           let startLeft = 0;
           let dragging = false;
@@ -3123,6 +3676,69 @@ object-fit: cover;</code></pre>
             true,
           );
         }
+      }
+      addEventListener('DOMContentLoaded', () => {
+        for (const strip of document.querySelectorAll('.dl-carousel-thumbs')) wireThumbDrag(strip);
+      });
+      // Image counter on the vehicle-card mini galleries: dlc:change is the
+      // extension point — the engine stays untouched. The chip is aria-hidden;
+      // the slider's own status region already announces position.
+      addEventListener('DOMContentLoaded', () => {
+        for (const media of document.querySelectorAll('.demo-cardgal-media')) {
+          const root = media.querySelector('.dl-carousel');
+          const out = media.querySelector('.demo-cardgal-count');
+          if (!root || !out) continue;
+          const total = root.querySelectorAll('.dl-carousel-slide').length;
+          const set = (i) => (out.textContent = i + 1 + ' / ' + total);
+          set(0);
+          root.addEventListener('dlc:change', (e) => set(e.detail.index));
+        }
+      });
+      // Filterable gallery. destroy() restores the markup ITS instance was
+      // built from — which after a filter is the pruned set — so the script
+      // captures the full authored markup once (first destroy restores it)
+      // and rebuilds every filter from that copy.
+      addEventListener('DOMContentLoaded', () => {
+        const bar = document.querySelector('.demo-filterbar');
+        const root = document.querySelector('.demo-fgallery');
+        if (!bar || !root) return;
+        let pristine = null;
+        bar.addEventListener('click', (e) => {
+          const btn = e.target.closest('.demo-filter');
+          if (!btn) return;
+          for (const b of bar.querySelectorAll('.demo-filter')) b.setAttribute('aria-pressed', String(b === btn));
+          root._dlCarousel?.destroy(); // first destroy restores the full authored markup
+          pristine ??= root.innerHTML;
+          root.innerHTML = pristine; // every filter starts from the complete set
+          const tag = btn.dataset.filter;
+          if (tag) for (const s of root.querySelectorAll('.dl-carousel-slide')) if (s.dataset.tag !== tag) s.remove();
+          DLCarousel.autoInit(root.parentElement);
+          // the rebuild made a fresh thumb strip — re-wire its mouse drag
+          const strip = root.querySelector('.dl-carousel-thumbs');
+          if (strip) wireThumbDrag(strip);
+        });
+      });
+      // Lightbox gallery: data-init="manual" keeps auto-init away (a closed
+      // dialog is display:none — measurements would be garbage). First open
+      // inits after showModal(), while the dialog is visible.
+      addEventListener('DOMContentLoaded', () => {
+        const dlg = document.querySelector('.demo-lightbox');
+        const open = document.querySelector('.demo-lightbox-open');
+        if (!dlg || !open) return;
+        open.addEventListener('click', () => {
+          dlg.showModal();
+          const root = dlg.querySelector('[data-slider]');
+          if (!root._dlCarousel) {
+            new DLCarousel(root);
+            // built after the page-load wiring pass — give its strip drag too
+            const strip = root.querySelector('.dl-carousel-thumbs');
+            if (strip) wireThumbDrag(strip);
+          }
+        });
+        dlg.querySelector('.demo-lightbox-close').addEventListener('click', () => dlg.close());
+        dlg.addEventListener('click', (e) => {
+          if (e.target === dlg) dlg.close();
+        });
       });
     </script>
   </body>

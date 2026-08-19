@@ -1,0 +1,213 @@
+/* Shared demo chrome for demo/index.html and demo/model-bars.html — one copy
+   instead of the three that used to drift (each page, plus the generator
+   template in scripts/build-model-bars.mjs). Slider styling lives in the
+   library CSS; nothing in this file touches the engine. */
+
+/* The sticky bar sits over the top of the viewport, so every anchor jump
+   (TOC, sitenav, skip link, back-to-top) and every focus-driven scroll must
+   land BELOW it — without this, each target's heading hides under the bar
+   (WCAG 2.4.11). The bar wraps to two lines on narrow screens. */
+html {
+  scroll-padding-block-start: 4rem;
+}
+
+@media (width <= 480px) {
+  html {
+    scroll-padding-block-start: 6rem;
+  }
+}
+
+body {
+  margin: 0;
+  font-family: system-ui, sans-serif;
+  line-height: 1.5;
+  color: #222;
+}
+
+main {
+  max-width: 72rem;
+  padding: 1rem;
+  margin: 0 auto;
+}
+
+main a,
+footer a,
+.demo-toc a {
+  color: #1a5fb4;
+}
+
+.demo-section {
+  margin-block: 3rem;
+}
+
+.demo-lede {
+  max-width: 68ch;
+  margin: 0.75rem 0;
+}
+
+.demo-sub {
+  max-width: 68ch;
+  margin: 0.35rem 0 1rem;
+  color: #3c4043;
+}
+
+/* break out of the 72rem column to 1440px, centered */
+.demo-wide {
+  position: relative;
+  inset-inline-start: 50%;
+  inline-size: min(1440px, 100vw - 2rem);
+  transform: translateX(-50%);
+}
+
+details {
+  margin-block-start: 1rem;
+}
+
+pre {
+  /* Colour belongs here, not only on the light sections: <pre> has a light
+     background of its own, so a dark band setting pale text would inherit
+     it into the code and drop to ~1.2:1. These sit inside a closed
+     <details>, so axe treats them as hidden and Lighthouse still reports
+     100 — the gate cannot catch this one. */
+  padding: 1rem;
+  overflow-x: auto;
+  color: #222;
+  background: #f6f6f6;
+  border-radius: 6px;
+}
+
+.copy-lead {
+  margin-block-start: 1rem;
+}
+
+.code-label {
+  margin: 0.9rem 0 0.3rem;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #5f6368;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+}
+
+/* The copy button sits over its own <pre>; the wrapper is added by script
+   so the markup stays clean for anyone reading the source. */
+.code-wrap {
+  position: relative;
+}
+
+.code-copy {
+  position: absolute;
+  inset-block-start: 0.5rem;
+  inset-inline-end: 0.5rem;
+  padding: 0.35rem 0.7rem;
+  font: inherit;
+  font-size: 0.8rem;
+  color: #16324f;
+  cursor: pointer;
+  background: #fff;
+  border: 1px solid #c4ced8;
+  border-radius: 4px;
+}
+
+.code-copy:hover {
+  background: #eef2f6;
+}
+
+.code-copy:focus-visible {
+  outline: 3px solid #16324f;
+  outline-offset: 2px;
+}
+
+.code-copy[data-copied] {
+  color: #1f6f4a;
+  border-color: #1f6f4a;
+}
+
+/* ---- navigation chrome --------------------------------------------------- */
+
+/* Skip link: first tabbable thing on the page, invisible until focused. */
+.demo-skip {
+  position: absolute;
+  inset-block-start: 0.5rem;
+  inset-inline-start: 0.5rem;
+  z-index: 100;
+  padding: 0.5rem 0.9rem;
+  color: #fff;
+  background: #16324f;
+  border-radius: 4px;
+  transform: translateY(-200%);
+}
+
+.demo-skip:focus-visible {
+  outline: 3px solid #16324f;
+  outline-offset: 2px;
+  transform: none;
+}
+
+/* Cross-page bar, sticky so orientation survives a fifteen-screen scroll.
+   z-index beats the .demo-wide sections: their transform makes each one a
+   stacking context that would otherwise paint over a plain sticky element. */
+.demo-sitenav {
+  position: sticky;
+  inset-block-start: 0;
+  z-index: 50;
+  background: #fff;
+  border-block-end: 1px solid #dde3e9;
+}
+
+.demo-sitenav nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.25rem;
+  align-items: baseline;
+  max-width: 72rem;
+  padding: 0.6rem 1rem;
+  margin: 0 auto;
+}
+
+.demo-sitenav-title {
+  color: #16324f;
+}
+
+.demo-sitenav a {
+  color: #1a5fb4;
+  text-decoration: none;
+}
+
+.demo-sitenav a:hover {
+  text-decoration: underline;
+}
+
+.demo-sitenav a[aria-current="page"] {
+  font-weight: 700;
+  color: #16324f;
+}
+
+/* Grouped table of contents; the scrollspy in demo.js sets aria-current. */
+.demo-toc {
+  margin-block: 1rem;
+}
+
+.demo-toc p {
+  margin: 0.35rem 0;
+}
+
+.demo-toc a[aria-current="true"] {
+  font-weight: 700;
+  text-decoration-thickness: 2px;
+}
+
+.demo-top {
+  display: inline-block;
+  margin-block-start: 1rem;
+}
+
+/* Visually hidden, still announced — the copy buttons' status region. */
+.demo-vh {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}

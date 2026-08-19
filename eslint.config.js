@@ -12,6 +12,18 @@ export default [
     ignores: ['dist/**', 'node_modules/**', 'demo/img/**', '.claude/**'],
   },
   {
+    // Demo-page chrome: a plain deferred script, no modules and no bundler.
+    files: ['demo/assets/**/*.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'script',
+      globals: {
+        ...globals.browser,
+      },
+    },
+    rules: sharedRules,
+  },
+  {
     // Carousel source: ES modules bundled to a classic script by esbuild.
     files: ['src/**/*.js'],
     languageOptions: {
