@@ -59,6 +59,13 @@ footer a,
   transform: translateX(-50%);
 }
 
+/* Wide sections break out for their MEDIA only — headings, notes and copy
+   panels get symmetric padding that lands their text exactly back on the
+   main column, so every section aligns with the group heads. */
+.demo-section.demo-wide > :not(.dl-carousel, [data-tabs], .demo-cardgrid, .sb-tilegrid, .sb-tilewide) {
+  padding-inline: max(0px, calc((100% - 72rem) / 2));
+}
+
 details {
   margin-block-start: 1rem;
 }
@@ -253,6 +260,7 @@ pre {
 }
 
 .demo-toc-group strong {
+  margin-inline-end: 0.35rem;
   font-size: 0.78rem;
   color: #5f6368;
   text-transform: uppercase;

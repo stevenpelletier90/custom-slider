@@ -311,11 +311,10 @@ const SKINS = {
       </a>`,
   },
   'category-tile': {
-    cardCss: `.my-modelbar { padding-block: 1.75rem; background: #1c1c1c; }
-.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
-.my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
+    cardCss: `/* Verified live 19 Aug: white background, dark uppercase labels BELOW the vehicles. */
+.my-modelbar-card { display: block; color: #222; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: -0.75rem 0 0; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }`,
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }`,
     liveSlides: () => CATEGORY_TILES.map(([slug, cat]) => `<a class="my-modelbar-card" href="index.html#modelbar">${cutoutImg(slug, '')}<p>${cat}</p></a>`),
     snippetLabel: 'Shop by category',
     snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?bodystyle=Motorcycle">
@@ -336,7 +335,7 @@ const SKINS = {
       </a>`,
   },
   'wordmark-dark': {
-    cardCss: `.my-modelbar { padding-block: 1.75rem; background: #101010; }
+    cardCss: `.my-modelbar { padding-block: 1.75rem; background: linear-gradient(#3a3a3a, #1f1f1f); }
 .my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
 .my-modelbar-wordmark { display: block; margin-block-end: 0.75rem; font-size: 1.3rem; font-style: italic; font-weight: 700; letter-spacing: 0.06em; }
@@ -772,24 +771,22 @@ const STATICS = [
     key: 'tilegrid',
     title: 'Hover-reveal tile grid',
     note: 'As the Porsche demo ships it: square photo tiles, two across on phones, six across on desktop. At rest a tile is just the photo; hover (or keyboard focus) darkens it and slides up the name with Search New / Search Used links. Below 992px the label and links simply sit under the photo &mdash; no hover choreography on touch.',
-    css: `/* Hover-reveal tile grid - 2-across base, 3 at 540px, 6 at 992px. */
+    css: `/* Tile grid - 2-across base, 3 at 540px, 6 at 992px. Verified live 19 Aug:
+   the name stays visible bottom-left over a darkened base at every width;
+   hover (or keyboard focus) deepens the wash and slides the action links up. */
 .my-tilegrid { display: flex; flex-wrap: wrap; gap: 1rem 2%; }
 .my-tile { position: relative; inline-size: 49%; overflow: hidden; border-radius: 10px; }
 @media (min-width: 540px) { .my-tile { inline-size: 32%; } }
 @media (min-width: 992px) { .my-tile { inline-size: 15%; } }
 .my-tile img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 1; object-fit: cover; }
-
-/* The cover: static under the photo on small screens, an overlay on desktop. */
-.my-tile-cover { display: flex; flex-direction: column; gap: 0.25rem; align-items: center; padding: 0.5rem; text-align: center; }
+.my-tile-cover { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 0.25rem; align-items: flex-start; justify-content: flex-end; padding: 0.6rem 0.7rem; color: #fff; background: linear-gradient(transparent 55%, rgb(0 0 0 / 65%)); border-radius: 10px; }
 .my-tile-cover p { margin: 0; font-weight: 700; }
-.my-tile-cover a { font-size: 0.9rem; }
-@media (min-width: 992px) {
-  .my-tile-cover { position: absolute; inset: 0; justify-content: center; color: #fff; background: rgb(0 0 0 / 55%); border-radius: 10px; opacity: 0; transition: opacity 0.25s; }
-  .my-tile-cover a { color: #fff; transition: transform 0.25s; transform: translateY(10px); }
-  .my-tile-cover a + a { transition-delay: 0.07s; }
-  .my-tile:hover .my-tile-cover, .my-tile:focus-within .my-tile-cover { opacity: 1; }
-  .my-tile:hover .my-tile-cover a, .my-tile:focus-within .my-tile-cover a { transform: none; }
-}
+.my-tile-cover a { max-block-size: 0; overflow: hidden; font-size: 0.9rem; color: #fff; opacity: 0; transition: max-block-size 0.25s, opacity 0.25s, transform 0.25s; transform: translateY(8px); }
+.my-tile:hover .my-tile-cover, .my-tile:focus-within .my-tile-cover { background: rgb(0 0 0 / 55%); }
+.my-tile:hover .my-tile-cover a, .my-tile:focus-within .my-tile-cover a { max-block-size: 2rem; opacity: 1; transform: none; }
+
+/* No hover on touch - keep the links visible below desktop. */
+@media (max-width: 991px) { .my-tile-cover a { max-block-size: 2rem; opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .my-tile-cover, .my-tile-cover a { transition: none; } }`,
     rootClass: 'my-tilegrid',
     liveUnits: TALL_TILES.slice(0, 6).map(
@@ -1313,15 +1310,124 @@ const BRANDS = [
   ['Volvo', 'Slider', '2 / 3 / 4 / 5', [['model-bars.html#chevrolet', 'Chevrolet ladder']], 'volvodemo1'],
 ];
 
-const brandRows = BRANDS.map(
-  ([brand, what, tiers, copies, host]) => `            <tr>
-              <th scope="row">${brand}</th>
-              <td>${what}</td>
-              <td>${tiers}</td>
-              <td>${copies.map(([href, label]) => `<a href="${href}">${label}</a>`).join(' &middot; ')}</td>
-              <td><a href="https://${host}.dealeron.com/">${host}</a></td>
-            </tr>`,
-).join('\n');
+// How each brand RENDERS on the brand library page: its variant's ladder,
+// its skin, and its imagery (brand-correct where harvested; Chevrolet
+// cutouts as labeled stand-ins otherwise). Note-only entries are the
+// non-slider bars and pure pointers.
+const BRAND_RENDER = {
+  Acura: { key: 'acura', skin: 'white', roster: R.acura },
+  'Alfa Romeo': { key: 'alfaromeo', skin: 'tall-tile', roster: R.alfaromeo },
+  Audi: { key: 'audi', skin: 'white', roster: R.audi },
+  BMW: {
+    note: 'BMW&rsquo;s official bar is tab panes with a static stacked list on phones &mdash; there is no slider to render. See <a href="model-bars.html#static-bars">the non-slider family</a> for the shape and <a href="index.html#modelbar-tabs">the tabs demo</a> for the wiring.',
+  },
+  Buick: { key: 'buick', skin: 'white', roster: R.buick },
+  Cadillac: { key: 'chevrolet', skin: 'band-dark', standin: true },
+  Chevrolet: {
+    key: 'chevrolet',
+    skin: 'white',
+    extra: 'The official presentation is tabbed &mdash; the <a href="model-bars.html#chevrolet">library&rsquo;s Chevrolet section</a> runs the full five-tab version live.',
+  },
+  'Chrysler / Dodge / Jeep / Ram': {
+    key: 'cdjr',
+    skin: 'cdjr-dark',
+    roster: R.cdjr,
+    extra: 'On the real sites this bar sits under brand-logo tabs &mdash; one pane per brand; the <a href="index.html#modelbar-tabs">tabs demo</a> shows the wiring.',
+  },
+  Ferrari: {
+    key: 'ferrari',
+    skin: 'wordmark-dark',
+    standin: true,
+    extra: 'Ferrari also ships a lifestyle photo-card version &mdash; <a href="model-bars.html#ferrari-photo">running live in the library</a>.',
+  },
+  Fiat: { note: 'Fiat rides the CDJR bar (the Fiat-including variant) &mdash; see <a href="#b-chrysler-dodge-jeep-ram">Chrysler / Dodge / Jeep / Ram</a> above.' },
+  Ford: {
+    key: 'ford',
+    skin: 'white',
+    roster: R.ford,
+    extra:
+      'Ford also ships a pure-CSS static grid and a tabbed version &mdash; see <a href="model-bars.html#static-bars">the non-slider family</a> and <a href="index.html#modelbar-tabs">the tabs demo</a>.',
+  },
+  Genesis: { key: 'genesis', skin: 'counts', roster: R.genesis },
+  GMC: { key: 'acura', skin: 'white', standin: true },
+  'Group sites': {
+    key: 'group',
+    skin: 'logo-strip',
+    stripIndex: 0,
+    standin: true,
+    extra: 'The rooftop-location rail runs live in <a href="model-bars.html#group">the library&rsquo;s group-site section</a>.',
+  },
+  Honda: { key: 'acura', skin: 'white', standin: true },
+  Hyundai: { key: 'hyundai', skin: 'white', roster: R.hyundai },
+  INFINITI: { note: 'INFINITI&rsquo;s bar is a static tile grid &mdash; no slider. The shape runs live in <a href="model-bars.html#static-bars">the non-slider family</a> (landscape variant).' },
+  Jaguar: { key: 'buick', skin: 'white', standin: true, extra: 'Jaguar dresses these tiers as photo cards with a tagline below each model.' },
+  Kia: {
+    key: 'acura',
+    skin: 'white',
+    standin: true,
+    extra: 'Kia also ships a tabbed version and a centre-mode version &mdash; the centre-mode recipe is <a href="index.html#peek">the peek pattern</a>.',
+  },
+  'Land Rover': { key: 'buick', skin: 'white', standin: true, extra: 'Land Rover dresses these tiers as photo cards, same as Jaguar.' },
+  Lexus: { key: 'lexus', skin: 'band-gray', roster: R.lexus },
+  Lincoln: { key: 'lincoln', skin: 'band-flat', roster: R.lincoln },
+  Maserati: { key: 'maserati', skin: 'spotlight', standin: true },
+  Mazda: { key: 'mazda', skin: 'name-top-chip', roster: R.mazda },
+  Mitsubishi: { key: 'acura', skin: 'white', standin: true },
+  Nissan: { key: 'lexus', skin: 'white', standin: true, extra: 'Nissan wears these tiers under body-style tabs with an est-MPG line per model.' },
+  Porsche: { note: 'Porsche&rsquo;s bar is a hover-reveal photo tile grid &mdash; no slider. The shape runs live in <a href="model-bars.html#static-bars">the non-slider family</a>.' },
+  Powersports: { key: 'powersports-cat', skin: 'category-tile', standin: true },
+  Subaru: { key: 'chevrolet', skin: 'white', standin: true, extra: 'Subaru wears this ladder under five icon tabs on the real sites.' },
+  Toyota: { key: 'toyota', skin: 'photo-card', roster: R.toyota },
+  Volkswagen: { key: 'genesis', skin: 'tile', standin: true },
+  Volvo: { key: 'chevrolet', skin: 'white', standin: true },
+};
+
+const brandSlug = (b) =>
+  b
+    .toLowerCase()
+    .replace(/[^a-z]+/g, '-')
+    .replace(/^-|-$/g, '');
+
+const brandCss = BRANDS.map(([brand]) => {
+  const r = BRAND_RENDER[brand];
+  if (!r || r.note) return '';
+  const v = byKey[r.key];
+  const s = r.stripIndex !== undefined ? v.strips[r.stripIndex] : { skin: r.skin };
+  return stripComments(recipeCss(v, { ...s, skin: r.skin })).replaceAll('.my-modelbar', `.bb-${brandSlug(brand)}`);
+})
+  .filter(Boolean)
+  .join('\n\n');
+
+const brandSections = BRANDS.map(([brand, what, tiers, copies, host]) => {
+  const r = BRAND_RENDER[brand] ?? {};
+  const slug = brandSlug(brand);
+  const links = copies.map(([href, label]) => `<a href="${href}">${label}</a>`).join(' &middot; ');
+  const standinChip = r.standin ? ' <span class="demo-standin">stand-in photos</span>' : '';
+  let body;
+  if (r.note) {
+    body = `        <p class="brand-note">${r.note}</p>`;
+  } else {
+    const v = byKey[r.key];
+    const s = r.stripIndex !== undefined ? v.strips[r.stripIndex] : {};
+    const roster = r.roster ?? s.roster ?? CHEVY;
+    const attrs = `data-slider data-step="slide"${s.autoplay ? ` data-autoplay="${s.autoplay}"` : ''}`;
+    const slides = SKINS[r.skin]
+      .liveSlides(roster)
+      .map((a) => `            <li class="dl-carousel-slide">${a.replaceAll('my-modelbar', `bb-${slug}`)}</li>`)
+      .join('\n');
+    body = `        <div class="dl-carousel bb-${slug}" ${attrs} aria-labelledby="b-${slug}-h">
+          <ul class="dl-carousel-track">
+${slides}
+          </ul>
+        </div>`;
+  }
+  const extra = r.extra ? `\n        <p class="brand-note">${r.extra}</p>` : '';
+  return `      <section class="demo-section" id="b-${slug}">
+        <h2 id="b-${slug}-h">${brand}${standinChip}</h2>
+        <p class="demo-sub">${what}. Cards per view: ${tiers}. Copy the finished build: ${links}. Official example: <a href="https://${host}.dealeron.com/">${host}</a>.</p>
+${body}${extra}
+      </section>`;
+}).join('\n\n');
 
 const brandsPage = `<!doctype html>
 <html lang="en">
@@ -1362,28 +1468,34 @@ const brandsPage = `<!doctype html>
         outline: 3px solid #16324f;
         outline-offset: 2px;
       }
-      .brand-table {
-        inline-size: 100%;
-        min-inline-size: 46rem;
-        border-collapse: collapse;
-      }
-      .brand-table th,
-      .brand-table td {
-        padding: 0.55rem 0.7rem;
-        font-size: 0.9rem;
-        text-align: start;
-        vertical-align: top;
-        border-block-end: 1px solid #dde3e9;
-      }
-      .brand-table thead th {
-        font-size: 0.72rem;
-        letter-spacing: 0.08em;
+      .demo-standin {
+        display: inline-block;
+        padding: 0.1rem 0.55rem;
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        color: #6b4a00;
         text-transform: uppercase;
+        vertical-align: middle;
+        background: #faeedd;
+        border-radius: 999px;
+      }
+      .brand-note {
+        max-width: 68ch;
+        margin: 0.5rem 0 0;
         color: #5f6368;
       }
-      .brand-table tbody th {
-        white-space: nowrap;
+      .demo-section > h2 {
+        margin: 0 0 0.35rem;
+        font-size: 1.5rem;
+        line-height: 1.25;
       }
+      /* Every strip below is its library recipe, class-renamed - rendered and
+         taught stay one, same rule as the model bar library page. */
+${brandCss
+  .split('\n')
+  .map((l) => (l ? `      ${l}` : ''))
+  .join('\n')}
     </style>
   </head>
   <body>
@@ -1409,44 +1521,31 @@ const brandsPage = `<!doctype html>
         <input id="brand-q" type="text" autocomplete="off" placeholder="e.g. Kia, tabs, no slider" />
         <p class="demo-vh" role="status" id="brand-count"></p>
       </div>
-      <div class="demo-scroll">
-        <table class="brand-table">
-          <thead>
-            <tr>
-              <th scope="col">Brand</th>
-              <th scope="col">What its model bar is</th>
-              <th scope="col">Cards per view</th>
-              <th scope="col">Copy it from</th>
-              <th scope="col">Official example</th>
-            </tr>
-          </thead>
-          <tbody>
-${brandRows}
-          </tbody>
-        </table>
-      </div>
+${brandSections}
+
       <p>
-        Ladders and looks all run live on the <a href="model-bars.html">model bar library</a>; generic patterns and the install step live on <a href="index.html">the main demo</a>. Sites named here
-        are internal demo sites, safe to open and compare against.
+        Ladders and looks in engineering detail run on the <a href="model-bars.html">model bar library</a>; generic patterns and the install step live on <a href="index.html">the main demo</a>.
+        Sites named here are internal demo sites, safe to open and compare against. Brands marked <span class="demo-standin">stand-in photos</span> render their real ladder and look with Chevrolet
+        cutouts standing in until their own imagery lands.
       </p>
     </main>
 ${FOOT}
     <script>
-      // Type-to-filter: hides rows whose text doesn't match; announces the
-      // count to screen readers. With JS off the full table simply stands.
+      // Type-to-filter: hides brand sections whose text doesn't match;
+      // announces the count. With JS off the full page simply stands.
       addEventListener('DOMContentLoaded', () => {
         const q = document.getElementById('brand-q');
         const status = document.getElementById('brand-count');
-        const rows = [...document.querySelectorAll('.brand-table tbody tr')];
+        const sections = [...document.querySelectorAll('main > section.demo-section')];
         q.addEventListener('input', () => {
           const term = q.value.trim().toLowerCase();
           let shown = 0;
-          for (const row of rows) {
-            const hit = !term || row.textContent.toLowerCase().includes(term);
-            row.hidden = !hit;
+          for (const sec of sections) {
+            const hit = !term || sec.textContent.toLowerCase().includes(term);
+            sec.hidden = !hit;
             if (hit) shown += 1;
           }
-          status.textContent = term ? shown + ' of ' + rows.length + ' brands shown' : '';
+          status.textContent = term ? shown + ' of ' + sections.length + ' brands shown' : '';
         });
       });
     </script>

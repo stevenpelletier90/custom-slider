@@ -871,17 +871,9 @@
         --dlc-controls-space: 0px;
       }
 
-      .mbx-powersports-cat {
-        padding-block: 1.75rem;
-        background: #1c1c1c;
-      }
-      .mbx-powersports-cat {
-        --dlc-arrow-bg: transparent;
-        --dlc-arrow-fg: #fff;
-      }
       .mbx-powersports-cat-card {
         display: block;
-        color: #fff;
+        color: #222;
         text-align: center;
         text-decoration: none;
       }
@@ -891,10 +883,10 @@
         object-fit: contain;
       }
       .mbx-powersports-cat-card p {
-        margin: -0.75rem 0 0;
-        font-size: 1.15rem;
+        margin: 0.5rem 0 0;
+        font-size: 1.05rem;
         font-weight: 700;
-        letter-spacing: 0.14em;
+        letter-spacing: 0.18em;
         text-transform: uppercase;
       }
 
@@ -967,7 +959,7 @@
 
       .mbx-ferrari {
         padding-block: 1.75rem;
-        background: #101010;
+        background: linear-gradient(#3a3a3a, #1f1f1f);
       }
       .mbx-ferrari {
         --dlc-arrow-bg: transparent;
@@ -1231,47 +1223,50 @@
         aspect-ratio: 1;
         object-fit: cover;
       }
-
       .sb-tile-cover {
+        position: absolute;
+        inset: 0;
         display: flex;
         flex-direction: column;
         gap: 0.25rem;
-        align-items: center;
-        padding: 0.5rem;
-        text-align: center;
+        align-items: flex-start;
+        justify-content: flex-end;
+        padding: 0.6rem 0.7rem;
+        color: #fff;
+        background: linear-gradient(transparent 55%, rgb(0 0 0 / 65%));
+        border-radius: 10px;
       }
       .sb-tile-cover p {
         margin: 0;
         font-weight: 700;
       }
       .sb-tile-cover a {
+        max-block-size: 0;
+        overflow: hidden;
         font-size: 0.9rem;
+        color: #fff;
+        opacity: 0;
+        transition:
+          max-block-size 0.25s,
+          opacity 0.25s,
+          transform 0.25s;
+        transform: translateY(8px);
       }
-      @media (min-width: 992px) {
-        .sb-tile-cover {
-          position: absolute;
-          inset: 0;
-          justify-content: center;
-          color: #fff;
-          background: rgb(0 0 0 / 55%);
-          border-radius: 10px;
-          opacity: 0;
-          transition: opacity 0.25s;
-        }
+      .sb-tile:hover .sb-tile-cover,
+      .sb-tile:focus-within .sb-tile-cover {
+        background: rgb(0 0 0 / 55%);
+      }
+      .sb-tile:hover .sb-tile-cover a,
+      .sb-tile:focus-within .sb-tile-cover a {
+        max-block-size: 2rem;
+        opacity: 1;
+        transform: none;
+      }
+
+      @media (max-width: 991px) {
         .sb-tile-cover a {
-          color: #fff;
-          transition: transform 0.25s;
-          transform: translateY(10px);
-        }
-        .sb-tile-cover a + a {
-          transition-delay: 0.07s;
-        }
-        .sb-tile:hover .sb-tile-cover,
-        .sb-tile:focus-within .sb-tile-cover {
+          max-block-size: 2rem;
           opacity: 1;
-        }
-        .sb-tile:hover .sb-tile-cover a,
-        .sb-tile:focus-within .sb-tile-cover a {
           transform: none;
         }
       }
@@ -3249,11 +3244,10 @@
 .my-modelbar .dl-carousel-dots { display: none; }
 .my-modelbar { --dlc-controls-space: 0px; }
 
-.my-modelbar { padding-block: 1.75rem; background: #1c1c1c; }
-.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
-.my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
+/* Verified live 19 Aug: white background, dark uppercase labels BELOW the vehicles. */
+.my-modelbar-card { display: block; color: #222; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: -0.75rem 0 0; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }</code></pre>
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }</code></pre>
           </details>
         </section>
 
@@ -3592,7 +3586,7 @@
 .my-modelbar .dl-carousel-dots { display: none; }
 .my-modelbar { --dlc-controls-space: 0px; }
 
-.my-modelbar { padding-block: 1.75rem; background: #101010; }
+.my-modelbar { padding-block: 1.75rem; background: linear-gradient(#3a3a3a, #1f1f1f); }
 .my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
 .my-modelbar-wordmark { display: block; margin-block-end: 0.75rem; font-size: 1.3rem; font-style: italic; font-weight: 700; letter-spacing: 0.06em; }
@@ -4187,24 +4181,22 @@
        the cover carries the name and the links. --&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Hover-reveal tile grid - 2-across base, 3 at 540px, 6 at 992px. */
+            <pre><code>/* Tile grid - 2-across base, 3 at 540px, 6 at 992px. Verified live 19 Aug:
+   the name stays visible bottom-left over a darkened base at every width;
+   hover (or keyboard focus) deepens the wash and slides the action links up. */
 .my-tilegrid { display: flex; flex-wrap: wrap; gap: 1rem 2%; }
 .my-tile { position: relative; inline-size: 49%; overflow: hidden; border-radius: 10px; }
 @media (min-width: 540px) { .my-tile { inline-size: 32%; } }
 @media (min-width: 992px) { .my-tile { inline-size: 15%; } }
 .my-tile img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 1; object-fit: cover; }
-
-/* The cover: static under the photo on small screens, an overlay on desktop. */
-.my-tile-cover { display: flex; flex-direction: column; gap: 0.25rem; align-items: center; padding: 0.5rem; text-align: center; }
+.my-tile-cover { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 0.25rem; align-items: flex-start; justify-content: flex-end; padding: 0.6rem 0.7rem; color: #fff; background: linear-gradient(transparent 55%, rgb(0 0 0 / 65%)); border-radius: 10px; }
 .my-tile-cover p { margin: 0; font-weight: 700; }
-.my-tile-cover a { font-size: 0.9rem; }
-@media (min-width: 992px) {
-  .my-tile-cover { position: absolute; inset: 0; justify-content: center; color: #fff; background: rgb(0 0 0 / 55%); border-radius: 10px; opacity: 0; transition: opacity 0.25s; }
-  .my-tile-cover a { color: #fff; transition: transform 0.25s; transform: translateY(10px); }
-  .my-tile-cover a + a { transition-delay: 0.07s; }
-  .my-tile:hover .my-tile-cover, .my-tile:focus-within .my-tile-cover { opacity: 1; }
-  .my-tile:hover .my-tile-cover a, .my-tile:focus-within .my-tile-cover a { transform: none; }
-}
+.my-tile-cover a { max-block-size: 0; overflow: hidden; font-size: 0.9rem; color: #fff; opacity: 0; transition: max-block-size 0.25s, opacity 0.25s, transform 0.25s; transform: translateY(8px); }
+.my-tile:hover .my-tile-cover, .my-tile:focus-within .my-tile-cover { background: rgb(0 0 0 / 55%); }
+.my-tile:hover .my-tile-cover a, .my-tile:focus-within .my-tile-cover a { max-block-size: 2rem; opacity: 1; transform: none; }
+
+/* No hover on touch - keep the links visible below desktop. */
+@media (max-width: 991px) { .my-tile-cover a { max-block-size: 2rem; opacity: 1; transform: none; } }
 @media (prefers-reduced-motion: reduce) { .my-tile-cover, .my-tile-cover a { transition: none; } }</code></pre>
           </details>
           <h4 id="sb-tilewide-h" class="strip-label">Tile grid, landscape variant</h4>

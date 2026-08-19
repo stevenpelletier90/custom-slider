@@ -37,27 +37,1353 @@
         outline: 3px solid #16324f;
         outline-offset: 2px;
       }
-      .brand-table {
-        inline-size: 100%;
-        min-inline-size: 46rem;
-        border-collapse: collapse;
-      }
-      .brand-table th,
-      .brand-table td {
-        padding: 0.55rem 0.7rem;
-        font-size: 0.9rem;
-        text-align: start;
-        vertical-align: top;
-        border-block-end: 1px solid #dde3e9;
-      }
-      .brand-table thead th {
-        font-size: 0.72rem;
-        letter-spacing: 0.08em;
+      .demo-standin {
+        display: inline-block;
+        padding: 0.1rem 0.55rem;
+        font-size: 0.68rem;
+        font-weight: 600;
+        letter-spacing: 0.06em;
+        color: #6b4a00;
         text-transform: uppercase;
+        vertical-align: middle;
+        background: #faeedd;
+        border-radius: 999px;
+      }
+      .brand-note {
+        max-width: 68ch;
+        margin: 0.5rem 0 0;
         color: #5f6368;
       }
-      .brand-table tbody th {
-        white-space: nowrap;
+      .demo-section > h2 {
+        margin: 0 0 0.35rem;
+        font-size: 1.5rem;
+        line-height: 1.25;
+      }
+      /* Every strip below is its library recipe, class-renamed - rendered and
+         taught stay one, same rule as the model bar library page. */
+      .bb-acura {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 461px) {
+        .bb-acura {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 769px) {
+        .bb-acura {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .bb-acura .dl-carousel-dots {
+        display: none;
+      }
+      .bb-acura {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-acura-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-acura-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-acura-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-alfa-romeo {
+        --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 541px) {
+        .bb-alfa-romeo {
+          --dlc-per-view: 2;
+        }
+      }
+      @media (min-width: 993px) {
+        .bb-alfa-romeo {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 1201px) {
+        .bb-alfa-romeo {
+          --dlc-per-view: 4;
+        }
+      }
+      @media (min-width: 1801px) {
+        .bb-alfa-romeo {
+          --dlc-per-view: 6;
+        }
+      }
+
+      .bb-alfa-romeo .dl-carousel-dots {
+        display: none;
+      }
+      .bb-alfa-romeo {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-alfa-romeo {
+        --dlc-gap: 1.25rem;
+        padding: 1.5rem;
+        background: #14161b;
+      }
+      .bb-alfa-romeo {
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #fff;
+      }
+      .bb-alfa-romeo-card {
+        display: block;
+        color: #fff;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-alfa-romeo-name {
+        margin: 0 0 0.5rem;
+        font-size: 1.1rem;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+        text-align: start;
+        text-transform: uppercase;
+      }
+      .bb-alfa-romeo-card img {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+        aspect-ratio: 3 / 5;
+        object-fit: cover;
+      }
+      .bb-alfa-romeo-cta {
+        display: inline-block;
+        margin-block-start: 0.75rem;
+        padding: 0.6rem 1.4rem;
+        font-size: 0.75rem;
+        font-weight: 700;
+        letter-spacing: 0.15em;
+        text-transform: uppercase;
+        color: #14161b;
+        background: #fff;
+      }
+
+      .bb-audi {
+        --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 361px) {
+        .bb-audi {
+          --dlc-per-view: 2;
+        }
+      }
+      @media (min-width: 769px) {
+        .bb-audi {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 993px) {
+        .bb-audi {
+          --dlc-per-view: 4;
+        }
+      }
+      @media (min-width: 1201px) {
+        .bb-audi {
+          --dlc-per-view: 6;
+        }
+      }
+
+      .bb-audi .dl-carousel-dots {
+        display: none;
+      }
+      .bb-audi {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-audi-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-audi-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-audi-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-buick {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 461px) {
+        .bb-buick {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 769px) {
+        .bb-buick {
+          --dlc-per-view: 4;
+        }
+      }
+
+      .bb-buick .dl-carousel-dots {
+        display: none;
+      }
+      .bb-buick {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-buick-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-buick-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-buick-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-cadillac {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 540px) {
+        .bb-cadillac {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 992px) {
+        .bb-cadillac {
+          --dlc-per-view: 4;
+        }
+      }
+      @media (min-width: 1200px) {
+        .bb-cadillac {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .bb-cadillac .dl-carousel-dots {
+        display: none;
+      }
+      .bb-cadillac {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-cadillac {
+        padding-block: 1.75rem;
+        background: #101010;
+      }
+      .bb-cadillac {
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #fff;
+      }
+      .bb-cadillac-card {
+        display: block;
+        color: #fff;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-cadillac-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-cadillac-card p {
+        margin: 0.5rem 0 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .bb-chevrolet {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 540px) {
+        .bb-chevrolet {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 992px) {
+        .bb-chevrolet {
+          --dlc-per-view: 4;
+        }
+      }
+      @media (min-width: 1200px) {
+        .bb-chevrolet {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .bb-chevrolet .dl-carousel-dots {
+        display: none;
+      }
+      .bb-chevrolet {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-chevrolet-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-chevrolet-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-chevrolet-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-chrysler-dodge-jeep-ram {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 461px) {
+        .bb-chrysler-dodge-jeep-ram {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 992px) {
+        .bb-chrysler-dodge-jeep-ram {
+          --dlc-per-view: 6;
+        }
+      }
+
+      .bb-chrysler-dodge-jeep-ram .dl-carousel-dots {
+        display: none;
+      }
+      .bb-chrysler-dodge-jeep-ram {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-chrysler-dodge-jeep-ram {
+        padding-block: 1.75rem;
+        background: #212121;
+      }
+      .bb-chrysler-dodge-jeep-ram {
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #fff;
+      }
+      .bb-chrysler-dodge-jeep-ram-card {
+        display: block;
+        color: #fff;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-chrysler-dodge-jeep-ram-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+        transition: transform 0.2s;
+      }
+      .bb-chrysler-dodge-jeep-ram-card:hover img,
+      .bb-chrysler-dodge-jeep-ram-card:focus-visible img {
+        transform: scale(1.1);
+      }
+      .bb-chrysler-dodge-jeep-ram-card p {
+        margin: 0.5rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-ferrari {
+        --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 768px) {
+        .bb-ferrari {
+          --dlc-per-view: 3;
+        }
+      }
+
+      .bb-ferrari .dl-carousel-dots {
+        display: none;
+      }
+      .bb-ferrari {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-ferrari {
+        padding-block: 1.75rem;
+        background: linear-gradient(#3a3a3a, #1f1f1f);
+      }
+      .bb-ferrari {
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #fff;
+      }
+      .bb-ferrari-card {
+        display: block;
+        color: #fff;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-ferrari-wordmark {
+        display: block;
+        margin-block-end: 0.75rem;
+        font-size: 1.3rem;
+        font-style: italic;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+      }
+      .bb-ferrari-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-ferrari-card p {
+        margin: 0.5rem 0 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .bb-ford {
+        --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 461px) {
+        .bb-ford {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 992px) {
+        .bb-ford {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .bb-ford .dl-carousel-dots {
+        display: none;
+      }
+      .bb-ford {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-ford-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-ford-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-ford-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-genesis {
+        --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 541px) {
+        .bb-genesis {
+          --dlc-per-view: 2;
+        }
+      }
+      @media (min-width: 993px) {
+        .bb-genesis {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 1201px) {
+        .bb-genesis {
+          --dlc-per-view: 4;
+        }
+      }
+
+      .bb-genesis .dl-carousel-dots {
+        display: none;
+      }
+      .bb-genesis {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-genesis-card {
+        display: block;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-genesis-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-genesis-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+      .bb-genesis-card small {
+        display: block;
+        color: #5f6368;
+      }
+
+      .bb-gmc {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 461px) {
+        .bb-gmc {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 769px) {
+        .bb-gmc {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .bb-gmc .dl-carousel-dots {
+        display: none;
+      }
+      .bb-gmc {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-gmc-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-gmc-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-gmc-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-group-sites {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 769px) {
+        .bb-group-sites {
+          --dlc-per-view: 4;
+        }
+      }
+      @media (min-width: 993px) {
+        .bb-group-sites {
+          --dlc-per-view: 7;
+        }
+      }
+
+      .bb-group-sites .dl-carousel-dots {
+        display: none;
+      }
+      .bb-group-sites {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-group-sites {
+        --dlc-gap: 1rem;
+      }
+
+      .bb-group-sites .dl-carousel-pause {
+        inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem);
+      }
+      .bb-group-sites-card {
+        display: block;
+        text-align: center;
+      }
+      .bb-group-sites-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+
+      .bb-honda {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 461px) {
+        .bb-honda {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 769px) {
+        .bb-honda {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .bb-honda .dl-carousel-dots {
+        display: none;
+      }
+      .bb-honda {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-honda-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-honda-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-honda-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-hyundai {
+        --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 461px) {
+        .bb-hyundai {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 993px) {
+        .bb-hyundai {
+          --dlc-per-view: 4;
+        }
+      }
+      @media (min-width: 1201px) {
+        .bb-hyundai {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .bb-hyundai .dl-carousel-dots {
+        display: none;
+      }
+      .bb-hyundai {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-hyundai-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-hyundai-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-hyundai-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-jaguar {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 461px) {
+        .bb-jaguar {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 769px) {
+        .bb-jaguar {
+          --dlc-per-view: 4;
+        }
+      }
+
+      .bb-jaguar .dl-carousel-dots {
+        display: none;
+      }
+      .bb-jaguar {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-jaguar-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-jaguar-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-jaguar-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-kia {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 461px) {
+        .bb-kia {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 769px) {
+        .bb-kia {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .bb-kia .dl-carousel-dots {
+        display: none;
+      }
+      .bb-kia {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-kia-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-kia-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-kia-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-land-rover {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 461px) {
+        .bb-land-rover {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 769px) {
+        .bb-land-rover {
+          --dlc-per-view: 4;
+        }
+      }
+
+      .bb-land-rover .dl-carousel-dots {
+        display: none;
+      }
+      .bb-land-rover {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-land-rover-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-land-rover-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-land-rover-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-lexus {
+        --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 401px) {
+        .bb-lexus {
+          --dlc-per-view: 2;
+        }
+      }
+      @media (min-width: 601px) {
+        .bb-lexus {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 992px) {
+        .bb-lexus {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .bb-lexus .dl-carousel-dots {
+        display: none;
+      }
+      .bb-lexus {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-lexus {
+        padding-block: 1.5rem;
+        background: linear-gradient(#e9e9e9, #f9f9f9);
+      }
+      .bb-lexus-card {
+        display: block;
+        color: #222;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-lexus-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-lexus-card p {
+        margin: 0.25rem 0 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.1em;
+        text-transform: uppercase;
+      }
+
+      .bb-lincoln {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 461px) {
+        .bb-lincoln {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 993px) {
+        .bb-lincoln {
+          --dlc-per-view: 4;
+        }
+      }
+
+      .bb-lincoln .dl-carousel-dots {
+        display: none;
+      }
+      .bb-lincoln {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-lincoln {
+        padding-block: 1.5rem;
+        background: #f2f2f2;
+      }
+      .bb-lincoln-card {
+        display: block;
+        color: #444649;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-lincoln-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-lincoln-card p {
+        margin: 0.5rem 0 0;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+      }
+
+      .bb-maserati {
+        --dlc-per-view: 1;
+        --dlc-peek: 20%;
+        --dlc-gap: 0.5rem;
+      }
+
+      .bb-maserati .dl-carousel-dots {
+        display: none;
+      }
+      .bb-maserati {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-maserati {
+        --dlc-arrow-size: 64px;
+        --dlc-arrow-fg: #14161b;
+        --dlc-arrow-bg: rgb(255 255 255 / 85%);
+      }
+      .bb-maserati .dl-carousel-arrow {
+        box-shadow: 0 2px 10px rgb(0 0 0 / 25%);
+      }
+      @media (min-width: 992px) {
+        .bb-maserati {
+          --dlc-peek: 23%;
+        }
+      }
+      .bb-maserati-card {
+        display: block;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-maserati-wordmark {
+        display: block;
+        margin-block-end: 0.5rem;
+        font-size: 1.5rem;
+        font-style: italic;
+        font-weight: 700;
+        letter-spacing: 0.06em;
+      }
+      .bb-maserati-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-maserati-card p {
+        margin: 0.5rem 0 0;
+        font-size: 1.15rem;
+      }
+
+      .bb-mazda {
+        --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 769px) {
+        .bb-mazda {
+          --dlc-per-view: 2;
+        }
+      }
+      @media (min-width: 992px) {
+        .bb-mazda {
+          --dlc-per-view: 3;
+        }
+      }
+
+      .bb-mazda-card {
+        display: flex;
+        flex-direction: column;
+        color: #222;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-mazda-card p {
+        order: -1;
+        margin: 0 0 0.5rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+        letter-spacing: 0.12em;
+        text-transform: uppercase;
+      }
+      .bb-mazda-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-mazda-card small {
+        align-self: center;
+        margin-block-start: 0.75rem;
+        padding: 0.35rem 0.9rem;
+        font-size: 0.7rem;
+        letter-spacing: 0.14em;
+        text-transform: uppercase;
+        background: #ececec;
+      }
+
+      .bb-mitsubishi {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 461px) {
+        .bb-mitsubishi {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 769px) {
+        .bb-mitsubishi {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .bb-mitsubishi .dl-carousel-dots {
+        display: none;
+      }
+      .bb-mitsubishi {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-mitsubishi-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-mitsubishi-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-mitsubishi-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-nissan {
+        --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 401px) {
+        .bb-nissan {
+          --dlc-per-view: 2;
+        }
+      }
+      @media (min-width: 601px) {
+        .bb-nissan {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 992px) {
+        .bb-nissan {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .bb-nissan .dl-carousel-dots {
+        display: none;
+      }
+      .bb-nissan {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-nissan-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-nissan-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-nissan-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-powersports {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 461px) {
+        .bb-powersports {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 993px) {
+        .bb-powersports {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .bb-powersports .dl-carousel-dots {
+        display: none;
+      }
+      .bb-powersports {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-powersports-card {
+        display: block;
+        color: #222;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-powersports-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-powersports-card p {
+        margin: 0.5rem 0 0;
+        font-size: 1.05rem;
+        font-weight: 700;
+        letter-spacing: 0.18em;
+        text-transform: uppercase;
+      }
+
+      .bb-subaru {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 540px) {
+        .bb-subaru {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 992px) {
+        .bb-subaru {
+          --dlc-per-view: 4;
+        }
+      }
+      @media (min-width: 1200px) {
+        .bb-subaru {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .bb-subaru .dl-carousel-dots {
+        display: none;
+      }
+      .bb-subaru {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-subaru-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-subaru-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-subaru-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
+      }
+
+      .bb-toyota {
+        --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 541px) {
+        .bb-toyota {
+          --dlc-per-view: 2;
+        }
+      }
+
+      .bb-toyota .dl-carousel-dots {
+        display: none;
+      }
+      .bb-toyota {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-toyota {
+        --dlc-gap: 1rem;
+      }
+      .bb-toyota-card {
+        display: block;
+        overflow: hidden;
+        color: #fff;
+        text-decoration: none;
+        background: #2a2a2a;
+        border-radius: 8px;
+      }
+      .bb-toyota-card img {
+        display: block;
+        inline-size: 100%;
+        block-size: auto;
+        aspect-ratio: 16 / 10;
+        object-fit: cover;
+      }
+      .bb-toyota-copy {
+        padding: 0.9rem 1rem 1.1rem;
+      }
+      .bb-toyota-copy small {
+        color: #c9c9c9;
+      }
+      .bb-toyota-copy h3 {
+        margin: 0.15rem 0 0;
+        font-size: 1.05rem;
+      }
+
+      .bb-volkswagen {
+        --dlc-per-view: 1;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 541px) {
+        .bb-volkswagen {
+          --dlc-per-view: 2;
+        }
+      }
+      @media (min-width: 993px) {
+        .bb-volkswagen {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 1201px) {
+        .bb-volkswagen {
+          --dlc-per-view: 4;
+        }
+      }
+
+      .bb-volkswagen .dl-carousel-dots {
+        display: none;
+      }
+      .bb-volkswagen {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-volkswagen {
+        --dlc-gap: 1rem;
+      }
+      .bb-volkswagen-card {
+        display: block;
+        color: #0b2a5b;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-volkswagen-tile {
+        display: block;
+        padding: 8% 6%;
+        background: #e2e6ea;
+      }
+      .bb-volkswagen-card--feature .bb-volkswagen-tile {
+        background: #0b2a5b;
+      }
+      .bb-volkswagen-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-volkswagen-card p {
+        margin: 0.4rem 0 0;
+        font-weight: 700;
+      }
+
+      .bb-volvo {
+        --dlc-per-view: 2;
+        --dlc-peek: 60px;
+        --dlc-gap: 0.5rem;
+      }
+      @media (min-width: 540px) {
+        .bb-volvo {
+          --dlc-per-view: 3;
+        }
+      }
+      @media (min-width: 992px) {
+        .bb-volvo {
+          --dlc-per-view: 4;
+        }
+      }
+      @media (min-width: 1200px) {
+        .bb-volvo {
+          --dlc-per-view: 5;
+        }
+      }
+
+      .bb-volvo .dl-carousel-dots {
+        display: none;
+      }
+      .bb-volvo {
+        --dlc-controls-space: 0px;
+      }
+
+      .bb-volvo-card {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-end;
+        block-size: 100%;
+        color: inherit;
+        text-align: center;
+        text-decoration: none;
+      }
+      .bb-volvo-card img {
+        inline-size: 100%;
+        block-size: auto;
+        object-fit: contain;
+      }
+      .bb-volvo-card p {
+        margin: 0.25rem 0 0;
+        font-weight: 600;
       }
     </style>
   </head>
@@ -84,248 +1410,2740 @@
         <input id="brand-q" type="text" autocomplete="off" placeholder="e.g. Kia, tabs, no slider" />
         <p class="demo-vh" role="status" id="brand-count"></p>
       </div>
-      <div class="demo-scroll">
-        <table class="brand-table">
-          <thead>
-            <tr>
-              <th scope="col">Brand</th>
-              <th scope="col">What its model bar is</th>
-              <th scope="col">Cards per view</th>
-              <th scope="col">Copy it from</th>
-              <th scope="col">Official example</th>
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row">Acura</th>
-              <td>Slider</td>
-              <td>2 / 3 / 5</td>
-              <td><a href="model-bars.html#acura">Acura ladder</a></td>
-              <td><a href="https://acurademo1.dealeron.com/">acurademo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Alfa Romeo</th>
-              <td>Slider — tall photo tiles with a CTA</td>
-              <td>1 / 2 / 3 / 4 / 6</td>
-              <td><a href="model-bars.html#alfaromeo">Alfa Romeo ladder</a></td>
-              <td><a href="https://alfaromeodemo1.dealeron.com/">alfaromeodemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Audi</th>
-              <td>Slider</td>
-              <td>1 / 2 / 3 / 4 / 6</td>
-              <td><a href="model-bars.html#audi">Audi ladder</a></td>
-              <td><a href="https://audidemo1.dealeron.com/">audidemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">BMW</th>
-              <td>Tab panes; a static stacked list on phones — no slider</td>
-              <td>&mdash;</td>
-              <td><a href="model-bars.html#static-bars">Not-sliders family</a> &middot; <a href="index.html#modelbar-tabs">tab wiring</a></td>
-              <td><a href="https://bmwdemo1.dealeron.com/">bmwdemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Buick</th>
-              <td>Slider</td>
-              <td>2 / 3 / 4</td>
-              <td><a href="model-bars.html#buick">Buick ladder</a></td>
-              <td><a href="https://buickdemo1.dealeron.com/">buickdemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Cadillac</th>
-              <td>Slider under body-style tabs, dark band</td>
-              <td>2 / 3 / 4 / 5</td>
-              <td><a href="model-bars.html#chevrolet">Chevrolet ladder, dark look</a></td>
-              <td><a href="https://cadillacdemo1.dealeron.com/">cadillacdemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Chevrolet</th>
-              <td>Tabbed slider (tabs are the official version since Nov 2025)</td>
-              <td>2 / 3 / 4 / 5</td>
-              <td><a href="model-bars.html#chevrolet">Chevrolet ladder</a> &middot; <a href="index.html#modelbar-tabs">tab wiring</a></td>
-              <td><a href="https://chevroletdemo1.dealeron.com/">chevroletdemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Chrysler / Dodge / Jeep / Ram</th>
-              <td>Brand-logo tabs over sliders on a dark band</td>
-              <td>2 / 3 / 6</td>
-              <td><a href="model-bars.html#cdjr">CDJR ladder</a></td>
-              <td><a href="https://cdjrdemo1.dealeron.com/">cdjrdemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Ferrari</th>
-              <td>Slider — wordmark band, or lifestyle photo cards</td>
-              <td>1 / 3 &middot; 1 / 2 / 3 / 4</td>
-              <td><a href="model-bars.html#ferrari">Ferrari band</a> &middot; <a href="model-bars.html#ferrari-photo">photo cards</a></td>
-              <td><a href="https://ferraridemo1.dealeron.com/">ferraridemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Fiat</th>
-              <td>Rides the CDJR bar (Fiat-including variant)</td>
-              <td>2 / 3 / 6</td>
-              <td><a href="model-bars.html#cdjr">CDJR ladder</a></td>
-              <td><a href="https://cdjrdemo1.dealeron.com/">cdjrdemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Ford</th>
-              <td>Slider, a static CSS grid, and a tabbed version</td>
-              <td>1 / 3 / 5</td>
-              <td><a href="model-bars.html#ford">Ford ladder</a> &middot; <a href="model-bars.html#static-bars">static grid</a></td>
-              <td><a href="https://forddemo3.dealeron.com/">forddemo3</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Genesis</th>
-              <td>Tabbed slider with inventory counts</td>
-              <td>1 / 2 / 3 / 4 (new platform: 1 / 2 / 3)</td>
-              <td><a href="model-bars.html#genesis">Genesis ladder</a></td>
-              <td><a href="https://genesisdemo1.dealeron.com/">genesisdemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">GMC</th>
-              <td>Tabs; the slick version rides the Acura tiers</td>
-              <td>2 / 3 / 5</td>
-              <td><a href="model-bars.html#acura">Acura ladder</a> &middot; <a href="index.html#modelbar-tabs">tab wiring</a></td>
-              <td><a href="https://gmcdemo1.dealeron.com/">gmcdemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Group sites</th>
-              <td>Autoplaying make-logo and rooftop-location rails</td>
-              <td>2 / 4 / 7 &middot; 1 / 2 / 4</td>
-              <td><a href="model-bars.html#group">Group-site strips</a></td>
-              <td><a href="https://groupdemo1.dealeron.com/">groupdemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Honda</th>
-              <td>Slider (plus a tabbed variant)</td>
-              <td>2 / 3 / 5</td>
-              <td><a href="model-bars.html#acura">Acura ladder</a></td>
-              <td><a href="https://hondademo4.dealeron.com/">hondademo4</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Hyundai</th>
-              <td>Slider, and a tabbed version</td>
-              <td>1 / 3 / 4 / 5</td>
-              <td><a href="model-bars.html#hyundai">Hyundai ladder</a></td>
-              <td><a href="https://hyundaidemo1.dealeron.com/">hyundaidemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">INFINITI</th>
-              <td>Static tile grid — no slider</td>
-              <td>2 / 2 / 3 across</td>
-              <td><a href="model-bars.html#static-bars">tile-grid family</a></td>
-              <td><a href="https://infinitidemo1.dealeron.com/">infinitidemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Jaguar</th>
-              <td>Slider — photo cards with a tagline</td>
-              <td>2 / 3 / 4</td>
-              <td><a href="model-bars.html#buick">Buick ladder</a></td>
-              <td><a href="https://jaguardemo3.dealeron.com/">jaguardemo3</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Kia</th>
-              <td>Slider; a tabbed version; and a centre-mode version</td>
-              <td>2 / 3 / 5</td>
-              <td><a href="model-bars.html#acura">Acura ladder</a> &middot; <a href="index.html#peek">centre mode</a></td>
-              <td><a href="https://kiademo3.dealeron.com/">kiademo3</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Land Rover</th>
-              <td>Slider — photo cards with a tagline</td>
-              <td>2 / 3 / 4</td>
-              <td><a href="model-bars.html#buick">Buick ladder</a></td>
-              <td><a href="https://landroverdemo3.dealeron.com/">landroverdemo3</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Lexus</th>
-              <td>Tabbed slider; the v2 look rides the Acura tiers</td>
-              <td>1 / 2 / 3 / 5</td>
-              <td><a href="model-bars.html#lexus">Lexus ladder</a></td>
-              <td><a href="https://lexusdemo1.dealeron.com/">lexusdemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Lincoln</th>
-              <td>Slider</td>
-              <td>2 / 3 / 4</td>
-              <td><a href="model-bars.html#lincoln">Lincoln ladder</a></td>
-              <td><a href="https://lincolndemo2.dealeron.com/">lincolndemo2</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Maserati</th>
-              <td>Spotlight slider — one huge centred card</td>
-              <td>1-up centre mode</td>
-              <td><a href="model-bars.html#maserati">Maserati spotlight</a></td>
-              <td><a href="https://maseratidemo4.dealeron.com/">maseratidemo4</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Mazda</th>
-              <td>Tabbed slider — and it keeps its dots</td>
-              <td>1 / 2 / 3</td>
-              <td><a href="model-bars.html#mazda">Mazda ladder</a></td>
-              <td><a href="https://mazdademo1.dealeron.com/">mazdademo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Mitsubishi</th>
-              <td>Slider</td>
-              <td>2 / 3 / 5</td>
-              <td><a href="model-bars.html#acura">Acura ladder</a></td>
-              <td><a href="https://mitsubishidemo1.dealeron.com/">mitsubishidemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Nissan</th>
-              <td>Tabbed slider</td>
-              <td>1 / 2 / 3 / 5</td>
-              <td><a href="model-bars.html#lexus">Lexus ladder</a></td>
-              <td><a href="https://nissandemo1.dealeron.com/">nissandemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Porsche</th>
-              <td>Hover-reveal photo tile grid — no slider</td>
-              <td>2 / 3 / 6 across</td>
-              <td><a href="model-bars.html#static-bars">tile-grid family</a></td>
-              <td><a href="https://porschedemo1.dealeron.com/">porschedemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Powersports</th>
-              <td>Category bar and a brand-logo strip</td>
-              <td>2 / 3 / 5 &middot; 2 / 3 / 6</td>
-              <td><a href="model-bars.html#powersports-cat">category bar</a> &middot; <a href="model-bars.html#powersports-brands">brand strip</a></td>
-              <td><a href="https://powersportsdemo2.dealeron.com/">powersportsdemo2</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Subaru</th>
-              <td>Tabbed slider (icon tabs)</td>
-              <td>2 / 3 / 4 / 5</td>
-              <td><a href="model-bars.html#chevrolet">Chevrolet ladder</a></td>
-              <td><a href="https://subarudemo2.dealeron.com/">subarudemo2</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Toyota</th>
-              <td>Slider (photo cards) plus three tabbed versions on the Lexus tiers</td>
-              <td>1 / 2 own &middot; 1 / 2 / 3 / 5</td>
-              <td><a href="model-bars.html#toyota">Toyota photo cards</a> &middot; <a href="model-bars.html#lexus">Lexus ladder</a></td>
-              <td><a href="https://toyotademo1.dealeron.com/">toyotademo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Volkswagen</th>
-              <td>Tabbed slider — a colour tile behind each car</td>
-              <td>1 / 2 / 3 / 4</td>
-              <td><a href="model-bars.html#genesis">Genesis ladder, tile look</a></td>
-              <td><a href="https://vwdemo1.dealeron.com/">vwdemo1</a></td>
-            </tr>
-            <tr>
-              <th scope="row">Volvo</th>
-              <td>Slider</td>
-              <td>2 / 3 / 4 / 5</td>
-              <td><a href="model-bars.html#chevrolet">Chevrolet ladder</a></td>
-              <td><a href="https://volvodemo1.dealeron.com/">volvodemo1</a></td>
-            </tr>
-          </tbody>
-        </table>
-      </div>
+      <section class="demo-section" id="b-acura">
+        <h2 id="b-acura-h">Acura</h2>
+        <p class="demo-sub">
+          Slider. Cards per view: 2 / 3 / 5. Copy the finished build: <a href="model-bars.html#acura">Acura ladder</a>. Official example: <a href="https://acurademo1.dealeron.com/">acurademo1</a>.
+        </p>
+        <div class="dl-carousel bb-acura" data-slider data-step="slide" aria-labelledby="b-acura-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-acura-card" href="index.html#modelbar" aria-label="Explore the Integra"
+                ><img src="img/oem/acura/integra.png" width="320" height="240" alt="2026 Acura Integra" loading="lazy" decoding="async" />
+                <p>Integra</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-acura-card" href="index.html#modelbar" aria-label="Explore the TLX"
+                ><img src="img/oem/acura/tlx.png" width="320" height="240" alt="2026 Acura TLX" loading="lazy" decoding="async" />
+                <p>TLX</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-acura-card" href="index.html#modelbar" aria-label="Explore the ADX"
+                ><img src="img/oem/acura/adx.png" width="320" height="240" alt="2026 Acura ADX" loading="lazy" decoding="async" />
+                <p>ADX</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-acura-card" href="index.html#modelbar" aria-label="Explore the RDX"
+                ><img src="img/oem/acura/rdx.png" width="320" height="240" alt="2026 Acura RDX" loading="lazy" decoding="async" />
+                <p>RDX</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-acura-card" href="index.html#modelbar" aria-label="Explore the ZDX"
+                ><img src="img/oem/acura/zdx.png" width="480" height="300" alt="2024 Acura ZDX" loading="lazy" decoding="async" />
+                <p>ZDX</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-acura-card" href="index.html#modelbar" aria-label="Explore the MDX"
+                ><img src="img/oem/acura/mdx.png" width="320" height="240" alt="2026 Acura MDX" loading="lazy" decoding="async" />
+                <p>MDX</p></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-alfa-romeo">
+        <h2 id="b-alfa-romeo-h">Alfa Romeo</h2>
+        <p class="demo-sub">
+          Slider — tall photo tiles with a CTA. Cards per view: 1 / 2 / 3 / 4 / 6. Copy the finished build: <a href="model-bars.html#alfaromeo">Alfa Romeo ladder</a>. Official example:
+          <a href="https://alfaromeodemo1.dealeron.com/">alfaromeodemo1</a>.
+        </p>
+        <div class="dl-carousel bb-alfa-romeo" data-slider data-step="slide" aria-labelledby="b-alfa-romeo-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-alfa-romeo-card" href="index.html#models"
+                ><p class="bb-alfa-romeo-name">Tonale</p>
+                <img src="img/oem/alfaromeo/tonale.jpg" width="300" height="500" alt="" loading="lazy" decoding="async" /><span class="bb-alfa-romeo-cta">Browse inventory</span></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-alfa-romeo-card" href="index.html#models"
+                ><p class="bb-alfa-romeo-name">Tonale Hybrid</p>
+                <img src="img/oem/alfaromeo/tonale-hybrid.jpg" width="300" height="500" alt="" loading="lazy" decoding="async" /><span class="bb-alfa-romeo-cta">Browse inventory</span></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-alfa-romeo-card" href="index.html#models"
+                ><p class="bb-alfa-romeo-name">Giulia</p>
+                <img src="img/oem/alfaromeo/giulia.jpg" width="300" height="500" alt="" loading="lazy" decoding="async" /><span class="bb-alfa-romeo-cta">Browse inventory</span></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-alfa-romeo-card" href="index.html#models"
+                ><p class="bb-alfa-romeo-name">Stelvio</p>
+                <img src="img/oem/alfaromeo/stelvio.jpg" width="300" height="500" alt="" loading="lazy" decoding="async" /><span class="bb-alfa-romeo-cta">Browse inventory</span></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-alfa-romeo-card" href="index.html#models"
+                ><p class="bb-alfa-romeo-name">Giulia Quadrifoglio</p>
+                <img src="img/oem/alfaromeo/giulia-quadrifoglio.jpg" width="300" height="500" alt="" loading="lazy" decoding="async" /><span class="bb-alfa-romeo-cta">Browse inventory</span></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-alfa-romeo-card" href="index.html#models"
+                ><p class="bb-alfa-romeo-name">Stelvio Quadrifoglio</p>
+                <img src="img/oem/alfaromeo/stelvio-quadrifoglio.jpg" width="300" height="500" alt="" loading="lazy" decoding="async" /><span class="bb-alfa-romeo-cta">Browse inventory</span></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-audi">
+        <h2 id="b-audi-h">Audi</h2>
+        <p class="demo-sub">
+          Slider. Cards per view: 1 / 2 / 3 / 4 / 6. Copy the finished build: <a href="model-bars.html#audi">Audi ladder</a>. Official example: <a href="https://audidemo1.dealeron.com/">audidemo1</a>.
+        </p>
+        <div class="dl-carousel bb-audi" data-slider data-step="slide" aria-labelledby="b-audi-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-audi-card" href="index.html#modelbar" aria-label="Explore the e-tron GT"
+                ><img src="img/oem/audi/e-tron-gt.webp" width="420" height="180" alt="2026 Audi e-tron GT" loading="lazy" decoding="async" />
+                <p>e-tron GT</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-audi-card" href="index.html#modelbar" aria-label="Explore the Q4 e-tron"
+                ><img src="img/oem/audi/q4-e-tron.webp" width="420" height="180" alt="2026 Audi Q4 e-tron" loading="lazy" decoding="async" />
+                <p>Q4 e-tron</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-audi-card" href="index.html#modelbar" aria-label="Explore the Q6 e-tron"
+                ><img src="img/oem/audi/q6-e-tron.webp" width="420" height="180" alt="2026 Audi Q6 e-tron" loading="lazy" decoding="async" />
+                <p>Q6 e-tron</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-audi-card" href="index.html#modelbar" aria-label="Explore the Q3"
+                ><img src="img/oem/audi/q3.webp" width="420" height="180" alt="2026 Audi Q3" loading="lazy" decoding="async" />
+                <p>Q3</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-audi-card" href="index.html#modelbar" aria-label="Explore the Q5"
+                ><img src="img/oem/audi/q5.webp" width="420" height="180" alt="2026 Audi Q5" loading="lazy" decoding="async" />
+                <p>Q5</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-audi-card" href="index.html#modelbar" aria-label="Explore the Q7"
+                ><img src="img/oem/audi/q7.webp" width="420" height="180" alt="2026 Audi Q7" loading="lazy" decoding="async" />
+                <p>Q7</p></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-bmw">
+        <h2 id="b-bmw-h">BMW</h2>
+        <p class="demo-sub">
+          Tab panes; a static stacked list on phones — no slider. Cards per view: &mdash;. Copy the finished build: <a href="model-bars.html#static-bars">Not-sliders family</a> &middot;
+          <a href="index.html#modelbar-tabs">tab wiring</a>. Official example: <a href="https://bmwdemo1.dealeron.com/">bmwdemo1</a>.
+        </p>
+        <p class="brand-note">
+          BMW&rsquo;s official bar is tab panes with a static stacked list on phones &mdash; there is no slider to render. See <a href="model-bars.html#static-bars">the non-slider family</a> for the
+          shape and <a href="index.html#modelbar-tabs">the tabs demo</a> for the wiring.
+        </p>
+      </section>
+
+      <section class="demo-section" id="b-buick">
+        <h2 id="b-buick-h">Buick</h2>
+        <p class="demo-sub">
+          Slider. Cards per view: 2 / 3 / 4. Copy the finished build: <a href="model-bars.html#buick">Buick ladder</a>. Official example: <a href="https://buickdemo1.dealeron.com/">buickdemo1</a>.
+        </p>
+        <div class="dl-carousel bb-buick" data-slider data-step="slide" aria-labelledby="b-buick-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-buick-card" href="index.html#modelbar" aria-label="Explore the Envista"
+                ><img src="img/oem/buick/envista.png" width="320" height="240" alt="2026 Buick Envista" loading="lazy" decoding="async" />
+                <p>Envista</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-buick-card" href="index.html#modelbar" aria-label="Explore the Encore GX"
+                ><img src="img/oem/buick/encore-gx.png" width="320" height="240" alt="2026 Buick Encore GX" loading="lazy" decoding="async" />
+                <p>Encore GX</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-buick-card" href="index.html#modelbar" aria-label="Explore the Envision"
+                ><img src="img/oem/buick/envision.png" width="320" height="240" alt="2026 Buick Envision" loading="lazy" decoding="async" />
+                <p>Envision</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-buick-card" href="index.html#modelbar" aria-label="Explore the Enclave"
+                ><img src="img/oem/buick/enclave.png" width="320" height="240" alt="2026 Buick Enclave" loading="lazy" decoding="async" />
+                <p>Enclave</p></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-cadillac">
+        <h2 id="b-cadillac-h">Cadillac <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Slider under body-style tabs, dark band. Cards per view: 2 / 3 / 4 / 5. Copy the finished build: <a href="model-bars.html#chevrolet">Chevrolet ladder, dark look</a>. Official example:
+          <a href="https://cadillacdemo1.dealeron.com/">cadillacdemo1</a>.
+        </p>
+        <div class="dl-carousel bb-cadillac" data-slider data-step="slide" aria-labelledby="b-cadillac-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-cadillac-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Silverado 1500"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-cadillac-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Colorado"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-cadillac-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Tahoe"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-cadillac-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Suburban"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-cadillac-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Traverse"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-cadillac-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Equinox"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-cadillac-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trailblazer"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-cadillac-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trax"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-chevrolet">
+        <h2 id="b-chevrolet-h">Chevrolet</h2>
+        <p class="demo-sub">
+          Tabbed slider (tabs are the official version since Nov 2025). Cards per view: 2 / 3 / 4 / 5. Copy the finished build: <a href="model-bars.html#chevrolet">Chevrolet ladder</a> &middot;
+          <a href="index.html#modelbar-tabs">tab wiring</a>. Official example: <a href="https://chevroletdemo1.dealeron.com/">chevroletdemo1</a>.
+        </p>
+        <div class="dl-carousel bb-chevrolet" data-slider data-step="slide" aria-labelledby="b-chevrolet-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-chevrolet-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Silverado 1500"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-chevrolet-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Colorado"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-chevrolet-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Tahoe"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-chevrolet-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Suburban"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-chevrolet-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Traverse"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-chevrolet-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Equinox"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-chevrolet-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trailblazer"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-chevrolet-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trax"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+        <p class="brand-note">The official presentation is tabbed &mdash; the <a href="model-bars.html#chevrolet">library&rsquo;s Chevrolet section</a> runs the full five-tab version live.</p>
+      </section>
+
+      <section class="demo-section" id="b-chrysler-dodge-jeep-ram">
+        <h2 id="b-chrysler-dodge-jeep-ram-h">Chrysler / Dodge / Jeep / Ram</h2>
+        <p class="demo-sub">
+          Brand-logo tabs over sliders on a dark band. Cards per view: 2 / 3 / 6. Copy the finished build: <a href="model-bars.html#cdjr">CDJR ladder</a>. Official example:
+          <a href="https://cdjrdemo1.dealeron.com/">cdjrdemo1</a>.
+        </p>
+        <div class="dl-carousel bb-chrysler-dodge-jeep-ram" data-slider data-step="slide" aria-labelledby="b-chrysler-dodge-jeep-ram-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-chrysler-dodge-jeep-ram-card" href="index.html#modelbar" aria-label="Explore the Pacifica"
+                ><img src="img/oem/cdjr/chrysler-pacifica.png" width="480" height="360" alt="2026 Chrysler Pacifica" loading="lazy" decoding="async" />
+                <p>Pacifica</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-chrysler-dodge-jeep-ram-card" href="index.html#modelbar" aria-label="Explore the Voyager"
+                ><img src="img/oem/cdjr/chrysler-voyager.png" width="480" height="360" alt="2026 Chrysler Voyager" loading="lazy" decoding="async" />
+                <p>Voyager</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-chrysler-dodge-jeep-ram-card" href="index.html#modelbar" aria-label="Explore the Charger"
+                ><img src="img/oem/cdjr/dodge-charger.png" width="480" height="360" alt="2026 Dodge Charger" loading="lazy" decoding="async" />
+                <p>Charger</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-chrysler-dodge-jeep-ram-card" href="index.html#modelbar" aria-label="Explore the Durango"
+                ><img src="img/oem/cdjr/dodge-durango.png" width="480" height="360" alt="2026 Dodge Durango" loading="lazy" decoding="async" />
+                <p>Durango</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-chrysler-dodge-jeep-ram-card" href="index.html#modelbar" aria-label="Explore the Wrangler"
+                ><img src="img/oem/cdjr/jeep-wrangler.png" width="480" height="360" alt="2026 Jeep Wrangler" loading="lazy" decoding="async" />
+                <p>Wrangler</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-chrysler-dodge-jeep-ram-card" href="index.html#modelbar" aria-label="Explore the Grand Cherokee"
+                ><img src="img/oem/cdjr/jeep-grand-cherokee.png" width="480" height="360" alt="2026 Jeep Grand Cherokee" loading="lazy" decoding="async" />
+                <p>Grand Cherokee</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-chrysler-dodge-jeep-ram-card" href="index.html#modelbar" aria-label="Explore the Ram 1500"
+                ><img src="img/oem/cdjr/ram-1500.png" width="480" height="360" alt="2026 Ram 1500" loading="lazy" decoding="async" />
+                <p>Ram 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-chrysler-dodge-jeep-ram-card" href="index.html#modelbar" aria-label="Explore the Ram 2500"
+                ><img src="img/oem/cdjr/ram-2500.png" width="480" height="360" alt="2026 Ram 2500" loading="lazy" decoding="async" />
+                <p>Ram 2500</p></a
+              >
+            </li>
+          </ul>
+        </div>
+        <p class="brand-note">On the real sites this bar sits under brand-logo tabs &mdash; one pane per brand; the <a href="index.html#modelbar-tabs">tabs demo</a> shows the wiring.</p>
+      </section>
+
+      <section class="demo-section" id="b-ferrari">
+        <h2 id="b-ferrari-h">Ferrari <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Slider — wordmark band, or lifestyle photo cards. Cards per view: 1 / 3 &middot; 1 / 2 / 3 / 4. Copy the finished build: <a href="model-bars.html#ferrari">Ferrari band</a> &middot;
+          <a href="model-bars.html#ferrari-photo">photo cards</a>. Official example: <a href="https://ferraridemo1.dealeron.com/">ferraridemo1</a>.
+        </p>
+        <div class="dl-carousel bb-ferrari" data-slider data-step="slide" aria-labelledby="b-ferrari-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-ferrari-card" href="index.html#modelbar"
+                ><span class="bb-ferrari-wordmark">Silverado 1500</span
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-ferrari-card" href="index.html#modelbar"
+                ><span class="bb-ferrari-wordmark">Colorado</span
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-ferrari-card" href="index.html#modelbar"
+                ><span class="bb-ferrari-wordmark">Tahoe</span
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-ferrari-card" href="index.html#modelbar"
+                ><span class="bb-ferrari-wordmark">Suburban</span
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-ferrari-card" href="index.html#modelbar"
+                ><span class="bb-ferrari-wordmark">Traverse</span
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-ferrari-card" href="index.html#modelbar"
+                ><span class="bb-ferrari-wordmark">Equinox</span
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-ferrari-card" href="index.html#modelbar"
+                ><span class="bb-ferrari-wordmark">Trailblazer</span
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-ferrari-card" href="index.html#modelbar"
+                ><span class="bb-ferrari-wordmark">Trax</span
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+        <p class="brand-note">Ferrari also ships a lifestyle photo-card version &mdash; <a href="model-bars.html#ferrari-photo">running live in the library</a>.</p>
+      </section>
+
+      <section class="demo-section" id="b-fiat">
+        <h2 id="b-fiat-h">Fiat</h2>
+        <p class="demo-sub">
+          Rides the CDJR bar (Fiat-including variant). Cards per view: 2 / 3 / 6. Copy the finished build: <a href="model-bars.html#cdjr">CDJR ladder</a>. Official example:
+          <a href="https://cdjrdemo1.dealeron.com/">cdjrdemo1</a>.
+        </p>
+        <p class="brand-note">Fiat rides the CDJR bar (the Fiat-including variant) &mdash; see <a href="#b-chrysler-dodge-jeep-ram">Chrysler / Dodge / Jeep / Ram</a> above.</p>
+      </section>
+
+      <section class="demo-section" id="b-ford">
+        <h2 id="b-ford-h">Ford</h2>
+        <p class="demo-sub">
+          Slider, a static CSS grid, and a tabbed version. Cards per view: 1 / 3 / 5. Copy the finished build: <a href="model-bars.html#ford">Ford ladder</a> &middot;
+          <a href="model-bars.html#static-bars">static grid</a>. Official example: <a href="https://forddemo3.dealeron.com/">forddemo3</a>.
+        </p>
+        <div class="dl-carousel bb-ford" data-slider data-step="slide" aria-labelledby="b-ford-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-ford-card" href="index.html#modelbar" aria-label="Explore the Mustang"
+                ><img src="img/oem/ford/mustang.png" width="320" height="240" alt="2026 Ford Mustang" loading="lazy" decoding="async" />
+                <p>Mustang</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-ford-card" href="index.html#modelbar" aria-label="Explore the Mach-E"
+                ><img src="img/oem/ford/mach-e.png" width="320" height="240" alt="2026 Ford Mach-E" loading="lazy" decoding="async" />
+                <p>Mach-E</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-ford-card" href="index.html#modelbar" aria-label="Explore the Escape"
+                ><img src="img/oem/ford/escape.png" width="320" height="240" alt="2026 Ford Escape" loading="lazy" decoding="async" />
+                <p>Escape</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-ford-card" href="index.html#modelbar" aria-label="Explore the Explorer"
+                ><img src="img/oem/ford/explorer.png" width="320" height="240" alt="2026 Ford Explorer" loading="lazy" decoding="async" />
+                <p>Explorer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-ford-card" href="index.html#modelbar" aria-label="Explore the Bronco"
+                ><img src="img/oem/ford/bronco.png" width="320" height="240" alt="2026 Ford Bronco" loading="lazy" decoding="async" />
+                <p>Bronco</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-ford-card" href="index.html#modelbar" aria-label="Explore the F-150"
+                ><img src="img/oem/ford/f-150.png" width="320" height="240" alt="2026 Ford F-150" loading="lazy" decoding="async" />
+                <p>F-150</p></a
+              >
+            </li>
+          </ul>
+        </div>
+        <p class="brand-note">
+          Ford also ships a pure-CSS static grid and a tabbed version &mdash; see <a href="model-bars.html#static-bars">the non-slider family</a> and
+          <a href="index.html#modelbar-tabs">the tabs demo</a>.
+        </p>
+      </section>
+
+      <section class="demo-section" id="b-genesis">
+        <h2 id="b-genesis-h">Genesis</h2>
+        <p class="demo-sub">
+          Tabbed slider with inventory counts. Cards per view: 1 / 2 / 3 / 4 (new platform: 1 / 2 / 3). Copy the finished build: <a href="model-bars.html#genesis">Genesis ladder</a>. Official example:
+          <a href="https://genesisdemo1.dealeron.com/">genesisdemo1</a>.
+        </p>
+        <div class="dl-carousel bb-genesis" data-slider data-step="slide" aria-labelledby="b-genesis-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-genesis-card" href="index.html#modelbar"
+                ><img src="img/oem/genesis/g70.png" width="400" height="225" alt="2026 Genesis G70" loading="lazy" decoding="async" />
+                <p>G70</p>
+                <small>53 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-genesis-card" href="index.html#modelbar"
+                ><img src="img/oem/genesis/g80.png" width="400" height="225" alt="2026 Genesis G80" loading="lazy" decoding="async" />
+                <p>G80</p>
+                <small>28 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-genesis-card" href="index.html#modelbar"
+                ><img src="img/oem/genesis/g90.png" width="400" height="225" alt="2026 Genesis G90" loading="lazy" decoding="async" />
+                <p>G90</p>
+                <small>8 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-genesis-card" href="index.html#modelbar"
+                ><img src="img/oem/genesis/gv60.png" width="640" height="360" alt="2026 Genesis GV60" loading="lazy" decoding="async" />
+                <p>GV60</p>
+                <small>5 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-genesis-card" href="index.html#modelbar"
+                ><img src="img/oem/genesis/gv70.png" width="400" height="225" alt="2026 Genesis GV70" loading="lazy" decoding="async" />
+                <p>GV70</p>
+                <small>198 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-genesis-card" href="index.html#modelbar"
+                ><img src="img/oem/genesis/gv80.png" width="400" height="225" alt="2026 Genesis GV80" loading="lazy" decoding="async" />
+                <p>GV80</p>
+                <small>134 Available</small></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-gmc">
+        <h2 id="b-gmc-h">GMC <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Tabs; the slick version rides the Acura tiers. Cards per view: 2 / 3 / 5. Copy the finished build: <a href="model-bars.html#acura">Acura ladder</a> &middot;
+          <a href="index.html#modelbar-tabs">tab wiring</a>. Official example: <a href="https://gmcdemo1.dealeron.com/">gmcdemo1</a>.
+        </p>
+        <div class="dl-carousel bb-gmc" data-slider data-step="slide" aria-labelledby="b-gmc-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-gmc-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Silverado 1500"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-gmc-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Colorado"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-gmc-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Tahoe"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-gmc-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Suburban"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-gmc-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Traverse"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-gmc-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Equinox"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-gmc-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trailblazer"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-gmc-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trax"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-group-sites">
+        <h2 id="b-group-sites-h">Group sites <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Autoplaying make-logo and rooftop-location rails. Cards per view: 2 / 4 / 7 &middot; 1 / 2 / 4. Copy the finished build: <a href="model-bars.html#group">Group-site strips</a>. Official
+          example: <a href="https://groupdemo1.dealeron.com/">groupdemo1</a>.
+        </p>
+        <div class="dl-carousel bb-group-sites" data-slider data-step="slide" data-autoplay="4000" aria-labelledby="b-group-sites-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-group-sites-card" href="index.html#modelbar" aria-label="Shop Silverado 1500"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+              /></a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-group-sites-card" href="index.html#modelbar" aria-label="Shop Colorado"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+              /></a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-group-sites-card" href="index.html#modelbar" aria-label="Shop Tahoe"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+              /></a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-group-sites-card" href="index.html#modelbar" aria-label="Shop Suburban"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+              /></a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-group-sites-card" href="index.html#modelbar" aria-label="Shop Traverse"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+              /></a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-group-sites-card" href="index.html#modelbar" aria-label="Shop Equinox"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+              /></a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-group-sites-card" href="index.html#modelbar" aria-label="Shop Trailblazer"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+              /></a>
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-group-sites-card" href="index.html#modelbar" aria-label="Shop Trax"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+              /></a>
+            </li>
+          </ul>
+        </div>
+        <p class="brand-note">The rooftop-location rail runs live in <a href="model-bars.html#group">the library&rsquo;s group-site section</a>.</p>
+      </section>
+
+      <section class="demo-section" id="b-honda">
+        <h2 id="b-honda-h">Honda <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Slider (plus a tabbed variant). Cards per view: 2 / 3 / 5. Copy the finished build: <a href="model-bars.html#acura">Acura ladder</a>. Official example:
+          <a href="https://hondademo4.dealeron.com/">hondademo4</a>.
+        </p>
+        <div class="dl-carousel bb-honda" data-slider data-step="slide" aria-labelledby="b-honda-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-honda-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Silverado 1500"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-honda-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Colorado"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-honda-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Tahoe"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-honda-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Suburban"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-honda-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Traverse"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-honda-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Equinox"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-honda-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trailblazer"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-honda-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trax"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-hyundai">
+        <h2 id="b-hyundai-h">Hyundai</h2>
+        <p class="demo-sub">
+          Slider, and a tabbed version. Cards per view: 1 / 3 / 4 / 5. Copy the finished build: <a href="model-bars.html#hyundai">Hyundai ladder</a>. Official example:
+          <a href="https://hyundaidemo1.dealeron.com/">hyundaidemo1</a>.
+        </p>
+        <div class="dl-carousel bb-hyundai" data-slider data-step="slide" aria-labelledby="b-hyundai-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-hyundai-card" href="index.html#modelbar" aria-label="Explore the Kona"
+                ><img src="img/oem/hyundai/kona.png" width="420" height="260" alt="2024 Hyundai Kona" loading="lazy" decoding="async" />
+                <p>Kona</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-hyundai-card" href="index.html#modelbar" aria-label="Explore the Tucson"
+                ><img src="img/oem/hyundai/tucson.png" width="420" height="260" alt="2024 Hyundai Tucson" loading="lazy" decoding="async" />
+                <p>Tucson</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-hyundai-card" href="index.html#modelbar" aria-label="Explore the Santa Fe"
+                ><img src="img/oem/hyundai/santa-fe.png" width="320" height="240" alt="2023 Hyundai Santa Fe" loading="lazy" decoding="async" />
+                <p>Santa Fe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-hyundai-card" href="index.html#modelbar" aria-label="Explore the Palisade"
+                ><img src="img/oem/hyundai/palisade.png" width="320" height="240" alt="2024 Hyundai Palisade" loading="lazy" decoding="async" />
+                <p>Palisade</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-hyundai-card" href="index.html#modelbar" aria-label="Explore the IONIQ 5"
+                ><img src="img/oem/hyundai/ioniq-5.png" width="420" height="260" alt="2024 Hyundai IONIQ 5" loading="lazy" decoding="async" />
+                <p>IONIQ 5</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-hyundai-card" href="index.html#modelbar" aria-label="Explore the Elantra"
+                ><img src="img/oem/hyundai/elantra.png" width="420" height="260" alt="2024 Hyundai Elantra" loading="lazy" decoding="async" />
+                <p>Elantra</p></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-infiniti">
+        <h2 id="b-infiniti-h">INFINITI</h2>
+        <p class="demo-sub">
+          Static tile grid — no slider. Cards per view: 2 / 2 / 3 across. Copy the finished build: <a href="model-bars.html#static-bars">tile-grid family</a>. Official example:
+          <a href="https://infinitidemo1.dealeron.com/">infinitidemo1</a>.
+        </p>
+        <p class="brand-note">
+          INFINITI&rsquo;s bar is a static tile grid &mdash; no slider. The shape runs live in <a href="model-bars.html#static-bars">the non-slider family</a> (landscape variant).
+        </p>
+      </section>
+
+      <section class="demo-section" id="b-jaguar">
+        <h2 id="b-jaguar-h">Jaguar <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Slider — photo cards with a tagline. Cards per view: 2 / 3 / 4. Copy the finished build: <a href="model-bars.html#buick">Buick ladder</a>. Official example:
+          <a href="https://jaguardemo3.dealeron.com/">jaguardemo3</a>.
+        </p>
+        <div class="dl-carousel bb-jaguar" data-slider data-step="slide" aria-labelledby="b-jaguar-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-jaguar-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Silverado 1500"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-jaguar-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Colorado"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-jaguar-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Tahoe"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-jaguar-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Suburban"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-jaguar-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Traverse"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-jaguar-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Equinox"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-jaguar-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trailblazer"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-jaguar-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trax"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+        <p class="brand-note">Jaguar dresses these tiers as photo cards with a tagline below each model.</p>
+      </section>
+
+      <section class="demo-section" id="b-kia">
+        <h2 id="b-kia-h">Kia <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Slider; a tabbed version; and a centre-mode version. Cards per view: 2 / 3 / 5. Copy the finished build: <a href="model-bars.html#acura">Acura ladder</a> &middot;
+          <a href="index.html#peek">centre mode</a>. Official example: <a href="https://kiademo3.dealeron.com/">kiademo3</a>.
+        </p>
+        <div class="dl-carousel bb-kia" data-slider data-step="slide" aria-labelledby="b-kia-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-kia-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Silverado 1500"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-kia-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Colorado"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-kia-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Tahoe"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-kia-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Suburban"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-kia-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Traverse"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-kia-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Equinox"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-kia-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trailblazer"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-kia-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trax"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+        <p class="brand-note">Kia also ships a tabbed version and a centre-mode version &mdash; the centre-mode recipe is <a href="index.html#peek">the peek pattern</a>.</p>
+      </section>
+
+      <section class="demo-section" id="b-land-rover">
+        <h2 id="b-land-rover-h">Land Rover <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Slider — photo cards with a tagline. Cards per view: 2 / 3 / 4. Copy the finished build: <a href="model-bars.html#buick">Buick ladder</a>. Official example:
+          <a href="https://landroverdemo3.dealeron.com/">landroverdemo3</a>.
+        </p>
+        <div class="dl-carousel bb-land-rover" data-slider data-step="slide" aria-labelledby="b-land-rover-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-land-rover-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Silverado 1500"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-land-rover-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Colorado"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-land-rover-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Tahoe"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-land-rover-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Suburban"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-land-rover-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Traverse"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-land-rover-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Equinox"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-land-rover-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trailblazer"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-land-rover-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trax"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+        <p class="brand-note">Land Rover dresses these tiers as photo cards, same as Jaguar.</p>
+      </section>
+
+      <section class="demo-section" id="b-lexus">
+        <h2 id="b-lexus-h">Lexus</h2>
+        <p class="demo-sub">
+          Tabbed slider; the v2 look rides the Acura tiers. Cards per view: 1 / 2 / 3 / 5. Copy the finished build: <a href="model-bars.html#lexus">Lexus ladder</a>. Official example:
+          <a href="https://lexusdemo1.dealeron.com/">lexusdemo1</a>.
+        </p>
+        <div class="dl-carousel bb-lexus" data-slider data-step="slide" aria-labelledby="b-lexus-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-lexus-card" href="index.html#modelbar" aria-label="Explore the UX Hybrid"
+                ><img src="img/oem/lexus/ux-hybrid.png" width="240" height="140" alt="2026 Lexus UX Hybrid" loading="lazy" decoding="async" />
+                <p>UX Hybrid</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-lexus-card" href="index.html#modelbar" aria-label="Explore the NX"
+                ><img src="img/oem/lexus/nx.png" width="240" height="140" alt="2026 Lexus NX" loading="lazy" decoding="async" />
+                <p>NX</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-lexus-card" href="index.html#modelbar" aria-label="Explore the NX Hybrid"
+                ><img src="img/oem/lexus/nx-hybrid.png" width="240" height="140" alt="2026 Lexus NX Hybrid" loading="lazy" decoding="async" />
+                <p>NX Hybrid</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-lexus-card" href="index.html#modelbar" aria-label="Explore the RZ"
+                ><img src="img/oem/lexus/rz.png" width="240" height="140" alt="2026 Lexus RZ" loading="lazy" decoding="async" />
+                <p>RZ</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-lexus-card" href="index.html#modelbar" aria-label="Explore the RX"
+                ><img src="img/oem/lexus/rx.png" width="240" height="140" alt="2026 Lexus RX" loading="lazy" decoding="async" />
+                <p>RX</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-lexus-card" href="index.html#modelbar" aria-label="Explore the GX"
+                ><img src="img/oem/lexus/gx.png" width="240" height="140" alt="2026 Lexus GX" loading="lazy" decoding="async" />
+                <p>GX</p></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-lincoln">
+        <h2 id="b-lincoln-h">Lincoln</h2>
+        <p class="demo-sub">
+          Slider. Cards per view: 2 / 3 / 4. Copy the finished build: <a href="model-bars.html#lincoln">Lincoln ladder</a>. Official example:
+          <a href="https://lincolndemo2.dealeron.com/">lincolndemo2</a>.
+        </p>
+        <div class="dl-carousel bb-lincoln" data-slider data-step="slide" aria-labelledby="b-lincoln-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-lincoln-card" href="index.html#modelbar" aria-label="Explore the Navigator"
+                ><img src="img/oem/lincoln/navigator.png" width="320" height="240" alt="2026 Lincoln Navigator" loading="lazy" decoding="async" />
+                <p>Navigator</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-lincoln-card" href="index.html#modelbar" aria-label="Explore the Aviator"
+                ><img src="img/oem/lincoln/aviator.png" width="320" height="240" alt="2026 Lincoln Aviator" loading="lazy" decoding="async" />
+                <p>Aviator</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-lincoln-card" href="index.html#modelbar" aria-label="Explore the Nautilus"
+                ><img src="img/oem/lincoln/nautilus.png" width="320" height="240" alt="2026 Lincoln Nautilus" loading="lazy" decoding="async" />
+                <p>Nautilus</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-lincoln-card" href="index.html#modelbar" aria-label="Explore the Corsair"
+                ><img src="img/oem/lincoln/corsair.png" width="320" height="240" alt="2026 Lincoln Corsair" loading="lazy" decoding="async" />
+                <p>Corsair</p></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-maserati">
+        <h2 id="b-maserati-h">Maserati <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Spotlight slider — one huge centred card. Cards per view: 1-up centre mode. Copy the finished build: <a href="model-bars.html#maserati">Maserati spotlight</a>. Official example:
+          <a href="https://maseratidemo4.dealeron.com/">maseratidemo4</a>.
+        </p>
+        <div class="dl-carousel bb-maserati" data-slider data-step="slide" aria-labelledby="b-maserati-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-maserati-card" href="index.html#modelbar"
+                ><span class="bb-maserati-wordmark">Silverado 1500</span
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-maserati-card" href="index.html#modelbar"
+                ><span class="bb-maserati-wordmark">Colorado</span
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-maserati-card" href="index.html#modelbar"
+                ><span class="bb-maserati-wordmark">Tahoe</span
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-maserati-card" href="index.html#modelbar"
+                ><span class="bb-maserati-wordmark">Suburban</span
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-maserati-card" href="index.html#modelbar"
+                ><span class="bb-maserati-wordmark">Traverse</span
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-maserati-card" href="index.html#modelbar"
+                ><span class="bb-maserati-wordmark">Equinox</span
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-maserati-card" href="index.html#modelbar"
+                ><span class="bb-maserati-wordmark">Trailblazer</span
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-maserati-card" href="index.html#modelbar"
+                ><span class="bb-maserati-wordmark">Trax</span
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-mazda">
+        <h2 id="b-mazda-h">Mazda</h2>
+        <p class="demo-sub">
+          Tabbed slider — and it keeps its dots. Cards per view: 1 / 2 / 3. Copy the finished build: <a href="model-bars.html#mazda">Mazda ladder</a>. Official example:
+          <a href="https://mazdademo1.dealeron.com/">mazdademo1</a>.
+        </p>
+        <div class="dl-carousel bb-mazda" data-slider data-step="slide" aria-labelledby="b-mazda-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-mazda-card" href="index.html#modelbar"
+                ><img src="img/oem/mazda/cx-30.png" width="480" height="209" alt="2026 Mazda CX-30" loading="lazy" decoding="async" />
+                <p>CX-30</p>
+                <small>12 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-mazda-card" href="index.html#modelbar"
+                ><img src="img/oem/mazda/cx-5.png" width="480" height="209" alt="2026 Mazda CX-5" loading="lazy" decoding="async" />
+                <p>CX-5</p>
+                <small>7 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-mazda-card" href="index.html#modelbar"
+                ><img src="img/oem/mazda/cx-50.png" width="480" height="209" alt="2026 Mazda CX-50" loading="lazy" decoding="async" />
+                <p>CX-50</p>
+                <small>19 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-mazda-card" href="index.html#modelbar"
+                ><img src="img/oem/mazda/cx-90.png" width="480" height="209" alt="2026 Mazda CX-90" loading="lazy" decoding="async" />
+                <p>CX-90</p>
+                <small>4 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-mazda-card" href="index.html#modelbar"
+                ><img src="img/oem/mazda/mazda3-sedan.png" width="480" height="209" alt="2026 Mazda Mazda3 Sedan" loading="lazy" decoding="async" />
+                <p>Mazda3 Sedan</p>
+                <small>9 Available</small></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-mazda-card" href="index.html#modelbar"
+                ><img src="img/oem/mazda/mx-5-miata.png" width="480" height="209" alt="2026 Mazda MX-5 Miata" loading="lazy" decoding="async" />
+                <p>MX-5 Miata</p>
+                <small>15 Available</small></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-mitsubishi">
+        <h2 id="b-mitsubishi-h">Mitsubishi <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Slider. Cards per view: 2 / 3 / 5. Copy the finished build: <a href="model-bars.html#acura">Acura ladder</a>. Official example:
+          <a href="https://mitsubishidemo1.dealeron.com/">mitsubishidemo1</a>.
+        </p>
+        <div class="dl-carousel bb-mitsubishi" data-slider data-step="slide" aria-labelledby="b-mitsubishi-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-mitsubishi-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Silverado 1500"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-mitsubishi-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Colorado"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-mitsubishi-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Tahoe"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-mitsubishi-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Suburban"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-mitsubishi-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Traverse"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-mitsubishi-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Equinox"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-mitsubishi-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trailblazer"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-mitsubishi-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trax"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-nissan">
+        <h2 id="b-nissan-h">Nissan <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Tabbed slider. Cards per view: 1 / 2 / 3 / 5. Copy the finished build: <a href="model-bars.html#lexus">Lexus ladder</a>. Official example:
+          <a href="https://nissandemo1.dealeron.com/">nissandemo1</a>.
+        </p>
+        <div class="dl-carousel bb-nissan" data-slider data-step="slide" aria-labelledby="b-nissan-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-nissan-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Silverado 1500"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-nissan-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Colorado"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-nissan-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Tahoe"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-nissan-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Suburban"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-nissan-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Traverse"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-nissan-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Equinox"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-nissan-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trailblazer"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-nissan-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trax"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+        <p class="brand-note">Nissan wears these tiers under body-style tabs with an est-MPG line per model.</p>
+      </section>
+
+      <section class="demo-section" id="b-porsche">
+        <h2 id="b-porsche-h">Porsche</h2>
+        <p class="demo-sub">
+          Hover-reveal photo tile grid — no slider. Cards per view: 2 / 3 / 6 across. Copy the finished build: <a href="model-bars.html#static-bars">tile-grid family</a>. Official example:
+          <a href="https://porschedemo1.dealeron.com/">porschedemo1</a>.
+        </p>
+        <p class="brand-note">Porsche&rsquo;s bar is a hover-reveal photo tile grid &mdash; no slider. The shape runs live in <a href="model-bars.html#static-bars">the non-slider family</a>.</p>
+      </section>
+
+      <section class="demo-section" id="b-powersports">
+        <h2 id="b-powersports-h">Powersports <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Category bar and a brand-logo strip. Cards per view: 2 / 3 / 5 &middot; 2 / 3 / 6. Copy the finished build: <a href="model-bars.html#powersports-cat">category bar</a> &middot;
+          <a href="model-bars.html#powersports-brands">brand strip</a>. Official example: <a href="https://powersportsdemo2.dealeron.com/">powersportsdemo2</a>.
+        </p>
+        <div class="dl-carousel bb-powersports" data-slider data-step="slide" aria-labelledby="b-powersports-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-powersports-card" href="index.html#modelbar"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trucks</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-powersports-card" href="index.html#modelbar"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Full-size SUVs</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-powersports-card" href="index.html#modelbar"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Crossovers</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-powersports-card" href="index.html#modelbar"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Electric</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-powersports-card" href="index.html#modelbar"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Midsize trucks</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-powersports-card" href="index.html#modelbar"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt=""
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Small SUVs</p></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-subaru">
+        <h2 id="b-subaru-h">Subaru <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Tabbed slider (icon tabs). Cards per view: 2 / 3 / 4 / 5. Copy the finished build: <a href="model-bars.html#chevrolet">Chevrolet ladder</a>. Official example:
+          <a href="https://subarudemo2.dealeron.com/">subarudemo2</a>.
+        </p>
+        <div class="dl-carousel bb-subaru" data-slider data-step="slide" aria-labelledby="b-subaru-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-subaru-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Silverado 1500"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-subaru-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Colorado"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-subaru-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Tahoe"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-subaru-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Suburban"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-subaru-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Traverse"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-subaru-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Equinox"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-subaru-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trailblazer"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-subaru-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trax"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+        <p class="brand-note">Subaru wears this ladder under five icon tabs on the real sites.</p>
+      </section>
+
+      <section class="demo-section" id="b-toyota">
+        <h2 id="b-toyota-h">Toyota</h2>
+        <p class="demo-sub">
+          Slider (photo cards) plus three tabbed versions on the Lexus tiers. Cards per view: 1 / 2 own &middot; 1 / 2 / 3 / 5. Copy the finished build:
+          <a href="model-bars.html#toyota">Toyota photo cards</a> &middot; <a href="model-bars.html#lexus">Lexus ladder</a>. Official example:
+          <a href="https://toyotademo1.dealeron.com/">toyotademo1</a>.
+        </p>
+        <div class="dl-carousel bb-toyota" data-slider data-step="slide" aria-labelledby="b-toyota-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-toyota-card" href="index.html#vehicles"
+                ><img src="img/oem/toyota/camry.jpg" width="800" height="747" alt="2026 Toyota Camry" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
+                  ><small>6 Available</small>
+                  <h3>Camry</h3></span
+                ></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-toyota-card" href="index.html#vehicles"
+                ><img src="img/oem/toyota/corolla.jpg" width="800" height="744" alt="2026 Toyota Corolla" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
+                  ><small>11 Available</small>
+                  <h3>Corolla</h3></span
+                ></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-toyota-card" href="index.html#vehicles"
+                ><img src="img/oem/toyota/rav4.jpg" width="800" height="744" alt="2026 Toyota RAV4" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
+                  ><small>4 Available</small>
+                  <h3>RAV4</h3></span
+                ></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-toyota-card" href="index.html#vehicles"
+                ><img src="img/oem/toyota/tacoma.jpg" width="800" height="744" alt="2026 Toyota Tacoma" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
+                  ><small>9 Available</small>
+                  <h3>Tacoma</h3></span
+                ></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-toyota-card" href="index.html#vehicles"
+                ><img src="img/oem/toyota/tundra.jpg" width="800" height="744" alt="2026 Toyota Tundra" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
+                  ><small>3 Available</small>
+                  <h3>Tundra</h3></span
+                ></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-toyota-card" href="index.html#vehicles"
+                ><img src="img/oem/toyota/4runner.jpg" width="800" height="744" alt="2026 Toyota 4Runner" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
+                  ><small>7 Available</small>
+                  <h3>4Runner</h3></span
+                ></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-volkswagen">
+        <h2 id="b-volkswagen-h">Volkswagen <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Tabbed slider — a colour tile behind each car. Cards per view: 1 / 2 / 3 / 4. Copy the finished build: <a href="model-bars.html#genesis">Genesis ladder, tile look</a>. Official example:
+          <a href="https://vwdemo1.dealeron.com/">vwdemo1</a>.
+        </p>
+        <div class="dl-carousel bb-volkswagen" data-slider data-step="slide" aria-labelledby="b-volkswagen-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-volkswagen-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><span class="bb-volkswagen-tile"
+                  ><img
+                    src="img/chrome-silverado-1500.png"
+                    srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Silverado 1500"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-volkswagen-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><span class="bb-volkswagen-tile"
+                  ><img
+                    src="img/chrome-colorado.png"
+                    srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2025 Chevrolet Colorado"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-volkswagen-card bb-volkswagen-card--feature" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><span class="bb-volkswagen-tile"
+                  ><img
+                    src="img/chrome-tahoe.png"
+                    srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2025 Chevrolet Tahoe"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-volkswagen-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><span class="bb-volkswagen-tile"
+                  ><img
+                    src="img/chrome-suburban.png"
+                    srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2025 Chevrolet Suburban"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-volkswagen-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><span class="bb-volkswagen-tile"
+                  ><img
+                    src="img/chrome-traverse.png"
+                    srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2025 Chevrolet Traverse"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-volkswagen-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><span class="bb-volkswagen-tile"
+                  ><img
+                    src="img/chrome-equinox.png"
+                    srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2025 Chevrolet Equinox"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-volkswagen-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><span class="bb-volkswagen-tile"
+                  ><img
+                    src="img/chrome-trailblazer.png"
+                    srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2025 Chevrolet Trailblazer"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-volkswagen-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><span class="bb-volkswagen-tile"
+                  ><img
+                    src="img/chrome-trax.png"
+                    srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2025 Chevrolet Trax"
+                    loading="lazy"
+                    decoding="async"
+                /></span>
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section class="demo-section" id="b-volvo">
+        <h2 id="b-volvo-h">Volvo <span class="demo-standin">stand-in photos</span></h2>
+        <p class="demo-sub">
+          Slider. Cards per view: 2 / 3 / 4 / 5. Copy the finished build: <a href="model-bars.html#chevrolet">Chevrolet ladder</a>. Official example:
+          <a href="https://volvodemo1.dealeron.com/">volvodemo1</a>.
+        </p>
+        <div class="dl-carousel bb-volvo" data-slider data-step="slide" aria-labelledby="b-volvo-h">
+          <ul class="dl-carousel-track">
+            <li class="dl-carousel-slide">
+              <a class="bb-volvo-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                ><img
+                  src="img/chrome-silverado-1500.png"
+                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2026 Chevrolet Silverado 1500"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Silverado 1500</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-volvo-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                ><img
+                  src="img/chrome-colorado.png"
+                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Colorado"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Colorado</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-volvo-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                ><img
+                  src="img/chrome-tahoe.png"
+                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Tahoe"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Tahoe</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-volvo-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                ><img
+                  src="img/chrome-suburban.png"
+                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Suburban"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Suburban</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-volvo-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                ><img
+                  src="img/chrome-traverse.png"
+                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Traverse"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Traverse</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-volvo-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                ><img
+                  src="img/chrome-equinox.png"
+                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Equinox"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Equinox</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-volvo-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                ><img
+                  src="img/chrome-trailblazer.png"
+                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trailblazer"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trailblazer</p></a
+              >
+            </li>
+            <li class="dl-carousel-slide">
+              <a class="bb-volvo-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                ><img
+                  src="img/chrome-trax.png"
+                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                  width="320"
+                  height="240"
+                  alt="2025 Chevrolet Trax"
+                  loading="lazy"
+                  decoding="async"
+                />
+                <p>Trax</p></a
+              >
+            </li>
+          </ul>
+        </div>
+      </section>
+
       <p>
-        Ladders and looks all run live on the <a href="model-bars.html">model bar library</a>; generic patterns and the install step live on <a href="index.html">the main demo</a>. Sites named here
-        are internal demo sites, safe to open and compare against.
+        Ladders and looks in engineering detail run on the <a href="model-bars.html">model bar library</a>; generic patterns and the install step live on <a href="index.html">the main demo</a>. Sites
+        named here are internal demo sites, safe to open and compare against. Brands marked <span class="demo-standin">stand-in photos</span> render their real ladder and look with Chevrolet cutouts
+        standing in until their own imagery lands.
       </p>
     </main>
     <footer class="demo-foot">
@@ -352,21 +4170,21 @@
       </div>
     </footer>
     <script>
-      // Type-to-filter: hides rows whose text doesn't match; announces the
-      // count to screen readers. With JS off the full table simply stands.
+      // Type-to-filter: hides brand sections whose text doesn't match;
+      // announces the count. With JS off the full page simply stands.
       addEventListener('DOMContentLoaded', () => {
         const q = document.getElementById('brand-q');
         const status = document.getElementById('brand-count');
-        const rows = [...document.querySelectorAll('.brand-table tbody tr')];
+        const sections = [...document.querySelectorAll('main > section.demo-section')];
         q.addEventListener('input', () => {
           const term = q.value.trim().toLowerCase();
           let shown = 0;
-          for (const row of rows) {
-            const hit = !term || row.textContent.toLowerCase().includes(term);
-            row.hidden = !hit;
+          for (const sec of sections) {
+            const hit = !term || sec.textContent.toLowerCase().includes(term);
+            sec.hidden = !hit;
             if (hit) shown += 1;
           }
-          status.textContent = term ? shown + ' of ' + rows.length + ' brands shown' : '';
+          status.textContent = term ? shown + ' of ' + sections.length + ' brands shown' : '';
         });
       });
     </script>
