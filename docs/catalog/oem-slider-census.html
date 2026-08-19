@@ -476,6 +476,15 @@
         border-block-end-color: var(--accent);
       }
 
+      .roster-links a.alias {
+        color: var(--off);
+        border-block-end-color: color-mix(in srgb, var(--off) 35%, transparent);
+      }
+
+      .roster-links a.alias:hover {
+        border-block-end-color: var(--off);
+      }
+
       .sep {
         color: var(--rule-strong);
       }
@@ -512,17 +521,18 @@
           <div class="eyebrow">DealerOn &#183; Creative Solutions &#183; 18&#8211;19 Aug 2026</div>
           <h1>What the OEM demo sliders actually are</h1>
           <p class="standfirst">
-            Every one of the 76 DealerOn OEM demo homepages was fingerprinted and the results clustered. The variety is mostly skin: five slider types account for the entire estate, and the one we
-            could not build until this week is the most common of all. A second sweep then followed one site per brand onto its inner pages &#8212; the numbers for that are further down.
+            The demo estate is 154 live hostnames &#8212; 129 distinct sites once 25 redirect aliases are folded in. The 76 known on 18 Aug were fully fingerprinted that day; an exhaustive hostname
+            probe then surfaced 53 more real sites, fingerprinted 19 Aug. The variety is mostly skin: the fading hero we could not build until this week is the most common pattern of all. A second
+            sweep also followed one site per brand onto its inner pages &#8212; the numbers for that are further down.
           </p>
         </header>
 
         <div class="stats">
-          <div class="stat"><b>76</b><span>demo sites</span></div>
-          <div class="stat"><b>32</b><span>OEM brands</span></div>
-          <div class="stat"><b>5</b><span>slider types</span></div>
-          <div class="stat"><b>14</b><span>breakpoint ladders</span></div>
-          <div class="stat"><b>80</b><span>slick instances</span></div>
+          <div class="stat"><b>154</b><span>live hostnames</span></div>
+          <div class="stat"><b>129</b><span>distinct sites</span></div>
+          <div class="stat"><b>76</b><span>fingerprinted 18 aug</span></div>
+          <div class="stat"><b>53</b><span>fingerprinted 19 aug</span></div>
+          <div class="stat"><b>22</b><span>breakpoint ladders</span></div>
         </div>
 
         <section>
@@ -540,7 +550,11 @@
 
         <section>
           <h2>Five types, and where we stand</h2>
-          <p>Counted by distinct sites. The "same across OEMs" question resolves here: one pattern covers 55 of the 76.</p>
+          <p>
+            Counted by distinct sites across the 76 fully fingerprinted on 18 Aug &#8212; the baseline every section down to the platform-hero comparison uses. The "same across OEMs" question resolves
+            here: one pattern covers 55 of the 76. One qualification from the 19 Aug estate sweep below: on the newer sites, four homepages replace the carousel with a background-video hero and one
+            lays its model strip out as a static CSS grid &#8212; so "five types cover everything" is exactly true of the 18 Aug baseline, and nearly true of the full 129.
+          </p>
           <p>
             Centre-mode and the two-row grid were first filed as out of scope, assuming they needed engine work. Re-tested on 18 Aug, neither does &#8212; both are CSS on top of what already ships, so
             <strong>every slider pattern in the estate is now buildable</strong>. The one entry that stays out is Mazda&#8217;s filter UI, which is not a carousel.
@@ -655,6 +669,11 @@
             Three of those settle open questions for us:
             <code>slidesToScroll: 1</code> is exactly what <code>data-step="slide"</code> reproduces, <code>centerPadding: 60px</code> is our <code>--dlc-peek</code>, and
             <strong>not one model bar in the estate autoplays</strong> &#8212; which is why no card strip in our library ever will.
+          </p>
+          <p>
+            One asterisk from the 19 Aug estate sweep: <code>groupdemo1</code> runs two <em>autoplaying</em> strips &#8212; a 7-up OEM-logo strip and a 4-up dealership-location strip, the first
+            autoplay found on any homepage card strip. Neither is a model bar (<code>.makes</code> and <code>.locations</code>, not <code>.modelBarS</code>), so the 55/55 above still holds for model
+            bars across all 129 sites.
           </p>
         </section>
 
@@ -838,6 +857,156 @@
         </section>
 
         <section>
+          <h2>The full estate: the 19 Aug hostname sweep</h2>
+          <p>
+            The original roster probed the obvious hostnames and stopped when they stopped answering. On 19 Aug the probe was made exhaustive &#8212; every brand stem times indexes 1&#8211;8, extended
+            to 14 wherever the tail kept going, plus the combined-brand and genre stems the first pass never tried (<code>buickgmc</code>, <code>cdjr</code>, <code>group</code>,
+            <code>powersports</code>, <code>mb</code>, <code>ferrari</code>, <code>maserati</code>). Numbering is non-contiguous &#8212; <code>cadillacdemo4</code> is a 404 while 5&#8211;7 exist
+            &#8212; so a 404 never ended a stem&#8217;s probe early. Reconciling against the Salesforce Knowledge roster is still pending.
+          </p>
+          <div class="stats">
+            <div class="stat"><b>154</b><span>live hostnames</span></div>
+            <div class="stat"><b>25</b><span>redirect aliases</span></div>
+            <div class="stat"><b>129</b><span>distinct sites</span></div>
+            <div class="stat"><b>8</b><span>new ladders</span></div>
+            <div class="stat"><b>14</b><span>new looks</span></div>
+          </div>
+          <div class="finding">
+            <p class="lede">53 more sites, 8 new ladders, 14 new looks &#8212; and not one of them needs an engine change.</p>
+            <p>
+              The census&#8217;s core claim survives the sweep: everything is the same five-selector slick estate in different skins. 26 of the 35 new slick-strip sites land exactly on six of the
+              fourteen known ladders &#8212; Acura 13 &#8594; 19 sites, Chevrolet 11 &#8594; 19, Lexus 6 &#8594; 14, Buick 5 &#8594; 7, Lincoln 3 &#8594; 4, Hyundai 2 &#8594; 3 &#8212; making the
+              Chevrolet and Lexus tiers the estate&#8217;s true workhorses, now worn by eight OEM brands. The fade hero keeps its crown too: 44 of the 53 new sites carry it. Everything found is a
+              catalog entry &#8212; ladders and looks &#8212; not engine work.
+            </p>
+          </div>
+          <p>
+            The eight new ladders, converted to min-width like the table above. <code>dots</code> is off on all eight; the two <code>group</code> strips are the only ones that autoplay. Full slick
+            recipes are in the research doc.
+          </p>
+          <div class="scroller">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Hosts</th>
+                  <th scope="col">Cards per view</th>
+                  <th scope="col">What is new about it</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="oems">cdjr 1&#8211;4</td>
+                  <td class="ladder">2 &#8594; 461px 3 &#8594; 992px 6</td>
+                  <td class="oems">the only three-tier 6-up; one init covers 4&#8211;5 brand-tab bars; hidden below md on cdjr 2&#8211;4</td>
+                </tr>
+                <tr>
+                  <td class="oems">powersports 1</td>
+                  <td class="ladder">2 &#8594; 461px 3 &#8594; 769px 6</td>
+                  <td class="oems">brand-logo strip (<code>.brandsNav</code>) &#8212; Acura tiers topping out at 6, not 5</td>
+                </tr>
+                <tr>
+                  <td class="oems">powersports 2</td>
+                  <td class="ladder">2 &#8594; 461px 3 &#8594; 993px 5</td>
+                  <td class="oems">body-style category tiles, not models; one-off tier set</td>
+                </tr>
+                <tr>
+                  <td class="oems">ferrari 1</td>
+                  <td class="ladder">1 &#8594; 768px 3</td>
+                  <td class="oems"><code>infinite: true</code>; a different slick recipe from the volume-brand bars</td>
+                </tr>
+                <tr>
+                  <td class="oems">ferrari 2</td>
+                  <td class="ladder">1 &#8594; 769px 2 &#8594; 993px 3 &#8594; 1441px 4</td>
+                  <td class="oems">photo cards; the only 1441px tier anywhere; <code>infinite: true</code></td>
+                </tr>
+                <tr>
+                  <td class="oems">maserati 4</td>
+                  <td class="ladder">1-up centre-mode, 20% &#8594; 992px 23% pad</td>
+                  <td class="oems">the lexus 2 gallery recipe &#8212; already proven with <code>--dlc-peek</code> &#8212; as a model bar</td>
+                </tr>
+                <tr>
+                  <td class="oems">group 1 &#8212; makes strip</td>
+                  <td class="ladder">2 &#8594; 769px 4 &#8594; 993px 7</td>
+                  <td class="oems"><strong>autoplays</strong>; OEM-logo links; 7-up is the widest per-view seen anywhere</td>
+                </tr>
+                <tr>
+                  <td class="oems">group 1 &#8212; locations strip</td>
+                  <td class="ladder">1 &#8594; 769px 2 &#8594; 993px 4</td>
+                  <td class="oems"><strong>autoplays</strong>; dealership-location cards &#8212; a new content type for a strip</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>Structurally new &#8212; things the 18 Aug baseline had no example of:</p>
+          <div class="scroller">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Pattern</th>
+                  <th scope="col">Where</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>Background-video hero &#8212; a muted looping <code>&lt;video&gt;</code> instead of any carousel</td>
+                  <td class="oems">group 1, maserati 1, powersports 3&#8211;4 &#8212; 4 sites</td>
+                </tr>
+                <tr>
+                  <td>Static CSS model grid, zero slick on the page</td>
+                  <td class="oems">ford 5</td>
+                </tr>
+                <tr>
+                  <td>Brand-tabbed model bars &#8212; tabs switch OEM brand, not body style</td>
+                  <td class="oems">buickgmc 1&#8211;4 (text tabs), cdjr 1&#8211;4 (logo tabs, sliding caret, dark band)</td>
+                </tr>
+                <tr>
+                  <td>Arrows-only fade hero &#8212; no indicator dots</td>
+                  <td class="oems">honda 4, subaru 4, toyota 4&#8211;7 &#8212; 6 sites</td>
+                </tr>
+                <tr>
+                  <td>Autoplaying logo and location strips</td>
+                  <td class="oems">group 1 &#8212; the estate&#8217;s first autoplay</td>
+                </tr>
+                <tr>
+                  <td>Search-led homepage with the fade banner demoted mid-page</td>
+                  <td class="oems">nissan 4&#8211;5, powersports 2; hero after the model bar in DOM on cdjr 2 &amp; 4, ford 4, mitsubishi 4</td>
+                </tr>
+                <tr>
+                  <td>Decorative second fade rotator as a featured-model showcase</td>
+                  <td class="oems">maserati 3</td>
+                </tr>
+                <tr>
+                  <td>Zero-stock redirect &#8212; <code>data-count</code> of 0 sends the click to a research page</td>
+                  <td class="oems">nissan 4&#8211;5</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <details>
+            <summary>The 25 redirect aliases</summary>
+            <ul>
+              <li>cadillacdemo5 &#8594; cadillacdemo1 &#183; cadillacdemo6 &#8594; cadillacdemo2 &#183; cadillacdemo7 &#8594; cadillacdemo3</li>
+              <li>cdjrdemo5 &#8594; cdjrdemo3</li>
+              <li>chevroletdemo5 &#8594; dealer17728 (outside the demo set, unanalyzed)</li>
+              <li>chryslerdemo2 &#8594; chryslerdemo1</li>
+              <li>
+                forddemo8, 9, 10 &#8594; forddemo7 &#183; forddemo11 &#8594; forddemo2 &#183; forddemo12 &#8594; forddemo6 &#183; forddemo13 &#8594; forddemo3 &#183; forddemo14 &#8594; forddemo1
+              </li>
+              <li>genesisdemo4 &#8594; genesisdemo1</li>
+              <li>hyundaidemo6 &#8594; dealer26244 (outside the demo set, unanalyzed)</li>
+              <li>kiademo4 &#8594; kiademo3 &#183; kiademo5 &#8594; kiademo2</li>
+              <li>lexusdemo5 &#8594; lexusdemo3 &#183; lexusdemo6 &#8594; lexusdemo4</li>
+              <li>lincolndemo5 &#8594; lincolndemo4</li>
+              <li>mitsubishidemo5 &#8594; mitsubishidemo3 &#183; mitsubishidemo6 &#8594; mitsubishidemo1</li>
+              <li>nissandemo6 &#8594; nissandemo3</li>
+              <li>toyotademo8 &#8594; toyotademo2</li>
+              <li>vwdemo4 &#8594; vwdemo1</li>
+              <li>Not aliases despite the redirect: jaguardemo3 (serves dealer19076) and lexusdemo7 (serves dealer22691) land on unique, analyzed sites.</li>
+            </ul>
+          </details>
+        </section>
+
+        <section>
           <h2>Inner pages: the 19 Aug sweep</h2>
           <p>
             The homepage census left the rest of each site unexamined, so a second sweep followed one demo site per brand inside &#8212; SRPs, VDPs, model detail pages, specials, service and
@@ -971,9 +1140,10 @@
         <section>
           <h2>Open the originals</h2>
           <p>
-            Screenshots of each distinct model bar are in the <a href="https://claude.ai/code/artifact/72367577-3336-4f58-abc1-5b0beb64ac08">Model Bar Library</a>. All 76 demo homepages below, so
-            nothing here has to be taken on trust. Numbers are the demo index &#8212; <code>&lt;brand&gt;demo&lt;N&gt;.dealeron.com</code>. These are internal DealerOn demo sites, not client sites:
-            safe to open, click around, and screenshot for design review.
+            Screenshots of each distinct model bar are in the <a href="https://claude.ai/code/artifact/72367577-3336-4f58-abc1-5b0beb64ac08">Model Bar Library</a>. All 154 live hostnames below, so
+            nothing here has to be taken on trust. Numbers are the demo index &#8212; <code>&lt;brand&gt;demo&lt;N&gt;.dealeron.com</code> &#8212; and gaps in a run are real: those indexes 404. Grayed
+            numbers are the 25 redirect aliases; the link opens the alias hostname and lands on its target. These are internal DealerOn demo sites, not client sites: safe to open, click around, and
+            screenshot for design review.
           </p>
           <div class="roster">
             <div class="roster-brand">
@@ -981,7 +1151,8 @@
               ><span class="roster-links"
                 ><a href="https://acurademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://acurademo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://acurademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://acurademo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://acurademo4.dealeron.com/" target="_blank" rel="noopener">4</a></span
               >
             </div>
             <div class="roster-brand">
@@ -995,7 +1166,8 @@
               ><span class="roster-links"
                 ><a href="https://bmwdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://bmwdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://bmwdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://bmwdemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://bmwdemo4.dealeron.com/" target="_blank" rel="noopener">4</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1006,11 +1178,33 @@
               >
             </div>
             <div class="roster-brand">
+              <span class="roster-name">Buick GMC</span
+              ><span class="roster-links"
+                ><a href="https://buickgmcdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+                ><a href="https://buickgmcdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
+                ><a href="https://buickgmcdemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://buickgmcdemo4.dealeron.com/" target="_blank" rel="noopener">4</a></span
+              >
+            </div>
+            <div class="roster-brand">
               <span class="roster-name">Cadillac</span
               ><span class="roster-links"
                 ><a href="https://cadillacdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://cadillacdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://cadillacdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://cadillacdemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://cadillacdemo5.dealeron.com/" class="alias" title="redirects to cadillacdemo1.dealeron.com" target="_blank" rel="noopener">5</a><span class="sep">&#183;</span
+                ><a href="https://cadillacdemo6.dealeron.com/" class="alias" title="redirects to cadillacdemo2.dealeron.com" target="_blank" rel="noopener">6</a><span class="sep">&#183;</span
+                ><a href="https://cadillacdemo7.dealeron.com/" class="alias" title="redirects to cadillacdemo3.dealeron.com" target="_blank" rel="noopener">7</a></span
+              >
+            </div>
+            <div class="roster-brand">
+              <span class="roster-name">CDJR</span
+              ><span class="roster-links"
+                ><a href="https://cdjrdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+                ><a href="https://cdjrdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
+                ><a href="https://cdjrdemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://cdjrdemo4.dealeron.com/" target="_blank" rel="noopener">4</a><span class="sep">&#183;</span
+                ><a href="https://cdjrdemo5.dealeron.com/" class="alias" title="redirects to cdjrdemo3.dealeron.com" target="_blank" rel="noopener">5</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1018,14 +1212,27 @@
               ><span class="roster-links"
                 ><a href="https://chevroletdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://chevroletdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://chevroletdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://chevroletdemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://chevroletdemo4.dealeron.com/" target="_blank" rel="noopener">4</a><span class="sep">&#183;</span
+                ><a href="https://chevroletdemo5.dealeron.com/" class="alias" title="redirects to dealer17728.dealeron.com" target="_blank" rel="noopener">5</a></span
               >
             </div>
             <div class="roster-brand">
-              <span class="roster-name">Chrysler</span><span class="roster-links"><a href="https://chryslerdemo1.dealeron.com/" target="_blank" rel="noopener">1</a></span>
+              <span class="roster-name">Chrysler</span
+              ><span class="roster-links"
+                ><a href="https://chryslerdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+                ><a href="https://chryslerdemo2.dealeron.com/" class="alias" title="redirects to chryslerdemo1.dealeron.com" target="_blank" rel="noopener">2</a></span
+              >
             </div>
             <div class="roster-brand">
               <span class="roster-name">Dodge</span><span class="roster-links"><a href="https://dodgedemo1.dealeron.com/" target="_blank" rel="noopener">1</a></span>
+            </div>
+            <div class="roster-brand">
+              <span class="roster-name">Ferrari</span
+              ><span class="roster-links"
+                ><a href="https://ferraridemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+                ><a href="https://ferraridemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
+              >
             </div>
             <div class="roster-brand">
               <span class="roster-name">Fiat</span><span class="roster-links"><a href="https://fiatdemo1.dealeron.com/" target="_blank" rel="noopener">1</a></span>
@@ -1035,7 +1242,18 @@
               ><span class="roster-links"
                 ><a href="https://forddemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://forddemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://forddemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://forddemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://forddemo4.dealeron.com/" target="_blank" rel="noopener">4</a><span class="sep">&#183;</span
+                ><a href="https://forddemo5.dealeron.com/" target="_blank" rel="noopener">5</a><span class="sep">&#183;</span
+                ><a href="https://forddemo6.dealeron.com/" target="_blank" rel="noopener">6</a><span class="sep">&#183;</span
+                ><a href="https://forddemo7.dealeron.com/" target="_blank" rel="noopener">7</a><span class="sep">&#183;</span
+                ><a href="https://forddemo8.dealeron.com/" class="alias" title="redirects to forddemo7.dealeron.com" target="_blank" rel="noopener">8</a><span class="sep">&#183;</span
+                ><a href="https://forddemo9.dealeron.com/" class="alias" title="redirects to forddemo7.dealeron.com" target="_blank" rel="noopener">9</a><span class="sep">&#183;</span
+                ><a href="https://forddemo10.dealeron.com/" class="alias" title="redirects to forddemo7.dealeron.com" target="_blank" rel="noopener">10</a><span class="sep">&#183;</span
+                ><a href="https://forddemo11.dealeron.com/" class="alias" title="redirects to forddemo2.dealeron.com" target="_blank" rel="noopener">11</a><span class="sep">&#183;</span
+                ><a href="https://forddemo12.dealeron.com/" class="alias" title="redirects to forddemo6.dealeron.com" target="_blank" rel="noopener">12</a><span class="sep">&#183;</span
+                ><a href="https://forddemo13.dealeron.com/" class="alias" title="redirects to forddemo3.dealeron.com" target="_blank" rel="noopener">13</a><span class="sep">&#183;</span
+                ><a href="https://forddemo14.dealeron.com/" class="alias" title="redirects to forddemo1.dealeron.com" target="_blank" rel="noopener">14</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1043,7 +1261,8 @@
               ><span class="roster-links"
                 ><a href="https://genesisdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://genesisdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://genesisdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://genesisdemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://genesisdemo4.dealeron.com/" class="alias" title="redirects to genesisdemo1.dealeron.com" target="_blank" rel="noopener">4</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1054,11 +1273,23 @@
               >
             </div>
             <div class="roster-brand">
+              <span class="roster-name">Group</span
+              ><span class="roster-links"
+                ><a href="https://groupdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+                ><a href="https://groupdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
+                ><a href="https://groupdemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://groupdemo4.dealeron.com/" target="_blank" rel="noopener">4</a><span class="sep">&#183;</span
+                ><a href="https://groupdemo5.dealeron.com/" target="_blank" rel="noopener">5</a></span
+              >
+            </div>
+            <div class="roster-brand">
               <span class="roster-name">Honda</span
               ><span class="roster-links"
                 ><a href="https://hondademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://hondademo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://hondademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://hondademo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://hondademo4.dealeron.com/" target="_blank" rel="noopener">4</a><span class="sep">&#183;</span
+                ><a href="https://hondademo5.dealeron.com/" target="_blank" rel="noopener">5</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1066,7 +1297,9 @@
               ><span class="roster-links"
                 ><a href="https://hyundaidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://hyundaidemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://hyundaidemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://hyundaidemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://hyundaidemo4.dealeron.com/" target="_blank" rel="noopener">4</a><span class="sep">&#183;</span
+                ><a href="https://hyundaidemo6.dealeron.com/" class="alias" title="redirects to dealer26244.dealeron.com" target="_blank" rel="noopener">6</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1077,7 +1310,11 @@
               >
             </div>
             <div class="roster-brand">
-              <span class="roster-name">Jaguar</span><span class="roster-links"><a href="https://jaguardemo1.dealeron.com/" target="_blank" rel="noopener">1</a></span>
+              <span class="roster-name">Jaguar</span
+              ><span class="roster-links"
+                ><a href="https://jaguardemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+                ><a href="https://jaguardemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+              >
             </div>
             <div class="roster-brand">
               <span class="roster-name">Jeep</span
@@ -1091,7 +1328,9 @@
               ><span class="roster-links"
                 ><a href="https://kiademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://kiademo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://kiademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://kiademo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://kiademo4.dealeron.com/" class="alias" title="redirects to kiademo3.dealeron.com" target="_blank" rel="noopener">4</a><span class="sep">&#183;</span
+                ><a href="https://kiademo5.dealeron.com/" class="alias" title="redirects to kiademo2.dealeron.com" target="_blank" rel="noopener">5</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1099,7 +1338,8 @@
               ><span class="roster-links"
                 ><a href="https://landroverdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://landroverdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://landroverdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://landroverdemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://landroverdemo4.dealeron.com/" target="_blank" rel="noopener">4</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1107,7 +1347,11 @@
               ><span class="roster-links"
                 ><a href="https://lexusdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://lexusdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://lexusdemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://lexusdemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://lexusdemo4.dealeron.com/" target="_blank" rel="noopener">4</a><span class="sep">&#183;</span
+                ><a href="https://lexusdemo5.dealeron.com/" class="alias" title="redirects to lexusdemo3.dealeron.com" target="_blank" rel="noopener">5</a><span class="sep">&#183;</span
+                ><a href="https://lexusdemo6.dealeron.com/" class="alias" title="redirects to lexusdemo4.dealeron.com" target="_blank" rel="noopener">6</a><span class="sep">&#183;</span
+                ><a href="https://lexusdemo7.dealeron.com/" target="_blank" rel="noopener">7</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1115,7 +1359,18 @@
               ><span class="roster-links"
                 ><a href="https://lincolndemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://lincolndemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://lincolndemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://lincolndemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://lincolndemo4.dealeron.com/" target="_blank" rel="noopener">4</a><span class="sep">&#183;</span
+                ><a href="https://lincolndemo5.dealeron.com/" class="alias" title="redirects to lincolndemo4.dealeron.com" target="_blank" rel="noopener">5</a></span
+              >
+            </div>
+            <div class="roster-brand">
+              <span class="roster-name">Maserati</span
+              ><span class="roster-links"
+                ><a href="https://maseratidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+                ><a href="https://maseratidemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
+                ><a href="https://maseratidemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://maseratidemo4.dealeron.com/" target="_blank" rel="noopener">4</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1126,11 +1381,20 @@
               >
             </div>
             <div class="roster-brand">
+              <span class="roster-name">Mercedes-Benz</span
+              ><span class="roster-links"
+                ><a href="https://mbdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span><a href="https://mbdemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+                ><span class="sep">&#183;</span><a href="https://mbdemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://mbdemo4.dealeron.com/" target="_blank" rel="noopener">4</a></span
+              >
+            </div>
+            <div class="roster-brand">
               <span class="roster-name">MINI</span
               ><span class="roster-links"
                 ><a href="https://minidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://minidemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://minidemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://minidemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://minidemo6.dealeron.com/" target="_blank" rel="noopener">6</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1138,7 +1402,10 @@
               ><span class="roster-links"
                 ><a href="https://mitsubishidemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://mitsubishidemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://mitsubishidemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://mitsubishidemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://mitsubishidemo4.dealeron.com/" target="_blank" rel="noopener">4</a><span class="sep">&#183;</span
+                ><a href="https://mitsubishidemo5.dealeron.com/" class="alias" title="redirects to mitsubishidemo3.dealeron.com" target="_blank" rel="noopener">5</a><span class="sep">&#183;</span
+                ><a href="https://mitsubishidemo6.dealeron.com/" class="alias" title="redirects to mitsubishidemo1.dealeron.com" target="_blank" rel="noopener">6</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1146,7 +1413,10 @@
               ><span class="roster-links"
                 ><a href="https://nissandemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://nissandemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://nissandemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://nissandemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://nissandemo4.dealeron.com/" target="_blank" rel="noopener">4</a><span class="sep">&#183;</span
+                ><a href="https://nissandemo5.dealeron.com/" target="_blank" rel="noopener">5</a><span class="sep">&#183;</span
+                ><a href="https://nissandemo6.dealeron.com/" class="alias" title="redirects to nissandemo3.dealeron.com" target="_blank" rel="noopener">6</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1154,7 +1424,17 @@
               ><span class="roster-links"
                 ><a href="https://porschedemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://porschedemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://porschedemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://porschedemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://porschedemo4.dealeron.com/" target="_blank" rel="noopener">4</a></span
+              >
+            </div>
+            <div class="roster-brand">
+              <span class="roster-name">Powersports</span
+              ><span class="roster-links"
+                ><a href="https://powersportsdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
+                ><a href="https://powersportsdemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
+                ><a href="https://powersportsdemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://powersportsdemo4.dealeron.com/" target="_blank" rel="noopener">4</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1169,7 +1449,8 @@
               ><span class="roster-links"
                 ><a href="https://subarudemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://subarudemo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://subarudemo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://subarudemo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://subarudemo4.dealeron.com/" target="_blank" rel="noopener">4</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1177,14 +1458,20 @@
               ><span class="roster-links"
                 ><a href="https://toyotademo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
                 ><a href="https://toyotademo2.dealeron.com/" target="_blank" rel="noopener">2</a><span class="sep">&#183;</span
-                ><a href="https://toyotademo3.dealeron.com/" target="_blank" rel="noopener">3</a></span
+                ><a href="https://toyotademo3.dealeron.com/" target="_blank" rel="noopener">3</a><span class="sep">&#183;</span
+                ><a href="https://toyotademo4.dealeron.com/" target="_blank" rel="noopener">4</a><span class="sep">&#183;</span
+                ><a href="https://toyotademo5.dealeron.com/" target="_blank" rel="noopener">5</a><span class="sep">&#183;</span
+                ><a href="https://toyotademo6.dealeron.com/" target="_blank" rel="noopener">6</a><span class="sep">&#183;</span
+                ><a href="https://toyotademo7.dealeron.com/" target="_blank" rel="noopener">7</a><span class="sep">&#183;</span
+                ><a href="https://toyotademo8.dealeron.com/" class="alias" title="redirects to toyotademo2.dealeron.com" target="_blank" rel="noopener">8</a><span class="sep">&#183;</span
+                ><a href="https://toyotademo9.dealeron.com/" target="_blank" rel="noopener">9</a></span
               >
             </div>
             <div class="roster-brand">
               <span class="roster-name">Volkswagen</span
               ><span class="roster-links"
-                ><a href="https://vwdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span
-                ><a href="https://vwdemo2.dealeron.com/" target="_blank" rel="noopener">2</a></span
+                ><a href="https://vwdemo1.dealeron.com/" target="_blank" rel="noopener">1</a><span class="sep">&#183;</span><a href="https://vwdemo2.dealeron.com/" target="_blank" rel="noopener">2</a
+                ><span class="sep">&#183;</span><a href="https://vwdemo4.dealeron.com/" class="alias" title="redirects to vwdemo1.dealeron.com" target="_blank" rel="noopener">4</a></span
               >
             </div>
             <div class="roster-brand">
@@ -1224,12 +1511,19 @@
                 <strong>The inner-page sweep (19 Aug) is static HTML only.</strong> One demo site per brand, ~190 pages by <code>curl</code>: 32 sites attempted, 24 with the full page set reachable
                 &#8212; the inner-page counts use only those 24, and no live-browser pass has run on them yet. The runtime-injected SRP card carousel is the known blind spot.
               </li>
+              <li>
+                <strong>The estate sweep (19 Aug) is also static HTML only</strong> &#8212; the 53 new sites have had no live-browser pass, and their "looks" are read from markup and CSS, not
+                screenshots. The hostname probe ran every brand stem times indexes 1&#8211;14 plus the combined-brand and genre stems; two alias targets (<code>dealer17728</code>,
+                <code>dealer26244</code>) land outside the demo naming set and stay unanalyzed. The Salesforce Knowledge roster is still behind Lightning auth, so the probe has not been reconciled
+                against it &#8212; a demo on an unconventional hostname would be missed exactly the way <code>buickgmc</code>/<code>cdjr</code>/<code>group</code> were the first time.
+              </li>
             </ul>
           </details>
         </section>
 
         <footer>
-          Source of truth: docs/research/2026-08-18-oem-demo-slider-census.md &#183; homepages (all 76) fingerprinted 18 Aug 2026 &#183; inner pages (one site per brand, static HTML) 19 Aug 2026
+          Source of truth: docs/research/2026-08-18-oem-demo-slider-census.md &#183; homepages (all 76) fingerprinted 18 Aug 2026 &#183; inner pages (one site per brand, static HTML) and the
+          full-estate hostname sweep (154 hostnames, 53 new sites, static HTML) 19 Aug 2026
         </footer>
       </div>
     </main>
