@@ -273,6 +273,11 @@ pre {
   margin-block-start: 1rem;
 }
 
+/* Wide content scrolls inside its own box — the page never scrolls sideways. */
+.demo-scroll {
+  overflow-x: auto;
+}
+
 /* Visually hidden, still announced — the copy buttons' status region. */
 .demo-vh {
   position: absolute;

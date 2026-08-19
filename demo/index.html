@@ -837,6 +837,11 @@
       .demo-video-section .demo-sub {
         color: #cbd6e2;
       }
+      /* the shared link blue is 2.08:1 on this navy band — lighten it here
+         (9.0:1); axe only sees this once the details panel is open */
+      .demo-video-section a {
+        color: #a8cdf0;
+      }
       /* #5f6368 on the navy band is 2.17:1 — the markers need a pale tone. */
       .demo-video-section .code-label {
         color: #cbd6e2;
@@ -1050,6 +1055,7 @@
       .demo-hero-copy {
         position: absolute;
         inset-block-end: 0;
+        box-sizing: border-box; /* 100% + padding must not overflow the slide */
         inline-size: 100%;
         padding: 2.5rem 1.25rem 1.25rem;
         color: #fff;
@@ -1416,6 +1422,7 @@
         <a href="#start">Start here</a>
         <a href="#options">Options</a>
         <a href="model-bars.html">Model bar library</a>
+        <a href="brands.html">Find your brand</a>
       </nav>
     </header>
     <main id="main">
@@ -1594,61 +1601,63 @@
             Everything you can switch on is a data attribute on the slider's root element; everything visual is plain CSS. Slides-per-view is CSS too &mdash; <code>--dlc-per-view</code> inside your
             own media queries, no JS breakpoints anywhere.
           </p>
-          <table>
-            <caption>
-              Data attributes
-            </caption>
-            <tr>
-              <th>Attribute</th>
-              <th>Default</th>
-              <th>Effect</th>
-            </tr>
-            <tr>
-              <td><code>data-slider</code></td>
-              <td>—</td>
-              <td>Auto-initialize this element</td>
-            </tr>
-            <tr>
-              <td><code>data-autoplay="4000"</code></td>
-              <td>0 (off)</td>
-              <td>Advance every N ms; adds a pause button</td>
-            </tr>
-            <tr>
-              <td><code>data-rewind="false"</code></td>
-              <td>rewind on</td>
-              <td>Stop at the ends instead of wrapping; end arrows disable</td>
-            </tr>
-            <tr>
-              <td><code>data-step="slide"</code></td>
-              <td>page</td>
-              <td>Arrows/autoplay advance one card at a time (see the model bar)</td>
-            </tr>
-            <tr>
-              <td><code>data-fade</code></td>
-              <td>off</td>
-              <td>Crossfade instead of sliding — one slide at a time (see the hero)</td>
-            </tr>
-            <tr>
-              <td><code>data-drag="false"</code></td>
-              <td>drag on</td>
-              <td>Opt out of mouse drag-to-scroll (touch swiping is native either way)</td>
-            </tr>
-            <tr>
-              <td><code>data-gallery</code></td>
-              <td>off</td>
-              <td>Thumbnail-gallery (tabbed) variant</td>
-            </tr>
-            <tr>
-              <td><code>data-init="manual"</code></td>
-              <td>auto</td>
-              <td>Skip auto-init; construct with <code>new DLCarousel(el)</code> from page script (see the <a href="#lightbox">lightbox</a>)</td>
-            </tr>
-            <tr>
-              <td><code>data-roledescription="…"</code></td>
-              <td>carousel</td>
-              <td>Screen-reader role description; empty string to omit</td>
-            </tr>
-          </table>
+          <div class="demo-scroll">
+            <table>
+              <caption>
+                Data attributes
+              </caption>
+              <tr>
+                <th>Attribute</th>
+                <th>Default</th>
+                <th>Effect</th>
+              </tr>
+              <tr>
+                <td><code>data-slider</code></td>
+                <td>—</td>
+                <td>Auto-initialize this element</td>
+              </tr>
+              <tr>
+                <td><code>data-autoplay="4000"</code></td>
+                <td>0 (off)</td>
+                <td>Advance every N ms; adds a pause button</td>
+              </tr>
+              <tr>
+                <td><code>data-rewind="false"</code></td>
+                <td>rewind on</td>
+                <td>Stop at the ends instead of wrapping; end arrows disable</td>
+              </tr>
+              <tr>
+                <td><code>data-step="slide"</code></td>
+                <td>page</td>
+                <td>Arrows/autoplay advance one card at a time (see the model bar)</td>
+              </tr>
+              <tr>
+                <td><code>data-fade</code></td>
+                <td>off</td>
+                <td>Crossfade instead of sliding — one slide at a time (see the hero)</td>
+              </tr>
+              <tr>
+                <td><code>data-drag="false"</code></td>
+                <td>drag on</td>
+                <td>Opt out of mouse drag-to-scroll (touch swiping is native either way)</td>
+              </tr>
+              <tr>
+                <td><code>data-gallery</code></td>
+                <td>off</td>
+                <td>Thumbnail-gallery (tabbed) variant</td>
+              </tr>
+              <tr>
+                <td><code>data-init="manual"</code></td>
+                <td>auto</td>
+                <td>Skip auto-init; construct with <code>new DLCarousel(el)</code> from page script (see the <a href="#lightbox">lightbox</a>)</td>
+              </tr>
+              <tr>
+                <td><code>data-roledescription="…"</code></td>
+                <td>carousel</td>
+                <td>Screen-reader role description; empty string to omit</td>
+              </tr>
+            </table>
+          </div>
           <p>
             The most-used <code>--dlc-*</code> CSS knobs are listed in the <a href="#stock">stock look's</a> copy block; the full list, the events and the JS API are in
             <a href="https://github.com/stevenpelletier90/custom-slider#readme">the README</a>.
@@ -1722,32 +1731,34 @@
               announce the same banner twice.
             </p>
             <p><strong>The reason this was worth rebuilding rather than leaving alone:</strong> the version on those 68 sites has four accessibility problems, and this one has none of them.</p>
-            <table class="demo-hero-table">
-              <thead>
-                <tr>
-                  <th scope="col">Platform hero (68 sites)</th>
-                  <th scope="col">This one</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>The pause button is <strong>16 × 6 pixels</strong> — smaller than the accessibility guidelines allow, and named "hidden" in the code</td>
-                  <td>A <strong>36 × 36</strong> button, comfortably above the minimum, and the first thing you reach with the Tab key</td>
-                </tr>
-                <tr>
-                  <td>The dots are list items pretending to be buttons</td>
-                  <td>Actual buttons, one per banner</td>
-                </tr>
-                <tr>
-                  <td>Screen-reader announcements are switched off on the banner</td>
-                  <td>A short announcement of which banner you are on — and silence while it is rotating on its own, so it does not chatter</td>
-                </tr>
-                <tr>
-                  <td>No handling for people who ask their device to reduce motion</td>
-                  <td>It simply does not rotate for them, and the dissolve is dropped too</td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="demo-scroll">
+              <table class="demo-hero-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Platform hero (68 sites)</th>
+                    <th scope="col">This one</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>The pause button is <strong>16 × 6 pixels</strong> — smaller than the accessibility guidelines allow, and named "hidden" in the code</td>
+                    <td>A <strong>36 × 36</strong> button, comfortably above the minimum, and the first thing you reach with the Tab key</td>
+                  </tr>
+                  <tr>
+                    <td>The dots are list items pretending to be buttons</td>
+                    <td>Actual buttons, one per banner</td>
+                  </tr>
+                  <tr>
+                    <td>Screen-reader announcements are switched off on the banner</td>
+                    <td>A short announcement of which banner you are on — and silence while it is rotating on its own, so it does not chatter</td>
+                  </tr>
+                  <tr>
+                    <td>No handling for people who ask their device to reduce motion</td>
+                    <td>It simply does not rotate for them, and the dissolve is dropped too</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <p>
               All 76 demo homepages were checked for this, and the banner behaviour was confirmed by watching the real pages rather than reading their code — the pause button, for instance, does not
               appear in the page source at all, because it is added after the page loads. Full write-up in <code>docs/research/2026-08-18-oem-demo-slider-census.md</code>.
@@ -1938,117 +1949,119 @@
               One more check before you reach for the slider: a few OEMs (Porsche, INFINITI, BMW, one Ford variant) ship their model bar as a <em>static grid or tab panes</em> with no carousel at all
               &mdash; that family lives on <a href="model-bars.html#static-bars">the library page too</a>.
             </p>
-            <table class="demo-ladder-table">
-              <thead>
-                <tr>
-                  <th scope="col">Sites</th>
-                  <th scope="col">OEM demos</th>
-                  <th scope="col"><code>--dlc-per-view</code> ladder</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>19</td>
-                  <td>acura 1-4, ford 2-4, gmc 1-2, honda 2-5, kia 2-3, mitsubishi 1-2, mitsubishi 4, toyota 9</td>
-                  <td>base 2 · ≥461px 3 · ≥769px 5</td>
-                </tr>
-                <tr>
-                  <td>19</td>
-                  <td>buickgmc 1-4, cadillac 1-3, chevrolet 1-4, ford 6-7, subaru 1-4, volvo 1-2</td>
-                  <td>base 2 · ≥540px 3 · ≥992px 4 · ≥1200px 5</td>
-                </tr>
-                <tr>
-                  <td>14</td>
-                  <td>lexus 1-4, lexus 7, nissan 2-5, toyota 1, toyota 4-7</td>
-                  <td>base 1 · ≥401px 2 · ≥601px 3 · ≥992px 5</td>
-                </tr>
-                <tr>
-                  <td>7</td>
-                  <td>buick 1-2, jaguar 1, jaguar 3, landrover 1, landrover 3-4</td>
-                  <td>base 2 · ≥461px 3 · ≥769px 4</td>
-                </tr>
-                <tr>
-                  <td>5</td>
-                  <td>genesis 1-3, vw 1-2</td>
-                  <td>base 1 · ≥541px 2 · ≥993px 3 · ≥1201px 4</td>
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td>cdjr 1-4</td>
-                  <td>base 2 · ≥461px 3 · ≥992px 6</td>
-                </tr>
-                <tr>
-                  <td>4</td>
-                  <td>lincoln 1-4</td>
-                  <td>base 2 · ≥461px 3 · ≥993px 4</td>
-                </tr>
-                <tr>
-                  <td>3</td>
-                  <td>hyundai 2-4</td>
-                  <td>base 1 · ≥461px 3 · ≥993px 4 · ≥1201px 5</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>ford 1, honda 1</td>
-                  <td>base 1 · ≥461px 3 · ≥992px 5</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>mazda 1-2</td>
-                  <td>base 1 · ≥769px 2 · ≥992px 3</td>
-                </tr>
-                <tr>
-                  <td>2</td>
-                  <td>toyota 2-3</td>
-                  <td>base 1 · ≥541px 2</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>alfaromeo 1</td>
-                  <td>base 1 · ≥541px 2 · ≥993px 3 · ≥1201px 4 · ≥1801px 6</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>audi 1</td>
-                  <td>base 1 · ≥361px 2 · ≥769px 3 · ≥993px 4 · ≥1201px 6</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>ferrari 1</td>
-                  <td>base 1 · ≥768px 3</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>ferrari 2</td>
-                  <td>base 1 · ≥769px 2 · ≥993px 3 · ≥1441px 4</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>kia 1</td>
-                  <td>base 1 · ≥769px 3</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>maserati 4</td>
-                  <td>1-up centre mode at every width — the peek pattern (<code>--dlc-peek: 20%</code>) worn as a model bar</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>powersports 1</td>
-                  <td>base 2 · ≥461px 3 · ≥769px 6 (brand-logo strip)</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>powersports 2</td>
-                  <td>base 2 · ≥461px 3 · ≥993px 5 (category tiles)</td>
-                </tr>
-                <tr>
-                  <td>1</td>
-                  <td>hyundai 1</td>
-                  <td>two-row grid (<code>rows: 2</code>) — not a carousel mode; out of scope</td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="demo-scroll">
+              <table class="demo-ladder-table">
+                <thead>
+                  <tr>
+                    <th scope="col">Sites</th>
+                    <th scope="col">OEM demos</th>
+                    <th scope="col"><code>--dlc-per-view</code> ladder</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>19</td>
+                    <td>acura 1-4, ford 2-4, gmc 1-2, honda 2-5, kia 2-3, mitsubishi 1-2, mitsubishi 4, toyota 9</td>
+                    <td>base 2 · ≥461px 3 · ≥769px 5</td>
+                  </tr>
+                  <tr>
+                    <td>19</td>
+                    <td>buickgmc 1-4, cadillac 1-3, chevrolet 1-4, ford 6-7, subaru 1-4, volvo 1-2</td>
+                    <td>base 2 · ≥540px 3 · ≥992px 4 · ≥1200px 5</td>
+                  </tr>
+                  <tr>
+                    <td>14</td>
+                    <td>lexus 1-4, lexus 7, nissan 2-5, toyota 1, toyota 4-7</td>
+                    <td>base 1 · ≥401px 2 · ≥601px 3 · ≥992px 5</td>
+                  </tr>
+                  <tr>
+                    <td>7</td>
+                    <td>buick 1-2, jaguar 1, jaguar 3, landrover 1, landrover 3-4</td>
+                    <td>base 2 · ≥461px 3 · ≥769px 4</td>
+                  </tr>
+                  <tr>
+                    <td>5</td>
+                    <td>genesis 1-3, vw 1-2</td>
+                    <td>base 1 · ≥541px 2 · ≥993px 3 · ≥1201px 4</td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>cdjr 1-4</td>
+                    <td>base 2 · ≥461px 3 · ≥992px 6</td>
+                  </tr>
+                  <tr>
+                    <td>4</td>
+                    <td>lincoln 1-4</td>
+                    <td>base 2 · ≥461px 3 · ≥993px 4</td>
+                  </tr>
+                  <tr>
+                    <td>3</td>
+                    <td>hyundai 2-4</td>
+                    <td>base 1 · ≥461px 3 · ≥993px 4 · ≥1201px 5</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>ford 1, honda 1</td>
+                    <td>base 1 · ≥461px 3 · ≥992px 5</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>mazda 1-2</td>
+                    <td>base 1 · ≥769px 2 · ≥992px 3</td>
+                  </tr>
+                  <tr>
+                    <td>2</td>
+                    <td>toyota 2-3</td>
+                    <td>base 1 · ≥541px 2</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>alfaromeo 1</td>
+                    <td>base 1 · ≥541px 2 · ≥993px 3 · ≥1201px 4 · ≥1801px 6</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>audi 1</td>
+                    <td>base 1 · ≥361px 2 · ≥769px 3 · ≥993px 4 · ≥1201px 6</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>ferrari 1</td>
+                    <td>base 1 · ≥768px 3</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>ferrari 2</td>
+                    <td>base 1 · ≥769px 2 · ≥993px 3 · ≥1441px 4</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>kia 1</td>
+                    <td>base 1 · ≥769px 3</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>maserati 4</td>
+                    <td>1-up centre mode at every width — the peek pattern (<code>--dlc-peek: 20%</code>) worn as a model bar</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>powersports 1</td>
+                    <td>base 2 · ≥461px 3 · ≥769px 6 (brand-logo strip)</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>powersports 2</td>
+                    <td>base 2 · ≥461px 3 · ≥993px 5 (category tiles)</td>
+                  </tr>
+                  <tr>
+                    <td>1</td>
+                    <td>hyundai 1</td>
+                    <td>two-row grid (<code>rows: 2</code>) — not a carousel mode; out of scope</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <p>Here is the top row written out in full. Every other row is the same shape &mdash; one line per step in your brand&rsquo;s row:</p>
             <p class="code-label">CSS</p>
             <pre><code>.my-modelbar { --dlc-per-view: 2; }
@@ -2314,40 +2327,42 @@
               fuel type, or (on the multi-brand stores) brand. One warning if you go looking at the originals: nearly every site also has a <em>Buy / Finance / Lease</em> switcher for payments, which
               is a completely different thing and easy to mistake for these. The real groupings:
             </p>
-            <table class="demo-ladder-table">
-              <thead>
-                <tr>
-                  <th scope="col">OEM</th>
-                  <th scope="col">Model-bar tab groups</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td>Chevrolet, Subaru, Toyota (5 bars)</td>
-                  <td>Trucks · Electric · Crossovers/SUVs · Performance · Commercial</td>
-                </tr>
-                <tr>
-                  <td>Toyota</td>
-                  <td>Popular · Cars &amp; Minivan · Trucks · Crossovers &amp; SUVs · Electrified</td>
-                </tr>
-                <tr>
-                  <td>Ford, Honda, Lexus, Nissan (4 bars)</td>
-                  <td>SUVs &amp; Crossovers · Trucks &amp; Vans · All Electric · Cars</td>
-                </tr>
-                <tr>
-                  <td>Genesis, VW (3 bars)</td>
-                  <td>SUV · Sedan · Electric (VW: Bus)</td>
-                </tr>
-                <tr>
-                  <td>Kia, Cadillac, Hyundai, Volvo (3 bars)</td>
-                  <td>SUV/CUV/MPV · Hybrid/Electric · Sedan</td>
-                </tr>
-                <tr>
-                  <td>The other 25 sites</td>
-                  <td>a single ungrouped model bar</td>
-                </tr>
-              </tbody>
-            </table>
+            <div class="demo-scroll">
+              <table class="demo-ladder-table">
+                <thead>
+                  <tr>
+                    <th scope="col">OEM</th>
+                    <th scope="col">Model-bar tab groups</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Chevrolet, Subaru, Toyota (5 bars)</td>
+                    <td>Trucks · Electric · Crossovers/SUVs · Performance · Commercial</td>
+                  </tr>
+                  <tr>
+                    <td>Toyota</td>
+                    <td>Popular · Cars &amp; Minivan · Trucks · Crossovers &amp; SUVs · Electrified</td>
+                  </tr>
+                  <tr>
+                    <td>Ford, Honda, Lexus, Nissan (4 bars)</td>
+                    <td>SUVs &amp; Crossovers · Trucks &amp; Vans · All Electric · Cars</td>
+                  </tr>
+                  <tr>
+                    <td>Genesis, VW (3 bars)</td>
+                    <td>SUV · Sedan · Electric (VW: Bus)</td>
+                  </tr>
+                  <tr>
+                    <td>Kia, Cadillac, Hyundai, Volvo (3 bars)</td>
+                    <td>SUV/CUV/MPV · Hybrid/Electric · Sedan</td>
+                  </tr>
+                  <tr>
+                    <td>The other 25 sites</td>
+                    <td>a single ungrouped model bar</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
               page.

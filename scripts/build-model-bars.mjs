@@ -388,6 +388,8 @@ const SKINS = {
   },
   'logo-strip': {
     cardCss: `.my-modelbar { --dlc-gap: 1rem; }
+/* autoplay's pause button clears the overlaid next arrow - both stay 24px+ touch targets */
+.my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
 .my-modelbar-card { display: block; text-align: center; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }`,
     liveSlides: () => CUTOUTS.map(([slug, name]) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Shop ${name}">${cutoutImg(slug, '')}</a>`),
@@ -398,6 +400,8 @@ const SKINS = {
   },
   'location-card': {
     cardCss: `.my-modelbar { --dlc-gap: 1rem; }
+/* same pause-vs-arrow clearance as the makes rail */
+.my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
 .my-modelbar-card { display: block; padding: 1.5rem 1.25rem; color: inherit; text-align: center; text-decoration: none; border: 1px solid #ddd; }
 .my-modelbar-card h3 { margin: 0 0 0.4rem; font-size: 1.05rem; }
 .my-modelbar-card p { margin: 0 0 1rem; font-size: 0.9rem; color: #5f6368; }
@@ -443,7 +447,7 @@ const VARIANTS = [
       [992, 4],
       [1200, 5],
     ],
-    why: 'The GM ladder — and proof a ladder is not a look: Chevrolet runs it plain, Cadillac on a black band, and the Buick GMC, Ford-family, and Subaru demos wear it under brand or body-style tabs.',
+    why: 'The GM ladder — and proof a ladder is not a look: Chevrolet runs it plain, Cadillac on a black band, and the Buick GMC, Ford-family, and Subaru demos wear it under brand or body-style tabs. Note: since Nov 2025 the official Chevrolet bar is the TABBED version (the plain slick look was deprecated and its sites migrated) — expect tabs on new Chevrolet requests; the <a href="index.html#modelbar-tabs">tabs demo</a> shows the wiring over this same ladder.',
     strips: [
       { skin: 'white', label: 'As Chevrolet ships it' },
       { skin: 'band-dark', label: 'Same ladder as Cadillac ships it — a dark band and spaced capitals' },
@@ -475,7 +479,7 @@ const VARIANTS = [
       [461, 3],
       [769, 4],
     ],
-    why: 'Four-up ceiling — roomier cards than the five-up brands.',
+    why: 'Four-up ceiling — roomier cards than the five-up brands. Jaguar and Land Rover wear these same tiers as photo cards: a background photo per model with a dark hover overlay and an uppercase name plus tagline below (their imagery is pending, so the look is described rather than shown).',
     strips: [{ skin: 'white', label: 'Plain white, name below' }],
   },
   {
@@ -1024,6 +1028,7 @@ ${staticCss
         <a href="index.html#start">Start here</a>
         <a href="index.html#options">Options</a>
         <a href="model-bars.html" aria-current="page">Model bar library</a>
+        <a href="brands.html">Find your brand</a>
       </nav>
     </header>
     <main id="main">
@@ -1082,3 +1087,257 @@ console.log(
   VARIANTS.reduce((n, v) => n + v.strips.length, 0),
   'strips',
 );
+
+// ---- demo/brands.html — the per-brand directory ----------------------------
+// One row per brand a designer might be handed: what its model bar IS, its
+// tiers, where on the demo pages to copy it, and the official example site.
+// Emitted from the same script as the library so the two can never disagree.
+const BRANDS = [
+  ['Acura', 'Slider', '2 / 3 / 5', [['model-bars.html#acura', 'Acura ladder']], 'acurademo1'],
+  ['Alfa Romeo', 'Slider — tall photo tiles with a CTA', '1 / 2 / 3 / 4 / 6', [['model-bars.html#alfaromeo', 'Alfa Romeo ladder']], 'alfaromeodemo1'],
+  ['Audi', 'Slider', '1 / 2 / 3 / 4 / 6', [['model-bars.html#audi', 'Audi ladder']], 'audidemo1'],
+  [
+    'BMW',
+    'Tab panes; a static stacked list on phones — no slider',
+    '&mdash;',
+    [
+      ['model-bars.html#static-bars', 'Not-sliders family'],
+      ['index.html#modelbar-tabs', 'tab wiring'],
+    ],
+    'bmwdemo1',
+  ],
+  ['Buick', 'Slider', '2 / 3 / 4', [['model-bars.html#buick', 'Buick ladder']], 'buickdemo1'],
+  ['Cadillac', 'Slider under body-style tabs, dark band', '2 / 3 / 4 / 5', [['model-bars.html#chevrolet', 'Chevrolet ladder, dark look']], 'cadillacdemo1'],
+  [
+    'Chevrolet',
+    'Tabbed slider (tabs are the official version since Nov 2025)',
+    '2 / 3 / 4 / 5',
+    [
+      ['model-bars.html#chevrolet', 'Chevrolet ladder'],
+      ['index.html#modelbar-tabs', 'tab wiring'],
+    ],
+    'chevroletdemo1',
+  ],
+  ['Chrysler / Dodge / Jeep / Ram', 'Brand-logo tabs over sliders on a dark band', '2 / 3 / 6', [['model-bars.html#cdjr', 'CDJR ladder']], 'cdjrdemo1'],
+  [
+    'Ferrari',
+    'Slider — wordmark band, or lifestyle photo cards',
+    '1 / 3 &middot; 1 / 2 / 3 / 4',
+    [
+      ['model-bars.html#ferrari', 'Ferrari band'],
+      ['model-bars.html#ferrari-photo', 'photo cards'],
+    ],
+    'ferraridemo1',
+  ],
+  ['Fiat', 'Rides the CDJR bar (Fiat-including variant)', '2 / 3 / 6', [['model-bars.html#cdjr', 'CDJR ladder']], 'cdjrdemo1'],
+  [
+    'Ford',
+    'Slider, a static CSS grid, and a tabbed version',
+    '1 / 3 / 5',
+    [
+      ['model-bars.html#ford', 'Ford ladder'],
+      ['model-bars.html#static-bars', 'static grid'],
+    ],
+    'forddemo3',
+  ],
+  ['Genesis', 'Tabbed slider with inventory counts', '1 / 2 / 3 / 4 (new platform: 1 / 2 / 3)', [['model-bars.html#genesis', 'Genesis ladder']], 'genesisdemo1'],
+  [
+    'GMC',
+    'Tabs; the slick version rides the Acura tiers',
+    '2 / 3 / 5',
+    [
+      ['model-bars.html#acura', 'Acura ladder'],
+      ['index.html#modelbar-tabs', 'tab wiring'],
+    ],
+    'gmcdemo1',
+  ],
+  ['Group sites', 'Autoplaying make-logo and rooftop-location rails', '2 / 4 / 7 &middot; 1 / 2 / 4', [['model-bars.html#group', 'Group-site strips']], 'groupdemo1'],
+  ['Honda', 'Slider (plus a tabbed variant)', '2 / 3 / 5', [['model-bars.html#acura', 'Acura ladder']], 'hondademo4'],
+  ['Hyundai', 'Slider, and a tabbed version', '1 / 3 / 4 / 5', [['model-bars.html#hyundai', 'Hyundai ladder']], 'hyundaidemo1'],
+  ['INFINITI', 'Static tile grid — no slider', '2 / 2 / 3 across', [['model-bars.html#static-bars', 'tile-grid family']], 'infinitidemo1'],
+  ['Jaguar', 'Slider — photo cards with a tagline', '2 / 3 / 4', [['model-bars.html#buick', 'Buick ladder']], 'jaguardemo3'],
+  [
+    'Kia',
+    'Slider; a tabbed version; and a centre-mode version',
+    '2 / 3 / 5',
+    [
+      ['model-bars.html#acura', 'Acura ladder'],
+      ['index.html#peek', 'centre mode'],
+    ],
+    'kiademo3',
+  ],
+  ['Land Rover', 'Slider — photo cards with a tagline', '2 / 3 / 4', [['model-bars.html#buick', 'Buick ladder']], 'landroverdemo3'],
+  ['Lexus', 'Tabbed slider; the v2 look rides the Acura tiers', '1 / 2 / 3 / 5', [['model-bars.html#lexus', 'Lexus ladder']], 'lexusdemo1'],
+  ['Lincoln', 'Slider', '2 / 3 / 4', [['model-bars.html#lincoln', 'Lincoln ladder']], 'lincolndemo2'],
+  ['Maserati', 'Spotlight slider — one huge centred card', '1-up centre mode', [['model-bars.html#maserati', 'Maserati spotlight']], 'maseratidemo4'],
+  ['Mazda', 'Tabbed slider — and it keeps its dots', '1 / 2 / 3', [['model-bars.html#mazda', 'Mazda ladder']], 'mazdademo1'],
+  ['Mitsubishi', 'Slider', '2 / 3 / 5', [['model-bars.html#acura', 'Acura ladder']], 'mitsubishidemo1'],
+  ['Nissan', 'Tabbed slider', '1 / 2 / 3 / 5', [['model-bars.html#lexus', 'Lexus ladder']], 'nissandemo1'],
+  ['Porsche', 'Hover-reveal photo tile grid — no slider', '2 / 3 / 6 across', [['model-bars.html#static-bars', 'tile-grid family']], 'porschedemo1'],
+  [
+    'Powersports',
+    'Category bar and a brand-logo strip',
+    '2 / 3 / 5 &middot; 2 / 3 / 6',
+    [
+      ['model-bars.html#powersports-cat', 'category bar'],
+      ['model-bars.html#powersports-brands', 'brand strip'],
+    ],
+    'powersportsdemo2',
+  ],
+  ['Subaru', 'Tabbed slider (icon tabs)', '2 / 3 / 4 / 5', [['model-bars.html#chevrolet', 'Chevrolet ladder']], 'subarudemo2'],
+  [
+    'Toyota',
+    'Slider (photo cards) plus three tabbed versions on the Lexus tiers',
+    '1 / 2 own &middot; 1 / 2 / 3 / 5',
+    [
+      ['model-bars.html#toyota', 'Toyota photo cards'],
+      ['model-bars.html#lexus', 'Lexus ladder'],
+    ],
+    'toyotademo1',
+  ],
+  ['Volkswagen', 'Tabbed slider — a colour tile behind each car', '1 / 2 / 3 / 4', [['model-bars.html#genesis', 'Genesis ladder, tile look']], 'vwdemo1'],
+  ['Volvo', 'Slider', '2 / 3 / 4 / 5', [['model-bars.html#chevrolet', 'Chevrolet ladder']], 'volvodemo1'],
+];
+
+const brandRows = BRANDS.map(
+  ([brand, what, tiers, copies, host]) => `            <tr>
+              <th scope="row">${brand}</th>
+              <td>${what}</td>
+              <td>${tiers}</td>
+              <td>${copies.map(([href, label]) => `<a href="${href}">${label}</a>`).join(' &middot; ')}</td>
+              <td><a href="https://${host}.dealeron.com/">${host}</a></td>
+            </tr>`,
+).join('\n');
+
+const brandsPage = `<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Custom Slider — find your brand</title>
+    <meta name="description" content="Every OEM's model bar in one directory: what it runs, its cards-per-view tiers, where to copy it from, and the official example site." />
+    <!-- inline so the page makes no request the repo can't serve (a missing favicon was a 404 in the console) -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23262626'/><rect x='5' y='11' width='14' height='10' rx='2' fill='%23fff'/><rect x='21' y='13' width='6' height='6' rx='2' fill='%23949494'/></svg>"
+    />
+    <link rel="stylesheet" href="../dist/dl-carousel.css" />
+    <link rel="stylesheet" href="assets/demo.css" />
+    <script src="../dist/dl-carousel.js" defer></script>
+    <script src="assets/demo.js" defer></script>
+    <style>
+      /* Page chrome shared with the other demo pages lives in assets/demo.css. */
+      .brand-filter {
+        max-inline-size: 22rem;
+        margin-block: 1rem 0.35rem;
+      }
+      .brand-filter label {
+        display: block;
+        margin-block-end: 0.25rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      .brand-filter input {
+        inline-size: 100%;
+        padding: 0.5rem 0.7rem;
+        font: inherit;
+        border: 1px solid #c4ced8;
+        border-radius: 6px;
+      }
+      .brand-filter input:focus-visible {
+        outline: 3px solid #16324f;
+        outline-offset: 2px;
+      }
+      .brand-table {
+        inline-size: 100%;
+        min-inline-size: 46rem;
+        border-collapse: collapse;
+      }
+      .brand-table th,
+      .brand-table td {
+        padding: 0.55rem 0.7rem;
+        font-size: 0.9rem;
+        text-align: start;
+        vertical-align: top;
+        border-block-end: 1px solid #dde3e9;
+      }
+      .brand-table thead th {
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #5f6368;
+      }
+      .brand-table tbody th {
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <a class="demo-skip" href="#main">Skip to content</a>
+    <header class="demo-sitenav">
+      <nav aria-label="Slider library">
+        <strong class="demo-sitenav-title">Custom Slider</strong>
+        <a href="index.html">Examples</a>
+        <a href="index.html#start">Start here</a>
+        <a href="index.html#options">Options</a>
+        <a href="model-bars.html">Model bar library</a>
+        <a href="brands.html" aria-current="page">Find your brand</a>
+      </nav>
+    </header>
+    <main id="main">
+      <h1>Find your brand</h1>
+      <p class="demo-lede">
+        Handed a site and told &ldquo;add the model bar&rdquo;? Look the brand up here: what its bar actually is (a slider, a tabbed slider, or no slider at all), how many cards it shows at each
+        width, where on these pages to copy the finished build, and the official example site to compare against.
+      </p>
+      <div class="brand-filter">
+        <label for="brand-q">Filter brands</label>
+        <input id="brand-q" type="text" autocomplete="off" placeholder="e.g. Kia, tabs, no slider" />
+        <p class="demo-vh" role="status" id="brand-count"></p>
+      </div>
+      <div class="demo-scroll">
+        <table class="brand-table">
+          <thead>
+            <tr>
+              <th scope="col">Brand</th>
+              <th scope="col">What its model bar is</th>
+              <th scope="col">Cards per view</th>
+              <th scope="col">Copy it from</th>
+              <th scope="col">Official example</th>
+            </tr>
+          </thead>
+          <tbody>
+${brandRows}
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Ladders and looks all run live on the <a href="model-bars.html">model bar library</a>; generic patterns and the install step live on <a href="index.html">the main demo</a>. Sites named here
+        are internal demo sites, safe to open and compare against.
+      </p>
+    </main>
+    <script>
+      // Type-to-filter: hides rows whose text doesn't match; announces the
+      // count to screen readers. With JS off the full table simply stands.
+      addEventListener('DOMContentLoaded', () => {
+        const q = document.getElementById('brand-q');
+        const status = document.getElementById('brand-count');
+        const rows = [...document.querySelectorAll('.brand-table tbody tr')];
+        q.addEventListener('input', () => {
+          const term = q.value.trim().toLowerCase();
+          let shown = 0;
+          for (const row of rows) {
+            const hit = !term || row.textContent.toLowerCase().includes(term);
+            row.hidden = !hit;
+            if (hit) shown += 1;
+          }
+          status.textContent = term ? shown + ' of ' + rows.length + ' brands shown' : '';
+        });
+      });
+    </script>
+  </body>
+</html>
+`;
+
+fs.writeFileSync('demo/brands.html', brandsPage);
+console.log('demo/brands.html written:', BRANDS.length, 'brands');

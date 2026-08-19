@@ -1109,6 +1109,9 @@
       .mbx-group-0 {
         --dlc-gap: 1rem;
       }
+      .mbx-group-0 .dl-carousel-pause {
+        inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem);
+      }
       .mbx-group-0-card {
         display: block;
         text-align: center;
@@ -1144,6 +1147,9 @@
 
       .mbx-group-1 {
         --dlc-gap: 1rem;
+      }
+      .mbx-group-1 .dl-carousel-pause {
+        inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem);
       }
       .mbx-group-1-card {
         display: block;
@@ -1306,6 +1312,7 @@
         <a href="index.html#start">Start here</a>
         <a href="index.html#options">Options</a>
         <a href="model-bars.html" aria-current="page">Model bar library</a>
+        <a href="brands.html">Find your brand</a>
       </nav>
     </header>
     <main id="main">
@@ -1431,7 +1438,9 @@
           <h3 id="chevrolet-h">The Chevrolet ladder &mdash; 19 sites</h3>
           <p class="demo-sub">
             The GM ladder — and proof a ladder is not a look: Chevrolet runs it plain, Cadillac on a black band, and the Buick GMC, Ford-family, and Subaru demos wear it under brand or body-style
-            tabs. Runs on buickgmc 1-4, cadillac 1-3, chevrolet 1-4, ford 6-7, subaru 1-4, volvo 1-2. Cards per view: base 2 &middot; &ge;540px 3 &middot; &ge;992px 4 &middot; &ge;1200px 5.
+            tabs. Note: since Nov 2025 the official Chevrolet bar is the TABBED version (the plain slick look was deprecated and its sites migrated) — expect tabs on new Chevrolet requests; the
+            <a href="index.html#modelbar-tabs">tabs demo</a> shows the wiring over this same ladder. Runs on buickgmc 1-4, cadillac 1-3, chevrolet 1-4, ford 6-7, subaru 1-4, volvo 1-2. Cards per view:
+            base 2 &middot; &ge;540px 3 &middot; &ge;992px 4 &middot; &ge;1200px 5.
           </p>
           <h4 id="mbx-chevrolet-0-h" class="strip-label">As Chevrolet ships it</h4>
           <div class="dl-carousel mbx-chevrolet-0" data-slider data-step="slide" aria-labelledby="mbx-chevrolet-0-h">
@@ -1841,8 +1850,9 @@
         <section class="demo-section demo-wide" id="buick">
           <h3 id="buick-h">The Buick ladder &mdash; 7 sites</h3>
           <p class="demo-sub">
-            Four-up ceiling — roomier cards than the five-up brands. Runs on buick 1-2, jaguar 1, jaguar 3, landrover 1, landrover 3-4. Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;769px
-            4.
+            Four-up ceiling — roomier cards than the five-up brands. Jaguar and Land Rover wear these same tiers as photo cards: a background photo per model with a dark hover overlay and an uppercase
+            name plus tagline below (their imagery is pending, so the look is described rather than shown). Runs on buick 1-2, jaguar 1, jaguar 3, landrover 1, landrover 3-4. Cards per view: base 2
+            &middot; &ge;461px 3 &middot; &ge;769px 4.
           </p>
           <p class="strip-note">Plain white, name below.</p>
           <div class="dl-carousel mbx-buick" data-slider data-step="slide" aria-labelledby="buick-h">
@@ -3829,6 +3839,8 @@
 /* Autoplay adds the engine's pause button (top right, first in tab order) - leave it. */
 
 .my-modelbar { --dlc-gap: 1rem; }
+/* autoplay's pause button clears the overlaid next arrow - both stay 24px+ touch targets */
+.my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
 .my-modelbar-card { display: block; text-align: center; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }</code></pre>
           </details>
@@ -3911,6 +3923,8 @@
 /* Autoplay adds the engine's pause button (top right, first in tab order) - leave it. */
 
 .my-modelbar { --dlc-gap: 1rem; }
+/* same pause-vs-arrow clearance as the makes rail */
+.my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
 .my-modelbar-card { display: block; padding: 1.5rem 1.25rem; color: inherit; text-align: center; text-decoration: none; border: 1px solid #ddd; }
 .my-modelbar-card h3 { margin: 0 0 0.4rem; font-size: 1.05rem; }
 .my-modelbar-card p { margin: 0 0 1rem; font-size: 0.9rem; color: #5f6368; }

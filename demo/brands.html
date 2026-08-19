@@ -1,0 +1,351 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Custom Slider — find your brand</title>
+    <meta name="description" content="Every OEM's model bar in one directory: what it runs, its cards-per-view tiers, where to copy it from, and the official example site." />
+    <!-- inline so the page makes no request the repo can't serve (a missing favicon was a 404 in the console) -->
+    <link
+      rel="icon"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23262626'/><rect x='5' y='11' width='14' height='10' rx='2' fill='%23fff'/><rect x='21' y='13' width='6' height='6' rx='2' fill='%23949494'/></svg>"
+    />
+    <link rel="stylesheet" href="../dist/dl-carousel.css" />
+    <link rel="stylesheet" href="assets/demo.css" />
+    <script src="../dist/dl-carousel.js" defer></script>
+    <script src="assets/demo.js" defer></script>
+    <style>
+      /* Page chrome shared with the other demo pages lives in assets/demo.css. */
+      .brand-filter {
+        max-inline-size: 22rem;
+        margin-block: 1rem 0.35rem;
+      }
+      .brand-filter label {
+        display: block;
+        margin-block-end: 0.25rem;
+        font-size: 0.85rem;
+        font-weight: 600;
+      }
+      .brand-filter input {
+        inline-size: 100%;
+        padding: 0.5rem 0.7rem;
+        font: inherit;
+        border: 1px solid #c4ced8;
+        border-radius: 6px;
+      }
+      .brand-filter input:focus-visible {
+        outline: 3px solid #16324f;
+        outline-offset: 2px;
+      }
+      .brand-table {
+        inline-size: 100%;
+        min-inline-size: 46rem;
+        border-collapse: collapse;
+      }
+      .brand-table th,
+      .brand-table td {
+        padding: 0.55rem 0.7rem;
+        font-size: 0.9rem;
+        text-align: start;
+        vertical-align: top;
+        border-block-end: 1px solid #dde3e9;
+      }
+      .brand-table thead th {
+        font-size: 0.72rem;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: #5f6368;
+      }
+      .brand-table tbody th {
+        white-space: nowrap;
+      }
+    </style>
+  </head>
+  <body>
+    <a class="demo-skip" href="#main">Skip to content</a>
+    <header class="demo-sitenav">
+      <nav aria-label="Slider library">
+        <strong class="demo-sitenav-title">Custom Slider</strong>
+        <a href="index.html">Examples</a>
+        <a href="index.html#start">Start here</a>
+        <a href="index.html#options">Options</a>
+        <a href="model-bars.html">Model bar library</a>
+        <a href="brands.html" aria-current="page">Find your brand</a>
+      </nav>
+    </header>
+    <main id="main">
+      <h1>Find your brand</h1>
+      <p class="demo-lede">
+        Handed a site and told &ldquo;add the model bar&rdquo;? Look the brand up here: what its bar actually is (a slider, a tabbed slider, or no slider at all), how many cards it shows at each
+        width, where on these pages to copy the finished build, and the official example site to compare against.
+      </p>
+      <div class="brand-filter">
+        <label for="brand-q">Filter brands</label>
+        <input id="brand-q" type="text" autocomplete="off" placeholder="e.g. Kia, tabs, no slider" />
+        <p class="demo-vh" role="status" id="brand-count"></p>
+      </div>
+      <div class="demo-scroll">
+        <table class="brand-table">
+          <thead>
+            <tr>
+              <th scope="col">Brand</th>
+              <th scope="col">What its model bar is</th>
+              <th scope="col">Cards per view</th>
+              <th scope="col">Copy it from</th>
+              <th scope="col">Official example</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">Acura</th>
+              <td>Slider</td>
+              <td>2 / 3 / 5</td>
+              <td><a href="model-bars.html#acura">Acura ladder</a></td>
+              <td><a href="https://acurademo1.dealeron.com/">acurademo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Alfa Romeo</th>
+              <td>Slider — tall photo tiles with a CTA</td>
+              <td>1 / 2 / 3 / 4 / 6</td>
+              <td><a href="model-bars.html#alfaromeo">Alfa Romeo ladder</a></td>
+              <td><a href="https://alfaromeodemo1.dealeron.com/">alfaromeodemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Audi</th>
+              <td>Slider</td>
+              <td>1 / 2 / 3 / 4 / 6</td>
+              <td><a href="model-bars.html#audi">Audi ladder</a></td>
+              <td><a href="https://audidemo1.dealeron.com/">audidemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">BMW</th>
+              <td>Tab panes; a static stacked list on phones — no slider</td>
+              <td>&mdash;</td>
+              <td><a href="model-bars.html#static-bars">Not-sliders family</a> &middot; <a href="index.html#modelbar-tabs">tab wiring</a></td>
+              <td><a href="https://bmwdemo1.dealeron.com/">bmwdemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Buick</th>
+              <td>Slider</td>
+              <td>2 / 3 / 4</td>
+              <td><a href="model-bars.html#buick">Buick ladder</a></td>
+              <td><a href="https://buickdemo1.dealeron.com/">buickdemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Cadillac</th>
+              <td>Slider under body-style tabs, dark band</td>
+              <td>2 / 3 / 4 / 5</td>
+              <td><a href="model-bars.html#chevrolet">Chevrolet ladder, dark look</a></td>
+              <td><a href="https://cadillacdemo1.dealeron.com/">cadillacdemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Chevrolet</th>
+              <td>Tabbed slider (tabs are the official version since Nov 2025)</td>
+              <td>2 / 3 / 4 / 5</td>
+              <td><a href="model-bars.html#chevrolet">Chevrolet ladder</a> &middot; <a href="index.html#modelbar-tabs">tab wiring</a></td>
+              <td><a href="https://chevroletdemo1.dealeron.com/">chevroletdemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Chrysler / Dodge / Jeep / Ram</th>
+              <td>Brand-logo tabs over sliders on a dark band</td>
+              <td>2 / 3 / 6</td>
+              <td><a href="model-bars.html#cdjr">CDJR ladder</a></td>
+              <td><a href="https://cdjrdemo1.dealeron.com/">cdjrdemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Ferrari</th>
+              <td>Slider — wordmark band, or lifestyle photo cards</td>
+              <td>1 / 3 &middot; 1 / 2 / 3 / 4</td>
+              <td><a href="model-bars.html#ferrari">Ferrari band</a> &middot; <a href="model-bars.html#ferrari-photo">photo cards</a></td>
+              <td><a href="https://ferraridemo1.dealeron.com/">ferraridemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Fiat</th>
+              <td>Rides the CDJR bar (Fiat-including variant)</td>
+              <td>2 / 3 / 6</td>
+              <td><a href="model-bars.html#cdjr">CDJR ladder</a></td>
+              <td><a href="https://cdjrdemo1.dealeron.com/">cdjrdemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Ford</th>
+              <td>Slider, a static CSS grid, and a tabbed version</td>
+              <td>1 / 3 / 5</td>
+              <td><a href="model-bars.html#ford">Ford ladder</a> &middot; <a href="model-bars.html#static-bars">static grid</a></td>
+              <td><a href="https://forddemo3.dealeron.com/">forddemo3</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Genesis</th>
+              <td>Tabbed slider with inventory counts</td>
+              <td>1 / 2 / 3 / 4 (new platform: 1 / 2 / 3)</td>
+              <td><a href="model-bars.html#genesis">Genesis ladder</a></td>
+              <td><a href="https://genesisdemo1.dealeron.com/">genesisdemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">GMC</th>
+              <td>Tabs; the slick version rides the Acura tiers</td>
+              <td>2 / 3 / 5</td>
+              <td><a href="model-bars.html#acura">Acura ladder</a> &middot; <a href="index.html#modelbar-tabs">tab wiring</a></td>
+              <td><a href="https://gmcdemo1.dealeron.com/">gmcdemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Group sites</th>
+              <td>Autoplaying make-logo and rooftop-location rails</td>
+              <td>2 / 4 / 7 &middot; 1 / 2 / 4</td>
+              <td><a href="model-bars.html#group">Group-site strips</a></td>
+              <td><a href="https://groupdemo1.dealeron.com/">groupdemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Honda</th>
+              <td>Slider (plus a tabbed variant)</td>
+              <td>2 / 3 / 5</td>
+              <td><a href="model-bars.html#acura">Acura ladder</a></td>
+              <td><a href="https://hondademo4.dealeron.com/">hondademo4</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Hyundai</th>
+              <td>Slider, and a tabbed version</td>
+              <td>1 / 3 / 4 / 5</td>
+              <td><a href="model-bars.html#hyundai">Hyundai ladder</a></td>
+              <td><a href="https://hyundaidemo1.dealeron.com/">hyundaidemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">INFINITI</th>
+              <td>Static tile grid — no slider</td>
+              <td>2 / 2 / 3 across</td>
+              <td><a href="model-bars.html#static-bars">tile-grid family</a></td>
+              <td><a href="https://infinitidemo1.dealeron.com/">infinitidemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Jaguar</th>
+              <td>Slider — photo cards with a tagline</td>
+              <td>2 / 3 / 4</td>
+              <td><a href="model-bars.html#buick">Buick ladder</a></td>
+              <td><a href="https://jaguardemo3.dealeron.com/">jaguardemo3</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Kia</th>
+              <td>Slider; a tabbed version; and a centre-mode version</td>
+              <td>2 / 3 / 5</td>
+              <td><a href="model-bars.html#acura">Acura ladder</a> &middot; <a href="index.html#peek">centre mode</a></td>
+              <td><a href="https://kiademo3.dealeron.com/">kiademo3</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Land Rover</th>
+              <td>Slider — photo cards with a tagline</td>
+              <td>2 / 3 / 4</td>
+              <td><a href="model-bars.html#buick">Buick ladder</a></td>
+              <td><a href="https://landroverdemo3.dealeron.com/">landroverdemo3</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Lexus</th>
+              <td>Tabbed slider; the v2 look rides the Acura tiers</td>
+              <td>1 / 2 / 3 / 5</td>
+              <td><a href="model-bars.html#lexus">Lexus ladder</a></td>
+              <td><a href="https://lexusdemo1.dealeron.com/">lexusdemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Lincoln</th>
+              <td>Slider</td>
+              <td>2 / 3 / 4</td>
+              <td><a href="model-bars.html#lincoln">Lincoln ladder</a></td>
+              <td><a href="https://lincolndemo2.dealeron.com/">lincolndemo2</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Maserati</th>
+              <td>Spotlight slider — one huge centred card</td>
+              <td>1-up centre mode</td>
+              <td><a href="model-bars.html#maserati">Maserati spotlight</a></td>
+              <td><a href="https://maseratidemo4.dealeron.com/">maseratidemo4</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Mazda</th>
+              <td>Tabbed slider — and it keeps its dots</td>
+              <td>1 / 2 / 3</td>
+              <td><a href="model-bars.html#mazda">Mazda ladder</a></td>
+              <td><a href="https://mazdademo1.dealeron.com/">mazdademo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Mitsubishi</th>
+              <td>Slider</td>
+              <td>2 / 3 / 5</td>
+              <td><a href="model-bars.html#acura">Acura ladder</a></td>
+              <td><a href="https://mitsubishidemo1.dealeron.com/">mitsubishidemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Nissan</th>
+              <td>Tabbed slider</td>
+              <td>1 / 2 / 3 / 5</td>
+              <td><a href="model-bars.html#lexus">Lexus ladder</a></td>
+              <td><a href="https://nissandemo1.dealeron.com/">nissandemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Porsche</th>
+              <td>Hover-reveal photo tile grid — no slider</td>
+              <td>2 / 3 / 6 across</td>
+              <td><a href="model-bars.html#static-bars">tile-grid family</a></td>
+              <td><a href="https://porschedemo1.dealeron.com/">porschedemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Powersports</th>
+              <td>Category bar and a brand-logo strip</td>
+              <td>2 / 3 / 5 &middot; 2 / 3 / 6</td>
+              <td><a href="model-bars.html#powersports-cat">category bar</a> &middot; <a href="model-bars.html#powersports-brands">brand strip</a></td>
+              <td><a href="https://powersportsdemo2.dealeron.com/">powersportsdemo2</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Subaru</th>
+              <td>Tabbed slider (icon tabs)</td>
+              <td>2 / 3 / 4 / 5</td>
+              <td><a href="model-bars.html#chevrolet">Chevrolet ladder</a></td>
+              <td><a href="https://subarudemo2.dealeron.com/">subarudemo2</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Toyota</th>
+              <td>Slider (photo cards) plus three tabbed versions on the Lexus tiers</td>
+              <td>1 / 2 own &middot; 1 / 2 / 3 / 5</td>
+              <td><a href="model-bars.html#toyota">Toyota photo cards</a> &middot; <a href="model-bars.html#lexus">Lexus ladder</a></td>
+              <td><a href="https://toyotademo1.dealeron.com/">toyotademo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Volkswagen</th>
+              <td>Tabbed slider — a colour tile behind each car</td>
+              <td>1 / 2 / 3 / 4</td>
+              <td><a href="model-bars.html#genesis">Genesis ladder, tile look</a></td>
+              <td><a href="https://vwdemo1.dealeron.com/">vwdemo1</a></td>
+            </tr>
+            <tr>
+              <th scope="row">Volvo</th>
+              <td>Slider</td>
+              <td>2 / 3 / 4 / 5</td>
+              <td><a href="model-bars.html#chevrolet">Chevrolet ladder</a></td>
+              <td><a href="https://volvodemo1.dealeron.com/">volvodemo1</a></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p>
+        Ladders and looks all run live on the <a href="model-bars.html">model bar library</a>; generic patterns and the install step live on <a href="index.html">the main demo</a>. Sites named here
+        are internal demo sites, safe to open and compare against.
+      </p>
+    </main>
+    <script>
+      // Type-to-filter: hides rows whose text doesn't match; announces the
+      // count to screen readers. With JS off the full table simply stands.
+      addEventListener('DOMContentLoaded', () => {
+        const q = document.getElementById('brand-q');
+        const status = document.getElementById('brand-count');
+        const rows = [...document.querySelectorAll('.brand-table tbody tr')];
+        q.addEventListener('input', () => {
+          const term = q.value.trim().toLowerCase();
+          let shown = 0;
+          for (const row of rows) {
+            const hit = !term || row.textContent.toLowerCase().includes(term);
+            row.hidden = !hit;
+            if (hit) shown += 1;
+          }
+          status.textContent = term ? shown + ' of ' + rows.length + ' brands shown' : '';
+        });
+      });
+    </script>
+  </body>
+</html>
