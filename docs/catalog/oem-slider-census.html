@@ -509,11 +509,11 @@
     <main>
       <div class="sheet">
         <header class="masthead">
-          <div class="eyebrow">DealerOn &#183; Creative Solutions &#183; 18 Aug 2026</div>
+          <div class="eyebrow">DealerOn &#183; Creative Solutions &#183; 18&#8211;19 Aug 2026</div>
           <h1>What the OEM demo sliders actually are</h1>
           <p class="standfirst">
             Every one of the 76 DealerOn OEM demo homepages was fingerprinted and the results clustered. The variety is mostly skin: five slider types account for the entire estate, and the one we
-            cannot build is the most common of all.
+            could not build until this week is the most common of all. A second sweep then followed one site per brand onto its inner pages &#8212; the numbers for that are further down.
           </p>
         </header>
 
@@ -838,6 +838,137 @@
         </section>
 
         <section>
+          <h2>Inner pages: the 19 Aug sweep</h2>
+          <p>
+            The homepage census left the rest of each site unexamined, so a second sweep followed one demo site per brand inside &#8212; SRPs, VDPs, model detail pages, specials, service and
+            about/staff. 32 sites were attempted; 24 had their full page set reachable, and every count below comes from those 24. This pass was static HTML only, which matters &#8212; see the caveat
+            under the table.
+          </p>
+          <div class="stats">
+            <div class="stat"><b>24</b><span>sites swept</span></div>
+            <div class="stat"><b>~190</b><span>inner pages</span></div>
+            <div class="stat"><b>~13</b><span>distinct patterns</span></div>
+            <div class="stat"><b>2</b><span>universal</span></div>
+            <div class="stat"><b>4</b><span>new demo sections</span></div>
+          </div>
+          <div class="finding">
+            <p class="lede">The platform&#8217;s newest slider already works the way ours does: every VDP runs a native scroll-snap photo gallery, and slick is not even loaded on the page.</p>
+            <p>
+              DealerOn&#8217;s own VDP gallery (<code>vehicle-image-carousel</code>) is a CSS scroll-snap track with arrows, a counter and thumbnail strips &#8212; architecturally the same bet
+              dl-carousel makes. The other universal pattern is its opposite: every SRP ships <code>slick.min.js</code> plus the full slick CSS with <strong>zero</strong> static init, for a
+              per-vehicle-card carousel that is injected entirely at runtime.
+            </p>
+          </div>
+          <div class="scroller">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Pattern</th>
+                  <th scope="col">Where</th>
+                  <th scope="col">Prevalence</th>
+                  <th scope="col">Covered by</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>VDP photo gallery with thumbnails</td>
+                  <td class="oems">every VDP &#8212; platform component, native scroll-snap</td>
+                  <td class="oems">universal</td>
+                  <td><span class="chip chip--have">Covered</span> <code>demo/index.html#gallery</code></td>
+                </tr>
+                <tr>
+                  <td>VDP fullscreen gallery in a modal</td>
+                  <td class="oems">every VDP &#8212; vertical thumbnail rail, video thumbs</td>
+                  <td class="oems">universal &#8212; modal instance of the gallery above</td>
+                  <td><span class="chip chip--new">New &#8212; built</span> <code>demo/index.html#lightbox</code></td>
+                </tr>
+                <tr>
+                  <td>SRP per-card image carousel</td>
+                  <td class="oems">every SRP &#8212; runtime-injected into each vehicle card</td>
+                  <td class="oems">universal, needs live check</td>
+                  <td><span class="chip chip--new">New &#8212; built</span> <code>demo/index.html#card-gallery</code></td>
+                </tr>
+                <tr>
+                  <td>Certified-service tile carousel</td>
+                  <td class="oems">Buick, Cadillac, Chevrolet, GMC <code>/service</code></td>
+                  <td class="oems">4 sites, identical init</td>
+                  <td><span class="chip chip--have">Covered</span> <code>demo/index.html#cards</code></td>
+                </tr>
+                <tr>
+                  <td>Tabbed feature-card carousels</td>
+                  <td class="oems">INFINITI QX60 model page</td>
+                  <td class="oems">1 page, 8 instances</td>
+                  <td><span class="chip chip--have">Covered</span> <code>demo/index.html#modelbar-tabs</code></td>
+                </tr>
+                <tr>
+                  <td>Trim-card strip, 4-up</td>
+                  <td class="oems">Kia Telluride model page</td>
+                  <td class="oems">1 page</td>
+                  <td><span class="chip chip--have">Covered</span> <code>demo/index.html#vehicles</code></td>
+                </tr>
+                <tr>
+                  <td>Synced filterable gallery</td>
+                  <td class="oems">Kia Telluride &#8212; filter buttons over a main + thumb pair</td>
+                  <td class="oems">1 page, 7 instances</td>
+                  <td><span class="chip chip--new">New &#8212; built</span> <code>demo/index.html#gallery-filter</code></td>
+                </tr>
+                <tr>
+                  <td>Mixed photo + video gallery</td>
+                  <td class="oems">Kia Telluride; platform VDP video thumbs</td>
+                  <td class="oems">1 authored page + platform</td>
+                  <td><span class="chip chip--new">New &#8212; built</span> <code>demo/index.html#media-gallery</code></td>
+                </tr>
+                <tr>
+                  <td>Centre-mode technology strip</td>
+                  <td class="oems">Nissan Rogue model page</td>
+                  <td class="oems">1 page</td>
+                  <td><span class="chip chip--have">Covered</span> <code>demo/index.html#peek</code></td>
+                </tr>
+                <tr>
+                  <td>Autoplaying feature cards</td>
+                  <td class="oems">MINI Countryman model page</td>
+                  <td class="oems">1 page &#8212; the only autoplaying card strip found</td>
+                  <td><span class="chip chip--have">Covered</span> <code>demo/index.html#vehicles</code></td>
+                </tr>
+                <tr>
+                  <td>Sitewide incentive chrome &#8212; fade banner + 3-up offer strip</td>
+                  <td class="oems">Subaru, on every inner page</td>
+                  <td class="oems">1 site, sitewide</td>
+                  <td><span class="chip chip--have">Covered</span> <code>demo/index.html#hero</code> + <code>#vehicles</code></td>
+                </tr>
+                <tr>
+                  <td>Service hero promo rotator</td>
+                  <td class="oems">Lexus <code>service.aspx</code></td>
+                  <td class="oems">1 page</td>
+                  <td><span class="chip chip--have">Covered</span> <code>demo/index.html#hero</code></td>
+                </tr>
+                <tr>
+                  <td>SRP banner slot (<code>&lt;do-banner&gt;</code>)</td>
+                  <td class="oems">Mitsubishi SRPs</td>
+                  <td class="oems">1 site&#8217;s SRPs</td>
+                  <td><span class="chip chip--have">Covered</span> <code>demo/index.html#hero</code></td>
+                </tr>
+                <tr>
+                  <td>Dormant Maverick trim showcase</td>
+                  <td class="oems">Ford &#8212; slick still loads and inits, target markup commented out</td>
+                  <td class="oems">1 page, 100% dead payload</td>
+                  <td><span class="chip chip--off">Dormant</span> nothing to cover</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            <strong>The static-HTML caveat.</strong> SRP vehicle cards are client-rendered from an API, so the biggest inner-page slider surface &#8212; the per-card carousel on every SRP &#8212;
+            cannot be seen in a static fetch. What can: the slick assets ship on every SRP with no init anywhere in the HTML, and the card data carries a photo-list model for it. Confirming which
+            library actually renders it needs a browser pass, which has not run yet.
+          </p>
+          <p>
+            <strong>The dead-weight argument writes itself.</strong> Ford&#8217;s Maverick page still loads slick and still calls it &#8212; on markup that is commented out. And every SRP estate-wide
+            carries slick&#8217;s JS and CSS for one runtime card carousel; dl-carousel&#8217;s entire budget is under 6&#8201;KB gzip, less than that freight before counting jQuery.
+          </p>
+        </section>
+
+        <section>
           <h2>Open the originals</h2>
           <p>
             Screenshots of each distinct model bar are in the <a href="https://claude.ai/code/artifact/72367577-3336-4f58-abc1-5b0beb64ac08">Model Bar Library</a>. All 76 demo homepages below, so
@@ -1089,11 +1220,17 @@
                 <strong>Corrected again:</strong> the pause control appears in <em>zero</em> of the 76 HTML sources, which looked like it was simply missing. It is injected at runtime &#8212; visible
                 only on the live page. Anything behaviour-dependent here was checked in a real browser for that reason.
               </li>
+              <li>
+                <strong>The inner-page sweep (19 Aug) is static HTML only.</strong> One demo site per brand, ~190 pages by <code>curl</code>: 32 sites attempted, 24 with the full page set reachable
+                &#8212; the inner-page counts use only those 24, and no live-browser pass has run on them yet. The runtime-injected SRP card carousel is the known blind spot.
+              </li>
             </ul>
           </details>
         </section>
 
-        <footer>Source of truth: docs/research/2026-08-18-oem-demo-slider-census.md &#183; homepages only &#183; fingerprinted 18 Aug 2026</footer>
+        <footer>
+          Source of truth: docs/research/2026-08-18-oem-demo-slider-census.md &#183; homepages (all 76) fingerprinted 18 Aug 2026 &#183; inner pages (one site per brand, static HTML) 19 Aug 2026
+        </footer>
       </div>
     </main>
   </body>

@@ -269,3 +269,100 @@ verified at 1280px (4 columns, 3 visible, 2 dots) and 700px (4 columns, 2 visibl
 
 Every slider pattern in the estate is now buildable. The only entry that stays out is Mazda's
 `.filtering`, which is a filter UI and not a carousel at all.
+
+## 9. Inner pages — the 2026-08-19 sweep
+
+The census above stops at the homepage. On 2026-08-19 a second sweep followed **one demo site
+per brand** (`<brand>demo1`) inside: SRPs (new/used/CPO), VDPs, model detail pages, specials,
+service, and about/staff pages — **~190 inner pages** fingerprinted by static `curl`, no
+browser. 32 sites were attempted; **24 had their full page set reachable**, and every count
+below is drawn from those 24 — the other 8 did not expose a full page set to the crawl and are
+excluded from the counts rather than partially counted.
+
+### Method, and the static-HTML limitation
+
+Same fingerprint approach as §1 — `<style>` blocks stripped before matching, balanced-delimiter
+extraction of every `.slick(...)` init — but no live-verification pass this time. That matters
+more here than it did on the homepages: **DealerOn SRP vehicle cards are 100% client-rendered**
+(cosmos API JSON → skeleton loaders), so the single biggest inner-page slider surface — the
+per-card image carousel on every SRP — is invisible to a static fetch. What _is_ visible
+statically: every SRP ships `slick.min.js` plus the full slick CSS with **zero** static init or
+markup, and the cosmos JSON for each card carries a `VehicleImageCarouselModel` with a
+`PhotoList`. The carousel is real; only a live browser can show which library actually renders
+it. Representative live-check candidates, for whenever that pass runs:
+`acurademo1`/`gmcdemo1`/`lexusdemo1`/`subarudemo1`/`volvodemo1` `searchnew.aspx`, an Acura VDP
+and CPO page, `ramdemo1.dealeron.com/2019-ram-1500.html`, and
+`kiademo1.dealeron.com/model-showroom`.
+
+### Thirteen distinct patterns, two of them universal
+
+Inner-page sliders collapse into **~13 functionally distinct patterns**. Two are platform
+components on effectively every site; the rest are authored one-offs concentrated on
+model-detail and service pages.
+
+The two universal ones first, because they reframe the pitch:
+
+1. **The VDP photo gallery is DealerOn's own component, and it is architecturally
+   dl-carousel.** Every VDP runs `data-dlron-type="vehicle-image-carousel"` — a native CSS
+   scroll-snap track (`.hero-carousel__items`) with hover arrows, an image counter, and
+   thumbnail strips, plus a second instance inside a fullscreen modal
+   (`.vehicle-image-gallery`) with a vertical thumbnail rail and video-thumb support.
+   **slick is not loaded on VDPs at all.** The platform's newest slider already made the
+   native-scroll-snap bet dl-carousel makes.
+2. **The SRP per-card image carousel is runtime-injected.** Universal across every SRP and
+   SRP-shaped model landing page on all 24 sites (~50+ pages) — the biggest slider surface on
+   inner pages — but confirmable only live, per the limitation above.
+
+The authored instances:
+
+| Pattern                                                                                                                | Where                                                                                      | Prevalence                                                 |
+| ---------------------------------------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------ | ---------------------------------------------------------- |
+| Certified-service tile carousel — 3-up slick strip of 6 coupon/feature cards, arrows + dots                            | [buick](https://buickdemo1.dealeron.com/service) / cadillac / chevrolet / gmc `/service`   | 4 sites, byte-identical init (shared GM template)          |
+| Tabbed feature-card carousels — Bootstrap tabs each wrapping a 3-up slick strip                                        | [INFINITI QX60 demo page](https://infinitidemo1.dealeron.com/2026-infiniti-qx60-demo.html) | 1 page, 8 instances                                        |
+| Trim-card strip — 10 trim cards, 4-up, arrows only                                                                     | [Kia Telluride](https://kiademo1.dealeron.com/2027-telluride)                              | 1 page                                                     |
+| Synced filterable gallery — main fade carousel + thumb nav (`asNavFor`), category filter buttons driving `slickFilter` | [Kia Telluride](https://kiademo1.dealeron.com/2027-telluride)                              | 1 page, 7 instances — densest custom slider found          |
+| Mixed photo+video gallery — synced pair with fade/speed disabled when slides contain video                             | Kia Telluride; platform VDP `data-carousel-content-type=video`                             | 1 authored page + platform support                         |
+| Center-mode technology strip — 10 cards, 3-up, 160px center padding                                                    | [Nissan Rogue](https://nissandemo1.dealeron.com/nissan-rogue)                              | 1 page                                                     |
+| Autoplaying feature cards — 3-up, autoplay on                                                                          | [MINI Countryman](https://minidemo1.dealeron.com/mini-countryman.html)                     | 1 page — the only autoplaying card strip found anywhere    |
+| Sitewide incentive chrome — Bootstrap fade promo banner + slick 3-up offer strip                                       | [Subaru](https://subarudemo1.dealeron.com/service.aspx), every inner page                  | 1 site, but on **all** of its inner pages                  |
+| Service hero promo rotator — Bootstrap 3 auto-cycling banner, 2 slides                                                 | [Lexus service](https://lexusdemo1.dealeron.com/service.aspx)                              | 1 page — only genuine Bootstrap carousel on any inner page |
+| `<do-banner>` web component — 2-banner SRP incentive slot, runtime-rendered                                            | [Mitsubishi SRPs](https://mitsubishidemo1.dealeron.com/searchnew.aspx)                     | 1 site's SRPs (platform component)                         |
+| **Dormant** Maverick trim showcase — slick init + assets still ship, target markup commented out                       | [Ford Maverick](https://forddemo1.dealeron.com/2025-ford-maverick.html)                    | 1 page — 100% dead payload                                 |
+
+Recorded to prevent future false positives: the VDP similar-vehicles row is a plain flex
+overflow strip (no library), `refine_slider` is the SRP filter drawer, Lincoln Corsair's
+"gallery-section" is a tabbed grid with modals, and Lexus's `.carousel-model` is Bootstrap
+tabs despite the name. None are sliders. Homepage markers (`modelBarS`, corpcell, quick-nav,
+`galleryS`) were confirmed absent from inner pages — §2's inventory does not leak inward.
+
+### Coverage, and the four sections built to close it
+
+Most patterns map onto demo sections that already existed: the GM service tiles →
+[#cards](../../demo/index.html#cards), the Subaru/Lexus/Mitsubishi banners →
+[#hero](../../demo/index.html#hero), the Kia trim strip, Subaru offer strip, and MINI cards →
+[#vehicles](../../demo/index.html#vehicles), the INFINITI tab wiring →
+[#modelbar-tabs](../../demo/index.html#modelbar-tabs), the Nissan and dormant Ford
+center-mode strips → [#peek](../../demo/index.html#peek), and the inline VDP gallery →
+[#gallery](../../demo/index.html#gallery).
+
+Four patterns had no demo counterpart. All four now do — added to `demo/index.html` on
+2026-08-19:
+
+| New section                                                                             | Covers                                                                                           |
+| --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
+| [#card-gallery](../../demo/index.html#card-gallery) — Vehicle cards with a mini gallery | The SRP per-card carousel: a small dl-carousel instance nested inside each card of a grid        |
+| [#gallery-filter](../../demo/index.html#gallery-filter) — Filterable gallery            | Kia's `slickFilter` pattern: filter buttons narrowing a synced main+thumb pair, page script only |
+| [#media-gallery](../../demo/index.html#media-gallery) — Gallery with photos and video   | Mixed photo+video slides with video-badged thumbnails                                            |
+| [#lightbox](../../demo/index.html#lightbox) — Fullscreen gallery in a dialog            | The VDP fullscreen viewer: dl-carousel in a modal with a vertical thumb rail                     |
+
+### Dead weight, for the positioning notes
+
+Two findings worth quoting when the byte budget comes up:
+
+- **Ford ships a fully dormant slider.** `forddemo1`'s Maverick page still loads slick and
+  still calls `$('.maverick-gallery').slick(...)` — but the entire target markup block is
+  commented out, replaced by a static grid. The library is 100% dead payload on that page,
+  and its font-face path leaks onto Acura/Alfa Romeo/Audi SRPs.
+- **Every SRP estate-wide loads slick JS + CSS for a runtime card carousel** that dl-carousel
+  could replace inside its entire < 6 KB gzip budget — less than slick's own CSS-and-JS
+  freight, before counting jQuery.
