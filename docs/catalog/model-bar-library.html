@@ -974,7 +974,10 @@
         <section class="group">
           <div class="group-head">
             <h2>The outliers</h2>
-            <p>Four strips that are not the standard model bar. Three are deliberately out of scope for the library; the Subaru strip is a different pattern we already support.</p>
+            <p>
+              Four strips that are not the standard model bar &#8212; a different pattern each, and every one already supported. Each card points at the section of demo/index.html that builds it; the
+              standard model bars are all running live in demo/model-bars.html.
+            </p>
           </div>
           <article class="card">
             <figure>
@@ -990,7 +993,7 @@
             <div class="card-body">
               <div class="card-head">
                 <h3>Kia <span class="demo-n">demo 1</span></h3>
-                <span class="chip chip--off">Out of scope</span>
+                <span class="chip chip--have">Different pattern &#8212; supported</span>
               </div>
               <p class="why">Centre-mode: the active card sits centred with neighbours peeking.</p>
               <dl class="specs">
@@ -1013,9 +1016,10 @@
               </dl>
               <details>
                 <summary>Build this</summary>
-                <pre><code>.kia-modelbar { --dlc-per-view: 1; }
-@media (min-width: 769px) { .kia-modelbar { --dlc-per-view: 3; } }</code></pre>
-                <p class="note">Plus <code>data-step="slide"</code>, <code>--dlc-peek: 60px</code>, and dots hidden &#8212; the shared model-bar recipe.</p>
+                <p class="note">
+                  The ladder alone does not build centre-mode &#8212; the centred card comes from <code>--dlc-peek</code> turned right up, not from a per-view recipe. Live build:
+                  <code>demo/index.html#peek</code>.
+                </p>
               </details>
               <a class="live" href="https://kiademo1.dealeron.com/" target="_blank" rel="noopener">Open kiademo1.dealeron.com &#8594;</a>
             </div>
@@ -1034,7 +1038,7 @@
             <div class="card-body">
               <div class="card-head">
                 <h3>Hyundai <span class="demo-n">demo 1</span></h3>
-                <span class="chip chip--off">Out of scope</span>
+                <span class="chip chip--have">Different pattern &#8212; supported</span>
               </div>
               <p class="why">Two-row grid &#8212; a different layout primitive, not a carousel mode.</p>
               <dl class="specs">
@@ -1055,7 +1059,13 @@
                   <dd>1 site</dd>
                 </div>
               </dl>
-
+              <details>
+                <summary>Build this</summary>
+                <p class="note">
+                  Not a carousel recipe &#8212; the track becomes a two-row grid, with <code>--dlc-cols</code> sizing the columns and <code>--dlc-per-view</code> counting cards (columns &#215; 2).
+                  Live build: <code>demo/index.html#grid</code>.
+                </p>
+              </details>
               <a class="live" href="https://hyundaidemo1.dealeron.com/" target="_blank" rel="noopener">Open hyundaidemo1.dealeron.com &#8594;</a>
             </div>
           </article>
@@ -1073,7 +1083,7 @@
             <div class="card-body">
               <div class="card-head">
                 <h3>Subaru <span class="demo-n">demo 1</span></h3>
-                <span class="chip chip--off">Out of scope</span>
+                <span class="chip chip--have">Different pattern &#8212; supported</span>
               </div>
               <p class="why">A content-card strip that steps a whole page at a time, not one card.</p>
               <dl class="specs">
@@ -1096,10 +1106,10 @@
               </dl>
               <details>
                 <summary>Build this</summary>
-                <pre><code>.subaru-modelbar { --dlc-per-view: 1; }
-@media (min-width: 540px) { .subaru-modelbar { --dlc-per-view: 2; } }
-@media (min-width: 1200px) { .subaru-modelbar { --dlc-per-view: 3; } }</code></pre>
-                <p class="note">Plus <code>data-step="slide"</code>, <code>--dlc-peek: 60px</code>, and dots hidden &#8212; the shared model-bar recipe.</p>
+                <p class="note">
+                  This is the plain card strip, not the model bar &#8212; default page-per-click stepping with dots showing, no <code>data-step="slide"</code>. Live build:
+                  <code>demo/index.html#vehicles</code>.
+                </p>
               </details>
               <a class="live" href="https://subarudemo1.dealeron.com/" target="_blank" rel="noopener">Open subarudemo1.dealeron.com &#8594;</a>
             </div>
@@ -1118,7 +1128,7 @@
             <div class="card-body">
               <div class="card-head">
                 <h3>Lexus <span class="demo-n">demo 2</span></h3>
-                <span class="chip chip--off">Out of scope</span>
+                <span class="chip chip--have">Different pattern &#8212; supported</span>
               </div>
               <p class="why">A quick-nav strip, centre-mode with 9% padding. Not a model bar.</p>
               <dl class="specs">
@@ -1141,9 +1151,9 @@
               </dl>
               <details>
                 <summary>Build this</summary>
-                <pre><code>.lexus-modelbar { --dlc-per-view: 1; }
-@media (min-width: 992px) { .lexus-modelbar { --dlc-per-view: 3; } }</code></pre>
-                <p class="note">Plus <code>data-step="slide"</code>, <code>--dlc-peek: 60px</code>, and dots hidden &#8212; the shared model-bar recipe.</p>
+                <p class="note">
+                  Same centre-mode trick as Kia &#8212; a large <code>--dlc-peek</code> centres the active card; the generic model-bar recipe does not. Live build: <code>demo/index.html#peek</code>.
+                </p>
               </details>
               <a class="live" href="https://lexusdemo2.dealeron.com/" target="_blank" rel="noopener">Open lexusdemo2.dealeron.com &#8594;</a>
             </div>

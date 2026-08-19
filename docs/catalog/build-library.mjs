@@ -220,6 +220,8 @@ const SPEC = {
     tabs: 3,
     dots: false,
     why: 'Centre-mode: the active card sits centred with neighbours peeking.',
+    demo: '#peek',
+    build: 'The ladder alone does not build centre-mode — the centred card comes from <code>--dlc-peek</code> turned right up, not from a per-view recipe.',
   },
   lexusdemo2: {
     brand: 'Lexus',
@@ -233,8 +235,21 @@ const SPEC = {
     tabs: 0,
     dots: false,
     why: 'A quick-nav strip, centre-mode with 9% padding. Not a model bar.',
+    demo: '#peek',
+    build: 'Same centre-mode trick as Kia — a large <code>--dlc-peek</code> centres the active card; the generic model-bar recipe does not.',
   },
-  hyundaidemo1: { brand: 'Hyundai', n: 1, group: 'edge', shares: 1, ladder: null, tabs: 3, dots: true, why: 'Two-row grid — a different layout primitive, not a carousel mode.' },
+  hyundaidemo1: {
+    brand: 'Hyundai',
+    n: 1,
+    group: 'edge',
+    shares: 1,
+    ladder: null,
+    tabs: 3,
+    dots: true,
+    why: 'Two-row grid — a different layout primitive, not a carousel mode.',
+    demo: '#grid',
+    build: 'Not a carousel recipe — the track becomes a two-row grid, with <code>--dlc-cols</code> sizing the columns and <code>--dlc-per-view</code> counting cards (columns × 2).',
+  },
   subarudemo1: {
     brand: 'Subaru',
     n: 1,
@@ -248,15 +263,16 @@ const SPEC = {
     tabs: 0,
     dots: true,
     why: 'A content-card strip that steps a whole page at a time, not one card.',
+    demo: '#vehicles',
+    build: 'This is the plain card strip, not the model bar — default page-per-click stepping with dots showing, no <code>data-step="slide"</code>.',
   },
 };
 
 const SUPPORT = {
   bar: { chip: 'have', label: 'Supported' },
   tabs: { chip: 'have', label: 'Supported' },
-  edge: { chip: 'off', label: 'Out of scope' },
+  edge: { chip: 'have', label: 'Different pattern — supported' },
 };
-const OUT_OF_SCOPE = new Set(['kiademo1', 'lexusdemo2', 'hyundaidemo1']);
 
 function recipe(s) {
   if (!s.ladder) return null;
@@ -274,7 +290,10 @@ const order = ['bar', 'tabs', 'edge'];
 const GROUP_TITLE = {
   bar: { h: 'Plain model bars', p: 'One strip, arrows only, no grouping. 25 of the 55 sites look like this. The only thing separating them is how many cards they show at each width.' },
   tabs: { h: 'Grouped under tabs', p: 'The majority shape: 30 of the 55 sites stack several model bars behind body-style or fuel-type tabs. Each pane is its own independent strip.' },
-  edge: { h: 'The outliers', p: 'Four strips that are not the standard model bar. Three are deliberately out of scope for the library; the Subaru strip is a different pattern we already support.' },
+  edge: {
+    h: 'The outliers',
+    p: 'Four strips that are not the standard model bar — a different pattern each, and every one already supported. Each card points at the section of demo/index.html that builds it; the standard model bars are all running live in demo/model-bars.html.',
+  },
 };
 
 let cards = '';
@@ -285,8 +304,8 @@ for (const g of order) {
   for (const m of items) {
     const s = SPEC[m.host];
     const b64 = fs.readFileSync(m.file).toString('base64');
-    const sup = OUT_OF_SCOPE.has(m.host) ? SUPPORT.edge : SUPPORT[s.group];
-    const rec = recipe(s);
+    const sup = SUPPORT[s.group];
+    const rec = s.demo ? null : recipe(s);
     cards += `    <article class="card">
       <figure>
         <img src="data:image/jpeg;base64,${b64}" alt="The ${esc(s.brand)} model bar as it renders at 1280px, showing ${esc(String(s.ladder ? s.ladder[s.ladder.length - 1][1] : 'several'))} vehicle cutouts across" width="${m.w}" height="${m.h}" loading="lazy" decoding="async" />
@@ -303,7 +322,7 @@ for (const g of order) {
           <div><dt>Dots</dt><dd>${s.dots ? 'yes' : 'hidden'}</dd></div>
           <div><dt>Shared by</dt><dd>${s.shares} site${s.shares === 1 ? '' : 's'}</dd></div>
         </dl>
-        ${rec ? `<details><summary>Build this</summary><pre><code>${esc(rec)}</code></pre><p class="note">Plus <code>data-step="slide"</code>, <code>--dlc-peek: 60px</code>, and dots hidden — the shared model-bar recipe.</p></details>` : ''}
+        ${s.demo ? `<details><summary>Build this</summary><p class="note">${s.build} Live build: <code>demo/index.html${s.demo}</code>.</p></details>` : rec ? `<details><summary>Build this</summary><pre><code>${esc(rec)}</code></pre><p class="note">Plus <code>data-step="slide"</code>, <code>--dlc-peek: 60px</code>, and dots hidden — the shared model-bar recipe.</p></details>` : ''}
         <a class="live" href="https://${m.host}.dealeron.com/" target="_blank" rel="noopener">Open ${m.host}.dealeron.com →</a>
       </div>
     </article>\n`;

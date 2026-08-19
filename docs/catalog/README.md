@@ -29,10 +29,17 @@ already handed out keep working.
 the composition outliers; `build-library.mjs` holds the per-site spec table
 (ladder, tab count, dots, why it is interesting) that becomes each card.
 
+Note that `build-library.mjs` does not write into the page: it emits a
+standalone `cards.html` fragment (the `<section class="group">` blocks only).
+Merge it into `model-bar-library.html` by hand, replacing everything between
+the closing `</header>` and the `<footer>`, then run Prettier and the encoder
+(`node encode.mjs model-bar-library.html`) over the page.
+
 ## Encoding
 
 **Both pages are pure ASCII** — every non-ASCII character is an HTML numeric
 entity. A plain `python3 -m http.server` sends `text/html` with no charset, and
 the em-dashes rendered as mojibake during preview. Entity-encoding makes the
 pages render correctly regardless of what charset the host declares. Keep it
-that way: re-run the encoder after editing.
+that way: after editing a page, run `node encode.mjs <page>.html` (idempotent),
+and verify with a byte check that nothing above 0x7E remains.
