@@ -552,8 +552,10 @@
           <h2>Five types, and where we stand</h2>
           <p>
             Counted by distinct sites across the 76 fully fingerprinted on 18 Aug &#8212; the baseline every section down to the platform-hero comparison uses. The "same across OEMs" question resolves
-            here: one pattern covers 55 of the 76. One qualification from the 19 Aug estate sweep below: on the newer sites, four homepages replace the carousel with a background-video hero and one
-            lays its model strip out as a static CSS grid &#8212; so "five types cover everything" is exactly true of the 18 Aug baseline, and nearly true of the full 129.
+            here: one pattern covers 55 of the 76. One qualification, which the 19 Aug reference reconciliation sharpened considerably: these five are the five <em>slick</em> selectors, and "no slick"
+            turned out not to mean "no model bar". Four newer homepages swap the carousel for a background-video hero, one lays its model strip out as a static CSS grid &#8212; and BMW, Porsche and
+            INFINITI ship official model bars with no slider in them at all. So "five types cover everything" is exactly true of the slick estate; the non-slick family is counted in
+            <a href="#reference-reconciliation">the reference reconciliation below</a>.
           </p>
           <p>
             Centre-mode and the two-row grid were first filed as out of scope, assuming they needed engine work. Re-tested on 18 Aug, neither does &#8212; both are CSS on top of what already ships, so
@@ -1004,6 +1006,114 @@
               <li>Not aliases despite the redirect: jaguardemo3 (serves dealer19076) and lexusdemo7 (serves dealer22691) land on unique, analyzed sites.</li>
             </ul>
           </details>
+        </section>
+
+        <section id="reference-reconciliation">
+          <h2>The reference reconciliation: the 19 Aug live pass</h2>
+          <p>
+            The internal per-OEM model-bar reference names one example site per configuration, and until now this census had never been checked against it. On 19 Aug all 13 of those example links were
+            fetched and fingerprinted live &#8212; the same method as the homepage census, pointed at the sites the reference itself holds up as canonical. (The full-roster reconciliation in the
+            method notes stays only partially discharged: the example links are checked, the complete list is not.)
+          </p>
+          <div class="stats">
+            <div class="stat"><b>13</b><span>reference examples</span></div>
+            <div class="stat"><b>11</b><span>reachable live</span></div>
+            <div class="stat"><b>2</b><span>stale entries</span></div>
+            <div class="stat"><b>5</b><span>covered or alias</span></div>
+            <div class="stat"><b>6</b><span>non-slick gaps closed</span></div>
+          </div>
+          <div class="finding">
+            <p class="lede">"No slick" never meant "no model bar" &#8212; BMW, Porsche and INFINITI all ship official model bars our fingerprint could not see.</p>
+            <p>
+              The 18 Aug census claimed the 21 sites without <code>.modelBarS</code> have no model bar section at all. That was the fingerprint talking, not the pages: it detected the absence of a
+              library, not the absence of a model bar. Ford&#8217;s static grid was the first crack; the reference&#8217;s own examples show the rest of the family &#8212; BMW&#8217;s Bootstrap tab
+              panes with a static mobile stack, Porsche and INFINITI hover-reveal tile grids, a client tile mosaic, a tabbed static grid, and the first carousel on the platform&#8217;s next
+              generation. The research doc&#8217;s claim now carries a dated correction, and the whole family is being added to the model-bars demo page.
+            </p>
+          </div>
+          <div class="scroller">
+            <table>
+              <thead>
+                <tr>
+                  <th scope="col">Reference example</th>
+                  <th scope="col">What it runs</th>
+                  <th scope="col">Census status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td class="live"><a href="https://bmw1.dealeron.com/" target="_blank" rel="noopener">bmw 1</a></td>
+                  <td class="oems">Bootstrap tab panes, 20 models, static mobile stack &#8212; no slick anywhere; lands on bmwdemo1, which the census filed as "no model bar"</td>
+                  <td><span class="chip chip--gap">Gap &#8212; closed</span></td>
+                </tr>
+                <tr>
+                  <td class="live"><a href="https://alfaromeo3.dealeron.com/" target="_blank" rel="noopener">alfaromeo 3</a></td>
+                  <td class="oems">hostname alias of alfaromeodemo1 &#8212; the library&#8217;s Alfa Romeo ladder, tier for tier</td>
+                  <td><span class="chip chip--have">Covered &#8212; alias</span></td>
+                </tr>
+                <tr>
+                  <td class="live"><code>gmdemo1</code></td>
+                  <td class="oems">hard-404 parking page &#8212; the GM multi-make example is offline</td>
+                  <td><span class="chip chip--off">Stale</span></td>
+                </tr>
+                <tr>
+                  <td class="live"><code>gmcdemo4</code></td>
+                  <td class="oems">hard-404 parking page &#8212; the GMC slick example is offline; no gap opens, gmc 1&#8211;2 already sit on the Acura ladder</td>
+                  <td><span class="chip chip--off">Stale</span></td>
+                </tr>
+                <tr>
+                  <td class="live"><a href="https://mazdadesign1.dealeron.com/" target="_blank" rel="noopener">mazdadesign 1</a></td>
+                  <td class="oems">hostname alias of mazdademo1 &#8212; the library&#8217;s Mazda ladder exactly</td>
+                  <td><span class="chip chip--have">Covered &#8212; alias</span></td>
+                </tr>
+                <tr>
+                  <td class="live"><a href="https://porschedemo1.dealeron.com/" target="_blank" rel="noopener">porsche 1</a></td>
+                  <td class="oems">hover-reveal photo-tile grid, static flex &#8212; 2 &#8594; 540px 3 &#8594; 992px 6, plus an All-Models banner tile</td>
+                  <td><span class="chip chip--gap">Gap &#8212; closed</span></td>
+                </tr>
+                <tr>
+                  <td class="live"><a href="https://infinitidemo1.dealeron.com/" target="_blank" rel="noopener">infiniti 1</a></td>
+                  <td class="oems">hover-reveal tile grid &#8212; 2 &#8594; 540px 2 &#8594; 992px 3, landscape photos, permanent overlay</td>
+                  <td><span class="chip chip--gap">Gap &#8212; closed</span></td>
+                </tr>
+                <tr>
+                  <td class="live"><a href="https://www.lexusoftucsonautomall.com/" target="_blank" rel="noopener">lexusoftucsonautomall.com</a></td>
+                  <td class="oems">slick on exactly the Acura tiers (2 &#8594; 461px 3 &#8594; 769px 5), Lexus-branded dressing</td>
+                  <td><span class="chip chip--have">Covered &#8212; tiers</span></td>
+                </tr>
+                <tr>
+                  <td class="live"><a href="https://www.rydelllincoln.com/" target="_blank" rel="noopener">rydelllincoln.com</a></td>
+                  <td class="oems">slick on the Lincoln ladder; client breakpoint puts 4-up at 992 instead of the demo&#8217;s 993 &#8212; one pixel</td>
+                  <td><span class="chip chip--have">Covered</span></td>
+                </tr>
+                <tr>
+                  <td class="live"><a href="https://www.coeurdalenenissan.com/" target="_blank" rel="noopener">coeurdalenenissan.com</a></td>
+                  <td class="oems">replaced its slick bar with a static tabbed flex grid, 2 &#8594; 401px 3 &#8594; 768px 7 &#8212; legacy slick CSS still ships with no markup</td>
+                  <td><span class="chip chip--gap">Gap &#8212; closed</span></td>
+                </tr>
+                <tr>
+                  <td class="live"><a href="https://www.infinitioflexington.com/" target="_blank" rel="noopener">infinitioflexington.com</a></td>
+                  <td class="oems">black portrait-tile mosaic, static &#8212; 2 &#8594; 992px 3, hover CTA choreography</td>
+                  <td><span class="chip chip--gap">Gap &#8212; closed</span></td>
+                </tr>
+                <tr>
+                  <td class="live"><a href="https://www.genesisofcartersville.com/" target="_blank" rel="noopener">genesisofcartersville.com</a></td>
+                  <td class="oems">Vue3-platform carousel, 1 &#8594; 600px 2 &#8594; 991px 3, arrows suppressed when all items fit &#8212; first sighting of the platform&#8217;s next generation</td>
+                  <td><span class="chip chip--gap">Gap &#8212; closed</span></td>
+                </tr>
+                <tr>
+                  <td class="live"><a href="https://www.brunerchryslerdodgejeepram.com/" target="_blank" rel="noopener">brunerchryslerdodgejeepram.com</a></td>
+                  <td class="oems">slick near the CDJR ladder (1 &#8594; 461px 3 &#8594; 992px 6), five brand tabs including Fiat, no background band</td>
+                  <td><span class="chip chip--have">Covered &#8212; variant</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <p>
+            The verdict cuts cleanly: <strong>every slick ladder in the reference is covered by the library</strong> &#8212; exactly, as an alias, or as a one-step variant of a covered ladder. The
+            uncovered remainder is entirely the non-slick family &#8212; the BMW tabs bar, the tile grids, the tabbed static grid and the Vue3 carousel &#8212; now being added to the model-bars demo
+            page as static-grid and tabs sections plus one 1 &#8594; 600px 2 &#8594; 991px 3 strip. Catalog and demo work, not engine work.
+          </p>
         </section>
 
         <section>

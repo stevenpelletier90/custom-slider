@@ -140,6 +140,15 @@ slick breakpoints are max-width. `5 | 768:3 460:2` reads: 5 per view above 768, 
 The 21 sites without `.modelBarS` do not have a model bar section on the homepage at all —
 they are not using a different library for it.
 
+> **Correction (2026-08-19, see §11):** the paragraph above overreached. "No `.modelBarS`"
+> only ever meant "no slick" — the fingerprint detected the absence of a library, not the
+> absence of a model bar. The live pass over the internal per-OEM model-bar reference found
+> official non-slick model bars on at least BMW (Bootstrap tab panes plus a static mobile
+> stack on bmwdemo1), Porsche (hover-reveal tile grid on porschedemo1) and INFINITI (tile
+> grid on infinitidemo1). forddemo5's static grid (§10.5) was the first crack in this claim;
+> §11 shows it is a family. The original sentence is kept as written above, as the record of
+> what the fingerprint alone could support.
+
 ## 5. Accessibility findings (live-verified)
 
 Two corrections to static-markup readings, both found by checking the running page:
@@ -600,3 +609,107 @@ Honesty about what this sweep is not:
   missed the first time.
 - **Two alias targets are unanalyzed.** `chevroletdemo5` → `dealer17728` and `hyundaidemo6` →
   `dealer26244` land outside the demo naming set and were not fingerprinted.
+
+## 11. The reference reconciliation — 2026-08-19 live pass
+
+§1 and §10.7 both carry the same caveat: this census was probed, never reconciled — the
+internal per-OEM model-bar reference that should be the authoritative roster had not been
+checked against it. On 2026-08-19 that check ran. The reference names one example site per
+OEM configuration; all **13** of those example links were fetched and fingerprinted live —
+the same method as §1, pointed at the sites the reference itself holds up as canonical.
+
+Headline: **11 of the 13 are reachable, 2 are dead; the library covers 5 of the 11 exactly
+or as aliases; the 6 it does not cover are all non-slick** — and together they refute a
+claim §4 made.
+
+| Reference example              | What it actually runs                                                                              | Census / library status                          |
+| ------------------------------ | -------------------------------------------------------------------------------------------------- | ------------------------------------------------ |
+| bmw1.dealeron.com              | Bootstrap tab panes, 20 models, static mobile stack — no slick anywhere                            | Gap — lands on bmwdemo1, filed "no model bar"    |
+| alfaromeo3.dealeron.com        | Hostname alias of alfaromeodemo1 — same slick ladder tier-for-tier                                 | Covered (alias)                                  |
+| gmdemo1.dealeron.com           | Hard-404 parking page — GM multi-make example offline                                              | Stale reference entry                            |
+| gmcdemo4.dealeron.com          | Hard-404 parking page — GMC slick example offline                                                  | Stale reference entry                            |
+| mazdadesign1.dealeron.com      | Hostname alias of mazdademo1 — same slick ladder exactly                                           | Covered (alias)                                  |
+| porschedemo1.dealeron.com      | Hover-reveal photo-tile grid, static flex-wrap, 2 → 3@540 → 6@992 + All-Models banner tile         | Gap — non-slick                                  |
+| infinitidemo1.dealeron.com     | Hover-reveal tile grid, 2 → 2@540 → 3@992, landscape photos, permanent 40% overlay                 | Gap — non-slick                                  |
+| lexusoftucsonautomall.com      | slick on exactly the Acura tiers (2/3/5@461/769), Lexus-branded dressing                           | Covered (tiers) — dressing is a variant          |
+| rydelllincoln.com              | slick on the Lincoln ladder; client breakpoint 991 puts 4-up at 992 vs the demo's 993              | Covered — one-pixel variance                     |
+| coeurdalenenissan.com          | Replaced its slick bar with a static tabbed flex grid, 2/3/7@401/768; legacy slick CSS still ships | Gap — client drift off the reference description |
+| infinitioflexington.com        | Black portrait-tile mosaic, static wrap, 2 → 2@540 → 3@992, hover CTA choreography                 | Gap — non-slick                                  |
+| genesisofcartersville.com      | Vue3-platform carousel, 1 → 2@600 → 3@991, arrows suppressed when all items fit                    | Gap — new platform, no library ladder matches    |
+| brunerchryslerdodgejeepram.com | slick near the CDJR ladder (1/3/6@461/992), five pipe-divided brand tabs incl. Fiat, no background | Covered — near-miss variant of CDJR              |
+
+### 11.1 The correction: "no `.modelBarS`" never meant "no model bar"
+
+§4 closed with "the 21 sites without `.modelBarS` do not have a model bar section on the
+homepage at all." That was the fingerprint talking, not the pages — it detected the absence
+of slick, not the absence of a model bar. The reference's own example links carry a family
+of official non-slick model bars the fingerprint was blind to:
+
+- **BMW (bmwdemo1)** — Bootstrap tab panes: 20 models, one pane each (text column beside a
+  side-profile image), a text-only series-selector rail below the pane, and a mobile variant
+  that abandons the widget entirely for a static stacked list of all 20 models. §7's example
+  table files this very site as "Fade hero, no model bar on the page."
+- **Porsche (porschedemo1)** — hover-reveal photo-tile grid: static flex-wrap, 2-across base
+  → 3-across@540 → 6-across@992 plus a full-width All-Models banner tile; the model name is
+  hidden at rest and revealed on hover with staggered Search New / Search Used links.
+- **INFINITI (infinitidemo1)** — the same hover-reveal skeleton at 2 → 2@540 → 3@992,
+  landscape photos, square corners, a permanent 40% overlay.
+- **INFINITI client (infinitioflexington.com)** — a black portrait-tile mosaic on the same
+  idea: full-bleed dark photo tiles, 2-across base → 3-across@992, bottom name-plus-chevron
+  overlay, desktop hover choreography.
+
+forddemo5's static grid (§10.5) was the first crack in the claim; this is the rest of the
+family. §4 now carries a dated correction note pointing here — the original sentence stands
+in place as the record of what the fingerprint alone supported.
+
+### 11.2 Aliases confirmed, stale entries found
+
+- **alfaromeo3.dealeron.com → alfaromeodemo1.** The "different code" concern dissolves: the
+  reference's hostname is an alias of a demo already fingerprinted, and the ladder matches
+  the library's Alfa Romeo section tier-for-tier.
+- **mazdadesign1.dealeron.com → mazdademo1.** Same phenomenon; the category tabs and
+  inventory-count line are dressing on the same single slick instance the library ships.
+- **bmw1.dealeron.com → bmwdemo1** lands the same way, so the reference's BMW example is the
+  census's own bmwdemo1 — which is what makes the §4/§7 mis-filing above an internal error
+  rather than a roster gap.
+- **gmdemo1 and gmcdemo4 are dead** — both return the platform's not-hosted 404 parking page
+  with no redirect. The GM multi-make and GMC slick examples are offline and should be
+  marked stale in any mirror of the reference. gmcdemo4's death opens no GMC gap: gmc1–2
+  already sit on the Acura ladder, which the library ships.
+
+### 11.3 Client drift, and the platform's next generation
+
+- **coeurdalenenissan.com** no longer runs what the reference describes. The slick bar is
+  gone — legacy `.modelBar` CSS still ships with no matching HTML — replaced by a static
+  flex grid inside pipe-divided underline tabs, item widths 50% base → 33.33%@401 →
+  14.2%@768: a 2/3/7 wrap ladder with a 7-up single row per tab that matches no known
+  ladder. Client sites drift off the pattern the reference (and this demo-estate census)
+  records.
+- **genesisofcartersville.com** is the first sighting of the platform's next generation: a
+  Vue3-platform page whose explore-models component renders dynamic body-type tabs feeding a
+  carousel at 1 base → 2@600 → 3@991, auto-centering, with arrows suppressed whenever all
+  items fit the viewport. No library ladder matches (the Genesis section is
+  1/2/3/4@541/993/1201).
+
+### 11.4 Client variants worth a note
+
+- **Lexus on the Acura ladder** (lexusoftucsonautomall.com): the tiers are exactly the Acura
+  ladder — fully covered — but Lexus ships its own dressing (hr-underlined centered heading,
+  240×140 cutouts scaling 0.95 → 1 on hover, a 23-slide roster). A strip-label variant under
+  the Acura section, not a new ladder.
+- **Lincoln 992-vs-993** (rydelllincoln.com): the client's breakpoint is 991, so 4-up starts
+  at 992 instead of the demo's 993 — a one-pixel variance. Its FOUC guard (opacity fade-in
+  on init) and live ColorMatched cutout sourcing are the only new details.
+- **CDJR-Fiat, no background** (brunerchryslerdodgejeepram.com): 1/3/6@461/992 with no
+  background band, five pipe-divided brand tabs (Fiat included) and dim-siblings-on-hover.
+  The divergent base-1 step never renders — the whole bar is hidden below 768px — so this
+  lands as a variant note on the existing CDJR section rather than a new ladder.
+
+### 11.5 Verdict
+
+Every slick ladder in the reference is covered by the library — exactly, as an alias, or as
+a one-step variant of a covered ladder; the library's slick coverage is effectively
+complete. The uncovered remainder is entirely the non-slick family — the BMW tabs bar, the
+Porsche and INFINITI tile grids, the Nissan tabbed static grid and the Genesis Vue3 carousel
+— now being added to demo/model-bars.html as static-grid and tabs sections plus one
+1/2/3@600/991 strip. Closing the gaps is catalog and demo-page work, not engine work.
