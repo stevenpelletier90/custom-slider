@@ -636,17 +636,28 @@
 
       .bb-group-sites {
         --dlc-gap: 1rem;
+        padding: 1.5rem 1rem;
+        background: #16294f;
+      }
+      .bb-group-sites {
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #fff;
       }
 
       .bb-group-sites .dl-carousel-pause {
         inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem);
       }
       .bb-group-sites-card {
-        display: block;
-        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 3 / 2;
+        padding: 1rem;
+        background: #253a5e;
+        border-radius: 10px;
       }
       .bb-group-sites-card img {
-        inline-size: 100%;
+        inline-size: 75%;
         block-size: auto;
         object-fit: contain;
       }
@@ -1256,32 +1267,45 @@
       }
 
       .bb-toyota {
-        --dlc-gap: 1rem;
+        --dlc-gap: 1.5rem;
       }
       .bb-toyota-card {
-        display: block;
+        display: flex;
         overflow: hidden;
         color: #fff;
         text-decoration: none;
-        background: #2a2a2a;
+        background: #2f2f2f;
         border-radius: 8px;
       }
       .bb-toyota-card img {
-        display: block;
-        inline-size: 100%;
+        inline-size: 48%;
         block-size: auto;
-        aspect-ratio: 16 / 10;
+        align-self: stretch;
         object-fit: cover;
       }
       .bb-toyota-copy {
-        padding: 0.9rem 1rem 1.1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+        padding: 1.4rem 1.5rem;
       }
       .bb-toyota-copy small {
-        color: #c9c9c9;
+        font-size: 0.85rem;
+        color: #d9d9d9;
       }
       .bb-toyota-copy h3 {
-        margin: 0.15rem 0 0;
-        font-size: 1.05rem;
+        margin: 0;
+        font-size: 1.5rem;
+      }
+      .bb-toyota-shop {
+        margin-block-start: auto;
+        padding: 0.5rem 1.3rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #222;
+        background: #fff;
+        border-radius: 999px;
       }
 
       .bb-volkswagen {
@@ -3819,48 +3843,54 @@
             <li class="dl-carousel-slide">
               <a class="bb-toyota-card" href="index.html#vehicles"
                 ><img src="img/oem/toyota/camry.jpg" width="800" height="747" alt="2026 Toyota Camry" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
-                  ><small>6 Available</small>
-                  <h3>Camry</h3></span
+                  ><small>2026 | 6 Available</small>
+                  <h3>Camry</h3>
+                  <span class="bb-toyota-shop">Shop Now</span></span
                 ></a
               >
             </li>
             <li class="dl-carousel-slide">
               <a class="bb-toyota-card" href="index.html#vehicles"
                 ><img src="img/oem/toyota/corolla.jpg" width="800" height="744" alt="2026 Toyota Corolla" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
-                  ><small>11 Available</small>
-                  <h3>Corolla</h3></span
+                  ><small>2026 | 11 Available</small>
+                  <h3>Corolla</h3>
+                  <span class="bb-toyota-shop">Shop Now</span></span
                 ></a
               >
             </li>
             <li class="dl-carousel-slide">
               <a class="bb-toyota-card" href="index.html#vehicles"
                 ><img src="img/oem/toyota/rav4.jpg" width="800" height="744" alt="2026 Toyota RAV4" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
-                  ><small>4 Available</small>
-                  <h3>RAV4</h3></span
+                  ><small>2026 | 4 Available</small>
+                  <h3>RAV4</h3>
+                  <span class="bb-toyota-shop">Shop Now</span></span
                 ></a
               >
             </li>
             <li class="dl-carousel-slide">
               <a class="bb-toyota-card" href="index.html#vehicles"
                 ><img src="img/oem/toyota/tacoma.jpg" width="800" height="744" alt="2026 Toyota Tacoma" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
-                  ><small>9 Available</small>
-                  <h3>Tacoma</h3></span
+                  ><small>2026 | 9 Available</small>
+                  <h3>Tacoma</h3>
+                  <span class="bb-toyota-shop">Shop Now</span></span
                 ></a
               >
             </li>
             <li class="dl-carousel-slide">
               <a class="bb-toyota-card" href="index.html#vehicles"
                 ><img src="img/oem/toyota/tundra.jpg" width="800" height="744" alt="2026 Toyota Tundra" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
-                  ><small>3 Available</small>
-                  <h3>Tundra</h3></span
+                  ><small>2026 | 3 Available</small>
+                  <h3>Tundra</h3>
+                  <span class="bb-toyota-shop">Shop Now</span></span
                 ></a
               >
             </li>
             <li class="dl-carousel-slide">
               <a class="bb-toyota-card" href="index.html#vehicles"
                 ><img src="img/oem/toyota/4runner.jpg" width="800" height="744" alt="2026 Toyota 4Runner" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
-                  ><small>7 Available</small>
-                  <h3>4Runner</h3></span
+                  ><small>2026 | 7 Available</small>
+                  <h3>4Runner</h3>
+                  <span class="bb-toyota-shop">Shop Now</span></span
                 ></a
               >
             </li>

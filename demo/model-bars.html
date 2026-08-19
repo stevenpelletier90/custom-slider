@@ -641,32 +641,45 @@
       }
 
       .mbx-toyota {
-        --dlc-gap: 1rem;
+        --dlc-gap: 1.5rem;
       }
       .mbx-toyota-card {
-        display: block;
+        display: flex;
         overflow: hidden;
         color: #fff;
         text-decoration: none;
-        background: #2a2a2a;
+        background: #2f2f2f;
         border-radius: 8px;
       }
       .mbx-toyota-card img {
-        display: block;
-        inline-size: 100%;
+        inline-size: 48%;
         block-size: auto;
-        aspect-ratio: 16 / 10;
+        align-self: stretch;
         object-fit: cover;
       }
       .mbx-toyota-copy {
-        padding: 0.9rem 1rem 1.1rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+        padding: 1.4rem 1.5rem;
       }
       .mbx-toyota-copy small {
-        color: #c9c9c9;
+        font-size: 0.85rem;
+        color: #d9d9d9;
       }
       .mbx-toyota-copy h3 {
-        margin: 0.15rem 0 0;
-        font-size: 1.05rem;
+        margin: 0;
+        font-size: 1.5rem;
+      }
+      .mbx-toyota-shop {
+        margin-block-start: auto;
+        padding: 0.5rem 1.3rem;
+        font-size: 0.9rem;
+        font-weight: 600;
+        color: #222;
+        background: #fff;
+        border-radius: 999px;
       }
 
       .mbx-alfaromeo {
@@ -1042,9 +1055,9 @@
         inset-block-end: 0;
         inset-inline: 0;
         margin: 0;
-        padding: 2.5rem 1rem 0.9rem;
+        padding: 0.7rem 1rem;
         font-weight: 700;
-        background: linear-gradient(transparent, rgb(0 0 0 / 75%));
+        background: rgb(20 20 20 / 88%);
       }
 
       .mbx-maserati {
@@ -1122,17 +1135,28 @@
 
       .mbx-group-0 {
         --dlc-gap: 1rem;
+        padding: 1.5rem 1rem;
+        background: #16294f;
+      }
+      .mbx-group-0 {
+        --dlc-arrow-bg: transparent;
+        --dlc-arrow-fg: #fff;
       }
 
       .mbx-group-0 .dl-carousel-pause {
         inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem);
       }
       .mbx-group-0-card {
-        display: block;
-        text-align: center;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        aspect-ratio: 3 / 2;
+        padding: 1rem;
+        background: #253a5e;
+        border-radius: 10px;
       }
       .mbx-group-0-card img {
-        inline-size: 100%;
+        inline-size: 75%;
         block-size: auto;
         object-fit: contain;
       }
@@ -1161,23 +1185,35 @@
       }
 
       .mbx-group-1 {
-        --dlc-gap: 1rem;
+        --dlc-gap: 1.25rem;
+        padding: 1.5rem 1rem;
+        background: #f4f6f8;
       }
 
       .mbx-group-1 .dl-carousel-pause {
         inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem);
       }
       .mbx-group-1-card {
-        display: block;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        block-size: 100%;
         padding: 1.5rem 1.25rem;
         color: inherit;
         text-align: center;
         text-decoration: none;
-        border: 1px solid #ddd;
+        background: #fff;
+        border-radius: 10px;
+        box-shadow: 0 4px 16px rgb(16 22 29 / 12%);
+      }
+      .mbx-group-1-card img {
+        inline-size: 55%;
+        block-size: auto;
+        object-fit: contain;
       }
       .mbx-group-1-card h3 {
-        margin: 0 0 0.4rem;
-        font-size: 1.05rem;
+        margin: 0.5rem 0 0.4rem;
+        font-size: 1.1rem;
       }
       .mbx-group-1-card p {
         margin: 0 0 1rem;
@@ -1186,13 +1222,13 @@
       }
       .mbx-group-1-visit {
         display: inline-block;
-        padding: 0.5rem 1.2rem;
-        font-size: 0.75rem;
+        margin-block-start: auto;
+        padding: 0.5rem 1.3rem;
+        font-size: 0.8rem;
         font-weight: 700;
-        letter-spacing: 0.12em;
-        text-transform: uppercase;
         color: #fff;
-        background: #1a5fb4;
+        background: #c8102e;
+        border-radius: 6px;
       }
       /* The non-slider family — same rendered-equals-taught rule. */
       .sb-tilegrid {
@@ -1309,11 +1345,14 @@
         justify-content: flex-end;
         padding: 0.6rem 0.8rem;
         color: #fff;
-        background: rgb(0 0 0 / 40%);
+        background: linear-gradient(transparent 55%, rgb(0 0 0 / 55%));
       }
       .sb-tilewide-cover p {
         margin: 0;
         font-weight: 700;
+      }
+      .sb-tilewide-cover p::before {
+        content: '\203A ';
       }
       .sb-tilewide-cover a {
         align-self: flex-start;
@@ -2846,54 +2885,60 @@
         <section class="demo-section demo-wide" id="toyota">
           <h3 id="toyota-h">The Toyota ladder &mdash; 2 sites</h3>
           <p class="demo-sub">Never more than two across — the roomiest cards of any standard bar. Runs on toyota 2-3. Cards per view: base 1 &middot; &ge;541px 2.</p>
-          <p class="strip-note">Big dark photo cards rather than cutouts.</p>
+          <p class="strip-note">Split photo cards — photo left, year and inventory count right, Shop Now pill. On the tabbed sites these group by body style.</p>
           <div class="dl-carousel mbx-toyota" data-slider data-step="slide" aria-labelledby="toyota-h">
             <ul class="dl-carousel-track">
               <li class="dl-carousel-slide">
                 <a class="mbx-toyota-card" href="index.html#vehicles"
                   ><img src="img/oem/toyota/camry.jpg" width="800" height="747" alt="2026 Toyota Camry" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
-                    ><small>6 Available</small>
-                    <h3>Camry</h3></span
+                    ><small>2026 | 6 Available</small>
+                    <h3>Camry</h3>
+                    <span class="mbx-toyota-shop">Shop Now</span></span
                   ></a
                 >
               </li>
               <li class="dl-carousel-slide">
                 <a class="mbx-toyota-card" href="index.html#vehicles"
                   ><img src="img/oem/toyota/corolla.jpg" width="800" height="744" alt="2026 Toyota Corolla" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
-                    ><small>11 Available</small>
-                    <h3>Corolla</h3></span
+                    ><small>2026 | 11 Available</small>
+                    <h3>Corolla</h3>
+                    <span class="mbx-toyota-shop">Shop Now</span></span
                   ></a
                 >
               </li>
               <li class="dl-carousel-slide">
                 <a class="mbx-toyota-card" href="index.html#vehicles"
                   ><img src="img/oem/toyota/rav4.jpg" width="800" height="744" alt="2026 Toyota RAV4" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
-                    ><small>4 Available</small>
-                    <h3>RAV4</h3></span
+                    ><small>2026 | 4 Available</small>
+                    <h3>RAV4</h3>
+                    <span class="mbx-toyota-shop">Shop Now</span></span
                   ></a
                 >
               </li>
               <li class="dl-carousel-slide">
                 <a class="mbx-toyota-card" href="index.html#vehicles"
                   ><img src="img/oem/toyota/tacoma.jpg" width="800" height="744" alt="2026 Toyota Tacoma" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
-                    ><small>9 Available</small>
-                    <h3>Tacoma</h3></span
+                    ><small>2026 | 9 Available</small>
+                    <h3>Tacoma</h3>
+                    <span class="mbx-toyota-shop">Shop Now</span></span
                   ></a
                 >
               </li>
               <li class="dl-carousel-slide">
                 <a class="mbx-toyota-card" href="index.html#vehicles"
                   ><img src="img/oem/toyota/tundra.jpg" width="800" height="744" alt="2026 Toyota Tundra" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
-                    ><small>3 Available</small>
-                    <h3>Tundra</h3></span
+                    ><small>2026 | 3 Available</small>
+                    <h3>Tundra</h3>
+                    <span class="mbx-toyota-shop">Shop Now</span></span
                   ></a
                 >
               </li>
               <li class="dl-carousel-slide">
                 <a class="mbx-toyota-card" href="index.html#vehicles"
                   ><img src="img/oem/toyota/4runner.jpg" width="800" height="744" alt="2026 Toyota 4Runner" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
-                    ><small>7 Available</small>
-                    <h3>4Runner</h3></span
+                    ><small>2026 | 7 Available</small>
+                    <h3>4Runner</h3>
+                    <span class="mbx-toyota-shop">Shop Now</span></span
                   ></a
                 >
               </li>
@@ -2911,7 +2956,11 @@
     &lt;li class="dl-carousel-slide"&gt;
       &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=Highlander"&gt;
         &lt;img src="#MISCPATH#/highlander.jpg" width="800" height="500" alt="Blue Toyota Highlander on a forest road"&gt;
-        &lt;span class="my-modelbar-copy"&gt;&lt;small&gt;4 Available&lt;/small&gt;&lt;h3&gt;Highlander&lt;/h3&gt;&lt;/span&gt;
+        &lt;span class="my-modelbar-copy"&gt;
+          &lt;small&gt;2026 | 4 Available&lt;/small&gt;
+          &lt;h3&gt;Highlander&lt;/h3&gt;
+          &lt;span class="my-modelbar-shop"&gt;Shop Now&lt;/span&gt;
+        &lt;/span&gt;
       &lt;/a&gt;
     &lt;/li&gt;
     &lt;!-- repeat the &lt;li&gt; for each model --&gt;
@@ -2926,12 +2975,15 @@
 .my-modelbar .dl-carousel-dots { display: none; }
 .my-modelbar { --dlc-controls-space: 0px; }
 
-.my-modelbar { --dlc-gap: 1rem; }
-.my-modelbar-card { display: block; overflow: hidden; color: #fff; text-decoration: none; background: #2a2a2a; border-radius: 8px; }
-.my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
-.my-modelbar-copy { padding: 0.9rem 1rem 1.1rem; }
-.my-modelbar-copy small { color: #c9c9c9; }
-.my-modelbar-copy h3 { margin: 0.15rem 0 0; font-size: 1.05rem; }</code></pre>
+/* Verified live 19 Aug: a split card - photo on the left half, dark panel on
+   the right with year | count, a big name, and a white Shop Now pill. */
+.my-modelbar { --dlc-gap: 1.5rem; }
+.my-modelbar-card { display: flex; overflow: hidden; color: #fff; text-decoration: none; background: #2f2f2f; border-radius: 8px; }
+.my-modelbar-card img { inline-size: 48%; block-size: auto; align-self: stretch; object-fit: cover; }
+.my-modelbar-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; padding: 1.4rem 1.5rem; }
+.my-modelbar-copy small { font-size: 0.85rem; color: #d9d9d9; }
+.my-modelbar-copy h3 { margin: 0; font-size: 1.5rem; }
+.my-modelbar-shop { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: #222; background: #fff; border-radius: 999px; }</code></pre>
           </details>
         </section>
       </section>
@@ -3670,10 +3722,11 @@
 .my-modelbar .dl-carousel-dots { display: none; }
 .my-modelbar { --dlc-controls-space: 0px; }
 
+/* Verified live 19 Aug: a solid dark caption strip along the card bottom. */
 .my-modelbar { --dlc-gap: 1rem; }
 .my-modelbar-card { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; }
 .my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
-.my-modelbar-card p { position: absolute; inset-block-end: 0; inset-inline: 0; margin: 0; padding: 2.5rem 1rem 0.9rem; font-weight: 700; background: linear-gradient(transparent, rgb(0 0 0 / 75%)); }</code></pre>
+.my-modelbar-card p { position: absolute; inset-block-end: 0; inset-inline: 0; margin: 0; padding: 0.7rem 1rem; font-weight: 700; background: rgb(20 20 20 / 88%); }</code></pre>
           </details>
         </section>
       </section>
@@ -4004,53 +4057,115 @@
 
 /* Autoplay adds the engine's pause button (top right, first in tab order) - leave it. */
 
-.my-modelbar { --dlc-gap: 1rem; }
+/* Verified live 19 Aug: a navy band, each make a rounded lighter-navy tile. */
+.my-modelbar { --dlc-gap: 1rem; padding: 1.5rem 1rem; background: #16294f; }
+.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
 /* autoplay's pause button clears the overlaid next arrow - both stay 24px+ touch targets */
 .my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
-.my-modelbar-card { display: block; text-align: center; }
-.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }</code></pre>
+.my-modelbar-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; background: #253a5e; border-radius: 10px; }
+.my-modelbar-card img { inline-size: 75%; block-size: auto; object-fit: contain; }</code></pre>
           </details>
           <h4 id="mbx-group-1-h" class="strip-label">Rooftop location cards (base 1 &middot; &ge;769px 2 &middot; &ge;993px 4)</h4>
           <div class="dl-carousel mbx-group-1" data-slider data-step="slide" data-autoplay="4000" aria-labelledby="mbx-group-1-h">
             <ul class="dl-carousel-track">
               <li class="dl-carousel-slide">
                 <a class="mbx-group-1-card" href="index.html#cards"
-                  ><h3>Northgate Chevrolet</h3>
+                  ><img
+                    src="img/chrome-silverado-1500.png"
+                    srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <h3>Northgate Chevrolet</h3>
                   <p>2400 Commerce Dr, Springfield<br />(555) 010-1100</p>
                   <span class="mbx-group-1-visit">Visit website</span></a
                 >
               </li>
               <li class="dl-carousel-slide">
                 <a class="mbx-group-1-card" href="index.html#cards"
-                  ><h3>Riverside Buick GMC</h3>
+                  ><img
+                    src="img/chrome-colorado.png"
+                    srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <h3>Riverside Buick GMC</h3>
                   <p>18 Bridge St, Springfield<br />(555) 010-1200</p>
                   <span class="mbx-group-1-visit">Visit website</span></a
                 >
               </li>
               <li class="dl-carousel-slide">
                 <a class="mbx-group-1-card" href="index.html#cards"
-                  ><h3>Lakeview CDJR</h3>
+                  ><img
+                    src="img/chrome-tahoe.png"
+                    srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <h3>Lakeview CDJR</h3>
                   <p>901 Shoreline Ave, Lakeview<br />(555) 010-1300</p>
                   <span class="mbx-group-1-visit">Visit website</span></a
                 >
               </li>
               <li class="dl-carousel-slide">
                 <a class="mbx-group-1-card" href="index.html#cards"
-                  ><h3>Summit Ford</h3>
+                  ><img
+                    src="img/chrome-suburban.png"
+                    srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <h3>Summit Ford</h3>
                   <p>77 Hilltop Rd, Summit<br />(555) 010-1400</p>
                   <span class="mbx-group-1-visit">Visit website</span></a
                 >
               </li>
               <li class="dl-carousel-slide">
                 <a class="mbx-group-1-card" href="index.html#cards"
-                  ><h3>Valley Honda</h3>
+                  ><img
+                    src="img/chrome-traverse.png"
+                    srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <h3>Valley Honda</h3>
                   <p>5120 Orchard Way, Valleyfield<br />(555) 010-1500</p>
                   <span class="mbx-group-1-visit">Visit website</span></a
                 >
               </li>
               <li class="dl-carousel-slide">
                 <a class="mbx-group-1-card" href="index.html#cards"
-                  ><h3>Downtown Kia</h3>
+                  ><img
+                    src="img/chrome-equinox.png"
+                    srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt=""
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <h3>Downtown Kia</h3>
                   <p>311 Main St, Springfield<br />(555) 010-1600</p>
                   <span class="mbx-group-1-visit">Visit website</span></a
                 >
@@ -4088,13 +4203,16 @@
 
 /* Autoplay adds the engine's pause button (top right, first in tab order) - leave it. */
 
-.my-modelbar { --dlc-gap: 1rem; }
+/* Verified live 19 Aug: floating white cards on a light band - brand mark on
+   top, name, address, phone, and a red Visit Website pill. */
+.my-modelbar { --dlc-gap: 1.25rem; padding: 1.5rem 1rem; background: #f4f6f8; }
 /* same pause-vs-arrow clearance as the makes rail */
 .my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
-.my-modelbar-card { display: block; padding: 1.5rem 1.25rem; color: inherit; text-align: center; text-decoration: none; border: 1px solid #ddd; }
-.my-modelbar-card h3 { margin: 0 0 0.4rem; font-size: 1.05rem; }
+.my-modelbar-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.5rem 1.25rem; color: inherit; text-align: center; text-decoration: none; background: #fff; border-radius: 10px; box-shadow: 0 4px 16px rgb(16 22 29 / 12%); }
+.my-modelbar-card img { inline-size: 55%; block-size: auto; object-fit: contain; }
+.my-modelbar-card h3 { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; }
 .my-modelbar-card p { margin: 0 0 1rem; font-size: 0.9rem; color: #5f6368; }
-.my-modelbar-visit { display: inline-block; padding: 0.5rem 1.2rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #fff; background: #1a5fb4; }</code></pre>
+.my-modelbar-visit { display: inline-block; margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.8rem; font-weight: 700; color: #fff; background: #c8102e; border-radius: 6px; }</code></pre>
           </details>
         </section>
       </section>
@@ -4251,8 +4369,9 @@
 .my-tilewide-unit img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 7; object-fit: cover; }
 
 /* Permanent wash; the name sits on the photo at every width. */
-.my-tilewide-cover { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 0.15rem; justify-content: flex-end; padding: 0.6rem 0.8rem; color: #fff; background: rgb(0 0 0 / 40%); }
+.my-tilewide-cover { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 0.15rem; justify-content: flex-end; padding: 0.6rem 0.8rem; color: #fff; background: linear-gradient(transparent 55%, rgb(0 0 0 / 55%)); }
 .my-tilewide-cover p { margin: 0; font-weight: 700; }
+.my-tilewide-cover p::before { content: "\203A "; }
 .my-tilewide-cover a { align-self: flex-start; font-size: 0.85rem; color: #fff; }</code></pre>
           </details>
         </section>

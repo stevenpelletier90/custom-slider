@@ -269,17 +269,27 @@ const SKINS = {
       </a>`,
   },
   'photo-card': {
-    cardCss: `.my-modelbar { --dlc-gap: 1rem; }
-.my-modelbar-card { display: block; overflow: hidden; color: #fff; text-decoration: none; background: #2a2a2a; border-radius: 8px; }
-.my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
-.my-modelbar-copy { padding: 0.9rem 1rem 1.1rem; }
-.my-modelbar-copy small { color: #c9c9c9; }
-.my-modelbar-copy h3 { margin: 0.15rem 0 0; font-size: 1.05rem; }`,
+    cardCss: `/* Verified live 19 Aug: a split card - photo on the left half, dark panel on
+   the right with year | count, a big name, and a white Shop Now pill. */
+.my-modelbar { --dlc-gap: 1.5rem; }
+.my-modelbar-card { display: flex; overflow: hidden; color: #fff; text-decoration: none; background: #2f2f2f; border-radius: 8px; }
+.my-modelbar-card img { inline-size: 48%; block-size: auto; align-self: stretch; object-fit: cover; }
+.my-modelbar-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; padding: 1.4rem 1.5rem; }
+.my-modelbar-copy small { font-size: 0.85rem; color: #d9d9d9; }
+.my-modelbar-copy h3 { margin: 0; font-size: 1.5rem; }
+.my-modelbar-shop { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: #222; background: #fff; border-radius: 999px; }`,
     liveSlides: (r) =>
-      r.map((e) => `<a class="my-modelbar-card" href="index.html#vehicles">${imgTag(e)}<span class="my-modelbar-copy"><small>${e.count ?? 5} Available</small><h3>${e.name}</h3></span></a>`),
+      r.map((e) => {
+        const year = (e.alt.match(/\b(20\d\d)\b/) || [])[1];
+        return `<a class="my-modelbar-card" href="index.html#vehicles">${imgTag(e)}<span class="my-modelbar-copy"><small>${year ? `${year} | ` : ''}${e.count ?? 5} Available</small><h3>${e.name}</h3><span class="my-modelbar-shop">Shop Now</span></span></a>`;
+      }),
     snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Highlander">
         <img src="#MISCPATH#/highlander.jpg" width="800" height="500" alt="Blue Toyota Highlander on a forest road">
-        <span class="my-modelbar-copy"><small>4 Available</small><h3>Highlander</h3></span>
+        <span class="my-modelbar-copy">
+          <small>2026 | 4 Available</small>
+          <h3>Highlander</h3>
+          <span class="my-modelbar-shop">Shop Now</span>
+        </span>
       </a>`,
   },
   'tall-tile': {
@@ -355,10 +365,11 @@ const SKINS = {
            and a label that doesn't contain ALL of it fails label-in-name -->`,
   },
   'photo-overlay': {
-    cardCss: `.my-modelbar { --dlc-gap: 1rem; }
+    cardCss: `/* Verified live 19 Aug: a solid dark caption strip along the card bottom. */
+.my-modelbar { --dlc-gap: 1rem; }
 .my-modelbar-card { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; }
 .my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
-.my-modelbar-card p { position: absolute; inset-block-end: 0; inset-inline: 0; margin: 0; padding: 2.5rem 1rem 0.9rem; font-weight: 700; background: linear-gradient(transparent, rgb(0 0 0 / 75%)); }`,
+.my-modelbar-card p { position: absolute; inset-block-end: 0; inset-inline: 0; margin: 0; padding: 0.7rem 1rem; font-weight: 700; background: rgb(20 20 20 / 88%); }`,
     liveSlides: () =>
       PHOTO_CARDS.map(
         ([slug, name, alt]) =>
@@ -386,11 +397,13 @@ const SKINS = {
       </a>`,
   },
   'logo-strip': {
-    cardCss: `.my-modelbar { --dlc-gap: 1rem; }
+    cardCss: `/* Verified live 19 Aug: a navy band, each make a rounded lighter-navy tile. */
+.my-modelbar { --dlc-gap: 1rem; padding: 1.5rem 1rem; background: #16294f; }
+.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
 /* autoplay's pause button clears the overlaid next arrow - both stay 24px+ touch targets */
 .my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
-.my-modelbar-card { display: block; text-align: center; }
-.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }`,
+.my-modelbar-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; background: #253a5e; border-radius: 10px; }
+.my-modelbar-card img { inline-size: 75%; block-size: auto; object-fit: contain; }`,
     liveSlides: () => CUTOUTS.map(([slug, name]) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Shop ${name}">${cutoutImg(slug, '')}</a>`),
     snippetLabel: 'Shop by make',
     snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?make=Chevrolet" aria-label="Shop Chevrolet">
@@ -398,16 +411,20 @@ const SKINS = {
       </a>`,
   },
   'location-card': {
-    cardCss: `.my-modelbar { --dlc-gap: 1rem; }
+    cardCss: `/* Verified live 19 Aug: floating white cards on a light band - brand mark on
+   top, name, address, phone, and a red Visit Website pill. */
+.my-modelbar { --dlc-gap: 1.25rem; padding: 1.5rem 1rem; background: #f4f6f8; }
 /* same pause-vs-arrow clearance as the makes rail */
 .my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
-.my-modelbar-card { display: block; padding: 1.5rem 1.25rem; color: inherit; text-align: center; text-decoration: none; border: 1px solid #ddd; }
-.my-modelbar-card h3 { margin: 0 0 0.4rem; font-size: 1.05rem; }
+.my-modelbar-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.5rem 1.25rem; color: inherit; text-align: center; text-decoration: none; background: #fff; border-radius: 10px; box-shadow: 0 4px 16px rgb(16 22 29 / 12%); }
+.my-modelbar-card img { inline-size: 55%; block-size: auto; object-fit: contain; }
+.my-modelbar-card h3 { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; }
 .my-modelbar-card p { margin: 0 0 1rem; font-size: 0.9rem; color: #5f6368; }
-.my-modelbar-visit { display: inline-block; padding: 0.5rem 1.2rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #fff; background: #1a5fb4; }`,
+.my-modelbar-visit { display: inline-block; margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.8rem; font-weight: 700; color: #fff; background: #c8102e; border-radius: 6px; }`,
     liveSlides: () =>
       LOCATIONS.map(
-        ([store, addr, phone]) => `<a class="my-modelbar-card" href="index.html#cards"><h3>${store}</h3><p>${addr}<br />${phone}</p><span class="my-modelbar-visit">Visit website</span></a>`,
+        ([store, addr, phone], i) =>
+          `<a class="my-modelbar-card" href="index.html#cards">${imgTag(CHEVY[i % CHEVY.length], '')}<h3>${store}</h3><p>${addr}<br />${phone}</p><span class="my-modelbar-visit">Visit website</span></a>`,
       ),
     snippetLabel: 'Our locations',
     snippetHtml: `<a class="my-modelbar-card" href="https://www.rooftop-site.example/">
@@ -592,7 +609,7 @@ const VARIANTS = [
       [541, 2],
     ],
     why: 'Never more than two across — the roomiest cards of any standard bar.',
-    strips: [{ skin: 'photo-card', label: 'Big dark photo cards rather than cutouts' }],
+    strips: [{ skin: 'photo-card', label: 'Split photo cards — photo left, year and inventory count right, Shop Now pill. On the tabbed sites these group by body style' }],
   },
   {
     key: 'alfaromeo',
@@ -817,8 +834,9 @@ const STATICS = [
 .my-tilewide-unit img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 7; object-fit: cover; }
 
 /* Permanent wash; the name sits on the photo at every width. */
-.my-tilewide-cover { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 0.15rem; justify-content: flex-end; padding: 0.6rem 0.8rem; color: #fff; background: rgb(0 0 0 / 40%); }
+.my-tilewide-cover { position: absolute; inset: 0; display: flex; flex-direction: column; gap: 0.15rem; justify-content: flex-end; padding: 0.6rem 0.8rem; color: #fff; background: linear-gradient(transparent 55%, rgb(0 0 0 / 55%)); }
 .my-tilewide-cover p { margin: 0; font-weight: 700; }
+.my-tilewide-cover p::before { content: "\\203A "; }
 .my-tilewide-cover a { align-self: flex-start; font-size: 0.85rem; color: #fff; }`,
     rootClass: 'my-tilewide',
     liveUnits: PHOTO_CARDS.slice(0, 3).map(
