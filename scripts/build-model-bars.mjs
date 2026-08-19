@@ -886,7 +886,7 @@ ${live}
         </details>`;
   }).join('\n');
   return `      <section class="demo-section demo-wide" id="static-bars">
-        <h3 id="static-bars-h">Model bars that are not sliders</h3>
+        <h3 id="static-bars-h">Model bars that are not sliders <a class="demo-anchor" href="#static-bars" aria-label="Link to this section">#</a></h3>
         <p class="demo-sub">
           A recurring official family, not a one-off: several OEMs ship their model bar as a static grid or tab panes with no carousel at all. Porsche and INFINITI run hover-reveal tile grids, one
           Ford variant is a plain CSS grid (<a href="index.html#modelbar">see the main page's ladder table</a>), BMW's is tab panes with a text rail &mdash; one pane per model, and on phones it
@@ -1131,7 +1131,7 @@ ${checkList(v, s)}
 };
 
 const section = (v) => `      <section class="demo-section demo-wide" id="${v.key}">
-        <h3 id="${v.key}-h">${v.heading ?? `The ${v.toc} ladder`} &mdash; ${v.sites === 1 ? '1 site' : `${v.sites} sites`}</h3>
+        <h3 id="${v.key}-h">${v.heading ?? `The ${v.toc} ladder`} &mdash; ${v.sites === 1 ? '1 site' : `${v.sites} sites`} <a class="demo-anchor" href="#${v.key}" aria-label="Link to this section">#</a></h3>
         <p class="demo-sub">${v.why} Runs on ${esc(v.demos)}.${v.ladder ? ` Cards per view: ${ladderText(v.ladder)}.` : ''}</p>
 ${v.strips.map((s, i) => strip(v, s, i)).join('\n')}
       </section>`;
@@ -1261,10 +1261,10 @@ ${staticCss
       <nav aria-label="Slider library">
         <strong class="demo-sitenav-title">Custom Slider</strong>
         <a href="index.html">Examples</a>
-        <a href="index.html#start">Start here</a>
-        <a href="index.html#options">Options</a>
         <a href="model-bars.html" aria-current="page">Model bar library</a>
         <a href="brands.html">Find your brand</a>
+        <a href="index.html#start">Start here</a>
+        <a href="index.html#options">Options</a>
       </nav>
     </header>
     <main id="main">
@@ -1283,7 +1283,12 @@ ${staticCss
         18&ndash;19 Aug 2026).
       </p>
 
-      <nav class="demo-toc" aria-label="On this page">
+      <div class="demo-filter">
+        <label for="demo-filter">Filter ladders and looks</label>
+        <input id="demo-filter" type="text" autocomplete="off" placeholder="e.g. Cadillac, dark band, tabs" />
+        <p class="demo-vh" role="status" id="demo-filter-count"></p>
+      </div>
+      <nav class="demo-toc demo-toc--chips" aria-label="On this page">
 ${PAGE_GROUPS.map((G) => `        <p class="demo-toc-group"><strong>${G.title}:</strong> ${G.keys.map((k) => `<a href="#${k}">${byKey[k].toc} (${byKey[k].sites})</a>`).join(' &middot; ')}</p>`).join('\n')}
         <p class="demo-toc-group"><strong>Brands wearing them:</strong> ${TOC_ALIASES.map(([b, href]) => `<a href="${href}">${b}</a>`).join(' &middot; ')}</p>
         <p class="demo-toc-group"><strong>Not the standard design:</strong> <a href="#static-bars">Not sliders</a> &middot; <a href="#outliers">The outliers</a></p>
@@ -1550,7 +1555,7 @@ ${slides}
   }
   const extra = r.extra ? `\n        <p class="brand-note">${r.extra}</p>` : '';
   return `      <section class="demo-section" id="b-${slug}">
-        <h2 id="b-${slug}-h">${brand}${standinChip}</h2>
+        <h2 id="b-${slug}-h">${brand}${standinChip} <a class="demo-anchor" href="#b-${slug}" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">${what}. Cards per view: ${tiers}. Copy the finished build: ${links}. Official example: <a href="https://${host}.dealeron.com/">${host}</a>.</p>
 ${body}${extra}
       </section>`;
@@ -1574,27 +1579,6 @@ const brandsPage = `<!doctype html>
     <script src="assets/demo.js" defer></script>
     <style>
       /* Page chrome shared with the other demo pages lives in assets/demo.css. */
-      .brand-filter {
-        max-inline-size: 22rem;
-        margin-block: 1rem 0.35rem;
-      }
-      .brand-filter label {
-        display: block;
-        margin-block-end: 0.25rem;
-        font-size: 0.85rem;
-        font-weight: 600;
-      }
-      .brand-filter input {
-        inline-size: 100%;
-        padding: 0.5rem 0.7rem;
-        font: inherit;
-        border: 1px solid #c4ced8;
-        border-radius: 6px;
-      }
-      .brand-filter input:focus-visible {
-        outline: 3px solid #16324f;
-        outline-offset: 2px;
-      }
       .demo-standin {
         display: inline-block;
         padding: 0.1rem 0.55rem;
@@ -1631,10 +1615,10 @@ ${brandCss
       <nav aria-label="Slider library">
         <strong class="demo-sitenav-title">Custom Slider</strong>
         <a href="index.html">Examples</a>
-        <a href="index.html#start">Start here</a>
-        <a href="index.html#options">Options</a>
         <a href="model-bars.html">Model bar library</a>
         <a href="brands.html" aria-current="page">Find your brand</a>
+        <a href="index.html#start">Start here</a>
+        <a href="index.html#options">Options</a>
       </nav>
     </header>
     <main id="main">
@@ -1643,10 +1627,10 @@ ${brandCss
         Handed a site and told &ldquo;add the model bar&rdquo;? Look the brand up here: what its bar actually is (a slider, a tabbed slider, or no slider at all), how many cards it shows at each
         width, where on these pages to copy the finished build, and the official example site to compare against.
       </p>
-      <div class="brand-filter">
-        <label for="brand-q">Filter brands</label>
-        <input id="brand-q" type="text" autocomplete="off" placeholder="e.g. Kia, tabs, no slider" />
-        <p class="demo-vh" role="status" id="brand-count"></p>
+      <div class="demo-filter">
+        <label for="demo-filter">Filter brands</label>
+        <input id="demo-filter" type="text" autocomplete="off" placeholder="e.g. Kia, tabs, no slider" />
+        <p class="demo-vh" role="status" id="demo-filter-count"></p>
       </div>
 ${brandSections}
 
@@ -1657,25 +1641,8 @@ ${brandSections}
       </p>
     </main>
 ${FOOT}
-    <script>
-      // Type-to-filter: hides brand sections whose text doesn't match;
-      // announces the count. With JS off the full page simply stands.
-      addEventListener('DOMContentLoaded', () => {
-        const q = document.getElementById('brand-q');
-        const status = document.getElementById('brand-count');
-        const sections = [...document.querySelectorAll('main > section.demo-section')];
-        q.addEventListener('input', () => {
-          const term = q.value.trim().toLowerCase();
-          let shown = 0;
-          for (const sec of sections) {
-            const hit = !term || sec.textContent.toLowerCase().includes(term);
-            sec.hidden = !hit;
-            if (hit) shown += 1;
-          }
-          status.textContent = term ? shown + ' of ' + sections.length + ' brands shown' : '';
-        });
-      });
-    </script>
+    <!-- The type-to-filter, copy buttons, section jump and scrollspy all come
+         from assets/demo.js, shared with the other demo pages. -->
   </body>
 </html>
 `;

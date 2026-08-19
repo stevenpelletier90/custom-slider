@@ -1404,10 +1404,10 @@
       <nav aria-label="Slider library">
         <strong class="demo-sitenav-title">Custom Slider</strong>
         <a href="index.html">Examples</a>
-        <a href="index.html#start">Start here</a>
-        <a href="index.html#options">Options</a>
         <a href="model-bars.html" aria-current="page">Model bar library</a>
         <a href="brands.html">Find your brand</a>
+        <a href="index.html#start">Start here</a>
+        <a href="index.html#options">Options</a>
       </nav>
     </header>
     <main id="main">
@@ -1425,7 +1425,12 @@
         see the <a href="../docs/catalog/model-bar-library.html">screenshot library</a> and the <a href="../docs/catalog/oem-slider-census.html">census</a> (fingerprinted live 18&ndash;19 Aug 2026).
       </p>
 
-      <nav class="demo-toc" aria-label="On this page">
+      <div class="demo-filter">
+        <label for="demo-filter">Filter ladders and looks</label>
+        <input id="demo-filter" type="text" autocomplete="off" placeholder="e.g. Cadillac, dark band, tabs" />
+        <p class="demo-vh" role="status" id="demo-filter-count"></p>
+      </div>
+      <nav class="demo-toc demo-toc--chips" aria-label="On this page">
         <p class="demo-toc-group">
           <strong>The shared ladders:</strong> <a href="#acura">Acura (19)</a> &middot; <a href="#chevrolet">Chevrolet (19)</a> &middot; <a href="#lexus">Lexus (14)</a> &middot;
           <a href="#buick">Buick (7)</a> &middot; <a href="#genesis">Genesis (5)</a> &middot; <a href="#lincoln">Lincoln (4)</a> &middot; <a href="#cdjr">CDJR (4)</a> &middot;
@@ -1456,7 +1461,7 @@
         </header>
 
         <section class="demo-section demo-wide" id="acura">
-          <h3 id="acura-h">The Acura ladder &mdash; 19 sites</h3>
+          <h3 id="acura-h">The Acura ladder &mdash; 19 sites <a class="demo-anchor" href="#acura" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             The most common ladder in the estate — tied with the Chevrolet tiers at 19 sites apiece. The same tiers also ship branded as Lexus on live client sites: a centered underlined heading and
             small cutouts that scale up a touch on hover. Runs on acura 1-4, ford 2-4, gmc 1-2, honda 2-5, kia 2-3, mitsubishi 1-2, mitsubishi 4, toyota 9. Cards per view: base 2 &middot; &ge;461px 3
@@ -1547,7 +1552,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="chevrolet">
-          <h3 id="chevrolet-h">The Chevrolet ladder &mdash; 19 sites</h3>
+          <h3 id="chevrolet-h">The Chevrolet ladder &mdash; 19 sites <a class="demo-anchor" href="#chevrolet" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             The GM ladder — and proof a ladder is not a look: Chevrolet runs it plain, Cadillac on a black band, and the Buick GMC, Ford-family, and Subaru demos wear it under brand or body-style
             tabs. Note: since Nov 2025 the official Chevrolet bar is the TABBED version (the plain slick look was deprecated and its sites migrated) — expect tabs on new Chevrolet requests; the
@@ -2089,7 +2094,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="lexus">
-          <h3 id="lexus-h">The Lexus ladder &mdash; 14 sites</h3>
+          <h3 id="lexus-h">The Lexus ladder &mdash; 14 sites <a class="demo-anchor" href="#lexus" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Drops to a single card on the narrowest phones. Runs on lexus 1-4, lexus 7, nissan 2-5, toyota 1, toyota 4-7. Cards per view: base 1 &middot; &ge;401px 2 &middot; &ge;601px 3 &middot;
             &ge;992px 5.
@@ -2179,7 +2184,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="buick">
-          <h3 id="buick-h">The Buick ladder &mdash; 7 sites</h3>
+          <h3 id="buick-h">The Buick ladder &mdash; 7 sites <a class="demo-anchor" href="#buick" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Four-up ceiling — roomier cards than the five-up brands. Jaguar and Land Rover wear these same tiers as photo cards: a background photo per model with a dark hover overlay and an uppercase
             name plus tagline below (their imagery is pending, so the look is described rather than shown). Runs on buick 1-2, jaguar 1, jaguar 3, landrover 1, landrover 3-4. Cards per view: base 2
@@ -2258,7 +2263,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="genesis">
-          <h3 id="genesis-h">The Genesis ladder &mdash; 5 sites</h3>
+          <h3 id="genesis-h">The Genesis ladder &mdash; 5 sites <a class="demo-anchor" href="#genesis" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             A gentle four-step climb — shipped two ways: Genesis plain with inventory counts, Volkswagen with a colour tile behind every car. Runs on genesis 1-3, vw 1-2. Cards per view: base 1
             &middot; &ge;541px 2 &middot; &ge;993px 3 &middot; &ge;1201px 4.
@@ -2622,7 +2627,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="lincoln">
-          <h3 id="lincoln-h">The Lincoln ladder &mdash; 4 sites</h3>
+          <h3 id="lincoln-h">The Lincoln ladder &mdash; 4 sites <a class="demo-anchor" href="#lincoln" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Holds three cards across a wide tablet range. Client builds sometimes cut the 4-up tier at 992px instead of 993 — one pixel, same ladder. Runs on lincoln 1-4. Cards per view: base 2
             &middot; &ge;461px 3 &middot; &ge;993px 4.
@@ -2699,7 +2704,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="cdjr">
-          <h3 id="cdjr-h">The CDJR ladder &mdash; 4 sites</h3>
+          <h3 id="cdjr-h">The CDJR ladder &mdash; 4 sites <a class="demo-anchor" href="#cdjr" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             The only six-up ladder that gets there in three rungs — and the only ladder from the 19 Aug sweep worn by more than one site. A Fiat-including client variant drops the colored band, uses
             pipe-divider tabs, and starts at one card — moot, since that variant hides the whole bar below 768px. Runs on cdjr 1-4. Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;992px 6.
@@ -2805,7 +2810,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="hyundai">
-          <h3 id="hyundai-h">The Hyundai ladder &mdash; 3 sites</h3>
+          <h3 id="hyundai-h">The Hyundai ladder &mdash; 3 sites <a class="demo-anchor" href="#hyundai" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">Also skips two-up on the way from phone to tablet. Runs on hyundai 2-4. Cards per view: base 1 &middot; &ge;461px 3 &middot; &ge;993px 4 &middot; &ge;1201px 5.</p>
           <p class="strip-note">Plain white, name below.</p>
           <div class="dl-carousel mbx-hyundai" data-slider data-step="slide" aria-labelledby="hyundai-h">
@@ -2893,7 +2898,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="ford">
-          <h3 id="ford-h">The Ford ladder &mdash; 2 sites</h3>
+          <h3 id="ford-h">The Ford ladder &mdash; 2 sites <a class="demo-anchor" href="#ford" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">Jumps 1 → 3 in one step; no two-up state at all. Runs on ford 1, honda 1. Cards per view: base 1 &middot; &ge;461px 3 &middot; &ge;992px 5.</p>
           <p class="strip-note">Plain white, name below.</p>
           <div class="dl-carousel mbx-ford" data-slider data-step="slide" aria-labelledby="ford-h">
@@ -2980,7 +2985,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="mazda">
-          <h3 id="mazda-h">The Mazda ladder &mdash; 2 sites</h3>
+          <h3 id="mazda-h">The Mazda ladder &mdash; 2 sites <a class="demo-anchor" href="#mazda" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">One of only three model bars in the estate that shows dots. Runs on mazda 1-2. Cards per view: base 1 &middot; &ge;769px 2 &middot; &ge;992px 3.</p>
           <p class="strip-note">Name above the car, inventory chip below — and it keeps its dots.</p>
           <div class="dl-carousel mbx-mazda" data-slider data-step="slide" aria-labelledby="mazda-h">
@@ -3071,7 +3076,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="toyota">
-          <h3 id="toyota-h">The Toyota ladder &mdash; 2 sites</h3>
+          <h3 id="toyota-h">The Toyota ladder &mdash; 2 sites <a class="demo-anchor" href="#toyota" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">Never more than two across — the roomiest cards of any standard bar. Runs on toyota 2-3. Cards per view: base 1 &middot; &ge;541px 2.</p>
           <p class="strip-note">Split photo cards — photo left, year and inventory count right, Shop Now pill. On the tabbed sites these group by body style.</p>
           <div class="dl-carousel mbx-toyota" data-slider data-step="slide" aria-labelledby="toyota-h">
@@ -3190,7 +3195,7 @@
         </header>
 
         <section class="demo-section demo-wide" id="alfaromeo">
-          <h3 id="alfaromeo-h">The Alfa Romeo ladder &mdash; 1 site</h3>
+          <h3 id="alfaromeo-h">The Alfa Romeo ladder &mdash; 1 site <a class="demo-anchor" href="#alfaromeo" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Six-up, but only past 1800px — the widest breakpoint in the estate. Runs on alfaromeo 1. Cards per view: base 1 &middot; &ge;541px 2 &middot; &ge;993px 3 &middot; &ge;1201px 4 &middot;
             &ge;1801px 6.
@@ -3284,7 +3289,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="audi">
-          <h3 id="audi-h">The Audi ladder &mdash; 1 site</h3>
+          <h3 id="audi-h">The Audi ladder &mdash; 1 site <a class="demo-anchor" href="#audi" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Five rungs, the most granular ladder anywhere. Runs on audi 1. Cards per view: base 1 &middot; &ge;361px 2 &middot; &ge;769px 3 &middot; &ge;993px 4 &middot; &ge;1201px 6.
           </p>
@@ -3375,7 +3380,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="powersports-cat">
-          <h3 id="powersports-cat-h">The Powersports categories ladder &mdash; 1 site</h3>
+          <h3 id="powersports-cat-h">The Powersports categories ladder &mdash; 1 site <a class="demo-anchor" href="#powersports-cat" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Same engine, different content contract: the slides are body-style categories (motorcycles, ATVs, scooters), not models. Runs on powersports 2. Cards per view: base 2 &middot; &ge;461px 3
             &middot; &ge;993px 5.
@@ -3520,7 +3525,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="powersports-brands">
-          <h3 id="powersports-brands-h">The Powersports brands ladder &mdash; 1 site</h3>
+          <h3 id="powersports-brands-h">The Powersports brands ladder &mdash; 1 site <a class="demo-anchor" href="#powersports-brands" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             A brand-logo strip standing where the model bar would be — the Acura tiers with a six-up ceiling. Runs on powersports 1. Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;769px 6.
           </p>
@@ -3695,7 +3700,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="ferrari">
-          <h3 id="ferrari-h">The Ferrari ladder &mdash; 1 site</h3>
+          <h3 id="ferrari-h">The Ferrari ladder &mdash; 1 site <a class="demo-anchor" href="#ferrari" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">One to three in a single step — and the boundary is 768px, not the platform&rsquo;s usual 769. Runs on ferrari 1. Cards per view: base 1 &middot; &ge;768px 3.</p>
           <p class="strip-note">A dark band with a small wordmark line above each car and the name repeated below. The styled text span stands in for the real site&rsquo;s script-wordmark images.</p>
           <div class="dl-carousel mbx-ferrari" data-slider data-step="slide" aria-labelledby="ferrari-h">
@@ -3878,7 +3883,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="ferrari-photo">
-          <h3 id="ferrari-photo-h">The Ferrari photo cards ladder &mdash; 1 site</h3>
+          <h3 id="ferrari-photo-h">The Ferrari photo cards ladder &mdash; 1 site <a class="demo-anchor" href="#ferrari-photo" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             The estate&rsquo;s only 1441px tier — a fourth card appears only past 1440px. Runs on ferrari 2. Cards per view: base 1 &middot; &ge;769px 2 &middot; &ge;993px 3 &middot; &ge;1441px 4.
           </p>
@@ -3975,7 +3980,7 @@
         </header>
 
         <section class="demo-section demo-wide" id="maserati">
-          <h3 id="maserati-h">The Maserati spotlight &mdash; 1 site</h3>
+          <h3 id="maserati-h">The Maserati spotlight &mdash; 1 site <a class="demo-anchor" href="#maserati" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Not really a ladder: one huge card centred at every width with both neighbours peeking. This is the <a href="index.html#peek">peek pattern</a> worn as a model bar —
             <code>--dlc-per-view: 1</code> with the peek turned right up. Runs on maserati 4. Cards per view: base 1.
@@ -4158,7 +4163,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="group">
-          <h3 id="group-h">Group-site strips &mdash; 1 site</h3>
+          <h3 id="group-h">Group-site strips &mdash; 1 site <a class="demo-anchor" href="#group" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Not model bars, but the strips designers will be asked for on group sites: a make-logo rail and a rooftop-location rail. Both autoplay on the real site — the census&rsquo;s only autoplay
             anywhere — so both carry <code>data-autoplay="4000"</code>, and the engine adds its pause button (top right, first in tab order). Dots stay hidden as everywhere else. Runs on group 1.
@@ -4482,7 +4487,7 @@
         </header>
 
         <section class="demo-section demo-wide" id="static-bars">
-          <h3 id="static-bars-h">Model bars that are not sliders</h3>
+          <h3 id="static-bars-h">Model bars that are not sliders <a class="demo-anchor" href="#static-bars" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             A recurring official family, not a one-off: several OEMs ship their model bar as a static grid or tab panes with no carousel at all. Porsche and INFINITI run hover-reveal tile grids, one
             Ford variant is a plain CSS grid (<a href="index.html#modelbar">see the main page's ladder table</a>), BMW's is tab panes with a text rail &mdash; one pane per model, and on phones it

@@ -284,9 +284,72 @@ pre {
   margin: 0.35rem 0;
 }
 
-.demo-toc a[aria-current="true"] {
+.demo-toc a[aria-current="location"] {
   font-weight: 700;
   text-decoration-thickness: 2px;
+}
+
+/* Chip variant (the generated pages): 24px+ tap targets instead of a wall
+   of middot-separated inline links. */
+.demo-toc--chips a {
+  display: inline-block;
+  padding: 0.22rem 0.6rem;
+  margin-block: 0.12rem;
+  text-decoration: none;
+  background: #fff;
+  border: 1px solid #dde3e9;
+  border-radius: 999px;
+}
+
+.demo-toc--chips a:hover {
+  background: #eef2f6;
+}
+
+.demo-toc--chips a[aria-current="location"] {
+  font-weight: 700;
+  color: #16324f;
+  background: #eef2f6;
+  border-color: #16324f;
+}
+
+/* Self-link on each section heading, so a phone can long-press-share
+   an exact section. Quiet until the heading is hovered or it is focused. */
+.demo-anchor {
+  margin-inline-start: 0.4rem;
+  font-size: 0.85em;
+  text-decoration: none;
+  opacity: 0.35;
+}
+
+h2:hover .demo-anchor,
+h3:hover .demo-anchor,
+.demo-anchor:hover,
+.demo-anchor:focus-visible {
+  opacity: 1;
+}
+
+/* Type-to-filter, shared by the pages that emit a #demo-filter input. */
+.demo-filter {
+  margin-block: 1rem;
+}
+
+.demo-filter label {
+  display: block;
+  margin-block-end: 0.3rem;
+  font-weight: 600;
+}
+
+.demo-filter input {
+  inline-size: min(22rem, 100%);
+  padding: 0.5rem 0.7rem;
+  font: inherit;
+  border: 1px solid #c4ced8;
+  border-radius: 6px;
+}
+
+.demo-filter input:focus-visible {
+  outline: 3px solid #16324f;
+  outline-offset: 2px;
 }
 
 .demo-top {
@@ -300,12 +363,32 @@ pre {
 }
 
 /* On phones the cross-page bar stays one row and pans sideways instead of
-   wrapping into a 100px-tall block. */
+   wrapping into a 100px-tall block. The scrollbar is hidden and a right-edge
+   fade says "there's more" — without it the off-canvas page links simply
+   don't exist for a phone user. */
 @media (width <= 700px) {
   .demo-sitenav nav {
     flex-wrap: nowrap;
+    gap: 0.25rem 1rem;
+    padding-block: 0.55rem;
     overflow-x: auto;
+    font-size: 0.9rem;
     white-space: nowrap;
+    scrollbar-width: none;
+  }
+
+  .demo-sitenav nav::-webkit-scrollbar {
+    display: none;
+  }
+
+  .demo-sitenav::after {
+    position: absolute;
+    inset-block: 0;
+    inset-inline-end: 0;
+    inline-size: 2rem;
+    pointer-events: none;
+    content: "";
+    background: linear-gradient(to right, transparent, #fff);
   }
 }
 
@@ -316,7 +399,7 @@ pre {
    section here too. With JS off it simply never exists. */
 .demo-jump {
   position: fixed;
-  inset-block-end: 1rem;
+  inset-block-end: max(1rem, env(safe-area-inset-bottom));
   inset-inline-end: 1rem;
   z-index: 60;
 }
@@ -389,10 +472,16 @@ pre {
   outline-offset: 1px;
 }
 
-.demo-jump-panel a[aria-current="true"] {
+.demo-jump-panel a[aria-current="location"] {
   font-weight: 700;
   color: #16324f;
   background: #eef2f6;
+}
+
+/* The looks nested inside a ladder — indented one step under their section. */
+.demo-jump-panel a.demo-jump-sub {
+  padding-inline-start: 1.1rem;
+  font-size: 0.78rem;
 }
 
 @media print {

@@ -36,9 +36,13 @@ addEventListener('DOMContentLoaded', () => {
     btn.type = 'button';
     btn.className = 'code-copy';
     btn.textContent = 'Copy';
-    // Named by what it copies, so a screen reader hears "Copy HTML"
-    // rather than twenty-nine identical "Copy" buttons.
-    btn.setAttribute('aria-label', `Copy ${label}`);
+    // Named by what it copies AND where: the look from the panel's summary
+    // ("Copy this look — Cadillac's dark band…") or, failing that, the
+    // section heading — so a screen reader's form-control list is not
+    // fifty identical "Copy CSS" buttons.
+    const sum = pre.closest('details')?.querySelector('summary')?.textContent.trim() ?? '';
+    const context = sum.includes('—') ? sum.split('—').slice(1).join('—').trim() : (pre.closest('section')?.querySelector('h2, h3')?.textContent.split('—')[0].trim() ?? '');
+    btn.setAttribute('aria-label', context ? `Copy ${label} — ${context}` : `Copy ${label}`);
     wrap.appendChild(btn);
 
     btn.addEventListener('click', async () => {
@@ -114,8 +118,6 @@ addEventListener('DOMContentLoaded', () => {
 // require scrolling back to the table of contents. Runs before the scrollspy
 // wires up, so its links get spy highlighting too.
 addEventListener('DOMContentLoaded', () => {
-  const groups = document.querySelectorAll('.demo-group');
-  if (!groups.length) return;
   const jump = document.createElement('details');
   jump.className = 'demo-jump';
   const summary = document.createElement('summary');
@@ -123,26 +125,51 @@ addEventListener('DOMContentLoaded', () => {
   const panel = document.createElement('nav');
   panel.className = 'demo-jump-panel';
   panel.setAttribute('aria-label', 'Jump to section');
-  for (const g of groups) {
-    const title = g.querySelector('.demo-group-head h2');
-    if (title) {
-      const label = document.createElement('p');
-      label.textContent = title.textContent;
-      panel.append(label);
+  const addLink = (sec, sub) => {
+    // section title from h2 or h3; a sub-entry (a look inside a ladder)
+    // links its own labelled heading
+    const h = sub ?? sec.querySelector('h2, h3');
+    if (!h) return;
+    const a = document.createElement('a');
+    a.href = `#${sub ? sub.id : sec.id}`;
+    // trim the em-dash tail ("— 19 sites") so the list stays scannable
+    a.textContent = h.textContent.split('—')[0].trim();
+    if (sub) a.className = 'demo-jump-sub';
+    panel.append(a);
+  };
+  const groups = document.querySelectorAll('.demo-group');
+  if (groups.length) {
+    for (const g of groups) {
+      const title = g.querySelector('.demo-group-head h2');
+      if (title) {
+        const label = document.createElement('p');
+        label.textContent = title.textContent;
+        panel.append(label);
+      }
+      for (const sec of g.querySelectorAll(':scope > section.demo-section[id]')) {
+        if (!sec.querySelector('h3')) continue;
+        addLink(sec);
+        // the looks inside a ladder — each has its own copy panel
+        for (const h4 of sec.querySelectorAll('h4.strip-label[id]')) addLink(sec, h4);
+      }
     }
-    for (const sec of g.querySelectorAll(':scope > section.demo-section[id]')) {
-      const h = sec.querySelector('h3');
-      if (!h) continue;
-      const a = document.createElement('a');
-      a.href = `#${sec.id}`;
-      // trim the em-dash tail ("— 19 sites") so the list stays scannable
-      a.textContent = h.textContent.split('—')[0].trim();
-      panel.append(a);
-    }
+  } else {
+    // Pages without group bands (the brand directory) still get the pill,
+    // built from the flat section list.
+    const flat = document.querySelectorAll('main section.demo-section[id]');
+    if (!flat.length) return;
+    for (const sec of flat) addLink(sec);
   }
   jump.append(summary, panel);
-  document.body.append(jump);
-  // close on a jump or on Escape, so the pill never covers the target
+  // Right after the skip link in DOM order: position: fixed keeps the pill
+  // visually bottom-right, but a keyboard user reaches it as tab stop #2
+  // instead of #320 (appended after the footer, it was effectively
+  // unreachable mid-page).
+  const skip = document.querySelector('.demo-skip');
+  if (skip) skip.after(jump);
+  else document.body.prepend(jump);
+  // close on a jump, on Escape, or on a tap/click outside (phones have no
+  // Escape key), so the pill never squats over the content
   panel.addEventListener('click', (e) => {
     if (e.target.closest('a')) jump.open = false;
   });
@@ -151,6 +178,30 @@ addEventListener('DOMContentLoaded', () => {
       jump.open = false;
       summary.focus();
     }
+  });
+  document.addEventListener('pointerdown', (e) => {
+    if (jump.open && !jump.contains(e.target)) jump.open = false;
+  });
+});
+
+// Type-to-filter, shared by every page that carries a #demo-filter input:
+// hides the sections whose text doesn't match and reports the count to a
+// status region. Brand names buried in strip prose (Cadillac, Subaru…)
+// match because the filter reads whole-section text, not headings.
+addEventListener('DOMContentLoaded', () => {
+  const q = document.getElementById('demo-filter');
+  if (!q) return;
+  const status = document.getElementById('demo-filter-count');
+  const sections = [...document.querySelectorAll('main section.demo-section[id]')];
+  q.addEventListener('input', () => {
+    const term = q.value.trim().toLowerCase();
+    let shown = 0;
+    for (const sec of sections) {
+      const hit = !term || sec.textContent.toLowerCase().includes(term);
+      sec.hidden = !hit;
+      if (hit) shown += 1;
+    }
+    if (status) status.textContent = term ? `${shown} of ${sections.length} sections shown` : '';
   });
 });
 
@@ -175,7 +226,9 @@ addEventListener('DOMContentLoaded', () => {
         if (!e.isIntersecting) continue;
         for (const a of current) a.removeAttribute('aria-current');
         current = byTarget.get(e.target) ?? [];
-        for (const a of current) a.setAttribute('aria-current', 'true');
+        // "location" is the ARIA token for "current place within an
+        // environment" — exactly what a scrollspy marks.
+        for (const a of current) a.setAttribute('aria-current', 'location');
       }
     },
     // A thin band just above centre screen decides "where you are" —
