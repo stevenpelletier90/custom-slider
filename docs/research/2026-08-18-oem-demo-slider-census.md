@@ -713,3 +713,22 @@ complete. The uncovered remainder is entirely the non-slick family — the BMW t
 Porsche and INFINITI tile grids, the Nissan tabbed static grid and the Genesis Vue3 carousel
 — now being added to demo/model-bars.html as static-grid and tabs sections plus one
 1/2/3@600/991 strip. Closing the gaps is catalog and demo-page work, not engine work.
+
+## 12. The onboarding portal — the curated customer-facing roster (2026-08-19)
+
+The public onboarding portal (`onboard.dealeron.com`, "Explore DealerOn Showcase Sites")
+turned out to carry the _curated_ roster — the list customers are actually shown. It
+resolves §10.7's roster caveat from the other direction:
+
+- **110 entries, every one inside this census's roster.** The portal names them
+  "<Brand> Showcase N", confirming the Showcase-program naming the internal sites list
+  used. Nothing on the portal was missed by the combined probe + platform sweep.
+- **The portal is a strict subset.** The deep probe tails (ford 8–14, cadillac 5–7,
+  kia 4–5, the lexus 5–7 aliases…) do not appear on it — consistent with §10.1's
+  finding that those are redirect aliases or internal-only copies.
+- **Five portal entries had never been fingerprinted:** `preowneddemo1–4` and
+  `darkthemedemo1`. Checked 2026-08-19 (static): all five are fade-hero-only
+  homepages — no model bar, no slick anywhere. Expected for the genre: a pre-owned
+  store has no OEM lineup to run a bar for. No library work follows.
+- The portal also notes the **video hero templates are refreshed annually** — the
+  first written cadence commitment for any of these assets.

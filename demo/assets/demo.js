@@ -68,6 +68,47 @@ addEventListener('DOMContentLoaded', () => {
   }
 });
 
+// Tabs ([data-tabs]): APG tabs pattern with automatic activation — arrow keys
+// move focus AND selection, panes toggle via [hidden]. The carousels inside
+// are untouched: each pane holds its own auto-inited instance, and the
+// engine's ResizeObserver re-measures a strip when its pane is revealed.
+addEventListener('DOMContentLoaded', () => {
+  for (const wrap of document.querySelectorAll('[data-tabs]')) {
+    const tabs = [...wrap.querySelectorAll('[role="tab"]')];
+    const panes = tabs.map((t) => document.getElementById(t.getAttribute('aria-controls')));
+    const select = (i) => {
+      tabs.forEach((t, j) => {
+        t.setAttribute('aria-selected', String(i === j));
+        t.tabIndex = i === j ? 0 : -1;
+        panes[j].hidden = i !== j;
+      });
+      // Background transition on tab change (the Kia Demo One touch):
+      // page script sets the index, CSS owns the colour and the fade.
+      wrap.dataset.tab = i;
+    };
+    select(
+      Math.max(
+        0,
+        tabs.findIndex((t) => t.getAttribute('aria-selected') === 'true'),
+      ),
+    );
+    tabs.forEach((t, i) => t.addEventListener('click', () => select(i)));
+    wrap.querySelector('[role="tablist"]').addEventListener('keydown', (e) => {
+      const i = tabs.indexOf(e.target);
+      if (i === -1) return;
+      let n = null;
+      if (e.key === 'ArrowRight') n = (i + 1) % tabs.length;
+      else if (e.key === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
+      else if (e.key === 'Home') n = 0;
+      else if (e.key === 'End') n = tabs.length - 1;
+      if (n === null) return;
+      e.preventDefault();
+      tabs[n].focus();
+      select(n);
+    });
+  }
+});
+
 // Floating section jump: a pill pinned bottom-right opening this page's own
 // section list, built from the grouped structure so mid-page jumps never
 // require scrolling back to the table of contents. Runs before the scrollspy

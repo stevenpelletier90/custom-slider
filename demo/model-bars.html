@@ -53,8 +53,7 @@
         --dlc-controls-space: 0px;
       }
 
-      aspect ratios still align their captions,
-      and the cars share a ground line. */ .mbx-acura-card {
+      .mbx-acura-card {
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -101,8 +100,7 @@
         --dlc-controls-space: 0px;
       }
 
-      aspect ratios still align their captions,
-      and the cars share a ground line. */ .mbx-chevrolet-0-card {
+      .mbx-chevrolet-0-card {
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -119,6 +117,34 @@
       .mbx-chevrolet-0-card p {
         margin: 0.25rem 0 0;
         font-weight: 600;
+      }
+
+      .mbx-chevrolet-0-tablist {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 0 0 1rem;
+      }
+      .mbx-chevrolet-0-tab {
+        padding: 0.3rem 1.25rem;
+        font: inherit;
+        font-size: 1.1rem;
+        color: #222;
+        cursor: pointer;
+        background: none;
+        border: 0;
+        border-block-end: 3px solid transparent;
+      }
+      .mbx-chevrolet-0-tab + .mbx-chevrolet-0-tab {
+        border-inline-start: 1px solid #c8ccd2;
+      }
+      .mbx-chevrolet-0-tab[aria-selected='true'] {
+        font-weight: 600;
+        border-block-end-color: #006dc7;
+      }
+      .mbx-chevrolet-0-tab:focus-visible {
+        outline: 3px solid #16324f;
+        outline-offset: 2px;
       }
 
       .mbx-chevrolet-1 {
@@ -250,8 +276,7 @@
         --dlc-controls-space: 0px;
       }
 
-      aspect ratios still align their captions,
-      and the cars share a ground line. */ .mbx-buick-card {
+      .mbx-buick-card {
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -485,8 +510,7 @@
         --dlc-controls-space: 0px;
       }
 
-      aspect ratios still align their captions,
-      and the cars share a ground line. */ .mbx-ford-card {
+      .mbx-ford-card {
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -533,8 +557,7 @@
         --dlc-controls-space: 0px;
       }
 
-      aspect ratios still align their captions,
-      and the cars share a ground line. */ .mbx-hyundai-card {
+      .mbx-hyundai-card {
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -754,8 +777,7 @@
         --dlc-controls-space: 0px;
       }
 
-      aspect ratios still align their captions,
-      and the cars share a ground line. */ .mbx-audi-card {
+      .mbx-audi-card {
         display: flex;
         flex-direction: column;
         justify-content: flex-end;
@@ -1109,6 +1131,7 @@
       .mbx-group-0 {
         --dlc-gap: 1rem;
       }
+
       .mbx-group-0 .dl-carousel-pause {
         inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem);
       }
@@ -1148,6 +1171,7 @@
       .mbx-group-1 {
         --dlc-gap: 1rem;
       }
+
       .mbx-group-1 .dl-carousel-pause {
         inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem);
       }
@@ -1442,148 +1466,288 @@
             <a href="index.html#modelbar-tabs">tabs demo</a> shows the wiring over this same ladder. Runs on buickgmc 1-4, cadillac 1-3, chevrolet 1-4, ford 6-7, subaru 1-4, volvo 1-2. Cards per view:
             base 2 &middot; &ge;540px 3 &middot; &ge;992px 4 &middot; &ge;1200px 5.
           </p>
-          <h4 id="mbx-chevrolet-0-h" class="strip-label">As Chevrolet ships it</h4>
-          <div class="dl-carousel mbx-chevrolet-0" data-slider data-step="slide" aria-labelledby="mbx-chevrolet-0-h">
-            <ul class="dl-carousel-track">
-              <li class="dl-carousel-slide">
-                <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
-                  ><img
-                    src="img/chrome-silverado-1500.png"
-                    srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
-                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                    width="320"
-                    height="240"
-                    alt="2026 Chevrolet Silverado 1500"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <p>Silverado 1500</p></a
-                >
-              </li>
-              <li class="dl-carousel-slide">
-                <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Colorado"
-                  ><img
-                    src="img/chrome-colorado.png"
-                    srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
-                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                    width="320"
-                    height="240"
-                    alt="2025 Chevrolet Colorado"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <p>Colorado</p></a
-                >
-              </li>
-              <li class="dl-carousel-slide">
-                <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
-                  ><img
-                    src="img/chrome-tahoe.png"
-                    srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
-                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                    width="320"
-                    height="240"
-                    alt="2025 Chevrolet Tahoe"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <p>Tahoe</p></a
-                >
-              </li>
-              <li class="dl-carousel-slide">
-                <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Suburban"
-                  ><img
-                    src="img/chrome-suburban.png"
-                    srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
-                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                    width="320"
-                    height="240"
-                    alt="2025 Chevrolet Suburban"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <p>Suburban</p></a
-                >
-              </li>
-              <li class="dl-carousel-slide">
-                <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Traverse"
-                  ><img
-                    src="img/chrome-traverse.png"
-                    srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
-                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                    width="320"
-                    height="240"
-                    alt="2025 Chevrolet Traverse"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <p>Traverse</p></a
-                >
-              </li>
-              <li class="dl-carousel-slide">
-                <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Equinox"
-                  ><img
-                    src="img/chrome-equinox.png"
-                    srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
-                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                    width="320"
-                    height="240"
-                    alt="2025 Chevrolet Equinox"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <p>Equinox</p></a
-                >
-              </li>
-              <li class="dl-carousel-slide">
-                <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
-                  ><img
-                    src="img/chrome-trailblazer.png"
-                    srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
-                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                    width="320"
-                    height="240"
-                    alt="2025 Chevrolet Trailblazer"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <p>Trailblazer</p></a
-                >
-              </li>
-              <li class="dl-carousel-slide">
-                <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Trax"
-                  ><img
-                    src="img/chrome-trax.png"
-                    srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
-                    sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                    width="320"
-                    height="240"
-                    alt="2025 Chevrolet Trax"
-                    loading="lazy"
-                    decoding="async"
-                  />
-                  <p>Trax</p></a
-                >
-              </li>
-            </ul>
+          <h4 id="mbx-chevrolet-0-h" class="strip-label">
+            As Chevrolet ships it — five body-style tabs (the official presentation since Nov 2025), each pane its own carousel on this ladder. Models repeat across panes on the real site too
+          </h4>
+          <div class="mbx-chevrolet-0-tabs" data-tabs>
+            <div role="tablist" aria-label="Models by body style" class="mbx-chevrolet-0-tablist">
+              <button type="button" role="tab" id="mbx-chevrolet-0-tab-0" aria-controls="mbx-chevrolet-0-pane-0" aria-selected="true" class="mbx-chevrolet-0-tab">Trucks</button>
+              <button type="button" role="tab" id="mbx-chevrolet-0-tab-1" aria-controls="mbx-chevrolet-0-pane-1" aria-selected="false" class="mbx-chevrolet-0-tab">Electric</button>
+              <button type="button" role="tab" id="mbx-chevrolet-0-tab-2" aria-controls="mbx-chevrolet-0-pane-2" aria-selected="false" class="mbx-chevrolet-0-tab">Crossovers/SUVs</button>
+              <button type="button" role="tab" id="mbx-chevrolet-0-tab-3" aria-controls="mbx-chevrolet-0-pane-3" aria-selected="false" class="mbx-chevrolet-0-tab">Performance</button>
+              <button type="button" role="tab" id="mbx-chevrolet-0-tab-4" aria-controls="mbx-chevrolet-0-pane-4" aria-selected="false" class="mbx-chevrolet-0-tab">Commercial</button>
+            </div>
+            <div role="tabpanel" id="mbx-chevrolet-0-pane-0" aria-labelledby="mbx-chevrolet-0-tab-0">
+              <div class="dl-carousel mbx-chevrolet-0" data-slider data-step="slide" aria-label="Chevrolet Trucks">
+                <ul class="dl-carousel-track">
+                  <li class="dl-carousel-slide">
+                    <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                      ><img
+                        src="img/chrome-silverado-1500.png"
+                        srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                        sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                        width="320"
+                        height="240"
+                        alt="2026 Chevrolet Silverado 1500"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p>Silverado 1500</p></a
+                    >
+                  </li>
+                  <li class="dl-carousel-slide">
+                    <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                      ><img
+                        src="img/chrome-colorado.png"
+                        srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                        sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                        width="320"
+                        height="240"
+                        alt="2025 Chevrolet Colorado"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p>Colorado</p></a
+                    >
+                  </li>
+                  <li class="dl-carousel-slide">
+                    <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                      ><img
+                        src="img/chrome-tahoe.png"
+                        srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                        sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                        width="320"
+                        height="240"
+                        alt="2025 Chevrolet Tahoe"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p>Tahoe</p></a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div role="tabpanel" id="mbx-chevrolet-0-pane-1" aria-labelledby="mbx-chevrolet-0-tab-1" hidden>
+              <div class="dl-carousel mbx-chevrolet-0" data-slider data-step="slide" aria-label="Chevrolet Electric">
+                <ul class="dl-carousel-track">
+                  <li class="dl-carousel-slide">
+                    <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Equinox"
+                      ><img
+                        src="img/chrome-equinox.png"
+                        srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                        sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                        width="320"
+                        height="240"
+                        alt="2025 Chevrolet Equinox"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p>Equinox</p></a
+                    >
+                  </li>
+                  <li class="dl-carousel-slide">
+                    <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                      ><img
+                        src="img/chrome-trax.png"
+                        srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                        sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                        width="320"
+                        height="240"
+                        alt="2025 Chevrolet Trax"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p>Trax</p></a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div role="tabpanel" id="mbx-chevrolet-0-pane-2" aria-labelledby="mbx-chevrolet-0-tab-2" hidden>
+              <div class="dl-carousel mbx-chevrolet-0" data-slider data-step="slide" aria-label="Chevrolet Crossovers/SUVs">
+                <ul class="dl-carousel-track">
+                  <li class="dl-carousel-slide">
+                    <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
+                      ><img
+                        src="img/chrome-tahoe.png"
+                        srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                        sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                        width="320"
+                        height="240"
+                        alt="2025 Chevrolet Tahoe"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p>Tahoe</p></a
+                    >
+                  </li>
+                  <li class="dl-carousel-slide">
+                    <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                      ><img
+                        src="img/chrome-suburban.png"
+                        srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                        sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                        width="320"
+                        height="240"
+                        alt="2025 Chevrolet Suburban"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p>Suburban</p></a
+                    >
+                  </li>
+                  <li class="dl-carousel-slide">
+                    <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Traverse"
+                      ><img
+                        src="img/chrome-traverse.png"
+                        srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                        sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                        width="320"
+                        height="240"
+                        alt="2025 Chevrolet Traverse"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p>Traverse</p></a
+                    >
+                  </li>
+                  <li class="dl-carousel-slide">
+                    <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
+                      ><img
+                        src="img/chrome-trailblazer.png"
+                        srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                        sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                        width="320"
+                        height="240"
+                        alt="2025 Chevrolet Trailblazer"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p>Trailblazer</p></a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div role="tabpanel" id="mbx-chevrolet-0-pane-3" aria-labelledby="mbx-chevrolet-0-tab-3" hidden>
+              <div class="dl-carousel mbx-chevrolet-0" data-slider data-step="slide" aria-label="Chevrolet Performance">
+                <ul class="dl-carousel-track">
+                  <li class="dl-carousel-slide">
+                    <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                      ><img
+                        src="img/chrome-silverado-1500.png"
+                        srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                        sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                        width="320"
+                        height="240"
+                        alt="2026 Chevrolet Silverado 1500"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p>Silverado 1500</p></a
+                    >
+                  </li>
+                  <li class="dl-carousel-slide">
+                    <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Trax"
+                      ><img
+                        src="img/chrome-trax.png"
+                        srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                        sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                        width="320"
+                        height="240"
+                        alt="2025 Chevrolet Trax"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p>Trax</p></a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
+            <div role="tabpanel" id="mbx-chevrolet-0-pane-4" aria-labelledby="mbx-chevrolet-0-tab-4" hidden>
+              <div class="dl-carousel mbx-chevrolet-0" data-slider data-step="slide" aria-label="Chevrolet Commercial">
+                <ul class="dl-carousel-track">
+                  <li class="dl-carousel-slide">
+                    <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
+                      ><img
+                        src="img/chrome-silverado-1500.png"
+                        srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                        sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                        width="320"
+                        height="240"
+                        alt="2026 Chevrolet Silverado 1500"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p>Silverado 1500</p></a
+                    >
+                  </li>
+                  <li class="dl-carousel-slide">
+                    <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Colorado"
+                      ><img
+                        src="img/chrome-colorado.png"
+                        srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                        sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                        width="320"
+                        height="240"
+                        alt="2025 Chevrolet Colorado"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p>Colorado</p></a
+                    >
+                  </li>
+                  <li class="dl-carousel-slide">
+                    <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Suburban"
+                      ><img
+                        src="img/chrome-suburban.png"
+                        srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                        sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
+                        width="320"
+                        height="240"
+                        alt="2025 Chevrolet Suburban"
+                        loading="lazy"
+                        decoding="async"
+                      />
+                      <p>Suburban</p></a
+                    >
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
           <details>
             <summary>Copy this look</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
-              once per page.
+              once per page &mdash; and take the small tabs script from the <a href="index.html#modelbar-tabs">tabs demo</a>, which shows this exact wiring.
             </p>
             <p class="code-label">HTML</p>
-            <pre><code>&lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Explore our lineup"&gt;
-  &lt;ul class="dl-carousel-track"&gt;
-    &lt;li class="dl-carousel-slide"&gt;
-      &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=Silverado 1500" aria-label="Explore the Silverado 1500"&gt;
+            <pre><code>&lt;div class="my-modelbar-tabs" data-tabs&gt;
+  &lt;div role="tablist" aria-label="Models by body style" class="my-modelbar-tablist"&gt;
+    &lt;button type="button" role="tab" id="tab-trucks" aria-controls="pane-trucks" aria-selected="true" class="my-modelbar-tab"&gt;Trucks&lt;/button&gt;
+    &lt;button type="button" role="tab" id="tab-electric" aria-controls="pane-electric" aria-selected="false" class="my-modelbar-tab"&gt;Electric&lt;/button&gt;
+    &lt;!-- one tab per group --&gt;
+  &lt;/div&gt;
+  &lt;div role="tabpanel" id="pane-trucks" aria-labelledby="tab-trucks"&gt;
+    &lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Trucks"&gt;
+      &lt;ul class="dl-carousel-track"&gt;
+        &lt;li class="dl-carousel-slide"&gt;
+          &lt;a class="my-modelbar-card" href="/new-inventory/index.htm?model=Silverado 1500" aria-label="Explore the Silverado 1500"&gt;
         &lt;img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Chevrolet Silverado 1500"&gt;
         &lt;p&gt;Silverado 1500&lt;/p&gt;
       &lt;/a&gt;
-    &lt;/li&gt;
-    &lt;!-- repeat the &lt;li&gt; for each model --&gt;
-  &lt;/ul&gt;
+        &lt;/li&gt;
+        &lt;!-- repeat the &lt;li&gt; for each model in this group --&gt;
+      &lt;/ul&gt;
+    &lt;/div&gt;
+  &lt;/div&gt;
+  &lt;div role="tabpanel" id="pane-electric" aria-labelledby="tab-electric" hidden&gt;
+    &lt;!-- same structure - one pane (with its own carousel) per tab. Models may
+         repeat across panes; the real sites do exactly that. --&gt;
+  &lt;/div&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Chevrolet ladder - 19 sites run exactly this. */
@@ -1600,7 +1764,15 @@
    aspect ratios still align their captions, and the cars share a ground line. */
 .my-modelbar-card { display: flex; flex-direction: column; justify-content: flex-end; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
+
+/* The tabs: pipe-separated labels, blue underline on the active one. The tab
+   SCRIPT is the standard one - copy it from the tabs demo on the main page. */
+.my-modelbar-tablist { display: flex; flex-wrap: wrap; justify-content: center; margin: 0 0 1rem; }
+.my-modelbar-tab { padding: 0.3rem 1.25rem; font: inherit; font-size: 1.1rem; color: #222; cursor: pointer; background: none; border: 0; border-block-end: 3px solid transparent; }
+.my-modelbar-tab + .my-modelbar-tab { border-inline-start: 1px solid #c8ccd2; }
+.my-modelbar-tab[aria-selected="true"] { font-weight: 600; border-block-end-color: #006dc7; }
+.my-modelbar-tab:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }</code></pre>
           </details>
           <h4 id="mbx-chevrolet-1-h" class="strip-label">Same ladder as Cadillac ships it — a dark band and spaced capitals</h4>
           <div class="dl-carousel mbx-chevrolet-1" data-slider data-step="slide" aria-labelledby="mbx-chevrolet-1-h">

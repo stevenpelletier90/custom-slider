@@ -449,7 +449,20 @@ const VARIANTS = [
     ],
     why: 'The GM ladder — and proof a ladder is not a look: Chevrolet runs it plain, Cadillac on a black band, and the Buick GMC, Ford-family, and Subaru demos wear it under brand or body-style tabs. Note: since Nov 2025 the official Chevrolet bar is the TABBED version (the plain slick look was deprecated and its sites migrated) — expect tabs on new Chevrolet requests; the <a href="index.html#modelbar-tabs">tabs demo</a> shows the wiring over this same ladder.',
     strips: [
-      { skin: 'white', label: 'As Chevrolet ships it' },
+      {
+        skin: 'white',
+        label: 'As Chevrolet ships it — five body-style tabs (the official presentation since Nov 2025), each pane its own carousel on this ladder. Models repeat across panes on the real site too',
+        tabbed: {
+          labels: ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial'],
+          panes: [
+            [0, 1, 2],
+            [5, 7],
+            [2, 3, 4, 6],
+            [0, 7],
+            [0, 1, 3],
+          ],
+        },
+      },
       { skin: 'band-dark', label: 'Same ladder as Cadillac ships it — a dark band and spaced capitals' },
     ],
   },
@@ -859,13 +872,16 @@ ${demos}
       </section>`;
 };
 
-const staticCss = STATICS.map((d) =>
-  d.css
-    .split('\n')
-    .filter((line) => !line.trimStart().startsWith('/*'))
-    .join('\n')
-    .replaceAll('.my-', '.sb-'),
-).join('\n\n');
+// Strip /* ... */ comments (multi-line included) from taught CSS before it
+// becomes live CSS — a line-based filter once left a dangling `*/` that
+// silently voided the rule after it.
+const stripComments = (css) =>
+  css
+    .replace(/\/\*[\s\S]*?\*\//g, '')
+    .replace(/\n{3,}/g, '\n\n')
+    .replace(/^\s*\n/, '');
+
+const staticCss = STATICS.map((d) => stripComments(d.css).replaceAll('.my-', '.sb-')).join('\n\n');
 
 // The complete copy-paste CSS for one strip: ladder + dots + skin. This exact
 // string, class-renamed, is also the live CSS — rendered and taught are one.
@@ -881,21 +897,25 @@ const recipeCss = (v, s) => {
     ? `/* This bar is one of the three in the estate that keeps its dots - nothing to hide. */`
     : `/* Arrows only - hide the dots and reclaim the space they reserved. */\n.my-modelbar .dl-carousel-dots { display: none; }\n.my-modelbar { --dlc-controls-space: 0px; }`;
   const auto = s.autoplay ? `\n\n/* Autoplay adds the engine's pause button (top right, first in tab order) - leave it. */` : '';
-  return `/* ${s.recipeName ?? `${v.toc} ladder`} - ${v.sites === 1 ? '1 site runs' : `${v.sites} sites run`} exactly this. */\n${rungs}\n\n${dots}${auto}\n\n${SKINS[s.skin].cardCss}`;
+  const tabbed = s.tabbed ? `\n${TABBED_CSS}` : '';
+  return `/* ${s.recipeName ?? `${v.toc} ladder`} - ${v.sites === 1 ? '1 site runs' : `${v.sites} sites run`} exactly this. */\n${rungs}\n\n${dots}${auto}\n\n${SKINS[s.skin].cardCss}${tabbed}`;
 };
+
+// Tab chrome for tabbed strips (Chevrolet ships this way): pipe-separated
+// labels, blue underline on the active tab — the real site's look.
+const TABBED_CSS = `
+/* The tabs: pipe-separated labels, blue underline on the active one. The tab
+   SCRIPT is the standard one - copy it from the tabs demo on the main page. */
+.my-modelbar-tablist { display: flex; flex-wrap: wrap; justify-content: center; margin: 0 0 1rem; }
+.my-modelbar-tab { padding: 0.3rem 1.25rem; font: inherit; font-size: 1.1rem; color: #222; cursor: pointer; background: none; border: 0; border-block-end: 3px solid transparent; }
+.my-modelbar-tab + .my-modelbar-tab { border-inline-start: 1px solid #c8ccd2; }
+.my-modelbar-tab[aria-selected="true"] { font-weight: 600; border-block-end-color: #006dc7; }
+.my-modelbar-tab:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }`;
 
 const stripId = (v, i) => (v.strips.length === 1 ? `mbx-${v.key}` : `mbx-${v.key}-${i}`);
 
 // Live style block: each strip's recipe with .my-modelbar → its unique class.
-const liveCss = VARIANTS.flatMap((v) =>
-  v.strips.map((s, i) =>
-    recipeCss(v, s)
-      .split('\n')
-      .filter((line) => !line.startsWith('/*'))
-      .join('\n')
-      .replaceAll('.my-modelbar', `.${stripId(v, i)}`),
-  ),
-).join('\n\n');
+const liveCss = VARIANTS.flatMap((v) => v.strips.map((s, i) => stripComments(recipeCss(v, s)).replaceAll('.my-modelbar', `.${stripId(v, i)}`))).join('\n\n');
 
 const strip = (v, s, i) => {
   const id = stripId(v, i);
@@ -906,6 +926,7 @@ const strip = (v, s, i) => {
   const attrs = `data-slider data-step="slide"${s.autoplay ? ` data-autoplay="${s.autoplay}"` : ''}`;
   const roster = s.roster ?? v.roster ?? CHEVY;
   const snippetHtml = typeof SKINS[s.skin].snippetHtml === 'function' ? SKINS[s.skin].snippetHtml(roster) : SKINS[s.skin].snippetHtml;
+  if (s.tabbed) return tabbedStrip(v, s, i, { id, heading, note, roster, snippetHtml });
   const slides = SKINS[s.skin]
     .liveSlides(roster)
     .map((a) => `            <li class="dl-carousel-slide">${a.replaceAll('my-modelbar', id)}</li>`)
@@ -929,6 +950,72 @@ ${slides}
     </li>
     <!-- repeat the <li> for each model -->
   </ul>
+</div>`)}</code></pre>
+          <p class="code-label">CSS</p>
+          <pre><code>${esc(recipeCss(v, s))}</code></pre>
+        </details>`;
+};
+
+// A tabbed strip: the real Chevrolet presentation — body-style tabs, each
+// pane its own auto-inited carousel on the same ladder. Uses the shared
+// [data-tabs] APG handler from assets/demo.js.
+const tabbedStrip = (v, s, i, { id, heading, note, roster, snippetHtml }) => {
+  const tabs = s.tabbed.labels
+    .map(
+      (label, t) =>
+        `            <button type="button" role="tab" id="${id}-tab-${t}" aria-controls="${id}-pane-${t}" aria-selected="${t === 0 ? 'true' : 'false'}" class="${id}-tab">${label}</button>`,
+    )
+    .join('\n');
+  const panes = s.tabbed.labels
+    .map((label, t) => {
+      const picks = s.tabbed.panes[t].map((n) => roster[n]);
+      const slides = SKINS[s.skin]
+        .liveSlides(picks)
+        .map((a) => `              <li class="dl-carousel-slide">${a.replaceAll('my-modelbar', id)}</li>`)
+        .join('\n');
+      return `          <div role="tabpanel" id="${id}-pane-${t}" aria-labelledby="${id}-tab-${t}"${t === 0 ? '' : ' hidden'}>
+            <div class="dl-carousel ${id}" data-slider data-step="slide" aria-label="Chevrolet ${label}">
+              <ul class="dl-carousel-track">
+${slides}
+              </ul>
+            </div>
+          </div>`;
+    })
+    .join('\n');
+  return `${heading}${note}        <div class="${id}-tabs" data-tabs>
+          <div role="tablist" aria-label="Models by body style" class="${id}-tablist">
+${tabs}
+          </div>
+${panes}
+        </div>
+        <details>
+          <summary>Copy this look</summary>
+          <p class="copy-lead">
+            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add
+            <a href="index.html#start">the slider itself</a> first &mdash; once per page &mdash; and take the small tabs script from the
+            <a href="index.html#modelbar-tabs">tabs demo</a>, which shows this exact wiring.
+          </p>
+          <p class="code-label">HTML</p>
+          <pre><code>${esc(`<div class="my-modelbar-tabs" data-tabs>
+  <div role="tablist" aria-label="Models by body style" class="my-modelbar-tablist">
+    <button type="button" role="tab" id="tab-trucks" aria-controls="pane-trucks" aria-selected="true" class="my-modelbar-tab">${s.tabbed.labels[0]}</button>
+    <button type="button" role="tab" id="tab-electric" aria-controls="pane-electric" aria-selected="false" class="my-modelbar-tab">${s.tabbed.labels[1]}</button>
+    <!-- one tab per group -->
+  </div>
+  <div role="tabpanel" id="pane-trucks" aria-labelledby="tab-trucks">
+    <div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="${s.tabbed.labels[0]}">
+      <ul class="dl-carousel-track">
+        <li class="dl-carousel-slide">
+          ${snippetHtml}
+        </li>
+        <!-- repeat the <li> for each model in this group -->
+      </ul>
+    </div>
+  </div>
+  <div role="tabpanel" id="pane-electric" aria-labelledby="tab-electric" hidden>
+    <!-- same structure - one pane (with its own carousel) per tab. Models may
+         repeat across panes; the real sites do exactly that. -->
+  </div>
 </div>`)}</code></pre>
           <p class="code-label">CSS</p>
           <pre><code>${esc(recipeCss(v, s))}</code></pre>
