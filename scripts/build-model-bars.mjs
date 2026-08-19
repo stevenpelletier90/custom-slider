@@ -36,6 +36,24 @@ const PHOTO_CARDS = [
   ['vehicle-5', '2020 Nissan GT-R Premium', 'White Nissan GT-R from behind on an open country road', 1],
   ['vehicle-6', '2019 Fiat 500 Lounge', 'Light blue Fiat 500 parked beside a stone building, side view', 2],
 ];
+// Cutouts relabelled as body-style categories, for the powersports category bar.
+const CATEGORY_TILES = [
+  ['silverado-1500', 'Trucks'],
+  ['tahoe', 'Full-size SUVs'],
+  ['traverse', 'Crossovers'],
+  ['equinox', 'Electric'],
+  ['colorado', 'Midsize trucks'],
+  ['trax', 'Small SUVs'],
+];
+// Fictional rooftops for the group-site locations strip.
+const LOCATIONS = [
+  ['Northgate Chevrolet', '2400 Commerce Dr, Springfield', '(555) 010-1100'],
+  ['Riverside Buick GMC', '18 Bridge St, Springfield', '(555) 010-1200'],
+  ['Lakeview CDJR', '901 Shoreline Ave, Lakeview', '(555) 010-1300'],
+  ['Summit Ford', '77 Hilltop Rd, Summit', '(555) 010-1400'],
+  ['Valley Honda', '5120 Orchard Way, Valleyfield', '(555) 010-1500'],
+  ['Downtown Kia', '311 Main St, Springfield', '(555) 010-1600'],
+];
 // The demo's tall model photos, for the Alfa Romeo-style tall tiles.
 const TALL_TILES = [
   ['model-camaro', 'Camaro'],
@@ -176,6 +194,122 @@ const SKINS = {
         <span class="my-modelbar-cta">Browse inventory</span>
       </a>`,
   },
+  'cdjr-dark': {
+    cardCss: `.my-modelbar { padding-block: 1.75rem; background: #212121; }
+.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+.my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
+.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.2s; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.1); }
+.my-modelbar-card p { margin: 0.5rem 0 0; font-weight: 600; }`,
+    liveSlides: () => CUTOUTS.map(([slug, name, alt]) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${name}">${cutoutImg(slug, alt)}<p>${name}</p></a>`),
+    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Wrangler" aria-label="Explore the Wrangler">
+        <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Jeep Wrangler">
+        <p>Wrangler</p>
+      </a>`,
+  },
+  'category-tile': {
+    cardCss: `.my-modelbar { padding-block: 1.75rem; background: #1c1c1c; }
+.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+.my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
+.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
+.my-modelbar-card p { margin: -0.75rem 0 0; font-size: 1.15rem; font-weight: 700; letter-spacing: 0.14em; text-transform: uppercase; }`,
+    liveSlides: () => CATEGORY_TILES.map(([slug, cat]) => `<a class="my-modelbar-card" href="index.html#modelbar">${cutoutImg(slug, '')}<p>${cat}</p></a>`),
+    snippetLabel: 'Shop by category',
+    snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?bodystyle=Motorcycle">
+        <img src="#MISCPATH#/category-motorcycles.png" width="320" height="240" alt="">
+        <p>Motorcycles</p>
+      </a>`,
+  },
+  'brand-logo': {
+    cardCss: `.my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
+.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; filter: grayscale(1); opacity: 0.6; transition: filter 0.2s, opacity 0.2s; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-within img { filter: none; opacity: 1; }
+.my-modelbar-card p { margin: -0.6rem 0 0; font-weight: 600; }`,
+    liveSlides: () => CUTOUTS.map(([slug, name, alt]) => `<a class="my-modelbar-card" href="index.html#modelbar">${cutoutImg(slug, alt)}<p>${name}</p></a>`),
+    snippetLabel: 'Shop by brand',
+    snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?make=Honda">
+        <img src="#MISCPATH#/brand-honda.png" width="320" height="240" alt="">
+        <p>Honda</p>
+      </a>`,
+  },
+  'wordmark-dark': {
+    cardCss: `.my-modelbar { padding-block: 1.75rem; background: #101010; }
+.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+.my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
+.my-modelbar-wordmark { display: block; margin-block-end: 0.75rem; font-size: 1.3rem; font-style: italic; font-weight: 700; letter-spacing: 0.06em; }
+.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }`,
+    // No aria-label here: the visible text names the card twice (wordmark +
+    // caption), and an "Explore the X" label would fail label-in-name (WCAG
+    // 2.5.3). Content names the link; the cutout is decorative (alt="").
+    liveSlides: () => CUTOUTS.map(([slug, name]) => `<a class="my-modelbar-card" href="index.html#modelbar"><span class="my-modelbar-wordmark">${name}</span>${cutoutImg(slug, '')}<p>${name}</p></a>`),
+    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Roma">
+        <span class="my-modelbar-wordmark">Roma</span>
+        <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="">
+        <p>Roma</p>
+      </a>
+      <!-- the real site puts the model's script-wordmark image where the span is.
+           No aria-label and an empty alt: the text already names the card twice,
+           and a label that doesn't contain ALL of it fails label-in-name -->`,
+  },
+  'photo-overlay': {
+    cardCss: `.my-modelbar { --dlc-gap: 1rem; }
+.my-modelbar-card { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; }
+.my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
+.my-modelbar-card p { position: absolute; inset-block-end: 0; inset-inline: 0; margin: 0; padding: 2.5rem 1rem 0.9rem; font-weight: 700; background: linear-gradient(transparent, rgb(0 0 0 / 75%)); }`,
+    liveSlides: () =>
+      PHOTO_CARDS.map(
+        ([slug, name, alt]) =>
+          `<a class="my-modelbar-card" href="index.html#vehicles"><img src="img/${slug}.jpg" width="800" height="500" alt="${alt}" loading="lazy" decoding="async" /><p>${name}</p></a>`,
+      ),
+    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Purosangue">
+        <img src="#MISCPATH#/purosangue.jpg" width="800" height="500" alt="Red Ferrari Purosangue on a coastal road">
+        <p>Purosangue</p>
+      </a>`,
+  },
+  spotlight: {
+    cardCss: `.my-modelbar { --dlc-arrow-size: 64px; --dlc-arrow-fg: #14161b; --dlc-arrow-bg: rgb(255 255 255 / 85%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 2px 10px rgb(0 0 0 / 25%); }
+@media (min-width: 992px) { .my-modelbar { --dlc-peek: 23%; } }
+.my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
+.my-modelbar-wordmark { display: block; margin-block-end: 0.5rem; font-size: 1.5rem; font-style: italic; font-weight: 700; letter-spacing: 0.06em; }
+.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 1.15rem; }`,
+    // Same label-in-name reasoning as the wordmark-dark skin above.
+    liveSlides: () => CUTOUTS.map(([slug, name]) => `<a class="my-modelbar-card" href="index.html#modelbar"><span class="my-modelbar-wordmark">${name}</span>${cutoutImg(slug, '')}<p>${name}</p></a>`),
+    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=GranTurismo">
+        <span class="my-modelbar-wordmark">GranTurismo</span>
+        <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="">
+        <p>GranTurismo</p>
+      </a>`,
+  },
+  'logo-strip': {
+    cardCss: `.my-modelbar { --dlc-gap: 1rem; }
+.my-modelbar-card { display: block; text-align: center; }
+.my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }`,
+    liveSlides: () => CUTOUTS.map(([slug, name]) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Shop ${name}">${cutoutImg(slug, '')}</a>`),
+    snippetLabel: 'Shop by make',
+    snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?make=Chevrolet" aria-label="Shop Chevrolet">
+        <img src="#MISCPATH#/make-chevrolet.png" width="320" height="240" alt="">
+      </a>`,
+  },
+  'location-card': {
+    cardCss: `.my-modelbar { --dlc-gap: 1rem; }
+.my-modelbar-card { display: block; padding: 1.5rem 1.25rem; color: inherit; text-align: center; text-decoration: none; border: 1px solid #ddd; }
+.my-modelbar-card h3 { margin: 0 0 0.4rem; font-size: 1.05rem; }
+.my-modelbar-card p { margin: 0 0 1rem; font-size: 0.9rem; color: #5f6368; }
+.my-modelbar-visit { display: inline-block; padding: 0.5rem 1.2rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.12em; text-transform: uppercase; color: #fff; background: #1a5fb4; }`,
+    liveSlides: () =>
+      LOCATIONS.map(
+        ([store, addr, phone]) => `<a class="my-modelbar-card" href="index.html#cards"><h3>${store}</h3><p>${addr}<br />${phone}</p><span class="my-modelbar-visit">Visit website</span></a>`,
+      ),
+    snippetLabel: 'Our locations',
+    snippetHtml: `<a class="my-modelbar-card" href="https://www.rooftop-site.example/">
+        <h3>Northgate Chevrolet</h3>
+        <p>2400 Commerce Dr, Springfield<br>(555) 010-1100</p>
+        <span class="my-modelbar-visit">Visit website</span>
+      </a>`,
+  },
 };
 
 // One entry per distinct ladder; strips = the looks that ladder ships with.
@@ -183,28 +317,28 @@ const VARIANTS = [
   {
     key: 'acura',
     toc: 'Acura',
-    sites: 13,
-    demos: 'acura 1-3, ford 2-3, gmc 1-2, honda 2-3, kia 2-3, mitsubishi 1-2',
+    sites: 19,
+    demos: 'acura 1-4, ford 2-4, gmc 1-2, honda 2-5, kia 2-3, mitsubishi 1-2, mitsubishi 4, toyota 9',
     ladder: [
       [0, 2],
       [461, 3],
       [769, 5],
     ],
-    why: 'The most common ladder in the estate.',
-    strips: [{ skin: 'white', label: 'Plain white, name below — how all 13 ship it' }],
+    why: 'The most common ladder in the estate — tied with the Chevrolet tiers at 19 sites apiece.',
+    strips: [{ skin: 'white', label: 'Plain white, name below — how all 19 ship it' }],
   },
   {
     key: 'chevrolet',
     toc: 'Chevrolet',
-    sites: 11,
-    demos: 'cadillac 1-3, chevrolet 1-3, subaru 1-3, volvo 1-2',
+    sites: 19,
+    demos: 'buickgmc 1-4, cadillac 1-3, chevrolet 1-4, ford 6-7, subaru 1-4, volvo 1-2',
     ladder: [
       [0, 2],
       [540, 3],
       [992, 4],
       [1200, 5],
     ],
-    why: 'The GM ladder — and proof a ladder is not a look: Chevrolet runs it plain, Cadillac runs it on a black band.',
+    why: 'The GM ladder — and proof a ladder is not a look: Chevrolet runs it plain, Cadillac on a black band, and the Buick GMC, Ford-family, and Subaru demos wear it under brand or body-style tabs.',
     strips: [
       { skin: 'white', label: 'As Chevrolet ships it' },
       { skin: 'band-dark', label: 'Same ladder as Cadillac ships it — a dark band and spaced capitals' },
@@ -213,8 +347,8 @@ const VARIANTS = [
   {
     key: 'lexus',
     toc: 'Lexus',
-    sites: 6,
-    demos: 'lexus 1-3, nissan 2-3, toyota 1',
+    sites: 14,
+    demos: 'lexus 1-4, lexus 7, nissan 2-5, toyota 1, toyota 4-7',
     ladder: [
       [0, 1],
       [401, 2],
@@ -227,8 +361,8 @@ const VARIANTS = [
   {
     key: 'buick',
     toc: 'Buick',
-    sites: 5,
-    demos: 'buick 1-2, jaguar 1, landrover 1, landrover 3',
+    sites: 7,
+    demos: 'buick 1-2, jaguar 1, jaguar 3, landrover 1, landrover 3-4',
     ladder: [
       [0, 2],
       [461, 3],
@@ -257,8 +391,8 @@ const VARIANTS = [
   {
     key: 'lincoln',
     toc: 'Lincoln',
-    sites: 3,
-    demos: 'lincoln 1-3',
+    sites: 4,
+    demos: 'lincoln 1-4',
     ladder: [
       [0, 2],
       [461, 3],
@@ -283,8 +417,8 @@ const VARIANTS = [
   {
     key: 'hyundai',
     toc: 'Hyundai',
-    sites: 2,
-    demos: 'hyundai 2-3',
+    sites: 3,
+    demos: 'hyundai 2-4',
     ladder: [
       [0, 1],
       [461, 3],
@@ -317,7 +451,7 @@ const VARIANTS = [
       [0, 1],
       [541, 2],
     ],
-    why: 'The largest cards anywhere — never more than two across.',
+    why: 'Never more than two across — the roomiest cards of any standard bar.',
     strips: [{ skin: 'photo-card', label: 'Big dark photo cards rather than cutouts' }],
   },
   {
@@ -350,20 +484,155 @@ const VARIANTS = [
     why: 'Five rungs, the most granular ladder anywhere.',
     strips: [{ skin: 'white', label: 'Plain white, name below' }],
   },
+  {
+    key: 'cdjr',
+    toc: 'CDJR',
+    sites: 4,
+    demos: 'cdjr 1-4',
+    ladder: [
+      [0, 2],
+      [461, 3],
+      [992, 6],
+    ],
+    why: 'The only six-up ladder that gets there in three rungs — and the only ladder from the 19 Aug sweep worn by more than one site.',
+    strips: [
+      {
+        skin: 'cdjr-dark',
+        label:
+          'The dark #212121 band with white model names under transparent cutouts — shown here minus the brand-logo tabs: the real sites wrap four or five of these bars (Chrysler, Dodge, Jeep, Ram, Wagoneer) in brand tabs, which is page script rather than the engine — see <a href="index.html#modelbar-tabs">the tab wiring</a>',
+      },
+    ],
+  },
+  {
+    key: 'powersports-cat',
+    toc: 'Powersports categories',
+    sites: 1,
+    demos: 'powersports 2',
+    ladder: [
+      [0, 2],
+      [461, 3],
+      [993, 5],
+    ],
+    why: 'Same engine, different content contract: the slides are body-style categories (motorcycles, ATVs, scooters), not models.',
+    strips: [
+      {
+        skin: 'category-tile',
+        label: 'Category tiles on a dark band — uppercase, letter-spaced labels pulled up under each vehicle. The Chevrolet cutouts stand in for the real site&rsquo;s dealer-hosted category images',
+      },
+    ],
+  },
+  {
+    key: 'powersports-brands',
+    toc: 'Powersports brands',
+    sites: 1,
+    demos: 'powersports 1',
+    ladder: [
+      [0, 2],
+      [461, 3],
+      [769, 6],
+    ],
+    why: 'A brand-logo strip standing where the model bar would be — the Acura tiers with a six-up ceiling.',
+    strips: [
+      {
+        skin: 'brand-logo',
+        label:
+          'Grayscale logo tiles that gain their colour on hover or keyboard focus — <code>filter: grayscale(1)</code> plus opacity, removed on hover/focus. The model cutouts here are stand-ins for the real site&rsquo;s brand logos',
+      },
+    ],
+  },
+  {
+    key: 'ferrari',
+    toc: 'Ferrari',
+    sites: 1,
+    demos: 'ferrari 1',
+    ladder: [
+      [0, 1],
+      [768, 3],
+    ],
+    why: 'One to three in a single step — and the boundary is 768px, not the platform&rsquo;s usual 769.',
+    strips: [
+      {
+        skin: 'wordmark-dark',
+        label: 'A dark band with a small wordmark line above each car and the name repeated below. The styled text span stands in for the real site&rsquo;s script-wordmark images',
+      },
+    ],
+  },
+  {
+    key: 'ferrari-photo',
+    toc: 'Ferrari photo cards',
+    sites: 1,
+    demos: 'ferrari 2',
+    ladder: [
+      [0, 1],
+      [769, 2],
+      [993, 3],
+      [1441, 4],
+    ],
+    why: 'The estate&rsquo;s only 1441px tier — a fourth card appears only past 1440px.',
+    strips: [{ skin: 'photo-overlay', label: 'Lifestyle photo cards with a bottom gradient overlay and the name bottom-left' }],
+  },
+  {
+    key: 'maserati',
+    toc: 'Maserati spotlight',
+    heading: 'The Maserati spotlight',
+    sites: 1,
+    demos: 'maserati 4',
+    ladder: [[0, 1]],
+    peek: '20%',
+    why: 'Not really a ladder: one huge card centred at every width with both neighbours peeking. This is the <a href="index.html#peek">peek pattern</a> worn as a model bar — <code>--dlc-per-view: 1</code> with the peek turned right up.',
+    strips: [{ skin: 'spotlight', label: 'Wordmark above the car, name below, oversized white arrows — the peek grows from 20% to 23% at 992px' }],
+  },
+  {
+    key: 'group',
+    toc: 'Group-site strips',
+    heading: 'Group-site strips',
+    sites: 1,
+    demos: 'group 1',
+    why: 'Not model bars, but the strips designers will be asked for on group sites: a make-logo rail and a rooftop-location rail. Both autoplay on the real site — the census&rsquo;s only autoplay anywhere — so both carry <code>data-autoplay="4000"</code>, and the engine adds its pause button (top right, first in tab order). Dots stay hidden as everywhere else.',
+    strips: [
+      {
+        skin: 'logo-strip',
+        recipeName: 'Group makes strip',
+        ladder: [
+          [0, 2],
+          [769, 4],
+          [993, 7],
+        ],
+        autoplay: 4000,
+        label: 'Make logos, seven across past 992px (base 2 &middot; &ge;769px 4 &middot; &ge;993px 7) — the cutouts stand in for OEM logos',
+      },
+      {
+        skin: 'location-card',
+        recipeName: 'Group locations strip',
+        ladder: [
+          [0, 1],
+          [769, 2],
+          [993, 4],
+        ],
+        autoplay: 4000,
+        label: 'Rooftop location cards (base 1 &middot; &ge;769px 2 &middot; &ge;993px 4)',
+      },
+    ],
+  },
 ];
 
 const ladderText = (l) => l.map(([bp, n], i) => (i === 0 ? `base ${n}` : `&ge;${bp}px ${n}`)).join(' &middot; ');
 
 // The complete copy-paste CSS for one strip: ladder + dots + skin. This exact
 // string, class-renamed, is also the live CSS — rendered and taught are one.
-const recipeCss = (v, skin) => {
-  const rungs = v.ladder
-    .map(([bp, n], i) => (i === 0 ? `.my-modelbar { --dlc-per-view: ${n}; --dlc-peek: 60px; --dlc-gap: 0.5rem; }` : `@media (min-width: ${bp}px) { .my-modelbar { --dlc-per-view: ${n}; } }`))
+// A strip may carry its own ladder/autoplay (the group-site rails); a variant
+// may override the base peek (the Maserati spotlight's centre mode).
+const recipeCss = (v, s) => {
+  const rungs = (s.ladder ?? v.ladder)
+    .map(([bp, n], i) =>
+      i === 0 ? `.my-modelbar { --dlc-per-view: ${n}; --dlc-peek: ${v.peek ?? '60px'}; --dlc-gap: 0.5rem; }` : `@media (min-width: ${bp}px) { .my-modelbar { --dlc-per-view: ${n}; } }`,
+    )
     .join('\n');
   const dots = v.dots
     ? `/* This bar is one of the three in the estate that keeps its dots - nothing to hide. */`
     : `/* Arrows only - hide the dots and reclaim the space they reserved. */\n.my-modelbar .dl-carousel-dots { display: none; }\n.my-modelbar { --dlc-controls-space: 0px; }`;
-  return `/* ${v.toc} ladder - ${v.sites === 1 ? '1 site runs' : `${v.sites} sites run`} exactly this. */\n${rungs}\n\n${dots}\n\n${SKINS[skin].cardCss}`;
+  const auto = s.autoplay ? `\n\n/* Autoplay adds the engine's pause button (top right, first in tab order) - leave it. */` : '';
+  return `/* ${s.recipeName ?? `${v.toc} ladder`} - ${v.sites === 1 ? '1 site runs' : `${v.sites} sites run`} exactly this. */\n${rungs}\n\n${dots}${auto}\n\n${SKINS[s.skin].cardCss}`;
 };
 
 const stripId = (v, i) => (v.strips.length === 1 ? `mbx-${v.key}` : `mbx-${v.key}-${i}`);
@@ -371,7 +640,7 @@ const stripId = (v, i) => (v.strips.length === 1 ? `mbx-${v.key}` : `mbx-${v.key
 // Live style block: each strip's recipe with .my-modelbar → its unique class.
 const liveCss = VARIANTS.flatMap((v) =>
   v.strips.map((s, i) =>
-    recipeCss(v, s.skin)
+    recipeCss(v, s)
       .split('\n')
       .filter((line) => !line.startsWith('/*'))
       .join('\n')
@@ -385,11 +654,12 @@ const strip = (v, s, i) => {
   const heading = v.strips.length === 1 ? '' : `        <h3 id="${labelId}" class="strip-label">${s.label}</h3>\n`;
   const note = v.strips.length === 1 ? `        <p class="strip-note">${s.label}.</p>\n` : '';
   const aria = v.strips.length === 1 ? `aria-labelledby="${v.key}-h"` : `aria-labelledby="${labelId}"`;
+  const attrs = `data-slider data-step="slide"${s.autoplay ? ` data-autoplay="${s.autoplay}"` : ''}`;
   const slides = SKINS[s.skin]
     .liveSlides()
     .map((a) => `            <li class="dl-carousel-slide">${a.replaceAll('my-modelbar', id)}</li>`)
     .join('\n');
-  return `${heading}${note}        <div class="dl-carousel ${id}" data-slider data-step="slide" ${aria}>
+  return `${heading}${note}        <div class="dl-carousel ${id}" ${attrs} ${aria}>
           <ul class="dl-carousel-track">
 ${slides}
           </ul>
@@ -401,7 +671,7 @@ ${slides}
             <a href="index.html#start">the slider itself</a> first &mdash; once per page.
           </p>
           <p class="code-label">HTML</p>
-          <pre><code>${esc(`<div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Explore our lineup">
+          <pre><code>${esc(`<div class="my-modelbar dl-carousel" ${attrs} aria-label="${SKINS[s.skin].snippetLabel ?? 'Explore our lineup'}">
   <ul class="dl-carousel-track">
     <li class="dl-carousel-slide">
       ${SKINS[s.skin].snippetHtml}
@@ -410,13 +680,13 @@ ${slides}
   </ul>
 </div>`)}</code></pre>
           <p class="code-label">CSS</p>
-          <pre><code>${esc(recipeCss(v, s.skin))}</code></pre>
+          <pre><code>${esc(recipeCss(v, s))}</code></pre>
         </details>`;
 };
 
 const section = (v) => `      <section class="demo-section demo-wide" id="${v.key}">
-        <h2 id="${v.key}-h">The ${v.toc} ladder &mdash; ${v.sites === 1 ? '1 site' : `${v.sites} sites`}</h2>
-        <p class="demo-sub">${v.why} Runs on ${esc(v.demos)}. Cards per view: ${ladderText(v.ladder)}.</p>
+        <h2 id="${v.key}-h">${v.heading ?? `The ${v.toc} ladder`} &mdash; ${v.sites === 1 ? '1 site' : `${v.sites} sites`}</h2>
+        <p class="demo-sub">${v.why} Runs on ${esc(v.demos)}.${v.ladder ? ` Cards per view: ${ladderText(v.ladder)}.` : ''}</p>
 ${v.strips.map((s, i) => strip(v, s, i)).join('\n')}
       </section>`;
 
@@ -472,9 +742,10 @@ ${liveCss
     <main id="main">
       <h1>Model bar library</h1>
       <p class="demo-lede">
-        <strong>All 55 model bars across the 76 OEM demo sites are one design</strong> &mdash; arrows, swipe, one card per step, a sliver of the next card peeking, and never autoplay. Brands differ in
-        two ways only: the <em>ladder</em> (how many cards show at each width) and the <em>look</em> (what the cards wear &mdash; plain white, a gray or black band, a colour tile behind each car,
-        photo cards). Every strip below runs live on a different brand&rsquo;s ladder wearing that brand&rsquo;s look; resize the window and watch the counts change.
+        <strong>All 90 model bars across the 129 OEM demo sites are one design</strong> &mdash; arrows, swipe, one card per step, a sliver of the next card peeking, and never autoplay (the only
+        autoplaying strips anywhere are one group site&rsquo;s make and location rails &mdash; not model bars &mdash; shown last on this page). Brands differ in two ways only: the <em>ladder</em>
+        (how many cards show at each width) and the <em>look</em> (what the cards wear &mdash; plain white, a gray or black band, a colour tile behind each car, photo cards). Every strip below runs
+        live on a different brand&rsquo;s ladder wearing that brand&rsquo;s look; resize the window and watch the counts change.
       </p>
       <p class="demo-lede">
         Where one ladder ships with two looks in the estate, both are shown &mdash; same breakpoints, different clothes, same engine. Each strip carries its complete copy-paste pair. Do the
@@ -491,15 +762,16 @@ ${VARIANTS.map(section).join('\n\n')}
 
       <section class="demo-section" id="outliers">
         <h2>The outliers &mdash; not this design</h2>
-        <p class="demo-sub">Four census entries are not the standard model bar (two of them share the centre-mode pattern). Each one is already demonstrated live on the main page.</p>
+        <p class="demo-sub">A few census entries are not the standard model bar. Each one is already demonstrated live on the main page.</p>
         <ul>
-          <li><strong>Kia demo 1</strong> and the <strong>Lexus quick-nav</strong> are centre-mode: the active card sits centred with neighbours peeking. That is the <a href="index.html#peek">peek pattern</a> with the peek turned right up.</li>
+          <li><strong>Kia demo 1</strong> and the <strong>Lexus and Nissan quick-navs</strong> are centre-mode: the active card sits centred with neighbours peeking. That is the <a href="index.html#peek">peek pattern</a> with the peek turned right up &mdash; and it now has company as a model bar proper: the <a href="#maserati">Maserati spotlight</a> above is the same recipe.</li>
           <li><strong>Hyundai demo 1</strong> folds the lineup into two rows &mdash; the <a href="index.html#grid">two-row grid</a>.</li>
           <li><strong>Subaru&rsquo;s strip</strong> is content cards stepping a whole page at a time &mdash; the default behaviour shown by <a href="index.html#vehicles">featured vehicles</a>.</li>
+          <li><strong>Ford demo 5</strong> has no slider at all: a static flex-wrap grid of models, six across on desktop down to two on phones. Proof the bar is optional &mdash; nothing to copy from this library.</li>
         </ul>
       </section>
 
-      <p>Back to <a href="index.html">the main demo</a>. Ladder data: <a href="https://github.com/stevenpelletier90/custom-slider/blob/master/docs/research/2026-08-18-oem-demo-slider-census.md">the OEM demo slider census</a>, fingerprinted 18 Aug 2026.</p>
+      <p>Back to <a href="index.html">the main demo</a>. Ladder data: <a href="https://github.com/stevenpelletier90/custom-slider/blob/master/docs/research/2026-08-18-oem-demo-slider-census.md">the OEM demo slider census</a>, fingerprinted 18&ndash;19 Aug 2026.</p>
     </main>
     <!-- Copy buttons and the TOC scrollspy come from assets/demo.js, shared with the main demo page. -->
   </body>
