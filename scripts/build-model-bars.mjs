@@ -449,7 +449,7 @@ const VARIANTS = [
       [769, 5],
     ],
     why: 'The most common ladder in the estate — tied with the Chevrolet tiers at 19 sites apiece. The same tiers also ship branded as Lexus on live client sites: a centered underlined heading and small cutouts that scale up a touch on hover.',
-    strips: [{ skin: 'white', label: 'Plain white, name below — how all 19 ship it' }],
+    strips: [{ skin: 'white', copy: 'Acura, plain white', label: 'Plain white, name below — how all 19 ship it' }],
   },
   {
     key: 'chevrolet',
@@ -467,6 +467,7 @@ const VARIANTS = [
     strips: [
       {
         skin: 'white',
+        copy: 'Chevrolet, the official tabbed bar',
         label: 'As Chevrolet ships it — five body-style tabs (the official presentation since Nov 2025), each pane its own carousel on this ladder. Models repeat across panes on the real site too',
         tabbed: {
           labels: ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial'],
@@ -479,7 +480,7 @@ const VARIANTS = [
           ],
         },
       },
-      { skin: 'band-dark', label: 'Same ladder as Cadillac ships it — a dark band and spaced capitals' },
+      { skin: 'band-dark', copy: "Cadillac's dark band, on the Chevrolet ladder", label: 'Same ladder as Cadillac ships it — a dark band and spaced capitals' },
     ],
   },
   {
@@ -495,7 +496,7 @@ const VARIANTS = [
       [992, 5],
     ],
     why: 'Drops to a single card on the narrowest phones.',
-    strips: [{ skin: 'band-gray', label: 'On a soft gray gradient band, spaced capitals' }],
+    strips: [{ skin: 'band-gray', copy: 'Lexus, gray gradient band', label: 'On a soft gray gradient band, spaced capitals' }],
   },
   {
     key: 'buick',
@@ -509,7 +510,7 @@ const VARIANTS = [
       [769, 4],
     ],
     why: 'Four-up ceiling — roomier cards than the five-up brands. Jaguar and Land Rover wear these same tiers as photo cards: a background photo per model with a dark hover overlay and an uppercase name plus tagline below (their imagery is pending, so the look is described rather than shown).',
-    strips: [{ skin: 'white', label: 'Plain white, name below' }],
+    strips: [{ skin: 'white', copy: 'Buick, plain white', label: 'Plain white, name below' }],
   },
   {
     key: 'genesis',
@@ -525,10 +526,11 @@ const VARIANTS = [
     ],
     why: 'A gentle four-step climb — shipped two ways: Genesis plain with inventory counts, Volkswagen with a colour tile behind every car.',
     strips: [
-      { skin: 'counts', label: 'As Genesis ships it — inventory count under each name' },
-      { skin: 'tile', label: 'Same ladder as Volkswagen ships it — a tile of colour behind each car, one featured in navy' },
+      { skin: 'counts', copy: 'Genesis, inventory counts', label: 'As Genesis ships it — inventory count under each name' },
+      { skin: 'tile', copy: "Volkswagen's colour tiles, on the Genesis ladder", label: 'Same ladder as Volkswagen ships it — a tile of colour behind each car, one featured in navy' },
       {
         skin: 'counts',
+        copy: 'Genesis, new-platform ladder',
         recipeName: 'Genesis new-platform ladder',
         ladder: [
           [0, 1],
@@ -552,7 +554,7 @@ const VARIANTS = [
       [993, 4],
     ],
     why: 'Holds three cards across a wide tablet range. Client builds sometimes cut the 4-up tier at 992px instead of 993 — one pixel, same ladder.',
-    strips: [{ skin: 'band-flat', label: 'On a flat light-gray band, spaced capitals' }],
+    strips: [{ skin: 'band-flat', copy: 'Lincoln, flat gray band', label: 'On a flat light-gray band, spaced capitals' }],
   },
   {
     key: 'ford',
@@ -566,7 +568,7 @@ const VARIANTS = [
       [992, 5],
     ],
     why: 'Jumps 1 → 3 in one step; no two-up state at all.',
-    strips: [{ skin: 'white', label: 'Plain white, name below' }],
+    strips: [{ skin: 'white', copy: 'Ford, plain white', label: 'Plain white, name below' }],
   },
   {
     key: 'hyundai',
@@ -581,7 +583,7 @@ const VARIANTS = [
       [1201, 5],
     ],
     why: 'Also skips two-up on the way from phone to tablet.',
-    strips: [{ skin: 'white', label: 'Plain white, name below' }],
+    strips: [{ skin: 'white', copy: 'Hyundai, plain white', label: 'Plain white, name below' }],
   },
   {
     key: 'mazda',
@@ -596,7 +598,7 @@ const VARIANTS = [
     ],
     dots: true,
     why: 'One of only three model bars in the estate that shows dots.',
-    strips: [{ skin: 'name-top-chip', label: 'Name above the car, inventory chip below — and it keeps its dots' }],
+    strips: [{ skin: 'name-top-chip', copy: 'Mazda, name above with chip', label: 'Name above the car, inventory chip below — and it keeps its dots' }],
   },
   {
     key: 'toyota',
@@ -609,7 +611,9 @@ const VARIANTS = [
       [541, 2],
     ],
     why: 'Never more than two across — the roomiest cards of any standard bar.',
-    strips: [{ skin: 'photo-card', label: 'Split photo cards — photo left, year and inventory count right, Shop Now pill. On the tabbed sites these group by body style' }],
+    strips: [
+      { skin: 'photo-card', copy: 'Toyota, split photo cards', label: 'Split photo cards — photo left, year and inventory count right, Shop Now pill. On the tabbed sites these group by body style' },
+    ],
   },
   {
     key: 'alfaromeo',
@@ -625,7 +629,7 @@ const VARIANTS = [
       [1801, 6],
     ],
     why: 'Six-up, but only past 1800px — the widest breakpoint in the estate.',
-    strips: [{ skin: 'tall-tile', label: 'Tall dark tiles with a browse button — the most styled bar in the estate' }],
+    strips: [{ skin: 'tall-tile', copy: 'Alfa Romeo, tall dark tiles', label: 'Tall dark tiles with a browse button — the most styled bar in the estate' }],
   },
   {
     key: 'audi',
@@ -641,7 +645,7 @@ const VARIANTS = [
       [1201, 6],
     ],
     why: 'Five rungs, the most granular ladder anywhere.',
-    strips: [{ skin: 'white', label: 'Plain white, name below' }],
+    strips: [{ skin: 'white', copy: 'Audi, plain white', label: 'Plain white, name below' }],
   },
   {
     key: 'cdjr',
@@ -658,6 +662,7 @@ const VARIANTS = [
     strips: [
       {
         skin: 'cdjr-dark',
+        copy: 'CDJR, dark band',
         label:
           'The dark #212121 band with white model names under transparent cutouts — shown here minus the brand-logo tabs: the real sites wrap four or five of these bars (Chrysler, Dodge, Jeep, Ram, Wagoneer) in brand tabs, which is page script rather than the engine — see <a href="index.html#modelbar-tabs">the tab wiring</a>',
       },
@@ -677,6 +682,7 @@ const VARIANTS = [
     strips: [
       {
         skin: 'category-tile',
+        copy: 'Powersports category tiles',
         label: 'Category tiles on a dark band — uppercase, letter-spaced labels pulled up under each vehicle. The Chevrolet cutouts stand in for the real site&rsquo;s dealer-hosted category images',
       },
     ],
@@ -695,6 +701,7 @@ const VARIANTS = [
     strips: [
       {
         skin: 'brand-logo',
+        copy: 'Powersports brand logos',
         label:
           'Grayscale logo tiles that gain their colour on hover or keyboard focus — <code>filter: grayscale(1)</code> plus opacity, removed on hover/focus. The model cutouts here are stand-ins for the real site&rsquo;s brand logos',
       },
@@ -713,6 +720,7 @@ const VARIANTS = [
     strips: [
       {
         skin: 'wordmark-dark',
+        copy: 'Ferrari, wordmark band',
         label: 'A dark band with a small wordmark line above each car and the name repeated below. The styled text span stands in for the real site&rsquo;s script-wordmark images',
       },
     ],
@@ -729,7 +737,7 @@ const VARIANTS = [
       [1441, 4],
     ],
     why: 'The estate&rsquo;s only 1441px tier — a fourth card appears only past 1440px.',
-    strips: [{ skin: 'photo-overlay', label: 'Lifestyle photo cards with a bottom gradient overlay and the name bottom-left' }],
+    strips: [{ skin: 'photo-overlay', copy: 'Ferrari, photo cards', label: 'Lifestyle photo cards with a bottom gradient overlay and the name bottom-left' }],
   },
   {
     key: 'maserati',
@@ -740,7 +748,7 @@ const VARIANTS = [
     ladder: [[0, 1]],
     peek: '20%',
     why: 'Not really a ladder: one huge card centred at every width with both neighbours peeking. This is the <a href="index.html#peek">peek pattern</a> worn as a model bar — <code>--dlc-per-view: 1</code> with the peek turned right up.',
-    strips: [{ skin: 'spotlight', label: 'Wordmark above the car, name below, oversized white arrows — the peek grows from 20% to 23% at 992px' }],
+    strips: [{ skin: 'spotlight', copy: 'Maserati spotlight', label: 'Wordmark above the car, name below, oversized white arrows — the peek grows from 20% to 23% at 992px' }],
   },
   {
     key: 'group',
@@ -752,6 +760,7 @@ const VARIANTS = [
     strips: [
       {
         skin: 'logo-strip',
+        copy: 'Group makes rail',
         recipeName: 'Group makes strip',
         ladder: [
           [0, 2],
@@ -763,6 +772,7 @@ const VARIANTS = [
       },
       {
         skin: 'location-card',
+        copy: 'Group locations rail',
         recipeName: 'Group locations strip',
         ladder: [
           [0, 1],
@@ -867,7 +877,7 @@ const staticSection = () => {
 ${live}
         </div>
         <details>
-          <summary>Copy this look</summary>
+          <summary>Copy this look &mdash; ${d.title}</summary>
           <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. No slider install needed &mdash; this one is pure CSS.</p>
           <p class="code-label">HTML</p>
           <pre><code>${esc(d.snippetHtml)}</code></pre>
@@ -913,7 +923,7 @@ const recipeCss = (v, s) => {
     : `/* Arrows only - hide the dots and reclaim the space they reserved. */\n.my-modelbar .dl-carousel-dots { display: none; }\n.my-modelbar { --dlc-controls-space: 0px; }`;
   const auto = s.autoplay ? `\n\n/* Autoplay adds the engine's pause button (top right, first in tab order) - leave it. */` : '';
   const tabbed = s.tabbed ? `\n${TABBED_CSS}` : '';
-  return `/* ${s.recipeName ?? `${v.toc} ladder`} - ${v.sites === 1 ? '1 site runs' : `${v.sites} sites run`} exactly this. */\n${rungs}\n\n${dots}${auto}\n\n${SKINS[s.skin].cardCss}${tabbed}`;
+  return `/* ${s.copy ?? s.recipeName ?? `${v.toc} ladder`} - ${v.sites === 1 ? 'runs on 1 site' : `${v.sites} sites run this ladder`}. */\n${rungs}\n\n${dots}${auto}\n\n${SKINS[s.skin].cardCss}${tabbed}`;
 };
 
 // Tab chrome for tabbed strips (Chevrolet ships this way): centered heading,
@@ -934,7 +944,88 @@ const TABBED_CSS = `
 .my-modelbar-cta:hover, .my-modelbar-cta:focus-visible { background: #005ba6; }
 .my-modelbar-cta:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }`;
 
+// The tab-switching script, verbatim from the tabs demo on the main page —
+// emitted into the tabbed copy panel with its own copy button, so the
+// official tabbed build is ONE panel instead of a hunt across two pages.
+const TAB_SCRIPT = `<script>
+  // Tab switching. Each pane holds its own slider; they look after themselves.
+  addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-tabs]').forEach(function (wrap) {
+      var tabs = Array.prototype.slice.call(wrap.querySelectorAll('[role="tab"]'));
+      var panes = tabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
+      function select(i) {
+        tabs.forEach(function (t, j) {
+          t.setAttribute('aria-selected', String(i === j));
+          t.tabIndex = i === j ? 0 : -1;
+          panes[j].hidden = i !== j;
+        });
+        wrap.dataset.tab = i;
+      }
+      tabs.forEach(function (t, i) { t.addEventListener('click', function () { select(i); }); });
+      wrap.querySelector('[role="tablist"]').addEventListener('keydown', function (e) {
+        var i = tabs.indexOf(e.target); if (i === -1) return;
+        var n = e.key === 'ArrowRight' ? (i + 1) % tabs.length : e.key === 'ArrowLeft' ? (i - 1 + tabs.length) % tabs.length : null;
+        if (n === null) return;
+        e.preventDefault(); tabs[n].focus(); select(n);
+      });
+      select(0);
+    });
+  });
+</script>`;
+
+// The "did it work" list at the foot of every copy panel: what the paste
+// should do, generated from the same ladder data as the CSS it follows.
+const checkList = (v, s) => {
+  const items = [
+    `Cards per view: ${ladderText(s.ladder ?? v.ladder)} &mdash; resize the window and count.`,
+    v.dots ? 'Arrows step one card, and the dots stay visible (this bar keeps them).' : 'Arrows step one card; no dots (the CSS hides them).',
+    s.autoplay ? `It advances by itself every ${s.autoplay / 1000}s, and a pause button sits top right, first in tab order.` : 'Nothing moves on its own &mdash; these bars never autoplay.',
+  ];
+  if (s.tabbed) items.push(`${s.tabbed.labels.length} tabs switch panes, and arrow keys move between them.`);
+  items.push('Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.');
+  return `          <p class="code-label">Check it worked</p>
+          <ul class="copy-check">
+${items.map((t) => `            <li>${t}</li>`).join('\n')}
+          </ul>`;
+};
+
 const stripId = (v, i) => (v.strips.length === 1 ? `mbx-${v.key}` : `mbx-${v.key}-${i}`);
+
+// The live tabbed unit — centered title, tablist, one carousel per pane,
+// centered CTA — shared by the library's tabbed strip and the brand
+// directory's Chevrolet section so the two can never drift.
+const tabbedLive = (id, s, roster, brandName) => {
+  const tabs = s.tabbed.labels
+    .map(
+      (label, t) =>
+        `            <button type="button" role="tab" id="${id}-tab-${t}" aria-controls="${id}-pane-${t}" aria-selected="${t === 0 ? 'true' : 'false'}"${t === 0 ? '' : ' tabindex="-1"'} class="${id}-tab">${label}</button>`,
+    )
+    .join('\n');
+  const panes = s.tabbed.labels
+    .map((label, t) => {
+      const picks = s.tabbed.panes[t].map((n) => roster[n]);
+      const slides = SKINS[s.skin]
+        .liveSlides(picks)
+        .map((a) => `              <li class="dl-carousel-slide">${a.replaceAll('my-modelbar', id)}</li>`)
+        .join('\n');
+      return `          <div role="tabpanel" id="${id}-pane-${t}" aria-labelledby="${id}-tab-${t}"${t === 0 ? '' : ' hidden'}>
+            <div class="dl-carousel ${id}" data-slider data-step="slide" aria-label="${brandName} ${label}">
+              <ul class="dl-carousel-track">
+${slides}
+              </ul>
+            </div>
+          </div>`;
+    })
+    .join('\n');
+  return `        <div class="${id}-tabs" data-tabs>
+          <p class="${id}-title">View Our Lineup</p>
+          <div role="tablist" aria-label="Models by body style" class="${id}-tablist">
+${tabs}
+          </div>
+${panes}
+          <a class="${id}-cta" href="index.html#modelbar">Explore All New Inventory</a>
+        </div>`;
+};
 
 // Live style block: each strip's recipe with .my-modelbar → its unique class.
 const liveCss = VARIANTS.flatMap((v) => v.strips.map((s, i) => stripComments(recipeCss(v, s)).replaceAll('.my-modelbar', `.${stripId(v, i)}`))).join('\n\n');
@@ -959,7 +1050,7 @@ ${slides}
           </ul>
         </div>
         <details>
-          <summary>Copy this look</summary>
+          <summary>Copy this look &mdash; ${s.copy}</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add
             <a href="index.html#start">the slider itself</a> first &mdash; once per page.
@@ -975,6 +1066,7 @@ ${slides}
 </div>`)}</code></pre>
           <p class="code-label">CSS</p>
           <pre><code>${esc(recipeCss(v, s))}</code></pre>
+${checkList(v, s)}
         </details>`;
 };
 
@@ -982,69 +1074,59 @@ ${slides}
 // pane its own auto-inited carousel on the same ladder. Uses the shared
 // [data-tabs] APG handler from assets/demo.js.
 const tabbedStrip = (v, s, i, { id, heading, note, roster, snippetHtml }) => {
-  const tabs = s.tabbed.labels
+  const slug = (label) =>
+    label
+      .toLowerCase()
+      .replace(/[^a-z]+/g, '-')
+      .replace(/^-|-$/g, '');
+  const members = (t) => s.tabbed.panes[t].map((n) => roster[n].name).join(', ');
+  const snippetTabs = s.tabbed.labels
     .map(
       (label, t) =>
-        `            <button type="button" role="tab" id="${id}-tab-${t}" aria-controls="${id}-pane-${t}" aria-selected="${t === 0 ? 'true' : 'false'}" class="${id}-tab">${label}</button>`,
+        `    <button type="button" role="tab" id="tab-${slug(label)}" aria-controls="pane-${slug(label)}" aria-selected="${t === 0 ? 'true' : 'false'}"${t === 0 ? '' : ' tabindex="-1"'} class="my-modelbar-tab">${label}</button>`,
     )
     .join('\n');
-  const panes = s.tabbed.labels
-    .map((label, t) => {
-      const picks = s.tabbed.panes[t].map((n) => roster[n]);
-      const slides = SKINS[s.skin]
-        .liveSlides(picks)
-        .map((a) => `              <li class="dl-carousel-slide">${a.replaceAll('my-modelbar', id)}</li>`)
-        .join('\n');
-      return `          <div role="tabpanel" id="${id}-pane-${t}" aria-labelledby="${id}-tab-${t}"${t === 0 ? '' : ' hidden'}>
-            <div class="dl-carousel ${id}" data-slider data-step="slide" aria-label="Chevrolet ${label}">
-              <ul class="dl-carousel-track">
-${slides}
-              </ul>
-            </div>
-          </div>`;
-    })
+  const firstSlug = slug(s.tabbed.labels[0]);
+  const stubPanes = s.tabbed.labels
+    .slice(1)
+    .map(
+      (label, t) => `  <div role="tabpanel" id="pane-${slug(label)}" aria-labelledby="tab-${slug(label)}" hidden>
+    <!-- same structure as the first pane. ${label}: ${members(t + 1)} -->
+  </div>`,
+    )
     .join('\n');
-  return `${heading}${note}        <div class="${id}-tabs" data-tabs>
-          <p class="${id}-title">View Our Lineup</p>
-          <div role="tablist" aria-label="Models by body style" class="${id}-tablist">
-${tabs}
-          </div>
-${panes}
-          <a class="${id}-cta" href="index.html#modelbar">Explore All New Inventory</a>
-        </div>
+  return `${heading}${note}${tabbedLive(id, s, roster, v.toc)}
         <details>
-          <summary>Copy this look</summary>
+          <summary>Copy this look &mdash; ${s.copy}</summary>
           <p class="copy-lead">
-            <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add
-            <a href="index.html#start">the slider itself</a> first &mdash; once per page &mdash; and take the small tabs script from the
-            <a href="index.html#modelbar-tabs">tabs demo</a>, which shows this exact wiring.
+            <strong>Copy this.</strong> Three pastes, all from this panel: the HTML into a Custom HTML block, the tab script into the same block right after it, and the CSS into the page's
+            <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash; once per page. Models may repeat across panes; the real sites do exactly that.
           </p>
           <p class="code-label">HTML</p>
           <pre><code>${esc(`<div class="my-modelbar-tabs" data-tabs>
   <h2 class="my-modelbar-title">View Our Lineup</h2>
   <div role="tablist" aria-label="Models by body style" class="my-modelbar-tablist">
-    <button type="button" role="tab" id="tab-trucks" aria-controls="pane-trucks" aria-selected="true" class="my-modelbar-tab">${s.tabbed.labels[0]}</button>
-    <button type="button" role="tab" id="tab-electric" aria-controls="pane-electric" aria-selected="false" class="my-modelbar-tab">${s.tabbed.labels[1]}</button>
-    <!-- one tab per group -->
+${snippetTabs}
   </div>
-  <div role="tabpanel" id="pane-trucks" aria-labelledby="tab-trucks">
+  <div role="tabpanel" id="pane-${firstSlug}" aria-labelledby="tab-${firstSlug}">
     <div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="${s.tabbed.labels[0]}">
       <ul class="dl-carousel-track">
         <li class="dl-carousel-slide">
           ${snippetHtml}
         </li>
-        <!-- repeat the <li> for each model in this group -->
+        <!-- repeat the <li> for each model in this group.
+             ${s.tabbed.labels[0]}: ${members(0)} -->
       </ul>
     </div>
   </div>
-  <div role="tabpanel" id="pane-electric" aria-labelledby="tab-electric" hidden>
-    <!-- same structure - one pane (with its own carousel) per tab. Models may
-         repeat across panes; the real sites do exactly that. -->
-  </div>
+${stubPanes}
   <a class="my-modelbar-cta" href="/new-inventory/index.htm">Explore All New Inventory</a>
 </div>`)}</code></pre>
+          <p class="code-label">Tab script &mdash; once per page</p>
+          <pre><code>${esc(TAB_SCRIPT)}</code></pre>
           <p class="code-label">CSS</p>
           <pre><code>${esc(recipeCss(v, s))}</code></pre>
+${checkList(v, s)}
         </details>`;
 };
 
@@ -1061,7 +1143,7 @@ const PAGE_GROUPS = [
   {
     g: 'shared',
     title: 'The shared ladders',
-    desc: 'Worn by two sites or more &mdash; find your brand here first. Ordered by how many sites run each ladder.',
+    desc: 'Worn by two sites or more, each named after the brand that anchors it. If your brand is not a heading here, it wears one of these ladders &mdash; the <strong>Brands wearing them</strong> line in the index above links each one to its exact look.',
     keys: ['acura', 'chevrolet', 'lexus', 'buick', 'genesis', 'lincoln', 'cdjr', 'hyundai', 'ford', 'mazda', 'toyota'],
   },
   {
@@ -1078,6 +1160,18 @@ const PAGE_GROUPS = [
   },
 ];
 const byKey = Object.fromEntries(VARIANTS.map((v) => [v.key, v]));
+
+// The anchor for a specific LOOK: the strip's own h4 id when the section
+// holds more than one look, else the section id — so a brand pointer can
+// land on the exact strip it names instead of the top of the section.
+const lookAnchor = (key, skin) => {
+  const v = byKey[key];
+  if (v.strips.length > 1) {
+    const i = v.strips.findIndex((s) => s.skin === skin);
+    if (i > 0) return `${stripId(v, i)}-h`;
+  }
+  return key;
+};
 const groupedSections = PAGE_GROUPS.map(
   (G) => `      <section class="demo-group" aria-labelledby="g-${G.g}-h">
         <header class="demo-group-head">
@@ -1115,7 +1209,10 @@ const FOOT = `    <footer class="demo-foot">
       </div>
     </footer>`;
 
-const page = `<!doctype html>
+// Built as a function and written at the end of the script: the on-page TOC
+// carries brand aliases derived from the BRANDS table, which is defined below
+// alongside the brand directory it also feeds.
+const modelBarsPage = () => `<!doctype html>
 <html lang="en">
   <head>
     <meta charset="utf-8" />
@@ -1179,13 +1276,16 @@ ${staticCss
         live on a different brand&rsquo;s ladder wearing that brand&rsquo;s look; resize the window and watch the counts change.
       </p>
       <p class="demo-lede">
-        Where one ladder ships with two looks in the estate, both are shown &mdash; same breakpoints, different clothes, same engine. Each strip carries its complete copy-paste pair. Do the
-        <a href="index.html#start">Start here</a> step from the main demo once per page first. For screenshots of the real sites, see the
-        <a href="../docs/catalog/model-bar-library.html">screenshot library</a> and the <a href="../docs/catalog/oem-slider-census.html">census</a>.
+        Where one ladder ships with two looks in the estate, both are shown &mdash; same breakpoints, different clothes, same engine. Each strip carries everything its build needs. Do the
+        <a href="index.html#start">Start here</a> step from the main demo once per page first. Ladders are named after the brand that anchors them; if yours is not named below, the
+        <strong>Brands wearing them</strong> line links each remaining brand to its exact look &mdash; or look it up on <a href="brands.html">Find your brand</a>. For screenshots of the real
+        sites, see the <a href="../docs/catalog/model-bar-library.html">screenshot library</a> and the <a href="../docs/catalog/oem-slider-census.html">census</a> (fingerprinted live
+        18&ndash;19 Aug 2026).
       </p>
 
       <nav class="demo-toc" aria-label="On this page">
 ${PAGE_GROUPS.map((G) => `        <p class="demo-toc-group"><strong>${G.title}:</strong> ${G.keys.map((k) => `<a href="#${k}">${byKey[k].toc} (${byKey[k].sites})</a>`).join(' &middot; ')}</p>`).join('\n')}
+        <p class="demo-toc-group"><strong>Brands wearing them:</strong> ${TOC_ALIASES.map(([b, href]) => `<a href="${href}">${b}</a>`).join(' &middot; ')}</p>
         <p class="demo-toc-group"><strong>Not the standard design:</strong> <a href="#static-bars">Not sliders</a> &middot; <a href="#outliers">The outliers</a></p>
       </nav>
 
@@ -1219,15 +1319,6 @@ ${FOOT}
 </html>
 `;
 
-fs.writeFileSync('demo/model-bars.html', page);
-console.log(
-  'demo/model-bars.html written:',
-  VARIANTS.length,
-  'ladders,',
-  VARIANTS.reduce((n, v) => n + v.strips.length, 0),
-  'strips',
-);
-
 // ---- demo/brands.html — the per-brand directory ----------------------------
 // One row per brand a designer might be handed: what its model bar IS, its
 // tiers, where on the demo pages to copy it, and the official example site.
@@ -1247,7 +1338,7 @@ const BRANDS = [
     'bmwdemo1',
   ],
   ['Buick', 'Slider', '2 / 3 / 4', [['model-bars.html#buick', 'Buick ladder']], 'buickdemo1'],
-  ['Cadillac', 'Slider under body-style tabs, dark band', '2 / 3 / 4 / 5', [['model-bars.html#chevrolet', 'Chevrolet ladder, dark look']], 'cadillacdemo1'],
+  ['Cadillac', 'Slider under body-style tabs, dark band', '2 / 3 / 4 / 5', [[`model-bars.html#${lookAnchor('chevrolet', 'band-dark')}`, 'the dark look on the Chevrolet ladder']], 'cadillacdemo1'],
   [
     'Chevrolet',
     'Tabbed slider (tabs are the official version since Nov 2025)',
@@ -1335,7 +1426,7 @@ const BRANDS = [
     ],
     'toyotademo1',
   ],
-  ['Volkswagen', 'Tabbed slider — a colour tile behind each car', '1 / 2 / 3 / 4', [['model-bars.html#genesis', 'Genesis ladder, tile look']], 'vwdemo1'],
+  ['Volkswagen', 'Tabbed slider — a colour tile behind each car', '1 / 2 / 3 / 4', [[`model-bars.html#${lookAnchor('genesis', 'tile')}`, 'the tile look on the Genesis ladder']], 'vwdemo1'],
   ['Volvo', 'Slider', '2 / 3 / 4 / 5', [['model-bars.html#chevrolet', 'Chevrolet ladder']], 'volvodemo1'],
 ];
 
@@ -1355,7 +1446,9 @@ const BRAND_RENDER = {
   Chevrolet: {
     key: 'chevrolet',
     skin: 'white',
-    extra: 'The official presentation is tabbed &mdash; the <a href="model-bars.html#chevrolet">library&rsquo;s Chevrolet section</a> runs the full five-tab version live.',
+    stripIndex: 0,
+    extra:
+      'This IS the official five-tab presentation (since Nov 2025). Copy the complete build &mdash; HTML, tab script and CSS &mdash; from the <a href="model-bars.html#chevrolet">library&rsquo;s Chevrolet section</a>.',
   },
   'Chrysler / Dodge / Jeep / Ram': {
     key: 'cdjr',
@@ -1439,16 +1532,21 @@ const brandSections = BRANDS.map(([brand, what, tiers, copies, host]) => {
     const v = byKey[r.key];
     const s = r.stripIndex !== undefined ? v.strips[r.stripIndex] : {};
     const roster = r.roster ?? s.roster ?? CHEVY;
-    const attrs = `data-slider data-step="slide"${s.autoplay ? ` data-autoplay="${s.autoplay}"` : ''}`;
-    const slides = SKINS[r.skin]
-      .liveSlides(roster)
-      .map((a) => `            <li class="dl-carousel-slide">${a.replaceAll('my-modelbar', `bb-${slug}`)}</li>`)
-      .join('\n');
-    body = `        <div class="dl-carousel bb-${slug}" ${attrs} aria-labelledby="b-${slug}-h">
+    if (s.tabbed) {
+      // the full tabbed unit, exactly as the library renders it (same helper)
+      body = tabbedLive(`bb-${slug}`, s, roster, brand);
+    } else {
+      const attrs = `data-slider data-step="slide"${s.autoplay ? ` data-autoplay="${s.autoplay}"` : ''}`;
+      const slides = SKINS[r.skin]
+        .liveSlides(roster)
+        .map((a) => `            <li class="dl-carousel-slide">${a.replaceAll('my-modelbar', `bb-${slug}`)}</li>`)
+        .join('\n');
+      body = `        <div class="dl-carousel bb-${slug}" ${attrs} aria-labelledby="b-${slug}-h">
           <ul class="dl-carousel-track">
 ${slides}
           </ul>
         </div>`;
+    }
   }
   const extra = r.extra ? `\n        <p class="brand-note">${r.extra}</p>` : '';
   return `      <section class="demo-section" id="b-${slug}">
@@ -1584,3 +1682,44 @@ ${FOOT}
 
 fs.writeFileSync('demo/brands.html', brandsPage);
 console.log('demo/brands.html written:', BRANDS.length, 'brands');
+
+// ---- the library page's brand-alias index -----------------------------------
+// Every brand that wears a shared ladder (or a non-slider family), linked to
+// its exact look — derived from the same BRANDS/BRAND_RENDER data as the
+// directory so the two cannot drift. Brands whose ladder is named after them
+// are already section headings and are skipped.
+const TOC_ALIASES = [
+  ...BRANDS.flatMap(([brand]) => {
+    const r = BRAND_RENDER[brand];
+    if (!r?.key) return [];
+    const anchor = byKey[r.key].toc;
+    if (anchor === brand || anchor.startsWith(brand) || brand === 'Group sites') return [];
+    return [[brand, `#${lookAnchor(r.key, r.skin)}`]];
+  }),
+  ['BMW', '#static-bars'],
+  ['Fiat', '#cdjr'],
+  ['INFINITI', '#static-bars'],
+  ['Porsche', '#static-bars'],
+].sort((a, b) => a[0].localeCompare(b[0]));
+
+fs.writeFileSync('demo/model-bars.html', modelBarsPage());
+console.log(
+  'demo/model-bars.html written:',
+  VARIANTS.length,
+  'ladders,',
+  VARIANTS.reduce((n, v) => n + v.strips.length, 0),
+  'strips,',
+  TOC_ALIASES.length,
+  'brand aliases',
+);
+
+// ---- truth sync into the hand-written page ----------------------------------
+// demo/index.html's picker card quotes this library's strip count; rewrite
+// the number from the real data so the two cannot drift.
+const stripCount = VARIANTS.reduce((n, v) => n + v.strips.length, 0);
+const indexHtml = fs.readFileSync('demo/index.html', 'utf8');
+const synced = indexHtml.replace(/\d+ live strips/, `${stripCount} live strips`);
+if (synced !== indexHtml) {
+  fs.writeFileSync('demo/index.html', synced);
+  console.log('demo/index.html picker count synced:', stripCount, 'live strips');
+}

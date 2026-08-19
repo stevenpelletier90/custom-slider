@@ -1419,9 +1419,10 @@
         a different brand&rsquo;s ladder wearing that brand&rsquo;s look; resize the window and watch the counts change.
       </p>
       <p class="demo-lede">
-        Where one ladder ships with two looks in the estate, both are shown &mdash; same breakpoints, different clothes, same engine. Each strip carries its complete copy-paste pair. Do the
-        <a href="index.html#start">Start here</a> step from the main demo once per page first. For screenshots of the real sites, see the
-        <a href="../docs/catalog/model-bar-library.html">screenshot library</a> and the <a href="../docs/catalog/oem-slider-census.html">census</a>.
+        Where one ladder ships with two looks in the estate, both are shown &mdash; same breakpoints, different clothes, same engine. Each strip carries everything its build needs. Do the
+        <a href="index.html#start">Start here</a> step from the main demo once per page first. Ladders are named after the brand that anchors them; if yours is not named below, the
+        <strong>Brands wearing them</strong> line links each remaining brand to its exact look &mdash; or look it up on <a href="brands.html">Find your brand</a>. For screenshots of the real sites,
+        see the <a href="../docs/catalog/model-bar-library.html">screenshot library</a> and the <a href="../docs/catalog/oem-slider-census.html">census</a> (fingerprinted live 18&ndash;19 Aug 2026).
       </p>
 
       <nav class="demo-toc" aria-label="On this page">
@@ -1436,13 +1437,22 @@
           <a href="#ferrari-photo">Ferrari photo cards (1)</a>
         </p>
         <p class="demo-toc-group"><strong>The specialty strips:</strong> <a href="#maserati">Maserati spotlight (1)</a> &middot; <a href="#group">Group-site strips (1)</a></p>
+        <p class="demo-toc-group">
+          <strong>Brands wearing them:</strong> <a href="#static-bars">BMW</a> &middot; <a href="#mbx-chevrolet-1-h">Cadillac</a> &middot; <a href="#cdjr">Chrysler / Dodge / Jeep / Ram</a> &middot;
+          <a href="#cdjr">Fiat</a> &middot; <a href="#acura">GMC</a> &middot; <a href="#acura">Honda</a> &middot; <a href="#static-bars">INFINITI</a> &middot; <a href="#buick">Jaguar</a> &middot;
+          <a href="#acura">Kia</a> &middot; <a href="#buick">Land Rover</a> &middot; <a href="#acura">Mitsubishi</a> &middot; <a href="#lexus">Nissan</a> &middot;
+          <a href="#static-bars">Porsche</a> &middot; <a href="#chevrolet">Subaru</a> &middot; <a href="#mbx-genesis-1-h">Volkswagen</a> &middot; <a href="#chevrolet">Volvo</a>
+        </p>
         <p class="demo-toc-group"><strong>Not the standard design:</strong> <a href="#static-bars">Not sliders</a> &middot; <a href="#outliers">The outliers</a></p>
       </nav>
 
       <section class="demo-group" aria-labelledby="g-shared-h">
         <header class="demo-group-head">
           <h2 id="g-shared-h">The shared ladders</h2>
-          <p>Worn by two sites or more &mdash; find your brand here first. Ordered by how many sites run each ladder.</p>
+          <p>
+            Worn by two sites or more, each named after the brand that anchors it. If your brand is not a heading here, it wears one of these ladders &mdash; the
+            <strong>Brands wearing them</strong> line in the index above links each one to its exact look.
+          </p>
         </header>
 
         <section class="demo-section demo-wide" id="acura">
@@ -1494,7 +1504,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Acura, plain white</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -1512,7 +1522,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Acura ladder - 19 sites run exactly this. */
+            <pre><code>/* Acura, plain white - 19 sites run this ladder. */
 .my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 5; } }
@@ -1526,6 +1536,13 @@
 .my-modelbar-card { display: flex; flex-direction: column; justify-content: flex-end; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;769px 5 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -1544,10 +1561,12 @@
             <p class="mbx-chevrolet-0-title">View Our Lineup</p>
             <div role="tablist" aria-label="Models by body style" class="mbx-chevrolet-0-tablist">
               <button type="button" role="tab" id="mbx-chevrolet-0-tab-0" aria-controls="mbx-chevrolet-0-pane-0" aria-selected="true" class="mbx-chevrolet-0-tab">Trucks</button>
-              <button type="button" role="tab" id="mbx-chevrolet-0-tab-1" aria-controls="mbx-chevrolet-0-pane-1" aria-selected="false" class="mbx-chevrolet-0-tab">Electric</button>
-              <button type="button" role="tab" id="mbx-chevrolet-0-tab-2" aria-controls="mbx-chevrolet-0-pane-2" aria-selected="false" class="mbx-chevrolet-0-tab">Crossovers/SUVs</button>
-              <button type="button" role="tab" id="mbx-chevrolet-0-tab-3" aria-controls="mbx-chevrolet-0-pane-3" aria-selected="false" class="mbx-chevrolet-0-tab">Performance</button>
-              <button type="button" role="tab" id="mbx-chevrolet-0-tab-4" aria-controls="mbx-chevrolet-0-pane-4" aria-selected="false" class="mbx-chevrolet-0-tab">Commercial</button>
+              <button type="button" role="tab" id="mbx-chevrolet-0-tab-1" aria-controls="mbx-chevrolet-0-pane-1" aria-selected="false" tabindex="-1" class="mbx-chevrolet-0-tab">Electric</button>
+              <button type="button" role="tab" id="mbx-chevrolet-0-tab-2" aria-controls="mbx-chevrolet-0-pane-2" aria-selected="false" tabindex="-1" class="mbx-chevrolet-0-tab">
+                Crossovers/SUVs
+              </button>
+              <button type="button" role="tab" id="mbx-chevrolet-0-tab-3" aria-controls="mbx-chevrolet-0-pane-3" aria-selected="false" tabindex="-1" class="mbx-chevrolet-0-tab">Performance</button>
+              <button type="button" role="tab" id="mbx-chevrolet-0-tab-4" aria-controls="mbx-chevrolet-0-pane-4" aria-selected="false" tabindex="-1" class="mbx-chevrolet-0-tab">Commercial</button>
             </div>
             <div role="tabpanel" id="mbx-chevrolet-0-pane-0" aria-labelledby="mbx-chevrolet-0-tab-0">
               <div class="dl-carousel mbx-chevrolet-0" data-slider data-step="slide" aria-label="Chevrolet Trucks">
@@ -1792,18 +1811,20 @@
             <a class="mbx-chevrolet-0-cta" href="index.html#modelbar">Explore All New Inventory</a>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Chevrolet, the official tabbed bar</summary>
             <p class="copy-lead">
-              <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
-              once per page &mdash; and take the small tabs script from the <a href="index.html#modelbar-tabs">tabs demo</a>, which shows this exact wiring.
+              <strong>Copy this.</strong> Three pastes, all from this panel: the HTML into a Custom HTML block, the tab script into the same block right after it, and the CSS into the page's
+              <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash; once per page. Models may repeat across panes; the real sites do exactly that.
             </p>
             <p class="code-label">HTML</p>
             <pre><code>&lt;div class="my-modelbar-tabs" data-tabs&gt;
   &lt;h2 class="my-modelbar-title"&gt;View Our Lineup&lt;/h2&gt;
   &lt;div role="tablist" aria-label="Models by body style" class="my-modelbar-tablist"&gt;
     &lt;button type="button" role="tab" id="tab-trucks" aria-controls="pane-trucks" aria-selected="true" class="my-modelbar-tab"&gt;Trucks&lt;/button&gt;
-    &lt;button type="button" role="tab" id="tab-electric" aria-controls="pane-electric" aria-selected="false" class="my-modelbar-tab"&gt;Electric&lt;/button&gt;
-    &lt;!-- one tab per group --&gt;
+    &lt;button type="button" role="tab" id="tab-electric" aria-controls="pane-electric" aria-selected="false" tabindex="-1" class="my-modelbar-tab"&gt;Electric&lt;/button&gt;
+    &lt;button type="button" role="tab" id="tab-crossovers-suvs" aria-controls="pane-crossovers-suvs" aria-selected="false" tabindex="-1" class="my-modelbar-tab"&gt;Crossovers/SUVs&lt;/button&gt;
+    &lt;button type="button" role="tab" id="tab-performance" aria-controls="pane-performance" aria-selected="false" tabindex="-1" class="my-modelbar-tab"&gt;Performance&lt;/button&gt;
+    &lt;button type="button" role="tab" id="tab-commercial" aria-controls="pane-commercial" aria-selected="false" tabindex="-1" class="my-modelbar-tab"&gt;Commercial&lt;/button&gt;
   &lt;/div&gt;
   &lt;div role="tabpanel" id="pane-trucks" aria-labelledby="tab-trucks"&gt;
     &lt;div class="my-modelbar dl-carousel" data-slider data-step="slide" aria-label="Trucks"&gt;
@@ -1814,18 +1835,53 @@
         &lt;p&gt;Silverado 1500&lt;/p&gt;
       &lt;/a&gt;
         &lt;/li&gt;
-        &lt;!-- repeat the &lt;li&gt; for each model in this group --&gt;
+        &lt;!-- repeat the &lt;li&gt; for each model in this group.
+             Trucks: Silverado 1500, Colorado, Tahoe --&gt;
       &lt;/ul&gt;
     &lt;/div&gt;
   &lt;/div&gt;
   &lt;div role="tabpanel" id="pane-electric" aria-labelledby="tab-electric" hidden&gt;
-    &lt;!-- same structure - one pane (with its own carousel) per tab. Models may
-         repeat across panes; the real sites do exactly that. --&gt;
+    &lt;!-- same structure as the first pane. Electric: Equinox, Trax --&gt;
+  &lt;/div&gt;
+  &lt;div role="tabpanel" id="pane-crossovers-suvs" aria-labelledby="tab-crossovers-suvs" hidden&gt;
+    &lt;!-- same structure as the first pane. Crossovers/SUVs: Tahoe, Suburban, Traverse, Trailblazer --&gt;
+  &lt;/div&gt;
+  &lt;div role="tabpanel" id="pane-performance" aria-labelledby="tab-performance" hidden&gt;
+    &lt;!-- same structure as the first pane. Performance: Silverado 1500, Trax --&gt;
+  &lt;/div&gt;
+  &lt;div role="tabpanel" id="pane-commercial" aria-labelledby="tab-commercial" hidden&gt;
+    &lt;!-- same structure as the first pane. Commercial: Silverado 1500, Colorado, Suburban --&gt;
   &lt;/div&gt;
   &lt;a class="my-modelbar-cta" href="/new-inventory/index.htm"&gt;Explore All New Inventory&lt;/a&gt;
 &lt;/div&gt;</code></pre>
+            <p class="code-label">Tab script &mdash; once per page</p>
+            <pre><code>&lt;script&gt;
+  // Tab switching. Each pane holds its own slider; they look after themselves.
+  addEventListener('DOMContentLoaded', function () {
+    document.querySelectorAll('[data-tabs]').forEach(function (wrap) {
+      var tabs = Array.prototype.slice.call(wrap.querySelectorAll('[role="tab"]'));
+      var panes = tabs.map(function (t) { return document.getElementById(t.getAttribute('aria-controls')); });
+      function select(i) {
+        tabs.forEach(function (t, j) {
+          t.setAttribute('aria-selected', String(i === j));
+          t.tabIndex = i === j ? 0 : -1;
+          panes[j].hidden = i !== j;
+        });
+        wrap.dataset.tab = i;
+      }
+      tabs.forEach(function (t, i) { t.addEventListener('click', function () { select(i); }); });
+      wrap.querySelector('[role="tablist"]').addEventListener('keydown', function (e) {
+        var i = tabs.indexOf(e.target); if (i === -1) return;
+        var n = e.key === 'ArrowRight' ? (i + 1) % tabs.length : e.key === 'ArrowLeft' ? (i - 1 + tabs.length) % tabs.length : null;
+        if (n === null) return;
+        e.preventDefault(); tabs[n].focus(); select(n);
+      });
+      select(0);
+    });
+  });
+&lt;/script&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Chevrolet ladder - 19 sites run exactly this. */
+            <pre><code>/* Chevrolet, the official tabbed bar - 19 sites run this ladder. */
 .my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 540px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 992px) { .my-modelbar { --dlc-per-view: 4; } }
@@ -1854,6 +1910,14 @@
 .my-modelbar-cta { display: block; inline-size: fit-content; padding: 0.7rem 1.6rem; margin: 1.5rem auto 0; font-weight: 600; color: #fff; text-decoration: none; background: #006dc7; border-radius: 4px; }
 .my-modelbar-cta:hover, .my-modelbar-cta:focus-visible { background: #005ba6; }
 .my-modelbar-cta:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 2 &middot; &ge;540px 3 &middot; &ge;992px 4 &middot; &ge;1200px 5 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>5 tabs switch panes, and arrow keys move between them.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
           <h4 id="mbx-chevrolet-1-h" class="strip-label">Same ladder as Cadillac ships it — a dark band and spaced capitals</h4>
           <div class="dl-carousel mbx-chevrolet-1" data-slider data-step="slide" aria-labelledby="mbx-chevrolet-1-h">
@@ -1981,7 +2045,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Cadillac's dark band, on the Chevrolet ladder</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -1999,7 +2063,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Chevrolet ladder - 19 sites run exactly this. */
+            <pre><code>/* Cadillac's dark band, on the Chevrolet ladder - 19 sites run this ladder. */
 .my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 540px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 992px) { .my-modelbar { --dlc-per-view: 4; } }
@@ -2014,6 +2078,13 @@
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 2 &middot; &ge;540px 3 &middot; &ge;992px 4 &middot; &ge;1200px 5 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -2065,7 +2136,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Lexus, gray gradient band</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -2083,7 +2154,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Lexus ladder - 14 sites run exactly this. */
+            <pre><code>/* Lexus, gray gradient band - 14 sites run this ladder. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 401px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 601px) { .my-modelbar { --dlc-per-view: 3; } }
@@ -2097,6 +2168,13 @@
 .my-modelbar-card { display: block; color: #222; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 1 &middot; &ge;401px 2 &middot; &ge;601px 3 &middot; &ge;992px 5 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -2137,7 +2215,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Buick, plain white</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -2155,7 +2233,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Buick ladder - 7 sites run exactly this. */
+            <pre><code>/* Buick, plain white - 7 sites run this ladder. */
 .my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 4; } }
@@ -2169,6 +2247,13 @@
 .my-modelbar-card { display: flex; flex-direction: column; justify-content: flex-end; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;769px 4 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -2226,7 +2311,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Genesis, inventory counts</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -2245,7 +2330,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Genesis ladder - 5 sites run exactly this. */
+            <pre><code>/* Genesis, inventory counts - 5 sites run this ladder. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 541px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 3; } }
@@ -2259,6 +2344,13 @@
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
 .my-modelbar-card small { display: block; color: #5f6368; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 1 &middot; &ge;541px 2 &middot; &ge;993px 3 &middot; &ge;1201px 4 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
           <h4 id="mbx-genesis-1-h" class="strip-label">Same ladder as Volkswagen ships it — a tile of colour behind each car, one featured in navy</h4>
           <div class="dl-carousel mbx-genesis-1" data-slider data-step="slide" aria-labelledby="mbx-genesis-1-h">
@@ -2394,7 +2486,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Volkswagen's colour tiles, on the Genesis ladder</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -2413,7 +2505,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Genesis ladder - 5 sites run exactly this. */
+            <pre><code>/* Volkswagen's colour tiles, on the Genesis ladder - 5 sites run this ladder. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 541px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 3; } }
@@ -2429,6 +2521,13 @@
 .my-modelbar-card--feature .my-modelbar-tile { background: #0b2a5b; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.4rem 0 0; font-weight: 700; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 1 &middot; &ge;541px 2 &middot; &ge;993px 3 &middot; &ge;1201px 4 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
           <h4 id="mbx-genesis-2-h" class="strip-label">
             The new-platform ladder (base 1 &middot; &ge;600px 2 &middot; &ge;991px 3) — the newest platform generation runs this shorter climb, and hides its arrows when every model already fits
@@ -2480,7 +2579,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Genesis, new-platform ladder</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -2499,7 +2598,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Genesis new-platform ladder - 5 sites run exactly this. */
+            <pre><code>/* Genesis, new-platform ladder - 5 sites run this ladder. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 600px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 991px) { .my-modelbar { --dlc-per-view: 3; } }
@@ -2512,6 +2611,13 @@
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
 .my-modelbar-card small { display: block; color: #5f6368; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 1 &middot; &ge;600px 2 &middot; &ge;991px 3 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -2551,7 +2657,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Lincoln, flat gray band</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -2569,7 +2675,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Lincoln ladder - 4 sites run exactly this. */
+            <pre><code>/* Lincoln, flat gray band - 4 sites run this ladder. */
 .my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 4; } }
@@ -2582,6 +2688,13 @@
 .my-modelbar-card { display: block; color: #444649; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;993px 4 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -2648,7 +2761,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; CDJR, dark band</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -2666,7 +2779,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* CDJR ladder - 4 sites run exactly this. */
+            <pre><code>/* CDJR, dark band - 4 sites run this ladder. */
 .my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 992px) { .my-modelbar { --dlc-per-view: 6; } }
@@ -2681,6 +2794,13 @@
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.2s; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.1); }
 .my-modelbar-card p { margin: 0.5rem 0 0; font-weight: 600; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;992px 6 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -2729,7 +2849,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Hyundai, plain white</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -2747,7 +2867,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Hyundai ladder - 3 sites run exactly this. */
+            <pre><code>/* Hyundai, plain white - 3 sites run this ladder. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 4; } }
@@ -2762,6 +2882,13 @@
 .my-modelbar-card { display: flex; flex-direction: column; justify-content: flex-end; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 1 &middot; &ge;461px 3 &middot; &ge;993px 4 &middot; &ge;1201px 5 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -2810,7 +2937,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Ford, plain white</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -2828,7 +2955,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Ford ladder - 2 sites run exactly this. */
+            <pre><code>/* Ford, plain white - 2 sites run this ladder. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 992px) { .my-modelbar { --dlc-per-view: 5; } }
@@ -2842,6 +2969,13 @@
 .my-modelbar-card { display: flex; flex-direction: column; justify-content: flex-end; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 1 &middot; &ge;461px 3 &middot; &ge;992px 5 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -2896,7 +3030,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Mazda, name above with chip</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -2915,7 +3049,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Mazda ladder - 2 sites run exactly this. */
+            <pre><code>/* Mazda, name above with chip - 2 sites run this ladder. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 992px) { .my-modelbar { --dlc-per-view: 3; } }
@@ -2926,6 +3060,13 @@
 .my-modelbar-card p { order: -1; margin: 0 0 0.5rem; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card small { align-self: center; margin-block-start: 0.75rem; padding: 0.35rem 0.9rem; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; background: #ececec; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 1 &middot; &ge;769px 2 &middot; &ge;992px 3 &mdash; resize the window and count.</li>
+              <li>Arrows step one card, and the dots stay visible (this bar keeps them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -2992,7 +3133,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Toyota, split photo cards</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -3014,7 +3155,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Toyota ladder - 2 sites run exactly this. */
+            <pre><code>/* Toyota, split photo cards - 2 sites run this ladder. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 541px) { .my-modelbar { --dlc-per-view: 2; } }
 
@@ -3031,6 +3172,13 @@
 .my-modelbar-copy small { font-size: 0.85rem; color: #d9d9d9; }
 .my-modelbar-copy h3 { margin: 0; font-size: 1.5rem; }
 .my-modelbar-shop { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: #222; background: #fff; border-radius: 999px; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 1 &middot; &ge;541px 2 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
       </section>
@@ -3089,7 +3237,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Alfa Romeo, tall dark tiles</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -3108,7 +3256,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Alfa Romeo ladder - 1 site runs exactly this. */
+            <pre><code>/* Alfa Romeo, tall dark tiles - runs on 1 site. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 541px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 3; } }
@@ -3125,6 +3273,13 @@
 .my-modelbar-name { margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.06em; text-align: start; text-transform: uppercase; }
 .my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; }
 .my-modelbar-cta { display: inline-block; margin-block-start: 0.75rem; padding: 0.6rem 1.4rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #14161b; background: #fff; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 1 &middot; &ge;541px 2 &middot; &ge;993px 3 &middot; &ge;1201px 4 &middot; &ge;1801px 6 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -3175,7 +3330,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Audi, plain white</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -3193,7 +3348,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Audi ladder - 1 site runs exactly this. */
+            <pre><code>/* Audi, plain white - runs on 1 site. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 361px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 3; } }
@@ -3209,6 +3364,13 @@
 .my-modelbar-card { display: flex; flex-direction: column; justify-content: flex-end; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 1 &middot; &ge;361px 2 &middot; &ge;769px 3 &middot; &ge;993px 4 &middot; &ge;1201px 6 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -3316,7 +3478,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Powersports category tiles</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -3334,7 +3496,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Powersports categories ladder - 1 site runs exactly this. */
+            <pre><code>/* Powersports category tiles - runs on 1 site. */
 .my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 5; } }
@@ -3347,6 +3509,13 @@
 .my-modelbar-card { display: block; color: #222; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.5rem 0 0; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;993px 5 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -3484,7 +3653,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Powersports brand logos</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -3502,7 +3671,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Powersports brands ladder - 1 site runs exactly this. */
+            <pre><code>/* Powersports brand logos - runs on 1 site. */
 .my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 6; } }
@@ -3515,6 +3684,13 @@
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; filter: grayscale(1); opacity: 0.6; transition: filter 0.2s, opacity 0.2s; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-within img { filter: none; opacity: 1; }
 .my-modelbar-card p { margin: -0.6rem 0 0; font-weight: 600; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;769px 6 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -3655,7 +3831,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Ferrari, wordmark band</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -3677,7 +3853,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Ferrari ladder - 1 site runs exactly this. */
+            <pre><code>/* Ferrari, wordmark band - runs on 1 site. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 768px) { .my-modelbar { --dlc-per-view: 3; } }
 
@@ -3691,6 +3867,13 @@
 .my-modelbar-wordmark { display: block; margin-block-end: 0.75rem; font-size: 1.3rem; font-style: italic; font-weight: 700; letter-spacing: 0.06em; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 1 &middot; &ge;768px 3 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -3741,7 +3924,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Ferrari, photo cards</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -3759,7 +3942,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Ferrari photo cards ladder - 1 site runs exactly this. */
+            <pre><code>/* Ferrari, photo cards - runs on 1 site. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 3; } }
@@ -3774,6 +3957,13 @@
 .my-modelbar-card { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; }
 .my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
 .my-modelbar-card p { position: absolute; inset-block-end: 0; inset-inline: 0; margin: 0; padding: 0.7rem 1rem; font-weight: 700; background: rgb(20 20 20 / 88%); }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 1 &middot; &ge;769px 2 &middot; &ge;993px 3 &middot; &ge;1441px 4 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
       </section>
@@ -3924,7 +4114,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Maserati spotlight</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -3943,7 +4133,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Maserati spotlight ladder - 1 site runs exactly this. */
+            <pre><code>/* Maserati spotlight - runs on 1 site. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 20%; --dlc-gap: 0.5rem; }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
@@ -3957,6 +4147,13 @@
 .my-modelbar-wordmark { display: block; margin-block-end: 0.5rem; font-size: 1.5rem; font-style: italic; font-weight: 700; letter-spacing: 0.06em; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.5rem 0 0; font-size: 1.15rem; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 1 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>Nothing moves on its own &mdash; these bars never autoplay.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
 
@@ -4076,7 +4273,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Group makes rail</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -4093,7 +4290,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Group makes strip - 1 site runs exactly this. */
+            <pre><code>/* Group makes rail - runs on 1 site. */
 .my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 4; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 7; } }
@@ -4111,6 +4308,13 @@
 .my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
 .my-modelbar-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; background: #253a5e; border-radius: 10px; }
 .my-modelbar-card img { inline-size: 75%; block-size: auto; object-fit: contain; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 2 &middot; &ge;769px 4 &middot; &ge;993px 7 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>It advances by itself every 4s, and a pause button sits top right, first in tab order.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
           <h4 id="mbx-group-1-h" class="strip-label">Rooftop location cards (base 1 &middot; &ge;769px 2 &middot; &ge;993px 4)</h4>
           <div class="dl-carousel mbx-group-1" data-slider data-step="slide" data-autoplay="4000" aria-labelledby="mbx-group-1-h">
@@ -4220,7 +4424,7 @@
             </ul>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Group locations rail</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="index.html#start">the slider itself</a> first &mdash;
               once per page.
@@ -4239,7 +4443,7 @@
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* Group locations strip - 1 site runs exactly this. */
+            <pre><code>/* Group locations rail - runs on 1 site. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 4; } }
@@ -4260,6 +4464,13 @@
 .my-modelbar-card h3 { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; }
 .my-modelbar-card p { margin: 0 0 1rem; font-size: 0.9rem; color: #5f6368; }
 .my-modelbar-visit { display: inline-block; margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.8rem; font-weight: 700; color: #fff; background: #c8102e; border-radius: 6px; }</code></pre>
+            <p class="code-label">Check it worked</p>
+            <ul class="copy-check">
+              <li>Cards per view: base 1 &middot; &ge;769px 2 &middot; &ge;993px 4 &mdash; resize the window and count.</li>
+              <li>Arrows step one card; no dots (the CSS hides them).</li>
+              <li>It advances by itself every 4s, and a pause button sits top right, first in tab order.</li>
+              <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
+            </ul>
           </details>
         </section>
       </section>
@@ -4328,7 +4539,7 @@
             </div>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Hover-reveal tile grid</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. No slider install needed &mdash; this one is pure CSS.
             </p>
@@ -4393,7 +4604,7 @@
             </div>
           </div>
           <details>
-            <summary>Copy this look</summary>
+            <summary>Copy this look &mdash; Tile grid, landscape variant</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. No slider install needed &mdash; this one is pure CSS.
             </p>

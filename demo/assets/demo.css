@@ -87,6 +87,19 @@ pre {
   margin-block-start: 1rem;
 }
 
+/* The "Check it worked" list closing every copy panel on the library page. */
+.copy-check {
+  max-width: 68ch;
+  padding-inline-start: 1.2rem;
+  margin: 0.3rem 0 0.5rem;
+  font-size: 0.9rem;
+  color: #3c4043;
+}
+
+.copy-check li {
+  margin: 0.2rem 0;
+}
+
 .code-label {
   margin: 0.9rem 0 0.3rem;
   font-size: 0.75rem;
