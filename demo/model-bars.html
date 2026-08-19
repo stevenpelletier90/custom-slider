@@ -119,30 +119,67 @@
         font-weight: 600;
       }
 
+      .mbx-chevrolet-0-title {
+        margin: 0 0 1rem;
+        font-size: 1.6rem;
+        font-weight: 700;
+        color: #222;
+        text-align: center;
+      }
       .mbx-chevrolet-0-tablist {
         display: flex;
         flex-wrap: wrap;
+        align-items: center;
         justify-content: center;
-        margin: 0 0 1rem;
+        margin: 0 0 1.75rem;
       }
       .mbx-chevrolet-0-tab {
-        padding: 0.3rem 1.25rem;
+        position: relative;
+        padding: 0.35rem 0.2rem;
+        margin-inline: 1.5rem;
         font: inherit;
-        font-size: 1.1rem;
+        font-size: 1.05rem;
+        font-weight: 600;
         color: #222;
         cursor: pointer;
         background: none;
         border: 0;
         border-block-end: 3px solid transparent;
       }
-      .mbx-chevrolet-0-tab + .mbx-chevrolet-0-tab {
-        border-inline-start: 1px solid #c8ccd2;
+
+      .mbx-chevrolet-0-tab + .mbx-chevrolet-0-tab::before {
+        position: absolute;
+        inset-block-start: 50%;
+        inset-inline-start: -1.5rem;
+        inline-size: 1px;
+        block-size: 1.05rem;
+        content: '';
+        background: #c8ccd2;
+        transform: translate(-50%, -50%);
       }
       .mbx-chevrolet-0-tab[aria-selected='true'] {
-        font-weight: 600;
         border-block-end-color: #006dc7;
       }
       .mbx-chevrolet-0-tab:focus-visible {
+        outline: 3px solid #16324f;
+        outline-offset: 2px;
+      }
+      .mbx-chevrolet-0-cta {
+        display: block;
+        inline-size: fit-content;
+        padding: 0.7rem 1.6rem;
+        margin: 1.5rem auto 0;
+        font-weight: 600;
+        color: #fff;
+        text-decoration: none;
+        background: #006dc7;
+        border-radius: 4px;
+      }
+      .mbx-chevrolet-0-cta:hover,
+      .mbx-chevrolet-0-cta:focus-visible {
+        background: #005ba6;
+      }
+      .mbx-chevrolet-0-cta:focus-visible {
         outline: 3px solid #16324f;
         outline-offset: 2px;
       }
@@ -1504,6 +1541,7 @@
             As Chevrolet ships it — five body-style tabs (the official presentation since Nov 2025), each pane its own carousel on this ladder. Models repeat across panes on the real site too
           </h4>
           <div class="mbx-chevrolet-0-tabs" data-tabs>
+            <p class="mbx-chevrolet-0-title">View Our Lineup</p>
             <div role="tablist" aria-label="Models by body style" class="mbx-chevrolet-0-tablist">
               <button type="button" role="tab" id="mbx-chevrolet-0-tab-0" aria-controls="mbx-chevrolet-0-pane-0" aria-selected="true" class="mbx-chevrolet-0-tab">Trucks</button>
               <button type="button" role="tab" id="mbx-chevrolet-0-tab-1" aria-controls="mbx-chevrolet-0-pane-1" aria-selected="false" class="mbx-chevrolet-0-tab">Electric</button>
@@ -1751,6 +1789,7 @@
                 </ul>
               </div>
             </div>
+            <a class="mbx-chevrolet-0-cta" href="index.html#modelbar">Explore All New Inventory</a>
           </div>
           <details>
             <summary>Copy this look</summary>
@@ -1760,6 +1799,7 @@
             </p>
             <p class="code-label">HTML</p>
             <pre><code>&lt;div class="my-modelbar-tabs" data-tabs&gt;
+  &lt;h2 class="my-modelbar-title"&gt;View Our Lineup&lt;/h2&gt;
   &lt;div role="tablist" aria-label="Models by body style" class="my-modelbar-tablist"&gt;
     &lt;button type="button" role="tab" id="tab-trucks" aria-controls="pane-trucks" aria-selected="true" class="my-modelbar-tab"&gt;Trucks&lt;/button&gt;
     &lt;button type="button" role="tab" id="tab-electric" aria-controls="pane-electric" aria-selected="false" class="my-modelbar-tab"&gt;Electric&lt;/button&gt;
@@ -1782,6 +1822,7 @@
     &lt;!-- same structure - one pane (with its own carousel) per tab. Models may
          repeat across panes; the real sites do exactly that. --&gt;
   &lt;/div&gt;
+  &lt;a class="my-modelbar-cta" href="/new-inventory/index.htm"&gt;Explore All New Inventory&lt;/a&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Chevrolet ladder - 19 sites run exactly this. */
@@ -1800,13 +1841,19 @@
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
 
-/* The tabs: pipe-separated labels, blue underline on the active one. The tab
-   SCRIPT is the standard one - copy it from the tabs demo on the main page. */
-.my-modelbar-tablist { display: flex; flex-wrap: wrap; justify-content: center; margin: 0 0 1rem; }
-.my-modelbar-tab { padding: 0.3rem 1.25rem; font: inherit; font-size: 1.1rem; color: #222; cursor: pointer; background: none; border: 0; border-block-end: 3px solid transparent; }
-.my-modelbar-tab + .my-modelbar-tab { border-inline-start: 1px solid #c8ccd2; }
-.my-modelbar-tab[aria-selected="true"] { font-weight: 600; border-block-end-color: #006dc7; }
-.my-modelbar-tab:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }</code></pre>
+/* The bar's own chrome: centered heading, tabs, centered CTA. The tab SCRIPT
+   is the standard one - copy it from the tabs demo on the main page. */
+.my-modelbar-title { margin: 0 0 1rem; font-size: 1.6rem; font-weight: 700; color: #222; text-align: center; }
+.my-modelbar-tablist { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; margin: 0 0 1.75rem; }
+.my-modelbar-tab { position: relative; padding: 0.35rem 0.2rem; margin-inline: 1.5rem; font: inherit; font-size: 1.05rem; font-weight: 600; color: #222; cursor: pointer; background: none; border: 0; border-block-end: 3px solid transparent; }
+/* The divider is a thin text-height pipe centered in the gap - NOT a border
+   on the button, which would run full height and touch the labels. */
+.my-modelbar-tab + .my-modelbar-tab::before { position: absolute; inset-block-start: 50%; inset-inline-start: -1.5rem; inline-size: 1px; block-size: 1.05rem; content: ""; background: #c8ccd2; transform: translate(-50%, -50%); }
+.my-modelbar-tab[aria-selected="true"] { border-block-end-color: #006dc7; }
+.my-modelbar-tab:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }
+.my-modelbar-cta { display: block; inline-size: fit-content; padding: 0.7rem 1.6rem; margin: 1.5rem auto 0; font-weight: 600; color: #fff; text-decoration: none; background: #006dc7; border-radius: 4px; }
+.my-modelbar-cta:hover, .my-modelbar-cta:focus-visible { background: #005ba6; }
+.my-modelbar-cta:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }</code></pre>
           </details>
           <h4 id="mbx-chevrolet-1-h" class="strip-label">Same ladder as Cadillac ships it — a dark band and spaced capitals</h4>
           <div class="dl-carousel mbx-chevrolet-1" data-slider data-step="slide" aria-labelledby="mbx-chevrolet-1-h">

@@ -916,16 +916,23 @@ const recipeCss = (v, s) => {
   return `/* ${s.recipeName ?? `${v.toc} ladder`} - ${v.sites === 1 ? '1 site runs' : `${v.sites} sites run`} exactly this. */\n${rungs}\n\n${dots}${auto}\n\n${SKINS[s.skin].cardCss}${tabbed}`;
 };
 
-// Tab chrome for tabbed strips (Chevrolet ships this way): pipe-separated
-// labels, blue underline on the active tab — the real site's look.
+// Tab chrome for tabbed strips (Chevrolet ships this way): centered heading,
+// pipe-separated labels with the blue underline, centered CTA — the real
+// site's full unit.
 const TABBED_CSS = `
-/* The tabs: pipe-separated labels, blue underline on the active one. The tab
-   SCRIPT is the standard one - copy it from the tabs demo on the main page. */
-.my-modelbar-tablist { display: flex; flex-wrap: wrap; justify-content: center; margin: 0 0 1rem; }
-.my-modelbar-tab { padding: 0.3rem 1.25rem; font: inherit; font-size: 1.1rem; color: #222; cursor: pointer; background: none; border: 0; border-block-end: 3px solid transparent; }
-.my-modelbar-tab + .my-modelbar-tab { border-inline-start: 1px solid #c8ccd2; }
-.my-modelbar-tab[aria-selected="true"] { font-weight: 600; border-block-end-color: #006dc7; }
-.my-modelbar-tab:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }`;
+/* The bar's own chrome: centered heading, tabs, centered CTA. The tab SCRIPT
+   is the standard one - copy it from the tabs demo on the main page. */
+.my-modelbar-title { margin: 0 0 1rem; font-size: 1.6rem; font-weight: 700; color: #222; text-align: center; }
+.my-modelbar-tablist { display: flex; flex-wrap: wrap; align-items: center; justify-content: center; margin: 0 0 1.75rem; }
+.my-modelbar-tab { position: relative; padding: 0.35rem 0.2rem; margin-inline: 1.5rem; font: inherit; font-size: 1.05rem; font-weight: 600; color: #222; cursor: pointer; background: none; border: 0; border-block-end: 3px solid transparent; }
+/* The divider is a thin text-height pipe centered in the gap - NOT a border
+   on the button, which would run full height and touch the labels. */
+.my-modelbar-tab + .my-modelbar-tab::before { position: absolute; inset-block-start: 50%; inset-inline-start: -1.5rem; inline-size: 1px; block-size: 1.05rem; content: ""; background: #c8ccd2; transform: translate(-50%, -50%); }
+.my-modelbar-tab[aria-selected="true"] { border-block-end-color: #006dc7; }
+.my-modelbar-tab:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }
+.my-modelbar-cta { display: block; inline-size: fit-content; padding: 0.7rem 1.6rem; margin: 1.5rem auto 0; font-weight: 600; color: #fff; text-decoration: none; background: #006dc7; border-radius: 4px; }
+.my-modelbar-cta:hover, .my-modelbar-cta:focus-visible { background: #005ba6; }
+.my-modelbar-cta:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }`;
 
 const stripId = (v, i) => (v.strips.length === 1 ? `mbx-${v.key}` : `mbx-${v.key}-${i}`);
 
@@ -998,10 +1005,12 @@ ${slides}
     })
     .join('\n');
   return `${heading}${note}        <div class="${id}-tabs" data-tabs>
+          <p class="${id}-title">View Our Lineup</p>
           <div role="tablist" aria-label="Models by body style" class="${id}-tablist">
 ${tabs}
           </div>
 ${panes}
+          <a class="${id}-cta" href="index.html#modelbar">Explore All New Inventory</a>
         </div>
         <details>
           <summary>Copy this look</summary>
@@ -1012,6 +1021,7 @@ ${panes}
           </p>
           <p class="code-label">HTML</p>
           <pre><code>${esc(`<div class="my-modelbar-tabs" data-tabs>
+  <h2 class="my-modelbar-title">View Our Lineup</h2>
   <div role="tablist" aria-label="Models by body style" class="my-modelbar-tablist">
     <button type="button" role="tab" id="tab-trucks" aria-controls="pane-trucks" aria-selected="true" class="my-modelbar-tab">${s.tabbed.labels[0]}</button>
     <button type="button" role="tab" id="tab-electric" aria-controls="pane-electric" aria-selected="false" class="my-modelbar-tab">${s.tabbed.labels[1]}</button>
@@ -1031,6 +1041,7 @@ ${panes}
     <!-- same structure - one pane (with its own carousel) per tab. Models may
          repeat across panes; the real sites do exactly that. -->
   </div>
+  <a class="my-modelbar-cta" href="/new-inventory/index.htm">Explore All New Inventory</a>
 </div>`)}</code></pre>
           <p class="code-label">CSS</p>
           <pre><code>${esc(recipeCss(v, s))}</code></pre>
