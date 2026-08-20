@@ -873,10 +873,13 @@ const staticSection = () => {
     const live = d.liveUnits.map((u) => `            ${u.replaceAll('my-', 'sb-')}`).join('\n');
     return `        <h4 id="${cls}-h" class="strip-label">${d.title}</h4>
         <p class="strip-note">${d.note}</p>
-        <div class="${d.rootClass.replaceAll('my-', 'sb-')}">
+        <div class="demo-stage">
+          <span class="demo-stage-tag" aria-hidden="true">Live</span>
+          <div class="${d.rootClass.replaceAll('my-', 'sb-')}">
 ${live}
+          </div>
         </div>
-        <details>
+        <details class="demo-copy">
           <summary>Copy this look &mdash; ${d.title}</summary>
           <p class="copy-lead"><strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. No slider install needed &mdash; this one is pure CSS.</p>
           <p class="code-label">HTML</p>
@@ -991,6 +994,15 @@ ${items.map((t) => `            <li>${t}</li>`).join('\n')}
 
 const stripId = (v, i) => (v.strips.length === 1 ? `mbx-${v.key}` : `mbx-${v.key}-${i}`);
 
+// A skin that sets a background on the strip root paints its own band and
+// self-delimits; everything else is white-on-white and gets the dotted
+// specimen stage so the exhibit's bounds separate from the page chrome.
+const isBanded = (skin) => /\.my-modelbar \{[^}]*background/.test(SKINS[skin].cardCss);
+const stage = (skin, inner) => `        <div class="demo-stage${isBanded(skin) ? ' demo-stage--band' : ''}">
+          <span class="demo-stage-tag" aria-hidden="true">Live</span>
+${inner}
+        </div>`;
+
 // The live tabbed unit — centered title, tablist, one carousel per pane,
 // centered CTA — shared by the library's tabbed strip and the brand
 // directory's Chevrolet section so the two can never drift.
@@ -1044,12 +1056,15 @@ const strip = (v, s, i) => {
     .liveSlides(roster)
     .map((a) => `            <li class="dl-carousel-slide">${a.replaceAll('my-modelbar', id)}</li>`)
     .join('\n');
-  return `${heading}${note}        <div class="dl-carousel ${id}" ${attrs} ${aria}>
-          <ul class="dl-carousel-track">
+  return `${heading}${note}${stage(
+    s.skin,
+    `          <div class="dl-carousel ${id}" ${attrs} ${aria}>
+            <ul class="dl-carousel-track">
 ${slides}
-          </ul>
-        </div>
-        <details>
+            </ul>
+          </div>`,
+  )}
+        <details class="demo-copy">
           <summary>Copy this look &mdash; ${s.copy}</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add
@@ -1095,8 +1110,8 @@ const tabbedStrip = (v, s, i, { id, heading, note, roster, snippetHtml }) => {
   </div>`,
     )
     .join('\n');
-  return `${heading}${note}${tabbedLive(id, s, roster, v.toc)}
-        <details>
+  return `${heading}${note}${stage(s.skin, tabbedLive(id, s, roster, v.toc))}
+        <details class="demo-copy">
           <summary>Copy this look &mdash; ${s.copy}</summary>
           <p class="copy-lead">
             <strong>Copy this.</strong> Three pastes, all from this panel: the HTML into a Custom HTML block, the tab script into the same block right after it, and the CSS into the page's
@@ -1283,7 +1298,7 @@ ${staticCss
         18&ndash;19 Aug 2026).
       </p>
 
-      <div class="demo-filter">
+      <div class="demo-search">
         <label for="demo-filter">Filter ladders and looks</label>
         <input id="demo-filter" type="text" autocomplete="off" placeholder="e.g. Cadillac, dark band, tabs" />
         <p class="demo-vh" role="status" id="demo-filter-count"></p>
@@ -1539,18 +1554,21 @@ const brandSections = BRANDS.map(([brand, what, tiers, copies, host]) => {
     const roster = r.roster ?? s.roster ?? CHEVY;
     if (s.tabbed) {
       // the full tabbed unit, exactly as the library renders it (same helper)
-      body = tabbedLive(`bb-${slug}`, s, roster, brand);
+      body = stage(r.skin, tabbedLive(`bb-${slug}`, s, roster, brand));
     } else {
       const attrs = `data-slider data-step="slide"${s.autoplay ? ` data-autoplay="${s.autoplay}"` : ''}`;
       const slides = SKINS[r.skin]
         .liveSlides(roster)
         .map((a) => `            <li class="dl-carousel-slide">${a.replaceAll('my-modelbar', `bb-${slug}`)}</li>`)
         .join('\n');
-      body = `        <div class="dl-carousel bb-${slug}" ${attrs} aria-labelledby="b-${slug}-h">
-          <ul class="dl-carousel-track">
+      body = stage(
+        r.skin,
+        `          <div class="dl-carousel bb-${slug}" ${attrs} aria-labelledby="b-${slug}-h">
+            <ul class="dl-carousel-track">
 ${slides}
-          </ul>
-        </div>`;
+            </ul>
+          </div>`,
+      );
     }
   }
   const extra = r.extra ? `\n        <p class="brand-note">${r.extra}</p>` : '';
@@ -1627,7 +1645,7 @@ ${brandCss
         Handed a site and told &ldquo;add the model bar&rdquo;? Look the brand up here: what its bar actually is (a slider, a tabbed slider, or no slider at all), how many cards it shows at each
         width, where on these pages to copy the finished build, and the official example site to compare against.
       </p>
-      <div class="demo-filter">
+      <div class="demo-search">
         <label for="demo-filter">Filter brands</label>
         <input id="demo-filter" type="text" autocomplete="off" placeholder="e.g. Kia, tabs, no slider" />
         <p class="demo-vh" role="status" id="demo-filter-count"></p>

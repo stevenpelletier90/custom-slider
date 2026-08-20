@@ -92,6 +92,7 @@
       .demo-glyph {
         position: relative;
         flex: none;
+        zoom: 1.3;
         inline-size: 44px;
         block-size: 32px;
         overflow: hidden;
@@ -974,15 +975,48 @@
         display: inline-block;
         margin: 0 1rem 1rem;
       }
-      table {
-        border-collapse: collapse;
-        margin-block: 0.5rem;
+      /* Tables are styled by the shared chrome (assets/demo.css). */
+      .demo-masthead {
+        padding: 3rem 1rem 2.6rem;
+        color: #fff;
+        background: linear-gradient(180deg, #16324f, #1d446b);
       }
-      th,
-      td {
-        border: 1px solid #ccc;
-        padding: 0.35rem 0.6rem;
-        text-align: left;
+      .demo-masthead-inner {
+        max-width: 72rem;
+        margin: 0 auto;
+      }
+      .demo-masthead h1 {
+        margin: 0 0 0.5rem;
+        font-size: clamp(2rem, 4vw, 2.75rem);
+        line-height: 1.1;
+        letter-spacing: -0.015em;
+      }
+      .demo-masthead-lede {
+        max-width: 52ch;
+        margin: 0 0 1.15rem;
+        font-size: clamp(1.05rem, 1.8vw, 1.3rem);
+        color: #dbe6f2;
+      }
+      .demo-masthead-chips {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem;
+        margin: 0 0 1.2rem;
+      }
+      .demo-masthead-chips span {
+        padding: 0.28rem 0.75rem;
+        font-size: 0.8rem;
+        font-weight: 600;
+        background: rgb(255 255 255 / 13%);
+        border-radius: 999px;
+      }
+      .demo-masthead-route {
+        margin: 0;
+        font-size: 0.95rem;
+        color: #dbe6f2;
+      }
+      .demo-masthead-route a {
+        color: #a8cdf0;
       }
       /* Reviews: Google-review-style cards */
       .demo-review {
@@ -1418,12 +1452,15 @@
         <a href="#options">Options</a>
       </nav>
     </header>
+    <div class="demo-masthead">
+      <div class="demo-masthead-inner">
+        <h1>Custom Slider</h1>
+        <p class="demo-masthead-lede">Every DealerOn slider pattern on one engine. Find the look, copy its panel, paste it into the CMS.</p>
+        <p class="demo-masthead-chips"><span>5.9 KB gzip, JS + CSS</span><span>0 dependencies</span><span>CLS 0</span><span>Readable with JS off</span></p>
+        <p class="demo-masthead-route">Handed a brand ticket &mdash; &ldquo;add the model bar&rdquo;? Go straight to <a href="brands.html">Find your brand</a>.</p>
+      </div>
+    </div>
     <main id="main">
-      <h1>Custom Slider</h1>
-      <p>
-        Dependency-free scroll-snap slider. Try this page with JavaScript disabled — every variation remains a readable, swipeable strip (the one exception is the fullscreen lightbox, which is modal
-        by nature).
-      </p>
       <p class="demo-lede">
         <strong>How to use this page:</strong> find the look you want below, open the panel underneath it, and copy the HTML and the CSS. Do <a href="#start">Start here</a> once per page first — that
         is what puts the slider on the page at all.
@@ -1433,12 +1470,11 @@
         <a href="brands.html">Find your brand</a> is the directory when you already know whose site you're on.
       </p>
       <p class="demo-lede">
-        One engine, one stylesheet — <strong>5.9 KB gzipped together</strong>, no dependencies and no build step. Only two of the looks below are separate engine modes (<code>data-fade</code> and
-        <code>data-gallery</code>); every other one is the same carousel with different site CSS. With JavaScript off, every strip stays a swipeable scroller with all its content readable — you lose
-        the arrows, dots, autoplay and the gallery's thumbnails.
+        Only two of the looks below are separate engine modes (<code>data-fade</code> and <code>data-gallery</code>); every other one is the same carousel with different site CSS. With JavaScript off,
+        every strip stays a swipeable scroller with all its content readable — you lose the arrows, dots, autoplay and the gallery's thumbnails (the fullscreen lightbox is the one modal exception).
       </p>
 
-      <div class="demo-filter">
+      <div class="demo-search">
         <label for="demo-filter">Filter the examples</label>
         <input id="demo-filter" type="text" autocomplete="off" placeholder="e.g. fade, gallery, model bar" />
         <p class="demo-vh" role="status" id="demo-filter-count"></p>
@@ -1585,7 +1621,7 @@
               the files fixes.
             </p>
           </details>
-          <details>
+          <details class="demo-copy">
             <summary>Once the files are hosted (later)</summary>
             <p>Two lines in the page head instead, and you can delete both pastes above. Nothing about your slider markup or CSS changes.</p>
             <p class="code-label">HTML</p>
@@ -1718,7 +1754,7 @@
               </li>
             </ul>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               The big rotating banner at the top of a homepage. Instead of sliding sideways, each image dissolves into the next. This is the most common slider on our demo sites by a distance —
@@ -1930,7 +1966,7 @@
               </li>
             </ul>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               The row of vehicle cutouts nearly every dealer homepage has. Click a model, land on that model's inventory. It moves one card at a time rather than jumping a whole screenful, the entire
@@ -2311,7 +2347,7 @@
               </div>
             </div>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               The same model bar, split into groups you switch between — trucks, SUVs, electric, and so on. Use it when a lineup is too long for one row, or when people shop by body style rather than
@@ -2568,7 +2604,7 @@
               </li>
             </ul>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               The same lineup in two rows instead of one, so twice as many models fit before anyone has to scroll. One OEM demo site does it this way. Cards fill top-to-bottom and then move to the
@@ -2625,7 +2661,7 @@
               <li class="dl-carousel-slide"><img src="img/photo-6.jpg" width="1200" height="750" alt="Classic BMW grilles lined up in a museum" loading="lazy" decoding="async" /></li>
             </ul>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               A sliver of the next card stays visible at each edge, fading out as it goes. It is the clearest way to tell someone there is more to scroll without adding anything to the page — people
@@ -2727,7 +2763,7 @@
               <a href="#vehicle-5" aria-label="View details: 2020 Nissan GT-R">View details</a>
             </article>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               The most common slider on the platform's inner pages: every inventory-results card has one. The card grid is ordinary CSS &mdash; no slider involved &mdash; and each card holds its own
@@ -2827,7 +2863,7 @@
               </div>
             </div>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               Thumbnails are generated from each slide's image; the image
@@ -2897,7 +2933,7 @@
               </div>
             </div>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               One OEM model page runs six of these &mdash; a photo gallery a visitor can narrow by category. Here it is three moving parts: a <code>data-tag</code> on each slide, a row of
@@ -2983,7 +3019,7 @@
               </div>
             </div>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               The platform's vehicle galleries mix photos and video in one strip, and this is the same idea: photo slides hold an <code>&lt;img&gt;</code>, the video slide holds a
@@ -3057,7 +3093,7 @@
               </div>
             </div>
           </dialog>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               Every vehicle detail page opens its photos in a fullscreen viewer, and this is that shape: a native <code>&lt;dialog&gt;</code> (Esc and focus containment come free, exactly like the
@@ -3207,7 +3243,7 @@
               </li>
             </ul>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               Card images need <code>width</code>/<code>height</code> (that is what holds CLS at 0) and, on a real site, <code>srcset</code>/<code>sizes</code> — size <code>sizes</code> to ONE slide's
@@ -3300,7 +3336,7 @@
               </li>
             </ul>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               Tall photo cards with the model name over the image — good for a "browse the lineup" row when you want photography rather than cutouts. It stops at the last card instead of looping back
@@ -3393,7 +3429,7 @@
               </li>
             </ul>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               Every image above is a different shape — tall, wide, square — and the row still looks tidy. That is deliberate: dealers upload whatever they have, and the layout should not fall apart
@@ -3503,7 +3539,7 @@ object-fit: cover;</code></pre>
               </li>
             </ul>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               The model bar's behaviour with proper content cards — a picture, a heading, a line of copy. Good for services, departments, or anything that needs a sentence of explanation rather than
@@ -3621,7 +3657,7 @@ object-fit: cover;</code></pre>
               </li>
             </ul>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               Customer video testimonials — a still frame with a play button on the left, the person's name and their story on the right. The video never plays in the card itself. Clicking either the
@@ -3809,7 +3845,7 @@ object-fit: cover;</code></pre>
               </li>
             </ul>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p>
               Autoplay pauses on hover, stops permanently on keyboard focus or drag (the pause button restarts it), never starts under
@@ -3900,7 +3936,7 @@ object-fit: cover;</code></pre>
               </li>
             </ul>
           </div>
-          <details>
+          <details class="demo-copy">
             <summary>What this is, and how to build it</summary>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
