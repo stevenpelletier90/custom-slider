@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../dist/dl-carousel.css" />
     <link rel="stylesheet" href="assets/demo.css" />
     <script src="../dist/dl-carousel.js" defer></script>
+    <script src="assets/vendor/prism.js" defer></script>
     <script src="assets/demo.js" defer></script>
     <style>
       /* Page chrome shared with demo/index.html lives in assets/demo.css;
@@ -32,7 +33,7 @@
          the generator — what renders is exactly what the panel teaches. */
       .mbx-acura {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -43,6 +44,12 @@
       @media (min-width: 769px) {
         .mbx-acura {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-acura {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -72,9 +79,33 @@
         font-weight: 600;
       }
 
+      .mbx-acura {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-acura .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-acura-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-acura-card:hover img,
+      .mbx-acura-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-acura-card img {
+          transition: none;
+        }
+      }
+      .mbx-acura-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .mbx-chevrolet-0 {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 540px) {
@@ -90,6 +121,12 @@
       @media (min-width: 1200px) {
         .mbx-chevrolet-0 {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-chevrolet-0 {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -117,6 +154,30 @@
       .mbx-chevrolet-0-card p {
         margin: 0.25rem 0 0;
         font-weight: 600;
+      }
+
+      .mbx-chevrolet-0 {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-chevrolet-0 .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-chevrolet-0-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-chevrolet-0-card:hover img,
+      .mbx-chevrolet-0-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-chevrolet-0-card img {
+          transition: none;
+        }
+      }
+      .mbx-chevrolet-0-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
       }
 
       .mbx-chevrolet-0-title {
@@ -157,12 +218,27 @@
         background: #c8ccd2;
         transform: translate(-50%, -50%);
       }
+      .mbx-chevrolet-0-tab:hover {
+        border-block-end-color: #9cc6e8;
+      }
       .mbx-chevrolet-0-tab[aria-selected='true'] {
         border-block-end-color: #006dc7;
       }
       .mbx-chevrolet-0-tab:focus-visible {
         outline: 3px solid #16324f;
         outline-offset: 2px;
+      }
+
+      @media (max-width: 560px) {
+        .mbx-chevrolet-0-tablist {
+          row-gap: 0.2rem;
+        }
+        .mbx-chevrolet-0-tab {
+          margin-inline: 0.7rem;
+        }
+        .mbx-chevrolet-0-tab + .mbx-chevrolet-0-tab::before {
+          display: none;
+        }
       }
       .mbx-chevrolet-0-cta {
         display: block;
@@ -186,7 +262,7 @@
 
       .mbx-chevrolet-1 {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 540px) {
@@ -205,6 +281,12 @@
         }
       }
 
+      @media (max-width: 480px) {
+        .mbx-chevrolet-1 {
+          --dlc-arrow-size: 36px;
+        }
+      }
+
       .mbx-chevrolet-1 .dl-carousel-dots {
         display: none;
       }
@@ -216,8 +298,9 @@
         padding-block: 1.75rem;
         background: #101010;
       }
+
       .mbx-chevrolet-1 {
-        --dlc-arrow-bg: transparent;
+        --dlc-arrow-bg: rgb(0 0 0 / 40%);
         --dlc-arrow-fg: #fff;
       }
       .mbx-chevrolet-1-card {
@@ -238,10 +321,26 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
       }
+      .mbx-chevrolet-1-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-chevrolet-1-card:hover img,
+      .mbx-chevrolet-1-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-chevrolet-1-card img {
+          transition: none;
+        }
+      }
+      .mbx-chevrolet-1-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
 
       .mbx-lexus {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 401px) {
@@ -257,6 +356,12 @@
       @media (min-width: 992px) {
         .mbx-lexus {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-lexus {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -289,10 +394,33 @@
         letter-spacing: 0.1em;
         text-transform: uppercase;
       }
+      .mbx-lexus {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-lexus .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-lexus-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-lexus-card:hover img,
+      .mbx-lexus-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-lexus-card img {
+          transition: none;
+        }
+      }
+      .mbx-lexus-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
 
       .mbx-buick {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -303,6 +431,12 @@
       @media (min-width: 769px) {
         .mbx-buick {
           --dlc-per-view: 4;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-buick {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -332,9 +466,33 @@
         font-weight: 600;
       }
 
+      .mbx-buick {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-buick .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-buick-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-buick-card:hover img,
+      .mbx-buick-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-buick-card img {
+          transition: none;
+        }
+      }
+      .mbx-buick-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .mbx-genesis-0 {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 541px) {
@@ -350,6 +508,12 @@
       @media (min-width: 1201px) {
         .mbx-genesis-0 {
           --dlc-per-view: 4;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-genesis-0 {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -373,16 +537,43 @@
       }
       .mbx-genesis-0-card p {
         margin: 0.25rem 0 0;
+        font-size: 1.05rem;
         font-weight: 600;
       }
       .mbx-genesis-0-card small {
         display: block;
+        margin-block-start: 0.1rem;
+        font-size: 0.8rem;
         color: #5f6368;
+        letter-spacing: 0.02em;
+      }
+      .mbx-genesis-0 {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-genesis-0 .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-genesis-0-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-genesis-0-card:hover img,
+      .mbx-genesis-0-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-genesis-0-card img {
+          transition: none;
+        }
+      }
+      .mbx-genesis-0-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
       }
 
       .mbx-genesis-1 {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 541px) {
@@ -398,6 +589,12 @@
       @media (min-width: 1201px) {
         .mbx-genesis-1 {
           --dlc-per-view: 4;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-genesis-1 {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -434,10 +631,33 @@
         margin: 0.4rem 0 0;
         font-weight: 700;
       }
+      .mbx-genesis-1 {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-genesis-1 .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-genesis-1-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-genesis-1-card:hover img,
+      .mbx-genesis-1-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-genesis-1-card img {
+          transition: none;
+        }
+      }
+      .mbx-genesis-1-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
 
       .mbx-genesis-2 {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 600px) {
@@ -448,6 +668,12 @@
       @media (min-width: 991px) {
         .mbx-genesis-2 {
           --dlc-per-view: 3;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-genesis-2 {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -471,16 +697,43 @@
       }
       .mbx-genesis-2-card p {
         margin: 0.25rem 0 0;
+        font-size: 1.05rem;
         font-weight: 600;
       }
       .mbx-genesis-2-card small {
         display: block;
+        margin-block-start: 0.1rem;
+        font-size: 0.8rem;
         color: #5f6368;
+        letter-spacing: 0.02em;
+      }
+      .mbx-genesis-2 {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-genesis-2 .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-genesis-2-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-genesis-2-card:hover img,
+      .mbx-genesis-2-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-genesis-2-card img {
+          transition: none;
+        }
+      }
+      .mbx-genesis-2-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
       }
 
       .mbx-lincoln {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -491,6 +744,12 @@
       @media (min-width: 993px) {
         .mbx-lincoln {
           --dlc-per-view: 4;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-lincoln {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -523,10 +782,33 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
       }
+      .mbx-lincoln {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-lincoln .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-lincoln-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-lincoln-card:hover img,
+      .mbx-lincoln-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-lincoln-card img {
+          transition: none;
+        }
+      }
+      .mbx-lincoln-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
 
       .mbx-ford {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -537,6 +819,12 @@
       @media (min-width: 992px) {
         .mbx-ford {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-ford {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -566,9 +854,33 @@
         font-weight: 600;
       }
 
+      .mbx-ford {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-ford .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-ford-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-ford-card:hover img,
+      .mbx-ford-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-ford-card img {
+          transition: none;
+        }
+      }
+      .mbx-ford-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .mbx-hyundai {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -584,6 +896,12 @@
       @media (min-width: 1201px) {
         .mbx-hyundai {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-hyundai {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -613,9 +931,33 @@
         font-weight: 600;
       }
 
+      .mbx-hyundai {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-hyundai .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-hyundai-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-hyundai-card:hover img,
+      .mbx-hyundai-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-hyundai-card img {
+          transition: none;
+        }
+      }
+      .mbx-hyundai-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .mbx-mazda {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 769px) {
@@ -629,6 +971,12 @@
         }
       }
 
+      @media (max-width: 480px) {
+        .mbx-mazda {
+          --dlc-arrow-size: 36px;
+        }
+      }
+
       .mbx-mazda-card {
         display: flex;
         flex-direction: column;
@@ -639,7 +987,7 @@
       .mbx-mazda-card p {
         order: -1;
         margin: 0 0 0.5rem;
-        font-size: 0.85rem;
+        font-size: 0.95rem;
         font-weight: 600;
         letter-spacing: 0.12em;
         text-transform: uppercase;
@@ -654,19 +1002,54 @@
         margin-block-start: 0.75rem;
         padding: 0.35rem 0.9rem;
         font-size: 0.7rem;
+        color: #55585c;
         letter-spacing: 0.14em;
         text-transform: uppercase;
-        background: #ececec;
+        background: #f2f2f2;
+        border-radius: 2px;
+      }
+      .mbx-mazda-card:hover small,
+      .mbx-mazda-card:focus-visible small {
+        background: #e2e2e2;
+      }
+      .mbx-mazda {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-mazda .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-mazda-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-mazda-card:hover img,
+      .mbx-mazda-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-mazda-card img {
+          transition: none;
+        }
+      }
+      .mbx-mazda-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
       }
 
       .mbx-toyota {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 541px) {
         .mbx-toyota {
           --dlc-per-view: 2;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-toyota {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -688,6 +1071,24 @@
         background: #2f2f2f;
         border-radius: 8px;
       }
+
+      .mbx-toyota-copy {
+        min-inline-size: 0;
+      }
+      @media (max-width: 600px) {
+        .mbx-toyota-copy {
+          gap: 0.35rem;
+          padding: 1rem;
+        }
+        .mbx-toyota-copy .mbx-toyota-name {
+          font-size: 1.15rem;
+        }
+        .mbx-toyota-shop {
+          padding: 0.45rem 1rem;
+          font-size: 0.8rem;
+          white-space: nowrap;
+        }
+      }
       .mbx-toyota-card img {
         inline-size: 48%;
         block-size: auto;
@@ -704,6 +1105,7 @@
       .mbx-toyota-copy small {
         font-size: 0.85rem;
         color: #d9d9d9;
+        letter-spacing: 0.03em;
       }
       .mbx-toyota-copy .mbx-toyota-name {
         margin: 0;
@@ -718,11 +1120,32 @@
         color: #222;
         background: #fff;
         border-radius: 999px;
+        transition: background 0.2s;
+      }
+      .mbx-toyota-card:hover .mbx-toyota-shop,
+      .mbx-toyota-card:focus-visible .mbx-toyota-shop {
+        background: #e6e6e6;
+      }
+      .mbx-toyota {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-toyota .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-toyota-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-toyota-shop {
+          transition: none;
+        }
       }
 
       .mbx-alfaromeo {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 541px) {
@@ -746,6 +1169,12 @@
         }
       }
 
+      @media (max-width: 480px) {
+        .mbx-alfaromeo {
+          --dlc-arrow-size: 36px;
+        }
+      }
+
       .mbx-alfaromeo .dl-carousel-dots {
         display: none;
       }
@@ -759,7 +1188,7 @@
         background: #14161b;
       }
       .mbx-alfaromeo {
-        --dlc-arrow-bg: transparent;
+        --dlc-arrow-bg: rgb(0 0 0 / 40%);
         --dlc-arrow-fg: #fff;
       }
       .mbx-alfaromeo-card {
@@ -770,9 +1199,9 @@
       }
       .mbx-alfaromeo-name {
         margin: 0 0 0.5rem;
-        font-size: 1.1rem;
+        font-size: 1.25rem;
         font-weight: 700;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.08em;
         text-align: start;
         text-transform: uppercase;
       }
@@ -793,11 +1222,25 @@
         text-transform: uppercase;
         color: #14161b;
         background: #fff;
+        transition: background 0.2s;
+      }
+      .mbx-alfaromeo-card:hover .mbx-alfaromeo-cta,
+      .mbx-alfaromeo-card:focus-visible .mbx-alfaromeo-cta {
+        background: #d9d9d9;
+      }
+      .mbx-alfaromeo-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-alfaromeo-cta {
+          transition: none;
+        }
       }
 
       .mbx-audi {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 361px) {
@@ -818,6 +1261,12 @@
       @media (min-width: 1201px) {
         .mbx-audi {
           --dlc-per-view: 6;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-audi {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -847,9 +1296,33 @@
         font-weight: 600;
       }
 
+      .mbx-audi {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-audi .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-audi-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-audi-card:hover img,
+      .mbx-audi-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-audi-card img {
+          transition: none;
+        }
+      }
+      .mbx-audi-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .mbx-cdjr {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -860,6 +1333,12 @@
       @media (min-width: 992px) {
         .mbx-cdjr {
           --dlc-per-view: 6;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-cdjr {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -875,7 +1354,7 @@
         background: #212121;
       }
       .mbx-cdjr {
-        --dlc-arrow-bg: transparent;
+        --dlc-arrow-bg: rgb(0 0 0 / 40%);
         --dlc-arrow-fg: #fff;
       }
       .mbx-cdjr-card {
@@ -898,10 +1377,19 @@
         margin: 0.5rem 0 0;
         font-weight: 600;
       }
+      .mbx-cdjr-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-cdjr-card img {
+          transition: none;
+        }
+      }
 
       .mbx-powersports-cat {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -912,6 +1400,12 @@
       @media (min-width: 993px) {
         .mbx-powersports-cat {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-powersports-cat {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -940,10 +1434,33 @@
         letter-spacing: 0.18em;
         text-transform: uppercase;
       }
+      .mbx-powersports-cat {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-powersports-cat .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-powersports-cat-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-powersports-cat-card:hover img,
+      .mbx-powersports-cat-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-powersports-cat-card img {
+          transition: none;
+        }
+      }
+      .mbx-powersports-cat-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
 
       .mbx-powersports-brands {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -954,6 +1471,12 @@
       @media (min-width: 769px) {
         .mbx-powersports-brands {
           --dlc-per-view: 6;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-powersports-brands {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -989,15 +1512,37 @@
         margin: -0.6rem 0 0;
         font-weight: 600;
       }
+      .mbx-powersports-brands {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-powersports-brands .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-powersports-brands-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-powersports-brands-card img {
+          transition: none;
+        }
+      }
 
       .mbx-ferrari {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 768px) {
         .mbx-ferrari {
           --dlc-per-view: 3;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-ferrari {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -1013,7 +1558,7 @@
         background: linear-gradient(#3a3a3a, #1f1f1f);
       }
       .mbx-ferrari {
-        --dlc-arrow-bg: transparent;
+        --dlc-arrow-bg: rgb(0 0 0 / 40%);
         --dlc-arrow-fg: #fff;
       }
       .mbx-ferrari-card {
@@ -1042,10 +1587,26 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
       }
+      .mbx-ferrari-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-ferrari-card:hover img,
+      .mbx-ferrari-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-ferrari-card img {
+          transition: none;
+        }
+      }
+      .mbx-ferrari-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
 
       .mbx-ferrari-photo {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 769px) {
@@ -1061,6 +1622,12 @@
       @media (min-width: 1441px) {
         .mbx-ferrari-photo {
           --dlc-per-view: 4;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-ferrari-photo {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -1097,11 +1664,40 @@
         font-weight: 700;
         background: rgb(20 20 20 / 88%);
       }
+      .mbx-ferrari-photo {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-ferrari-photo .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .mbx-ferrari-photo-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-ferrari-photo-card:hover img,
+      .mbx-ferrari-photo-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-ferrari-photo-card img {
+          transition: none;
+        }
+      }
+      .mbx-ferrari-photo-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
 
       .mbx-maserati {
         --dlc-per-view: 1;
         --dlc-peek: 20%;
         --dlc-gap: 0.5rem;
+      }
+
+      @media (max-width: 480px) {
+        .mbx-maserati {
+          --dlc-arrow-size: 36px;
+        }
       }
 
       .mbx-maserati .dl-carousel-dots {
@@ -1112,7 +1708,7 @@
       }
 
       .mbx-maserati {
-        --dlc-arrow-size: 64px;
+        --dlc-arrow-size: 56px;
         --dlc-arrow-fg: #14161b;
         --dlc-arrow-bg: rgb(255 255 255 / 85%);
       }
@@ -1122,6 +1718,11 @@
       @media (min-width: 992px) {
         .mbx-maserati {
           --dlc-peek: 23%;
+        }
+      }
+      @media (max-width: 480px) {
+        .mbx-maserati {
+          --dlc-arrow-size: 44px;
         }
       }
       .mbx-maserati-card {
@@ -1146,11 +1747,28 @@
       .mbx-maserati-card p {
         margin: 0.5rem 0 0;
         font-size: 1.15rem;
+        font-weight: 600;
+      }
+      .mbx-maserati-card img {
+        transition: transform 0.25s ease;
+      }
+      .mbx-maserati-card:hover img,
+      .mbx-maserati-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-maserati-card img {
+          transition: none;
+        }
+      }
+      .mbx-maserati-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
       }
 
       .mbx-group-0 {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 769px) {
@@ -1161,6 +1779,12 @@
       @media (min-width: 993px) {
         .mbx-group-0 {
           --dlc-per-view: 7;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-group-0 {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -1177,7 +1801,7 @@
         background: #16294f;
       }
       .mbx-group-0 {
-        --dlc-arrow-bg: transparent;
+        --dlc-arrow-bg: rgb(9 17 34 / 45%);
         --dlc-arrow-fg: #fff;
       }
 
@@ -1190,18 +1814,34 @@
         justify-content: center;
         aspect-ratio: 3 / 2;
         padding: 1rem;
+        color: #fff;
         background: #253a5e;
+        border: 1px solid rgb(255 255 255 / 7%);
         border-radius: 10px;
+        transition: background 0.2s;
+      }
+      .mbx-group-0-card:hover,
+      .mbx-group-0-card:focus-visible {
+        background: #2e4670;
       }
       .mbx-group-0-card img {
         inline-size: 75%;
         block-size: auto;
         object-fit: contain;
       }
+      .mbx-group-0-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-group-0-card {
+          transition: none;
+        }
+      }
 
       .mbx-group-1 {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 769px) {
@@ -1212,6 +1852,12 @@
       @media (min-width: 993px) {
         .mbx-group-1 {
           --dlc-per-view: 4;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .mbx-group-1 {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -1227,14 +1873,23 @@
         padding: 1.5rem 1rem;
         background: #f4f6f8;
       }
+      .mbx-group-1 {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .mbx-group-1 .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
 
       .mbx-group-1 .dl-carousel-pause {
         inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem);
       }
+
       .mbx-group-1-card {
         display: flex;
         flex-direction: column;
         align-items: center;
+        box-sizing: border-box;
         block-size: 100%;
         padding: 1.5rem 1.25rem;
         color: inherit;
@@ -1243,6 +1898,11 @@
         background: #fff;
         border-radius: 10px;
         box-shadow: 0 4px 16px rgb(16 22 29 / 12%);
+        transition: box-shadow 0.2s;
+      }
+      .mbx-group-1-card:hover,
+      .mbx-group-1-card:focus-visible {
+        box-shadow: 0 8px 24px rgb(16 22 29 / 18%);
       }
       .mbx-group-1-card img {
         inline-size: 55%;
@@ -1256,7 +1916,7 @@
         color: #222;
       }
       .mbx-group-1-card p {
-        margin: 0 0 1rem;
+        margin: 0 0 0.9rem;
         font-size: 0.9rem;
         color: #5f6368;
       }
@@ -1268,7 +1928,20 @@
         font-weight: 700;
         color: #fff;
         background: #c8102e;
-        border-radius: 6px;
+        border-radius: 999px;
+      }
+      .mbx-group-1-card:hover .mbx-group-1-visit,
+      .mbx-group-1-card:focus-visible .mbx-group-1-visit {
+        background: #a80d27;
+      }
+      .mbx-group-1-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .mbx-group-1-card {
+          transition: none;
+        }
       }
       /* The non-slider family — same rendered-equals-taught rule. */
       .sb-tilegrid {
@@ -1435,23 +2108,22 @@
       </div>
       <nav class="demo-toc demo-toc--chips" id="toc" aria-label="On this page">
         <p class="demo-toc-group">
-          <strong>The shared ladders:</strong> <a href="#acura">Acura (19)</a> &middot; <a href="#chevrolet">Chevrolet (19)</a> &middot; <a href="#lexus">Lexus (14)</a> &middot;
-          <a href="#buick">Buick (7)</a> &middot; <a href="#genesis">Genesis (5)</a> &middot; <a href="#lincoln">Lincoln (4)</a> &middot; <a href="#cdjr">CDJR (4)</a> &middot;
-          <a href="#hyundai">Hyundai (3)</a> &middot; <a href="#ford">Ford (2)</a> &middot; <a href="#mazda">Mazda (2)</a> &middot; <a href="#toyota">Toyota (2)</a>
+          <strong>The shared ladders:</strong> <a href="#acura">Acura (19)</a> <a href="#chevrolet">Chevrolet (19)</a> <a href="#lexus">Lexus (14)</a> <a href="#buick">Buick (7)</a>
+          <a href="#genesis">Genesis (5)</a> <a href="#lincoln">Lincoln (4)</a> <a href="#cdjr">CDJR (4)</a> <a href="#hyundai">Hyundai (3)</a> <a href="#ford">Ford (2)</a>
+          <a href="#mazda">Mazda (2)</a> <a href="#toyota">Toyota (2)</a>
         </p>
         <p class="demo-toc-group">
-          <strong>The one-site ladders:</strong> <a href="#alfaromeo">Alfa Romeo (1)</a> &middot; <a href="#audi">Audi (1)</a> &middot;
-          <a href="#powersports-cat">Powersports categories (1)</a> &middot; <a href="#powersports-brands">Powersports brands (1)</a> &middot; <a href="#ferrari">Ferrari (1)</a> &middot;
-          <a href="#ferrari-photo">Ferrari photo cards (1)</a>
+          <strong>The one-site ladders:</strong> <a href="#alfaromeo">Alfa Romeo (1)</a> <a href="#audi">Audi (1)</a> <a href="#powersports-cat">Powersports categories (1)</a>
+          <a href="#powersports-brands">Powersports brands (1)</a> <a href="#ferrari">Ferrari (1)</a> <a href="#ferrari-photo">Ferrari photo cards (1)</a>
         </p>
-        <p class="demo-toc-group"><strong>The specialty strips:</strong> <a href="#maserati">Maserati spotlight (1)</a> &middot; <a href="#group">Group-site strips (1)</a></p>
+        <p class="demo-toc-group"><strong>The specialty strips:</strong> <a href="#maserati">Maserati spotlight (1)</a> <a href="#group">Group-site strips (1)</a></p>
         <p class="demo-toc-group">
-          <strong>Brands wearing them:</strong> <a href="#static-bars">BMW</a> &middot; <a href="#mbx-chevrolet-1-h">Cadillac</a> &middot; <a href="#cdjr">Chrysler / Dodge / Jeep / Ram</a> &middot;
-          <a href="#cdjr">Fiat</a> &middot; <a href="#acura">GMC</a> &middot; <a href="#acura">Honda</a> &middot; <a href="#static-bars">INFINITI</a> &middot; <a href="#buick">Jaguar</a> &middot;
-          <a href="#acura">Kia</a> &middot; <a href="#buick">Land Rover</a> &middot; <a href="#acura">Mitsubishi</a> &middot; <a href="#lexus">Nissan</a> &middot;
-          <a href="#static-bars">Porsche</a> &middot; <a href="#chevrolet">Subaru</a> &middot; <a href="#mbx-genesis-1-h">Volkswagen</a> &middot; <a href="#chevrolet">Volvo</a>
+          <strong>Brands wearing them:</strong> <a href="#static-bars">BMW</a> <a href="#mbx-chevrolet-1-h">Cadillac</a> <a href="#cdjr">Chrysler / Dodge / Jeep / Ram</a> <a href="#cdjr">Fiat</a>
+          <a href="#acura">GMC</a> <a href="#acura">Honda</a> <a href="#static-bars">INFINITI</a> <a href="#buick">Jaguar</a> <a href="#acura">Kia</a> <a href="#buick">Land Rover</a>
+          <a href="#acura">Mitsubishi</a> <a href="#lexus">Nissan</a> <a href="#static-bars">Porsche</a> <a href="#chevrolet">Subaru</a> <a href="#mbx-genesis-1-h">Volkswagen</a>
+          <a href="#chevrolet">Volvo</a>
         </p>
-        <p class="demo-toc-group"><strong>Not the standard design:</strong> <a href="#static-bars">Not sliders</a> &middot; <a href="#outliers">The outliers</a></p>
+        <p class="demo-toc-group"><strong>Not the standard design:</strong> <a href="#static-bars">Not sliders</a> <a href="#outliers">The outliers</a></p>
       </nav>
 
       <section class="demo-group" aria-labelledby="g-shared-h">
@@ -1464,7 +2136,7 @@
         </header>
 
         <section class="demo-section demo-wide" id="acura">
-          <h3 id="acura-h">The Acura ladder &mdash; 19 sites <a class="demo-anchor" href="#acura" aria-label="Link to this section">#</a></h3>
+          <h3 id="acura-h">The Acura ladder &mdash; 19 sites<a class="demo-anchor" href="#acura" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             The most common ladder in the estate — tied with the Chevrolet tiers at 19 sites apiece. The same tiers also ship branded as Lexus on live client sites: a centered underlined heading and
             small cutouts that scale up a touch on hover. Runs on acura 1-4, ford 2-4, gmc 1-2, honda 2-5, kia 2-3, mitsubishi 1-2, mitsubishi 4, toyota 9. Cards per view: base 2 &middot; &ge;461px 3
@@ -1534,9 +2206,11 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Acura, plain white - 19 sites run this ladder. */
-.my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 2; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 5; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -1546,7 +2220,17 @@
    aspect ratios still align their captions, and the cars share a ground line. */
 .my-modelbar-card { display: flex; flex-direction: column; justify-content: flex-end; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
+
+/* Soft white arrow discs instead of the engine's gray defaults, a gentle
+   cutout lift on hover/focus (transform only - no layout shift), and a
+   visible focus ring. */
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;769px 5 &mdash; resize the window and count.</li>
@@ -1559,7 +2243,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="chevrolet">
-          <h3 id="chevrolet-h">The Chevrolet ladder &mdash; 19 sites <a class="demo-anchor" href="#chevrolet" aria-label="Link to this section">#</a></h3>
+          <h3 id="chevrolet-h">The Chevrolet ladder &mdash; 19 sites<a class="demo-anchor" href="#chevrolet" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             The GM ladder — and proof a ladder is not a look: Chevrolet runs it plain, Cadillac on a black band, and the Buick GMC, Ford-family, and Subaru demos wear it under brand or body-style
             tabs. Note: since Nov 2025 the official Chevrolet bar is the TABBED version (the plain slick look was deprecated and its sites migrated) — expect tabs on new Chevrolet requests; the
@@ -1897,10 +2581,12 @@
 &lt;/script&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Chevrolet, the official tabbed bar - 19 sites run this ladder. */
-.my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 2; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 540px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 992px) { .my-modelbar { --dlc-per-view: 4; } }
 @media (min-width: 1200px) { .my-modelbar { --dlc-per-view: 5; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -1912,6 +2598,16 @@
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
 
+/* Soft white arrow discs instead of the engine's gray defaults, a gentle
+   cutout lift on hover/focus (transform only - no layout shift), and a
+   visible focus ring. */
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+
 /* The bar's own chrome: centered heading, tabs, centered CTA. The tab SCRIPT
    is the standard one - copy it from the tabs demo on the main page. */
 .my-modelbar-title { margin: 0 0 1rem; font-size: 1.6rem; font-weight: 700; color: #222; text-align: center; }
@@ -1920,8 +2616,11 @@
 /* The divider is a thin text-height pipe centered in the gap - NOT a border
    on the button, which would run full height and touch the labels. */
 .my-modelbar-tab + .my-modelbar-tab::before { position: absolute; inset-block-start: 50%; inset-inline-start: -1.5rem; inline-size: 1px; block-size: 1.05rem; content: ""; background: #c8ccd2; transform: translate(-50%, -50%); }
+.my-modelbar-tab:hover { border-block-end-color: #9cc6e8; }
 .my-modelbar-tab[aria-selected="true"] { border-block-end-color: #006dc7; }
 .my-modelbar-tab:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }
+/* Phones: tighter gaps, and no pipes - a wrapped row would strand them. */
+@media (max-width: 560px) { .my-modelbar-tablist { row-gap: 0.2rem; } .my-modelbar-tab { margin-inline: 0.7rem; } .my-modelbar-tab + .my-modelbar-tab::before { display: none; } }
 .my-modelbar-cta { display: block; inline-size: fit-content; padding: 0.7rem 1.6rem; margin: 1.5rem auto 0; font-weight: 600; color: #fff; text-decoration: none; background: #006dc7; border-radius: 4px; }
 .my-modelbar-cta:hover, .my-modelbar-cta:focus-visible { background: #005ba6; }
 .my-modelbar-cta:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }</code></pre>
@@ -2082,20 +2781,27 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Cadillac's dark band, on the Chevrolet ladder - 19 sites run this ladder. */
-.my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 2; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 540px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 992px) { .my-modelbar { --dlc-per-view: 4; } }
 @media (min-width: 1200px) { .my-modelbar { --dlc-per-view: 5; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
 .my-modelbar { --dlc-controls-space: 0px; }
 
 .my-modelbar { padding-block: 1.75rem; background: #101010; }
-.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+/* a 40% scrim disc keeps the white chevron visible over silver cutouts */
+.my-modelbar { --dlc-arrow-bg: rgb(0 0 0 / 40%); --dlc-arrow-fg: #fff; }
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }</code></pre>
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 2 &middot; &ge;540px 3 &middot; &ge;992px 4 &middot; &ge;1200px 5 &mdash; resize the window and count.</li>
@@ -2108,7 +2814,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="lexus">
-          <h3 id="lexus-h">The Lexus ladder &mdash; 14 sites <a class="demo-anchor" href="#lexus" aria-label="Link to this section">#</a></h3>
+          <h3 id="lexus-h">The Lexus ladder &mdash; 14 sites<a class="demo-anchor" href="#lexus" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Drops to a single card on the narrowest phones. Runs on lexus 1-4, lexus 7, nissan 2-5, toyota 1, toyota 4-7. Cards per view: base 1 &middot; &ge;401px 2 &middot; &ge;601px 3 &middot;
             &ge;992px 5.
@@ -2177,10 +2883,12 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Lexus, gray gradient band - 14 sites run this ladder. */
-.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 401px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 601px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 992px) { .my-modelbar { --dlc-per-view: 5; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -2189,7 +2897,13 @@
 .my-modelbar { padding-block: 1.5rem; background: linear-gradient(#e9e9e9, #f9f9f9); }
 .my-modelbar-card { display: block; color: #222; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }</code></pre>
+.my-modelbar-card p { margin: 0.25rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 1 &middot; &ge;401px 2 &middot; &ge;601px 3 &middot; &ge;992px 5 &mdash; resize the window and count.</li>
@@ -2202,7 +2916,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="buick">
-          <h3 id="buick-h">The Buick ladder &mdash; 7 sites <a class="demo-anchor" href="#buick" aria-label="Link to this section">#</a></h3>
+          <h3 id="buick-h">The Buick ladder &mdash; 7 sites<a class="demo-anchor" href="#buick" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Four-up ceiling — roomier cards than the five-up brands. Jaguar and Land Rover wear these same tiers as photo cards: a background photo per model with a dark hover overlay and an uppercase
             name plus tagline below (their imagery is pending, so the look is described rather than shown). Runs on buick 1-2, jaguar 1, jaguar 3, landrover 1, landrover 3-4. Cards per view: base 2
@@ -2260,9 +2974,11 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Buick, plain white - 7 sites run this ladder. */
-.my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 2; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 4; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -2272,7 +2988,17 @@
    aspect ratios still align their captions, and the cars share a ground line. */
 .my-modelbar-card { display: flex; flex-direction: column; justify-content: flex-end; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
+
+/* Soft white arrow discs instead of the engine's gray defaults, a gentle
+   cutout lift on hover/focus (transform only - no layout shift), and a
+   visible focus ring. */
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;769px 4 &mdash; resize the window and count.</li>
@@ -2285,7 +3011,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="genesis">
-          <h3 id="genesis-h">The Genesis ladder &mdash; 5 sites <a class="demo-anchor" href="#genesis" aria-label="Link to this section">#</a></h3>
+          <h3 id="genesis-h">The Genesis ladder &mdash; 5 sites<a class="demo-anchor" href="#genesis" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             A gentle four-step climb — shipped two ways: Genesis plain with inventory counts, Volkswagen with a colour tile behind every car. Runs on genesis 1-3, vw 1-2. Cards per view: base 1
             &middot; &ge;541px 2 &middot; &ge;993px 3 &middot; &ge;1201px 4.
@@ -2361,10 +3087,12 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Genesis, inventory counts - 5 sites run this ladder. */
-.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 541px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 1201px) { .my-modelbar { --dlc-per-view: 4; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -2372,8 +3100,14 @@
 
 .my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
-.my-modelbar-card small { display: block; color: #5f6368; }</code></pre>
+.my-modelbar-card p { margin: 0.25rem 0 0; font-size: 1.05rem; font-weight: 600; }
+.my-modelbar-card small { display: block; margin-block-start: 0.1rem; font-size: 0.8rem; color: #5f6368; letter-spacing: 0.02em; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 1 &middot; &ge;541px 2 &middot; &ge;993px 3 &middot; &ge;1201px 4 &mdash; resize the window and count.</li>
@@ -2539,10 +3273,12 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Volkswagen's colour tiles, on the Genesis ladder - 5 sites run this ladder. */
-.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 541px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 1201px) { .my-modelbar { --dlc-per-view: 4; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -2553,7 +3289,13 @@
 .my-modelbar-tile { display: block; padding: 8% 6%; background: #e2e6ea; }
 .my-modelbar-card--feature .my-modelbar-tile { background: #0b2a5b; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.4rem 0 0; font-weight: 700; }</code></pre>
+.my-modelbar-card p { margin: 0.4rem 0 0; font-weight: 700; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 1 &middot; &ge;541px 2 &middot; &ge;993px 3 &middot; &ge;1201px 4 &mdash; resize the window and count.</li>
@@ -2635,9 +3377,11 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Genesis, new-platform ladder - 5 sites run this ladder. */
-.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 600px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 991px) { .my-modelbar { --dlc-per-view: 3; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -2645,8 +3389,14 @@
 
 .my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
-.my-modelbar-card small { display: block; color: #5f6368; }</code></pre>
+.my-modelbar-card p { margin: 0.25rem 0 0; font-size: 1.05rem; font-weight: 600; }
+.my-modelbar-card small { display: block; margin-block-start: 0.1rem; font-size: 0.8rem; color: #5f6368; letter-spacing: 0.02em; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 1 &middot; &ge;600px 2 &middot; &ge;991px 3 &mdash; resize the window and count.</li>
@@ -2659,7 +3409,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="lincoln">
-          <h3 id="lincoln-h">The Lincoln ladder &mdash; 4 sites <a class="demo-anchor" href="#lincoln" aria-label="Link to this section">#</a></h3>
+          <h3 id="lincoln-h">The Lincoln ladder &mdash; 4 sites<a class="demo-anchor" href="#lincoln" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Holds three cards across a wide tablet range. Client builds sometimes cut the 4-up tier at 992px instead of 993 — one pixel, same ladder. Runs on lincoln 1-4. Cards per view: base 2
             &middot; &ge;461px 3 &middot; &ge;993px 4.
@@ -2716,9 +3466,11 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Lincoln, flat gray band - 4 sites run this ladder. */
-.my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 2; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 4; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -2727,7 +3479,13 @@
 .my-modelbar { padding-block: 1.5rem; background: #f2f2f2; }
 .my-modelbar-card { display: block; color: #444649; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }</code></pre>
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;993px 4 &mdash; resize the window and count.</li>
@@ -2740,7 +3498,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="cdjr">
-          <h3 id="cdjr-h">The CDJR ladder &mdash; 4 sites <a class="demo-anchor" href="#cdjr" aria-label="Link to this section">#</a></h3>
+          <h3 id="cdjr-h">The CDJR ladder &mdash; 4 sites<a class="demo-anchor" href="#cdjr" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             The only six-up ladder that gets there in three rungs — and the only ladder from the 19 Aug sweep worn by more than one site. A Fiat-including client variant drops the colored band, uses
             pipe-divider tabs, and starts at one card — moot, since that variant hides the whole bar below 768px. Runs on cdjr 1-4. Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;992px 6.
@@ -2824,20 +3582,24 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* CDJR, dark band - 4 sites run this ladder. */
-.my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 2; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 992px) { .my-modelbar { --dlc-per-view: 6; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
 .my-modelbar { --dlc-controls-space: 0px; }
 
 .my-modelbar { padding-block: 1.75rem; background: #212121; }
-.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+.my-modelbar { --dlc-arrow-bg: rgb(0 0 0 / 40%); --dlc-arrow-fg: #fff; }
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.2s; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.1); }
-.my-modelbar-card p { margin: 0.5rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar-card p { margin: 0.5rem 0 0; font-weight: 600; }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;992px 6 &mdash; resize the window and count.</li>
@@ -2850,7 +3612,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="hyundai">
-          <h3 id="hyundai-h">The Hyundai ladder &mdash; 3 sites <a class="demo-anchor" href="#hyundai" aria-label="Link to this section">#</a></h3>
+          <h3 id="hyundai-h">The Hyundai ladder &mdash; 3 sites<a class="demo-anchor" href="#hyundai" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">Also skips two-up on the way from phone to tablet. Runs on hyundai 2-4. Cards per view: base 1 &middot; &ge;461px 3 &middot; &ge;993px 4 &middot; &ge;1201px 5.</p>
           <p class="strip-note">Plain white, name below.</p>
           <div class="demo-stage">
@@ -2916,10 +3678,12 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Hyundai, plain white - 3 sites run this ladder. */
-.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 4; } }
 @media (min-width: 1201px) { .my-modelbar { --dlc-per-view: 5; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -2929,7 +3693,17 @@
    aspect ratios still align their captions, and the cars share a ground line. */
 .my-modelbar-card { display: flex; flex-direction: column; justify-content: flex-end; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
+
+/* Soft white arrow discs instead of the engine's gray defaults, a gentle
+   cutout lift on hover/focus (transform only - no layout shift), and a
+   visible focus ring. */
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 1 &middot; &ge;461px 3 &middot; &ge;993px 4 &middot; &ge;1201px 5 &mdash; resize the window and count.</li>
@@ -2942,7 +3716,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="ford">
-          <h3 id="ford-h">The Ford ladder &mdash; 2 sites <a class="demo-anchor" href="#ford" aria-label="Link to this section">#</a></h3>
+          <h3 id="ford-h">The Ford ladder &mdash; 2 sites<a class="demo-anchor" href="#ford" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">Jumps 1 → 3 in one step; no two-up state at all. Runs on ford 1, honda 1. Cards per view: base 1 &middot; &ge;461px 3 &middot; &ge;992px 5.</p>
           <p class="strip-note">Plain white, name below.</p>
           <div class="demo-stage">
@@ -3008,9 +3782,11 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Ford, plain white - 2 sites run this ladder. */
-.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 992px) { .my-modelbar { --dlc-per-view: 5; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -3020,7 +3796,17 @@
    aspect ratios still align their captions, and the cars share a ground line. */
 .my-modelbar-card { display: flex; flex-direction: column; justify-content: flex-end; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
+
+/* Soft white arrow discs instead of the engine's gray defaults, a gentle
+   cutout lift on hover/focus (transform only - no layout shift), and a
+   visible focus ring. */
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 1 &middot; &ge;461px 3 &middot; &ge;992px 5 &mdash; resize the window and count.</li>
@@ -3033,7 +3819,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="mazda">
-          <h3 id="mazda-h">The Mazda ladder &mdash; 2 sites <a class="demo-anchor" href="#mazda" aria-label="Link to this section">#</a></h3>
+          <h3 id="mazda-h">The Mazda ladder &mdash; 2 sites<a class="demo-anchor" href="#mazda" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">One of only three model bars in the estate that shows dots. Runs on mazda 1-2. Cards per view: base 1 &middot; &ge;769px 2 &middot; &ge;992px 3.</p>
           <p class="strip-note">Name above the car, inventory chip below — and it keeps its dots.</p>
           <div class="demo-stage">
@@ -3106,16 +3892,25 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Mazda, name above with chip - 2 sites run this ladder. */
-.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 992px) { .my-modelbar { --dlc-per-view: 3; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* This bar is one of the three in the estate that keeps its dots - nothing to hide. */
 
 .my-modelbar-card { display: flex; flex-direction: column; color: #222; text-align: center; text-decoration: none; }
-.my-modelbar-card p { order: -1; margin: 0 0 0.5rem; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+.my-modelbar-card p { order: -1; margin: 0 0 0.5rem; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card small { align-self: center; margin-block-start: 0.75rem; padding: 0.35rem 0.9rem; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; background: #ececec; }</code></pre>
+.my-modelbar-card small { align-self: center; margin-block-start: 0.75rem; padding: 0.35rem 0.9rem; font-size: 0.7rem; color: #55585c; letter-spacing: 0.14em; text-transform: uppercase; background: #f2f2f2; border-radius: 2px; }
+.my-modelbar-card:hover small, .my-modelbar-card:focus-visible small { background: #e2e2e2; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 1 &middot; &ge;769px 2 &middot; &ge;992px 3 &mdash; resize the window and count.</li>
@@ -3128,7 +3923,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="toyota">
-          <h3 id="toyota-h">The Toyota ladder &mdash; 2 sites <a class="demo-anchor" href="#toyota" aria-label="Link to this section">#</a></h3>
+          <h3 id="toyota-h">The Toyota ladder &mdash; 2 sites<a class="demo-anchor" href="#toyota" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">Never more than two across — the roomiest cards of any standard bar. Runs on toyota 2-3. Cards per view: base 1 &middot; &ge;541px 2.</p>
           <p class="strip-note">Split photo cards — photo left, year and inventory count right, Shop Now pill. On the tabbed sites these group by body style.</p>
           <div class="demo-stage">
@@ -3216,8 +4011,10 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Toyota, split photo cards - 2 sites run this ladder. */
-.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 541px) { .my-modelbar { --dlc-per-view: 2; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -3227,11 +4024,19 @@
    the right with year | count, a big name, and a white Shop Now pill. */
 .my-modelbar { --dlc-gap: 1.5rem; }
 .my-modelbar-card { display: flex; overflow: hidden; color: #fff; text-decoration: none; background: #2f2f2f; border-radius: 8px; }
+/* the copy column must be allowed to shrink, or long names clip on phones */
+.my-modelbar-copy { min-inline-size: 0; }
+@media (max-width: 600px) { .my-modelbar-copy { gap: 0.35rem; padding: 1rem; } .my-modelbar-copy .my-modelbar-name { font-size: 1.15rem; } .my-modelbar-shop { padding: 0.45rem 1rem; font-size: 0.8rem; white-space: nowrap; } }
 .my-modelbar-card img { inline-size: 48%; block-size: auto; align-self: stretch; object-fit: cover; }
 .my-modelbar-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; padding: 1.4rem 1.5rem; }
-.my-modelbar-copy small { font-size: 0.85rem; color: #d9d9d9; }
+.my-modelbar-copy small { font-size: 0.85rem; color: #d9d9d9; letter-spacing: 0.03em; }
 .my-modelbar-copy .my-modelbar-name { margin: 0; font-size: 1.5rem; font-weight: 700; }
-.my-modelbar-shop { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: #222; background: #fff; border-radius: 999px; }</code></pre>
+.my-modelbar-shop { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: #222; background: #fff; border-radius: 999px; transition: background 0.2s; }
+.my-modelbar-card:hover .my-modelbar-shop, .my-modelbar-card:focus-visible .my-modelbar-shop { background: #e6e6e6; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-shop { transition: none; } }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 1 &middot; &ge;541px 2 &mdash; resize the window and count.</li>
@@ -3251,7 +4056,7 @@
         </header>
 
         <section class="demo-section demo-wide" id="alfaromeo">
-          <h3 id="alfaromeo-h">The Alfa Romeo ladder &mdash; 1 site <a class="demo-anchor" href="#alfaromeo" aria-label="Link to this section">#</a></h3>
+          <h3 id="alfaromeo-h">The Alfa Romeo ladder &mdash; 1 site<a class="demo-anchor" href="#alfaromeo" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Six-up, but only past 1800px — the widest breakpoint in the estate. Runs on alfaromeo 1. Cards per view: base 1 &middot; &ge;541px 2 &middot; &ge;993px 3 &middot; &ge;1201px 4 &middot;
             &ge;1801px 6.
@@ -3321,22 +4126,27 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Alfa Romeo, tall dark tiles - runs on 1 site. */
-.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 541px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 1201px) { .my-modelbar { --dlc-per-view: 4; } }
 @media (min-width: 1801px) { .my-modelbar { --dlc-per-view: 6; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
 .my-modelbar { --dlc-controls-space: 0px; }
 
 .my-modelbar { --dlc-gap: 1.25rem; padding: 1.5rem; background: #14161b; }
-.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+.my-modelbar { --dlc-arrow-bg: rgb(0 0 0 / 40%); --dlc-arrow-fg: #fff; }
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
-.my-modelbar-name { margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.06em; text-align: start; text-transform: uppercase; }
+.my-modelbar-name { margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.08em; text-align: start; text-transform: uppercase; }
 .my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; }
-.my-modelbar-cta { display: inline-block; margin-block-start: 0.75rem; padding: 0.6rem 1.4rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #14161b; background: #fff; }</code></pre>
+.my-modelbar-cta { display: inline-block; margin-block-start: 0.75rem; padding: 0.6rem 1.4rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #14161b; background: #fff; transition: background 0.2s; }
+.my-modelbar-card:hover .my-modelbar-cta, .my-modelbar-card:focus-visible .my-modelbar-cta { background: #d9d9d9; }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-cta { transition: none; } }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 1 &middot; &ge;541px 2 &middot; &ge;993px 3 &middot; &ge;1201px 4 &middot; &ge;1801px 6 &mdash; resize the window and count.</li>
@@ -3349,7 +4159,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="audi">
-          <h3 id="audi-h">The Audi ladder &mdash; 1 site <a class="demo-anchor" href="#audi" aria-label="Link to this section">#</a></h3>
+          <h3 id="audi-h">The Audi ladder &mdash; 1 site<a class="demo-anchor" href="#audi" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Five rungs, the most granular ladder anywhere. Runs on audi 1. Cards per view: base 1 &middot; &ge;361px 2 &middot; &ge;769px 3 &middot; &ge;993px 4 &middot; &ge;1201px 6.
           </p>
@@ -3417,11 +4227,13 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Audi, plain white - runs on 1 site. */
-.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 361px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 4; } }
 @media (min-width: 1201px) { .my-modelbar { --dlc-per-view: 6; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -3431,7 +4243,17 @@
    aspect ratios still align their captions, and the cars share a ground line. */
 .my-modelbar-card { display: flex; flex-direction: column; justify-content: flex-end; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
+
+/* Soft white arrow discs instead of the engine's gray defaults, a gentle
+   cutout lift on hover/focus (transform only - no layout shift), and a
+   visible focus ring. */
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 1 &middot; &ge;361px 2 &middot; &ge;769px 3 &middot; &ge;993px 4 &middot; &ge;1201px 6 &mdash; resize the window and count.</li>
@@ -3444,7 +4266,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="powersports-cat">
-          <h3 id="powersports-cat-h">The Powersports categories ladder &mdash; 1 site <a class="demo-anchor" href="#powersports-cat" aria-label="Link to this section">#</a></h3>
+          <h3 id="powersports-cat-h">The Powersports categories ladder &mdash; 1 site<a class="demo-anchor" href="#powersports-cat" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Same engine, different content contract: the slides are body-style categories (motorcycles, ATVs, scooters), not models. Runs on powersports 2. Cards per view: base 2 &middot; &ge;461px 3
             &middot; &ge;993px 5.
@@ -3569,9 +4391,11 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Powersports category tiles - runs on 1 site. */
-.my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 2; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 5; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -3580,7 +4404,13 @@
 /* Verified live 19 Aug: white background, dark uppercase labels BELOW the vehicles. */
 .my-modelbar-card { display: block; color: #222; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }</code></pre>
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;993px 5 &mdash; resize the window and count.</li>
@@ -3593,7 +4423,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="powersports-brands">
-          <h3 id="powersports-brands-h">The Powersports brands ladder &mdash; 1 site <a class="demo-anchor" href="#powersports-brands" aria-label="Link to this section">#</a></h3>
+          <h3 id="powersports-brands-h">The Powersports brands ladder &mdash; 1 site<a class="demo-anchor" href="#powersports-brands" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             A brand-logo strip standing where the model bar would be — the Acura tiers with a six-up ceiling. Runs on powersports 1. Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;769px 6.
           </p>
@@ -3748,9 +4578,11 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Powersports brand logos - runs on 1 site. */
-.my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 2; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 6; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -3759,7 +4591,11 @@
 .my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; filter: grayscale(1); opacity: 0.6; transition: filter 0.2s, opacity 0.2s; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-within img { filter: none; opacity: 1; }
-.my-modelbar-card p { margin: -0.6rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar-card p { margin: -0.6rem 0 0; font-weight: 600; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 2 &middot; &ge;461px 3 &middot; &ge;769px 6 &mdash; resize the window and count.</li>
@@ -3772,7 +4608,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="ferrari">
-          <h3 id="ferrari-h">The Ferrari ladder &mdash; 1 site <a class="demo-anchor" href="#ferrari" aria-label="Link to this section">#</a></h3>
+          <h3 id="ferrari-h">The Ferrari ladder &mdash; 1 site<a class="demo-anchor" href="#ferrari" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">One to three in a single step — and the boundary is 768px, not the platform&rsquo;s usual 769. Runs on ferrari 1. Cards per view: base 1 &middot; &ge;768px 3.</p>
           <p class="strip-note">A dark band with a small wordmark line above each car and the name repeated below. The styled text span stands in for the real site&rsquo;s script-wordmark images.</p>
           <div class="demo-stage demo-stage--band">
@@ -3934,19 +4770,25 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Ferrari, wordmark band - runs on 1 site. */
-.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 768px) { .my-modelbar { --dlc-per-view: 3; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
 .my-modelbar { --dlc-controls-space: 0px; }
 
 .my-modelbar { padding-block: 1.75rem; background: linear-gradient(#3a3a3a, #1f1f1f); }
-.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+.my-modelbar { --dlc-arrow-bg: rgb(0 0 0 / 40%); --dlc-arrow-fg: #fff; }
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
 .my-modelbar-wordmark { display: block; margin-block-end: 0.75rem; font-size: 1.3rem; font-style: italic; font-weight: 700; letter-spacing: 0.06em; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }</code></pre>
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 1 &middot; &ge;768px 3 &mdash; resize the window and count.</li>
@@ -3959,7 +4801,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="ferrari-photo">
-          <h3 id="ferrari-photo-h">The Ferrari photo cards ladder &mdash; 1 site <a class="demo-anchor" href="#ferrari-photo" aria-label="Link to this section">#</a></h3>
+          <h3 id="ferrari-photo-h">The Ferrari photo cards ladder &mdash; 1 site<a class="demo-anchor" href="#ferrari-photo" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             The estate&rsquo;s only 1441px tier — a fourth card appears only past 1440px. Runs on ferrari 2. Cards per view: base 1 &middot; &ge;769px 2 &middot; &ge;993px 3 &middot; &ge;1441px 4.
           </p>
@@ -4027,10 +4869,12 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Ferrari, photo cards - runs on 1 site. */
-.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 3; } }
 @media (min-width: 1441px) { .my-modelbar { --dlc-per-view: 4; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -4040,7 +4884,13 @@
 .my-modelbar { --dlc-gap: 1rem; }
 .my-modelbar-card { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; }
 .my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
-.my-modelbar-card p { position: absolute; inset-block-end: 0; inset-inline: 0; margin: 0; padding: 0.7rem 1rem; font-weight: 700; background: rgb(20 20 20 / 88%); }</code></pre>
+.my-modelbar-card p { position: absolute; inset-block-end: 0; inset-inline: 0; margin: 0; padding: 0.7rem 1rem; font-weight: 700; background: rgb(20 20 20 / 88%); }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 1 &middot; &ge;769px 2 &middot; &ge;993px 3 &middot; &ge;1441px 4 &mdash; resize the window and count.</li>
@@ -4060,7 +4910,7 @@
         </header>
 
         <section class="demo-section demo-wide" id="maserati">
-          <h3 id="maserati-h">The Maserati spotlight &mdash; 1 site <a class="demo-anchor" href="#maserati" aria-label="Link to this section">#</a></h3>
+          <h3 id="maserati-h">The Maserati spotlight &mdash; 1 site<a class="demo-anchor" href="#maserati" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Not really a ladder: one huge card centred at every width with both neighbours peeking. This is the <a href="index.html#peek">peek pattern</a> worn as a model bar —
             <code>--dlc-per-view: 1</code> with the peek turned right up. Runs on maserati 4. Cards per view: base 1.
@@ -4223,18 +5073,25 @@
             <p class="code-label">CSS</p>
             <pre><code>/* Maserati spotlight - runs on 1 site. */
 .my-modelbar { --dlc-per-view: 1; --dlc-peek: 20%; --dlc-gap: 0.5rem; }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
 .my-modelbar { --dlc-controls-space: 0px; }
 
-.my-modelbar { --dlc-arrow-size: 64px; --dlc-arrow-fg: #14161b; --dlc-arrow-bg: rgb(255 255 255 / 85%); }
+.my-modelbar { --dlc-arrow-size: 56px; --dlc-arrow-fg: #14161b; --dlc-arrow-bg: rgb(255 255 255 / 85%); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 2px 10px rgb(0 0 0 / 25%); }
 @media (min-width: 992px) { .my-modelbar { --dlc-peek: 23%; } }
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 44px; } }
 .my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-wordmark { display: block; margin-block-end: 0.5rem; font-size: 1.5rem; font-style: italic; font-weight: 700; letter-spacing: 0.06em; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 1.15rem; }</code></pre>
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 1.15rem; font-weight: 600; }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 1 &mdash; resize the window and count.</li>
@@ -4247,7 +5104,7 @@
         </section>
 
         <section class="demo-section demo-wide" id="group">
-          <h3 id="group-h">Group-site strips &mdash; 1 site <a class="demo-anchor" href="#group" aria-label="Link to this section">#</a></h3>
+          <h3 id="group-h">Group-site strips &mdash; 1 site<a class="demo-anchor" href="#group" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             Not model bars, but the strips designers will be asked for on group sites: a make-logo rail and a rooftop-location rail. Both autoplay on the real site — the census&rsquo;s only autoplay
             anywhere — so both carry <code>data-autoplay="4000"</code>, and the engine adds its pause button (top right, first in tab order). Dots stay hidden as everywhere else. Runs on group 1.
@@ -4383,9 +5240,11 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Group makes rail - runs on 1 site. */
-.my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 2; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 4; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 7; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -4395,11 +5254,14 @@
 
 /* Verified live 19 Aug: a navy band, each make a rounded lighter-navy tile. */
 .my-modelbar { --dlc-gap: 1rem; padding: 1.5rem 1rem; background: #16294f; }
-.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+.my-modelbar { --dlc-arrow-bg: rgb(9 17 34 / 45%); --dlc-arrow-fg: #fff; }
 /* autoplay's pause button clears the overlaid next arrow - both stay 24px+ touch targets */
 .my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
-.my-modelbar-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; background: #253a5e; border-radius: 10px; }
-.my-modelbar-card img { inline-size: 75%; block-size: auto; object-fit: contain; }</code></pre>
+.my-modelbar-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; color: #fff; background: #253a5e; border: 1px solid rgb(255 255 255 / 7%); border-radius: 10px; transition: background 0.2s; }
+.my-modelbar-card:hover, .my-modelbar-card:focus-visible { background: #2e4670; }
+.my-modelbar-card img { inline-size: 75%; block-size: auto; object-fit: contain; }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card { transition: none; } }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 2 &middot; &ge;769px 4 &middot; &ge;993px 7 &mdash; resize the window and count.</li>
@@ -4539,9 +5401,11 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* Group locations rail - runs on 1 site. */
-.my-modelbar { --dlc-per-view: 1; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
+.my-modelbar { --dlc-per-view: 1; --dlc-peek: clamp(32px, 9vw, 60px); --dlc-gap: 0.5rem; }
 @media (min-width: 769px) { .my-modelbar { --dlc-per-view: 2; } }
 @media (min-width: 993px) { .my-modelbar { --dlc-per-view: 4; } }
+/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -4552,13 +5416,21 @@
 /* Verified live 19 Aug: floating white cards on a light band - brand mark on
    top, name, address, phone, and a red Visit Website pill. */
 .my-modelbar { --dlc-gap: 1.25rem; padding: 1.5rem 1rem; background: #f4f6f8; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 /* same pause-vs-arrow clearance as the makes rail */
 .my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
-.my-modelbar-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.5rem 1.25rem; color: inherit; text-align: center; text-decoration: none; background: #fff; border-radius: 10px; box-shadow: 0 4px 16px rgb(16 22 29 / 12%); }
+/* border-box, or the 100% height plus padding overflows the slide and the
+   card grows its own scrollbar */
+.my-modelbar-card { display: flex; flex-direction: column; align-items: center; box-sizing: border-box; block-size: 100%; padding: 1.5rem 1.25rem; color: inherit; text-align: center; text-decoration: none; background: #fff; border-radius: 10px; box-shadow: 0 4px 16px rgb(16 22 29 / 12%); transition: box-shadow 0.2s; }
+.my-modelbar-card:hover, .my-modelbar-card:focus-visible { box-shadow: 0 8px 24px rgb(16 22 29 / 18%); }
 .my-modelbar-card img { inline-size: 55%; block-size: auto; object-fit: contain; }
 .my-modelbar-card .my-modelbar-name { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; font-weight: 700; color: #222; }
-.my-modelbar-card p { margin: 0 0 1rem; font-size: 0.9rem; color: #5f6368; }
-.my-modelbar-visit { display: inline-block; margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.8rem; font-weight: 700; color: #fff; background: #c8102e; border-radius: 6px; }</code></pre>
+.my-modelbar-card p { margin: 0 0 0.9rem; font-size: 0.9rem; color: #5f6368; }
+.my-modelbar-visit { display: inline-block; margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.8rem; font-weight: 700; color: #fff; background: #c8102e; border-radius: 999px; }
+.my-modelbar-card:hover .my-modelbar-visit, .my-modelbar-card:focus-visible .my-modelbar-visit { background: #a80d27; }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card { transition: none; } }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
               <li>Cards per view: base 1 &middot; &ge;769px 2 &middot; &ge;993px 4 &mdash; resize the window and count.</li>
@@ -4578,7 +5450,7 @@
         </header>
 
         <section class="demo-section demo-wide" id="static-bars">
-          <h3 id="static-bars-h">Model bars that are not sliders <a class="demo-anchor" href="#static-bars" aria-label="Link to this section">#</a></h3>
+          <h3 id="static-bars-h">Model bars that are not sliders<a class="demo-anchor" href="#static-bars" aria-label="Link to this section">#</a></h3>
           <p class="demo-sub">
             A recurring official family, not a one-off: several OEMs ship their model bar as a static grid or tab panes with no carousel at all. Porsche and INFINITI run hover-reveal tile grids, one
             Ford variant is a plain CSS grid (<a href="index.html#modelbar">see the main page's ladder table</a>), BMW's is tab panes with a text rail &mdash; one pane per model, and on phones it

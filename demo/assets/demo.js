@@ -27,6 +27,20 @@ addEventListener('DOMContentLoaded', () => {
     // ends up named "Copy code".
     const label = pre.previousElementSibling?.classList.contains('code-label') ? pre.previousElementSibling.textContent.trim() : 'code';
 
+    // Monokai highlighting: infer the language from the label and let the
+    // vendored Prism (assets/vendor/prism.js, manual mode) tokenize it.
+    // Copying is untouched — the button reads textContent, which stays the
+    // raw code. With Prism absent the block simply stays light.
+    if (window.Prism?.highlightElement) {
+      const code = pre.querySelector('code');
+      if (code) {
+        const lang = /css/i.test(label) ? 'css' : /script|\bjs\b/i.test(label) ? 'javascript' : 'markup';
+        code.classList.add(`language-${lang}`);
+        pre.classList.add('code-dark');
+        window.Prism.highlightElement(code);
+      }
+    }
+
     const wrap = document.createElement('div');
     wrap.className = 'code-wrap';
     pre.parentNode.insertBefore(wrap, pre);

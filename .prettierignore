@@ -6,6 +6,7 @@ dist/
 
 # Generated files
 package-lock.json
+demo/assets/vendor/
 demo/img/
 .claude/
 

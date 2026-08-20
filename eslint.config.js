@@ -9,7 +9,7 @@ const sharedRules = {
 
 export default [
   {
-    ignores: ['dist/**', 'node_modules/**', 'demo/img/**', '.claude/**'],
+    ignores: ['dist/**', 'node_modules/**', 'demo/img/**', 'demo/assets/vendor/**', '.claude/**'],
   },
   {
     // Demo-page chrome: a plain deferred script, no modules and no bundler.

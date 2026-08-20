@@ -149,10 +149,12 @@ details {
 
 .demo-copy[open] {
   padding-block-end: 0.9rem;
+  padding-inline-start: 1.1rem;
   border-inline-start: 4px solid var(--g-accent, #16324f);
 }
 
 .demo-copy[open] > summary {
+  margin-inline-start: -1.1rem;
   border-block-end: 1px solid #dde3e9;
   border-end-start-radius: 0;
   border-end-end-radius: 0;
@@ -173,6 +175,63 @@ pre {
 
 .copy-lead {
   margin-block-start: 1rem;
+}
+
+/* ---- Monokai code panels ---------------------------------------------------
+   demo.js adds .code-dark and a language-* class, then the vendored Prism
+   tokenizes. Comment color is lifted from Monokai's #75715e to keep 4.5:1
+   on #272822. With JS off the blocks stay on the light <pre> style. */
+.code-dark {
+  color: #f8f8f2;
+  background: #272822;
+}
+
+.code-dark .token.comment,
+.code-dark .token.prolog,
+.code-dark .token.doctype,
+.code-dark .token.cdata {
+  color: #9a9083;
+}
+
+.code-dark .token.punctuation {
+  color: #f8f8f2;
+}
+
+.code-dark .token.tag,
+.code-dark .token.selector,
+.code-dark .token.keyword,
+.code-dark .token.operator,
+.code-dark .token.important,
+.code-dark .token.atrule .token.rule {
+  color: #f92672;
+}
+
+.code-dark .token.attr-name,
+.code-dark .token.function,
+.code-dark .token.class-name {
+  color: #a6e22e;
+}
+
+.code-dark .token.attr-value,
+.code-dark .token.string,
+.code-dark .token.char,
+.code-dark .token.regex {
+  color: #e6db74;
+}
+
+.code-dark .token.number,
+.code-dark .token.constant,
+.code-dark .token.boolean,
+.code-dark .token.symbol,
+.code-dark .token.unit {
+  color: #ae81ff;
+}
+
+.code-dark .token.property,
+.code-dark .token.builtin,
+.code-dark .token.entity,
+.code-dark .token.url {
+  color: #66d9ef;
 }
 
 /* The "Check it worked" list closing every copy panel on the library page. */
@@ -400,6 +459,7 @@ pre {
   display: inline-block;
   padding: 0.22rem 0.6rem;
   margin-block: 0.12rem;
+  margin-inline-end: 0.1rem;
   text-decoration: none;
   background: #fff;
   border: 1px solid #dde3e9;
@@ -445,6 +505,7 @@ h3:hover .demo-anchor,
 }
 
 .demo-search input {
+  box-sizing: border-box;
   inline-size: min(22rem, 100%);
   padding: 0.5rem 0.7rem;
   font: inherit;
@@ -510,6 +571,12 @@ main caption {
   letter-spacing: 0.1em;
 }
 
+@media (width <= 480px) {
+  .demo-stage {
+    padding: 1.4rem 0.6rem 0.9rem;
+  }
+}
+
 /* On phones the cross-page bar stays one row and pans sideways instead of
    wrapping into a 100px-tall block. The scrollbar is hidden and a right-edge
    fade says "there's more" — without it the off-canvas page links simply
@@ -537,6 +604,17 @@ main caption {
     pointer-events: none;
     content: "";
     background: linear-gradient(to right, transparent, #fff);
+  }
+
+  /* the floating pill shrinks, and the page keeps enough tail room that the
+     last interactive row can always scroll clear of it */
+  .demo-jump summary {
+    padding: 0.4rem 0.85rem;
+    font-size: 0.8rem;
+  }
+
+  main {
+    padding-block-end: 4rem;
   }
 }
 

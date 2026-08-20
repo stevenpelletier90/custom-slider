@@ -185,7 +185,17 @@ const SKINS = {
    aspect ratios still align their captions, and the cars share a ground line. */
 .my-modelbar-card { display: flex; flex-direction: column; justify-content: flex-end; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }`,
+.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
+
+/* Soft white arrow discs instead of the engine's gray defaults, a gentle
+   cutout lift on hover/focus (transform only - no layout shift), and a
+   visible focus ring. */
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${e.name}">${imgTag(e)}<p>${e.name}</p></a>`),
     snippetHtml: (r) => `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=${r[0].name}" aria-label="Explore the ${r[0].name}">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="${r[0].alt}">
@@ -196,7 +206,13 @@ const SKINS = {
     cardCss: `.my-modelbar { padding-block: 1.5rem; background: linear-gradient(#e9e9e9, #f9f9f9); }
 .my-modelbar-card { display: block; color: #222; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }`,
+.my-modelbar-card p { margin: 0.25rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${e.name}">${imgTag(e)}<p>${e.name}</p></a>`),
     snippetHtml: (r) => `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=${r[0].name}" aria-label="Explore the ${r[0].name}">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="${r[0].alt}">
@@ -207,7 +223,13 @@ const SKINS = {
     cardCss: `.my-modelbar { padding-block: 1.5rem; background: #f2f2f2; }
 .my-modelbar-card { display: block; color: #444649; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }`,
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${e.name}">${imgTag(e)}<p>${e.name}</p></a>`),
     snippetHtml: (r) => `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=${r[0].name}" aria-label="Explore the ${r[0].name}">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="${r[0].alt}">
@@ -217,8 +239,14 @@ const SKINS = {
   counts: {
     cardCss: `.my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
-.my-modelbar-card small { display: block; color: #5f6368; }`,
+.my-modelbar-card p { margin: 0.25rem 0 0; font-size: 1.05rem; font-weight: 600; }
+.my-modelbar-card small { display: block; margin-block-start: 0.1rem; font-size: 0.8rem; color: #5f6368; letter-spacing: 0.02em; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar">${imgTag(e)}<p>${e.name}</p><small>${e.count ?? 12} Available</small></a>`),
     snippetHtml: (r) => `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=${r[0].name}">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="${r[0].alt}">
@@ -232,7 +260,13 @@ const SKINS = {
 .my-modelbar-tile { display: block; padding: 8% 6%; background: #e2e6ea; }
 .my-modelbar-card--feature .my-modelbar-tile { background: #0b2a5b; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.4rem 0 0; font-weight: 700; }`,
+.my-modelbar-card p { margin: 0.4rem 0 0; font-weight: 700; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: () =>
       CUTOUTS.map(
         ([slug, name, alt], i) =>
@@ -246,10 +280,15 @@ const SKINS = {
   },
   'band-dark': {
     cardCss: `.my-modelbar { padding-block: 1.75rem; background: #101010; }
-.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+/* a 40% scrim disc keeps the white chevron visible over silver cutouts */
+.my-modelbar { --dlc-arrow-bg: rgb(0 0 0 / 40%); --dlc-arrow-fg: #fff; }
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }`,
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: () => CUTOUTS.map(([slug, name, alt]) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${name}">${cutoutImg(slug, alt)}<p>${name}</p></a>`),
     snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=LYRIQ" aria-label="Explore the LYRIQ">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Cadillac LYRIQ">
@@ -258,9 +297,16 @@ const SKINS = {
   },
   'name-top-chip': {
     cardCss: `.my-modelbar-card { display: flex; flex-direction: column; color: #222; text-align: center; text-decoration: none; }
-.my-modelbar-card p { order: -1; margin: 0 0 0.5rem; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
+.my-modelbar-card p { order: -1; margin: 0 0 0.5rem; font-size: 0.95rem; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card small { align-self: center; margin-block-start: 0.75rem; padding: 0.35rem 0.9rem; font-size: 0.7rem; letter-spacing: 0.14em; text-transform: uppercase; background: #ececec; }`,
+.my-modelbar-card small { align-self: center; margin-block-start: 0.75rem; padding: 0.35rem 0.9rem; font-size: 0.7rem; color: #55585c; letter-spacing: 0.14em; text-transform: uppercase; background: #f2f2f2; border-radius: 2px; }
+.my-modelbar-card:hover small, .my-modelbar-card:focus-visible small { background: #e2e2e2; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar">${imgTag(e)}<p>${e.name}</p><small>${e.count ?? 9} Available</small></a>`),
     snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=CX-5">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Mazda CX-5">
@@ -273,11 +319,19 @@ const SKINS = {
    the right with year | count, a big name, and a white Shop Now pill. */
 .my-modelbar { --dlc-gap: 1.5rem; }
 .my-modelbar-card { display: flex; overflow: hidden; color: #fff; text-decoration: none; background: #2f2f2f; border-radius: 8px; }
+/* the copy column must be allowed to shrink, or long names clip on phones */
+.my-modelbar-copy { min-inline-size: 0; }
+@media (max-width: 600px) { .my-modelbar-copy { gap: 0.35rem; padding: 1rem; } .my-modelbar-copy .my-modelbar-name { font-size: 1.15rem; } .my-modelbar-shop { padding: 0.45rem 1rem; font-size: 0.8rem; white-space: nowrap; } }
 .my-modelbar-card img { inline-size: 48%; block-size: auto; align-self: stretch; object-fit: cover; }
 .my-modelbar-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; padding: 1.4rem 1.5rem; }
-.my-modelbar-copy small { font-size: 0.85rem; color: #d9d9d9; }
+.my-modelbar-copy small { font-size: 0.85rem; color: #d9d9d9; letter-spacing: 0.03em; }
 .my-modelbar-copy .my-modelbar-name { margin: 0; font-size: 1.5rem; font-weight: 700; }
-.my-modelbar-shop { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: #222; background: #fff; border-radius: 999px; }`,
+.my-modelbar-shop { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: #222; background: #fff; border-radius: 999px; transition: background 0.2s; }
+.my-modelbar-card:hover .my-modelbar-shop, .my-modelbar-card:focus-visible .my-modelbar-shop { background: #e6e6e6; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-shop { transition: none; } }`,
     liveSlides: (r) =>
       r.map((e) => {
         const year = (e.alt.match(/\b(20\d\d)\b/) || [])[1];
@@ -294,11 +348,14 @@ const SKINS = {
   },
   'tall-tile': {
     cardCss: `.my-modelbar { --dlc-gap: 1.25rem; padding: 1.5rem; background: #14161b; }
-.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+.my-modelbar { --dlc-arrow-bg: rgb(0 0 0 / 40%); --dlc-arrow-fg: #fff; }
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
-.my-modelbar-name { margin: 0 0 0.5rem; font-size: 1.1rem; font-weight: 700; letter-spacing: 0.06em; text-align: start; text-transform: uppercase; }
+.my-modelbar-name { margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.08em; text-align: start; text-transform: uppercase; }
 .my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; }
-.my-modelbar-cta { display: inline-block; margin-block-start: 0.75rem; padding: 0.6rem 1.4rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #14161b; background: #fff; }`,
+.my-modelbar-cta { display: inline-block; margin-block-start: 0.75rem; padding: 0.6rem 1.4rem; font-size: 0.75rem; font-weight: 700; letter-spacing: 0.15em; text-transform: uppercase; color: #14161b; background: #fff; transition: background 0.2s; }
+.my-modelbar-card:hover .my-modelbar-cta, .my-modelbar-card:focus-visible .my-modelbar-cta { background: #d9d9d9; }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-cta { transition: none; } }`,
     liveSlides: (r) =>
       r.map((e) => `<a class="my-modelbar-card" href="index.html#models"><p class="my-modelbar-name">${e.name}</p>${imgTag(e, '')}<span class="my-modelbar-cta">Browse inventory</span></a>`),
     snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Giulia">
@@ -309,11 +366,13 @@ const SKINS = {
   },
   'cdjr-dark': {
     cardCss: `.my-modelbar { padding-block: 1.75rem; background: #212121; }
-.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+.my-modelbar { --dlc-arrow-bg: rgb(0 0 0 / 40%); --dlc-arrow-fg: #fff; }
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.2s; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.1); }
-.my-modelbar-card p { margin: 0.5rem 0 0; font-weight: 600; }`,
+.my-modelbar-card p { margin: 0.5rem 0 0; font-weight: 600; }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }`,
     liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${e.name}">${imgTag(e)}<p>${e.name}</p></a>`),
     snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Wrangler" aria-label="Explore the Wrangler">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Jeep Wrangler">
@@ -324,7 +383,13 @@ const SKINS = {
     cardCss: `/* Verified live 19 Aug: white background, dark uppercase labels BELOW the vehicles. */
 .my-modelbar-card { display: block; color: #222; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }`,
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: () => CATEGORY_TILES.map(([slug, cat]) => `<a class="my-modelbar-card" href="index.html#modelbar">${cutoutImg(slug, '')}<p>${cat}</p></a>`),
     snippetLabel: 'Shop by category',
     snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?bodystyle=Motorcycle">
@@ -336,7 +401,11 @@ const SKINS = {
     cardCss: `.my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; filter: grayscale(1); opacity: 0.6; transition: filter 0.2s, opacity 0.2s; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-within img { filter: none; opacity: 1; }
-.my-modelbar-card p { margin: -0.6rem 0 0; font-weight: 600; }`,
+.my-modelbar-card p { margin: -0.6rem 0 0; font-weight: 600; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }`,
     liveSlides: () => CUTOUTS.map(([slug, name, alt]) => `<a class="my-modelbar-card" href="index.html#modelbar">${cutoutImg(slug, alt)}<p>${name}</p></a>`),
     snippetLabel: 'Shop by brand',
     snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?make=Honda">
@@ -346,11 +415,15 @@ const SKINS = {
   },
   'wordmark-dark': {
     cardCss: `.my-modelbar { padding-block: 1.75rem; background: linear-gradient(#3a3a3a, #1f1f1f); }
-.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+.my-modelbar { --dlc-arrow-bg: rgb(0 0 0 / 40%); --dlc-arrow-fg: #fff; }
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
 .my-modelbar-wordmark { display: block; margin-block-end: 0.75rem; font-size: 1.3rem; font-style: italic; font-weight: 700; letter-spacing: 0.06em; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }`,
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     // No aria-label here: the visible text names the card twice (wordmark +
     // caption), and an "Explore the X" label would fail label-in-name (WCAG
     // 2.5.3). Content names the link; the cutout is decorative (alt="").
@@ -369,7 +442,13 @@ const SKINS = {
 .my-modelbar { --dlc-gap: 1rem; }
 .my-modelbar-card { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; }
 .my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
-.my-modelbar-card p { position: absolute; inset-block-end: 0; inset-inline: 0; margin: 0; padding: 0.7rem 1rem; font-weight: 700; background: rgb(20 20 20 / 88%); }`,
+.my-modelbar-card p { position: absolute; inset-block-end: 0; inset-inline: 0; margin: 0; padding: 0.7rem 1rem; font-weight: 700; background: rgb(20 20 20 / 88%); }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: () =>
       PHOTO_CARDS.map(
         ([slug, name, alt]) =>
@@ -381,13 +460,18 @@ const SKINS = {
       </a>`,
   },
   spotlight: {
-    cardCss: `.my-modelbar { --dlc-arrow-size: 64px; --dlc-arrow-fg: #14161b; --dlc-arrow-bg: rgb(255 255 255 / 85%); }
+    cardCss: `.my-modelbar { --dlc-arrow-size: 56px; --dlc-arrow-fg: #14161b; --dlc-arrow-bg: rgb(255 255 255 / 85%); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 2px 10px rgb(0 0 0 / 25%); }
 @media (min-width: 992px) { .my-modelbar { --dlc-peek: 23%; } }
+@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 44px; } }
 .my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-wordmark { display: block; margin-block-end: 0.5rem; font-size: 1.5rem; font-style: italic; font-weight: 700; letter-spacing: 0.06em; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 1.15rem; }`,
+.my-modelbar-card p { margin: 0.5rem 0 0; font-size: 1.15rem; font-weight: 600; }
+.my-modelbar-card img { transition: transform 0.25s ease; }
+.my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     // Same label-in-name reasoning as the wordmark-dark skin above.
     liveSlides: () => CUTOUTS.map(([slug, name]) => `<a class="my-modelbar-card" href="index.html#modelbar"><span class="my-modelbar-wordmark">${name}</span>${cutoutImg(slug, '')}<p>${name}</p></a>`),
     snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=GranTurismo">
@@ -399,11 +483,14 @@ const SKINS = {
   'logo-strip': {
     cardCss: `/* Verified live 19 Aug: a navy band, each make a rounded lighter-navy tile. */
 .my-modelbar { --dlc-gap: 1rem; padding: 1.5rem 1rem; background: #16294f; }
-.my-modelbar { --dlc-arrow-bg: transparent; --dlc-arrow-fg: #fff; }
+.my-modelbar { --dlc-arrow-bg: rgb(9 17 34 / 45%); --dlc-arrow-fg: #fff; }
 /* autoplay's pause button clears the overlaid next arrow - both stay 24px+ touch targets */
 .my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
-.my-modelbar-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; background: #253a5e; border-radius: 10px; }
-.my-modelbar-card img { inline-size: 75%; block-size: auto; object-fit: contain; }`,
+.my-modelbar-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; color: #fff; background: #253a5e; border: 1px solid rgb(255 255 255 / 7%); border-radius: 10px; transition: background 0.2s; }
+.my-modelbar-card:hover, .my-modelbar-card:focus-visible { background: #2e4670; }
+.my-modelbar-card img { inline-size: 75%; block-size: auto; object-fit: contain; }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card { transition: none; } }`,
     liveSlides: () => CUTOUTS.map(([slug, name]) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Shop ${name}">${cutoutImg(slug, '')}</a>`),
     snippetLabel: 'Shop by make',
     snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?make=Chevrolet" aria-label="Shop Chevrolet">
@@ -414,13 +501,21 @@ const SKINS = {
     cardCss: `/* Verified live 19 Aug: floating white cards on a light band - brand mark on
    top, name, address, phone, and a red Visit Website pill. */
 .my-modelbar { --dlc-gap: 1.25rem; padding: 1.5rem 1rem; background: #f4f6f8; }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 /* same pause-vs-arrow clearance as the makes rail */
 .my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
-.my-modelbar-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.5rem 1.25rem; color: inherit; text-align: center; text-decoration: none; background: #fff; border-radius: 10px; box-shadow: 0 4px 16px rgb(16 22 29 / 12%); }
+/* border-box, or the 100% height plus padding overflows the slide and the
+   card grows its own scrollbar */
+.my-modelbar-card { display: flex; flex-direction: column; align-items: center; box-sizing: border-box; block-size: 100%; padding: 1.5rem 1.25rem; color: inherit; text-align: center; text-decoration: none; background: #fff; border-radius: 10px; box-shadow: 0 4px 16px rgb(16 22 29 / 12%); transition: box-shadow 0.2s; }
+.my-modelbar-card:hover, .my-modelbar-card:focus-visible { box-shadow: 0 8px 24px rgb(16 22 29 / 18%); }
 .my-modelbar-card img { inline-size: 55%; block-size: auto; object-fit: contain; }
 .my-modelbar-card .my-modelbar-name { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; font-weight: 700; color: #222; }
-.my-modelbar-card p { margin: 0 0 1rem; font-size: 0.9rem; color: #5f6368; }
-.my-modelbar-visit { display: inline-block; margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.8rem; font-weight: 700; color: #fff; background: #c8102e; border-radius: 6px; }`,
+.my-modelbar-card p { margin: 0 0 0.9rem; font-size: 0.9rem; color: #5f6368; }
+.my-modelbar-visit { display: inline-block; margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.8rem; font-weight: 700; color: #fff; background: #c8102e; border-radius: 999px; }
+.my-modelbar-card:hover .my-modelbar-visit, .my-modelbar-card:focus-visible .my-modelbar-visit { background: #a80d27; }
+.my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .my-modelbar-card { transition: none; } }`,
     liveSlides: () =>
       LOCATIONS.map(
         ([store, addr, phone], i) =>
@@ -889,7 +984,7 @@ ${live}
         </details>`;
   }).join('\n');
   return `      <section class="demo-section demo-wide" id="static-bars">
-        <h3 id="static-bars-h">Model bars that are not sliders <a class="demo-anchor" href="#static-bars" aria-label="Link to this section">#</a></h3>
+        <h3 id="static-bars-h">Model bars that are not sliders<a class="demo-anchor" href="#static-bars" aria-label="Link to this section">#</a></h3>
         <p class="demo-sub">
           A recurring official family, not a one-off: several OEMs ship their model bar as a static grid or tab panes with no carousel at all. Porsche and INFINITI run hover-reveal tile grids, one
           Ford variant is a plain CSS grid (<a href="index.html#modelbar">see the main page's ladder table</a>), BMW's is tab panes with a text rail &mdash; one pane per model, and on phones it
@@ -919,7 +1014,9 @@ const staticCss = STATICS.map((d) => stripComments(d.css).replaceAll('.my-', '.s
 const recipeCss = (v, s) => {
   const rungs = (s.ladder ?? v.ladder)
     .map(([bp, n], i) =>
-      i === 0 ? `.my-modelbar { --dlc-per-view: ${n}; --dlc-peek: ${v.peek ?? '60px'}; --dlc-gap: 0.5rem; }` : `@media (min-width: ${bp}px) { .my-modelbar { --dlc-per-view: ${n}; } }`,
+      i === 0
+        ? `.my-modelbar { --dlc-per-view: ${n}; --dlc-peek: ${v.peek ?? 'clamp(32px, 9vw, 60px)'}; --dlc-gap: 0.5rem; }`
+        : `@media (min-width: ${bp}px) { .my-modelbar { --dlc-per-view: ${n}; } }`,
     )
     .join('\n');
   const dots = v.dots
@@ -927,7 +1024,8 @@ const recipeCss = (v, s) => {
     : `/* Arrows only - hide the dots and reclaim the space they reserved. */\n.my-modelbar .dl-carousel-dots { display: none; }\n.my-modelbar { --dlc-controls-space: 0px; }`;
   const auto = s.autoplay ? `\n\n/* Autoplay adds the engine's pause button (top right, first in tab order) - leave it. */` : '';
   const tabbed = s.tabbed ? `\n${TABBED_CSS}` : '';
-  return `/* ${s.copy ?? s.recipeName ?? `${v.toc} ladder`} - ${v.sites === 1 ? 'runs on 1 site' : `${v.sites} sites run this ladder`}. */\n${rungs}\n\n${dots}${auto}\n\n${SKINS[s.skin].cardCss}${tabbed}`;
+  const phones = `/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */\n@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }`;
+  return `/* ${s.copy ?? s.recipeName ?? `${v.toc} ladder`} - ${v.sites === 1 ? 'runs on 1 site' : `${v.sites} sites run this ladder`}. */\n${rungs}\n${phones}\n\n${dots}${auto}\n\n${SKINS[s.skin].cardCss}${tabbed}`;
 };
 
 // Tab chrome for tabbed strips (Chevrolet ships this way): centered heading,
@@ -942,8 +1040,11 @@ const TABBED_CSS = `
 /* The divider is a thin text-height pipe centered in the gap - NOT a border
    on the button, which would run full height and touch the labels. */
 .my-modelbar-tab + .my-modelbar-tab::before { position: absolute; inset-block-start: 50%; inset-inline-start: -1.5rem; inline-size: 1px; block-size: 1.05rem; content: ""; background: #c8ccd2; transform: translate(-50%, -50%); }
+.my-modelbar-tab:hover { border-block-end-color: #9cc6e8; }
 .my-modelbar-tab[aria-selected="true"] { border-block-end-color: #006dc7; }
 .my-modelbar-tab:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }
+/* Phones: tighter gaps, and no pipes - a wrapped row would strand them. */
+@media (max-width: 560px) { .my-modelbar-tablist { row-gap: 0.2rem; } .my-modelbar-tab { margin-inline: 0.7rem; } .my-modelbar-tab + .my-modelbar-tab::before { display: none; } }
 .my-modelbar-cta { display: block; inline-size: fit-content; padding: 0.7rem 1.6rem; margin: 1.5rem auto 0; font-weight: 600; color: #fff; text-decoration: none; background: #006dc7; border-radius: 4px; }
 .my-modelbar-cta:hover, .my-modelbar-cta:focus-visible { background: #005ba6; }
 .my-modelbar-cta:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }`;
@@ -1147,7 +1248,7 @@ ${checkList(v, s)}
 };
 
 const section = (v) => `      <section class="demo-section demo-wide" id="${v.key}">
-        <h3 id="${v.key}-h">${v.heading ?? `The ${v.toc} ladder`} &mdash; ${v.sites === 1 ? '1 site' : `${v.sites} sites`} <a class="demo-anchor" href="#${v.key}" aria-label="Link to this section">#</a></h3>
+        <h3 id="${v.key}-h">${v.heading ?? `The ${v.toc} ladder`} &mdash; ${v.sites === 1 ? '1 site' : `${v.sites} sites`}<a class="demo-anchor" href="#${v.key}" aria-label="Link to this section">#</a></h3>
         <p class="demo-sub">${v.why} Runs on ${esc(v.demos)}.${v.ladder ? ` Cards per view: ${ladderText(v.ladder)}.` : ''}</p>
 ${v.strips.map((s, i) => strip(v, s, i)).join('\n')}
         <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
@@ -1244,6 +1345,7 @@ const modelBarsPage = () => `<!doctype html>
     <link rel="stylesheet" href="../dist/dl-carousel.css" />
     <link rel="stylesheet" href="assets/demo.css" />
     <script src="../dist/dl-carousel.js" defer></script>
+    <script src="assets/vendor/prism.js" defer></script>
     <script src="assets/demo.js" defer></script>
     <style>
       /* Page chrome shared with demo/index.html lives in assets/demo.css;
@@ -1306,9 +1408,9 @@ ${staticCss
         <p class="demo-vh" role="status" id="demo-filter-count"></p>
       </div>
       <nav class="demo-toc demo-toc--chips" id="toc" aria-label="On this page">
-${PAGE_GROUPS.map((G) => `        <p class="demo-toc-group"><strong>${G.title}:</strong> ${G.keys.map((k) => `<a href="#${k}">${byKey[k].toc} (${byKey[k].sites})</a>`).join(' &middot; ')}</p>`).join('\n')}
-        <p class="demo-toc-group"><strong>Brands wearing them:</strong> ${TOC_ALIASES.map(([b, href]) => `<a href="${href}">${b}</a>`).join(' &middot; ')}</p>
-        <p class="demo-toc-group"><strong>Not the standard design:</strong> <a href="#static-bars">Not sliders</a> &middot; <a href="#outliers">The outliers</a></p>
+${PAGE_GROUPS.map((G) => `        <p class="demo-toc-group"><strong>${G.title}:</strong> ${G.keys.map((k) => `<a href="#${k}">${byKey[k].toc} (${byKey[k].sites})</a>`).join(' ')}</p>`).join('\n')}
+        <p class="demo-toc-group"><strong>Brands wearing them:</strong> ${TOC_ALIASES.map(([b, href]) => `<a href="${href}">${b}</a>`).join(' ')}</p>
+        <p class="demo-toc-group"><strong>Not the standard design:</strong> <a href="#static-bars">Not sliders</a> <a href="#outliers">The outliers</a></p>
       </nav>
 
 ${groupedSections}
@@ -1575,7 +1677,7 @@ ${slides}
   }
   const extra = r.extra ? `\n        <p class="brand-note">${r.extra}</p>` : '';
   return `      <section class="demo-section" id="b-${slug}">
-        <h2 id="b-${slug}-h">${brand}${standinChip} <a class="demo-anchor" href="#b-${slug}" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-${slug}-h">${brand}${standinChip}<a class="demo-anchor" href="#b-${slug}" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">${what}. Cards per view: ${tiers}. Copy the finished build: ${links}. Official example: <a href="https://${host}.dealeron.com/">${host}</a>.</p>
 ${body}${extra}
       </section>`;
@@ -1596,6 +1698,7 @@ const brandsPage = `<!doctype html>
     <link rel="stylesheet" href="../dist/dl-carousel.css" />
     <link rel="stylesheet" href="assets/demo.css" />
     <script src="../dist/dl-carousel.js" defer></script>
+    <script src="assets/vendor/prism.js" defer></script>
     <script src="assets/demo.js" defer></script>
     <style>
       /* Page chrome shared with the other demo pages lives in assets/demo.css. */

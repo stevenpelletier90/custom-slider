@@ -13,6 +13,7 @@
     <link rel="stylesheet" href="../dist/dl-carousel.css" />
     <link rel="stylesheet" href="assets/demo.css" />
     <script src="../dist/dl-carousel.js" defer></script>
+    <script src="assets/vendor/prism.js" defer></script>
     <script src="assets/demo.js" defer></script>
     <style>
       /* Page chrome shared with the other demo pages lives in assets/demo.css. */
@@ -42,7 +43,7 @@
          taught stay one, same rule as the model bar library page. */
       .bb-acura {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -53,6 +54,12 @@
       @media (min-width: 769px) {
         .bb-acura {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-acura {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -82,9 +89,33 @@
         font-weight: 600;
       }
 
+      .bb-acura {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-acura .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-acura-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-acura-card:hover img,
+      .bb-acura-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-acura-card img {
+          transition: none;
+        }
+      }
+      .bb-acura-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .bb-alfa-romeo {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 541px) {
@@ -108,6 +139,12 @@
         }
       }
 
+      @media (max-width: 480px) {
+        .bb-alfa-romeo {
+          --dlc-arrow-size: 36px;
+        }
+      }
+
       .bb-alfa-romeo .dl-carousel-dots {
         display: none;
       }
@@ -121,7 +158,7 @@
         background: #14161b;
       }
       .bb-alfa-romeo {
-        --dlc-arrow-bg: transparent;
+        --dlc-arrow-bg: rgb(0 0 0 / 40%);
         --dlc-arrow-fg: #fff;
       }
       .bb-alfa-romeo-card {
@@ -132,9 +169,9 @@
       }
       .bb-alfa-romeo-name {
         margin: 0 0 0.5rem;
-        font-size: 1.1rem;
+        font-size: 1.25rem;
         font-weight: 700;
-        letter-spacing: 0.06em;
+        letter-spacing: 0.08em;
         text-align: start;
         text-transform: uppercase;
       }
@@ -155,11 +192,25 @@
         text-transform: uppercase;
         color: #14161b;
         background: #fff;
+        transition: background 0.2s;
+      }
+      .bb-alfa-romeo-card:hover .bb-alfa-romeo-cta,
+      .bb-alfa-romeo-card:focus-visible .bb-alfa-romeo-cta {
+        background: #d9d9d9;
+      }
+      .bb-alfa-romeo-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-alfa-romeo-cta {
+          transition: none;
+        }
       }
 
       .bb-audi {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 361px) {
@@ -180,6 +231,12 @@
       @media (min-width: 1201px) {
         .bb-audi {
           --dlc-per-view: 6;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-audi {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -209,9 +266,33 @@
         font-weight: 600;
       }
 
+      .bb-audi {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-audi .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-audi-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-audi-card:hover img,
+      .bb-audi-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-audi-card img {
+          transition: none;
+        }
+      }
+      .bb-audi-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .bb-buick {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -222,6 +303,12 @@
       @media (min-width: 769px) {
         .bb-buick {
           --dlc-per-view: 4;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-buick {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -251,9 +338,33 @@
         font-weight: 600;
       }
 
+      .bb-buick {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-buick .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-buick-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-buick-card:hover img,
+      .bb-buick-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-buick-card img {
+          transition: none;
+        }
+      }
+      .bb-buick-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .bb-cadillac {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 540px) {
@@ -272,6 +383,12 @@
         }
       }
 
+      @media (max-width: 480px) {
+        .bb-cadillac {
+          --dlc-arrow-size: 36px;
+        }
+      }
+
       .bb-cadillac .dl-carousel-dots {
         display: none;
       }
@@ -283,8 +400,9 @@
         padding-block: 1.75rem;
         background: #101010;
       }
+
       .bb-cadillac {
-        --dlc-arrow-bg: transparent;
+        --dlc-arrow-bg: rgb(0 0 0 / 40%);
         --dlc-arrow-fg: #fff;
       }
       .bb-cadillac-card {
@@ -305,10 +423,26 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
       }
+      .bb-cadillac-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-cadillac-card:hover img,
+      .bb-cadillac-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-cadillac-card img {
+          transition: none;
+        }
+      }
+      .bb-cadillac-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
 
       .bb-chevrolet {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 540px) {
@@ -324,6 +458,12 @@
       @media (min-width: 1200px) {
         .bb-chevrolet {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-chevrolet {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -351,6 +491,30 @@
       .bb-chevrolet-card p {
         margin: 0.25rem 0 0;
         font-weight: 600;
+      }
+
+      .bb-chevrolet {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-chevrolet .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-chevrolet-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-chevrolet-card:hover img,
+      .bb-chevrolet-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-chevrolet-card img {
+          transition: none;
+        }
+      }
+      .bb-chevrolet-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
       }
 
       .bb-chevrolet-title {
@@ -391,12 +555,27 @@
         background: #c8ccd2;
         transform: translate(-50%, -50%);
       }
+      .bb-chevrolet-tab:hover {
+        border-block-end-color: #9cc6e8;
+      }
       .bb-chevrolet-tab[aria-selected='true'] {
         border-block-end-color: #006dc7;
       }
       .bb-chevrolet-tab:focus-visible {
         outline: 3px solid #16324f;
         outline-offset: 2px;
+      }
+
+      @media (max-width: 560px) {
+        .bb-chevrolet-tablist {
+          row-gap: 0.2rem;
+        }
+        .bb-chevrolet-tab {
+          margin-inline: 0.7rem;
+        }
+        .bb-chevrolet-tab + .bb-chevrolet-tab::before {
+          display: none;
+        }
       }
       .bb-chevrolet-cta {
         display: block;
@@ -420,7 +599,7 @@
 
       .bb-chrysler-dodge-jeep-ram {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -431,6 +610,12 @@
       @media (min-width: 992px) {
         .bb-chrysler-dodge-jeep-ram {
           --dlc-per-view: 6;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-chrysler-dodge-jeep-ram {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -446,7 +631,7 @@
         background: #212121;
       }
       .bb-chrysler-dodge-jeep-ram {
-        --dlc-arrow-bg: transparent;
+        --dlc-arrow-bg: rgb(0 0 0 / 40%);
         --dlc-arrow-fg: #fff;
       }
       .bb-chrysler-dodge-jeep-ram-card {
@@ -469,15 +654,30 @@
         margin: 0.5rem 0 0;
         font-weight: 600;
       }
+      .bb-chrysler-dodge-jeep-ram-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-chrysler-dodge-jeep-ram-card img {
+          transition: none;
+        }
+      }
 
       .bb-ferrari {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 768px) {
         .bb-ferrari {
           --dlc-per-view: 3;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-ferrari {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -493,7 +693,7 @@
         background: linear-gradient(#3a3a3a, #1f1f1f);
       }
       .bb-ferrari {
-        --dlc-arrow-bg: transparent;
+        --dlc-arrow-bg: rgb(0 0 0 / 40%);
         --dlc-arrow-fg: #fff;
       }
       .bb-ferrari-card {
@@ -522,10 +722,26 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
       }
+      .bb-ferrari-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-ferrari-card:hover img,
+      .bb-ferrari-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-ferrari-card img {
+          transition: none;
+        }
+      }
+      .bb-ferrari-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
 
       .bb-ford {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -536,6 +752,12 @@
       @media (min-width: 992px) {
         .bb-ford {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-ford {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -565,9 +787,33 @@
         font-weight: 600;
       }
 
+      .bb-ford {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-ford .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-ford-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-ford-card:hover img,
+      .bb-ford-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-ford-card img {
+          transition: none;
+        }
+      }
+      .bb-ford-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .bb-genesis {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 541px) {
@@ -583,6 +829,12 @@
       @media (min-width: 1201px) {
         .bb-genesis {
           --dlc-per-view: 4;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-genesis {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -606,16 +858,43 @@
       }
       .bb-genesis-card p {
         margin: 0.25rem 0 0;
+        font-size: 1.05rem;
         font-weight: 600;
       }
       .bb-genesis-card small {
         display: block;
+        margin-block-start: 0.1rem;
+        font-size: 0.8rem;
         color: #5f6368;
+        letter-spacing: 0.02em;
+      }
+      .bb-genesis {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-genesis .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-genesis-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-genesis-card:hover img,
+      .bb-genesis-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-genesis-card img {
+          transition: none;
+        }
+      }
+      .bb-genesis-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
       }
 
       .bb-gmc {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -626,6 +905,12 @@
       @media (min-width: 769px) {
         .bb-gmc {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-gmc {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -655,9 +940,33 @@
         font-weight: 600;
       }
 
+      .bb-gmc {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-gmc .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-gmc-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-gmc-card:hover img,
+      .bb-gmc-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-gmc-card img {
+          transition: none;
+        }
+      }
+      .bb-gmc-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .bb-group-sites {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 769px) {
@@ -668,6 +977,12 @@
       @media (min-width: 993px) {
         .bb-group-sites {
           --dlc-per-view: 7;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-group-sites {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -684,7 +999,7 @@
         background: #16294f;
       }
       .bb-group-sites {
-        --dlc-arrow-bg: transparent;
+        --dlc-arrow-bg: rgb(9 17 34 / 45%);
         --dlc-arrow-fg: #fff;
       }
 
@@ -697,18 +1012,34 @@
         justify-content: center;
         aspect-ratio: 3 / 2;
         padding: 1rem;
+        color: #fff;
         background: #253a5e;
+        border: 1px solid rgb(255 255 255 / 7%);
         border-radius: 10px;
+        transition: background 0.2s;
+      }
+      .bb-group-sites-card:hover,
+      .bb-group-sites-card:focus-visible {
+        background: #2e4670;
       }
       .bb-group-sites-card img {
         inline-size: 75%;
         block-size: auto;
         object-fit: contain;
       }
+      .bb-group-sites-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-group-sites-card {
+          transition: none;
+        }
+      }
 
       .bb-honda {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -719,6 +1050,12 @@
       @media (min-width: 769px) {
         .bb-honda {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-honda {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -748,9 +1085,33 @@
         font-weight: 600;
       }
 
+      .bb-honda {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-honda .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-honda-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-honda-card:hover img,
+      .bb-honda-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-honda-card img {
+          transition: none;
+        }
+      }
+      .bb-honda-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .bb-hyundai {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -766,6 +1127,12 @@
       @media (min-width: 1201px) {
         .bb-hyundai {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-hyundai {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -795,9 +1162,33 @@
         font-weight: 600;
       }
 
+      .bb-hyundai {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-hyundai .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-hyundai-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-hyundai-card:hover img,
+      .bb-hyundai-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-hyundai-card img {
+          transition: none;
+        }
+      }
+      .bb-hyundai-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .bb-jaguar {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -808,6 +1199,12 @@
       @media (min-width: 769px) {
         .bb-jaguar {
           --dlc-per-view: 4;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-jaguar {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -837,9 +1234,33 @@
         font-weight: 600;
       }
 
+      .bb-jaguar {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-jaguar .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-jaguar-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-jaguar-card:hover img,
+      .bb-jaguar-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-jaguar-card img {
+          transition: none;
+        }
+      }
+      .bb-jaguar-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .bb-kia {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -850,6 +1271,12 @@
       @media (min-width: 769px) {
         .bb-kia {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-kia {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -879,9 +1306,33 @@
         font-weight: 600;
       }
 
+      .bb-kia {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-kia .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-kia-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-kia-card:hover img,
+      .bb-kia-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-kia-card img {
+          transition: none;
+        }
+      }
+      .bb-kia-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .bb-land-rover {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -892,6 +1343,12 @@
       @media (min-width: 769px) {
         .bb-land-rover {
           --dlc-per-view: 4;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-land-rover {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -921,9 +1378,33 @@
         font-weight: 600;
       }
 
+      .bb-land-rover {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-land-rover .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-land-rover-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-land-rover-card:hover img,
+      .bb-land-rover-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-land-rover-card img {
+          transition: none;
+        }
+      }
+      .bb-land-rover-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .bb-lexus {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 401px) {
@@ -939,6 +1420,12 @@
       @media (min-width: 992px) {
         .bb-lexus {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-lexus {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -971,10 +1458,33 @@
         letter-spacing: 0.1em;
         text-transform: uppercase;
       }
+      .bb-lexus {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-lexus .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-lexus-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-lexus-card:hover img,
+      .bb-lexus-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-lexus-card img {
+          transition: none;
+        }
+      }
+      .bb-lexus-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
 
       .bb-lincoln {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -985,6 +1495,12 @@
       @media (min-width: 993px) {
         .bb-lincoln {
           --dlc-per-view: 4;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-lincoln {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -1017,11 +1533,40 @@
         letter-spacing: 0.14em;
         text-transform: uppercase;
       }
+      .bb-lincoln {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-lincoln .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-lincoln-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-lincoln-card:hover img,
+      .bb-lincoln-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-lincoln-card img {
+          transition: none;
+        }
+      }
+      .bb-lincoln-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
 
       .bb-maserati {
         --dlc-per-view: 1;
         --dlc-peek: 20%;
         --dlc-gap: 0.5rem;
+      }
+
+      @media (max-width: 480px) {
+        .bb-maserati {
+          --dlc-arrow-size: 36px;
+        }
       }
 
       .bb-maserati .dl-carousel-dots {
@@ -1032,7 +1577,7 @@
       }
 
       .bb-maserati {
-        --dlc-arrow-size: 64px;
+        --dlc-arrow-size: 56px;
         --dlc-arrow-fg: #14161b;
         --dlc-arrow-bg: rgb(255 255 255 / 85%);
       }
@@ -1042,6 +1587,11 @@
       @media (min-width: 992px) {
         .bb-maserati {
           --dlc-peek: 23%;
+        }
+      }
+      @media (max-width: 480px) {
+        .bb-maserati {
+          --dlc-arrow-size: 44px;
         }
       }
       .bb-maserati-card {
@@ -1066,11 +1616,28 @@
       .bb-maserati-card p {
         margin: 0.5rem 0 0;
         font-size: 1.15rem;
+        font-weight: 600;
+      }
+      .bb-maserati-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-maserati-card:hover img,
+      .bb-maserati-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-maserati-card img {
+          transition: none;
+        }
+      }
+      .bb-maserati-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
       }
 
       .bb-mazda {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 769px) {
@@ -1084,6 +1651,12 @@
         }
       }
 
+      @media (max-width: 480px) {
+        .bb-mazda {
+          --dlc-arrow-size: 36px;
+        }
+      }
+
       .bb-mazda-card {
         display: flex;
         flex-direction: column;
@@ -1094,7 +1667,7 @@
       .bb-mazda-card p {
         order: -1;
         margin: 0 0 0.5rem;
-        font-size: 0.85rem;
+        font-size: 0.95rem;
         font-weight: 600;
         letter-spacing: 0.12em;
         text-transform: uppercase;
@@ -1109,14 +1682,43 @@
         margin-block-start: 0.75rem;
         padding: 0.35rem 0.9rem;
         font-size: 0.7rem;
+        color: #55585c;
         letter-spacing: 0.14em;
         text-transform: uppercase;
-        background: #ececec;
+        background: #f2f2f2;
+        border-radius: 2px;
+      }
+      .bb-mazda-card:hover small,
+      .bb-mazda-card:focus-visible small {
+        background: #e2e2e2;
+      }
+      .bb-mazda {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-mazda .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-mazda-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-mazda-card:hover img,
+      .bb-mazda-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-mazda-card img {
+          transition: none;
+        }
+      }
+      .bb-mazda-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
       }
 
       .bb-mitsubishi {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -1127,6 +1729,12 @@
       @media (min-width: 769px) {
         .bb-mitsubishi {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-mitsubishi {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -1156,9 +1764,33 @@
         font-weight: 600;
       }
 
+      .bb-mitsubishi {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-mitsubishi .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-mitsubishi-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-mitsubishi-card:hover img,
+      .bb-mitsubishi-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-mitsubishi-card img {
+          transition: none;
+        }
+      }
+      .bb-mitsubishi-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .bb-nissan {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 401px) {
@@ -1174,6 +1806,12 @@
       @media (min-width: 992px) {
         .bb-nissan {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-nissan {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -1203,9 +1841,33 @@
         font-weight: 600;
       }
 
+      .bb-nissan {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-nissan .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-nissan-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-nissan-card:hover img,
+      .bb-nissan-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-nissan-card img {
+          transition: none;
+        }
+      }
+      .bb-nissan-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .bb-powersports {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 461px) {
@@ -1216,6 +1878,12 @@
       @media (min-width: 993px) {
         .bb-powersports {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-powersports {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -1244,10 +1912,33 @@
         letter-spacing: 0.18em;
         text-transform: uppercase;
       }
+      .bb-powersports {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-powersports .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-powersports-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-powersports-card:hover img,
+      .bb-powersports-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-powersports-card img {
+          transition: none;
+        }
+      }
+      .bb-powersports-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
 
       .bb-subaru {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 540px) {
@@ -1263,6 +1954,12 @@
       @media (min-width: 1200px) {
         .bb-subaru {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-subaru {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -1292,14 +1989,44 @@
         font-weight: 600;
       }
 
+      .bb-subaru {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-subaru .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-subaru-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-subaru-card:hover img,
+      .bb-subaru-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-subaru-card img {
+          transition: none;
+        }
+      }
+      .bb-subaru-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+
       .bb-toyota {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 541px) {
         .bb-toyota {
           --dlc-per-view: 2;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-toyota {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -1321,6 +2048,24 @@
         background: #2f2f2f;
         border-radius: 8px;
       }
+
+      .bb-toyota-copy {
+        min-inline-size: 0;
+      }
+      @media (max-width: 600px) {
+        .bb-toyota-copy {
+          gap: 0.35rem;
+          padding: 1rem;
+        }
+        .bb-toyota-copy .bb-toyota-name {
+          font-size: 1.15rem;
+        }
+        .bb-toyota-shop {
+          padding: 0.45rem 1rem;
+          font-size: 0.8rem;
+          white-space: nowrap;
+        }
+      }
       .bb-toyota-card img {
         inline-size: 48%;
         block-size: auto;
@@ -1337,6 +2082,7 @@
       .bb-toyota-copy small {
         font-size: 0.85rem;
         color: #d9d9d9;
+        letter-spacing: 0.03em;
       }
       .bb-toyota-copy .bb-toyota-name {
         margin: 0;
@@ -1351,11 +2097,32 @@
         color: #222;
         background: #fff;
         border-radius: 999px;
+        transition: background 0.2s;
+      }
+      .bb-toyota-card:hover .bb-toyota-shop,
+      .bb-toyota-card:focus-visible .bb-toyota-shop {
+        background: #e6e6e6;
+      }
+      .bb-toyota {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-toyota .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-toyota-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-toyota-shop {
+          transition: none;
+        }
       }
 
       .bb-volkswagen {
         --dlc-per-view: 1;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 541px) {
@@ -1371,6 +2138,12 @@
       @media (min-width: 1201px) {
         .bb-volkswagen {
           --dlc-per-view: 4;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-volkswagen {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -1407,10 +2180,33 @@
         margin: 0.4rem 0 0;
         font-weight: 700;
       }
+      .bb-volkswagen {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-volkswagen .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-volkswagen-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-volkswagen-card:hover img,
+      .bb-volkswagen-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-volkswagen-card img {
+          transition: none;
+        }
+      }
+      .bb-volkswagen-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
 
       .bb-volvo {
         --dlc-per-view: 2;
-        --dlc-peek: 60px;
+        --dlc-peek: clamp(32px, 9vw, 60px);
         --dlc-gap: 0.5rem;
       }
       @media (min-width: 540px) {
@@ -1426,6 +2222,12 @@
       @media (min-width: 1200px) {
         .bb-volvo {
           --dlc-per-view: 5;
+        }
+      }
+
+      @media (max-width: 480px) {
+        .bb-volvo {
+          --dlc-arrow-size: 36px;
         }
       }
 
@@ -1454,6 +2256,30 @@
         margin: 0.25rem 0 0;
         font-weight: 600;
       }
+
+      .bb-volvo {
+        --dlc-arrow-fg: #222;
+        --dlc-arrow-bg: rgb(255 255 255 / 92%);
+      }
+      .bb-volvo .dl-carousel-arrow {
+        box-shadow: 0 1px 6px rgb(0 0 0 / 20%);
+      }
+      .bb-volvo-card img {
+        transition: transform 0.25s ease;
+      }
+      .bb-volvo-card:hover img,
+      .bb-volvo-card:focus-visible img {
+        transform: scale(1.04);
+      }
+      @media (prefers-reduced-motion: reduce) {
+        .bb-volvo-card img {
+          transition: none;
+        }
+      }
+      .bb-volvo-card:focus-visible {
+        outline: 3px solid currentcolor;
+        outline-offset: 3px;
+      }
     </style>
   </head>
   <body>
@@ -1480,7 +2306,7 @@
         <p class="demo-vh" role="status" id="demo-filter-count"></p>
       </div>
       <section class="demo-section" id="b-acura">
-        <h2 id="b-acura-h">Acura <a class="demo-anchor" href="#b-acura" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-acura-h">Acura<a class="demo-anchor" href="#b-acura" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider. Cards per view: 2 / 3 / 5. Copy the finished build: <a href="model-bars.html#acura">Acura ladder</a>. Official example: <a href="https://acurademo1.dealeron.com/">acurademo1</a>.
         </p>
@@ -1530,7 +2356,7 @@
       </section>
 
       <section class="demo-section" id="b-alfa-romeo">
-        <h2 id="b-alfa-romeo-h">Alfa Romeo <a class="demo-anchor" href="#b-alfa-romeo" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-alfa-romeo-h">Alfa Romeo<a class="demo-anchor" href="#b-alfa-romeo" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider — tall photo tiles with a CTA. Cards per view: 1 / 2 / 3 / 4 / 6. Copy the finished build: <a href="model-bars.html#alfaromeo">Alfa Romeo ladder</a>. Official example:
           <a href="https://alfaromeodemo1.dealeron.com/">alfaromeodemo1</a>.
@@ -1581,7 +2407,7 @@
       </section>
 
       <section class="demo-section" id="b-audi">
-        <h2 id="b-audi-h">Audi <a class="demo-anchor" href="#b-audi" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-audi-h">Audi<a class="demo-anchor" href="#b-audi" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider. Cards per view: 1 / 2 / 3 / 4 / 6. Copy the finished build: <a href="model-bars.html#audi">Audi ladder</a>. Official example: <a href="https://audidemo1.dealeron.com/">audidemo1</a>.
         </p>
@@ -1631,7 +2457,7 @@
       </section>
 
       <section class="demo-section" id="b-bmw">
-        <h2 id="b-bmw-h">BMW <a class="demo-anchor" href="#b-bmw" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-bmw-h">BMW<a class="demo-anchor" href="#b-bmw" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Tab panes; a static stacked list on phones — no slider. Cards per view: &mdash;. Copy the finished build: <a href="model-bars.html#static-bars">Not-sliders family</a> &middot;
           <a href="index.html#modelbar-tabs">tab wiring</a>. Official example: <a href="https://bmwdemo1.dealeron.com/">bmwdemo1</a>.
@@ -1643,7 +2469,7 @@
       </section>
 
       <section class="demo-section" id="b-buick">
-        <h2 id="b-buick-h">Buick <a class="demo-anchor" href="#b-buick" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-buick-h">Buick<a class="demo-anchor" href="#b-buick" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider. Cards per view: 2 / 3 / 4. Copy the finished build: <a href="model-bars.html#buick">Buick ladder</a>. Official example: <a href="https://buickdemo1.dealeron.com/">buickdemo1</a>.
         </p>
@@ -1681,7 +2507,7 @@
       </section>
 
       <section class="demo-section" id="b-cadillac">
-        <h2 id="b-cadillac-h">Cadillac <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-cadillac" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-cadillac-h">Cadillac <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-cadillac" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider under body-style tabs, dark band. Cards per view: 2 / 3 / 4 / 5. Copy the finished build: <a href="model-bars.html#mbx-chevrolet-1-h">the dark look on the Chevrolet ladder</a>.
           Official example: <a href="https://cadillacdemo1.dealeron.com/">cadillacdemo1</a>.
@@ -1816,7 +2642,7 @@
       </section>
 
       <section class="demo-section" id="b-chevrolet">
-        <h2 id="b-chevrolet-h">Chevrolet <a class="demo-anchor" href="#b-chevrolet" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-chevrolet-h">Chevrolet<a class="demo-anchor" href="#b-chevrolet" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Tabbed slider (tabs are the official version since Nov 2025). Cards per view: 2 / 3 / 4 / 5. Copy the finished build: <a href="model-bars.html#chevrolet">Chevrolet ladder</a> &middot;
           <a href="index.html#modelbar-tabs">tab wiring</a>. Official example: <a href="https://chevroletdemo1.dealeron.com/">chevroletdemo1</a>.
@@ -2082,7 +2908,7 @@
       </section>
 
       <section class="demo-section" id="b-chrysler-dodge-jeep-ram">
-        <h2 id="b-chrysler-dodge-jeep-ram-h">Chrysler / Dodge / Jeep / Ram <a class="demo-anchor" href="#b-chrysler-dodge-jeep-ram" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-chrysler-dodge-jeep-ram-h">Chrysler / Dodge / Jeep / Ram<a class="demo-anchor" href="#b-chrysler-dodge-jeep-ram" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Brand-logo tabs over sliders on a dark band. Cards per view: 2 / 3 / 6. Copy the finished build: <a href="model-bars.html#cdjr">CDJR ladder</a>. Official example:
           <a href="https://cdjrdemo1.dealeron.com/">cdjrdemo1</a>.
@@ -2146,7 +2972,7 @@
       </section>
 
       <section class="demo-section" id="b-ferrari">
-        <h2 id="b-ferrari-h">Ferrari <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-ferrari" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-ferrari-h">Ferrari <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-ferrari" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider — wordmark band, or lifestyle photo cards. Cards per view: 1 / 3 &middot; 1 / 2 / 3 / 4. Copy the finished build: <a href="model-bars.html#ferrari">Ferrari band</a> &middot;
           <a href="model-bars.html#ferrari-photo">photo cards</a>. Official example: <a href="https://ferraridemo1.dealeron.com/">ferraridemo1</a>.
@@ -2290,7 +3116,7 @@
       </section>
 
       <section class="demo-section" id="b-fiat">
-        <h2 id="b-fiat-h">Fiat <a class="demo-anchor" href="#b-fiat" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-fiat-h">Fiat<a class="demo-anchor" href="#b-fiat" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Rides the CDJR bar (Fiat-including variant). Cards per view: 2 / 3 / 6. Copy the finished build: <a href="model-bars.html#cdjr">CDJR ladder</a>. Official example:
           <a href="https://cdjrdemo1.dealeron.com/">cdjrdemo1</a>.
@@ -2299,7 +3125,7 @@
       </section>
 
       <section class="demo-section" id="b-ford">
-        <h2 id="b-ford-h">Ford <a class="demo-anchor" href="#b-ford" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-ford-h">Ford<a class="demo-anchor" href="#b-ford" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider, a static CSS grid, and a tabbed version. Cards per view: 1 / 3 / 5. Copy the finished build: <a href="model-bars.html#ford">Ford ladder</a> &middot;
           <a href="model-bars.html#static-bars">static grid</a>. Official example: <a href="https://forddemo3.dealeron.com/">forddemo3</a>.
@@ -2354,7 +3180,7 @@
       </section>
 
       <section class="demo-section" id="b-genesis">
-        <h2 id="b-genesis-h">Genesis <a class="demo-anchor" href="#b-genesis" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-genesis-h">Genesis<a class="demo-anchor" href="#b-genesis" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Tabbed slider with inventory counts. Cards per view: 1 / 2 / 3 / 4 (new platform: 1 / 2 / 3). Copy the finished build: <a href="model-bars.html#genesis">Genesis ladder</a>. Official example:
           <a href="https://genesisdemo1.dealeron.com/">genesisdemo1</a>.
@@ -2411,7 +3237,7 @@
       </section>
 
       <section class="demo-section" id="b-gmc">
-        <h2 id="b-gmc-h">GMC <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-gmc" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-gmc-h">GMC <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-gmc" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Tabs; the slick version rides the Acura tiers. Cards per view: 2 / 3 / 5. Copy the finished build: <a href="model-bars.html#acura">Acura ladder</a> &middot;
           <a href="index.html#modelbar-tabs">tab wiring</a>. Official example: <a href="https://gmcdemo1.dealeron.com/">gmcdemo1</a>.
@@ -2546,7 +3372,7 @@
       </section>
 
       <section class="demo-section" id="b-group-sites">
-        <h2 id="b-group-sites-h">Group sites <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-group-sites" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-group-sites-h">Group sites <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-group-sites" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Autoplaying make-logo and rooftop-location rails. Cards per view: 2 / 4 / 7 &middot; 1 / 2 / 4. Copy the finished build: <a href="model-bars.html#group">Group-site strips</a>. Official
           example: <a href="https://groupdemo1.dealeron.com/">groupdemo1</a>.
@@ -2666,7 +3492,7 @@
       </section>
 
       <section class="demo-section" id="b-honda">
-        <h2 id="b-honda-h">Honda <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-honda" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-honda-h">Honda <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-honda" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider (plus a tabbed variant). Cards per view: 2 / 3 / 5. Copy the finished build: <a href="model-bars.html#acura">Acura ladder</a>. Official example:
           <a href="https://hondademo4.dealeron.com/">hondademo4</a>.
@@ -2801,7 +3627,7 @@
       </section>
 
       <section class="demo-section" id="b-hyundai">
-        <h2 id="b-hyundai-h">Hyundai <a class="demo-anchor" href="#b-hyundai" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-hyundai-h">Hyundai<a class="demo-anchor" href="#b-hyundai" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider, and a tabbed version. Cards per view: 1 / 3 / 4 / 5. Copy the finished build: <a href="model-bars.html#hyundai">Hyundai ladder</a>. Official example:
           <a href="https://hyundaidemo1.dealeron.com/">hyundaidemo1</a>.
@@ -2852,7 +3678,7 @@
       </section>
 
       <section class="demo-section" id="b-infiniti">
-        <h2 id="b-infiniti-h">INFINITI <a class="demo-anchor" href="#b-infiniti" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-infiniti-h">INFINITI<a class="demo-anchor" href="#b-infiniti" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Static tile grid — no slider. Cards per view: 2 / 2 / 3 across. Copy the finished build: <a href="model-bars.html#static-bars">tile-grid family</a>. Official example:
           <a href="https://infinitidemo1.dealeron.com/">infinitidemo1</a>.
@@ -2863,7 +3689,7 @@
       </section>
 
       <section class="demo-section" id="b-jaguar">
-        <h2 id="b-jaguar-h">Jaguar <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-jaguar" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-jaguar-h">Jaguar <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-jaguar" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider — photo cards with a tagline. Cards per view: 2 / 3 / 4. Copy the finished build: <a href="model-bars.html#buick">Buick ladder</a>. Official example:
           <a href="https://jaguardemo3.dealeron.com/">jaguardemo3</a>.
@@ -2999,7 +3825,7 @@
       </section>
 
       <section class="demo-section" id="b-kia">
-        <h2 id="b-kia-h">Kia <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-kia" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-kia-h">Kia <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-kia" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider; a tabbed version; and a centre-mode version. Cards per view: 2 / 3 / 5. Copy the finished build: <a href="model-bars.html#acura">Acura ladder</a> &middot;
           <a href="index.html#peek">centre mode</a>. Official example: <a href="https://kiademo3.dealeron.com/">kiademo3</a>.
@@ -3135,7 +3961,7 @@
       </section>
 
       <section class="demo-section" id="b-land-rover">
-        <h2 id="b-land-rover-h">Land Rover <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-land-rover" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-land-rover-h">Land Rover <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-land-rover" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider — photo cards with a tagline. Cards per view: 2 / 3 / 4. Copy the finished build: <a href="model-bars.html#buick">Buick ladder</a>. Official example:
           <a href="https://landroverdemo3.dealeron.com/">landroverdemo3</a>.
@@ -3271,7 +4097,7 @@
       </section>
 
       <section class="demo-section" id="b-lexus">
-        <h2 id="b-lexus-h">Lexus <a class="demo-anchor" href="#b-lexus" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-lexus-h">Lexus<a class="demo-anchor" href="#b-lexus" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Tabbed slider; the v2 look rides the Acura tiers. Cards per view: 1 / 2 / 3 / 5. Copy the finished build: <a href="model-bars.html#lexus">Lexus ladder</a>. Official example:
           <a href="https://lexusdemo1.dealeron.com/">lexusdemo1</a>.
@@ -3322,7 +4148,7 @@
       </section>
 
       <section class="demo-section" id="b-lincoln">
-        <h2 id="b-lincoln-h">Lincoln <a class="demo-anchor" href="#b-lincoln" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-lincoln-h">Lincoln<a class="demo-anchor" href="#b-lincoln" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider. Cards per view: 2 / 3 / 4. Copy the finished build: <a href="model-bars.html#lincoln">Lincoln ladder</a>. Official example:
           <a href="https://lincolndemo2.dealeron.com/">lincolndemo2</a>.
@@ -3361,7 +4187,7 @@
       </section>
 
       <section class="demo-section" id="b-maserati">
-        <h2 id="b-maserati-h">Maserati <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-maserati" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-maserati-h">Maserati <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-maserati" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Spotlight slider — one huge centred card. Cards per view: 1-up centre mode. Copy the finished build: <a href="model-bars.html#maserati">Maserati spotlight</a>. Official example:
           <a href="https://maseratidemo4.dealeron.com/">maseratidemo4</a>.
@@ -3504,7 +4330,7 @@
       </section>
 
       <section class="demo-section" id="b-mazda">
-        <h2 id="b-mazda-h">Mazda <a class="demo-anchor" href="#b-mazda" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-mazda-h">Mazda<a class="demo-anchor" href="#b-mazda" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Tabbed slider — and it keeps its dots. Cards per view: 1 / 2 / 3. Copy the finished build: <a href="model-bars.html#mazda">Mazda ladder</a>. Official example:
           <a href="https://mazdademo1.dealeron.com/">mazdademo1</a>.
@@ -3561,7 +4387,7 @@
       </section>
 
       <section class="demo-section" id="b-mitsubishi">
-        <h2 id="b-mitsubishi-h">Mitsubishi <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-mitsubishi" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-mitsubishi-h">Mitsubishi <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-mitsubishi" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider. Cards per view: 2 / 3 / 5. Copy the finished build: <a href="model-bars.html#acura">Acura ladder</a>. Official example:
           <a href="https://mitsubishidemo1.dealeron.com/">mitsubishidemo1</a>.
@@ -3696,7 +4522,7 @@
       </section>
 
       <section class="demo-section" id="b-nissan">
-        <h2 id="b-nissan-h">Nissan <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-nissan" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-nissan-h">Nissan <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-nissan" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Tabbed slider. Cards per view: 1 / 2 / 3 / 5. Copy the finished build: <a href="model-bars.html#lexus">Lexus ladder</a>. Official example:
           <a href="https://nissandemo1.dealeron.com/">nissandemo1</a>.
@@ -3832,7 +4658,7 @@
       </section>
 
       <section class="demo-section" id="b-porsche">
-        <h2 id="b-porsche-h">Porsche <a class="demo-anchor" href="#b-porsche" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-porsche-h">Porsche<a class="demo-anchor" href="#b-porsche" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Hover-reveal photo tile grid — no slider. Cards per view: 2 / 3 / 6 across. Copy the finished build: <a href="model-bars.html#static-bars">tile-grid family</a>. Official example:
           <a href="https://porschedemo1.dealeron.com/">porschedemo1</a>.
@@ -3841,7 +4667,7 @@
       </section>
 
       <section class="demo-section" id="b-powersports">
-        <h2 id="b-powersports-h">Powersports <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-powersports" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-powersports-h">Powersports <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-powersports" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Category bar and a brand-logo strip. Cards per view: 2 / 3 / 5 &middot; 2 / 3 / 6. Copy the finished build: <a href="model-bars.html#powersports-cat">category bar</a> &middot;
           <a href="model-bars.html#powersports-brands">brand strip</a>. Official example: <a href="https://powersportsdemo2.dealeron.com/">powersportsdemo2</a>.
@@ -3946,7 +4772,7 @@
       </section>
 
       <section class="demo-section" id="b-subaru">
-        <h2 id="b-subaru-h">Subaru <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-subaru" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-subaru-h">Subaru <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-subaru" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Tabbed slider (icon tabs). Cards per view: 2 / 3 / 4 / 5. Copy the finished build: <a href="model-bars.html#chevrolet">Chevrolet ladder</a>. Official example:
           <a href="https://subarudemo2.dealeron.com/">subarudemo2</a>.
@@ -4082,7 +4908,7 @@
       </section>
 
       <section class="demo-section" id="b-toyota">
-        <h2 id="b-toyota-h">Toyota <a class="demo-anchor" href="#b-toyota" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-toyota-h">Toyota<a class="demo-anchor" href="#b-toyota" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider (photo cards) plus three tabbed versions on the Lexus tiers. Cards per view: 1 / 2 own &middot; 1 / 2 / 3 / 5. Copy the finished build:
           <a href="model-bars.html#toyota">Toyota photo cards</a> &middot; <a href="model-bars.html#lexus">Lexus ladder</a>. Official example:
@@ -4152,7 +4978,7 @@
       </section>
 
       <section class="demo-section" id="b-volkswagen">
-        <h2 id="b-volkswagen-h">Volkswagen <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-volkswagen" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-volkswagen-h">Volkswagen <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-volkswagen" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Tabbed slider — a colour tile behind each car. Cards per view: 1 / 2 / 3 / 4. Copy the finished build: <a href="model-bars.html#mbx-genesis-1-h">the tile look on the Genesis ladder</a>.
           Official example: <a href="https://vwdemo1.dealeron.com/">vwdemo1</a>.
@@ -4295,7 +5121,7 @@
       </section>
 
       <section class="demo-section" id="b-volvo">
-        <h2 id="b-volvo-h">Volvo <span class="demo-standin">stand-in photos</span> <a class="demo-anchor" href="#b-volvo" aria-label="Link to this section">#</a></h2>
+        <h2 id="b-volvo-h">Volvo <span class="demo-standin">stand-in photos</span><a class="demo-anchor" href="#b-volvo" aria-label="Link to this section">#</a></h2>
         <p class="demo-sub">
           Slider. Cards per view: 2 / 3 / 4 / 5. Copy the finished build: <a href="model-bars.html#chevrolet">Chevrolet ladder</a>. Official example:
           <a href="https://volvodemo1.dealeron.com/">volvodemo1</a>.
