@@ -63,7 +63,13 @@ two tags:
           var css = document.createElement('link');
           css.rel = 'stylesheet';
           css.href = '/assets/shared/CustomHTMLFiles/dl-carousel/dl-carousel.css';
-          document.head.appendChild(css);
+          // PREPEND, never append: the engine stylesheet carries the default
+          // --dlc-* values at the same specificity as your recipe CSS, so it
+          // must land BEFORE the page's Style Only CSS in the cascade.
+          // Appended at the end of <head> it silently overrides every recipe
+          // override (--dlc-per-view snaps back to 1, peek to 0) — found live
+          // on the spelletier test site, 2026-08-20.
+          document.head.insertBefore(css, document.head.firstChild);
           var js = document.createElement('script');
           js.src = '/assets/shared/CustomHTMLFiles/dl-carousel/dl-carousel.js';
           document.head.appendChild(js);
