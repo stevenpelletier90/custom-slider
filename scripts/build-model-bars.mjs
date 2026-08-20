@@ -190,7 +190,7 @@ const SKINS = {
 /* Soft white arrow discs instead of the engine's gray defaults, a gentle
    cutout lift on hover/focus (transform only - no layout shift), and a
    visible focus ring. */
-.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgba(255, 255, 255, 0.92); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 .my-modelbar-card img { transition: transform 0.25s ease; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
@@ -207,7 +207,7 @@ const SKINS = {
 .my-modelbar-card { display: block; color: #222; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.1em; text-transform: uppercase; }
-.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgba(255, 255, 255, 0.92); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 .my-modelbar-card img { transition: transform 0.25s ease; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
@@ -224,7 +224,7 @@ const SKINS = {
 .my-modelbar-card { display: block; color: #444649; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
-.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgba(255, 255, 255, 0.92); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 .my-modelbar-card img { transition: transform 0.25s ease; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
@@ -241,7 +241,7 @@ const SKINS = {
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.25rem 0 0; font-size: 1.05rem; font-weight: 600; }
 .my-modelbar-card small { display: block; margin-block-start: 0.1rem; font-size: 0.8rem; color: #5f6368; letter-spacing: 0.02em; }
-.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgba(255, 255, 255, 0.92); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 .my-modelbar-card img { transition: transform 0.25s ease; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
@@ -261,7 +261,7 @@ const SKINS = {
 .my-modelbar-card--feature .my-modelbar-tile { background: #0b2a5b; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.4rem 0 0; font-weight: 700; }
-.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgba(255, 255, 255, 0.92); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 .my-modelbar-card img { transition: transform 0.25s ease; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
@@ -281,7 +281,7 @@ const SKINS = {
   'band-dark': {
     cardCss: `.my-modelbar { padding-block: 1.75rem; background: #101010; }
 /* a 40% scrim disc keeps the white chevron visible over silver cutouts */
-.my-modelbar { --dlc-arrow-bg: rgb(0 0 0 / 40%); --dlc-arrow-fg: #fff; }
+.my-modelbar { --dlc-arrow-bg: rgba(0, 0, 0, 0.4); --dlc-arrow-fg: #fff; }
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.5rem 0 0; font-size: 0.85rem; font-weight: 600; letter-spacing: 0.14em; text-transform: uppercase; }
@@ -301,7 +301,7 @@ const SKINS = {
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card small { align-self: center; margin-block-start: 0.75rem; padding: 0.35rem 0.9rem; font-size: 0.7rem; color: #55585c; letter-spacing: 0.14em; text-transform: uppercase; background: #f2f2f2; border-radius: 2px; }
 .my-modelbar-card:hover small, .my-modelbar-card:focus-visible small { background: #e2e2e2; }
-.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgba(255, 255, 255, 0.92); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 .my-modelbar-card img { transition: transform 0.25s ease; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
@@ -328,7 +328,7 @@ const SKINS = {
 .my-modelbar-copy .my-modelbar-name { margin: 0; font-size: 1.5rem; font-weight: 700; }
 .my-modelbar-shop { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: #222; background: #fff; border-radius: 999px; transition: background 0.2s; }
 .my-modelbar-card:hover .my-modelbar-shop, .my-modelbar-card:focus-visible .my-modelbar-shop { background: #e6e6e6; }
-.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgba(255, 255, 255, 0.92); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 .my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .my-modelbar-shop { transition: none; } }`,
@@ -348,7 +348,7 @@ const SKINS = {
   },
   'tall-tile': {
     cardCss: `.my-modelbar { --dlc-gap: 1.25rem; padding: 1.5rem; background: #14161b; }
-.my-modelbar { --dlc-arrow-bg: rgb(0 0 0 / 40%); --dlc-arrow-fg: #fff; }
+.my-modelbar { --dlc-arrow-bg: rgba(0, 0, 0, 0.4); --dlc-arrow-fg: #fff; }
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
 .my-modelbar-name { margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 700; letter-spacing: 0.08em; text-align: start; text-transform: uppercase; }
 .my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; }
@@ -366,7 +366,7 @@ const SKINS = {
   },
   'cdjr-dark': {
     cardCss: `.my-modelbar { padding-block: 1.75rem; background: #212121; }
-.my-modelbar { --dlc-arrow-bg: rgb(0 0 0 / 40%); --dlc-arrow-fg: #fff; }
+.my-modelbar { --dlc-arrow-bg: rgba(0, 0, 0, 0.4); --dlc-arrow-fg: #fff; }
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.2s; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.1); }
@@ -384,7 +384,7 @@ const SKINS = {
 .my-modelbar-card { display: block; color: #222; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
 .my-modelbar-card p { margin: 0.5rem 0 0; font-size: 1.05rem; font-weight: 700; letter-spacing: 0.18em; text-transform: uppercase; }
-.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgba(255, 255, 255, 0.92); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 .my-modelbar-card img { transition: transform 0.25s ease; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
@@ -402,7 +402,7 @@ const SKINS = {
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; filter: grayscale(1); opacity: 0.6; transition: filter 0.2s, opacity 0.2s; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-within img { filter: none; opacity: 1; }
 .my-modelbar-card p { margin: -0.6rem 0 0; font-weight: 600; }
-.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgba(255, 255, 255, 0.92); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 .my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }`,
@@ -415,7 +415,7 @@ const SKINS = {
   },
   'wordmark-dark': {
     cardCss: `.my-modelbar { padding-block: 1.75rem; background: linear-gradient(#3a3a3a, #1f1f1f); }
-.my-modelbar { --dlc-arrow-bg: rgb(0 0 0 / 40%); --dlc-arrow-fg: #fff; }
+.my-modelbar { --dlc-arrow-bg: rgba(0, 0, 0, 0.4); --dlc-arrow-fg: #fff; }
 .my-modelbar-card { display: block; color: #fff; text-align: center; text-decoration: none; }
 .my-modelbar-wordmark { display: block; margin-block-end: 0.75rem; font-size: 1.3rem; font-style: italic; font-weight: 700; letter-spacing: 0.06em; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
@@ -443,7 +443,7 @@ const SKINS = {
 .my-modelbar-card { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; }
 .my-modelbar-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
 .my-modelbar-card p { position: absolute; inset-block-end: 0; inset-inline: 0; margin: 0; padding: 0.7rem 1rem; font-weight: 700; background: rgb(20 20 20 / 88%); }
-.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgba(255, 255, 255, 0.92); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 .my-modelbar-card img { transition: transform 0.25s ease; }
 .my-modelbar-card:hover img, .my-modelbar-card:focus-visible img { transform: scale(1.04); }
@@ -460,7 +460,7 @@ const SKINS = {
       </a>`,
   },
   spotlight: {
-    cardCss: `.my-modelbar { --dlc-arrow-size: 56px; --dlc-arrow-fg: #14161b; --dlc-arrow-bg: rgb(255 255 255 / 85%); }
+    cardCss: `.my-modelbar { --dlc-arrow-size: 56px; --dlc-arrow-fg: #14161b; --dlc-arrow-bg: rgba(255, 255, 255, 0.85); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 2px 10px rgb(0 0 0 / 25%); }
 @media (min-width: 992px) { .my-modelbar { --dlc-peek: 23%; } }
 @media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 44px; } }
@@ -483,7 +483,7 @@ const SKINS = {
   'logo-strip': {
     cardCss: `/* Verified live 19 Aug: a navy band, each make a rounded lighter-navy tile. */
 .my-modelbar { --dlc-gap: 1rem; padding: 1.5rem 1rem; background: #16294f; }
-.my-modelbar { --dlc-arrow-bg: rgb(9 17 34 / 45%); --dlc-arrow-fg: #fff; }
+.my-modelbar { --dlc-arrow-bg: rgba(9, 17, 34, 0.45); --dlc-arrow-fg: #fff; }
 /* autoplay's pause button clears the overlaid next arrow - both stay 24px+ touch targets */
 .my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
 .my-modelbar-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; color: #fff; background: #253a5e; border: 1px solid rgb(255 255 255 / 7%); border-radius: 10px; transition: background 0.2s; }
@@ -501,7 +501,7 @@ const SKINS = {
     cardCss: `/* Verified live 19 Aug: floating white cards on a light band - brand mark on
    top, name, address, phone, and a red Visit Website pill. */
 .my-modelbar { --dlc-gap: 1.25rem; padding: 1.5rem 1rem; background: #f4f6f8; }
-.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgb(255 255 255 / 92%); }
+.my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgba(255, 255, 255, 0.92); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 /* same pause-vs-arrow clearance as the makes rail */
 .my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
@@ -1014,9 +1014,7 @@ const staticCss = STATICS.map((d) => stripComments(d.css).replaceAll('.my-', '.s
 const recipeCss = (v, s) => {
   const rungs = (s.ladder ?? v.ladder)
     .map(([bp, n], i) =>
-      i === 0
-        ? `.my-modelbar { --dlc-per-view: ${n}; --dlc-peek: ${v.peek ?? 'clamp(32px, 9vw, 60px)'}; --dlc-gap: 0.5rem; }`
-        : `@media (min-width: ${bp}px) { .my-modelbar { --dlc-per-view: ${n}; } }`,
+      i === 0 ? `.my-modelbar { --dlc-per-view: ${n}; --dlc-peek: ${v.peek ?? '60px'}; --dlc-gap: 0.5rem; }` : `@media (min-width: ${bp}px) { .my-modelbar { --dlc-per-view: ${n}; } }`,
     )
     .join('\n');
   const dots = v.dots
@@ -1024,7 +1022,11 @@ const recipeCss = (v, s) => {
     : `/* Arrows only - hide the dots and reclaim the space they reserved. */\n.my-modelbar .dl-carousel-dots { display: none; }\n.my-modelbar { --dlc-controls-space: 0px; }`;
   const auto = s.autoplay ? `\n\n/* Autoplay adds the engine's pause button (top right, first in tab order) - leave it. */` : '';
   const tabbed = s.tabbed ? `\n${TABBED_CSS}` : '';
-  const phones = `/* Phones: smaller arrow discs so they stop sitting on the vehicles (still a 24px+ target). */\n@media (max-width: 480px) { .my-modelbar { --dlc-arrow-size: 36px; } }`;
+  // Platform-safe by design: DealerOn's styleCode minifier rejects modern
+  // function values (clamp, slash-rgb) INSIDE custom-property declarations
+  // and silently serves the last good sheet - so responsive peek is a plain
+  // media step, never clamp() (live-tested on dealer 26900, 2026-08-20).
+  const phones = `/* Phones: smaller peek and arrow discs so the arrows stop sitting on the vehicles (still a 24px+ target). */\n@media (max-width: 480px) { .my-modelbar { ${v.peek ? '' : '--dlc-peek: 36px; '}--dlc-arrow-size: 36px; } }`;
   return `/* ${s.copy ?? s.recipeName ?? `${v.toc} ladder`} - ${v.sites === 1 ? 'runs on 1 site' : `${v.sites} sites run this ladder`}. */\n${rungs}\n${phones}\n\n${dots}${auto}\n\n${SKINS[s.skin].cardCss}${tabbed}`;
 };
 

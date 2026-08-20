@@ -145,6 +145,31 @@ Per-site styling goes in **Style Only / Head Section (`styleCode`)**, which is
 **raw CSS — no `<style>` tags and no comments.** The platform wraps and minifies
 it. Do not put slider CSS in the block itself.
 
+### The minifier's rules (live-tested on dealer 26900, 2026-08-20)
+
+The styleCode minifier has two behaviors every recipe must respect:
+
+- **Modern function values inside custom-property declarations fail the whole
+  sheet.** `--dlc-peek: clamp(32px, 9vw, 60px)` and
+  `--dlc-arrow-bg: rgb(0 0 0 / 40%)` each kill minification — and the
+  storefront then **silently serves the last successfully-minified styleCode**
+  (or nothing, if there was none). No error surfaces anywhere; your CSS just
+  never appears. The same functions are fine in _normal_ properties
+  (`width: clamp(...)`, `color: rgb(0 0 0 / 40%)`, slash-rgb in box-shadows) —
+  the failure is specific to `--*:` declarations. Every recipe in the library
+  therefore uses plain values and classic `rgba(r, g, b, a)` inside `--dlc-*`
+  declarations, with media queries instead of `clamp()`.
+- **Zero lengths lose their unit** (`0px` → `0`). Chrome resolves the engine's
+  `calc(100% - var(--dlc-controls-space))` with a unitless `0` today, but that
+  is lenient behavior — treat `--dlc-*: 0px` values as a cross-browser watch
+  item after pasting.
+
+Also expect **site CSS to outrank recipe classes**: OEM styles commonly set
+link decoration at id specificity (`#content-main a`), which beats
+`.my-modelbar-card { text-decoration: none }`. If pasted card names come out
+underlined, add one page-scoped rule:
+`#content-main .my-modelbar-card { text-decoration: none; }`.
+
 ## 4. Picking a variation
 
 Every variation is authored HTML plus site CSS over the same two files. The demo
