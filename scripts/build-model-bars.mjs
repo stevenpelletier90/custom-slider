@@ -174,7 +174,7 @@ const CHEVY = CUTOUTS.map(([slug, name, alt, count]) => ({ slug, name, alt, coun
 const esc = (s) => s.replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
 
 const cutoutImg = (slug, alt) =>
-  `<img src="img/chrome-${slug}.png" srcset="img/chrome-${slug}.png 320w, img/chrome-${slug}-640.png 640w" sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw" width="320" height="240" alt="${alt}" loading="lazy" decoding="async" />`;
+  `<img src="img/chrome-${slug}.webp" srcset="img/chrome-${slug}.webp 320w, img/chrome-${slug}-640.webp 640w" sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw" width="320" height="240" alt="${alt}" loading="lazy" decoding="async" />`;
 
 // Each skin: how the estate actually dresses the bar (see the screenshot
 // library). cardCss is the copy-paste CSS below the ladder lines; liveSlides
@@ -276,18 +276,18 @@ const SKINS = {
 .my-modelbar-card img { inline-size: 48%; block-size: auto; align-self: stretch; object-fit: cover; }
 .my-modelbar-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; padding: 1.4rem 1.5rem; }
 .my-modelbar-copy small { font-size: 0.85rem; color: #d9d9d9; }
-.my-modelbar-copy h3 { margin: 0; font-size: 1.5rem; }
+.my-modelbar-copy .my-modelbar-name { margin: 0; font-size: 1.5rem; font-weight: 700; }
 .my-modelbar-shop { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: #222; background: #fff; border-radius: 999px; }`,
     liveSlides: (r) =>
       r.map((e) => {
         const year = (e.alt.match(/\b(20\d\d)\b/) || [])[1];
-        return `<a class="my-modelbar-card" href="index.html#vehicles">${imgTag(e)}<span class="my-modelbar-copy"><small>${year ? `${year} | ` : ''}${e.count ?? 5} Available</small><h3>${e.name}</h3><span class="my-modelbar-shop">Shop Now</span></span></a>`;
+        return `<a class="my-modelbar-card" href="index.html#vehicles">${imgTag(e)}<span class="my-modelbar-copy"><small>${year ? `${year} | ` : ''}${e.count ?? 5} Available</small><p class="my-modelbar-name">${e.name}</p><span class="my-modelbar-shop">Shop Now</span></span></a>`;
       }),
     snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Highlander">
         <img src="#MISCPATH#/highlander.jpg" width="800" height="500" alt="Blue Toyota Highlander on a forest road">
         <span class="my-modelbar-copy">
           <small>2026 | 4 Available</small>
-          <h3>Highlander</h3>
+          <h3 class="my-modelbar-name">Highlander</h3>
           <span class="my-modelbar-shop">Shop Now</span>
         </span>
       </a>`,
@@ -418,17 +418,17 @@ const SKINS = {
 .my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
 .my-modelbar-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.5rem 1.25rem; color: inherit; text-align: center; text-decoration: none; background: #fff; border-radius: 10px; box-shadow: 0 4px 16px rgb(16 22 29 / 12%); }
 .my-modelbar-card img { inline-size: 55%; block-size: auto; object-fit: contain; }
-.my-modelbar-card h3 { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; }
+.my-modelbar-card .my-modelbar-name { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; font-weight: 700; color: #222; }
 .my-modelbar-card p { margin: 0 0 1rem; font-size: 0.9rem; color: #5f6368; }
 .my-modelbar-visit { display: inline-block; margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.8rem; font-weight: 700; color: #fff; background: #c8102e; border-radius: 6px; }`,
     liveSlides: () =>
       LOCATIONS.map(
         ([store, addr, phone], i) =>
-          `<a class="my-modelbar-card" href="index.html#cards">${imgTag(CHEVY[i % CHEVY.length], '')}<h3>${store}</h3><p>${addr}<br />${phone}</p><span class="my-modelbar-visit">Visit website</span></a>`,
+          `<a class="my-modelbar-card" href="index.html#cards">${imgTag(CHEVY[i % CHEVY.length], '')}<p class="my-modelbar-name">${store}</p><p>${addr}<br />${phone}</p><span class="my-modelbar-visit">Visit website</span></a>`,
       ),
     snippetLabel: 'Our locations',
     snippetHtml: `<a class="my-modelbar-card" href="https://www.rooftop-site.example/">
-        <h3>Northgate Chevrolet</h3>
+        <h3 class="my-modelbar-name">Northgate Chevrolet</h3>
         <p>2400 Commerce Dr, Springfield<br>(555) 010-1100</p>
         <span class="my-modelbar-visit">Visit website</span>
       </a>`,
@@ -897,6 +897,7 @@ ${live}
           static grid. If a request says &ldquo;model bar&rdquo;, check which family before reaching for the slider.
         </p>
 ${demos}
+        <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
       </section>`;
 };
 
@@ -1047,7 +1048,7 @@ const strip = (v, s, i) => {
   const labelId = `${id}-h`;
   const heading = v.strips.length === 1 ? '' : `        <h4 id="${labelId}" class="strip-label">${s.label}</h4>\n`;
   const note = v.strips.length === 1 ? `        <p class="strip-note">${s.label}.</p>\n` : '';
-  const aria = v.strips.length === 1 ? `aria-labelledby="${v.key}-h"` : `aria-labelledby="${labelId}"`;
+  const aria = `aria-label="${s.copy}"`;
   const attrs = `data-slider data-step="slide"${s.autoplay ? ` data-autoplay="${s.autoplay}"` : ''}`;
   const roster = s.roster ?? v.roster ?? CHEVY;
   const snippetHtml = typeof SKINS[s.skin].snippetHtml === 'function' ? SKINS[s.skin].snippetHtml(roster) : SKINS[s.skin].snippetHtml;
@@ -1149,6 +1150,7 @@ const section = (v) => `      <section class="demo-section demo-wide" id="${v.ke
         <h3 id="${v.key}-h">${v.heading ?? `The ${v.toc} ladder`} &mdash; ${v.sites === 1 ? '1 site' : `${v.sites} sites`} <a class="demo-anchor" href="#${v.key}" aria-label="Link to this section">#</a></h3>
         <p class="demo-sub">${v.why} Runs on ${esc(v.demos)}.${v.ladder ? ` Cards per view: ${ladderText(v.ladder)}.` : ''}</p>
 ${v.strips.map((s, i) => strip(v, s, i)).join('\n')}
+        <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
       </section>`;
 
 // The page's bands: same grouped-architecture chrome the main demo uses
@@ -1303,7 +1305,7 @@ ${staticCss
         <input id="demo-filter" type="text" autocomplete="off" placeholder="e.g. Cadillac, dark band, tabs" />
         <p class="demo-vh" role="status" id="demo-filter-count"></p>
       </div>
-      <nav class="demo-toc demo-toc--chips" aria-label="On this page">
+      <nav class="demo-toc demo-toc--chips" id="toc" aria-label="On this page">
 ${PAGE_GROUPS.map((G) => `        <p class="demo-toc-group"><strong>${G.title}:</strong> ${G.keys.map((k) => `<a href="#${k}">${byKey[k].toc} (${byKey[k].sites})</a>`).join(' &middot; ')}</p>`).join('\n')}
         <p class="demo-toc-group"><strong>Brands wearing them:</strong> ${TOC_ALIASES.map(([b, href]) => `<a href="${href}">${b}</a>`).join(' &middot; ')}</p>
         <p class="demo-toc-group"><strong>Not the standard design:</strong> <a href="#static-bars">Not sliders</a> &middot; <a href="#outliers">The outliers</a></p>

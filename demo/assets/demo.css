@@ -13,7 +13,14 @@ html {
 
 @media (width <= 480px) {
   html {
-    scroll-padding-block-start: 6rem;
+    /* the bar is a single scrolling row on phones now — one step of extra
+       clearance is enough */
+    scroll-padding-block-start: 3.5rem;
+  }
+
+  /* clear the floating Copy button off the first code line */
+  .code-wrap pre {
+    padding-block-start: 2.4rem;
   }
 }
 
@@ -453,6 +460,13 @@ h3:hover .demo-anchor,
 .demo-top {
   display: inline-block;
   margin-block-start: 1rem;
+}
+
+/* One-stop bypass at each section's foot — a keyboard user mid-page gets
+   back to the index for one tab stop instead of ~10 per remaining strip. */
+.demo-backtotoc {
+  margin: 1.25rem 0 0;
+  font-size: 0.85rem;
 }
 
 /* Wide content scrolls inside its own box — the page never scrolls sideways. */

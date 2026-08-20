@@ -32,7 +32,9 @@ deliberately mismatched dimensions for the "Mixed image sizes" demo section.
 
 ## Chrome model cutouts
 
-`chrome-*.png` are ChromeData (JD Power) licensed library renders served through
+`chrome-*.webp` (lossy WebP derivatives of the original `chrome-*.png` cutouts, which
+were removed from the tree after conversion — see git history) are ChromeData
+(JD Power) licensed library renders served through
 the DealerOn platform (Chrome Photo Builder, angle 1, transparent PNG at 320/640),
 fetched from a live DealerOn storefront. Internal demo use for DealerOn team
 presentation; on a production DealerOn site reference them with
@@ -57,5 +59,5 @@ own source demo site serves — DealerOn-licensed ColorMatched/stock cutouts
 harvested one size per model from: acurademo1, lexusdemo1, buickdemo1,
 audidemo1, genesisdemo1, lincolndemo1, forddemo2, hyundaidemo2, mazdademo1,
 toyotademo2, alfaromeodemo1, and cdjrdemo1. Same asset class and license as the
-`chrome-*.png` Chevrolet cutouts above. Internal demo use only — these are OEM
+`chrome-*.webp` Chevrolet cutouts above. Internal demo use only — these are OEM
 marketing assets, not freely redistributable imagery.

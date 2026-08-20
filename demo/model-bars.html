@@ -705,9 +705,10 @@
         font-size: 0.85rem;
         color: #d9d9d9;
       }
-      .mbx-toyota-copy h3 {
+      .mbx-toyota-copy .mbx-toyota-name {
         margin: 0;
         font-size: 1.5rem;
+        font-weight: 700;
       }
       .mbx-toyota-shop {
         margin-block-start: auto;
@@ -1248,9 +1249,11 @@
         block-size: auto;
         object-fit: contain;
       }
-      .mbx-group-1-card h3 {
+      .mbx-group-1-card .mbx-group-1-name {
         margin: 0.5rem 0 0.4rem;
         font-size: 1.1rem;
+        font-weight: 700;
+        color: #222;
       }
       .mbx-group-1-card p {
         margin: 0 0 1rem;
@@ -1430,7 +1433,7 @@
         <input id="demo-filter" type="text" autocomplete="off" placeholder="e.g. Cadillac, dark band, tabs" />
         <p class="demo-vh" role="status" id="demo-filter-count"></p>
       </div>
-      <nav class="demo-toc demo-toc--chips" aria-label="On this page">
+      <nav class="demo-toc demo-toc--chips" id="toc" aria-label="On this page">
         <p class="demo-toc-group">
           <strong>The shared ladders:</strong> <a href="#acura">Acura (19)</a> &middot; <a href="#chevrolet">Chevrolet (19)</a> &middot; <a href="#lexus">Lexus (14)</a> &middot;
           <a href="#buick">Buick (7)</a> &middot; <a href="#genesis">Genesis (5)</a> &middot; <a href="#lincoln">Lincoln (4)</a> &middot; <a href="#cdjr">CDJR (4)</a> &middot;
@@ -1470,7 +1473,7 @@
           <p class="strip-note">Plain white, name below — how all 19 ship it.</p>
           <div class="demo-stage">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-acura" data-slider data-step="slide" aria-labelledby="acura-h">
+            <div class="dl-carousel mbx-acura" data-slider data-step="slide" aria-label="Acura, plain white">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-acura-card" href="index.html#modelbar" aria-label="Explore the Integra"
@@ -1552,6 +1555,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="chevrolet">
@@ -1584,8 +1588,8 @@
                     <li class="dl-carousel-slide">
                       <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
                         ><img
-                          src="img/chrome-silverado-1500.png"
-                          srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                          src="img/chrome-silverado-1500.webp"
+                          srcset="img/chrome-silverado-1500.webp 320w, img/chrome-silverado-1500-640.webp 640w"
                           sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                           width="320"
                           height="240"
@@ -1599,8 +1603,8 @@
                     <li class="dl-carousel-slide">
                       <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Colorado"
                         ><img
-                          src="img/chrome-colorado.png"
-                          srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                          src="img/chrome-colorado.webp"
+                          srcset="img/chrome-colorado.webp 320w, img/chrome-colorado-640.webp 640w"
                           sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                           width="320"
                           height="240"
@@ -1614,8 +1618,8 @@
                     <li class="dl-carousel-slide">
                       <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
                         ><img
-                          src="img/chrome-tahoe.png"
-                          srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                          src="img/chrome-tahoe.webp"
+                          srcset="img/chrome-tahoe.webp 320w, img/chrome-tahoe-640.webp 640w"
                           sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                           width="320"
                           height="240"
@@ -1635,8 +1639,8 @@
                     <li class="dl-carousel-slide">
                       <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Equinox"
                         ><img
-                          src="img/chrome-equinox.png"
-                          srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                          src="img/chrome-equinox.webp"
+                          srcset="img/chrome-equinox.webp 320w, img/chrome-equinox-640.webp 640w"
                           sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                           width="320"
                           height="240"
@@ -1650,8 +1654,8 @@
                     <li class="dl-carousel-slide">
                       <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Trax"
                         ><img
-                          src="img/chrome-trax.png"
-                          srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                          src="img/chrome-trax.webp"
+                          srcset="img/chrome-trax.webp 320w, img/chrome-trax-640.webp 640w"
                           sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                           width="320"
                           height="240"
@@ -1671,8 +1675,8 @@
                     <li class="dl-carousel-slide">
                       <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
                         ><img
-                          src="img/chrome-tahoe.png"
-                          srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                          src="img/chrome-tahoe.webp"
+                          srcset="img/chrome-tahoe.webp 320w, img/chrome-tahoe-640.webp 640w"
                           sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                           width="320"
                           height="240"
@@ -1686,8 +1690,8 @@
                     <li class="dl-carousel-slide">
                       <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Suburban"
                         ><img
-                          src="img/chrome-suburban.png"
-                          srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                          src="img/chrome-suburban.webp"
+                          srcset="img/chrome-suburban.webp 320w, img/chrome-suburban-640.webp 640w"
                           sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                           width="320"
                           height="240"
@@ -1701,8 +1705,8 @@
                     <li class="dl-carousel-slide">
                       <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Traverse"
                         ><img
-                          src="img/chrome-traverse.png"
-                          srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                          src="img/chrome-traverse.webp"
+                          srcset="img/chrome-traverse.webp 320w, img/chrome-traverse-640.webp 640w"
                           sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                           width="320"
                           height="240"
@@ -1716,8 +1720,8 @@
                     <li class="dl-carousel-slide">
                       <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
                         ><img
-                          src="img/chrome-trailblazer.png"
-                          srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                          src="img/chrome-trailblazer.webp"
+                          srcset="img/chrome-trailblazer.webp 320w, img/chrome-trailblazer-640.webp 640w"
                           sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                           width="320"
                           height="240"
@@ -1737,8 +1741,8 @@
                     <li class="dl-carousel-slide">
                       <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
                         ><img
-                          src="img/chrome-silverado-1500.png"
-                          srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                          src="img/chrome-silverado-1500.webp"
+                          srcset="img/chrome-silverado-1500.webp 320w, img/chrome-silverado-1500-640.webp 640w"
                           sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                           width="320"
                           height="240"
@@ -1752,8 +1756,8 @@
                     <li class="dl-carousel-slide">
                       <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Trax"
                         ><img
-                          src="img/chrome-trax.png"
-                          srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                          src="img/chrome-trax.webp"
+                          srcset="img/chrome-trax.webp 320w, img/chrome-trax-640.webp 640w"
                           sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                           width="320"
                           height="240"
@@ -1773,8 +1777,8 @@
                     <li class="dl-carousel-slide">
                       <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
                         ><img
-                          src="img/chrome-silverado-1500.png"
-                          srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                          src="img/chrome-silverado-1500.webp"
+                          srcset="img/chrome-silverado-1500.webp 320w, img/chrome-silverado-1500-640.webp 640w"
                           sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                           width="320"
                           height="240"
@@ -1788,8 +1792,8 @@
                     <li class="dl-carousel-slide">
                       <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Colorado"
                         ><img
-                          src="img/chrome-colorado.png"
-                          srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                          src="img/chrome-colorado.webp"
+                          srcset="img/chrome-colorado.webp 320w, img/chrome-colorado-640.webp 640w"
                           sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                           width="320"
                           height="240"
@@ -1803,8 +1807,8 @@
                     <li class="dl-carousel-slide">
                       <a class="mbx-chevrolet-0-card" href="index.html#modelbar" aria-label="Explore the Suburban"
                         ><img
-                          src="img/chrome-suburban.png"
-                          srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                          src="img/chrome-suburban.webp"
+                          srcset="img/chrome-suburban.webp 320w, img/chrome-suburban-640.webp 640w"
                           sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                           width="320"
                           height="240"
@@ -1933,13 +1937,13 @@
           <h4 id="mbx-chevrolet-1-h" class="strip-label">Same ladder as Cadillac ships it — a dark band and spaced capitals</h4>
           <div class="demo-stage demo-stage--band">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-chevrolet-1" data-slider data-step="slide" aria-labelledby="mbx-chevrolet-1-h">
+            <div class="dl-carousel mbx-chevrolet-1" data-slider data-step="slide" aria-label="Cadillac's dark band, on the Chevrolet ladder">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
                     ><img
-                      src="img/chrome-silverado-1500.png"
-                      srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                      src="img/chrome-silverado-1500.webp"
+                      srcset="img/chrome-silverado-1500.webp 320w, img/chrome-silverado-1500-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -1953,8 +1957,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Colorado"
                     ><img
-                      src="img/chrome-colorado.png"
-                      srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                      src="img/chrome-colorado.webp"
+                      srcset="img/chrome-colorado.webp 320w, img/chrome-colorado-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -1968,8 +1972,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Tahoe"
                     ><img
-                      src="img/chrome-tahoe.png"
-                      srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                      src="img/chrome-tahoe.webp"
+                      srcset="img/chrome-tahoe.webp 320w, img/chrome-tahoe-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -1983,8 +1987,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Suburban"
                     ><img
-                      src="img/chrome-suburban.png"
-                      srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                      src="img/chrome-suburban.webp"
+                      srcset="img/chrome-suburban.webp 320w, img/chrome-suburban-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -1998,8 +2002,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Traverse"
                     ><img
-                      src="img/chrome-traverse.png"
-                      srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                      src="img/chrome-traverse.webp"
+                      srcset="img/chrome-traverse.webp 320w, img/chrome-traverse-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -2013,8 +2017,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Equinox"
                     ><img
-                      src="img/chrome-equinox.png"
-                      srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                      src="img/chrome-equinox.webp"
+                      srcset="img/chrome-equinox.webp 320w, img/chrome-equinox-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -2028,8 +2032,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
                     ><img
-                      src="img/chrome-trailblazer.png"
-                      srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                      src="img/chrome-trailblazer.webp"
+                      srcset="img/chrome-trailblazer.webp 320w, img/chrome-trailblazer-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -2043,8 +2047,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-chevrolet-1-card" href="index.html#modelbar" aria-label="Explore the Trax"
                     ><img
-                      src="img/chrome-trax.png"
-                      srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                      src="img/chrome-trax.webp"
+                      srcset="img/chrome-trax.webp 320w, img/chrome-trax-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -2100,6 +2104,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="lexus">
@@ -2111,7 +2116,7 @@
           <p class="strip-note">On a soft gray gradient band, spaced capitals.</p>
           <div class="demo-stage demo-stage--band">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-lexus" data-slider data-step="slide" aria-labelledby="lexus-h">
+            <div class="dl-carousel mbx-lexus" data-slider data-step="slide" aria-label="Lexus, gray gradient band">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-lexus-card" href="index.html#modelbar" aria-label="Explore the UX Hybrid"
@@ -2193,6 +2198,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="buick">
@@ -2205,7 +2211,7 @@
           <p class="strip-note">Plain white, name below.</p>
           <div class="demo-stage">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-buick" data-slider data-step="slide" aria-labelledby="buick-h">
+            <div class="dl-carousel mbx-buick" data-slider data-step="slide" aria-label="Buick, plain white">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-buick-card" href="index.html#modelbar" aria-label="Explore the Envista"
@@ -2275,6 +2281,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="genesis">
@@ -2286,7 +2293,7 @@
           <h4 id="mbx-genesis-0-h" class="strip-label">As Genesis ships it — inventory count under each name</h4>
           <div class="demo-stage">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-genesis-0" data-slider data-step="slide" aria-labelledby="mbx-genesis-0-h">
+            <div class="dl-carousel mbx-genesis-0" data-slider data-step="slide" aria-label="Genesis, inventory counts">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-genesis-0-card" href="index.html#modelbar"
@@ -2378,14 +2385,14 @@
           <h4 id="mbx-genesis-1-h" class="strip-label">Same ladder as Volkswagen ships it — a tile of colour behind each car, one featured in navy</h4>
           <div class="demo-stage">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-genesis-1" data-slider data-step="slide" aria-labelledby="mbx-genesis-1-h">
+            <div class="dl-carousel mbx-genesis-1" data-slider data-step="slide" aria-label="Volkswagen's colour tiles, on the Genesis ladder">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-genesis-1-card" href="index.html#modelbar" aria-label="Explore the Silverado 1500"
                     ><span class="mbx-genesis-1-tile"
                       ><img
-                        src="img/chrome-silverado-1500.png"
-                        srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                        src="img/chrome-silverado-1500.webp"
+                        srcset="img/chrome-silverado-1500.webp 320w, img/chrome-silverado-1500-640.webp 640w"
                         sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                         width="320"
                         height="240"
@@ -2400,8 +2407,8 @@
                   <a class="mbx-genesis-1-card" href="index.html#modelbar" aria-label="Explore the Colorado"
                     ><span class="mbx-genesis-1-tile"
                       ><img
-                        src="img/chrome-colorado.png"
-                        srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                        src="img/chrome-colorado.webp"
+                        srcset="img/chrome-colorado.webp 320w, img/chrome-colorado-640.webp 640w"
                         sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                         width="320"
                         height="240"
@@ -2416,8 +2423,8 @@
                   <a class="mbx-genesis-1-card mbx-genesis-1-card--feature" href="index.html#modelbar" aria-label="Explore the Tahoe"
                     ><span class="mbx-genesis-1-tile"
                       ><img
-                        src="img/chrome-tahoe.png"
-                        srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                        src="img/chrome-tahoe.webp"
+                        srcset="img/chrome-tahoe.webp 320w, img/chrome-tahoe-640.webp 640w"
                         sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                         width="320"
                         height="240"
@@ -2432,8 +2439,8 @@
                   <a class="mbx-genesis-1-card" href="index.html#modelbar" aria-label="Explore the Suburban"
                     ><span class="mbx-genesis-1-tile"
                       ><img
-                        src="img/chrome-suburban.png"
-                        srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                        src="img/chrome-suburban.webp"
+                        srcset="img/chrome-suburban.webp 320w, img/chrome-suburban-640.webp 640w"
                         sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                         width="320"
                         height="240"
@@ -2448,8 +2455,8 @@
                   <a class="mbx-genesis-1-card" href="index.html#modelbar" aria-label="Explore the Traverse"
                     ><span class="mbx-genesis-1-tile"
                       ><img
-                        src="img/chrome-traverse.png"
-                        srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                        src="img/chrome-traverse.webp"
+                        srcset="img/chrome-traverse.webp 320w, img/chrome-traverse-640.webp 640w"
                         sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                         width="320"
                         height="240"
@@ -2464,8 +2471,8 @@
                   <a class="mbx-genesis-1-card" href="index.html#modelbar" aria-label="Explore the Equinox"
                     ><span class="mbx-genesis-1-tile"
                       ><img
-                        src="img/chrome-equinox.png"
-                        srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                        src="img/chrome-equinox.webp"
+                        srcset="img/chrome-equinox.webp 320w, img/chrome-equinox-640.webp 640w"
                         sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                         width="320"
                         height="240"
@@ -2480,8 +2487,8 @@
                   <a class="mbx-genesis-1-card" href="index.html#modelbar" aria-label="Explore the Trailblazer"
                     ><span class="mbx-genesis-1-tile"
                       ><img
-                        src="img/chrome-trailblazer.png"
-                        srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                        src="img/chrome-trailblazer.webp"
+                        srcset="img/chrome-trailblazer.webp 320w, img/chrome-trailblazer-640.webp 640w"
                         sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                         width="320"
                         height="240"
@@ -2496,8 +2503,8 @@
                   <a class="mbx-genesis-1-card" href="index.html#modelbar" aria-label="Explore the Trax"
                     ><span class="mbx-genesis-1-tile"
                       ><img
-                        src="img/chrome-trax.png"
-                        srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                        src="img/chrome-trax.webp"
+                        srcset="img/chrome-trax.webp 320w, img/chrome-trax-640.webp 640w"
                         sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                         width="320"
                         height="240"
@@ -2560,7 +2567,7 @@
           </h4>
           <div class="demo-stage">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-genesis-2" data-slider data-step="slide" aria-labelledby="mbx-genesis-2-h">
+            <div class="dl-carousel mbx-genesis-2" data-slider data-step="slide" aria-label="Genesis, new-platform ladder">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-genesis-2-card" href="index.html#modelbar"
@@ -2648,6 +2655,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="lincoln">
@@ -2659,7 +2667,7 @@
           <p class="strip-note">On a flat light-gray band, spaced capitals.</p>
           <div class="demo-stage demo-stage--band">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-lincoln" data-slider data-step="slide" aria-labelledby="lincoln-h">
+            <div class="dl-carousel mbx-lincoln" data-slider data-step="slide" aria-label="Lincoln, flat gray band">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-lincoln-card" href="index.html#modelbar" aria-label="Explore the Navigator"
@@ -2728,6 +2736,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="cdjr">
@@ -2742,7 +2751,7 @@
           </p>
           <div class="demo-stage demo-stage--band">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-cdjr" data-slider data-step="slide" aria-labelledby="cdjr-h">
+            <div class="dl-carousel mbx-cdjr" data-slider data-step="slide" aria-label="CDJR, dark band">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-cdjr-card" href="index.html#modelbar" aria-label="Explore the Pacifica"
@@ -2837,6 +2846,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="hyundai">
@@ -2845,7 +2855,7 @@
           <p class="strip-note">Plain white, name below.</p>
           <div class="demo-stage">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-hyundai" data-slider data-step="slide" aria-labelledby="hyundai-h">
+            <div class="dl-carousel mbx-hyundai" data-slider data-step="slide" aria-label="Hyundai, plain white">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-hyundai-card" href="index.html#modelbar" aria-label="Explore the Kona"
@@ -2928,6 +2938,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="ford">
@@ -2936,7 +2947,7 @@
           <p class="strip-note">Plain white, name below.</p>
           <div class="demo-stage">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-ford" data-slider data-step="slide" aria-labelledby="ford-h">
+            <div class="dl-carousel mbx-ford" data-slider data-step="slide" aria-label="Ford, plain white">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-ford-card" href="index.html#modelbar" aria-label="Explore the Mustang"
@@ -3018,6 +3029,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="mazda">
@@ -3026,7 +3038,7 @@
           <p class="strip-note">Name above the car, inventory chip below — and it keeps its dots.</p>
           <div class="demo-stage">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-mazda" data-slider data-step="slide" aria-labelledby="mazda-h">
+            <div class="dl-carousel mbx-mazda" data-slider data-step="slide" aria-label="Mazda, name above with chip">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-mazda-card" href="index.html#modelbar"
@@ -3112,6 +3124,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="toyota">
@@ -3120,13 +3133,13 @@
           <p class="strip-note">Split photo cards — photo left, year and inventory count right, Shop Now pill. On the tabbed sites these group by body style.</p>
           <div class="demo-stage">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-toyota" data-slider data-step="slide" aria-labelledby="toyota-h">
+            <div class="dl-carousel mbx-toyota" data-slider data-step="slide" aria-label="Toyota, split photo cards">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-toyota-card" href="index.html#vehicles"
                     ><img src="img/oem/toyota/camry.jpg" width="800" height="747" alt="2026 Toyota Camry" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
                       ><small>2026 | 6 Available</small>
-                      <h3>Camry</h3>
+                      <p class="mbx-toyota-name">Camry</p>
                       <span class="mbx-toyota-shop">Shop Now</span></span
                     ></a
                   >
@@ -3135,7 +3148,7 @@
                   <a class="mbx-toyota-card" href="index.html#vehicles"
                     ><img src="img/oem/toyota/corolla.jpg" width="800" height="744" alt="2026 Toyota Corolla" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
                       ><small>2026 | 11 Available</small>
-                      <h3>Corolla</h3>
+                      <p class="mbx-toyota-name">Corolla</p>
                       <span class="mbx-toyota-shop">Shop Now</span></span
                     ></a
                   >
@@ -3144,7 +3157,7 @@
                   <a class="mbx-toyota-card" href="index.html#vehicles"
                     ><img src="img/oem/toyota/rav4.jpg" width="800" height="744" alt="2026 Toyota RAV4" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
                       ><small>2026 | 4 Available</small>
-                      <h3>RAV4</h3>
+                      <p class="mbx-toyota-name">RAV4</p>
                       <span class="mbx-toyota-shop">Shop Now</span></span
                     ></a
                   >
@@ -3153,7 +3166,7 @@
                   <a class="mbx-toyota-card" href="index.html#vehicles"
                     ><img src="img/oem/toyota/tacoma.jpg" width="800" height="744" alt="2026 Toyota Tacoma" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
                       ><small>2026 | 9 Available</small>
-                      <h3>Tacoma</h3>
+                      <p class="mbx-toyota-name">Tacoma</p>
                       <span class="mbx-toyota-shop">Shop Now</span></span
                     ></a
                   >
@@ -3162,7 +3175,7 @@
                   <a class="mbx-toyota-card" href="index.html#vehicles"
                     ><img src="img/oem/toyota/tundra.jpg" width="800" height="744" alt="2026 Toyota Tundra" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
                       ><small>2026 | 3 Available</small>
-                      <h3>Tundra</h3>
+                      <p class="mbx-toyota-name">Tundra</p>
                       <span class="mbx-toyota-shop">Shop Now</span></span
                     ></a
                   >
@@ -3171,7 +3184,7 @@
                   <a class="mbx-toyota-card" href="index.html#vehicles"
                     ><img src="img/oem/toyota/4runner.jpg" width="800" height="744" alt="2026 Toyota 4Runner" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
                       ><small>2026 | 7 Available</small>
-                      <h3>4Runner</h3>
+                      <p class="mbx-toyota-name">4Runner</p>
                       <span class="mbx-toyota-shop">Shop Now</span></span
                     ></a
                   >
@@ -3193,7 +3206,7 @@
         &lt;img src="#MISCPATH#/highlander.jpg" width="800" height="500" alt="Blue Toyota Highlander on a forest road"&gt;
         &lt;span class="my-modelbar-copy"&gt;
           &lt;small&gt;2026 | 4 Available&lt;/small&gt;
-          &lt;h3&gt;Highlander&lt;/h3&gt;
+          &lt;h3 class="my-modelbar-name"&gt;Highlander&lt;/h3&gt;
           &lt;span class="my-modelbar-shop"&gt;Shop Now&lt;/span&gt;
         &lt;/span&gt;
       &lt;/a&gt;
@@ -3217,7 +3230,7 @@
 .my-modelbar-card img { inline-size: 48%; block-size: auto; align-self: stretch; object-fit: cover; }
 .my-modelbar-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; padding: 1.4rem 1.5rem; }
 .my-modelbar-copy small { font-size: 0.85rem; color: #d9d9d9; }
-.my-modelbar-copy h3 { margin: 0; font-size: 1.5rem; }
+.my-modelbar-copy .my-modelbar-name { margin: 0; font-size: 1.5rem; font-weight: 700; }
 .my-modelbar-shop { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: #222; background: #fff; border-radius: 999px; }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">
@@ -3227,6 +3240,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
       </section>
 
@@ -3245,7 +3259,7 @@
           <p class="strip-note">Tall dark tiles with a browse button — the most styled bar in the estate.</p>
           <div class="demo-stage demo-stage--band">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-alfaromeo" data-slider data-step="slide" aria-labelledby="alfaromeo-h">
+            <div class="dl-carousel mbx-alfaromeo" data-slider data-step="slide" aria-label="Alfa Romeo, tall dark tiles">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-alfaromeo-card" href="index.html#models"
@@ -3331,6 +3345,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="audi">
@@ -3341,7 +3356,7 @@
           <p class="strip-note">Plain white, name below.</p>
           <div class="demo-stage">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-audi" data-slider data-step="slide" aria-labelledby="audi-h">
+            <div class="dl-carousel mbx-audi" data-slider data-step="slide" aria-label="Audi, plain white">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-audi-card" href="index.html#modelbar" aria-label="Explore the e-tron GT"
@@ -3425,6 +3440,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="powersports-cat">
@@ -3438,13 +3454,13 @@
           </p>
           <div class="demo-stage">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-powersports-cat" data-slider data-step="slide" aria-labelledby="powersports-cat-h">
+            <div class="dl-carousel mbx-powersports-cat" data-slider data-step="slide" aria-label="Powersports category tiles">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-powersports-cat-card" href="index.html#modelbar"
                     ><img
-                      src="img/chrome-silverado-1500.png"
-                      srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                      src="img/chrome-silverado-1500.webp"
+                      srcset="img/chrome-silverado-1500.webp 320w, img/chrome-silverado-1500-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3458,8 +3474,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-powersports-cat-card" href="index.html#modelbar"
                     ><img
-                      src="img/chrome-tahoe.png"
-                      srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                      src="img/chrome-tahoe.webp"
+                      srcset="img/chrome-tahoe.webp 320w, img/chrome-tahoe-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3473,8 +3489,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-powersports-cat-card" href="index.html#modelbar"
                     ><img
-                      src="img/chrome-traverse.png"
-                      srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                      src="img/chrome-traverse.webp"
+                      srcset="img/chrome-traverse.webp 320w, img/chrome-traverse-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3488,8 +3504,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-powersports-cat-card" href="index.html#modelbar"
                     ><img
-                      src="img/chrome-equinox.png"
-                      srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                      src="img/chrome-equinox.webp"
+                      srcset="img/chrome-equinox.webp 320w, img/chrome-equinox-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3503,8 +3519,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-powersports-cat-card" href="index.html#modelbar"
                     ><img
-                      src="img/chrome-colorado.png"
-                      srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                      src="img/chrome-colorado.webp"
+                      srcset="img/chrome-colorado.webp 320w, img/chrome-colorado-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3518,8 +3534,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-powersports-cat-card" href="index.html#modelbar"
                     ><img
-                      src="img/chrome-trax.png"
-                      srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                      src="img/chrome-trax.webp"
+                      srcset="img/chrome-trax.webp 320w, img/chrome-trax-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3573,6 +3589,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="powersports-brands">
@@ -3586,13 +3603,13 @@
           </p>
           <div class="demo-stage">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-powersports-brands" data-slider data-step="slide" aria-labelledby="powersports-brands-h">
+            <div class="dl-carousel mbx-powersports-brands" data-slider data-step="slide" aria-label="Powersports brand logos">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-powersports-brands-card" href="index.html#modelbar"
                     ><img
-                      src="img/chrome-silverado-1500.png"
-                      srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                      src="img/chrome-silverado-1500.webp"
+                      srcset="img/chrome-silverado-1500.webp 320w, img/chrome-silverado-1500-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3606,8 +3623,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-powersports-brands-card" href="index.html#modelbar"
                     ><img
-                      src="img/chrome-colorado.png"
-                      srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                      src="img/chrome-colorado.webp"
+                      srcset="img/chrome-colorado.webp 320w, img/chrome-colorado-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3621,8 +3638,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-powersports-brands-card" href="index.html#modelbar"
                     ><img
-                      src="img/chrome-tahoe.png"
-                      srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                      src="img/chrome-tahoe.webp"
+                      srcset="img/chrome-tahoe.webp 320w, img/chrome-tahoe-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3636,8 +3653,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-powersports-brands-card" href="index.html#modelbar"
                     ><img
-                      src="img/chrome-suburban.png"
-                      srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                      src="img/chrome-suburban.webp"
+                      srcset="img/chrome-suburban.webp 320w, img/chrome-suburban-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3651,8 +3668,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-powersports-brands-card" href="index.html#modelbar"
                     ><img
-                      src="img/chrome-traverse.png"
-                      srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                      src="img/chrome-traverse.webp"
+                      srcset="img/chrome-traverse.webp 320w, img/chrome-traverse-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3666,8 +3683,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-powersports-brands-card" href="index.html#modelbar"
                     ><img
-                      src="img/chrome-equinox.png"
-                      srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                      src="img/chrome-equinox.webp"
+                      srcset="img/chrome-equinox.webp 320w, img/chrome-equinox-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3681,8 +3698,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-powersports-brands-card" href="index.html#modelbar"
                     ><img
-                      src="img/chrome-trailblazer.png"
-                      srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                      src="img/chrome-trailblazer.webp"
+                      srcset="img/chrome-trailblazer.webp 320w, img/chrome-trailblazer-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3696,8 +3713,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-powersports-brands-card" href="index.html#modelbar"
                     ><img
-                      src="img/chrome-trax.png"
-                      srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                      src="img/chrome-trax.webp"
+                      srcset="img/chrome-trax.webp 320w, img/chrome-trax-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3751,6 +3768,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="ferrari">
@@ -3759,14 +3777,14 @@
           <p class="strip-note">A dark band with a small wordmark line above each car and the name repeated below. The styled text span stands in for the real site&rsquo;s script-wordmark images.</p>
           <div class="demo-stage demo-stage--band">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-ferrari" data-slider data-step="slide" aria-labelledby="ferrari-h">
+            <div class="dl-carousel mbx-ferrari" data-slider data-step="slide" aria-label="Ferrari, wordmark band">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-ferrari-card" href="index.html#modelbar"
                     ><span class="mbx-ferrari-wordmark">Silverado 1500</span
                     ><img
-                      src="img/chrome-silverado-1500.png"
-                      srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                      src="img/chrome-silverado-1500.webp"
+                      srcset="img/chrome-silverado-1500.webp 320w, img/chrome-silverado-1500-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3781,8 +3799,8 @@
                   <a class="mbx-ferrari-card" href="index.html#modelbar"
                     ><span class="mbx-ferrari-wordmark">Colorado</span
                     ><img
-                      src="img/chrome-colorado.png"
-                      srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                      src="img/chrome-colorado.webp"
+                      srcset="img/chrome-colorado.webp 320w, img/chrome-colorado-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3797,8 +3815,8 @@
                   <a class="mbx-ferrari-card" href="index.html#modelbar"
                     ><span class="mbx-ferrari-wordmark">Tahoe</span
                     ><img
-                      src="img/chrome-tahoe.png"
-                      srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                      src="img/chrome-tahoe.webp"
+                      srcset="img/chrome-tahoe.webp 320w, img/chrome-tahoe-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3813,8 +3831,8 @@
                   <a class="mbx-ferrari-card" href="index.html#modelbar"
                     ><span class="mbx-ferrari-wordmark">Suburban</span
                     ><img
-                      src="img/chrome-suburban.png"
-                      srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                      src="img/chrome-suburban.webp"
+                      srcset="img/chrome-suburban.webp 320w, img/chrome-suburban-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3829,8 +3847,8 @@
                   <a class="mbx-ferrari-card" href="index.html#modelbar"
                     ><span class="mbx-ferrari-wordmark">Traverse</span
                     ><img
-                      src="img/chrome-traverse.png"
-                      srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                      src="img/chrome-traverse.webp"
+                      srcset="img/chrome-traverse.webp 320w, img/chrome-traverse-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3845,8 +3863,8 @@
                   <a class="mbx-ferrari-card" href="index.html#modelbar"
                     ><span class="mbx-ferrari-wordmark">Equinox</span
                     ><img
-                      src="img/chrome-equinox.png"
-                      srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                      src="img/chrome-equinox.webp"
+                      srcset="img/chrome-equinox.webp 320w, img/chrome-equinox-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3861,8 +3879,8 @@
                   <a class="mbx-ferrari-card" href="index.html#modelbar"
                     ><span class="mbx-ferrari-wordmark">Trailblazer</span
                     ><img
-                      src="img/chrome-trailblazer.png"
-                      srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                      src="img/chrome-trailblazer.webp"
+                      srcset="img/chrome-trailblazer.webp 320w, img/chrome-trailblazer-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3877,8 +3895,8 @@
                   <a class="mbx-ferrari-card" href="index.html#modelbar"
                     ><span class="mbx-ferrari-wordmark">Trax</span
                     ><img
-                      src="img/chrome-trax.png"
-                      srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                      src="img/chrome-trax.webp"
+                      srcset="img/chrome-trax.webp 320w, img/chrome-trax-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -3937,6 +3955,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="ferrari-photo">
@@ -3947,7 +3966,7 @@
           <p class="strip-note">Lifestyle photo cards with a bottom gradient overlay and the name bottom-left.</p>
           <div class="demo-stage">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-ferrari-photo" data-slider data-step="slide" aria-labelledby="ferrari-photo-h">
+            <div class="dl-carousel mbx-ferrari-photo" data-slider data-step="slide" aria-label="Ferrari, photo cards">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-ferrari-photo-card" href="index.html#vehicles"
@@ -4030,6 +4049,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
       </section>
 
@@ -4048,14 +4068,14 @@
           <p class="strip-note">Wordmark above the car, name below, oversized white arrows — the peek grows from 20% to 23% at 992px.</p>
           <div class="demo-stage">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-maserati" data-slider data-step="slide" aria-labelledby="maserati-h">
+            <div class="dl-carousel mbx-maserati" data-slider data-step="slide" aria-label="Maserati spotlight">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-maserati-card" href="index.html#modelbar"
                     ><span class="mbx-maserati-wordmark">Silverado 1500</span
                     ><img
-                      src="img/chrome-silverado-1500.png"
-                      srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                      src="img/chrome-silverado-1500.webp"
+                      srcset="img/chrome-silverado-1500.webp 320w, img/chrome-silverado-1500-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4070,8 +4090,8 @@
                   <a class="mbx-maserati-card" href="index.html#modelbar"
                     ><span class="mbx-maserati-wordmark">Colorado</span
                     ><img
-                      src="img/chrome-colorado.png"
-                      srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                      src="img/chrome-colorado.webp"
+                      srcset="img/chrome-colorado.webp 320w, img/chrome-colorado-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4086,8 +4106,8 @@
                   <a class="mbx-maserati-card" href="index.html#modelbar"
                     ><span class="mbx-maserati-wordmark">Tahoe</span
                     ><img
-                      src="img/chrome-tahoe.png"
-                      srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                      src="img/chrome-tahoe.webp"
+                      srcset="img/chrome-tahoe.webp 320w, img/chrome-tahoe-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4102,8 +4122,8 @@
                   <a class="mbx-maserati-card" href="index.html#modelbar"
                     ><span class="mbx-maserati-wordmark">Suburban</span
                     ><img
-                      src="img/chrome-suburban.png"
-                      srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                      src="img/chrome-suburban.webp"
+                      srcset="img/chrome-suburban.webp 320w, img/chrome-suburban-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4118,8 +4138,8 @@
                   <a class="mbx-maserati-card" href="index.html#modelbar"
                     ><span class="mbx-maserati-wordmark">Traverse</span
                     ><img
-                      src="img/chrome-traverse.png"
-                      srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                      src="img/chrome-traverse.webp"
+                      srcset="img/chrome-traverse.webp 320w, img/chrome-traverse-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4134,8 +4154,8 @@
                   <a class="mbx-maserati-card" href="index.html#modelbar"
                     ><span class="mbx-maserati-wordmark">Equinox</span
                     ><img
-                      src="img/chrome-equinox.png"
-                      srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                      src="img/chrome-equinox.webp"
+                      srcset="img/chrome-equinox.webp 320w, img/chrome-equinox-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4150,8 +4170,8 @@
                   <a class="mbx-maserati-card" href="index.html#modelbar"
                     ><span class="mbx-maserati-wordmark">Trailblazer</span
                     ><img
-                      src="img/chrome-trailblazer.png"
-                      srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                      src="img/chrome-trailblazer.webp"
+                      srcset="img/chrome-trailblazer.webp 320w, img/chrome-trailblazer-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4166,8 +4186,8 @@
                   <a class="mbx-maserati-card" href="index.html#modelbar"
                     ><span class="mbx-maserati-wordmark">Trax</span
                     ><img
-                      src="img/chrome-trax.png"
-                      srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                      src="img/chrome-trax.webp"
+                      srcset="img/chrome-trax.webp 320w, img/chrome-trax-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4223,6 +4243,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section demo-wide" id="group">
@@ -4234,13 +4255,13 @@
           <h4 id="mbx-group-0-h" class="strip-label">Make logos, seven across past 992px (base 2 &middot; &ge;769px 4 &middot; &ge;993px 7) — the cutouts stand in for OEM logos</h4>
           <div class="demo-stage demo-stage--band">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-group-0" data-slider data-step="slide" data-autoplay="4000" aria-labelledby="mbx-group-0-h">
+            <div class="dl-carousel mbx-group-0" data-slider data-step="slide" data-autoplay="4000" aria-label="Group makes rail">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-group-0-card" href="index.html#modelbar" aria-label="Shop Silverado 1500"
                     ><img
-                      src="img/chrome-silverado-1500.png"
-                      srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                      src="img/chrome-silverado-1500.webp"
+                      srcset="img/chrome-silverado-1500.webp 320w, img/chrome-silverado-1500-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4252,8 +4273,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-group-0-card" href="index.html#modelbar" aria-label="Shop Colorado"
                     ><img
-                      src="img/chrome-colorado.png"
-                      srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                      src="img/chrome-colorado.webp"
+                      srcset="img/chrome-colorado.webp 320w, img/chrome-colorado-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4265,8 +4286,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-group-0-card" href="index.html#modelbar" aria-label="Shop Tahoe"
                     ><img
-                      src="img/chrome-tahoe.png"
-                      srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                      src="img/chrome-tahoe.webp"
+                      srcset="img/chrome-tahoe.webp 320w, img/chrome-tahoe-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4278,8 +4299,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-group-0-card" href="index.html#modelbar" aria-label="Shop Suburban"
                     ><img
-                      src="img/chrome-suburban.png"
-                      srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                      src="img/chrome-suburban.webp"
+                      srcset="img/chrome-suburban.webp 320w, img/chrome-suburban-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4291,8 +4312,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-group-0-card" href="index.html#modelbar" aria-label="Shop Traverse"
                     ><img
-                      src="img/chrome-traverse.png"
-                      srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                      src="img/chrome-traverse.webp"
+                      srcset="img/chrome-traverse.webp 320w, img/chrome-traverse-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4304,8 +4325,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-group-0-card" href="index.html#modelbar" aria-label="Shop Equinox"
                     ><img
-                      src="img/chrome-equinox.png"
-                      srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                      src="img/chrome-equinox.webp"
+                      srcset="img/chrome-equinox.webp 320w, img/chrome-equinox-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4317,8 +4338,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-group-0-card" href="index.html#modelbar" aria-label="Shop Trailblazer"
                     ><img
-                      src="img/chrome-trailblazer.png"
-                      srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                      src="img/chrome-trailblazer.webp"
+                      srcset="img/chrome-trailblazer.webp 320w, img/chrome-trailblazer-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4330,8 +4351,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-group-0-card" href="index.html#modelbar" aria-label="Shop Trax"
                     ><img
-                      src="img/chrome-trax.png"
-                      srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                      src="img/chrome-trax.webp"
+                      srcset="img/chrome-trax.webp 320w, img/chrome-trax-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4390,13 +4411,13 @@
           <h4 id="mbx-group-1-h" class="strip-label">Rooftop location cards (base 1 &middot; &ge;769px 2 &middot; &ge;993px 4)</h4>
           <div class="demo-stage demo-stage--band">
             <span class="demo-stage-tag" aria-hidden="true">Live</span>
-            <div class="dl-carousel mbx-group-1" data-slider data-step="slide" data-autoplay="4000" aria-labelledby="mbx-group-1-h">
+            <div class="dl-carousel mbx-group-1" data-slider data-step="slide" data-autoplay="4000" aria-label="Group locations rail">
               <ul class="dl-carousel-track">
                 <li class="dl-carousel-slide">
                   <a class="mbx-group-1-card" href="index.html#cards"
                     ><img
-                      src="img/chrome-silverado-1500.png"
-                      srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                      src="img/chrome-silverado-1500.webp"
+                      srcset="img/chrome-silverado-1500.webp 320w, img/chrome-silverado-1500-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4404,7 +4425,7 @@
                       loading="lazy"
                       decoding="async"
                     />
-                    <h3>Northgate Chevrolet</h3>
+                    <p class="mbx-group-1-name">Northgate Chevrolet</p>
                     <p>2400 Commerce Dr, Springfield<br />(555) 010-1100</p>
                     <span class="mbx-group-1-visit">Visit website</span></a
                   >
@@ -4412,8 +4433,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-group-1-card" href="index.html#cards"
                     ><img
-                      src="img/chrome-colorado.png"
-                      srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                      src="img/chrome-colorado.webp"
+                      srcset="img/chrome-colorado.webp 320w, img/chrome-colorado-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4421,7 +4442,7 @@
                       loading="lazy"
                       decoding="async"
                     />
-                    <h3>Riverside Buick GMC</h3>
+                    <p class="mbx-group-1-name">Riverside Buick GMC</p>
                     <p>18 Bridge St, Springfield<br />(555) 010-1200</p>
                     <span class="mbx-group-1-visit">Visit website</span></a
                   >
@@ -4429,8 +4450,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-group-1-card" href="index.html#cards"
                     ><img
-                      src="img/chrome-tahoe.png"
-                      srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                      src="img/chrome-tahoe.webp"
+                      srcset="img/chrome-tahoe.webp 320w, img/chrome-tahoe-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4438,7 +4459,7 @@
                       loading="lazy"
                       decoding="async"
                     />
-                    <h3>Lakeview CDJR</h3>
+                    <p class="mbx-group-1-name">Lakeview CDJR</p>
                     <p>901 Shoreline Ave, Lakeview<br />(555) 010-1300</p>
                     <span class="mbx-group-1-visit">Visit website</span></a
                   >
@@ -4446,8 +4467,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-group-1-card" href="index.html#cards"
                     ><img
-                      src="img/chrome-suburban.png"
-                      srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                      src="img/chrome-suburban.webp"
+                      srcset="img/chrome-suburban.webp 320w, img/chrome-suburban-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4455,7 +4476,7 @@
                       loading="lazy"
                       decoding="async"
                     />
-                    <h3>Summit Ford</h3>
+                    <p class="mbx-group-1-name">Summit Ford</p>
                     <p>77 Hilltop Rd, Summit<br />(555) 010-1400</p>
                     <span class="mbx-group-1-visit">Visit website</span></a
                   >
@@ -4463,8 +4484,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-group-1-card" href="index.html#cards"
                     ><img
-                      src="img/chrome-traverse.png"
-                      srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                      src="img/chrome-traverse.webp"
+                      srcset="img/chrome-traverse.webp 320w, img/chrome-traverse-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4472,7 +4493,7 @@
                       loading="lazy"
                       decoding="async"
                     />
-                    <h3>Valley Honda</h3>
+                    <p class="mbx-group-1-name">Valley Honda</p>
                     <p>5120 Orchard Way, Valleyfield<br />(555) 010-1500</p>
                     <span class="mbx-group-1-visit">Visit website</span></a
                   >
@@ -4480,8 +4501,8 @@
                 <li class="dl-carousel-slide">
                   <a class="mbx-group-1-card" href="index.html#cards"
                     ><img
-                      src="img/chrome-equinox.png"
-                      srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                      src="img/chrome-equinox.webp"
+                      srcset="img/chrome-equinox.webp 320w, img/chrome-equinox-640.webp 640w"
                       sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
                       width="320"
                       height="240"
@@ -4489,7 +4510,7 @@
                       loading="lazy"
                       decoding="async"
                     />
-                    <h3>Downtown Kia</h3>
+                    <p class="mbx-group-1-name">Downtown Kia</p>
                     <p>311 Main St, Springfield<br />(555) 010-1600</p>
                     <span class="mbx-group-1-visit">Visit website</span></a
                   >
@@ -4508,7 +4529,7 @@
   &lt;ul class="dl-carousel-track"&gt;
     &lt;li class="dl-carousel-slide"&gt;
       &lt;a class="my-modelbar-card" href="https://www.rooftop-site.example/"&gt;
-        &lt;h3&gt;Northgate Chevrolet&lt;/h3&gt;
+        &lt;h3 class="my-modelbar-name"&gt;Northgate Chevrolet&lt;/h3&gt;
         &lt;p&gt;2400 Commerce Dr, Springfield&lt;br&gt;(555) 010-1100&lt;/p&gt;
         &lt;span class="my-modelbar-visit"&gt;Visit website&lt;/span&gt;
       &lt;/a&gt;
@@ -4535,7 +4556,7 @@
 .my-modelbar .dl-carousel-pause { inset-inline-end: calc(var(--dlc-arrow-size, 36px) + 0.75rem); }
 .my-modelbar-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.5rem 1.25rem; color: inherit; text-align: center; text-decoration: none; background: #fff; border-radius: 10px; box-shadow: 0 4px 16px rgb(16 22 29 / 12%); }
 .my-modelbar-card img { inline-size: 55%; block-size: auto; object-fit: contain; }
-.my-modelbar-card h3 { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; }
+.my-modelbar-card .my-modelbar-name { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; font-weight: 700; color: #222; }
 .my-modelbar-card p { margin: 0 0 1rem; font-size: 0.9rem; color: #5f6368; }
 .my-modelbar-visit { display: inline-block; margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.8rem; font-weight: 700; color: #fff; background: #c8102e; border-radius: 6px; }</code></pre>
             <p class="code-label">Check it worked</p>
@@ -4546,6 +4567,7 @@
               <li>Swipe, drag and scroll all work &mdash; and the strip still scrolls with JavaScript turned off.</li>
             </ul>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
       </section>
 
@@ -4712,6 +4734,7 @@
 .my-tilewide-cover p::before { content: "\203A "; }
 .my-tilewide-cover a { align-self: flex-start; font-size: 0.85rem; color: #fff; }</code></pre>
           </details>
+          <p class="demo-backtotoc"><a href="#toc">All sections &#8593;</a></p>
         </section>
 
         <section class="demo-section" id="outliers">
