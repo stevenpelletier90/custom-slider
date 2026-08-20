@@ -1019,7 +1019,10 @@ const recipeCss = (v, s) => {
     .join('\n');
   const dots = v.dots
     ? `/* This bar is one of the three in the estate that keeps its dots - nothing to hide. */`
-    : `/* Arrows only - hide the dots and reclaim the space they reserved. */\n.my-modelbar .dl-carousel-dots { display: none; }\n.my-modelbar { --dlc-controls-space: 0px; }`;
+    : `/* Arrows only - hide the dots and reclaim the space they reserved.
+   0.1px, not 0px: the platform's CSS minifier strips the unit off any zero
+   length, and a unitless 0 inside the engine's calc() breaks the arrows'
+   vertical centering (they jump to the top of the strip). */\n.my-modelbar .dl-carousel-dots { display: none; }\n.my-modelbar { --dlc-controls-space: 0.1px; }`;
   const auto = s.autoplay ? `\n\n/* Autoplay adds the engine's pause button (top right, first in tab order) - leave it. */` : '';
   const tabbed = s.tabbed ? `\n${TABBED_CSS}` : '';
   // Platform-safe by design: DealerOn's styleCode minifier rejects modern
