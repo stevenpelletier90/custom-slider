@@ -31,6 +31,191 @@
   // The look's own horizontal chrome comes off separately - see CHROME.
   const TIER_BOX = { base: 360, 768: 750, 992: 970, 1200: 1170 };
 
+  // The vehicles each brand actually shows, from the cutouts in demo/img/oem.
+  // [folder, [[file, width, height, name], ...]] - real intrinsic sizes,
+  // because they vary a lot between brands (Lexus ships 240x140, Genesis
+  // 640x360, Alfa Romeo 300x500 portraits) and the wrong width/height
+  // attribute is a layout shift on a real page.
+  //
+  // Twelve of the 32 have imagery. The rest fall back to the Chevrolet
+  // cutouts and say so in the picker rather than pretending otherwise.
+  const ROSTERS = {
+    acura: [
+      'acura',
+      [
+        ['integra.png', 320, 240, 'Integra'],
+        ['tlx.png', 320, 240, 'TLX'],
+        ['adx.png', 320, 240, 'ADX'],
+        ['rdx.png', 320, 240, 'RDX'],
+        ['zdx.png', 480, 300, 'ZDX'],
+        ['mdx.png', 320, 240, 'MDX'],
+      ],
+    ],
+    lexus: [
+      'lexus',
+      [
+        ['ux-hybrid.png', 240, 140, 'UX Hybrid'],
+        ['nx.png', 240, 140, 'NX'],
+        ['nx-hybrid.png', 240, 140, 'NX Hybrid'],
+        ['rz.png', 240, 140, 'RZ'],
+        ['rx.png', 240, 140, 'RX'],
+        ['gx.png', 240, 140, 'GX'],
+      ],
+    ],
+    buick: [
+      'buick',
+      [
+        ['envista.png', 320, 240, 'Envista'],
+        ['encore-gx.png', 320, 240, 'Encore GX'],
+        ['envision.png', 320, 240, 'Envision'],
+        ['enclave.png', 320, 240, 'Enclave'],
+      ],
+    ],
+    audi: [
+      'audi',
+      [
+        ['e-tron-gt.webp', 420, 180, 'e-tron GT'],
+        ['q4-e-tron.webp', 420, 180, 'Q4 e-tron'],
+        ['q6-e-tron.webp', 420, 180, 'Q6 e-tron'],
+        ['q3.webp', 420, 180, 'Q3'],
+        ['q5.webp', 420, 180, 'Q5'],
+        ['q7.webp', 420, 180, 'Q7'],
+      ],
+    ],
+    genesis: [
+      'genesis',
+      [
+        ['g70.png', 400, 225, 'G70'],
+        ['g80.png', 400, 225, 'G80'],
+        ['g90.png', 400, 225, 'G90'],
+        ['gv60.png', 640, 360, 'GV60'],
+        ['gv70.png', 400, 225, 'GV70'],
+        ['gv80.png', 400, 225, 'GV80'],
+      ],
+    ],
+    lincoln: [
+      'lincoln',
+      [
+        ['navigator.png', 320, 240, 'Navigator'],
+        ['aviator.png', 320, 240, 'Aviator'],
+        ['nautilus.png', 320, 240, 'Nautilus'],
+        ['corsair.png', 320, 240, 'Corsair'],
+      ],
+    ],
+    ford: [
+      'ford',
+      [
+        ['mustang.png', 320, 240, 'Mustang'],
+        ['mach-e.png', 320, 240, 'Mach-E'],
+        ['escape.png', 320, 240, 'Escape'],
+        ['explorer.png', 320, 240, 'Explorer'],
+        ['bronco.png', 320, 240, 'Bronco'],
+        ['f-150.png', 320, 240, 'F-150'],
+      ],
+    ],
+    hyundai: [
+      'hyundai',
+      [
+        ['kona.png', 420, 260, 'Kona'],
+        ['tucson.png', 420, 260, 'Tucson'],
+        ['santa-fe.png', 320, 240, 'Santa Fe'],
+        ['palisade.png', 320, 240, 'Palisade'],
+        ['ioniq-5.png', 420, 260, 'IONIQ 5'],
+        ['elantra.png', 420, 260, 'Elantra'],
+      ],
+    ],
+    mazda: [
+      'mazda',
+      [
+        ['cx-30.png', 480, 209, 'CX-30'],
+        ['cx-5.png', 480, 209, 'CX-5'],
+        ['cx-50.png', 480, 209, 'CX-50'],
+        ['cx-90.png', 480, 209, 'CX-90'],
+        ['mazda3-sedan.png', 480, 209, 'Mazda3 Sedan'],
+        ['mx-5-miata.png', 480, 209, 'MX-5 Miata'],
+      ],
+    ],
+    toyota: [
+      'toyota',
+      [
+        ['camry.jpg', 800, 747, 'Camry'],
+        ['corolla.jpg', 800, 744, 'Corolla'],
+        ['rav4.jpg', 800, 744, 'RAV4'],
+        ['tacoma.jpg', 800, 744, 'Tacoma'],
+        ['tundra.jpg', 800, 744, 'Tundra'],
+        ['4runner.jpg', 800, 744, '4Runner'],
+      ],
+    ],
+    alfaromeo: [
+      'alfaromeo',
+      [
+        ['tonale.jpg', 300, 500, 'Tonale'],
+        ['tonale-hybrid.jpg', 300, 500, 'Tonale Hybrid'],
+        ['giulia.jpg', 300, 500, 'Giulia'],
+        ['stelvio.jpg', 300, 500, 'Stelvio'],
+        ['giulia-quadrifoglio.jpg', 300, 500, 'Giulia Quadrifoglio'],
+        ['stelvio-quadrifoglio.jpg', 300, 500, 'Stelvio Quadrifoglio'],
+      ],
+    ],
+    chevrolet: [
+      '',
+      [
+        ['chrome-silverado-1500.webp', 320, 240, 'Silverado 1500'],
+        ['chrome-colorado.webp', 320, 240, 'Colorado'],
+        ['chrome-tahoe.webp', 320, 240, 'Tahoe'],
+        ['chrome-suburban.webp', 320, 240, 'Suburban'],
+        ['chrome-traverse.webp', 320, 240, 'Traverse'],
+        ['chrome-trax.webp', 320, 240, 'Trax'],
+        ['chrome-equinox.webp', 320, 240, 'Equinox'],
+        ['chrome-trailblazer.webp', 320, 240, 'Trailblazer'],
+      ],
+    ],
+    chrysler: [
+      'cdjr',
+      [
+        ['chrysler-pacifica.png', 480, 360, 'Pacifica'],
+        ['chrysler-voyager.png', 480, 360, 'Voyager'],
+      ],
+    ],
+    dodge: [
+      'cdjr',
+      [
+        ['dodge-charger.png', 480, 360, 'Charger'],
+        ['dodge-durango.png', 480, 360, 'Durango'],
+      ],
+    ],
+    jeep: [
+      'cdjr',
+      [
+        ['jeep-wrangler.png', 480, 360, 'Wrangler'],
+        ['jeep-grand-cherokee.png', 480, 360, 'Grand Cherokee'],
+      ],
+    ],
+    ram: [
+      'cdjr',
+      [
+        ['ram-1500.png', 480, 360, 'Ram 1500'],
+        ['ram-2500.png', 480, 360, 'Ram 2500'],
+      ],
+    ],
+  };
+
+  const roster = (id, label) => {
+    const entry = ROSTERS[id];
+    if (!entry) return null;
+    const [folder, items] = entry;
+    return items.map(([file, w, h, name]) => ({
+      img: folder ? `img/oem/${folder}/${file}` : `img/${file}`,
+      w,
+      h,
+      name,
+      alt: `${label} ${name}`,
+      sub: 'In stock now',
+      blurb: `Explore the ${label} ${name}.`,
+      href: `/searchnew.aspx?Model=${encodeURIComponent(name)}`,
+    }));
+  };
+
   const BRANDS = {
     acura: {
       label: 'Acura',
@@ -375,6 +560,13 @@
       out[tier === 'base' ? 'base' : +tier] = n;
     }
     return out;
+  }
+
+  // Attach each brand's own vehicles. A brand with none keeps `models` unset,
+  // and the workbench falls back to the Chevrolet roster.
+  for (const [id, b] of Object.entries(BRANDS)) {
+    const list = roster(id, b.label);
+    if (list) b.models = list;
   }
 
   globalThis.DLX = Object.assign(globalThis.DLX || {}, { BRANDS, perViewFor, perAt, TIER_BOX, CHROME, MARGIN });

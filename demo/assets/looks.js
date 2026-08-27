@@ -20,6 +20,7 @@ const LOOKS = {
     // A vehicle cutout with its name under it - no card, no plate.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><path d="M9 16h26l-3-5.5a3 3 0 0 0-2.6-1.5H14.6A3 3 0 0 0 12 10.5L9 16Z" fill="currentColor" opacity=".85"/><rect x="7" y="15.5" width="30" height="3.5" rx="1.6" fill="currentColor" opacity=".85"/><circle cx="14" cy="19.5" r="2.6" fill="currentColor"/><circle cx="30" cy="19.5" r="2.6" fill="currentColor"/><rect x="13" y="25" width="18" height="2.4" rx="1.2" fill="currentColor" opacity=".45"/></svg>`,
     label: 'Cutout tile',
+    note: 'The workhorse - a vehicle cutout with its name under it. Fourteen of the 24 brands in the census ship this one.',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
     minCard: 150,
@@ -51,13 +52,12 @@ const LOOKS = {
 @media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; padding-inline: 0; } }
 @media (max-width: 380px) { .dlx { --dlc-per-view: 1; } }
 .dlx-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
-.dlx-plate { display: block; padding: var(--plate-pad); background: var(--plate-bg); }
-.dlx-card img { inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); object-fit: contain; filter: var(--img-filter); transition: filter 0.2s, transform 0.25s ease; }
+.dlx-card img { box-sizing: border-box; inline-size: 100%; block-size: auto; padding: var(--plate-pad); aspect-ratio: var(--img-aspect); object-fit: contain; background: var(--plate-bg); filter: var(--img-filter); transition: filter 0.2s, transform 0.25s ease; }
 .dlx-card:hover img { filter: none; }
 .dlx-name { order: var(--name-order); margin: 0.4rem 0 0; line-height: 1.35; font-size: var(--name-size); font-weight: var(--name-weight); text-transform: var(--name-case); letter-spacing: var(--name-tracking); color: var(--name-color); }
 .dlx-sub { display: block; margin-block-start: 0.15rem; font-size: 0.8rem; line-height: 1.35; color: #5f6368; }`,
     markup: (m) => `<a class="dlx-card" href="${m.href}">
-  <span class="dlx-plate"><img src="${m.img}" width="320" height="240" alt="${m.alt}" loading="lazy" decoding="async"></span>
+  <img src="${m.img}" width="320" height="240" alt="${m.alt}" loading="lazy" decoding="async">
   <p class="dlx-name">${m.name}</p>${m.sub ? `\n  <small class="dlx-sub">${m.sub}</small>` : ''}
 </a>`,
   },
@@ -66,6 +66,7 @@ const LOOKS = {
     // Photo on top, title and price under it, all inside one card.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="6.5" y="3.5" width="31" height="23" rx="3" stroke="currentColor" opacity=".5"/><rect x="9" y="6" width="26" height="11" rx="1.6" fill="currentColor" opacity=".85"/><rect x="9" y="19" width="18" height="2.2" rx="1.1" fill="currentColor" opacity=".55"/><rect x="9" y="22.6" width="11" height="2" rx="1" fill="currentColor" opacity=".3"/></svg>`,
     label: 'Vehicle card',
+    note: 'Photo, title and price in one card, made clickable by a single stretched link.',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
     minCard: 240,
@@ -109,6 +110,7 @@ const LOOKS = {
     // has no room for, which is why this is its own component.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="12" y="4" width="20" height="2.8" rx="1.4" fill="currentColor" opacity=".85"/><rect x="9" y="12.5" width="26" height="3.5" rx="1.6" fill="currentColor" opacity=".85"/><path d="M11 13h22l-2.4-4a2.6 2.6 0 0 0-2.2-1.2H15.6A2.6 2.6 0 0 0 13.4 9L11 13Z" fill="currentColor" opacity=".45"/><circle cx="15.5" cy="16.5" r="2.2" fill="currentColor"/><circle cx="28.5" cy="16.5" r="2.2" fill="currentColor"/><rect x="13" y="22" width="18" height="2.4" rx="1.2" fill="currentColor" opacity=".45"/></svg>`,
     label: 'Wordmark above',
+    note: "The model's wordmark set above the vehicle - the one slot the cutout tile has no room for.",
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
     minCard: 165,
@@ -140,6 +142,7 @@ const LOOKS = {
     // Photo down one half, copy and a pill down the other.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="4.5" y="6.5" width="35" height="17" rx="3" stroke="currentColor" opacity=".5"/><path d="M7 9.5a2 2 0 0 1 2-2h11v15H9a2 2 0 0 1-2-2v-11Z" fill="currentColor" opacity=".85"/><rect x="23" y="10" width="13" height="2.4" rx="1.2" fill="currentColor" opacity=".55"/><rect x="23" y="14" width="9" height="1.8" rx=".9" fill="currentColor" opacity=".3"/><rect x="23" y="18" width="10" height="3.4" rx="1.7" fill="currentColor" opacity=".55"/></svg>`,
     label: 'Split photo card',
+    note: 'Photo down one half, copy and a button down the other. Needs a wide card: 260px is the floor.',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
     minCard: 260,
@@ -186,6 +189,7 @@ const LOOKS = {
     // Tall photo with the name and a button over the bottom of it.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="13.5" y="2.5" width="17" height="25" rx="3" fill="currentColor" opacity=".85"/><rect x="16" y="17" width="12" height="2.2" rx="1.1" fill="var(--wb-icon-bg, #fff)" opacity=".9"/><rect x="16" y="21" width="12" height="4" rx="2" fill="var(--wb-icon-bg, #fff)" opacity=".55"/></svg>`,
     label: 'Tall tile with CTA',
+    note: 'Tall photography with the name and a button over the bottom of the image.',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
     minCard: 165,
@@ -216,6 +220,7 @@ const LOOKS = {
     // A logo centred on a filled panel - brand strips, nothing else.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="5.5" y="5.5" width="33" height="19" rx="3" fill="currentColor" opacity=".85"/><circle cx="22" cy="15" r="5" fill="var(--wb-icon-bg, #fff)" opacity=".9"/><rect x="17" y="14" width="10" height="2" rx="1" fill="currentColor" opacity=".85"/></svg>`,
     label: 'Logo panel',
+    note: 'Built for a strip of manufacturer logos on a dark panel, not for vehicles - which is why it looks odd under a model bar. The navy is only --strip-bg and --card-bg; change them below.',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
     minCard: 165,
@@ -229,7 +234,8 @@ const LOOKS = {
       '--card-fg': '#fff',
     },
     css: `.dlx { padding-block-start: 1.5rem; padding-inline: 1rem; background: var(--strip-bg); }
-@media (max-width: 460px) { .dlx { --dlc-per-view: 1; padding-block-start: 1rem; padding-inline: 0.5rem; } }
+.dlx .dl-carousel-track { padding-block-end: 1.5rem; }
+@media (max-width: 460px) { .dlx { --dlc-per-view: 1; padding-block-start: 1rem; padding-inline: 0.5rem; } .dlx .dl-carousel-track { padding-block-end: 1rem; } }
 .dlx-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; color: var(--card-fg); background: var(--card-bg); border: 1px solid rgb(255 255 255 / 7%); border-radius: 10px; transition: background 0.2s; }
 .dlx-card img { inline-size: 75%; block-size: auto; object-fit: contain; }`,
     markup: (m) => `<a class="dlx-card" href="${m.href}" aria-label="${m.alt}">
@@ -241,6 +247,7 @@ const LOOKS = {
     // Storefront photo, the store name, then a coloured action bar.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="6.5" y="3.5" width="31" height="23" rx="3" stroke="currentColor" opacity=".5"/><rect x="9" y="6" width="26" height="9" rx="1.6" fill="currentColor" opacity=".85"/><rect x="9" y="17" width="15" height="2.2" rx="1.1" fill="currentColor" opacity=".45"/><rect x="9" y="21" width="26" height="3.2" rx="1.6" fill="currentColor" opacity=".85"/></svg>`,
     label: 'Location card',
+    note: 'A dealership: storefront photo, the store name, and a coloured action bar.',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
     minCard: 170,

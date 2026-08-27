@@ -368,6 +368,11 @@ body {
   background: var(--signal);
 }
 
+.ui-widths button:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
 /* ---- the signature: a spec readout under the stage ---------------------- */
 
 .ui-spec {

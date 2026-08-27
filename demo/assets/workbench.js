@@ -277,7 +277,6 @@
       css: `.dlx { padding-inline: calc(var(--dlc-arrow-size) + 0.4rem); }
 @media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; } }
 .dlx-svc { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
-.dlx-svc-media { overflow: hidden; }
 .dlx-svc img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.35s ease; }
 .dlx-svc:hover img { transform: scale(1.05); }
 .dlx-svc h4 { margin: 1rem 1.1rem 0.35rem; font-size: 1.1rem; line-height: 1.3; }
@@ -286,7 +285,7 @@
       slides: (models) =>
         models.map(
           (m) =>
-            `<a class="dlx-svc" href="${m.href}"><span class="dlx-svc-media"><img src="${m.img}" width="1200" height="750" alt="" loading="lazy" decoding="async"></span><h4>${m.name}</h4><p>${m.blurb}</p><span class="dlx-svc-more" aria-hidden="true">Read more →</span></a>`,
+            `<a class="dlx-svc" href="${m.href}"><img src="${m.img}" width="1200" height="750" alt="" loading="lazy" decoding="async"><h4>${m.name}</h4><p>${m.blurb}</p><span class="dlx-svc-more" aria-hidden="true">Read more →</span></a>`,
         ),
     },
 
@@ -467,6 +466,11 @@
     state.lookProps = p.look ? { ...LOOKS[p.look].settings } : {};
   }
 
+  // A brand preset brings its own vehicles where the estate gave us the
+  // cutouts. Seventeen of the 32 have none, and those keep the pattern's own
+  // content rather than being shown someone else's cars under their name.
+  const modelsFor = (p) => (state.brand && BRANDS[state.brand]?.models ? BRANDS[state.brand].models : p.models);
+
   const minCard = () => PATTERNS[state.pattern].minCard ?? (state.look ? LOOKS[state.look].minCard : 200);
 
   // --dlc-gap as a number. Values here are always rem or px.
@@ -523,7 +527,8 @@
     // Cycle the content up or down to the requested count. Repeats are how you
     // see what the slider does at 12 cards, and what it does when everything
     // already fits and it correctly stops drawing arrows and dots.
-    const models = Array.from({ length: state.count }, (_, i) => p.models[i % p.models.length]);
+    const source = modelsFor(p);
+    const models = Array.from({ length: state.count }, (_, i) => source[i % source.length]);
     // A pattern draws its slides one of three ways: its own slides(), a shared
     // card look, or - for the card grid - entirely inside its own branch below.
     let items = p.slides ? p.slides(models) : state.look ? models.map((m) => LOOKS[state.look].markup(m)) : [];
@@ -549,7 +554,12 @@
       [
         `${pad}<div class="${cls} dl-carousel" data-slider${attrs} aria-label="${label}">`,
         `${pad}  <${tag} class="dl-carousel-track">`,
-        ...list.map((h) => `${pad}    <${item} class="dl-carousel-slide">${h}</${item}>`),
+        // Indent the card's own lines to match, so what you paste is not a
+        // wall of markup starting at column zero inside a nested list item.
+        ...list.map((h) => {
+          const inner = h.includes('\n') ? ['', h.replace(/^/gm, `${pad}      `), `${pad}    `].join('\n') : h;
+          return `${pad}    <${item} class="dl-carousel-slide">${inner}</${item}>`;
+        }),
         `${pad}  </${tag}>`,
         `${pad}</div>`,
       ].join('\n');
@@ -595,10 +605,12 @@
     // A grid of cards, each with its own small slider of that vehicle's photos.
     if (p.cardGrid) {
       const shots = PHOTOS.map((x) => x.img);
-      const cards = p.models.slice(0, state.count).map((m, i) => {
-        const pics = [m.img, shots[i % shots.length], shots[(i + 2) % shots.length]].map((src) => `<img src="${src}" width="800" height="600" alt="${m.alt}" loading="lazy" decoding="async">`);
-        return [`  <div class="dlx-cg-card">`, carousel(pics, `Photos of the ${m.name}`, '    '), `    <div class="dlx-cg-body"><h4>${m.name}</h4><p>${m.sub}</p></div>`, `  </div>`].join('\n');
-      });
+      const cards = modelsFor(p)
+        .slice(0, state.count)
+        .map((m, i) => {
+          const pics = [m.img, shots[i % shots.length], shots[(i + 2) % shots.length]].map((src) => `<img src="${src}" width="800" height="600" alt="${m.alt}" loading="lazy" decoding="async">`);
+          return [`  <div class="dlx-cg-card">`, carousel(pics, `Photos of the ${m.name}`, '    '), `    <div class="dlx-cg-body"><h4>${m.name}</h4><p>${m.sub}</p></div>`, `  </div>`].join('\n');
+        });
       return `<div class="${cls}-wrap">\n${cards.join('\n')}\n</div>`;
     }
 
@@ -845,6 +857,7 @@
         state.brand = sel.value || null;
         const b = BRANDS[state.brand];
         if (b) {
+          if (b.models) state.count = b.models.length;
           state.look = b.look;
           state.lookProps = { ...LOOKS[b.look].settings };
           // A recorded ladder is read at the platform's tiers and clamped;
@@ -885,7 +898,15 @@
         });
         looks.append(b);
       }
-      panel.append(section('Card style', looks));
+      // What the selected style is FOR. A thumbnail cannot say "this one is a
+      // logo strip, so it will look wrong under a model bar" - and that is
+      // exactly the question the navy panel raises the first time you pick it.
+      const lookNote = document.createElement('p');
+      lookNote.className = 'wb-note';
+      lookNote.textContent = LOOKS[state.look].note ?? '';
+      const wrap2 = document.createElement('div');
+      wrap2.append(looks, lookNote);
+      panel.append(section('Card style', wrap2));
     }
 
     const colors = document.createElement('div');
@@ -982,13 +1003,39 @@
   // Preview width. The column the stage sits in is not the width the slider
   // will have on a real page, so the default caps it at Bootstrap 3's 1170px
   // .container and you can step down through the other two tiers.
-  for (const b of document.querySelectorAll('.ui-widths button')) {
-    b.addEventListener('click', () => {
-      for (const x of document.querySelectorAll('.ui-widths button')) x.setAttribute('aria-pressed', String(x === b));
-      stage.style.setProperty('--frame', b.dataset.w === '0' ? '100%' : `${b.dataset.w}px`);
-      requestAnimationFrame(checkFit);
-    });
+  const widthBtns = () => [...document.querySelectorAll('.ui-widths button')];
+
+  const setFrame = (b) => {
+    for (const x of widthBtns()) x.setAttribute('aria-pressed', String(x === b));
+    stage.style.setProperty('--frame', b.dataset.w === '0' ? '100%' : `${b.dataset.w}px`);
+    requestAnimationFrame(checkFit);
+  };
+
+  // A width the column cannot actually give is a lie: the preview silently
+  // renders narrower, the fit gauge then reports "tight" for a layout that is
+  // fine on a real page, and the number beside it disagrees with the button
+  // you pressed. Offer only the widths that fit, and step down when the window
+  // shrinks past one.
+  function fitWidths() {
+    const box = stage.parentElement;
+    const cs = getComputedStyle(box);
+    const avail = box.clientWidth - parseFloat(cs.paddingInlineStart) - parseFloat(cs.paddingInlineEnd);
+    let active = null;
+    for (const b of widthBtns()) {
+      const w = +b.dataset.w;
+      b.disabled = w > avail + 1;
+      b.title = b.disabled ? `Needs a window about ${Math.round(w + (innerWidth - avail))}px wide` : `Preview in a ${w || 'full-width'} container`;
+      if (b.getAttribute('aria-pressed') === 'true') active = b;
+    }
+    if (active && active.disabled) {
+      const widest = widthBtns()
+        .filter((b) => !b.disabled)
+        .sort((a, b) => +b.dataset.w - +a.dataset.w)[0];
+      if (widest) setFrame(widest);
+    }
   }
+
+  for (const b of widthBtns()) b.addEventListener('click', () => setFrame(b));
 
   /* ---- pattern picker ---------------------------------------------------- */
 
@@ -1066,7 +1113,11 @@
     for (const x of nav.querySelectorAll('button')) x.setAttribute('aria-current', String(x.dataset.go === state.pattern));
     buildPanel();
     render();
-    addEventListener('resize', checkFit);
+    addEventListener('resize', () => {
+      fitWidths();
+      checkFit();
+    });
+    fitWidths();
   };
   if (globalThis.DLCarousel) boot();
   else addEventListener('DOMContentLoaded', boot);
