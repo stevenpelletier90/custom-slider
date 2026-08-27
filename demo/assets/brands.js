@@ -40,6 +40,66 @@
   // Twelve of the 32 have imagery. The rest fall back to the Chevrolet
   // cutouts and say so in the picker rather than pretending otherwise.
   const ROSTERS = {
+    bmw: [
+      'bmw',
+      [
+        ['3-series.png', 320, 240, '3 Series'],
+        ['i4.png', 320, 240, 'i4'],
+        ['ix.png', 320, 240, 'iX'],
+        ['x3.png', 320, 240, 'X3'],
+        ['x5.png', 320, 240, 'X5'],
+      ],
+    ],
+    cadillac: [
+      'cadillac',
+      [
+        ['ct5-v.png', 320, 240, 'CT5-V'],
+        ['escalade-esv.png', 320, 240, 'Escalade ESV'],
+        ['escalade-iq.png', 320, 240, 'Escalade IQ'],
+        ['escalade-iql.png', 320, 240, 'Escalade IQL'],
+        ['escalade.png', 320, 240, 'Escalade'],
+      ],
+    ],
+    honda: [
+      'honda',
+      [
+        ['passport.png', 320, 240, 'Passport'],
+        ['pilot.png', 320, 240, 'Pilot'],
+        ['prologue.png', 320, 240, 'Prologue'],
+      ],
+    ],
+    infiniti: ['infiniti', [['qx80.png', 320, 240, 'QX80']]],
+    jaguar: [
+      'jaguar',
+      [
+        ['f-pace.png', 320, 240, 'F-PACE'],
+        ['f-type.png', 320, 240, 'F-TYPE'],
+      ],
+    ],
+    landrover: [
+      'landrover',
+      [
+        ['defender.png', 320, 240, 'Defender'],
+        ['range-rover.png', 320, 240, 'Range Rover'],
+      ],
+    ],
+    mitsubishi: ['mitsubishi', [['outlander.png', 320, 240, 'Outlander']]],
+    porsche: [
+      'porsche',
+      [
+        ['911.png', 320, 240, '911'],
+        ['cayenne.png', 320, 240, 'Cayenne'],
+      ],
+    ],
+    subaru: [
+      'subaru',
+      [
+        ['ascent.png', 320, 240, 'Ascent'],
+        ['outback.png', 320, 240, 'Outback'],
+      ],
+    ],
+    volkswagen: ['volkswagen', [['atlas.png', 320, 240, 'Atlas']]],
+    volvo: ['volvo', [['ex90.png', 320, 240, 'EX90']]],
     gmc: [
       'gmc',
       [
