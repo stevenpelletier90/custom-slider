@@ -26,6 +26,11 @@
   --signal-bg: #fdf3dd;
   --on-signal: #fff;
   --focus: #1a5fb4;
+  --glyph-bg: #eef2f6;
+  --glyph-edge: #c4ced8;
+  --glyph-mid: #a9bccd;
+  --glyph-ink: #16324f;
+  --glyph-soft: #cdd9e3;
 
   /* The code panel keeps Monokai in both themes: it is a quotation of an
      editor, and an editor does not change colour with the page around it. */
@@ -47,6 +52,11 @@
   --signal-bg: #2a2113;
   --on-signal: #1a1204;
   --focus: #7cb0ff;
+  --glyph-bg: #1b222c;
+  --glyph-edge: #333d4b;
+  --glyph-mid: #5b6d84;
+  --glyph-ink: #9db6d4;
+  --glyph-soft: #2b3542;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -61,6 +71,11 @@
     --signal-bg: #2a2113;
     --on-signal: #1a1204;
     --focus: #7cb0ff;
+    --glyph-bg: #1b222c;
+    --glyph-edge: #333d4b;
+    --glyph-mid: #5b6d84;
+    --glyph-ink: #9db6d4;
+    --glyph-soft: #2b3542;
   }
 }
 
@@ -245,8 +260,10 @@ body {
 }
 
 #wb-nav button {
-  display: block;
-  padding: 0.42rem 0.6rem;
+  display: flex;
+  gap: 0.6rem;
+  align-items: center;
+  padding: 0.35rem 0.5rem;
   font: inherit;
   font-size: 0.87rem;
   color: var(--ink-soft);
@@ -273,7 +290,7 @@ body {
 
 #wb-nav button[aria-current="true"]::before {
   position: absolute;
-  inset-block: 0.42rem;
+  inset-block: 0.35rem;
   inset-inline-start: 0;
   inline-size: 2px;
   content: "";
@@ -901,6 +918,239 @@ code {
   color: var(--on-signal);
   background: var(--signal);
   border-color: var(--signal);
+}
+
+/* ---- pattern glyphs ---------------------------------------------------- */
+
+/* A small drawing of each pattern's LAYOUT, so the rail is scannable by shape
+   rather than by reading seventeen labels. Ported from the original demo's
+   picker, where they did the same job; the hardcoded blues are tokens now so
+   they hold up in both themes. Pure CSS on ::before/::after — no image
+   requests, and they scale with the text. */
+.wb-glyph {
+  position: relative;
+  flex: none;
+  inline-size: 38px;
+  block-size: 27px;
+  overflow: hidden;
+  background: var(--glyph-bg);
+  border: 1px solid var(--glyph-edge);
+  border-radius: 3px;
+}
+
+.wb-glyph::before,
+.wb-glyph::after {
+  position: absolute;
+  content: "";
+}
+
+/* A full-width photo with a dot row under it. */
+.wb-glyph--hero::before {
+  inset: 4px 5px 9px;
+  background: var(--glyph-mid);
+}
+
+.wb-glyph--hero::after {
+  inset-block-end: 3px;
+  inset-inline: 11px;
+  block-size: 4px;
+  background: radial-gradient(circle 1.7px, var(--glyph-ink) 98%, transparent) 0 0 / 7px 4px repeat-x;
+}
+
+/* Evenly spaced cutouts across a single row. */
+.wb-glyph--modelbar::before {
+  inset: 8px 4px;
+  background: repeating-linear-gradient(90deg, var(--glyph-mid) 0 5px, transparent 5px 8px);
+}
+
+/* The same row under a strip of tabs. */
+.wb-glyph--tabs::before {
+  inset: 3px 7px auto;
+  block-size: 4px;
+  background: repeating-linear-gradient(90deg, var(--glyph-ink) 0 8px, transparent 8px 11px);
+}
+
+.wb-glyph--tabs::after {
+  inset: 11px 4px 5px;
+  background: repeating-linear-gradient(90deg, var(--glyph-mid) 0 5px, transparent 5px 8px);
+}
+
+/* Two rows of cards, split by a gap. */
+.wb-glyph--grid::before {
+  inset: 4px 5px;
+  background: repeating-linear-gradient(90deg, var(--glyph-mid) 0 8px, transparent 8px 11px);
+}
+
+.wb-glyph--grid::after {
+  inset-block-start: 50%;
+  inset-inline: 3px;
+  block-size: 3px;
+  background: var(--glyph-bg);
+  transform: translateY(-50%);
+}
+
+/* One card centred, slivers of its neighbours at both edges. */
+.wb-glyph--peek::before {
+  inset-block: 4px;
+  inset-inline: 0;
+  background: linear-gradient(90deg, var(--glyph-soft) 0 5px, transparent 5px calc(100% - 5px), var(--glyph-soft) calc(100% - 5px));
+}
+
+.wb-glyph--peek::after {
+  inset: 4px 9px;
+  background: var(--glyph-mid);
+}
+
+/* A photo with its own little pager inside the card. */
+.wb-glyph--card-gallery::before {
+  inset: 3px 9px;
+  background: var(--glyph-mid);
+  border-radius: 2px;
+}
+
+.wb-glyph--card-gallery::after {
+  inset-block-end: 6px;
+  inset-inline-end: 11px;
+  inline-size: 8px;
+  block-size: 4px;
+  background: var(--glyph-ink);
+  border-radius: 3px;
+}
+
+/* A photo above its thumbnail strip. */
+.wb-glyph--gallery::before {
+  inset: 3px 7px 10px;
+  background: var(--glyph-mid);
+}
+
+.wb-glyph--gallery::after {
+  inset-block-end: 3px;
+  inset-inline: 7px;
+  block-size: 4px;
+  background: repeating-linear-gradient(90deg, var(--glyph-ink) 0 5px, transparent 5px 8px);
+}
+
+/* Filter pills above the photo. */
+.wb-glyph--gallery-filter::before {
+  inset-block-start: 3px;
+  inset-inline: 8px;
+  block-size: 4px;
+  background: repeating-linear-gradient(90deg, var(--glyph-ink) 0 7px, transparent 7px 10px);
+  border-radius: 3px;
+}
+
+.wb-glyph--gallery-filter::after {
+  inset: 10px 7px 4px;
+  background: var(--glyph-mid);
+}
+
+/* A photo with a play triangle over it. */
+.wb-glyph--media-gallery::before {
+  inset: 3px 7px;
+  background: var(--glyph-mid);
+}
+
+.wb-glyph--media-gallery::after {
+  inset-block-start: 50%;
+  inset-inline-start: 50%;
+  border: 5px solid transparent;
+  border-inline-start: 8px solid var(--glyph-ink);
+  transform: translate(-30%, -50%);
+}
+
+/* A panel floating over a dimmed page. */
+.wb-glyph--lightbox::before {
+  inset: 0;
+  background: var(--glyph-soft);
+}
+
+.wb-glyph--lightbox::after {
+  inset: 6px 9px;
+  background: var(--glyph-bg);
+  border: 1px solid var(--glyph-ink);
+}
+
+/* A row of cards, each with a line of text under it. */
+.wb-glyph--cards::before {
+  inset: 5px 4px 10px;
+  background: repeating-linear-gradient(90deg, var(--glyph-mid) 0 8px, transparent 8px 11px);
+}
+
+.wb-glyph--cards::after {
+  inset-block-end: 6px;
+  inset-inline: 4px;
+  block-size: 2px;
+  background: repeating-linear-gradient(90deg, var(--glyph-ink) 0 8px, transparent 8px 11px);
+}
+
+/* Tall portraits, no text under them. */
+.wb-glyph--models::before {
+  inset: 3px 7px;
+  background: repeating-linear-gradient(90deg, var(--glyph-mid) 0 7px, transparent 7px 11px);
+}
+
+/* Three source files at three different heights — the whole point. */
+.wb-glyph--mixed::before {
+  inset: 4px;
+  background:
+    linear-gradient(var(--glyph-mid), var(--glyph-mid)) 0 100% / 8px 12px no-repeat,
+    linear-gradient(var(--glyph-mid), var(--glyph-mid)) 11px 100% / 8px 18px no-repeat,
+    linear-gradient(var(--glyph-mid), var(--glyph-mid)) 22px 100% / 8px 9px no-repeat;
+}
+
+/* One card: photo on top, a paragraph under it. */
+.wb-glyph--service::before {
+  inset: 4px 10px 12px;
+  background: var(--glyph-mid);
+}
+
+.wb-glyph--service::after {
+  inset-block-end: 4px;
+  inset-inline: 10px;
+  block-size: 6px;
+  background: repeating-linear-gradient(var(--ink-soft) 0 2px, transparent 2px 4px);
+}
+
+/* Poster on the left, its caption on the right. */
+.wb-glyph--video::before {
+  inset: 4px 19px 4px 5px;
+  background: var(--glyph-mid);
+}
+
+.wb-glyph--video::after {
+  inset: 6px 5px 6px 21px;
+  background: repeating-linear-gradient(var(--glyph-mid) 0 2px, transparent 2px 4px);
+}
+
+/* Stars over a quote. */
+.wb-glyph--reviews::before {
+  inset-block-start: 5px;
+  inset-inline: 7px;
+  block-size: 4px;
+  background: radial-gradient(circle 2px, var(--signal) 98%, transparent) 0 0 / 7px 4px repeat-x;
+}
+
+.wb-glyph--reviews::after {
+  inset: 13px 7px 5px;
+  background: repeating-linear-gradient(var(--glyph-mid) 0 2px, transparent 2px 4px);
+}
+
+/* The engine untouched: a card with the default arrows either side. */
+.wb-glyph--stock::before {
+  inset: 5px 10px;
+  background: var(--glyph-mid);
+}
+
+.wb-glyph--stock::after {
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-inline: 2px;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--glyph-ink);
+  content: "‹ ›";
 }
 
 /* ---- narrower screens -------------------------------------------------- */

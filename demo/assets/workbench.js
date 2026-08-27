@@ -996,7 +996,7 @@
   for (const [id, p] of Object.entries(PATTERNS)) {
     const b = document.createElement('button');
     b.type = 'button';
-    b.textContent = p.label;
+    b.innerHTML = `<span class="wb-glyph wb-glyph--${id}"></span><span>${p.label}</span>`;
     b.dataset.go = id;
     b.addEventListener('click', () => {
       loadPattern(id);
