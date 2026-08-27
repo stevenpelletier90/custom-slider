@@ -8,7 +8,8 @@
 //
 // What survives here is the set that differs in MARKUP - a split card is not a
 // stacked card with different numbers, and no property turns one into the
-// other. Six components cover all 17.
+// other. Six components cover all 17 old skins; a seventh, the vehicle card,
+// is new.
 //
 // Every point of variation is a custom property, so a preset is a handful of
 // values and the browser does the rendering. If a new brand needs something no
@@ -57,7 +58,7 @@ const LOOKS = {
 .dlx-name { order: var(--name-order); margin: 0.4rem 0 0; line-height: 1.35; font-size: var(--name-size); font-weight: var(--name-weight); text-transform: var(--name-case); letter-spacing: var(--name-tracking); color: var(--name-color); }
 .dlx-sub { display: block; margin-block-start: 0.15rem; font-size: 0.8rem; line-height: 1.35; color: #5f6368; }`,
     markup: (m) => `<a class="dlx-card" href="${m.href}">
-  <img src="${m.img}" width="320" height="240" alt="${m.alt}" loading="lazy" decoding="async">
+  <img src="${m.img}" width="${m.w ?? 320}" height="${m.h ?? 240}" alt="${m.alt}" loading="lazy" decoding="async">
   <p class="dlx-name">${m.name}</p>${m.sub ? `\n  <small class="dlx-sub">${m.sub}</small>` : ''}
 </a>`,
   },
@@ -131,11 +132,18 @@ const LOOKS = {
 .dlx-mark { display: block; margin-block-end: 0.6rem; font-size: var(--mark-size); font-style: italic; font-weight: 700; line-height: 1.2; letter-spacing: 0.06em; }
 .dlx-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.25s ease; }
 .dlx-name { margin: 0.5rem 0 0; font-size: var(--name-size); font-weight: 600; line-height: 1.35; text-transform: var(--name-case); letter-spacing: 0.1em; }`,
-    markup: (m) => `<a class="dlx-card" href="${m.href}">
-  <span class="dlx-mark">${m.mark ?? m.name}</span>
-  <img src="${m.img}" width="320" height="240" alt="${m.alt}" loading="lazy" decoding="async">
-  <p class="dlx-name">${m.name}</p>
-</a>`,
+    // No `mark` means no wordmark element - falling back to the model name
+    // printed it twice in every card.
+    markup: (m) =>
+      [
+        `<a class="dlx-card" href="${m.href}">`,
+        m.mark ? `  <span class="dlx-mark">${m.mark}</span>` : null,
+        `  <img src="${m.img}" width="${m.w ?? 320}" height="${m.h ?? 240}" alt="${m.alt}" loading="lazy" decoding="async">`,
+        `  <p class="dlx-name">${m.name}</p>`,
+        `</a>`,
+      ]
+        .filter((l) => l !== null)
+        .join('\n'),
   },
 
   split: {
@@ -161,7 +169,7 @@ const LOOKS = {
 .dlx-card img { flex: 0 0 50%; inline-size: 50%; aspect-ratio: 1; object-fit: cover; }
 .dlx-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; min-inline-size: 0; padding: 28px; }
 .dlx-sub { font-size: 0.85rem; color: #d9d9d9; }
-.dlx-name { margin: 0; font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+.dlx-name { display: block; margin: 0; font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
 .dlx-blurb { font-size: 0.95rem; line-height: 1.4; color: #d9d9d9; }
 .dlx-pill { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: var(--pill-fg); background: var(--pill-bg); border-radius: 999px; }
 @media (max-width: 600px) { .dlx-copy { gap: 0.35rem; padding: 1rem; } .dlx-name { font-size: 1.15rem; } .dlx-pill { padding: 0.45rem 1rem; font-size: 0.8rem; white-space: nowrap; } }
@@ -175,7 +183,7 @@ const LOOKS = {
         `  <img src="${m.img}" width="800" height="800" alt="${m.alt}" loading="lazy" decoding="async">`,
         `  <span class="dlx-copy">`,
         m.sub ? `    <small class="dlx-sub">${m.sub}</small>` : null,
-        `    <p class="dlx-name">${m.name}</p>`,
+        `    <span class="dlx-name">${m.name}</span>`,
         m.blurb ? `    <span class="dlx-blurb">${m.blurb}</span>` : null,
         `    <span class="dlx-pill">Shop Now</span>`,
         `  </span>`,

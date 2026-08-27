@@ -1,6 +1,7 @@
 // Proves the card-look collapse lost nothing.
 //
-// The old library shipped 17 skins. They were merged into 6 components because
+// The old library shipped 17 skins. They were merged into seven components (six
+// absorb the old skins, one is new) because
 // most differed only in values. The risk in a merge like that is silent loss —
 // a look that nobody notices is gone until a brand needs it. This asserts every
 // one of the 17 is accounted for by exactly one component, and that no

@@ -24,7 +24,8 @@
   --rule: #dde2e9;
   --signal: #b8770a;
   --signal-bg: #fdf3dd;
-  --on-signal: #fff;
+  --on-signal: #1a1204; /* dark ON amber: white was 3.70:1, this is 5.02:1 */
+  --signal-text: #8a5300; /* amber-family TEXT on --signal-bg; --signal itself is 3.35:1 there */
   --focus: #1a5fb4;
   --glyph-bg: #eef2f6;
   --glyph-edge: #c4ced8;
@@ -51,6 +52,7 @@
   --signal: #e8a317;
   --signal-bg: #2a2113;
   --on-signal: #1a1204;
+  --signal-text: #e8a317; /* 7.31:1 on the dark signal background */
   --focus: #7cb0ff;
   --glyph-bg: #1b222c;
   --glyph-edge: #333d4b;
@@ -127,8 +129,8 @@ body {
    the page scrolled sideways at 375px. */
 @media (width <= 30rem) {
   .ui-head-in {
-    gap: 0.5rem;
-    padding: 0 0.75rem;
+    gap: 0.35rem;
+    padding: 0 0.5rem;
   }
 
   .ui-brand span {
@@ -136,8 +138,13 @@ body {
   }
 
   .ui-tabs a {
-    padding: 0.4rem 0.6rem;
+    padding: 0.4rem 0.45rem;
+    font-size: 0.82rem;
   }
+}
+
+.ui-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .ui-brand {
@@ -159,10 +166,16 @@ body {
   color: var(--ink-soft);
 }
 
+/* min-inline-size + overflow: the masthead is the one row that cannot wrap, so
+   the tab strip scrolls inside itself rather than pushing the page sideways.
+   Adding a third tab put it 4px over at 375px. */
 .ui-tabs {
   display: flex;
   gap: 0.25rem;
+  min-inline-size: 0;
   margin-inline-start: auto;
+  overflow-x: auto;
+  scrollbar-width: none;
 }
 
 .ui-tabs a {
@@ -298,6 +311,19 @@ body {
   border-radius: 2px;
 }
 
+/* Visually hidden but announced — used for headings that exist to keep the
+   document outline continuous rather than to be read on screen. */
+.ui-sr {
+  position: absolute;
+  inline-size: 1px;
+  block-size: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  white-space: nowrap;
+  clip-path: inset(50%);
+}
+
 /* ---- the stage --------------------------------------------------------- */
 
 .ui-title {
@@ -341,12 +367,23 @@ body {
   max-inline-size: var(--frame, 1170px);
 }
 
+/* No overflow:hidden here - it clipped the focus ring off the buttons inside,
+   leaving them with no visible focus at all. The ends are rounded instead. */
 .ui-widths {
   display: inline-flex;
   gap: 1px;
-  overflow: hidden;
   border: 1px solid var(--rule);
   border-radius: 6px;
+}
+
+.ui-widths button:first-child {
+  border-start-start-radius: 5px;
+  border-end-start-radius: 5px;
+}
+
+.ui-widths button:last-child {
+  border-start-end-radius: 5px;
+  border-end-end-radius: 5px;
 }
 
 .ui-widths button {
@@ -428,7 +465,7 @@ body {
 }
 
 .ui-spec[data-fit="tight"] {
-  color: var(--signal);
+  color: var(--signal-text);
   background: var(--signal-bg);
   border-color: var(--signal);
 }
@@ -655,8 +692,12 @@ body {
 
 /* Monokai. Tokens come from assets/highlight.js — no CDN, because this page
    has to work opened straight off disk. */
+
+/* Two tokens lifted off Monokai's originals to clear 4.5:1 on #272822:
+   the comment was 3.03:1 and the keyword 3.93:1. #ff6188 is Monokai Pro's
+   own pink, so the panel still reads as Monokai. */
 .t-c {
-  color: #75715e;
+  color: #99957f;
 }
 
 .t-s {
@@ -669,7 +710,7 @@ body {
 
 .t-k,
 .t-tag {
-  color: #f92672;
+  color: #ff6188;
 }
 
 .t-attr,
@@ -692,7 +733,7 @@ body {
 
 .ui-get {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(21rem, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(min(21rem, 100%), 1fr));
   gap: 1rem;
   margin-block-start: 1.1rem;
 }
@@ -1156,6 +1197,68 @@ code {
   font-weight: 700;
   color: var(--glyph-ink);
   content: "‹ ›";
+}
+
+/* ---- the index (patterns.html) ----------------------------------------- */
+
+.gx-doc {
+  max-inline-size: 78rem;
+}
+
+.gx-card {
+  padding: 1.25rem 1.4rem 1.5rem;
+  margin-block-start: 1.5rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
+
+.gx-head {
+  display: flex;
+  gap: 1rem;
+  align-items: start;
+  margin-block-end: 1.1rem;
+}
+
+.gx-head h2 {
+  margin: 0;
+  font-size: 1.1rem;
+  font-weight: 700;
+  font-stretch: 112%;
+}
+
+.gx-head p {
+  max-inline-size: 66ch;
+  margin: 0.2rem 0 0;
+  font-size: 0.87rem;
+  color: var(--ink-soft);
+}
+
+.gx-head .ui-btn {
+  flex: none;
+  margin-inline-start: auto;
+  white-space: nowrap;
+  text-decoration: none;
+}
+
+/* Same light artboard the builder previews on, for the same reason. */
+.gx-stage {
+  padding: 1.25rem;
+  overflow: hidden;
+  color: #10151c;
+  background: #fff;
+  border: 1px solid var(--rule);
+  border-radius: 10px;
+}
+
+@media (width <= 700px) {
+  .gx-head {
+    flex-wrap: wrap;
+  }
+
+  .gx-head .ui-btn {
+    margin-inline-start: 0;
+  }
 }
 
 /* ---- narrower screens -------------------------------------------------- */

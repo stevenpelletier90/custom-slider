@@ -23,6 +23,7 @@
   --dlc-thumb-w: 88px;
   --dlc-thumb-h: 56px;
   --dlc-focus: #1a5fb4;
+  --dlc-fade-ms: 500ms; /* crossfade duration in fade mode */
 
   /* Shared duration/easing for every control's state change. Deliberately a
      property LIST at each use site, never `transition: all`: `all` also

@@ -27,6 +27,7 @@
     img: `img/chrome-${slug}.webp`,
     alt: `2026 Chevrolet ${title(slug)}`,
     name: title(slug),
+    mark: 'Chevrolet',
     sub: 'In stock now',
     blurb: 'Built for the way you actually drive.',
   }));
@@ -211,9 +212,20 @@
 .dlx-tabs [role="tab"] { padding: 0.6rem 1.1rem; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: 0.65; }
 .dlx-tabs [role="tab"][aria-selected="true"] { opacity: 1; border-block-end-color: currentcolor; }
 .dlx-pane[hidden] { display: none; }`,
-      script: `document.querySelectorAll('[data-tabs]').forEach((wrap) => {
+      script: `document.querySelectorAll('[data-tabs]').forEach((wrap, w) => {
   const tabs = [...wrap.querySelectorAll('[role="tab"]')];
-  const panes = tabs.map((t) => document.getElementById(t.getAttribute('aria-controls')));
+  const panes = [...wrap.querySelectorAll('[role="tabpanel"]')];
+  // Re-id per widget, and find panes within this wrapper rather than by
+  // getElementById. The markup ships fixed ids, so two of these on one page
+  // would otherwise share them and each tab would drive the other's panes.
+  tabs.forEach((t, i) => {
+    const tid = 'dlx-tab-' + w + '-' + i;
+    const pid = 'dlx-pane-' + w + '-' + i;
+    t.id = tid;
+    panes[i].id = pid;
+    t.setAttribute('aria-controls', pid);
+    panes[i].setAttribute('aria-labelledby', tid);
+  });
   const show = (i) => tabs.forEach((t, j) => {
     t.setAttribute('aria-selected', String(i === j));
     t.tabIndex = i === j ? 0 : -1;
@@ -456,7 +468,7 @@
       models: VEHICLES,
       cardGrid: true,
       hideDots: true,
-      css: `.dlx-wrap { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
+      css: `.dlx-wrap { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); gap: 1rem; }
 .dlx-cg-card { overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .dlx-cg-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 .dlx-cg-body { padding: 0.8rem 0.9rem 1rem; }
@@ -652,7 +664,7 @@
         `    <img src="${m.img}" width="68" height="44" alt="" loading="lazy" decoding="async">`,
         `    <span>View all ${items.length} photos</span>`,
         `  </button>`,
-        `  <dialog class="dlx-lb">`,
+        `  <dialog class="dlx-lb" aria-label="Vehicle photos">`,
         `    <div class="dlx-lb-head"><span>Vehicle photos</span><button type="button" class="dlx-lb-close" data-lb-close>Close</button></div>`,
         carousel(items, 'Vehicle photos', '    '),
         `  </dialog>`,
@@ -662,11 +674,14 @@
 
     // A grid of cards, each with its own small slider of that vehicle's photos.
     if (p.cardGrid) {
-      const shots = PHOTOS.map((x) => x.img);
       const cards = modelsFor(p)
         .slice(0, state.count)
         .map((m, i) => {
-          const pics = [m.img, shots[i % shots.length], shots[(i + 2) % shots.length]].map((src) => `<img src="${src}" width="800" height="600" alt="${m.alt}" loading="lazy" decoding="async">`);
+          // Each photo carries its OWN description. Stamping the vehicle's alt
+          // on all three put "2021 Porsche Panamera" over a steering wheel.
+          const pics = [{ img: m.img, alt: m.alt }, PHOTOS[i % PHOTOS.length], PHOTOS[(i + 2) % PHOTOS.length]].map(
+            (x) => `<img src="${x.img}" width="800" height="600" alt="${x.alt}" loading="lazy" decoding="async">`,
+          );
           return [`  <div class="dlx-cg-card">`, carousel(pics, `Photos of the ${m.name}`, '    '), `    <div class="dlx-cg-body"><h4>${m.name}</h4><p>${m.sub}</p></div>`, `  </div>`].join('\n');
         });
       return `<div class="${cls}-wrap">\n${cards.join('\n')}\n</div>`;
@@ -683,6 +698,20 @@
   const codeEl = $('wb-code');
   const panel = $('wb-settings');
   let live = [];
+
+  // The index page (patterns.html) loads this file for the generator alone: one
+  // example of every pattern, built by the same cssFor/htmlFor pair the builder
+  // uses, so an example there cannot drift from the same example here.
+  globalThis.DLX = Object.assign(globalThis.DLX || {}, {
+    PATTERNS,
+    renderPattern(id, cls) {
+      loadPattern(id);
+      return { css: cssFor(`.${cls}`), html: htmlFor(cls) };
+    },
+  });
+
+  // Nothing below this line has a DOM to attach to on that page.
+  if (!stage) return;
 
   function render() {
     live.forEach((s) => s.destroy());
@@ -826,6 +855,9 @@
     const text = document.createElement('input');
     text.type = 'text';
     text.value = val;
+    // The wrapping <label> binds to the swatch, not to this field - and the
+    // swatch is hidden whenever the value is not a plain hex.
+    text.setAttribute('aria-label', `${label} value`);
     const push = (v) => {
       store[key] = v;
       render();
@@ -901,6 +933,7 @@
     if (p.look) {
       const wrap = document.createElement('div');
       const sel = document.createElement('select');
+      sel.setAttribute('aria-label', 'Brand preset');
       sel.style.inlineSize = '100%';
       const none = document.createElement('option');
       none.value = '';
@@ -924,7 +957,7 @@
         const counts = ['base', 768, 992, 1200].map((k) => state.perView[k]).join(' / ');
         note.textContent = b.ladder
           ? `${counts} across (phone / 768 / 992 / 1200). ${b.note ?? ''}`.trim()
-          : `No model bar runs on any of ${b.label}'s ${b.demos} demo homepages, so there is no recorded ladder — this is the default. ${b.note ?? ''}`.trim();
+          : `The census recorded no breakpoint ladder for ${b.label}, so this starts from the card style's own defaults. ${b.note ?? ''}`.trim();
       };
       sel.addEventListener('change', () => {
         state.brand = sel.value || null;

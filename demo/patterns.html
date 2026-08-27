@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>dl-carousel — reference</title>
-    <meta name="description" content="The markup contract, every option and CSS custom property, the JavaScript API, and the accessibility behaviours that must not be changed." />
+    <title>dl-carousel — every pattern</title>
+    <meta name="description" content="Every slider pattern the engine ships, one live example each, with a link straight into the builder." />
     <link
       rel="icon"
       href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2310151c'/><rect x='5' y='11' width='14' height='10' rx='2' fill='%23fff'/><rect x='21' y='13' width='6' height='6' rx='2' fill='%23e8a317'/></svg>"
@@ -13,6 +13,8 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+    <link rel="stylesheet" href="../dist/dl-carousel.css" />
     <link rel="stylesheet" href="assets/ui.css" />
 
     <script>
@@ -24,45 +26,37 @@
       }
     </script>
 
+    <script src="../dist/dl-carousel.js" defer></script>
+    <script src="assets/looks.js" defer></script>
+    <script src="assets/brands.js" defer></script>
     <script src="assets/highlight.js" defer></script>
-    <script src="assets/guide.js" defer></script>
+    <script src="assets/workbench.js" defer></script>
+    <script src="assets/gallery.js" defer></script>
     <script src="assets/theme.js" defer></script>
+
+    <!-- Written by gallery.js from the same generator the builder uses. -->
+    <style id="gx-css"></style>
   </head>
   <body>
     <header class="ui-head">
       <div class="ui-head-in">
         <h1 class="ui-brand">dl-carousel <span id="ui-size">no dependencies</span></h1>
         <nav class="ui-tabs" aria-label="Sections">
-          <a href="patterns.html">Patterns</a>
+          <a href="patterns.html" aria-current="page">Patterns</a>
           <a href="index.html">Build</a>
-          <a href="reference.html" aria-current="page">Reference</a>
+          <a href="reference.html">Reference</a>
         </nav>
         <button type="button" class="ui-theme" id="ui-theme" aria-label="Switch to dark theme" title="Switch theme">◐</button>
       </div>
     </header>
 
-    <main class="ui-doc">
-      <h2 class="ui-title">Reference</h2>
+    <main class="ui-doc gx-doc">
+      <h2 class="ui-title">Every pattern</h2>
       <p class="ui-blurb">
-        A scroll-snap carousel with no runtime dependencies, built to replace the third-party sliders on DealerOn sites. The CSS owns layout and physics — the track is a native scroll container, so
-        swipe, momentum and snapping all work before any JavaScript runs and keep working with JavaScript off. The JavaScript only adds controls into space the CSS already reserved.
+        One live example of each, at its own defaults. These are the same generators the builder runs — open any of them there to change how many are across, which card style it wears, which brand's
+        vehicles it shows, and to copy the code.
       </p>
-
-      <nav class="ui-toc" aria-label="On this page">
-        <a href="#g-markup">Markup</a>
-        <a href="#g-options">Options</a>
-        <a href="#g-props">Properties</a>
-        <a href="#g-a11y">Accessibility</a>
-        <a href="#g-api">JavaScript API</a>
-        <a href="#g-cms">On a DealerOn site</a>
-        <a href="#g-limits">Limits</a>
-      </nav>
-
-      <div id="g-body"></div>
+      <div id="gx-grid"></div>
     </main>
-
-    <script>
-      addEventListener('DOMContentLoaded', () => globalThis.DLX.guide.render());
-    </script>
   </body>
 </html>

@@ -173,8 +173,10 @@ underlined, add one page-scoped rule:
 ## 4. Picking a variation
 
 Every variation is authored HTML plus site CSS over the same two files. The demo
-page (`demo/index.html`) is the copy-paste catalog; each section's "How this
-variant is built" block has the exact markup and CSS.
+page (`demo/index.html`) is a builder: pick the pattern, set how many are across
+at each breakpoint and which card style it wears, and the code panel prints the
+markup and CSS for exactly what is on screen. `demo/patterns.html` shows all
+seventeen at once; `demo/reference.html` is the API.
 
 | You want                         | Use                                            |
 | -------------------------------- | ---------------------------------------------- |
@@ -184,11 +186,12 @@ variant is built" block has the exact markup and CSS.
 | Vehicle / service / offer cards  | Default page stepping, 1-2-3 per view          |
 | Photo gallery with thumbnails    | `data-gallery`                                 |
 
-**For a model bar, start from the ladder for that OEM.** All 55 OEM demo sites
-share one anatomy and differ only in breakpoints; the fourteen ladders are
-tabulated in the demo's model-bar section, already converted to the min-width
-media queries `--dlc-per-view` uses. Do not re-derive them by hand — copy the
-tabulated ladder.
+**For a model bar, start from the brand preset.** The OEM demo estate shares one
+anatomy and differs only in how many cards are across at each width. Every one of
+the 32 brands is a preset in the builder (`demo/assets/brands.js` records each
+brand's real slick config verbatim), read at the platform's own Bootstrap 3 tiers
+— 768 / 992 / 1200 — rather than at the one-off breakpoints the original agencies
+used. Pick the brand rather than re-deriving a ladder by hand.
 
 If you ever do need to convert one yourself, the rule is: **slick's
 `breakpoint: N` becomes `min-width: N`.** Not `N + 1`. slick compares

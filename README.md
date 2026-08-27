@@ -1,6 +1,6 @@
 # Custom Slider
 
-Dependency-free scroll-snap slider/carousel. ~5.9 KB gzip total (JS+CSS), no build
+Dependency-free scroll-snap slider/carousel. ~6.1 KB gzip total (JS+CSS), no build
 step required to use, themed entirely with CSS custom properties. Built to be
 maintained in-house: the whole engine is one commented file, `src/dl-carousel.js`.
 
@@ -157,7 +157,7 @@ process and the one open question (shared path vs. per-dealer upload).
 
     npm install
     npm run build   # src → dist (esbuild)
-    npm run size    # build + gzip budget gate (fails at or over 6 KB total)
+    npm run size    # build + gzip budget gate (fails at or over 6656 B / 6.5 KB total)
     npm run serve   # http://127.0.0.1:8137 (for Lighthouse)
 
 `src/` is the canonical, readable code; `dist/` is the checked-in CMS build.

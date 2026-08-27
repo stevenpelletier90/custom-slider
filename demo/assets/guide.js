@@ -1,18 +1,21 @@
 // The reference: everything a designer has to know before putting a slider on
-// a site. It lives on the same page as the workbench on purpose - splitting
-// "the examples" from "the documentation" across pages is what made the old
-// demo estate confusing.
+// a site. It is its own page (demo/reference.html) because it is read start to
+// finish, unlike the builder, which is used one setting at a time.
 //
 // The custom-property table is NOT written out here. It is parsed from the
 // dist CSS the page is actually running, so a knob added, renamed or
 // re-defaulted in src shows up here the moment it ships, and a table row can
-// never describe a property that no longer exists. The rest is prose that has
-// to be written by a person - but `check-looks.mjs` asserts the option list
-// below matches the attributes the engine really parses.
+// never describe a property that no longer exists.
+//
+// The rest is prose, and nothing checks it. If you change an option, an event
+// payload or an accessibility behaviour in src/, change it here in the same
+// commit - there is no gate that will catch you.
 
 (() => {
   // Every data attribute the engine reads, with the default it falls back to.
-  // Keep in step with _readData() in src/dl-carousel.js - the build gate checks.
+  // Keep in step with _parseOptions() in src/dl-carousel.js, and with the two
+  // attributes read outside it: data-slider and data-init, which autoInit()
+  // looks at before any instance exists.
   const OPTIONS = [
     ['data-slider', '—', 'Marks the element for auto-init on DOMContentLoaded. Without it you must construct the slider yourself.'],
     ['data-init="manual"', '—', 'Opts this slider out of auto-init, for when page script needs to control when it starts.'],
@@ -30,18 +33,27 @@
   ];
 
   const API = [
+    ['new DLCarousel(el, opts)', 'Construct one yourself. The class is <code>Slider</code> in source and <code>window.DLCarousel</code> on the page; both names are part of the API.'],
+    [
+      'DLCarousel.autoInit(scope)',
+      'Initialise every <code>[data-slider]</code> under <code>scope</code> that is not already running and not <code>data-init="manual"</code>. Runs itself on DOMContentLoaded.',
+    ],
     ['next()', 'Advance one stop.'],
     ['prev()', 'Go back one stop.'],
     ['goTo(n, { behavior })', 'Jump to slide index <code>n</code>. <code>behavior</code> overrides the scroll behaviour for this call.'],
     ['play() / pause()', 'Start and stop autoplay.'],
     ['destroy()', 'Remove every listener and observer, restore the original markup.'],
     ['element._dlCarousel', 'The instance, for page script that needs to reach in.'],
+    [
+      '{ labels: {…} }',
+      'Constructor-only. Overrides every announced string (prev, next, pause, play, dots, gotoSlide, gotoPage, statusSingle, statusMulti, thumbs, photo) — the way to localise a slider. There is no data attribute for it.',
+    ],
   ];
 
   const EVENTS = [
-    ['dlc:change', '<code>{ index, page, slidesInView }</code> — fired once the scroll has settled, never mid-gesture.'],
-    ['dlc:autoplay-start', 'Autoplay started or resumed.'],
-    ['dlc:autoplay-stop', 'Autoplay paused, by the button, hover, focus or a drag.'],
+    ['dlc:change', '<code>{ index, page, slidesInView }</code> — fired from _commit(), once the scroll has settled on a stop.'],
+    ['dlc:autoplay-start', 'Rotation started, or restarted from the play button.'],
+    ['dlc:autoplay-stop', 'Rotation stopped. Only a real stop fires this — hover, focus and drag <em>suspend</em> rotation without changing whether it is playing, so they emit nothing.'],
     ['dlc:destroy', 'The instance tore itself down.'],
   ];
 

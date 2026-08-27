@@ -40,16 +40,12 @@ fetched from a live DealerOn storefront. Internal demo use for DealerOn team
 presentation; on a production DealerOn site reference them with
 `#CHROMEPHOTOPATH|StyleID|1|640p#` instead of copying files.
 
-## Video testimonial embed
+## Video testimonials
 
-The testimonials dialog embeds **Big Buck Bunny** (© Blender Foundation,
-<https://peach.blender.org>) via `youtube-nocookie.com`, YouTube id `aqz-KE-bpKQ`.
-It is Creative Commons Attribution licensed, so it is safe to ship in a public
-demo — unlike a real dealer testimonial, which would not be. Nothing is
-downloaded into this repo; the embed is a third-party iframe.
-
-On a production site, swap the `data-video-id` on each trigger for the dealer's
-own video. The stop-on-close wiring does not care which id it is.
+The video patterns embed nothing. A poster is a `<button>` that opens a native
+`<dialog>` saying where the video would go, so the demo ships no third-party
+iframe and no third-party video. On a production site, put the dealer's own
+player inside that dialog — the engine is not involved either way.
 
 ## oem/ — brand-correct model images (added 19 Aug 2026)
 

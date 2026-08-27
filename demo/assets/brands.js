@@ -320,6 +320,7 @@
       w,
       h,
       name,
+      mark: label,
       alt: `${label} ${name}`,
       sub: 'In stock now',
       blurb: `Explore the ${label} ${name}.`,
@@ -680,5 +681,5 @@
     if (list) b.models = list;
   }
 
-  globalThis.DLX = Object.assign(globalThis.DLX || {}, { BRANDS, perViewFor, perAt, TIER_BOX, CHROME, MARGIN });
+  globalThis.DLX = Object.assign(globalThis.DLX || {}, { BRANDS, perViewFor, TIER_BOX, CHROME, MARGIN });
 })();

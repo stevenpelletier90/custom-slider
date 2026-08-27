@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A dependency-free scroll-snap carousel (`dl-carousel`) built to replace third-party slider libraries on DealerOn CMS sites. Two shipped files, no runtime dependencies, just under 6 KB gzip total.
+A dependency-free scroll-snap carousel (`dl-carousel`) built to replace third-party slider libraries on DealerOn CMS sites. Two shipped files, no runtime dependencies, about 6.1 KB gzip total against a 6656 B budget.
 
 `README.md` is the public API reference (markup contract, options, CSS custom properties, JS API, accessibility behaviors, verification checklist) — read it before changing anything user-facing. The design rationale behind each decision is in `docs/superpowers/specs/2026-07-13-custom-slider-design.md`; the per-task build log and the triaged backlog of known non-blocking issues are in `.superpowers/sdd/progress.md` (git-ignored).
 
@@ -13,8 +13,8 @@ A dependency-free scroll-snap carousel (`dl-carousel`) built to replace third-pa
 ```bash
 npm run build          # src → dist via esbuild (bundle+minify JS, minify CSS)
 npm run size           # build + gzip budget gate — FAILS at ≥ 6656 B total
-npm run validate       # stylelint + eslint + prettier --check + check:recipes  (the gate before committing)
-npm run check:recipes  # asserts every copy-paste recipe declares the --dlc-* knobs its live example sets
+npm run validate       # stylelint + eslint + prettier --check + check:looks  (the gate before committing)
+npm run check:looks    # asserts the demo data holds: 17 old skins -> 7 components, 32 brand presets, no cramped preset
 npm run lint:css:fix   # stylelint --fix on src/**/*.css and demo/assets/*.css
 npm run lint:js:fix    # eslint --fix on src/**/*.js, demo/assets/*.js and scripts/
 npm run format         # prettier --write .

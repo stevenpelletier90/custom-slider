@@ -45,6 +45,7 @@
       <div class="ui-head-in">
         <h1 class="ui-brand">dl-carousel <span id="ui-size">no dependencies</span></h1>
         <nav class="ui-tabs" aria-label="Sections">
+          <a href="patterns.html">Patterns</a>
           <a href="index.html" aria-current="page">Build</a>
           <a href="reference.html">Reference</a>
         </nav>
@@ -63,6 +64,7 @@
         <h2 class="ui-title" id="wb-title"></h2>
         <p class="ui-blurb" id="wb-blurb"></p>
 
+        <h3 class="ui-sr">Live preview</h3>
         <div class="wb-stage"><div id="wb-stage"></div></div>
 
         <!-- The readout. Everything here is measured off the rendered slider,
@@ -147,7 +149,7 @@
       </main>
     </div>
 
-    <dialog id="wb-dialog">
+    <dialog id="wb-dialog" aria-labelledby="wb-dialog-title">
       <h3 id="wb-dialog-title" style="margin-top: 0"></h3>
       <p>The video would play here. The demo stops at opening the dialog — Esc closes it and focus is trapped, both from the native <code>&lt;dialog&gt;</code> rather than any code of ours.</p>
       <form method="dialog"><button type="submit" class="ui-btn">Close</button></form>
