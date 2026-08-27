@@ -125,6 +125,7 @@
       props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'transparent', '--dlc-arrow-fg': '#262626' },
     },
     hero: {
+      gutter: false,
       label: 'Hero banner',
       blurb: 'Full width, one at a time, crossfading on a timer. Autoplay adds the pause button and never starts under reduced motion.',
       data: { 'data-fade': '', 'data-autoplay': '5000' },
@@ -138,6 +139,7 @@
       slides: (models) => models.map((m) => `<span class="dlx-photo">${pic(m)}</span>`),
     },
     gallery: {
+      gutter: false,
       label: 'Photo gallery',
       blurb: 'Thumbnails generated from the slide images and wired as a real tab list with arrow keys. Thumbs are fresh elements, so site ids and srcset never leak into them.',
       data: { 'data-gallery': '' },
@@ -163,6 +165,7 @@
 @media (max-width: 600px) { .dlx { padding-inline: calc(var(--dlc-arrow-size) + 0.3rem); } }`,
     },
     peek: {
+      gutter: false,
       label: 'Peek at the next slide',
       blurb: 'A sliver of the neighbours stays visible so it always reads as "there is more this way". One property — --dlc-peek. Zero turns it off.',
       data: {},
@@ -176,6 +179,7 @@
       slides: (models) => models.map((m) => `<span class="dlx-photo">${pic(m)}</span>`),
     },
     video: {
+      gutter: false,
       label: 'Video testimonials',
       blurb: 'Posters open a native dialog, which gives Esc-to-close and focus trapping for free. Video never plays inline — autoplay on video cards fights the content.',
       data: {},
@@ -235,21 +239,53 @@
     },
 
     models: {
+      gutter: true,
       label: 'Model cards — tall photos',
-      blurb: 'Portrait photography instead of cutouts, name set over the image. Arrows stop at the ends rather than wrapping (data-rewind="false"), which suits a short finite list.',
-      data: { 'data-rewind': 'false' },
+      blurb:
+        'Portrait photography instead of cutouts, and the dot row restyled into a solid bar with a marker that slides along it. The marker is page script watching the engine’s own state — the segments underneath are still real "go to page" buttons.',
+      data: { 'data-rewind': 'false', 'data-bar': '' },
       props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
-      perView: { base: 1, 768: 2, 992: 3, 1200: 4 },
+      perView: { base: 1, 768: 2, 992: 4, 1200: 4 },
       minCard: 190,
       models: MODELS,
-      css: `.dlx-model { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; border-radius: 10px; }
+      css: `.dlx { --dlc-dot-fg: #949494; --dlc-dot-current: #949494; --dlc-controls-space: 3rem; }
+@media (min-width: 992px) { .dlx { --dlc-arrow-size: 56px; } }
+
+/* The dots become one solid bar. Every segment is still a real, labelled
+   button; the marker is a ::before whose translate follows --bar-index and
+   --bar-count, set by the script below. #949494 is 3.03:1 on white, because
+   the segments ARE the control and their extent has to meet WCAG 1.4.11. */
+.dlx .dl-carousel-dots { gap: 0; inset-inline: 25%; }
+.dlx .dl-carousel-dots::before { content: ""; position: absolute; inset-block-start: calc(50% - 2px); inset-inline-start: 0; inline-size: calc(100% / var(--bar-count, 1)); block-size: 4px; background: #262626; border-radius: 2px; translate: calc(var(--bar-index, 0) * 100%); pointer-events: none; }
+@media (prefers-reduced-motion: no-preference) { .dlx .dl-carousel-dots::before { transition: translate 0.35s ease; } }
+.dlx .dl-carousel-dot { flex: 1 1 auto; }
+.dlx .dl-carousel-dot::after { inline-size: 100%; block-size: 4px; border-radius: 0; }
+.dlx .dl-carousel-dot:first-child::after { border-start-start-radius: 2px; border-end-start-radius: 2px; }
+.dlx .dl-carousel-dot:last-child::after { border-start-end-radius: 2px; border-end-end-radius: 2px; }
+
+.dlx-model { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; border-radius: 10px; }
 .dlx-model img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; transition: transform 0.35s ease; }
 .dlx-model:hover img { transform: scale(1.05); }
 .dlx-model h4 { position: absolute; inset-inline: 0; inset-block-end: 0; padding: 2.5rem 1rem 1rem; margin: 0; font-size: 1.15rem; line-height: 1.3; background: linear-gradient(transparent, rgb(0 0 0 / 78%)); }`,
       slides: (models) => models.map((m) => `<a class="dlx-model" href="${m.href}"><img src="${m.img}" width="600" height="1000" alt="" loading="lazy" decoding="async"><h4>${m.name}</h4></a>`),
+      // Site-level enhancement, not an engine feature: it reads the engine's
+      // own current-dot class and writes two custom properties. Nothing in the
+      // engine knows the bar exists.
+      script: `document.querySelectorAll('[data-bar] .dl-carousel-dots').forEach((bar) => {
+  const sync = () => {
+    const dots = [...bar.children];
+    bar.style.setProperty('--bar-count', dots.length || 1);
+    bar.style.setProperty('--bar-index', Math.max(0, dots.findIndex((d) => d.classList.contains('dl-carousel-dot--current'))));
+  };
+  // The class flips on page change; the children are rebuilt when a
+  // breakpoint changes the page count, so watch for both.
+  new MutationObserver(sync).observe(bar, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+  sync();
+});`,
     },
 
     mixed: {
+      gutter: true,
       label: 'Mixed image sizes',
       blurb: 'Six source files at six different aspect ratios, all cropped to one shape by the CSS. Dealers upload whatever they have — aspect-ratio plus object-fit is what keeps the row even.',
       props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
@@ -267,6 +303,7 @@
     },
 
     service: {
+      gutter: true,
       label: 'Service cards',
       blurb: 'Photo, heading, a paragraph and a read-more affordance. One card per arrow click, because the copy is long enough that a full-page jump loses your place.',
       data: { 'data-step': 'slide' },
@@ -290,6 +327,7 @@
     },
 
     reviews: {
+      gutter: true,
       label: 'Customer reviews',
       blurb: 'Quotes in a real figure/blockquote, with the star rating exposed as an image plus a text label rather than bare glyphs a screen reader would spell out one at a time.',
       props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'transparent', '--dlc-arrow-fg': '#262626' },
@@ -320,6 +358,7 @@
     },
 
     'gallery-filter': {
+      gutter: false,
       label: 'Filterable gallery',
       blurb:
         'A gallery whose slides carry a category. Filtering rebuilds the slider over the matching slides rather than hiding the rest — hiding leaves them in the thumb strip and in the announced "3 of 6".',
@@ -356,6 +395,7 @@
     },
 
     'media-gallery': {
+      gutter: false,
       label: 'Gallery with photos and video',
       blurb: 'A gallery where some slides are video posters. The poster is a real button that opens a dialog — video never plays inline, and the thumb strip treats it like any other slide.',
       data: { 'data-gallery': '' },
@@ -377,6 +417,7 @@
     },
 
     lightbox: {
+      gutter: false,
       label: 'Fullscreen gallery in a dialog',
       blurb:
         'A thumbnail that opens the full gallery in a native dialog. Built with data-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure.',
@@ -409,6 +450,7 @@
     },
 
     'card-gallery': {
+      gutter: false,
       label: 'Vehicle cards with a mini gallery',
       blurb:
         'The SRP pattern: a grid of cards, each holding its own small slider of that vehicle’s photos. Many instances on one page is fine — each is independent, and none of them is the page’s main carousel.',
@@ -427,6 +469,7 @@
     },
 
     stock: {
+      gutter: true,
       label: 'Stock look — the base',
       blurb:
         'The engine with nothing styled on top: default arrows, default dots, no card CSS at all. This is what you get before setting a single property, and the honest starting point for anything new.',
@@ -463,6 +506,8 @@
     state.data = { ...p.data };
     state.hideDots = !!p.hideDots;
     state.count = p.models.length;
+    // Beside the content wherever a card has text an arrow could land on.
+    state.gutter = p.gutter ?? !!p.look;
     state.lookProps = p.look ? { ...LOOKS[p.look].settings } : {};
   }
 
@@ -519,7 +564,10 @@
       });
 
     const body = [state.look ? scope(LOOKS[state.look].css) : '', p.css ? scope(p.css) : ''].filter(Boolean).join('\n');
-    return [`${sel} {\n${decls}\n}`, steps, dots, arrows, body].filter(Boolean).join('\n\n');
+    // Arrows either sit in a gutter beside the content or float over it. Last
+    // in the sheet so it beats the padding-inline a card look sets for itself.
+    const gutter = state.gutter ? `${sel} { padding-inline: calc(var(--dlc-arrow-size) + 0.4rem); }` : `${sel} { padding-inline: 0; }`;
+    return [`${sel} {\n${decls}\n}`, steps, dots, arrows, body, gutter].filter(Boolean).join('\n\n');
   }
 
   function htmlFor(cls) {
@@ -983,6 +1031,15 @@
       render();
     });
     beh.append(control('Show dots', dots));
+
+    const gut = document.createElement('input');
+    gut.type = 'checkbox';
+    gut.checked = state.gutter;
+    gut.addEventListener('change', () => {
+      state.gutter = gut.checked;
+      render();
+    });
+    beh.append(control('Arrows beside, not over', gut));
 
     const count = document.createElement('input');
     count.type = 'number';
