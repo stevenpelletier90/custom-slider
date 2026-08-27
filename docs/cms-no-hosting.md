@@ -48,7 +48,7 @@ Per-slider theming (`--dlc-per-view`, colours, peek) goes in the same Style Only
 tab as step 1, under your own class:
 
     .my-strip { --dlc-per-view: 2; }
-    @media (min-width: 769px) { .my-strip { --dlc-per-view: 5; } }
+    @media (min-width: 768px) { .my-strip { --dlc-per-view: 5; } }
 
 Model bars: start from your OEM's ladder — the fourteen are tabulated in the
 [census](research/2026-08-18-oem-demo-slider-census.md) and shown per brand in the

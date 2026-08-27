@@ -187,9 +187,16 @@ variant is built" block has the exact markup and CSS.
 **For a model bar, start from the ladder for that OEM.** All 55 OEM demo sites
 share one anatomy and differ only in breakpoints; the fourteen ladders are
 tabulated in the demo's model-bar section, already converted to the min-width
-media queries `--dlc-per-view` uses. Do not re-derive them — slick counts
-breakpoints as max-width and ours are min-width, so a hand conversion is where
-this goes wrong.
+media queries `--dlc-per-view` uses. Do not re-derive them by hand — copy the
+tabulated ladder.
+
+If you ever do need to convert one yourself, the rule is: **slick's
+`breakpoint: N` becomes `min-width: N`.** Not `N + 1`. slick compares
+`windowWidth < breakpoint` (a strict `<`), so `breakpoint: 768` applies _below_
+768 and the tier above starts at exactly 768. Adding 1 puts the strip one pixel
+out of step with the platform's Bootstrap 3 grid (768 / 992 / 1200), and at
+768px — iPad portrait — the page goes `md` while the slider is still on its
+phone tier. That off-by-one was live in this repo until 2026-08-27.
 
 ## 5. Theming per OEM
 
@@ -203,7 +210,7 @@ Override custom properties in `styleCode`. Never edit the engine:
       --dlc-arrow-fg: #fff;
       --dlc-dot-current: #0b2a4a;
     }
-    @media (min-width: 769px) { .my-strip { --dlc-per-view: 5; } }
+    @media (min-width: 768px) { .my-strip { --dlc-per-view: 5; } }
 
 Full list in the README under "CSS custom properties".
 

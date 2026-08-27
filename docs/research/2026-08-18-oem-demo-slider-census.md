@@ -3,6 +3,21 @@
 Date: 2026-08-18 · Method: scripted fingerprint of all 76 rendered homepages, plus live
 runtime verification in a real browser on representative sites.
 
+> **Correction, 2026-08-27 — derived min-widths were all one pixel too high.**
+> The raw slick configs recorded here (`992:4, 768:2`, "client breakpoint 991")
+> were re-measured against five live sites and matched 5/5; they are unchanged.
+> But every min-width **derived** from them — the `1/3/6@461/992` shorthand and
+> the `≥769px` prose — had been converted by adding 1. slick compares
+> `windowWidth < breakpoint` (slick.js:619, a strict `<`), so `breakpoint: N`
+> means the tier above starts at exactly `min-width: N`. 94 derived values were
+> corrected; they now equal the raw breakpoints they came from, which is the
+> arithmetic check that the rule is right.
+>
+> Where a corrected value landed 1px under the platform's Bootstrap 3 grid
+> (768 / 992 / 1200) it was snapped onto it — see the note above `VARIANTS` in
+> `scripts/build-model-bars.mjs`. The same off-by-one was live in the generator
+> and in `docs/cms-implementation.md`; both are fixed.
+
 Prompted by the 2026-08-11 Creative Solutions sync: "here is a link to a bunch we might need
 to start cataloguing and organizing ones that are the same both for diff OEMs etc."
 
@@ -458,16 +473,16 @@ Exact tiers, straight from the fingerprints — these feed the generator, so the
 copied verbatim. Tiers read min-width, matching §4's convention after inversion. `dots` is
 false on all eight; the two `group` strips are the only autoplaying ones.
 
-| Ladder                                                                                                                                                                        | Hosts            | Notes                                                                                                                                                                                                                                                                 |
-| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| CDJR 6-up: base 2 → ≥461px 3 → ≥992px 6 (slick: slidesToShow 6 \| 991:3, 460:2; centerPadding 60px, slidesToScroll 1, swipeToSlide, arrows, autoplay false)                   | cdjrdemo1–4      | Only 6-up ladder with just three tiers (Alfa/Audi 6-ups have five). One shared init covers 4–5 `.modelBarS` bars, one per brand tab-pane. cdjrdemo2/3/4 hide the whole widget below md (`hidden-xs`); cdjrdemo2/4 place it _above_ the hero in DOM order.             |
-| Powersports brand strip 6-up: base 2 → ≥461px 3 → ≥769px 6 (slick: slidesToShow 6 \| 768:3 @40px pad, 460:2 @40px pad; otherwise standard recipe)                             | powersportsdemo1 | Selector is `.brandsNav`, not `.modelBarS` — slides are brand logos, not vehicles. Same tiers as the Acura ladder but tops out at 6 instead of 5.                                                                                                                     |
-| Powersports category 5-up: base 2 → ≥461px 3 → ≥993px 5 (slick: slidesToShow 5 \| 992:3 @40px pad, 460:2 @40px pad)                                                           | powersportsdemo2 | One-off tier set: like Acura (2/3/5) but the 5-up threshold is 993 instead of 769; like Lincoln's 461/993 thresholds but 5-up. Slides are body-style category tiles (Motorcycles/ATVs/Scooters), not models.                                                          |
-| Ferrari flat 3-up: base 1 → ≥768px 3 (slick: slidesToShow 3, infinite:true, cssEase linear, centerPadding '60'/'40', centerMode:false \| 767:1)                               | ferraridemo1     | Near-twin of the Kia1 1/3@769 centre-mode ladder but _not_ centre-mode, boundary is 768 not 769, and it is the estate's only `infinite: true` untabbed bar besides ferraridemo2. No swipeToSlide/autoplay keys — a different slick recipe from the volume-brand bars. |
-| Ferrari photo 4-up: base 1 → ≥769px 2 → ≥993px 3 → ≥1441px 4 (slick: slidesToShow 4, infinite:true, cssEase linear \| 1440:3, 992:2, 768:1)                                   | ferraridemo2     | Only ladder anywhere with a 1441 tier; maxes at 4-up only above 1440px. Slides are photo cards, not cutouts.                                                                                                                                                          |
-| Maserati spotlight: 1-up centre-mode at every width; centerPadding 20% base → 23% at ≥992px (slick: centerMode:true, slidesToShow 1, infinite:true \| 991: centerPadding 20%) | maseratidemo4    | Structurally the lexusdemo2 gallery recipe (1-up + large `--dlc-peek`, already proven 0px-off-centre reproducible in §8) applied to a model bar — first model bar in the estate to use it.                                                                            |
-| Group makes logo strip: base 2 → ≥769px 4 → ≥993px 7, **autoplay on** (slick: slidesToShow 7, arrows:true \| 992:4, 768:2)                                                    | groupdemo1       | Selector `.makes` — transparent-black OEM logo links to `/searchnew.aspx?make=X`. First autoplaying homepage card strip in the estate (§4 had `autoplay: false` on 55/55 model bars); 7-up is the widest per-view seen anywhere.                                      |
-| Group locations 4-up: base 1 → ≥769px 2 → ≥993px 4, **autoplay on** (slick: slidesToShow 4, arrows:true \| 992:2, 768:1)                                                      | groupdemo1       | Selector `.locations` — dealership-location cards (logo, address, phone, Visit Website CTA). A genuinely new content type for a strip: multi-rooftop group navigation.                                                                                                |
+| Ladder                                                                                                                                                                        | Hosts            | Notes                                                                                                                                                                                                                                                                                                                                                            |
+| ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------- | ---------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| CDJR 6-up: base 2 → ≥460px 3 → ≥992px 6 (slick: slidesToShow 6 \| 991:3, 460:2; centerPadding 60px, slidesToScroll 1, swipeToSlide, arrows, autoplay false)                   | cdjrdemo1–4      | Only 6-up ladder with just three tiers (Alfa/Audi 6-ups have five). One shared init covers 4–5 `.modelBarS` bars, one per brand tab-pane. cdjrdemo2/3/4 hide the whole widget below md (`hidden-xs`); cdjrdemo2/4 place it _above_ the hero in DOM order.                                                                                                        |
+| Powersports brand strip 6-up: base 2 → ≥460px 3 → ≥768px 6 (slick: slidesToShow 6 \| 768:3 @40px pad, 460:2 @40px pad; otherwise standard recipe)                             | powersportsdemo1 | Selector is `.brandsNav`, not `.modelBarS` — slides are brand logos, not vehicles. Same tiers as the Acura ladder but tops out at 6 instead of 5.                                                                                                                                                                                                                |
+| Powersports category 5-up: base 2 → ≥460px 3 → ≥992px 5 (slick: slidesToShow 5 \| 992:3 @40px pad, 460:2 @40px pad)                                                           | powersportsdemo2 | One-off tier set: like Acura (2/3/5) but the 5-up threshold is 992 instead of 768; like Lincoln's 460/992 thresholds but 5-up. Slides are body-style category tiles (Motorcycles/ATVs/Scooters), not models.                                                                                                                                                     |
+| Ferrari flat 3-up: base 1 → ≥768px 3 (slick: slidesToShow 3, infinite:true, cssEase linear, centerPadding '60'/'40', centerMode:false \| 767:1)                               | ferraridemo1     | Near-twin of the Kia1 1/3@768 centre-mode ladder but _not_ centre-mode; its raw slick boundary is 767 where Kia1's is 768, a one-pixel difference both recipes snap onto the 768 grid tier, and it is the estate's only `infinite: true` untabbed bar besides ferraridemo2. No swipeToSlide/autoplay keys — a different slick recipe from the volume-brand bars. |
+| Ferrari photo 4-up: base 1 → ≥768px 2 → ≥992px 3 → ≥1440px 4 (slick: slidesToShow 4, infinite:true, cssEase linear \| 1440:3, 992:2, 768:1)                                   | ferraridemo2     | Only ladder anywhere with a 1440 tier; reaches 4-up at and above 1440px. Slides are photo cards, not cutouts.                                                                                                                                                                                                                                                    |
+| Maserati spotlight: 1-up centre-mode at every width; centerPadding 20% base → 23% at ≥992px (slick: centerMode:true, slidesToShow 1, infinite:true \| 991: centerPadding 20%) | maseratidemo4    | Structurally the lexusdemo2 gallery recipe (1-up + large `--dlc-peek`, already proven 0px-off-centre reproducible in §8) applied to a model bar — first model bar in the estate to use it.                                                                                                                                                                       |
+| Group makes logo strip: base 2 → ≥768px 4 → ≥992px 7, **autoplay on** (slick: slidesToShow 7, arrows:true \| 992:4, 768:2)                                                    | groupdemo1       | Selector `.makes` — transparent-black OEM logo links to `/searchnew.aspx?make=X`. First autoplaying homepage card strip in the estate (§4 had `autoplay: false` on 55/55 model bars); 7-up is the widest per-view seen anywhere.                                                                                                                                 |
+| Group locations 4-up: base 1 → ≥768px 2 → ≥992px 4, **autoplay on** (slick: slidesToShow 4, arrows:true \| 992:2, 768:1)                                                      | groupdemo1       | Selector `.locations` — dealership-location cards (logo, address, phone, Visit Website CTA). A genuinely new content type for a strip: multi-rooftop group navigation.                                                                                                                                                                                           |
 
 ### 10.4 The known ladders grew — six of the fourteen absorbed 26 new sites
 
@@ -476,12 +491,12 @@ Chevrolet and Lexus tiers are now the estate's true workhorses, worn by eight OE
 
 | Ladder (min-width)               | Was | Now | New wearers                                                        |
 | -------------------------------- | --- | --- | ------------------------------------------------------------------ |
-| Acura 2/3/5 @ 461/769            | 13  | 19  | acura4, ford4, honda4, honda5, mitsubishi4, toyota9                |
-| Chevrolet 2/3/4/5 @ 540/992/1200 | 11  | 19  | buickgmc1–4, chevrolet4, ford6, ford7, subaru4                     |
-| Lexus 1/2/3/5 @ 401/601/992      | 6   | 14  | lexus4, lexus7, nissan4, nissan5, toyota4–7                        |
-| Buick 2/3/4 @ 461/769            | 5   | 7   | jaguar3, landrover4 — both wearing the new JLR photo-card dressing |
-| Lincoln 2/3/4 @ 461/993          | 3   | 4   | lincoln4                                                           |
-| Hyundai 1/3/4/5 @ 461/993/1201   | 2   | 3   | hyundai4 — tabbed SUVs · Sedans · Electrified                      |
+| Acura 2/3/5 @ 460/768            | 13  | 19  | acura4, ford4, honda4, honda5, mitsubishi4, toyota9                |
+| Chevrolet 2/3/4/5 @ 539/992/1200 | 11  | 19  | buickgmc1–4, chevrolet4, ford6, ford7, subaru4                     |
+| Lexus 1/2/3/5 @ 400/600/992      | 6   | 14  | lexus4, lexus7, nissan4, nissan5, toyota4–7                        |
+| Buick 2/3/4 @ 460/768            | 5   | 7   | jaguar3, landrover4 — both wearing the new JLR photo-card dressing |
+| Lincoln 2/3/4 @ 460/992          | 3   | 4   | lincoln4                                                           |
+| Hyundai 1/3/4/5 @ 460/992/1200   | 2   | 3   | hyundai4 — tabbed SUVs · Sedans · Electrified                      |
 
 The fade hero holds its crown: **44 of the 53** new real sites carry it (top-of-page on
 most). The tabbed composition of §4.1 also holds: 21 of the 35 new slick-strip sites are
@@ -539,36 +554,36 @@ lands on. Tab labels use `·` where the source uses a pipe.
 
 | Host                             | Hero                               | Model bar / strip                        | Tabs                                          | Dots          | Notes                                                                                                         |
 | -------------------------------- | ---------------------------------- | ---------------------------------------- | --------------------------------------------- | ------------- | ------------------------------------------------------------------------------------------------------------- |
-| acurademo4                       | fade 5s, 8 slides                  | 2/3/5@461/769 (Acura)                    | none                                          | no            | OEM cutouts, top heading + bottom CTA frame, fade-in on init                                                  |
+| acurademo4                       | fade 5s, 8 slides                  | 2/3/5@460/768 (Acura)                    | none                                          | no            | OEM cutouts, top heading + bottom CTA frame, fade-in on init                                                  |
 | bmwdemo4                         | fade 5s                            | no model bar                             | —                                             | —             | zero slick; quick-nav is a static flex grid of image panels                                                   |
-| buickgmcdemo1                    | fade 5s                            | 2/3/4/5@540/992/1200 (Chevrolet)         | brand: Buick · GMC text tabs                  | no            | 2 bars one init, sibling-dim hover, stat-arrow classes                                                        |
-| buickgmcdemo2                    | fade 5s                            | 2/3/4/5@540/992/1200 (Chevrolet)         | brand: Buick · GMC                            | no            | byte-identical config to demo1; static icon quickNav                                                          |
-| buickgmcdemo3                    | fade 5s, 12 slides                 | 2/3/4/5@540/992/1200 (Chevrolet)         | brand: Buick · GMC                            | no            | same template; GMC cutouts from /static/brand-gmc                                                             |
-| buickgmcdemo4                    | fade 5s, 2 slides                  | 2/3/4/5@540/992/1200 (Chevrolet)         | brand: Buick · GMC                            | no            | same template; static CPO block                                                                               |
-| cdjrdemo1                        | fade 5s, 18 slides                 | 2/3/6@461/992 (new CDJR)                 | brand logo tabs × 5 + caret indicator         | no            | dark #212121 band, 5 bars one init, white labels                                                              |
-| cdjrdemo2                        | fade 5s, after bar                 | 2/3/6@461/992 (CDJR)                     | brand logo tabs × 4                           | no            | desktop-only bar (hidden-xs), hover scale 1.1                                                                 |
-| cdjrdemo3                        | fade 5s                            | 2/3/6@461/992 (CDJR)                     | brand logo tabs × 4                           | no            | cdjrdemo5 aliases here; same dark look                                                                        |
-| cdjrdemo4                        | fade 5s after bar, 9 slides        | 2/3/6@461/992 (CDJR)                     | brand logo tabs × 5 (col-flush-5)             | no            | static quickNav1 card grid                                                                                    |
-| chevroletdemo4                   | fade 5s inside split-hero          | 2/3/4/5@540/992/1200 (Chevrolet)         | body-style × 5, gold #B6862D underline        | no            | data-count attrs; per-slide disclaimer popover                                                                |
+| buickgmcdemo1                    | fade 5s                            | 2/3/4/5@539/992/1200 (Chevrolet)         | brand: Buick · GMC text tabs                  | no            | 2 bars one init, sibling-dim hover, stat-arrow classes                                                        |
+| buickgmcdemo2                    | fade 5s                            | 2/3/4/5@539/992/1200 (Chevrolet)         | brand: Buick · GMC                            | no            | byte-identical config to demo1; static icon quickNav                                                          |
+| buickgmcdemo3                    | fade 5s, 12 slides                 | 2/3/4/5@539/992/1200 (Chevrolet)         | brand: Buick · GMC                            | no            | same template; GMC cutouts from /static/brand-gmc                                                             |
+| buickgmcdemo4                    | fade 5s, 2 slides                  | 2/3/4/5@539/992/1200 (Chevrolet)         | brand: Buick · GMC                            | no            | same template; static CPO block                                                                               |
+| cdjrdemo1                        | fade 5s, 18 slides                 | 2/3/6@460/992 (new CDJR)                 | brand logo tabs × 5 + caret indicator         | no            | dark #212121 band, 5 bars one init, white labels                                                              |
+| cdjrdemo2                        | fade 5s, after bar                 | 2/3/6@460/992 (CDJR)                     | brand logo tabs × 4                           | no            | desktop-only bar (hidden-xs), hover scale 1.1                                                                 |
+| cdjrdemo3                        | fade 5s                            | 2/3/6@460/992 (CDJR)                     | brand logo tabs × 4                           | no            | cdjrdemo5 aliases here; same dark look                                                                        |
+| cdjrdemo4                        | fade 5s after bar, 9 slides        | 2/3/6@460/992 (CDJR)                     | brand logo tabs × 5 (col-flush-5)             | no            | static quickNav1 card grid                                                                                    |
+| chevroletdemo4                   | fade 5s inside split-hero          | 2/3/4/5@539/992/1200 (Chevrolet)         | body-style × 5, gold #B6862D underline        | no            | data-count attrs; per-slide disclaimer popover                                                                |
 | ferraridemo1                     | fade 5s, 10 slides                 | 1/3@768 (new, infinite)                  | none                                          | no            | dark band, logotype above car, custom SVG arrows                                                              |
-| ferraridemo2                     | fade 5s, 8 slides                  | 1/2/3/4@769/993/1441 (new, infinite)     | none                                          | no            | lifestyle photo cards, hover Learn More CTA overlay                                                           |
-| forddemo4                        | fade 5s mid-page (after bar)       | 2/3/5@461/769 (Acura)                    | none                                          | no            | light band "A Vehicle for Every Lifestyle"; focus-visible arrow fix                                           |
+| ferraridemo2                     | fade 5s, 8 slides                  | 1/2/3/4@768/992/1440 (new, infinite)     | none                                          | no            | lifestyle photo cards, hover Learn More CTA overlay                                                           |
+| forddemo4                        | fade 5s mid-page (after bar)       | 2/3/5@460/768 (Acura)                    | none                                          | no            | light band "A Vehicle for Every Lifestyle"; focus-visible arrow fix                                           |
 | forddemo5                        | fade 5s, 8 slides                  | static grid 6 → 4@≤1199 → 2@≤450         | none                                          | —             | no slick on page; pure-CSS model strip                                                                        |
-| forddemo6                        | fade 5s, 10 slides                 | 2/3/4/5@540/992/1200 (Chevrolet)         | body-style × 4, gold #feb245                  | no            | "The Ford Family", road backdrop ≥992, sibling dim                                                            |
-| forddemo7                        | fade 5s, 10 slides                 | 2/3/4/5@540/992/1200 (Chevrolet)         | body-style × 4, gold #feb245                  | no            | bar byte-identical to demo6; alias target of demo8/9/10                                                       |
-| groupdemo1                       | bg video + search widget           | no model bar                             | —                                             | no            | new: `.makes` 2/4/7@769/993 autoplay + `.locations` 1/2/4@769/993 autoplay; ekko-lightbox                     |
+| forddemo6                        | fade 5s, 10 slides                 | 2/3/4/5@539/992/1200 (Chevrolet)         | body-style × 4, gold #feb245                  | no            | "The Ford Family", road backdrop ≥992, sibling dim                                                            |
+| forddemo7                        | fade 5s, 10 slides                 | 2/3/4/5@539/992/1200 (Chevrolet)         | body-style × 4, gold #feb245                  | no            | bar byte-identical to demo6; alias target of demo8/9/10                                                       |
+| groupdemo1                       | bg video + search widget           | no model bar                             | —                                             | no            | new: `.makes` 2/4/7@768/992 autoplay + `.locations` 1/2/4@768/992 autoplay; ekko-lightbox                     |
 | groupdemo2                       | static 100vh image + search        | none                                     | —                                             | —             | zero JS sliders; static 9-tile quick-nav grid                                                                 |
 | groupdemo3                       | fade 5s, 3 slides                  | none                                     | —                                             | —             | hero only                                                                                                     |
 | groupdemo4                       | fade 5s, 3 slides                  | none                                     | —                                             | —             | hero only                                                                                                     |
 | groupdemo5                       | static image hero + search         | none                                     | —                                             | —             | static makesNav logo row; zero sliders                                                                        |
-| hondademo4                       | fade 5s, arrows only (no dots)     | 2/3/5@461/769 (Acura)                    | none                                          | no            | img-chrome cutouts, btn-main CTA below bar                                                                    |
-| hondademo5                       | fade 5s + dots                     | 2/3/5@461/769 (Acura)                    | none                                          | no            | bar byte-identical to hondademo4                                                                              |
-| hyundaidemo4                     | fade 5s                            | 1/3/4/5@461/993/1201 (Hyundai)           | SUVs · Sedans · Electrified                   | no            | slick-in-hidden-tabs caveat; 40px pad in responsive tiers                                                     |
-| jaguardemo3 (serves dealer19076) | fade 5s                            | 2/3/4@461/769 (Buick)                    | none                                          | no            | photo-card bar, hover overlay, tagline below name                                                             |
-| landroverdemo4                   | fade 5s                            | 2/3/4@461/769 (Buick)                    | none                                          | no            | same JLR photo-card template; LR-specific slick CSS path                                                      |
-| lexusdemo4                       | fade 5s, 9 slides                  | 1/2/3/5@401/601/992 (Lexus)              | 3 tabs (Performance commented, 4 bars in DOM) | no            | est-MPG line, FA chevron arrows                                                                               |
-| lexusdemo7 (serves dealer22691)  | fade 5s                            | 1/2/3/5@401/601/992 (Lexus)              | 4 tabs incl Performance                       | no            | only Lexus demo with Performance live                                                                         |
-| lincolndemo4                     | fade 5s, 6 slides                  | 2/3/4@461/993 (Lincoln)                  | none                                          | no            | heading-italic "Select A Vehicle"; lincolndemo5 aliases here                                                  |
+| hondademo4                       | fade 5s, arrows only (no dots)     | 2/3/5@460/768 (Acura)                    | none                                          | no            | img-chrome cutouts, btn-main CTA below bar                                                                    |
+| hondademo5                       | fade 5s + dots                     | 2/3/5@460/768 (Acura)                    | none                                          | no            | bar byte-identical to hondademo4                                                                              |
+| hyundaidemo4                     | fade 5s                            | 1/3/4/5@460/992/1200 (Hyundai)           | SUVs · Sedans · Electrified                   | no            | slick-in-hidden-tabs caveat; 40px pad in responsive tiers                                                     |
+| jaguardemo3 (serves dealer19076) | fade 5s                            | 2/3/4@460/768 (Buick)                    | none                                          | no            | photo-card bar, hover overlay, tagline below name                                                             |
+| landroverdemo4                   | fade 5s                            | 2/3/4@460/768 (Buick)                    | none                                          | no            | same JLR photo-card template; LR-specific slick CSS path                                                      |
+| lexusdemo4                       | fade 5s, 9 slides                  | 1/2/3/5@400/600/992 (Lexus)              | 3 tabs (Performance commented, 4 bars in DOM) | no            | est-MPG line, FA chevron arrows                                                                               |
+| lexusdemo7 (serves dealer22691)  | fade 5s                            | 1/2/3/5@400/600/992 (Lexus)              | 4 tabs incl Performance                       | no            | only Lexus demo with Performance live                                                                         |
+| lincolndemo4                     | fade 5s, 6 slides                  | 2/3/4@460/992 (Lincoln)                  | none                                          | no            | heading-italic "Select A Vehicle"; lincolndemo5 aliases here                                                  |
 | maseratidemo1                    | bg video + search                  | none                                     | —                                             | —             | zero sliders                                                                                                  |
 | maseratidemo2                    | fade 5s, 13 slides                 | none                                     | —                                             | —             | hero only                                                                                                     |
 | maseratidemo3                    | fade 5s, 15 slides                 | none                                     | —                                             | —             | 2nd Bootstrap fade rotator (#carousel-maserati, featured GranTurismo)                                         |
@@ -578,20 +593,20 @@ lands on. Tab labels use `·` where the source uses a pipe.
 | mbdemo3                          | fade 5s, 3 slides                  | none                                     | —                                             | —             | hero only                                                                                                     |
 | mbdemo4                          | fade 5s, 3 slides                  | none                                     | —                                             | —             | hero only; all 4 MB demos slider-free beyond hero                                                             |
 | minidemo6                        | none (search widget only)          | none                                     | —                                             | —             | empty shell site, zero sliders                                                                                |
-| mitsubishidemo4                  | fade 5s below bar, 13 slides       | 2/3/5@461/769 (Acura)                    | none                                          | no            | flat strip, ColorMatched cutouts, hover .85 → .9                                                              |
-| nissandemo4                      | search-led; fade banner mid-page   | 1/2/3/5@401/601/992 (Lexus)              | Popular · Cars · SUVs · Trucks                | no            | + quick-nav-5 centerMode 3-up@9% (Lexus quick-nav recipe); data-count zero-stock redirect; a11y tabindex shim |
-| nissandemo5                      | search-led; fade mid-page col-md-7 | 1/2/3/5@401/601/992 (Lexus)              | Popular · Cars · SUVs · Trucks                | no            | opacity/height-0 until init then 1s fade-in                                                                   |
+| mitsubishidemo4                  | fade 5s below bar, 13 slides       | 2/3/5@460/768 (Acura)                    | none                                          | no            | flat strip, ColorMatched cutouts, hover .85 → .9                                                              |
+| nissandemo4                      | search-led; fade banner mid-page   | 1/2/3/5@400/600/992 (Lexus)              | Popular · Cars · SUVs · Trucks                | no            | + quick-nav-5 centerMode 3-up@9% (Lexus quick-nav recipe); data-count zero-stock redirect; a11y tabindex shim |
+| nissandemo5                      | search-led; fade mid-page col-md-7 | 1/2/3/5@400/600/992 (Lexus)              | Popular · Cars · SUVs · Trucks                | no            | opacity/height-0 until init then 1s fade-in                                                                   |
 | porschedemo4                     | static intro tiles + search band   | none                                     | —                                             | —             | zero sliders; quick-nav strings are just image filenames                                                      |
-| powersportsdemo1                 | fade 5s (true top hero)            | brands 2/3/6@461/769 (new, `.brandsNav`) | none                                          | no            | grayscale logos color-on-hover; static quickNav row                                                           |
-| powersportsdemo2                 | search-led; boxed fade mid-page    | 2/3/5@461/993 (new)                      | none                                          | no            | category tiles, BebasNeue labels, dealer-hosted cutouts                                                       |
+| powersportsdemo1                 | fade 5s (true top hero)            | brands 2/3/6@460/768 (new, `.brandsNav`) | none                                          | no            | grayscale logos color-on-hover; static quickNav row                                                           |
+| powersportsdemo2                 | search-led; boxed fade mid-page    | 2/3/5@460/992 (new)                      | none                                          | no            | category tiles, BebasNeue labels, dealer-hosted cutouts                                                       |
 | powersportsdemo3                 | bg video                           | none                                     | —                                             | —             | zero sliders; static parallax CTA tiles                                                                       |
 | powersportsdemo4                 | bg video                           | none                                     | —                                             | —             | zero sliders                                                                                                  |
-| subarudemo4                      | fade 5s, arrows only (no dots)     | 2/3/4/5@540/992/1200 (Chevrolet)         | 5 icon tabs (SVG in labels)                   | corpcell: yes | 3 carousels: hero + #carousel-CorporateCell fade + corpcell slick 1/2/3@540/1200 dots, infinite:false         |
-| toyotademo4                      | fade 5s, arrows only               | 1/2/3/5@401/601/992 (Lexus)              | 5 tabs, red #BB162B underline                 | no            | est-MPG + data-count; static quick-nav tiles                                                                  |
-| toyotademo5                      | fade 5s, arrows only               | 1/2/3/5@401/601/992 (Lexus)              | 5 tabs, red underline                         | no            | twin of demo4 minus quick-nav                                                                                 |
-| toyotademo6                      | fade 5s, arrows only               | 1/2/3/5@401/601/992 (Lexus)              | 5 boxed tab tiles, red 5px top border         | no            | boxed gray/white tab-tile strip                                                                               |
-| toyotademo7                      | fade 5s, arrows only               | 1/2/3/5@401/601/992 (Lexus)              | 5 boxed tab tiles                             | no            | + quick-nav tiles, hours accordion                                                                            |
-| toyotademo9                      | static intro (no hero carousel)    | 2/3/5@461/769 (Acura)                    | none                                          | no            | leanest page: one slick total; est-MPG + data-count; never drops below 2-up                                   |
+| subarudemo4                      | fade 5s, arrows only (no dots)     | 2/3/4/5@539/992/1200 (Chevrolet)         | 5 icon tabs (SVG in labels)                   | corpcell: yes | 3 carousels: hero + #carousel-CorporateCell fade + corpcell slick 1/2/3@539/1200 dots, infinite:false         |
+| toyotademo4                      | fade 5s, arrows only               | 1/2/3/5@400/600/992 (Lexus)              | 5 tabs, red #BB162B underline                 | no            | est-MPG + data-count; static quick-nav tiles                                                                  |
+| toyotademo5                      | fade 5s, arrows only               | 1/2/3/5@400/600/992 (Lexus)              | 5 tabs, red underline                         | no            | twin of demo4 minus quick-nav                                                                                 |
+| toyotademo6                      | fade 5s, arrows only               | 1/2/3/5@400/600/992 (Lexus)              | 5 boxed tab tiles, red 5px top border         | no            | boxed gray/white tab-tile strip                                                                               |
+| toyotademo7                      | fade 5s, arrows only               | 1/2/3/5@400/600/992 (Lexus)              | 5 boxed tab tiles                             | no            | + quick-nav tiles, hours accordion                                                                            |
+| toyotademo9                      | static intro (no hero carousel)    | 2/3/5@460/768 (Acura)                    | none                                          | no            | leanest page: one slick total; est-MPG + data-count; never drops below 2-up                                   |
 
 ### 10.7 Limitations
 
@@ -629,14 +644,14 @@ claim §4 made.
 | gmdemo1.dealeron.com           | Hard-404 parking page — GM multi-make example offline                                              | Stale reference entry                            |
 | gmcdemo4.dealeron.com          | Hard-404 parking page — GMC slick example offline                                                  | Stale reference entry                            |
 | mazdadesign1.dealeron.com      | Hostname alias of mazdademo1 — same slick ladder exactly                                           | Covered (alias)                                  |
-| porschedemo1.dealeron.com      | Hover-reveal photo-tile grid, static flex-wrap, 2 → 3@540 → 6@992 + All-Models banner tile         | Gap — non-slick                                  |
-| infinitidemo1.dealeron.com     | Hover-reveal tile grid, 2 → 2@540 → 3@992, landscape photos, permanent 40% overlay                 | Gap — non-slick                                  |
-| lexusoftucsonautomall.com      | slick on exactly the Acura tiers (2/3/5@461/769), Lexus-branded dressing                           | Covered (tiers) — dressing is a variant          |
-| rydelllincoln.com              | slick on the Lincoln ladder; client breakpoint 991 puts 4-up at 992 vs the demo's 993              | Covered — one-pixel variance                     |
-| coeurdalenenissan.com          | Replaced its slick bar with a static tabbed flex grid, 2/3/7@401/768; legacy slick CSS still ships | Gap — client drift off the reference description |
-| infinitioflexington.com        | Black portrait-tile mosaic, static wrap, 2 → 2@540 → 3@992, hover CTA choreography                 | Gap — non-slick                                  |
-| genesisofcartersville.com      | Vue3-platform carousel, 1 → 2@600 → 3@991, arrows suppressed when all items fit                    | Gap — new platform, no library ladder matches    |
-| brunerchryslerdodgejeepram.com | slick near the CDJR ladder (1/3/6@461/992), five pipe-divided brand tabs incl. Fiat, no background | Covered — near-miss variant of CDJR              |
+| porschedemo1.dealeron.com      | Hover-reveal photo-tile grid, static flex-wrap, 2 → 3@539 → 6@992 + All-Models banner tile         | Gap — non-slick                                  |
+| infinitidemo1.dealeron.com     | Hover-reveal tile grid, 2 → 2@539 → 3@992, landscape photos, permanent 40% overlay                 | Gap — non-slick                                  |
+| lexusoftucsonautomall.com      | slick on exactly the Acura tiers (2/3/5@460/768), Lexus-branded dressing                           | Covered (tiers) — dressing is a variant          |
+| rydelllincoln.com              | slick on the Lincoln ladder; client breakpoint 991 puts 4-up at 991 vs the demo's 992              | Covered — one-pixel variance                     |
+| coeurdalenenissan.com          | Replaced its slick bar with a static tabbed flex grid, 2/3/7@400/768; legacy slick CSS still ships | Gap — client drift off the reference description |
+| infinitioflexington.com        | Black portrait-tile mosaic, static wrap, 2 → 2@539 → 3@992, hover CTA choreography                 | Gap — non-slick                                  |
+| genesisofcartersville.com      | Vue3-platform carousel, 1 → 2@599 → 3@990, arrows suppressed when all items fit                    | Gap — new platform, no library ladder matches    |
+| brunerchryslerdodgejeepram.com | slick near the CDJR ladder (1/3/6@460/992), five pipe-divided brand tabs incl. Fiat, no background | Covered — near-miss variant of CDJR              |
 
 ### 11.1 The correction: "no `.modelBarS`" never meant "no model bar"
 
@@ -650,9 +665,9 @@ of official non-slick model bars the fingerprint was blind to:
   that abandons the widget entirely for a static stacked list of all 20 models. §7's example
   table files this very site as "Fade hero, no model bar on the page."
 - **Porsche (porschedemo1)** — hover-reveal photo-tile grid: static flex-wrap, 2-across base
-  → 3-across@540 → 6-across@992 plus a full-width All-Models banner tile; the model name is
+  → 3-across@539 → 6-across@992 plus a full-width All-Models banner tile; the model name is
   hidden at rest and revealed on hover with staggered Search New / Search Used links.
-- **INFINITI (infinitidemo1)** — the same hover-reveal skeleton at 2 → 2@540 → 3@992,
+- **INFINITI (infinitidemo1)** — the same hover-reveal skeleton at 2 → 2@539 → 3@992,
   landscape photos, square corners, a permanent 40% overlay.
 - **INFINITI client (infinitioflexington.com)** — a black portrait-tile mosaic on the same
   idea: full-bleed dark photo tiles, 2-across base → 3-across@992, bottom name-plus-chevron
@@ -681,15 +696,15 @@ in place as the record of what the fingerprint alone supported.
 
 - **coeurdalenenissan.com** no longer runs what the reference describes. The slick bar is
   gone — legacy `.modelBar` CSS still ships with no matching HTML — replaced by a static
-  flex grid inside pipe-divided underline tabs, item widths 50% base → 33.33%@401 →
+  flex grid inside pipe-divided underline tabs, item widths 50% base → 33.33%@400 →
   14.2%@768: a 2/3/7 wrap ladder with a 7-up single row per tab that matches no known
   ladder. Client sites drift off the pattern the reference (and this demo-estate census)
   records.
 - **genesisofcartersville.com** is the first sighting of the platform's next generation: a
   Vue3-platform page whose explore-models component renders dynamic body-type tabs feeding a
-  carousel at 1 base → 2@600 → 3@991, auto-centering, with arrows suppressed whenever all
+  carousel at 1 base → 2@599 → 3@990, auto-centering, with arrows suppressed whenever all
   items fit the viewport. No library ladder matches (the Genesis section is
-  1/2/3/4@541/993/1201).
+  1/2/3/4@540/992/1200).
 
 ### 11.4 Client variants worth a note
 
@@ -697,10 +712,10 @@ in place as the record of what the fingerprint alone supported.
   ladder — fully covered — but Lexus ships its own dressing (hr-underlined centered heading,
   240×140 cutouts scaling 0.95 → 1 on hover, a 23-slide roster). A strip-label variant under
   the Acura section, not a new ladder.
-- **Lincoln 992-vs-993** (rydelllincoln.com): the client's breakpoint is 991, so 4-up starts
-  at 992 instead of the demo's 993 — a one-pixel variance. Its FOUC guard (opacity fade-in
+- **Lincoln 991-vs-992** (rydelllincoln.com): the client's breakpoint is 991, so 4-up starts
+  at 991 instead of the demo's 992 — a one-pixel variance. Its FOUC guard (opacity fade-in
   on init) and live ColorMatched cutout sourcing are the only new details.
-- **CDJR-Fiat, no background** (brunerchryslerdodgejeepram.com): 1/3/6@461/992 with no
+- **CDJR-Fiat, no background** (brunerchryslerdodgejeepram.com): 1/3/6@460/992 with no
   background band, five pipe-divided brand tabs (Fiat included) and dim-siblings-on-hover.
   The divergent base-1 step never renders — the whole bar is hidden below 768px — so this
   lands as a variant note on the existing CDJR section rather than a new ladder.
@@ -712,7 +727,7 @@ a one-step variant of a covered ladder; the library's slick coverage is effectiv
 complete. The uncovered remainder is entirely the non-slick family — the BMW tabs bar, the
 Porsche and INFINITI tile grids, the Nissan tabbed static grid and the Genesis Vue3 carousel
 — now being added to demo/model-bars.html as static-grid and tabs sections plus one
-1/2/3@600/991 strip. Closing the gaps is catalog and demo-page work, not engine work.
+1/2/3@599/990 strip. Closing the gaps is catalog and demo-page work, not engine work.
 
 ## 12. The onboarding portal — the curated customer-facing roster (2026-08-19)
 
