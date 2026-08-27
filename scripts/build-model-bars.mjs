@@ -136,13 +136,19 @@ const R = {
     { file: 'img/oem/mazda/mazda3-sedan.png', w: 480, h: 209, name: 'Mazda3 Sedan', alt: '2026 Mazda Mazda3 Sedan', count: 9 },
     { file: 'img/oem/mazda/mx-5-miata.png', w: 480, h: 209, name: 'MX-5 Miata', alt: '2026 Mazda MX-5 Miata', count: 15 },
   ],
+  // `tag` is the one-line blurb the split photo card carries between the name
+  // and the Shop Now pill. The live Toyota bars have one on every card
+  // (`p.margin-top-1x`); without it the dark panel has a hole in it, because
+  // the pill is pinned to the bottom with margin-block-start: auto. Wording
+  // here is our own -- the shape is what the demo is reproducing, not the
+  // brand's marketing copy.
   toyota: [
-    { file: 'img/oem/toyota/camry.jpg', w: 800, h: 747, name: 'Camry', alt: '2026 Toyota Camry', count: 6 },
-    { file: 'img/oem/toyota/corolla.jpg', w: 800, h: 744, name: 'Corolla', alt: '2026 Toyota Corolla', count: 11 },
-    { file: 'img/oem/toyota/rav4.jpg', w: 800, h: 744, name: 'RAV4', alt: '2026 Toyota RAV4', count: 4 },
-    { file: 'img/oem/toyota/tacoma.jpg', w: 800, h: 744, name: 'Tacoma', alt: '2026 Toyota Tacoma', count: 9 },
-    { file: 'img/oem/toyota/tundra.jpg', w: 800, h: 744, name: 'Tundra', alt: '2026 Toyota Tundra', count: 3 },
-    { file: 'img/oem/toyota/4runner.jpg', w: 800, h: 744, name: '4Runner', alt: '2026 Toyota 4Runner', count: 7 },
+    { file: 'img/oem/toyota/camry.jpg', w: 800, h: 747, name: 'Camry', alt: '2026 Toyota Camry', count: 6, tag: 'The midsize standard, now with available all-wheel drive.' },
+    { file: 'img/oem/toyota/corolla.jpg', w: 800, h: 744, name: 'Corolla', alt: '2026 Toyota Corolla', count: 11, tag: 'Efficient by design, with room for everything you carry.' },
+    { file: 'img/oem/toyota/rav4.jpg', w: 800, h: 744, name: 'RAV4', alt: '2026 Toyota RAV4', count: 4, tag: 'Built for the weekend and capable enough for the long way round.' },
+    { file: 'img/oem/toyota/tacoma.jpg', w: 800, h: 744, name: 'Tacoma', alt: '2026 Toyota Tacoma', count: 9, tag: 'Trail-ready every day, with the payload to match.' },
+    { file: 'img/oem/toyota/tundra.jpg', w: 800, h: 744, name: 'Tundra', alt: '2026 Toyota Tundra', count: 3, tag: 'Full-size capability without giving up the daily drive.' },
+    { file: 'img/oem/toyota/4runner.jpg', w: 800, h: 744, name: '4Runner', alt: '2026 Toyota 4Runner', count: 7, tag: 'Where the pavement ends, the weekend starts.' },
   ],
   alfaromeo: [
     { file: 'img/oem/alfaromeo/tonale.jpg', w: 300, h: 500, name: 'Tonale', alt: '2026 Alfa Romeo Tonale' },
@@ -321,27 +327,38 @@ const SKINS = {
 .my-modelbar-card { display: flex; overflow: hidden; color: #fff; text-decoration: none; background: #2f2f2f; border-radius: 8px; }
 /* the copy column must be allowed to shrink, or long names clip on phones */
 .my-modelbar-copy { min-inline-size: 0; }
-@media (max-width: 600px) { .my-modelbar-copy { gap: 0.35rem; padding: 1rem; } .my-modelbar-copy .my-modelbar-name { font-size: 1.15rem; } .my-modelbar-shop { padding: 0.45rem 1rem; font-size: 0.8rem; white-space: nowrap; } }
-.my-modelbar-card img { inline-size: 48%; block-size: auto; align-self: stretch; object-fit: cover; }
-.my-modelbar-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; padding: 1.4rem 1.5rem; }
+/* Measured on toyotademo2, 27 Aug: the card is exactly 2:1 (560x280) with a
+   SQUARE photo filling half of it. Square + 50% is what produces the 2:1 -- so
+   set those, and the card height follows from its own width instead of from
+   whatever aspect the source photo happens to have. Without it a near-square
+   roster image (ours are 800x744) drives the card tall and leaves a hole above
+   the Shop Now pill, which sits at the bottom by design. */
+.my-modelbar-card img { flex: 0 0 50%; inline-size: 50%; aspect-ratio: 1; object-fit: cover; }
+.my-modelbar-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; padding: 28px; }
 .my-modelbar-copy small { font-size: 0.85rem; color: #d9d9d9; letter-spacing: 0.03em; }
 .my-modelbar-copy .my-modelbar-name { margin: 0; font-size: 1.5rem; font-weight: 700; }
+.my-modelbar-tag { font-size: 0.95rem; line-height: 1.4; color: #d9d9d9; }
 .my-modelbar-shop { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: #222; background: #fff; border-radius: 999px; transition: background 0.2s; }
 .my-modelbar-card:hover .my-modelbar-shop, .my-modelbar-card:focus-visible .my-modelbar-shop { background: #e6e6e6; }
 .my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgba(255, 255, 255, 0.92); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 .my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+/* Phone override, and it must come AFTER the base rule: same specificity,
+   so source order decides. It sat above and silently lost. */
+@media (max-width: 600px) { .my-modelbar-copy { gap: 0.35rem; padding: 1rem; } .my-modelbar-copy .my-modelbar-name { font-size: 1.15rem; } .my-modelbar-shop { padding: 0.45rem 1rem; font-size: 0.8rem; white-space: nowrap; } }
 @media (prefers-reduced-motion: reduce) { .my-modelbar-shop { transition: none; } }`,
     liveSlides: (r) =>
       r.map((e) => {
         const year = (e.alt.match(/\b(20\d\d)\b/) || [])[1];
-        return `<a class="my-modelbar-card" href="index.html#vehicles">${imgTag(e)}<span class="my-modelbar-copy"><small>${year ? `${year} | ` : ''}${e.count ?? 5} Available</small><p class="my-modelbar-name">${e.name}</p><span class="my-modelbar-shop">Shop Now</span></span></a>`;
+        const tag = e.tag ? `<span class="my-modelbar-tag">${e.tag}</span>` : '';
+        return `<a class="my-modelbar-card" href="index.html#vehicles">${imgTag(e)}<span class="my-modelbar-copy"><small>${year ? `${year} | ` : ''}${e.count ?? 5} Available</small><p class="my-modelbar-name">${e.name}</p>${tag}<span class="my-modelbar-shop">Shop Now</span></span></a>`;
       }),
     snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?Model=Highlander">
         <img src="#MISCPATH#/highlander.jpg" width="800" height="500" alt="Blue Toyota Highlander on a forest road">
         <span class="my-modelbar-copy">
           <small>2026 | 4 Available</small>
           <h3 class="my-modelbar-name">Highlander</h3>
+          <span class="my-modelbar-tag">Room for the whole trip.</span>
           <span class="my-modelbar-shop">Shop Now</span>
         </span>
       </a>`,

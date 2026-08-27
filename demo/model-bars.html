@@ -1088,24 +1088,11 @@
       .mbx-toyota-copy {
         min-inline-size: 0;
       }
-      @media (max-width: 600px) {
-        .mbx-toyota-copy {
-          gap: 0.35rem;
-          padding: 1rem;
-        }
-        .mbx-toyota-copy .mbx-toyota-name {
-          font-size: 1.15rem;
-        }
-        .mbx-toyota-shop {
-          padding: 0.45rem 1rem;
-          font-size: 0.8rem;
-          white-space: nowrap;
-        }
-      }
+
       .mbx-toyota-card img {
-        inline-size: 48%;
-        block-size: auto;
-        align-self: stretch;
+        flex: 0 0 50%;
+        inline-size: 50%;
+        aspect-ratio: 1;
         object-fit: cover;
       }
       .mbx-toyota-copy {
@@ -1113,7 +1100,7 @@
         flex-direction: column;
         gap: 0.5rem;
         align-items: flex-start;
-        padding: 1.4rem 1.5rem;
+        padding: 28px;
       }
       .mbx-toyota-copy small {
         font-size: 0.85rem;
@@ -1124,6 +1111,11 @@
         margin: 0;
         font-size: 1.5rem;
         font-weight: 700;
+      }
+      .mbx-toyota-tag {
+        font-size: 0.95rem;
+        line-height: 1.4;
+        color: #d9d9d9;
       }
       .mbx-toyota-shop {
         margin-block-start: auto;
@@ -1149,6 +1141,21 @@
       .mbx-toyota-card:focus-visible {
         outline: 3px solid currentcolor;
         outline-offset: 3px;
+      }
+
+      @media (max-width: 600px) {
+        .mbx-toyota-copy {
+          gap: 0.35rem;
+          padding: 1rem;
+        }
+        .mbx-toyota-copy .mbx-toyota-name {
+          font-size: 1.15rem;
+        }
+        .mbx-toyota-shop {
+          padding: 0.45rem 1rem;
+          font-size: 0.8rem;
+          white-space: nowrap;
+        }
       }
       @media (prefers-reduced-motion: reduce) {
         .mbx-toyota-shop {
@@ -3993,7 +4000,7 @@
                     ><img src="img/oem/toyota/camry.jpg" width="800" height="747" alt="2026 Toyota Camry" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
                       ><small>2026 | 6 Available</small>
                       <p class="mbx-toyota-name">Camry</p>
-                      <span class="mbx-toyota-shop">Shop Now</span></span
+                      <span class="mbx-toyota-tag">The midsize standard, now with available all-wheel drive.</span><span class="mbx-toyota-shop">Shop Now</span></span
                     ></a
                   >
                 </li>
@@ -4002,7 +4009,7 @@
                     ><img src="img/oem/toyota/corolla.jpg" width="800" height="744" alt="2026 Toyota Corolla" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
                       ><small>2026 | 11 Available</small>
                       <p class="mbx-toyota-name">Corolla</p>
-                      <span class="mbx-toyota-shop">Shop Now</span></span
+                      <span class="mbx-toyota-tag">Efficient by design, with room for everything you carry.</span><span class="mbx-toyota-shop">Shop Now</span></span
                     ></a
                   >
                 </li>
@@ -4011,7 +4018,7 @@
                     ><img src="img/oem/toyota/rav4.jpg" width="800" height="744" alt="2026 Toyota RAV4" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
                       ><small>2026 | 4 Available</small>
                       <p class="mbx-toyota-name">RAV4</p>
-                      <span class="mbx-toyota-shop">Shop Now</span></span
+                      <span class="mbx-toyota-tag">Built for the weekend and capable enough for the long way round.</span><span class="mbx-toyota-shop">Shop Now</span></span
                     ></a
                   >
                 </li>
@@ -4020,7 +4027,7 @@
                     ><img src="img/oem/toyota/tacoma.jpg" width="800" height="744" alt="2026 Toyota Tacoma" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
                       ><small>2026 | 9 Available</small>
                       <p class="mbx-toyota-name">Tacoma</p>
-                      <span class="mbx-toyota-shop">Shop Now</span></span
+                      <span class="mbx-toyota-tag">Trail-ready every day, with the payload to match.</span><span class="mbx-toyota-shop">Shop Now</span></span
                     ></a
                   >
                 </li>
@@ -4029,7 +4036,7 @@
                     ><img src="img/oem/toyota/tundra.jpg" width="800" height="744" alt="2026 Toyota Tundra" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
                       ><small>2026 | 3 Available</small>
                       <p class="mbx-toyota-name">Tundra</p>
-                      <span class="mbx-toyota-shop">Shop Now</span></span
+                      <span class="mbx-toyota-tag">Full-size capability without giving up the daily drive.</span><span class="mbx-toyota-shop">Shop Now</span></span
                     ></a
                   >
                 </li>
@@ -4038,7 +4045,7 @@
                     ><img src="img/oem/toyota/4runner.jpg" width="800" height="744" alt="2026 Toyota 4Runner" loading="lazy" decoding="async" /><span class="mbx-toyota-copy"
                       ><small>2026 | 7 Available</small>
                       <p class="mbx-toyota-name">4Runner</p>
-                      <span class="mbx-toyota-shop">Shop Now</span></span
+                      <span class="mbx-toyota-tag">Where the pavement ends, the weekend starts.</span><span class="mbx-toyota-shop">Shop Now</span></span
                     ></a
                   >
                 </li>
@@ -4060,6 +4067,7 @@
         &lt;span class="my-modelbar-copy"&gt;
           &lt;small&gt;2026 | 4 Available&lt;/small&gt;
           &lt;h3 class="my-modelbar-name"&gt;Highlander&lt;/h3&gt;
+          &lt;span class="my-modelbar-tag"&gt;Room for the whole trip.&lt;/span&gt;
           &lt;span class="my-modelbar-shop"&gt;Shop Now&lt;/span&gt;
         &lt;/span&gt;
       &lt;/a&gt;
@@ -4087,16 +4095,25 @@
 .my-modelbar-card { display: flex; overflow: hidden; color: #fff; text-decoration: none; background: #2f2f2f; border-radius: 8px; }
 /* the copy column must be allowed to shrink, or long names clip on phones */
 .my-modelbar-copy { min-inline-size: 0; }
-@media (max-width: 600px) { .my-modelbar-copy { gap: 0.35rem; padding: 1rem; } .my-modelbar-copy .my-modelbar-name { font-size: 1.15rem; } .my-modelbar-shop { padding: 0.45rem 1rem; font-size: 0.8rem; white-space: nowrap; } }
-.my-modelbar-card img { inline-size: 48%; block-size: auto; align-self: stretch; object-fit: cover; }
-.my-modelbar-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; padding: 1.4rem 1.5rem; }
+/* Measured on toyotademo2, 27 Aug: the card is exactly 2:1 (560x280) with a
+   SQUARE photo filling half of it. Square + 50% is what produces the 2:1 -- so
+   set those, and the card height follows from its own width instead of from
+   whatever aspect the source photo happens to have. Without it a near-square
+   roster image (ours are 800x744) drives the card tall and leaves a hole above
+   the Shop Now pill, which sits at the bottom by design. */
+.my-modelbar-card img { flex: 0 0 50%; inline-size: 50%; aspect-ratio: 1; object-fit: cover; }
+.my-modelbar-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; padding: 28px; }
 .my-modelbar-copy small { font-size: 0.85rem; color: #d9d9d9; letter-spacing: 0.03em; }
 .my-modelbar-copy .my-modelbar-name { margin: 0; font-size: 1.5rem; font-weight: 700; }
+.my-modelbar-tag { font-size: 0.95rem; line-height: 1.4; color: #d9d9d9; }
 .my-modelbar-shop { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: #222; background: #fff; border-radius: 999px; transition: background 0.2s; }
 .my-modelbar-card:hover .my-modelbar-shop, .my-modelbar-card:focus-visible .my-modelbar-shop { background: #e6e6e6; }
 .my-modelbar { --dlc-arrow-fg: #222; --dlc-arrow-bg: rgba(255, 255, 255, 0.92); }
 .my-modelbar .dl-carousel-arrow { box-shadow: 0 1px 6px rgb(0 0 0 / 20%); }
 .my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
+/* Phone override, and it must come AFTER the base rule: same specificity,
+   so source order decides. It sat above and silently lost. */
+@media (max-width: 600px) { .my-modelbar-copy { gap: 0.35rem; padding: 1rem; } .my-modelbar-copy .my-modelbar-name { font-size: 1.15rem; } .my-modelbar-shop { padding: 0.45rem 1rem; font-size: 0.8rem; white-space: nowrap; } }
 @media (prefers-reduced-motion: reduce) { .my-modelbar-shop { transition: none; } }</code></pre>
             <p class="code-label">Check it worked</p>
             <ul class="copy-check">

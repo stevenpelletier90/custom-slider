@@ -2077,24 +2077,11 @@
       .bb-toyota-copy {
         min-inline-size: 0;
       }
-      @media (max-width: 600px) {
-        .bb-toyota-copy {
-          gap: 0.35rem;
-          padding: 1rem;
-        }
-        .bb-toyota-copy .bb-toyota-name {
-          font-size: 1.15rem;
-        }
-        .bb-toyota-shop {
-          padding: 0.45rem 1rem;
-          font-size: 0.8rem;
-          white-space: nowrap;
-        }
-      }
+
       .bb-toyota-card img {
-        inline-size: 48%;
-        block-size: auto;
-        align-self: stretch;
+        flex: 0 0 50%;
+        inline-size: 50%;
+        aspect-ratio: 1;
         object-fit: cover;
       }
       .bb-toyota-copy {
@@ -2102,7 +2089,7 @@
         flex-direction: column;
         gap: 0.5rem;
         align-items: flex-start;
-        padding: 1.4rem 1.5rem;
+        padding: 28px;
       }
       .bb-toyota-copy small {
         font-size: 0.85rem;
@@ -2113,6 +2100,11 @@
         margin: 0;
         font-size: 1.5rem;
         font-weight: 700;
+      }
+      .bb-toyota-tag {
+        font-size: 0.95rem;
+        line-height: 1.4;
+        color: #d9d9d9;
       }
       .bb-toyota-shop {
         margin-block-start: auto;
@@ -2138,6 +2130,21 @@
       .bb-toyota-card:focus-visible {
         outline: 3px solid currentcolor;
         outline-offset: 3px;
+      }
+
+      @media (max-width: 600px) {
+        .bb-toyota-copy {
+          gap: 0.35rem;
+          padding: 1rem;
+        }
+        .bb-toyota-copy .bb-toyota-name {
+          font-size: 1.15rem;
+        }
+        .bb-toyota-shop {
+          padding: 0.45rem 1rem;
+          font-size: 0.8rem;
+          white-space: nowrap;
+        }
       }
       @media (prefers-reduced-motion: reduce) {
         .bb-toyota-shop {
@@ -4950,7 +4957,7 @@
                   ><img src="img/oem/toyota/camry.jpg" width="800" height="747" alt="2026 Toyota Camry" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
                     ><small>2026 | 6 Available</small>
                     <p class="bb-toyota-name">Camry</p>
-                    <span class="bb-toyota-shop">Shop Now</span></span
+                    <span class="bb-toyota-tag">The midsize standard, now with available all-wheel drive.</span><span class="bb-toyota-shop">Shop Now</span></span
                   ></a
                 >
               </li>
@@ -4959,7 +4966,7 @@
                   ><img src="img/oem/toyota/corolla.jpg" width="800" height="744" alt="2026 Toyota Corolla" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
                     ><small>2026 | 11 Available</small>
                     <p class="bb-toyota-name">Corolla</p>
-                    <span class="bb-toyota-shop">Shop Now</span></span
+                    <span class="bb-toyota-tag">Efficient by design, with room for everything you carry.</span><span class="bb-toyota-shop">Shop Now</span></span
                   ></a
                 >
               </li>
@@ -4968,7 +4975,7 @@
                   ><img src="img/oem/toyota/rav4.jpg" width="800" height="744" alt="2026 Toyota RAV4" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
                     ><small>2026 | 4 Available</small>
                     <p class="bb-toyota-name">RAV4</p>
-                    <span class="bb-toyota-shop">Shop Now</span></span
+                    <span class="bb-toyota-tag">Built for the weekend and capable enough for the long way round.</span><span class="bb-toyota-shop">Shop Now</span></span
                   ></a
                 >
               </li>
@@ -4977,7 +4984,7 @@
                   ><img src="img/oem/toyota/tacoma.jpg" width="800" height="744" alt="2026 Toyota Tacoma" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
                     ><small>2026 | 9 Available</small>
                     <p class="bb-toyota-name">Tacoma</p>
-                    <span class="bb-toyota-shop">Shop Now</span></span
+                    <span class="bb-toyota-tag">Trail-ready every day, with the payload to match.</span><span class="bb-toyota-shop">Shop Now</span></span
                   ></a
                 >
               </li>
@@ -4986,7 +4993,7 @@
                   ><img src="img/oem/toyota/tundra.jpg" width="800" height="744" alt="2026 Toyota Tundra" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
                     ><small>2026 | 3 Available</small>
                     <p class="bb-toyota-name">Tundra</p>
-                    <span class="bb-toyota-shop">Shop Now</span></span
+                    <span class="bb-toyota-tag">Full-size capability without giving up the daily drive.</span><span class="bb-toyota-shop">Shop Now</span></span
                   ></a
                 >
               </li>
@@ -4995,7 +5002,7 @@
                   ><img src="img/oem/toyota/4runner.jpg" width="800" height="744" alt="2026 Toyota 4Runner" loading="lazy" decoding="async" /><span class="bb-toyota-copy"
                     ><small>2026 | 7 Available</small>
                     <p class="bb-toyota-name">4Runner</p>
-                    <span class="bb-toyota-shop">Shop Now</span></span
+                    <span class="bb-toyota-tag">Where the pavement ends, the weekend starts.</span><span class="bb-toyota-shop">Shop Now</span></span
                   ></a
                 >
               </li>
