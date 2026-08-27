@@ -91,11 +91,20 @@ invented:
 - `--dlc-transition`
 - Behaviour: `data-step`, `data-autoplay`, `data-rewind`, `data-drag`
 
-**Card styles** — the 13 hand-made skins collapse to the ones that are
-genuinely different components rather than different values:
+**Card styles.** There are **17** distinct looks today, across two separate
+skin systems that grew independently: 13 in `SKINS` (used by the library
+strips) and 4 more used only by the brands page (`white`, `counts`,
+`spotlight`, `tile`). De-duplicating those two systems is part of this work.
 
-`cutout tile` · `split photo card` · `tall photo tile` · `logo strip` ·
-`category tile`
+Several of the 17 are the same component wearing a different colour —
+`band-dark`, `band-gray` and `band-flat` are one banded look with a background
+setting, not three looks. The card-style set is therefore the components that
+survive that collapse, each with colour as a setting.
+
+**The exact final count is determined by inspecting the 17, not guessed here.**
+An earlier draft of this spec asserted "collapse to 5" and would have dropped
+looks brands actually use. Expect roughly 8–11; the implementation plan
+enumerates them one by one with the evidence for each merge.
 
 **Brand preset** — a dropdown that sets the settings above. It is a shortcut,
 not a separate slider, and it copies nothing. Choosing a brand changes numbers
