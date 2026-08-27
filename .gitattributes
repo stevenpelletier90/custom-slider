@@ -1,0 +1,20 @@
+# Line endings are pinned here rather than left to each machine's config.
+#
+# Git for Windows ships core.autocrlf=true in its SYSTEM config, so without
+# this file these sources check out as CRLF. Prettier is configured
+# endOfLine:"lf" and `npm run validate` enforces it, so a fresh Windows
+# clone would fail the gate on every file it touches — and every `git add`
+# prints "LF will be replaced by CRLF the next time Git touches it".
+#
+# text=auto eol=lf keeps LF in the index AND in the working tree regardless
+# of local core.autocrlf, which is what both Prettier and the CI gate want.
+* text=auto eol=lf
+
+# Images: never line-ending-converted, never diffed as text.
+*.png binary
+*.jpg binary
+*.jpeg binary
+*.gif binary
+*.webp binary
+*.woff binary
+*.woff2 binary
