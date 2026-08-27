@@ -23,6 +23,9 @@ const LOOKS = {
     settings: {
       '--strip-bg': 'transparent',
       '--strip-pad': '0px',
+      // Reserves the gutter the arrows sit in. Without it transparent arrows
+      // overlay the vehicles instead of standing beside them.
+      '--strip-pad-x': 'calc(var(--dlc-arrow-size) + 0.25rem)',
       '--name-color': '#222',
       '--name-size': '1rem',
       '--name-weight': '600',
@@ -33,13 +36,14 @@ const LOOKS = {
       '--img-aspect': 'auto',
       '--plate-bg': 'transparent', // coloured plate behind the vehicle
     },
-    css: `.dlx { background: var(--strip-bg); padding-block: var(--strip-pad); }
+    css: `.dlx { background: var(--strip-bg); padding-block: var(--strip-pad); padding-inline: var(--strip-pad-x); }
+.dlx-arrow-prev { inset-inline-start: 0; }
 .dlx-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .dlx-plate { display: block; padding: 8% 6%; background: var(--plate-bg); }
 .dlx-card img { inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); object-fit: contain; filter: var(--img-filter); transition: filter 0.2s, transform 0.25s ease; }
 .dlx-card:hover img { filter: none; }
-.dlx-name { order: var(--name-order); margin: 0.4rem 0 0; font-size: var(--name-size); font-weight: var(--name-weight); text-transform: var(--name-case); letter-spacing: var(--name-tracking); color: var(--name-color); }
-.dlx-sub { display: block; margin-block-start: 0.15rem; font-size: 0.8rem; color: #5f6368; }`,
+.dlx-name { order: var(--name-order); margin: 0.4rem 0 0; line-height: 1.35; font-size: var(--name-size); font-weight: var(--name-weight); text-transform: var(--name-case); letter-spacing: var(--name-tracking); color: var(--name-color); }
+.dlx-sub { display: block; margin-block-start: 0.15rem; font-size: 0.8rem; line-height: 1.35; color: #5f6368; }`,
     markup: (m) => `<a class="dlx-card" href="${m.href}">
   <span class="dlx-plate"><img src="${m.img}" width="320" height="240" alt="${m.alt}" loading="lazy" decoding="async"></span>
   <p class="dlx-name">${m.name}</p>${m.sub ? `\n  <small class="dlx-sub">${m.sub}</small>` : ''}
@@ -61,9 +65,9 @@ const LOOKS = {
     },
     css: `.dlx { background: var(--strip-bg); padding-block: var(--strip-pad); }
 .dlx-card { display: block; color: var(--name-color); text-align: center; text-decoration: none; }
-.dlx-mark { display: block; margin-block-end: 0.6rem; font-size: var(--mark-size); font-style: italic; font-weight: 700; letter-spacing: 0.06em; }
+.dlx-mark { display: block; margin-block-end: 0.6rem; font-size: var(--mark-size); font-style: italic; font-weight: 700; line-height: 1.2; letter-spacing: 0.06em; }
 .dlx-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.25s ease; }
-.dlx-name { margin: 0.5rem 0 0; font-size: var(--name-size); font-weight: 600; text-transform: var(--name-case); letter-spacing: 0.1em; }`,
+.dlx-name { margin: 0.5rem 0 0; font-size: var(--name-size); font-weight: 600; line-height: 1.35; text-transform: var(--name-case); letter-spacing: 0.1em; }`,
     markup: (m) => `<a class="dlx-card" href="${m.href}">
   <span class="dlx-mark">${m.mark ?? m.name}</span>
   <img src="${m.img}" width="320" height="240" alt="${m.alt}" loading="lazy" decoding="async">
@@ -87,7 +91,7 @@ const LOOKS = {
 .dlx-card img { flex: 0 0 50%; inline-size: 50%; aspect-ratio: 1; object-fit: cover; }
 .dlx-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; min-inline-size: 0; padding: 28px; }
 .dlx-sub { font-size: 0.85rem; color: #d9d9d9; }
-.dlx-name { margin: 0; font-size: 1.5rem; font-weight: 700; }
+.dlx-name { margin: 0; font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
 .dlx-blurb { font-size: 0.95rem; line-height: 1.4; color: #d9d9d9; }
 .dlx-pill { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: var(--pill-fg); background: var(--pill-bg); border-radius: 999px; }
 @media (max-width: 600px) { .dlx-copy { gap: 0.35rem; padding: 1rem; } .dlx-name { font-size: 1.15rem; } .dlx-pill { padding: 0.45rem 1rem; font-size: 0.8rem; white-space: nowrap; } }`,
@@ -116,7 +120,7 @@ const LOOKS = {
     },
     css: `.dlx { background: var(--strip-bg); padding: 1.5rem; }
 .dlx-card { display: block; color: var(--card-fg); text-align: center; text-decoration: none; }
-.dlx-name { margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 700; text-align: start; text-transform: uppercase; letter-spacing: 0.08em; }
+.dlx-name { margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 700; line-height: 1.3; text-align: start; text-transform: uppercase; letter-spacing: 0.08em; }
 .dlx-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); object-fit: cover; }
 .dlx-cta { display: inline-block; margin-block-start: 0.75rem; padding: 0.6rem 1.4rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--cta-fg); background: var(--cta-bg); }`,
     markup: (m) => `<a class="dlx-card" href="${m.href}">
@@ -157,7 +161,7 @@ const LOOKS = {
     css: `.dlx { padding: 1.5rem 1rem; background: var(--strip-bg); }
 .dlx-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.25rem; text-align: center; text-decoration: none; background: var(--card-bg); border-radius: 10px; }
 .dlx-card img { inline-size: 55%; block-size: auto; object-fit: contain; }
-.dlx-name { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; font-weight: 700; color: #222; }
+.dlx-name { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; font-weight: 700; line-height: 1.3; color: #222; }
 .dlx-card p { margin: 0 0 0.9rem; font-size: 0.9rem; color: #5f6368; }
 .dlx-cta { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.8rem; font-weight: 700; color: var(--cta-fg); background: var(--cta-bg); border-radius: 999px; }`,
     markup: (m) => `<a class="dlx-card" href="${m.href}">
