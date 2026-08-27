@@ -295,13 +295,13 @@
       .demo-reviews {
         --dlc-per-view: 1;
       }
-      @media (min-width: 640px) {
+      @media (min-width: 768px) {
         .demo-vehicles,
         .demo-reviews {
           --dlc-per-view: 2;
         }
       }
-      @media (min-width: 1024px) {
+      @media (min-width: 992px) {
         .demo-vehicles,
         .demo-reviews {
           --dlc-per-view: 3;
@@ -462,12 +462,12 @@
         --dlc-dot-current: #949494;
         --dlc-controls-space: 3rem;
       }
-      @media (min-width: 640px) {
+      @media (min-width: 768px) {
         .demo-models {
           --dlc-per-view: 2;
         }
       }
-      @media (min-width: 1024px) {
+      @media (min-width: 992px) {
         .demo-models {
           --dlc-per-view: 4;
           --dlc-arrow-size: 56px;
@@ -575,12 +575,12 @@
         --dlc-arrow-fg: #262626;
         padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
       }
-      @media (min-width: 461px) {
+      @media (min-width: 460px) {
         .demo-modelbar {
           --dlc-per-view: 3;
         }
       }
-      @media (min-width: 769px) {
+      @media (min-width: 768px) {
         .demo-modelbar {
           --dlc-per-view: 5;
         }
@@ -629,7 +629,7 @@
       .demo-modelbar-tabs-section .demo-modelbar {
         --dlc-per-view: 2;
       }
-      @media (min-width: 640px) {
+      @media (min-width: 768px) {
         .demo-modelbar-tabs-section .demo-modelbar {
           --dlc-per-view: 3;
         }
@@ -690,7 +690,7 @@
         --dlc-arrow-bg: transparent;
         --dlc-arrow-fg: #262626;
       }
-      @media (min-width: 1024px) {
+      @media (min-width: 992px) {
         .demo-peek {
           --dlc-per-view: 2;
           --dlc-peek: 6rem;
@@ -717,12 +717,12 @@
         --dlc-arrow-fg: #262626;
         padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
       }
-      @media (min-width: 640px) {
+      @media (min-width: 768px) {
         .demo-mixed {
           --dlc-per-view: 2;
         }
       }
-      @media (min-width: 1024px) {
+      @media (min-width: 992px) {
         .demo-mixed {
           --dlc-per-view: 3;
         }
@@ -750,12 +750,12 @@
         --dlc-arrow-fg: #262626;
         padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
       }
-      @media (min-width: 640px) {
+      @media (min-width: 768px) {
         .demo-cards {
           --dlc-per-view: 2;
         }
       }
-      @media (min-width: 1024px) {
+      @media (min-width: 992px) {
         .demo-cards {
           --dlc-per-view: 3;
         }
@@ -1081,7 +1081,7 @@
         aspect-ratio: 3 / 2;
         object-fit: cover;
       }
-      @media (min-width: 769px) {
+      @media (min-width: 768px) {
         .demo-hero img {
           aspect-ratio: 16 / 6;
         }
@@ -1121,7 +1121,7 @@
         --dlc-per-view: 4;
         --dlc-gap: 1rem;
       }
-      @media (min-width: 769px) {
+      @media (min-width: 768px) {
         .demo-grid {
           --dlc-cols: 3;
           --dlc-per-view: 6;
@@ -1144,12 +1144,12 @@
         grid-template-columns: 1fr;
         gap: 1rem;
       }
-      @media (min-width: 640px) {
+      @media (min-width: 768px) {
         .demo-cardgrid {
           grid-template-columns: 1fr 1fr;
         }
       }
-      @media (min-width: 1024px) {
+      @media (min-width: 992px) {
         .demo-cardgrid {
           grid-template-columns: 1fr 1fr 1fr;
         }
@@ -1831,7 +1831,7 @@
 .my-hero .dl-carousel-slide { position: relative; }
 .my-hero a { display: block; color: inherit; text-decoration: none; }
 .my-hero img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 2; object-fit: cover; }
-@media (min-width: 769px) { .my-hero img { aspect-ratio: 16 / 6; } }
+@media (min-width: 768px) { .my-hero img { aspect-ratio: 16 / 6; } }
 .my-hero-copy { position: absolute; inset-block-end: 0; inline-size: 100%; padding: 2.5rem 1.25rem 1.25rem; color: #fff; background: linear-gradient(to top, rgb(0 0 0 / 78%), rgb(0 0 0 / 0%)); }
 .my-hero-copy strong { display: block; font-size: clamp(1.25rem, 3.2vw, 2rem); }
 .my-hero-copy span { display: inline-block; margin-block-start: 0.6rem; padding: 0.45rem 1rem; font-weight: 600; color: #16324f; background: #fff; border-radius: 4px; }</code></pre>
@@ -2106,8 +2106,8 @@
             <p>Here is the top row written out in full. Every other row is the same shape &mdash; one line per step in your brand&rsquo;s row:</p>
             <p class="code-label">CSS</p>
             <pre><code>.my-modelbar { --dlc-per-view: 2; }
-@media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
-@media (min-width: 769px) { .my-modelbar { --dlc-per-view: 5; } }</code></pre>
+@media (min-width: 460px) { .my-modelbar { --dlc-per-view: 3; } }
+@media (min-width: 768px) { .my-modelbar { --dlc-per-view: 5; } }</code></pre>
             <p class="copy-lead">
               <strong>Copy this.</strong> The HTML goes in a Custom HTML block; the CSS goes in the page's <em>Style Only</em> box. Add <a href="#start">the slider itself</a> first &mdash; once per
               page.
@@ -2128,8 +2128,8 @@
             <pre><code>/* Cards per view: use YOUR brand's row from the table above. This is the
    most common one (19 sites, the Acura tiers). */
 .my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; }
-@media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
-@media (min-width: 769px) { .my-modelbar { --dlc-per-view: 5; } }
+@media (min-width: 460px) { .my-modelbar { --dlc-per-view: 3; } }
+@media (min-width: 768px) { .my-modelbar { --dlc-per-view: 5; } }
 
 /* Arrows only - hide the dots and reclaim the space they reserved. */
 .my-modelbar .dl-carousel-dots { display: none; }
@@ -2461,8 +2461,8 @@
             <pre><code>/* The model bar inside each pane. Same recipe as the plain model bar - use
    YOUR brand's row from the ladder table in that section. */
 .my-modelbar { --dlc-per-view: 2; --dlc-peek: 60px; --dlc-gap: 0.5rem; --dlc-controls-space: 0px; }
-@media (min-width: 461px) { .my-modelbar { --dlc-per-view: 3; } }
-@media (min-width: 769px) { .my-modelbar { --dlc-per-view: 5; } }
+@media (min-width: 460px) { .my-modelbar { --dlc-per-view: 3; } }
+@media (min-width: 768px) { .my-modelbar { --dlc-per-view: 5; } }
 .my-modelbar .dl-carousel-dots { display: none; }
 .my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
@@ -2638,7 +2638,7 @@
    two rows is columns x 2. The slider counts cards, so this pairing is what
    makes one arrow click move exactly one screen. */
 .my-grid { --dlc-cols: 2; --dlc-per-view: 4; --dlc-gap: 1rem; }
-@media (min-width: 769px) { .my-grid { --dlc-cols: 3; --dlc-per-view: 6; } }
+@media (min-width: 768px) { .my-grid { --dlc-cols: 3; --dlc-per-view: 6; } }
 
 .my-grid .dl-carousel-track {
   display: grid;
@@ -2693,7 +2693,7 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>.my-peek { --dlc-per-view: 1; --dlc-peek: 48px; --dlc-gap: 1rem; }
-@media (min-width: 1024px) { .my-peek { --dlc-per-view: 3; } }
+@media (min-width: 992px) { .my-peek { --dlc-per-view: 3; } }
 .my-peek img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; border-radius: 6px; }
 
 /* Fade the peeking slivers at both edges. The fade width matches --dlc-peek. */
@@ -2820,8 +2820,8 @@
 &lt;/script&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>.my-cardgrid { display: grid; gap: 1rem; grid-template-columns: 1fr; }
-@media (min-width: 640px)  { .my-cardgrid { grid-template-columns: 1fr 1fr; } }
-@media (min-width: 1024px) { .my-cardgrid { grid-template-columns: 1fr 1fr 1fr; } }
+@media (min-width: 768px)  { .my-cardgrid { grid-template-columns: 1fr 1fr; } }
+@media (min-width: 992px) { .my-cardgrid { grid-template-columns: 1fr 1fr 1fr; } }
 
 .my-vcard { overflow: hidden; background: #fff; border: 1px solid #dde3e9; border-radius: 6px; }
 .my-vcard h3 { margin: 0.75rem 1rem 0.25rem; font-size: 1.05rem; }
@@ -3279,8 +3279,8 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>.my-vehicles { --dlc-per-view: 1; --dlc-gap: 1rem; }
-@media (min-width: 640px)  { .my-vehicles { --dlc-per-view: 2; } }
-@media (min-width: 1024px) { .my-vehicles { --dlc-per-view: 3; } }
+@media (min-width: 768px)  { .my-vehicles { --dlc-per-view: 2; } }
+@media (min-width: 992px) { .my-vehicles { --dlc-per-view: 3; } }
 
 .my-vehicle { position: relative; block-size: 100%; background: #fff; border: 1px solid #dde3e9; border-radius: 6px; overflow: hidden; }
 .my-vehicle img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 8 / 5; object-fit: cover; }
@@ -3374,8 +3374,8 @@
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>.my-models { --dlc-per-view: 1; --dlc-gap: 1rem; }
-@media (min-width: 640px)  { .my-models { --dlc-per-view: 2; } }
-@media (min-width: 1024px) { .my-models { --dlc-per-view: 4; } }
+@media (min-width: 768px)  { .my-models { --dlc-per-view: 2; } }
+@media (min-width: 992px) { .my-models { --dlc-per-view: 4; } }
 .my-model-card { position: relative; display: block; color: #fff; text-decoration: none; }
 .my-model-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; border-radius: 6px; }
 .my-model-card h3 { position: absolute; inset-block-end: 0; inline-size: 100%; margin: 0; padding: 2rem 1rem 1rem; font-size: 1.1rem; background: linear-gradient(to top, rgb(0 0 0 / 75%), rgb(0 0 0 / 0%)); }</code></pre>
@@ -3466,8 +3466,8 @@ object-fit: cover;</code></pre>
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>.my-mixed { --dlc-per-view: 1; --dlc-gap: 1rem; }
-@media (min-width: 640px)  { .my-mixed { --dlc-per-view: 2; } }
-@media (min-width: 1024px) { .my-mixed { --dlc-per-view: 3; } }
+@media (min-width: 768px)  { .my-mixed { --dlc-per-view: 2; } }
+@media (min-width: 992px) { .my-mixed { --dlc-per-view: 3; } }
 
 .my-mixed-card { background: #fff; border: 1px solid #dde3e9; border-radius: 6px; overflow: hidden; }
 .my-mixed-card h3 { margin: 0.75rem 1rem 0.25rem; font-size: 1.05rem; }
@@ -3585,8 +3585,8 @@ object-fit: cover;</code></pre>
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>.my-cards { --dlc-per-view: 1; --dlc-gap: 1rem; }
-@media (min-width: 640px)  { .my-cards { --dlc-per-view: 2; } }
-@media (min-width: 1024px) { .my-cards { --dlc-per-view: 3; } }
+@media (min-width: 768px)  { .my-cards { --dlc-per-view: 2; } }
+@media (min-width: 992px) { .my-cards { --dlc-per-view: 3; } }
 
 /* Equal heights come free: the row is already flex, so the card stretches
    and flex-grow on the copy pushes every "Read more" to the same line. */
@@ -3875,8 +3875,8 @@ object-fit: cover;</code></pre>
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>.my-reviews { --dlc-per-view: 1; --dlc-gap: 1rem; }
-@media (min-width: 640px)  { .my-reviews { --dlc-per-view: 2; } }
-@media (min-width: 1024px) { .my-reviews { --dlc-per-view: 3; } }
+@media (min-width: 768px)  { .my-reviews { --dlc-per-view: 2; } }
+@media (min-width: 992px) { .my-reviews { --dlc-per-view: 3; } }
 
 /* Bare arrows in the margins, and the pause button moved clear of them. */
 .my-reviews {
@@ -3955,8 +3955,8 @@ object-fit: cover;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>/* The only setting most sliders need: how many cards show at each width. */
 .my-slider { --dlc-per-view: 1; --dlc-gap: 1rem; }
-@media (min-width: 640px)  { .my-slider { --dlc-per-view: 2; } }
-@media (min-width: 1024px) { .my-slider { --dlc-per-view: 3; } }
+@media (min-width: 768px)  { .my-slider { --dlc-per-view: 2; } }
+@media (min-width: 992px) { .my-slider { --dlc-per-view: 3; } }
 
 /* Everything else is optional. A few you are most likely to want:
    --dlc-peek        a sliver of the next card showing at the edges
