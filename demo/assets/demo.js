@@ -251,3 +251,70 @@ addEventListener('DOMContentLoaded', () => {
   );
   for (const target of byTarget.keys()) io.observe(target);
 });
+
+// Solo mode: show one example at a time. The catalog grew to nineteen sections
+// and sixteen screens of scrolling, which is fine for browsing and poor for
+// "show me the model bar". Reuses the same hidden-section mechanism the
+// type-filter uses, and the picker links already point at section ids, so
+// navigating IS selecting - no second set of controls to keep in sync.
+//
+// The filter wins while a search term is live: both features drive the same
+// `hidden` flags, and this listener runs after the filter's, so without the
+// early return below it would immediately re-show everything the search had
+// just narrowed. Clearing the term hands control back to solo.
+//
+// Only runs where the page provides the toggle. The brand and model-bar
+// libraries deliberately opt out: those exist for comparison, where seeing
+// many strips at once is the point.
+addEventListener('DOMContentLoaded', () => {
+  const toggle = document.getElementById('demo-solo-toggle');
+  if (!toggle) return;
+  const sections = [...document.querySelectorAll('main section.demo-section[id]')];
+  if (!sections.length) return;
+  const status = document.getElementById('demo-solo-status');
+  const filter = document.getElementById('demo-filter');
+  const searching = () => !!filter?.value.trim();
+
+  const currentSection = () => {
+    const id = decodeURIComponent(location.hash.slice(1));
+    return sections.find((s) => s.id === id) || sections[0];
+  };
+
+  const apply = () => {
+    if (searching()) return; // the filter owns visibility until the term clears
+    if (!toggle.checked) {
+      for (const s of sections) s.hidden = false;
+      if (status) status.textContent = '';
+      return;
+    }
+    const show = currentSection();
+    for (const s of sections) s.hidden = s !== show;
+    const name = show.querySelector('h2, h3')?.textContent.trim() ?? show.id;
+    if (status) status.textContent = `${name} — ${sections.indexOf(show) + 1} of ${sections.length}`;
+  };
+
+  toggle.addEventListener('change', () => {
+    // Re-checking the box while a search is live would do nothing visible,
+    // because apply() defers to the filter. Clear the term so the intent lands.
+    if (toggle.checked && searching()) {
+      filter.value = '';
+      filter.dispatchEvent(new Event('input'));
+      return; // that input event re-runs apply() below
+    }
+    apply();
+  });
+
+  // Runs after the filter's own handler, so it sees the post-search state:
+  // a live term short-circuits, a cleared one restores solo.
+  filter?.addEventListener('input', apply);
+
+  addEventListener('hashchange', apply);
+
+  // Clicking the picker entry for the section already shown fires no
+  // hashchange, so re-apply on any in-page link.
+  for (const a of document.querySelectorAll('.demo-picker a[href^="#"], .demo-jump-panel a[href^="#"]')) {
+    a.addEventListener('click', () => setTimeout(apply, 0));
+  }
+
+  apply();
+});

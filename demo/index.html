@@ -23,6 +23,28 @@
          section-title scale) is shared with the model bar library — it lives
          in assets/demo.css. */
 
+      /* ---- one-at-a-time toggle ------------------------------------------ */
+      .demo-solo {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 0.5rem 1rem;
+        align-items: baseline;
+        margin-block: 0.75rem;
+      }
+      .demo-solo label {
+        display: flex;
+        gap: 0.45rem;
+        align-items: center;
+        font-weight: 600;
+        color: #16324f;
+        cursor: pointer;
+      }
+      .demo-solo-status {
+        margin: 0;
+        font-size: 0.9rem;
+        color: #5f6368;
+      }
+
       /* ---- pattern picker ----------------------------------------------- */
       /* The TOC as a card grid: every pattern drawn as a tiny diagram of
          itself. Glyphs are decorative (aria-hidden); the text carries the
@@ -1480,6 +1502,15 @@
         <label for="demo-filter">Filter the examples</label>
         <input id="demo-filter" type="text" autocomplete="off" placeholder="e.g. fade, gallery, model bar" />
         <p class="demo-vh" role="status" id="demo-filter-count"></p>
+      </div>
+
+      <!-- Nineteen examples stacked out to sixteen screens of scrolling, which
+           made the catalog hard to read one pattern at a time. On by default;
+           uncheck to get the whole page back for Ctrl+F or side-by-side
+           comparison. Progressive enhancement — with JS off nothing hides. -->
+      <div class="demo-solo">
+        <label><input type="checkbox" id="demo-solo-toggle" checked /> Show one example at a time</label>
+        <p class="demo-solo-status" role="status" id="demo-solo-status"></p>
       </div>
 
       <nav class="demo-toc demo-picker" aria-label="On this page">
