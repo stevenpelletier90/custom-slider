@@ -1139,24 +1139,25 @@
          telling it the true number is what makes one arrow click move one full
          screen and the dots come out right. */
       .demo-grid {
-        --dlc-cols: 2;
-        --dlc-per-view: 4;
+        --dlc-per-view: 2;
         --dlc-gap: 1rem;
       }
       @media (min-width: 768px) {
         .demo-grid {
-          --dlc-cols: 3;
-          --dlc-per-view: 6;
+          --dlc-per-view: 3;
         }
       }
-      .demo-grid .dl-carousel-track {
-        display: grid;
-        grid-auto-flow: column;
-        grid-template-rows: repeat(2, auto);
-        grid-auto-columns: calc((100% - (var(--dlc-cols) - 1) * var(--dlc-gap)) / var(--dlc-cols));
-      }
+      /* Each SLIDE is a column holding two cards, so one slide is still one
+         scroll stop -- which is the engine's whole model. The earlier version
+         put eight flat slides in a grid track and told the engine six per
+         view; two slides then shared every scroll position, the index-to-
+         offset maths went out by a factor of two, and the dots never advanced
+         past the first page. Stacking inside the slide needs no track
+         override at all. */
       .demo-grid .dl-carousel-slide {
-        flex: none;
+        display: grid;
+        grid-template-rows: repeat(2, auto);
+        gap: var(--dlc-gap);
       }
       /* Vehicle cards with a mini gallery: the grid is plain CSS; each card
          holds its own one-up instance. The counter chip is aria-hidden — the
@@ -2558,8 +2559,6 @@
                   />
                   <p>Silverado 1500</p></a
                 >
-              </li>
-              <li class="dl-carousel-slide">
                 <a class="demo-modelbar-card" href="#colorado" aria-label="Explore the Colorado"
                   ><img
                     src="img/chrome-colorado.webp"
@@ -2588,8 +2587,6 @@
                   />
                   <p>Tahoe</p></a
                 >
-              </li>
-              <li class="dl-carousel-slide">
                 <a class="demo-modelbar-card" href="#suburban" aria-label="Explore the Suburban"
                   ><img
                     src="img/chrome-suburban.webp"
@@ -2618,8 +2615,6 @@
                   />
                   <p>Traverse</p></a
                 >
-              </li>
-              <li class="dl-carousel-slide">
                 <a class="demo-modelbar-card" href="#equinox" aria-label="Explore the Equinox"
                   ><img
                     src="img/chrome-equinox.webp"
@@ -2648,8 +2643,6 @@
                   />
                   <p>Trailblazer</p></a
                 >
-              </li>
-              <li class="dl-carousel-slide">
                 <a class="demo-modelbar-card" href="#trax" aria-label="Explore the Trax"
                   ><img
                     src="img/chrome-trax.webp"
@@ -2688,25 +2681,31 @@
             <p class="code-label">HTML</p>
             <pre><code>&lt;div class="my-grid dl-carousel" data-slider aria-label="Our lineup"&gt;
   &lt;ul class="dl-carousel-track"&gt;
-    &lt;li class="dl-carousel-slide"&gt;...card...&lt;/li&gt;
-    &lt;li class="dl-carousel-slide"&gt;...card...&lt;/li&gt;
-    &lt;!-- cards fill top-to-bottom, then move to the next column --&gt;
+    &lt;li class="dl-carousel-slide"&gt;
+      &lt;a class="my-tile" href="/searchnew.aspx?Model=Silverado%201500"&gt;...top card...&lt;/a&gt;
+      &lt;a class="my-tile" href="/searchnew.aspx?Model=Colorado"&gt;...bottom card...&lt;/a&gt;
+    &lt;/li&gt;
+    &lt;!-- repeat the &lt;li&gt; for each column of two --&gt;
   &lt;/ul&gt;
 &lt;/div&gt;</code></pre>
             <p class="code-label">CSS</p>
-            <pre><code>/* --dlc-cols = columns on screen. --dlc-per-view = cards on screen, which in
-   two rows is columns x 2. The slider counts cards, so this pairing is what
-   makes one arrow click move exactly one screen. */
-.my-grid { --dlc-cols: 2; --dlc-per-view: 4; --dlc-gap: 1rem; }
-@media (min-width: 768px) { .my-grid { --dlc-cols: 3; --dlc-per-view: 6; } }
+            <pre><code>/* One SLIDE per column, holding the two cards that stack in it.
+   --dlc-per-view is therefore COLUMNS, not cards.
 
-.my-grid .dl-carousel-track {
+   Why it matters: a slide is what scrolls. The engine puts one slide at each
+   scroll stop and derives the pages, dots and announced count from that. Put
+   the cards in the track as eight flat slides and stack them with a grid
+   track instead, and two slides share every stop -- the index-to-offset maths
+   goes out by a factor of two, and the dots stop advancing past the first
+   page. Stacking inside the slide needs no track override at all. */
+.my-grid { --dlc-per-view: 2; --dlc-gap: 1rem; }
+@media (min-width: 768px) { .my-grid { --dlc-per-view: 3; } }
+
+.my-grid .dl-carousel-slide {
   display: grid;
-  grid-auto-flow: column;
   grid-template-rows: repeat(2, auto);
-  grid-auto-columns: calc((100% - (var(--dlc-cols) - 1) * var(--dlc-gap)) / var(--dlc-cols));
-}
-.my-grid .dl-carousel-slide { flex: none; }</code></pre>
+  gap: var(--dlc-gap);
+}</code></pre>
           </details>
         </section>
 
