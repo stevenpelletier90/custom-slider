@@ -10,8 +10,10 @@ variant — plus the one physics gap browsers leave open: mouse drag-to-scroll
 (native scroll containers don't drag with a mouse; `data-drag="false"` opts out). Rewind instead of infinite loop: no cloned slides, so no duplicate
 content for SEO and no screen-reader confusion.
 
-The demo page (`demo/index.html`) doubles as the variation catalog — every
-section is a copy-paste recipe over the same two files.
+The demo page (`demo/index.html`) is the example catalog: pick one example in
+the sidebar and it renders on its own, with the exact HTML + CSS that produced
+it in a copy panel underneath. The preview and the snippet are the same source
+string, so what you copy always matches what you just looked at.
 
 ## Quick start (CMS / classic script)
 
@@ -27,12 +29,17 @@ section is a copy-paste recipe over the same two files.
 
     <style>
       .my-slider { --dlc-per-view: 1; }
-      @media (min-width: 640px)  { .my-slider { --dlc-per-view: 2; } }
-      @media (min-width: 1024px) { .my-slider { --dlc-per-view: 3; } }
+      @media (min-width: 576px)  { .my-slider { --dlc-per-view: 2; } }
+      @media (min-width: 992px)  { .my-slider { --dlc-per-view: 3; } }
     </style>
 
 Every `[data-slider]` element initializes automatically. Slides-per-view is CSS,
 not a JS option — set `--dlc-per-view` per breakpoint.
+
+Use the platform's own Bootstrap ladder — **576 / 768 / 992 / 1200** — not custom
+values, so a slider steps at the same widths as everything else on the page.
+(Measured on `chevroletdemo1.dealeron.com`: its model bar's slick breakpoints are
+1199 / 991 / 539, i.e. exactly that ladder.)
 
 ## Quick start (ES module)
 
@@ -67,9 +74,51 @@ JS options override data attributes, which override defaults.
 
 ## CSS custom properties
 
-`--dlc-per-view`, `--dlc-gap`, `--dlc-peek` (edge sliver of the next slide),
-`--dlc-arrow-size/fg/bg`, `--dlc-dot-size/fg/current`, `--dlc-controls-space`,
-`--dlc-thumb-w/h`, `--dlc-focus`. Set them on the `.dl-carousel` element or any wrapper.
+`--dlc-per-view`, `--dlc-gap`, `--dlc-peek`, `--dlc-arrow-size/fg/bg`,
+`--dlc-arrow-fg-hover/-bg-hover`, `--dlc-dot-size/fg/current`,
+`--dlc-controls-space`, `--dlc-thumb-w/h`, `--dlc-focus`, `--dlc-transition`.
+Set them on the `.dl-carousel` element or any wrapper.
+
+### Peek — a sliver of the next slide at the edges
+
+`--dlc-peek` is the entire feature, and it is **off by default**:
+
+    .my-slider { --dlc-peek: 0px; }    /* off — the default */
+    .my-slider { --dlc-peek: 3rem; }   /* 3rem of the neighbours shows at each edge */
+
+It pads the track and sets `scroll-padding-inline` together, so snapping stays
+correct at both ends — never set either by hand. Keep the unit: a bare `0`
+breaks the arrow-centering `calc()`.
+
+The edge **fade** is separate and optional — a `mask-image` on the track. The
+"Faded peek" example in the demo carries those two lines.
+
+### Hover and transitions
+
+Generated controls transition `color`, `background-color`, `border-color`,
+`opacity` and `transform` over `--dlc-transition` (default `250ms ease-in-out`);
+the duration collapses to 1ms under `prefers-reduced-motion`. Re-theme the hover
+state with `--dlc-arrow-fg-hover` / `--dlc-arrow-bg-hover`.
+
+The explicit property list is deliberate — **never `transition: all` here.** `all`
+also animates layout and scroll-related properties, which fights the snap
+container and janks the strip mid-gesture.
+
+### Swapping the arrow icons (Bootstrap Icons, or any icon font)
+
+The arrows are plain `<button>`s carrying their own accessible name, so the glyph
+is purely visual. Hide the built-in SVG and draw a font glyph in its place — no
+engine edit and no JavaScript:
+
+    .my-slider .dl-carousel-arrow svg { display: none; }
+    .my-slider .dl-carousel-arrow::before { font-family: bootstrap-icons; font-size: 38px; }
+    .my-slider .dl-carousel-arrow--prev::before { content: "\f12a"; }  /* bi-arrow-left-circle */
+    .my-slider .dl-carousel-arrow--next::before { content: "\f134"; }  /* bi-arrow-right-circle */
+
+Those two codepoints are the pair `chevroletdemo1.dealeron.com` uses; plain
+chevrons are `\f284` / `\f285`. Do **not** name the wrapper class `bi-*` — every
+Bootstrap Icons class starts with that prefix and `.bi-arrows` is a real icon
+(`\f6a2`), so it paints a stray glyph on your own container.
 
 ## JS API
 
@@ -145,8 +194,8 @@ Rebuild and re-commit `dist/` whenever `src/` changes.
    tabs respond to Arrow/Home/End; focus is never trapped or lost.
 4. Autoplay: pauses on hover, stops on focus/drag, button restarts, nothing
    rotates under emulated `prefers-reduced-motion`.
-5. Screenshots at 375 / 768 / 1280 look right; slides-per-view matches the
-   breakpoints.
+5. Screenshots at 375 / 768 / 1280 look right; slides-per-view steps on the
+   576 / 768 / 992 / 1200 ladder.
 6. With JavaScript disabled the strips still scroll and all content is visible.
 7. Spot-checks: Windows Firefox at 125–150 % DPI; Tab into cards in Safari;
    one pre-2025 iPhone (scrollend fallback).
