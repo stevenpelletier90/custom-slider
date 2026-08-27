@@ -737,7 +737,7 @@
     swatch.type = 'color';
     // A colour input only understands #rrggbb; transparent and rgb() are
     // legitimate values here, so the text field stays authoritative.
-    swatch.value = /^#[0-9a-f]{6}$/i.test(val) ? val : '#000000';
+    swatch.value = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test((val || '').trim()) ? val : '#000000';
     const text = document.createElement('input');
     text.type = 'text';
     text.value = val;
@@ -748,9 +748,34 @@
     // A colour input has no way to show "transparent" or an rgb() with alpha -
     // it just renders black, which reads as a real colour choice that was never
     // made. Show the swatch only when it can tell the truth.
+    const chip = document.createElement('button');
+    chip.type = 'button';
+    chip.className = 'wb-chip';
+    chip.addEventListener('click', () => {
+      // Give it a real colour to edit, then hand over to the picker.
+      text.value = '#262626';
+      push(text.value);
+      sync();
+      swatch.click();
+    });
+
+    // #222 is as valid as #222222 and the picker only speaks the long form.
+    const asHex = (v) => {
+      const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec((v || '').trim());
+      if (!m) return null;
+      return m[1].length === 3 ? `#${[...m[1]].map((c) => c + c).join('')}` : `#${m[1]}`;
+    };
+
     const sync = () => {
-      swatch.hidden = !/^#[0-9a-f]{6}$/i.test(text.value);
-      if (!swatch.hidden) swatch.value = text.value;
+      const hex = asHex(text.value);
+      swatch.hidden = !hex;
+      chip.hidden = !!hex;
+      if (hex) swatch.value = hex;
+      else {
+        chip.style.setProperty('--chip', text.value || 'transparent');
+        chip.title = `${text.value || 'unset'} — click to pick a solid colour instead`;
+        chip.setAttribute('aria-label', chip.title);
+      }
     };
     swatch.addEventListener('input', () => {
       text.value = swatch.value;
@@ -761,7 +786,7 @@
       push(text.value);
     });
     sync();
-    wrap.append(swatch, text);
+    wrap.append(swatch, chip, text);
     return control(label, wrap);
   }
 
@@ -847,7 +872,7 @@
         b.type = 'button';
         b.className = 'wb-look';
         b.setAttribute('aria-pressed', String(id === state.look));
-        b.innerHTML = `<span class="wb-look-swatch" data-look="${id}"></span><span>${look.label}</span>`;
+        b.innerHTML = `<span class="wb-look-icon">${look.icon}</span><span>${look.label}</span>`;
         b.addEventListener('click', () => {
           state.brand = null;
           state.look = id;

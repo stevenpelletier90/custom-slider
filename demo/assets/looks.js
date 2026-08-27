@@ -17,6 +17,8 @@
 
 const LOOKS = {
   tile: {
+    // A vehicle cutout with its name under it - no card, no plate.
+    icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><path d="M9 16h26l-3-5.5a3 3 0 0 0-2.6-1.5H14.6A3 3 0 0 0 12 10.5L9 16Z" fill="currentColor" opacity=".85"/><rect x="7" y="15.5" width="30" height="3.5" rx="1.6" fill="currentColor" opacity=".85"/><circle cx="14" cy="19.5" r="2.6" fill="currentColor"/><circle cx="30" cy="19.5" r="2.6" fill="currentColor"/><rect x="13" y="25" width="18" height="2.4" rx="1.2" fill="currentColor" opacity=".45"/></svg>`,
     label: 'Cutout tile',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
@@ -61,6 +63,8 @@ const LOOKS = {
   },
 
   vcard: {
+    // Photo on top, title and price under it, all inside one card.
+    icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="6.5" y="3.5" width="31" height="23" rx="3" stroke="currentColor" opacity=".5"/><rect x="9" y="6" width="26" height="11" rx="1.6" fill="currentColor" opacity=".85"/><rect x="9" y="19" width="18" height="2.2" rx="1.1" fill="currentColor" opacity=".55"/><rect x="9" y="22.6" width="11" height="2" rx="1" fill="currentColor" opacity=".3"/></svg>`,
     label: 'Vehicle card',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
@@ -101,6 +105,9 @@ const LOOKS = {
   },
 
   wordmark: {
+    // The model wordmark set ABOVE the vehicle - the one slot the tile
+    // has no room for, which is why this is its own component.
+    icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="12" y="4" width="20" height="2.8" rx="1.4" fill="currentColor" opacity=".85"/><rect x="9" y="12.5" width="26" height="3.5" rx="1.6" fill="currentColor" opacity=".85"/><path d="M11 13h22l-2.4-4a2.6 2.6 0 0 0-2.2-1.2H15.6A2.6 2.6 0 0 0 13.4 9L11 13Z" fill="currentColor" opacity=".45"/><circle cx="15.5" cy="16.5" r="2.2" fill="currentColor"/><circle cx="28.5" cy="16.5" r="2.2" fill="currentColor"/><rect x="13" y="22" width="18" height="2.4" rx="1.2" fill="currentColor" opacity=".45"/></svg>`,
     label: 'Wordmark above',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
@@ -130,6 +137,8 @@ const LOOKS = {
   },
 
   split: {
+    // Photo down one half, copy and a pill down the other.
+    icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="4.5" y="6.5" width="35" height="17" rx="3" stroke="currentColor" opacity=".5"/><path d="M7 9.5a2 2 0 0 1 2-2h11v15H9a2 2 0 0 1-2-2v-11Z" fill="currentColor" opacity=".85"/><rect x="23" y="10" width="13" height="2.4" rx="1.2" fill="currentColor" opacity=".55"/><rect x="23" y="14" width="9" height="1.8" rx=".9" fill="currentColor" opacity=".3"/><rect x="23" y="18" width="10" height="3.4" rx="1.7" fill="currentColor" opacity=".55"/></svg>`,
     label: 'Split photo card',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
@@ -174,6 +183,8 @@ const LOOKS = {
   },
 
   portrait: {
+    // Tall photo with the name and a button over the bottom of it.
+    icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="13.5" y="2.5" width="17" height="25" rx="3" fill="currentColor" opacity=".85"/><rect x="16" y="17" width="12" height="2.2" rx="1.1" fill="var(--wb-icon-bg, #fff)" opacity=".9"/><rect x="16" y="21" width="12" height="4" rx="2" fill="var(--wb-icon-bg, #fff)" opacity=".55"/></svg>`,
     label: 'Tall tile with CTA',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
@@ -202,6 +213,8 @@ const LOOKS = {
   },
 
   logo: {
+    // A logo centred on a filled panel - brand strips, nothing else.
+    icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="5.5" y="5.5" width="33" height="19" rx="3" fill="currentColor" opacity=".85"/><circle cx="22" cy="15" r="5" fill="var(--wb-icon-bg, #fff)" opacity=".9"/><rect x="17" y="14" width="10" height="2" rx="1" fill="currentColor" opacity=".85"/></svg>`,
     label: 'Logo panel',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
@@ -225,6 +238,8 @@ const LOOKS = {
   },
 
   location: {
+    // Storefront photo, the store name, then a coloured action bar.
+    icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="6.5" y="3.5" width="31" height="23" rx="3" stroke="currentColor" opacity=".5"/><rect x="9" y="6" width="26" height="9" rx="1.6" fill="currentColor" opacity=".85"/><rect x="9" y="17" width="15" height="2.2" rx="1.1" fill="currentColor" opacity=".45"/><rect x="9" y="21" width="26" height="3.2" rx="1.6" fill="currentColor" opacity=".85"/></svg>`,
     label: 'Location card',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
