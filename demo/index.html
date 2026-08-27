@@ -3,13 +3,32 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>dl-carousel — set it up and copy the code</title>
-    <meta name="description" content="Configure a slider and copy the code. One component per pattern, settings that drive it, and code generated from the same settings." />
+    <title>dl-carousel — build a slider</title>
+    <meta name="description" content="Pick a slider pattern, set it up, and copy code generated from the same settings. Seventeen patterns and 32 brand presets over one dependency-free engine." />
     <link
       rel="icon"
-      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%23262626'/><rect x='5' y='11' width='14' height='10' rx='2' fill='%23fff'/><rect x='21' y='13' width='6' height='6' rx='2' fill='%23949494'/></svg>"
+      href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'><rect width='32' height='32' rx='6' fill='%2310151c'/><rect x='5' y='11' width='14' height='10' rx='2' fill='%23fff'/><rect x='21' y='13' width='6' height='6' rx='2' fill='%23e8a317'/></svg>"
     />
+
+    <!-- Falls back to the system stacks in ui.css when opened over file://,
+         where the demo also has to work. -->
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
     <link rel="stylesheet" href="../dist/dl-carousel.css" />
+    <link rel="stylesheet" href="assets/ui.css" />
+
+    <!-- Set before first paint so a dark-mode reload never flashes white. -->
+    <script>
+      try {
+        const t = localStorage.getItem('dlx-theme');
+        if (t) document.documentElement.dataset.theme = t;
+      } catch {
+        /* private mode: fall through to the system preference */
+      }
+    </script>
+
     <script src="../dist/dl-carousel.js" defer></script>
     <script src="assets/looks.js" defer></script>
     <script src="assets/brands.js" defer></script>
@@ -17,491 +36,123 @@
     <script src="assets/workbench.js" defer></script>
 
     <!-- Written by the workbench from the current settings. The same generator
-         fills the code panel, with .wb-live swapped for .my-slider - which is
+         fills the code panel, with .wb-live swapped for .my-slider — which is
          why the code cannot drift from what you are looking at. -->
     <style id="wb-live-css"></style>
-
-    <style>
-      :root {
-        --bg: #f6f7f9;
-        --panel: #fff;
-        --ink: #1c1f23;
-        --muted: #5b6470;
-        --line: #e2e5ea;
-        --accent: #16324f;
-      }
-      * {
-        box-sizing: border-box;
-      }
-      body {
-        margin: 0;
-        font-family:
-          system-ui,
-          -apple-system,
-          'Segoe UI',
-          sans-serif;
-        line-height: 1.5;
-        color: var(--ink);
-        background: var(--bg);
-      }
-      header {
-        padding: 0.9rem 1.25rem 0;
-        background: var(--panel);
-        border-bottom: 1px solid var(--line);
-      }
-      .wb-head {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.35rem 1.5rem;
-        align-items: baseline;
-        max-width: 1400px;
-        margin: 0 auto;
-      }
-      header h1 {
-        margin: 0;
-        font-size: 1.05rem;
-      }
-      header p {
-        flex: 1;
-        min-inline-size: 18rem;
-        margin: 0;
-        font-size: 0.85rem;
-        color: var(--muted);
-      }
-      /* The pattern picker. Nothing else navigates - one page, one slider,
-         settings that change it. */
-      #wb-nav {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.15rem;
-        max-width: 1400px;
-        margin: 0.75rem auto 0;
-      }
-      #wb-nav button {
-        padding: 0.5rem 0.85rem;
-        font: inherit;
-        font-size: 0.87rem;
-        color: var(--muted);
-        cursor: pointer;
-        background: none;
-        border: 0;
-        border-block-end: 2px solid transparent;
-      }
-      #wb-nav button:hover {
-        color: var(--ink);
-      }
-      #wb-nav button[aria-current='true'] {
-        font-weight: 600;
-        color: var(--accent);
-        border-block-end-color: var(--accent);
-      }
-      main {
-        max-width: 1400px;
-        padding: 1.5rem;
-        margin: 0 auto;
-      }
-      h2 {
-        margin: 0 0 0.25rem;
-        font-size: 1.5rem;
-        letter-spacing: -0.02em;
-      }
-      .wb-blurb {
-        max-width: 62ch;
-        margin: 0 0 1.25rem;
-        color: var(--muted);
-      }
-      .wb-stage {
-        padding: 1.5rem;
-        margin-bottom: 1.25rem;
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-      }
-      .wb-cols {
-        display: grid;
-        grid-template-columns: 20rem minmax(0, 1fr);
-        gap: 1.25rem;
-        align-items: start;
-      }
-      #wb-settings {
-        padding: 1rem 1.1rem;
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-      }
-      #wb-settings h3 {
-        margin: 1.1rem 0 0.5rem;
-        font-size: 0.72rem;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: 0.08em;
-      }
-      #wb-settings section:first-child h3 {
-        margin-top: 0;
-      }
-      .wb-row {
-        display: flex;
-        gap: 0.75rem;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 0.4rem;
-        font-size: 0.87rem;
-      }
-      .wb-row input[type='text'],
-      .wb-row input[type='number'],
-      .wb-row select {
-        inline-size: 7.5rem;
-        padding: 0.25rem 0.4rem;
-        font: inherit;
-        font-size: 0.85rem;
-        border: 1px solid var(--line);
-        border-radius: 5px;
-      }
-      .wb-color {
-        display: flex;
-        gap: 0.3rem;
-        align-items: center;
-      }
-      .wb-color input[type='text'] {
-        inline-size: 5.4rem;
-      }
-      .wb-row input[type='color'] {
-        inline-size: 2rem;
-        block-size: 1.7rem;
-        padding: 0;
-        cursor: pointer;
-        border: 1px solid var(--line);
-        border-radius: 5px;
-      }
-      .wb-looks {
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 0.4rem;
-      }
-      .wb-look {
-        display: flex;
-        flex-direction: column;
-        gap: 0.3rem;
-        align-items: center;
-        padding: 0.5rem 0.3rem;
-        font: inherit;
-        font-size: 0.75rem;
-        color: inherit;
-        cursor: pointer;
-        background: none;
-        border: 1px solid var(--line);
-        border-radius: 7px;
-      }
-      .wb-look[aria-pressed='true'] {
-        border-color: var(--accent);
-        box-shadow: inset 0 0 0 1px var(--accent);
-      }
-      /* Thumbnails, because a dropdown reading "split photo card" helps nobody
-         who does not already know they want it. */
-      .wb-look-swatch {
-        inline-size: 100%;
-        block-size: 2.1rem;
-        background: #e9edf1;
-        border-radius: 4px;
-      }
-      .wb-look-swatch[data-look='vcard'] {
-        background: linear-gradient(#b9c3cc 60%, #fff 60%);
-      }
-      .wb-look-swatch[data-look='split'] {
-        background: linear-gradient(90deg, #b9c3cc 50%, #2f2f2f 50%);
-      }
-      .wb-look-swatch[data-look='portrait'] {
-        background: linear-gradient(#14161b 62%, #fff 62%);
-      }
-      .wb-look-swatch[data-look='logo'] {
-        background: #253a5e;
-      }
-      .wb-look-swatch[data-look='location'] {
-        background: linear-gradient(#fff 62%, #c8102e 62%);
-      }
-      .wb-look-swatch[data-look='wordmark'] {
-        background: linear-gradient(#3a3a3a, #1f1f1f);
-      }
-      .wb-note {
-        margin: 0.45rem 0 0;
-        font-size: 0.78rem;
-        line-height: 1.45;
-        color: var(--muted);
-      }
-      .wb-warn {
-        padding: 0.6rem 0.85rem;
-        margin: -0.5rem 0 1.25rem;
-        font-size: 0.87rem;
-        color: #8a5300;
-        background: #fff8e6;
-        border: 1px solid #f0dca8;
-        border-radius: 8px;
-      }
-      .wb-code {
-        overflow: hidden;
-        background: #272822;
-        border-radius: 10px;
-      }
-
-      /* Monokai. The tokens come from assets/highlight.js — no CDN, because
-         this page has to work opened straight off disk. */
-      .t-c {
-        color: #75715e;
-      }
-      .t-s {
-        color: #e6db74;
-      }
-      .t-n {
-        color: #ae81ff;
-      }
-      .t-k,
-      .t-tag {
-        color: #f92672;
-      }
-      .t-attr,
-      .t-sel {
-        color: #a6e22e;
-      }
-      .t-p {
-        color: #66d9ef;
-      }
-      .wb-code-bar {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.5rem;
-        align-items: center;
-        justify-content: space-between;
-        padding: 0.45rem 0.6rem;
-        font-size: 0.8rem;
-        color: #aeb6c2;
-        border-bottom: 1px solid #3e3d32;
-      }
-      .wb-code pre {
-        max-height: 30rem;
-        padding: 1rem;
-        margin: 0;
-        overflow: auto;
-        font-size: 0.78rem;
-        line-height: 1.55;
-        color: #f8f8f2;
-      }
-      .wb-btn {
-        padding: 0.3rem 0.8rem;
-        font: inherit;
-        font-size: 0.8rem;
-        color: #cfd6e0;
-        cursor: pointer;
-        background: #2c333d;
-        border: 0;
-        border-radius: 6px;
-      }
-      .wb-btn:hover {
-        color: #fff;
-        background: #3a434f;
-      }
-
-      /* ---- step 1: getting the engine onto the site --------------------- */
-      .wb-get {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(20rem, 1fr));
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-      }
-      .wb-get > div {
-        padding: 1rem 1.1rem;
-        background: var(--panel);
-        border: 1px solid var(--line);
-        border-radius: 10px;
-      }
-      .wb-get h4 {
-        margin: 0 0 0.15rem;
-        font-size: 0.95rem;
-      }
-      .wb-get p {
-        margin: 0 0 0.7rem;
-        font-size: 0.85rem;
-        color: var(--muted);
-      }
-      .wb-where {
-        padding: 0.55rem 0.7rem;
-        margin: 0.7rem 0 0;
-        font-size: 0.82rem;
-        background: #eef2f6;
-        border-radius: 7px;
-      }
-      .wb-where b {
-        display: block;
-        margin-bottom: 0.2rem;
-        font-size: 0.72rem;
-        color: var(--muted);
-        text-transform: uppercase;
-        letter-spacing: 0.07em;
-      }
-      .wb-where code {
-        font-size: 0.8rem;
-      }
-      .wb-tags {
-        padding: 0.65rem 0.75rem;
-        margin: 0;
-        overflow-x: auto;
-        font-size: 0.75rem;
-        line-height: 1.6;
-        color: #f8f8f2;
-        background: #272822;
-        border-radius: 7px;
-      }
-      .wb-file {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 0.35rem;
-        align-items: center;
-        margin-bottom: 0.45rem;
-        font-size: 0.85rem;
-      }
-      .wb-file code {
-        flex: 1;
-        min-inline-size: 8.5rem;
-        font-size: 0.82rem;
-      }
-      .wb-file .wb-btn {
-        color: var(--ink);
-        background: #e7ebf0;
-      }
-      .wb-file .wb-btn:hover {
-        color: #fff;
-        background: var(--accent);
-      }
-      #wb-file-view {
-        overflow: hidden;
-        background: #272822;
-        border-radius: 10px;
-      }
-      #wb-file-view pre {
-        max-height: 22rem;
-        padding: 1rem;
-        margin: 0;
-        overflow: auto;
-        font-size: 0.72rem;
-        line-height: 1.5;
-        color: #f8f8f2;
-        overflow-wrap: anywhere;
-        white-space: pre-wrap;
-      }
-      #wb-dialog {
-        max-inline-size: 34rem;
-        padding: 1.5rem;
-        border: 0;
-        border-radius: 12px;
-      }
-      #wb-dialog::backdrop {
-        background: rgb(0 0 0 / 55%);
-      }
-
-      @media (max-width: 900px) {
-        .wb-cols {
-          grid-template-columns: 1fr;
-        }
-      }
-      /* The page padding, the stage padding and the arrow gutter together ate
-         96px at 768px and 200px of a 390px screen, so the preview showed cards
-         narrower than the same settings give inside a real Bootstrap 3
-         .container (750px at this tier). Give the stage back, or the fit
-         warning fires on presets that are fine in production. */
-      @media (max-width: 992px) {
-        main {
-          padding: 1rem 0.5rem;
-        }
-        .wb-stage {
-          padding: 0.5rem 0.25rem;
-        }
-      }
-    </style>
   </head>
   <body>
-    <header>
-      <div class="wb-head">
-        <h1>dl-carousel</h1>
-        <p>Pick a pattern, set it up the way you need it, copy the code. The code is generated from the settings — it is always exactly what you are looking at.</p>
+    <header class="ui-head">
+      <div class="ui-head-in">
+        <h1 class="ui-brand">dl-carousel <span id="ui-size">no dependencies</span></h1>
+        <nav class="ui-tabs" aria-label="Sections">
+          <a href="index.html" aria-current="page">Build</a>
+          <a href="reference.html">Reference</a>
+        </nav>
+        <button type="button" class="ui-theme" id="ui-theme" aria-label="Switch to dark theme" title="Switch theme">◐</button>
       </div>
-      <nav id="wb-nav" aria-label="Slider patterns"></nav>
     </header>
 
-    <main>
-      <h2 id="wb-title"></h2>
-      <p class="wb-blurb" id="wb-blurb"></p>
+    <div class="ui-shell">
+      <aside class="ui-rail">
+        <h2>Patterns</h2>
+        <nav id="wb-nav" aria-label="Slider patterns"></nav>
+        <div class="ui-panel"><div id="wb-settings"></div></div>
+      </aside>
 
-      <div class="wb-stage" id="wb-stage"></div>
-      <p class="wb-warn" id="wb-warn" role="status" hidden></p>
+      <main class="ui-main">
+        <h2 class="ui-title" id="wb-title"></h2>
+        <p class="ui-blurb" id="wb-blurb"></p>
 
-      <div class="wb-cols">
-        <div id="wb-settings"></div>
-        <section class="wb-code" aria-label="Code for these settings">
-          <div class="wb-code-bar">
-            <span>Step 2 — the slider itself. Styles go in <strong>Style Only</strong>, markup in a <strong>Custom HTML</strong> block.</span>
-            <button type="button" class="wb-btn" id="wb-copy">Copy</button>
+        <div class="wb-stage"><div id="wb-stage"></div></div>
+
+        <!-- The readout. Everything here is measured off the rendered slider,
+             not computed from the settings, so it tells you what the browser
+             actually did rather than what was asked for. -->
+        <div class="ui-spec" id="wb-spec" role="status">
+          <span class="ui-spec-item"
+            ><b>Width</b>
+            <span class="ui-widths" role="group" aria-label="Preview container width">
+              <button type="button" data-w="750">750</button>
+              <button type="button" data-w="970">970</button>
+              <button type="button" data-w="1170" aria-pressed="true">1170</button>
+              <button type="button" data-w="0">fill</button>
+            </span>
+          </span>
+          <span class="ui-spec-item"><b>Card</b> <span id="spec-card">—</span></span>
+          <span class="ui-spec-item"><b>Across</b> <span id="spec-across">—</span></span>
+          <span class="ui-spec-item"><b>Gap</b> <span id="spec-gap">—</span></span>
+          <span class="ui-spec-item"><b>Stops</b> <span id="spec-stops">—</span></span>
+          <span class="ui-spec-item"><b>Controls</b> <span id="spec-controls">—</span></span>
+          <span class="ui-spec-item"
+            ><b>Fit</b> <span class="ui-gauge"><i id="spec-gauge"></i></span
+          ></span>
+          <span class="ui-spec-note" id="wb-warn" hidden></span>
+        </div>
+
+        <section class="ui-code" aria-label="Code for these settings">
+          <div class="ui-code-bar">
+            <span>Styles into <strong>Style Only</strong>, markup into a <strong>Custom HTML</strong> block</span>
+            <button type="button" class="ui-btn" id="wb-copy">Copy</button>
           </div>
           <pre><code id="wb-code"></code></pre>
         </section>
-      </div>
 
-      <!-- Step 1 sits below the thing it enables on purpose: you decide what
-           you want first, and you only do this part once per site. -->
-      <h3 style="margin: 2.25rem 0 0.15rem; font-size: 1.15rem">Step 1 — put the engine on the site (once per site)</h3>
-      <p class="wb-blurb">
-        Two ways in. Link to the files if you can upload them; paste the code if you can’t. Either way it is the same two files, and the slider above is running the very ones you’d be taking.
-      </p>
+        <h3 class="ui-h3">Put the engine on the site</h3>
+        <p class="ui-blurb">
+          Once per site, not once per slider. Link the files if you can upload them; paste the code if you can’t. Either way it is the same two files, and the slider above is running the very ones you
+          would take.
+        </p>
 
-      <div class="wb-get">
-        <div>
-          <h4>Link to the files</h4>
-          <p>Best choice. Upload both files once, and every page that links them shares one cached copy.</p>
-          <pre class="wb-tags"><code>&lt;link rel="stylesheet" href="/path/dl-carousel.css"&gt;
+        <div class="ui-get">
+          <div>
+            <h4>Link to the files</h4>
+            <p>Best choice — every page that links them shares one cached copy.</p>
+            <pre class="ui-tags"><code>&lt;link rel="stylesheet" href="/path/dl-carousel.css"&gt;
 &lt;script src="/path/dl-carousel.js" defer&gt;&lt;/script&gt;</code></pre>
-          <div class="wb-where">
-            <b>Where these go</b>
-            The <code>&lt;link&gt;</code> in <strong>Style Only → Head Section</strong>. The <code>&lt;script&gt;</code> in <strong>Body Section, Bottom</strong>. Swap <code>/path/</code> for wherever
-            you uploaded them.
-          </div>
-          <p style="margin: 0.7rem 0 0">
-            <button type="button" class="wb-btn" id="wb-copy-tags">Copy both tags</button>
-          </p>
-        </div>
-
-        <div>
-          <h4>Or paste the code</h4>
-          <p>For a site where you can’t upload files. Copy each file’s contents straight into the page. It is fetched live from this demo, so it can never be a stale copy.</p>
-
-          <div class="wb-file">
-            <code>dl-carousel.css</code>
-            <button type="button" class="wb-btn" data-file="css" data-act="copy">Copy</button>
-            <button type="button" class="wb-btn" data-file="css" data-act="view">View</button>
-            <button type="button" class="wb-btn" data-file="css" data-act="download">Download</button>
-          </div>
-          <div class="wb-file">
-            <code>dl-carousel.js</code>
-            <button type="button" class="wb-btn" data-file="js" data-act="copy">Copy</button>
-            <button type="button" class="wb-btn" data-file="js" data-act="view">View</button>
-            <button type="button" class="wb-btn" data-file="js" data-act="download">Download</button>
+            <div class="ui-where">
+              <b>Where these go</b>
+              The <code>&lt;link&gt;</code> in <strong>Style Only → Head Section</strong>, the <code>&lt;script&gt;</code> in <strong>Body Section, Bottom</strong>. Swap <code>/path/</code> for
+              wherever you uploaded them.
+            </div>
+            <p style="margin: 0.8rem 0 0"><button type="button" class="ui-btn" id="wb-copy-tags">Copy both tags</button></p>
           </div>
 
-          <div class="wb-where">
-            <b>Where these go</b>
-            Copy gives you the wrapper too. The CSS <code>&lt;style&gt;</code> goes in <strong>Style Only → Head Section</strong>; the JS <code>&lt;script&gt;</code> goes in
-            <strong>Body Section, Bottom</strong> — it must load after the markup, or it finds nothing to wire up.
+          <div>
+            <h4>Or paste the code</h4>
+            <p>For a site where you can’t upload files. Fetched live from this page, so it can never be a stale copy.</p>
+            <div class="ui-file">
+              <code>dl-carousel.css</code>
+              <button type="button" class="ui-btn" data-file="css" data-act="copy">Copy</button>
+              <button type="button" class="ui-btn" data-file="css" data-act="view">View</button>
+              <button type="button" class="ui-btn" data-file="css" data-act="download">Download</button>
+            </div>
+            <div class="ui-file">
+              <code>dl-carousel.js</code>
+              <button type="button" class="ui-btn" data-file="js" data-act="copy">Copy</button>
+              <button type="button" class="ui-btn" data-file="js" data-act="view">View</button>
+              <button type="button" class="ui-btn" data-file="js" data-act="download">Download</button>
+            </div>
+            <div class="ui-where">
+              <b>Where these go</b>
+              Copy gives you the wrapper too. The <code>&lt;style&gt;</code> in <strong>Style Only → Head Section</strong>; the <code>&lt;script&gt;</code> in <strong>Body Section, Bottom</strong> —
+              it has to load after the markup or it finds nothing to wire up.
+            </div>
           </div>
         </div>
-      </div>
 
-      <section id="wb-file-view" hidden aria-label="File contents">
-        <div class="wb-code-bar"><span>File contents — select all and copy, or use the Copy button above</span></div>
-        <pre><code></code></pre>
-      </section>
-    </main>
+        <section id="wb-file-view" hidden aria-label="File contents">
+          <div class="ui-code-bar"><span>File contents — select all and copy, or use the Copy button above</span></div>
+          <pre><code></code></pre>
+        </section>
+      </main>
+    </div>
 
     <dialog id="wb-dialog">
       <h3 id="wb-dialog-title" style="margin-top: 0"></h3>
-      <p>The video would play here. The demo stops at opening the dialog — Esc closes it, and focus is trapped, both from the native <code>&lt;dialog&gt;</code> rather than any code of ours.</p>
-      <form method="dialog"><button type="submit" class="wb-btn" style="color: #fff; background: #16324f">Close</button></form>
+      <p>The video would play here. The demo stops at opening the dialog — Esc closes it and focus is trapped, both from the native <code>&lt;dialog&gt;</code> rather than any code of ours.</p>
+      <form method="dialog"><button type="submit" class="ui-btn">Close</button></form>
     </dialog>
+
+    <script src="assets/theme.js" defer></script>
   </body>
 </html>

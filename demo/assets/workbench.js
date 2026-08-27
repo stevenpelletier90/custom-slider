@@ -159,7 +159,8 @@
       props: { '--dlc-gap': '1rem', '--dlc-controls-space': '2rem', '--dlc-arrow-bg': 'transparent', '--dlc-arrow-fg': '#262626' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       pairUp: true,
-      css: `.dlx-col { display: grid; grid-template-rows: repeat(2, auto); gap: var(--dlc-gap); }`,
+      css: `.dlx-col { display: grid; grid-template-rows: repeat(2, auto); gap: var(--dlc-gap); }
+@media (max-width: 600px) { .dlx { padding-inline: calc(var(--dlc-arrow-size) + 0.3rem); } }`,
     },
     peek: {
       label: 'Peek at the next slide',
@@ -206,7 +207,7 @@
         ['SUVs', [2, 3, 4]],
         ['Crossovers', [5, 6, 7]],
       ],
-      css: `.dlx-tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-block-end: 1rem; border-block-end: 1px solid var(--wbx-line, #e2e5ea); }
+      css: `.dlx-tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-block-end: 1rem; border-block-end: 1px solid #e2e5ea; }
 .dlx-tabs [role="tab"] { padding: 0.6rem 1.1rem; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: 0.65; }
 .dlx-tabs [role="tab"][aria-selected="true"] { opacity: 1; border-block-end-color: currentcolor; }
 .dlx-pane[hidden] { display: none; }`,
@@ -255,7 +256,9 @@
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 230,
       models: MIXED,
-      css: `.dlx-mix { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; background: var(--wbx-card, #fff); border: 1px solid var(--wbx-line, #e2e5ea); border-radius: 10px; }
+      css: `.dlx { padding-inline: calc(var(--dlc-arrow-size) + 0.4rem); }
+@media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; } }
+.dlx-mix { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .dlx-mix img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 .dlx-mix h4 { margin: 0.8rem 0.9rem 0.2rem; font-size: 0.95rem; line-height: 1.3; }
 .dlx-mix p { margin: 0 0.9rem 0.9rem; font-size: 0.85rem; line-height: 1.45; opacity: 0.75; }`,
@@ -271,13 +274,15 @@
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 250,
       models: SERVICES,
-      css: `.dlx-svc { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: var(--wbx-card, #fff); border: 1px solid var(--wbx-line, #e2e5ea); border-radius: 10px; }
+      css: `.dlx { padding-inline: calc(var(--dlc-arrow-size) + 0.4rem); }
+@media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; } }
+.dlx-svc { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .dlx-svc-media { overflow: hidden; }
 .dlx-svc img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.35s ease; }
 .dlx-svc:hover img { transform: scale(1.05); }
 .dlx-svc h4 { margin: 1rem 1.1rem 0.35rem; font-size: 1.1rem; line-height: 1.3; }
 .dlx-svc p { margin: 0 1.1rem; font-size: 0.9rem; line-height: 1.5; opacity: 0.75; }
-.dlx-svc-more { margin: 0.9rem 1.1rem 1.1rem; font-size: 0.85rem; font-weight: 700; }`,
+.dlx-svc-more { display: block; margin: 0.9rem 1.1rem 1.1rem; font-size: 0.85rem; font-weight: 700; line-height: 1.35; }`,
       slides: (models) =>
         models.map(
           (m) =>
@@ -288,14 +293,16 @@
     reviews: {
       label: 'Customer reviews',
       blurb: 'Quotes in a real figure/blockquote, with the star rating exposed as an image plus a text label rather than bare glyphs a screen reader would spell out one at a time.',
-      props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'transparent', '--dlc-arrow-fg': 'currentcolor' },
+      props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'transparent', '--dlc-arrow-fg': '#262626' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 250,
       models: REVIEWS,
-      css: `.dlx-review { block-size: 100%; padding: 1.25rem; margin: 0; background: var(--wbx-card, #fff); border: 1px solid var(--wbx-line, #e2e5ea); border-radius: 10px; }
-.dlx-review figcaption { display: flex; gap: 0.7rem; align-items: center; }
-.dlx-avatar { display: grid; flex: none; place-items: center; inline-size: 40px; block-size: 40px; font-weight: 700; color: #fff; background: var(--avatar-bg); border-radius: 50%; }
-.dlx-byline { display: flex; flex-direction: column; line-height: 1.35; }
+      css: `.dlx { padding-inline: calc(var(--dlc-arrow-size) + 0.4rem); }
+@media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; } }
+.dlx-review { block-size: 100%; padding: 1.25rem; margin: 0; line-height: 1.5; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
+.dlx-review figcaption { display: flex; gap: 0.7rem; align-items: center; line-height: 1.35; }
+.dlx-avatar { display: grid; flex: none; place-items: center; inline-size: 40px; block-size: 40px; font-weight: 700; line-height: 1; color: #fff; background: var(--avatar-bg); border-radius: 50%; }
+.dlx-byline { display: flex; flex-direction: column; font-size: 0.95rem; line-height: 1.35; }
 .dlx-byline small { font-size: 0.8rem; opacity: 0.7; }
 .dlx-stars { margin: 0.7rem 0 0.4rem; font-size: 1rem; line-height: 1; color: #e0a012; letter-spacing: 0.1em; }
 .dlx-review blockquote { margin: 0; }
@@ -325,8 +332,8 @@
       models: TAGGED,
       filters: ['', 'exterior', 'interior', 'service'],
       css: `.dlx-filterbar { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-end: 1rem; }
-.dlx-filterbar button { padding: 0.4rem 0.9rem; font: inherit; font-size: 0.87rem; color: inherit; cursor: pointer; background: var(--wbx-card, #fff); border: 1px solid var(--wbx-line, #e2e5ea); border-radius: 999px; }
-.dlx-filterbar button[aria-pressed="true"] { color: var(--wbx-onaccent, #fff); background: var(--wbx-accent, #16324f); border-color: var(--wbx-accent, #16324f); }
+.dlx-filterbar button { padding: 0.4rem 0.9rem; font: inherit; font-size: 0.87rem; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 999px; }
+.dlx-filterbar button[aria-pressed="true"] { color: #fff; background: #16324f; border-color: #16324f; }
 .dlx-photo { display: block; }
 .dlx-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }`,
       slides: (models) => models.map((m) => `<span class="dlx-photo" data-tag="${m.tag}">${pic(m)}</span>`),
@@ -380,7 +387,7 @@
       minCard: 240,
       track: 'div',
       models: PHOTOS,
-      css: `.dlx-lb-open { display: inline-flex; gap: 0.7rem; align-items: center; padding: 0.6rem 1rem; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: var(--wbx-card, #fff); border: 1px solid var(--wbx-line, #e2e5ea); border-radius: 10px; }
+      css: `.dlx-lb-open { display: inline-flex; gap: 0.7rem; align-items: center; padding: 0.6rem 1rem; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .dlx-lb-open img { inline-size: 68px; block-size: 44px; object-fit: cover; border-radius: 5px; }
 .dlx-lb { inline-size: min(94vw, 1100px); padding: 0; background: #111; border: 0; border-radius: 12px; }
 .dlx-lb::backdrop { background: rgb(0 0 0 / 80%); }
@@ -413,7 +420,7 @@
       cardGrid: true,
       hideDots: true,
       css: `.dlx-wrap { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
-.dlx-cg-card { overflow: hidden; background: var(--wbx-card, #fff); border: 1px solid var(--wbx-line, #e2e5ea); border-radius: 10px; }
+.dlx-cg-card { overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .dlx-cg-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 .dlx-cg-body { padding: 0.8rem 0.9rem 1rem; }
 .dlx-cg-body h4 { margin: 0; font-size: 0.95rem; line-height: 1.35; }
@@ -433,7 +440,9 @@
         ['Works without JS', 'The track is a native scroll-snap container — turn JavaScript off and it still swipes.'],
         ['Start here', 'Copy the markup, add your <code>--dlc-per-view</code> breakpoints, then restyle.'],
       ].map(([name, blurb]) => ({ name, blurb })),
-      css: `.dlx-stock { block-size: 100%; padding: 1.1rem; background: var(--wbx-sunken, #f0f2f5); border-radius: 8px; }
+      css: `.dlx { padding-inline: calc(var(--dlc-arrow-size) + 0.4rem); }
+@media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; } }
+.dlx-stock { block-size: 100%; padding: 1.1rem; background: #f0f2f5; border-radius: 8px; }
 .dlx-stock h4 { margin: 0 0 0.35rem; font-size: 1rem; line-height: 1.3; }
 .dlx-stock p { margin: 0; font-size: 0.9rem; line-height: 1.5; opacity: 0.8; }
 .dlx-stock code { font-size: 0.85em; }`,
@@ -651,20 +660,54 @@
   // Measured, not asserted: compare the card actually rendered against the
   // narrowest this look's content fits in. Catches "crammed" the only way that
   // works - by looking, not by reading the numbers.
+  // Everything here is MEASURED off the rendered slider, never computed from
+  // the settings - the point is to report what the browser actually did. The
+  // gauge is the fit check made visible: how much room the card has over the
+  // width this look's content needs.
   function checkFit() {
     const warn = $('wb-warn');
+    const spec = $('wb-spec');
+    const set = (id, v) => ($(id).textContent = v);
+    const root = stage.querySelector('.dl-carousel');
     const slide = stage.querySelector('.dl-carousel-slide');
-    if (!slide) return;
+    if (!root || !slide) return;
+
     const w = Math.round(slide.getBoundingClientRect().width);
     // A slider inside a closed <dialog> measures 0. There is nothing to judge
-    // until it is opened, so say nothing rather than cry "cramped".
+    // until it is opened, so report that rather than cry "cramped".
     if (w === 0) {
+      spec.dataset.fit = 'idle';
       warn.hidden = true;
+      set('spec-card', 'not shown yet');
+      set('spec-across', '—');
+      set('spec-gap', '—');
+      set('spec-stops', '—');
+      set('spec-controls', '—');
+      $('spec-gauge').style.inlineSize = '0%';
       return;
     }
+
+    const cs = getComputedStyle(root);
     const min = minCard();
+    const stops = root._dlCarousel ? root._dlCarousel._stops().length : 1;
+    const fits = root.hasAttribute('data-fits');
+    const n = stage.querySelectorAll('.dl-carousel').length;
+
+    set('spec-card', `${w}px in ${Math.round(stage.getBoundingClientRect().width)}px`);
+    set('spec-across', `${cs.getPropertyValue('--dlc-per-view').trim()} of ${stage.querySelectorAll('.dl-carousel-slide').length}${n > 1 ? ` · ${n} sliders` : ''}`);
+    set('spec-gap', cs.getPropertyValue('--dlc-gap').trim() || '0');
+    set('spec-stops', String(stops));
+    set('spec-controls', fits ? 'hidden — all fits' : 'arrows' + (state.hideDots ? '' : ' + dots'));
+
+    // Full bar at twice the minimum; amber inside the last 15% before it.
+    const head = w / min;
+    $('spec-gauge').style.inlineSize = `${Math.max(4, Math.min(100, (head / 2) * 100))}%`;
+    const tight = head < 1.15;
+    spec.dataset.fit = tight ? 'tight' : 'ok';
     warn.hidden = w >= min;
-    warn.textContent = warn.hidden ? '' : `Each card is ${w}px here, and this look needs about ${min}px before the text starts colliding. Show fewer across, or pick a look that suits narrow cards.`;
+    warn.textContent = warn.hidden
+      ? ''
+      : `Each card is ${w}px here and this look needs about ${min}px before the text starts colliding. Show fewer across, or pick a card style that suits narrow cards.`;
   }
 
   /* ---- settings UI ------------------------------------------------------ */
@@ -909,6 +952,17 @@
     });
     beh.append(control('Slides in this example', count));
     panel.append(section('Behaviour', beh));
+  }
+
+  // Preview width. The column the stage sits in is not the width the slider
+  // will have on a real page, so the default caps it at Bootstrap 3's 1170px
+  // .container and you can step down through the other two tiers.
+  for (const b of document.querySelectorAll('.ui-widths button')) {
+    b.addEventListener('click', () => {
+      for (const x of document.querySelectorAll('.ui-widths button')) x.setAttribute('aria-pressed', String(x === b));
+      stage.style.setProperty('--frame', b.dataset.w === '0' ? '100%' : `${b.dataset.w}px`);
+      requestAnimationFrame(checkFit);
+    });
   }
 
   /* ---- pattern picker ---------------------------------------------------- */

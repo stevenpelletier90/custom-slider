@@ -177,7 +177,11 @@ Rebuild and re-commit `dist/` whenever `src/` changes.
 7. Widen until every slide fits: the arrows and dots disappear (the root gains
    `data-fits`), and narrowing brings them back. Controls that cannot move
    anything must not be focusable.
-8. Spot-checks: Windows Firefox at 125–150 % DPI; Tab into cards in Safari;
+8. Paste parity: drop a generated snippet into a page with hostile typography
+   (serif, 19px, line-height 2.1) at the same container width. The rendered
+   slide must match the preview to the pixel — a mismatch means a card is
+   inheriting the host's leading or font-size instead of setting its own.
+9. Spot-checks: Windows Firefox at 125–150 % DPI; Tab into cards in Safari;
    one pre-2025 iPhone (scrollend fallback).
 
 ## Known limitations (v1)

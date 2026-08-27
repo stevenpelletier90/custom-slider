@@ -73,18 +73,22 @@ const LOOKS = {
     settings: {
       '--strip-bg': 'transparent',
       '--strip-pad': '0px',
+      // Reserves the gutter the arrows sit in. Without it a transparent
+      // arrow lands on the card's own text instead of beside it.
+      '--strip-pad-x': 'calc(var(--dlc-arrow-size) + 0.4rem)',
       '--card-bg': '#ffffff',
       '--card-radius': '10px',
       '--name-color': '#1c1f23',
       '--name-size': '1rem',
       '--price-color': '#16324f',
     },
-    css: `.dlx { background: var(--strip-bg); padding-block-start: var(--strip-pad); }
+    css: `.dlx { background: var(--strip-bg); padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); }
+@media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; } }
 .dlx-card { position: relative; display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: var(--card-bg); border: 1px solid #e2e5ea; border-radius: var(--card-radius); }
 .dlx-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; transition: transform 0.3s ease; }
 .dlx-card:hover img { transform: scale(1.04); }
-.dlx-body { padding: 0.85rem 0.9rem 1rem; }
-.dlx-name { margin: 0; font-size: var(--name-size); font-weight: 700; line-height: 1.35; color: var(--name-color); }
+.dlx-body { display: block; padding: 0.85rem 0.9rem 1rem; line-height: 1.4; }
+.dlx-name { display: block; margin: 0; font-size: var(--name-size); font-weight: 700; line-height: 1.35; color: var(--name-color); }
 .dlx-sub { display: block; margin-block-start: 0.2rem; font-size: 0.85rem; line-height: 1.4; color: var(--price-color); }`,
     // One stretched link over the whole card: the anchor IS the card, so there
     // is no nested link and nothing announces twice.
