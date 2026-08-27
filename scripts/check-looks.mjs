@@ -69,6 +69,15 @@ for (const [id, look] of Object.entries(LOOKS)) {
       console.error(`  ${id}: markup() does not produce a .dlx-card root`);
       bad++;
     }
+    // Not every content set carries a sub or a blurb. A look that renders the
+    // element anyway leaves a blank row, and any `margin-block-start: auto`
+    // below it then pushes to the bottom of a card that reads as broken.
+    const bare = look.markup({ href: '#', img: 'x.png', alt: 'a', name: 'N' });
+    const empty = bare.match(/<(\w+)[^>]*>\s*<\/\1>/);
+    if (empty) {
+      console.error(`  ${id}: markup() emits an empty ${empty[1]} when optional content is missing — omit the element instead`);
+      bad++;
+    }
   }
 }
 

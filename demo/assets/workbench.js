@@ -51,6 +51,57 @@
 
   const pic = (m) => `<img src="${m.img}" width="1200" height="750" alt="${m.alt}" loading="lazy" decoding="async">`;
 
+  // Tall 3:5 model photography — the "model cards" look, and the reason
+  // model-*.jpg is in demo/img.
+  const MODELS = [
+    ['silverado', 'Silverado'],
+    ['equinox', 'Equinox'],
+    ['tahoe', 'Tahoe'],
+    ['malibu', 'Malibu'],
+    ['camaro', 'Camaro'],
+    ['corvette', 'Corvette'],
+  ].map(([slug, name]) => ({ img: `img/model-${slug}.jpg`, name, href: `/searchnew.aspx?Model=${name}`, alt: `${name}` }));
+
+  // Deliberately mismatched source files. The point of the example is that the
+  // CSS crops them to one shape, so a dealer uploading whatever they have still
+  // gets an even row.
+  const MIXED = [
+    ['mixed-1.jpg', 500, 500, 'Black Porsche Panamera, square crop', '500 × 500 source', 'Square upload — cover-cropped to 4:3.'],
+    ['mixed-2.jpg', 375, 500, 'Blue BMW 4 Series coupe, portrait crop', '375 × 500 source', 'Portrait upload — the sides are what get cropped.'],
+    ['mixed-3.jpg', 800, 350, 'White Ford Expedition on a desert road, wide crop', '800 × 350 source', 'Ultra-wide upload — top and bottom get cropped.'],
+    ['mixed-4.jpg', 640, 480, 'White Honda CR-V near snowy mountains, 4:3 crop', '640 × 480 source', 'Already 4:3 — nothing is lost.'],
+    ['mixed-5.jpg', 300, 500, 'White Nissan GT-R, tall narrow crop', '300 × 500 source', 'Tall and narrow — the most aggressive crop of the set.'],
+    ['vehicle-6.jpg', 800, 500, 'Light blue Fiat 500 parked beside a stone building', '800 × 500 source', 'Landscape upload — a light trim.'],
+  ].map(([f, w, h, alt, name, blurb]) => ({ img: `img/${f}`, w, h, alt, name, blurb }));
+
+  const REVIEWS = [
+    ['#7b1fa2', 'Dana W.', '2 weeks ago', 5, 'Painless from test drive to paperwork — in and out in two hours.'],
+    ['#1565c0', 'Marcus T.', 'a month ago', 5, "Fair trade-in value and no pressure. Second car we've bought here."],
+    ['#00796b', 'Priya S.', '3 months ago', 5, "Service department caught a recall I didn't know about. Honest people."],
+    ['#e65100', 'Colin R.', '3 weeks ago', 4, 'Found the exact trim I wanted and they delivered it to my office.'],
+    ['#c2185b', 'Aisha B.', '2 months ago', 5, 'First-time buyer — they walked me through financing without the runaround.'],
+    ['#2e7d32', 'Gene &amp; Marta L.', 'a week ago', 5, "Five years of oil changes and never an upsell. That's why we come back."],
+  ].map(([bg, name, when, stars, quote]) => ({ bg, name, when, stars, quote }));
+
+  const SERVICES = [
+    ['photo-5.jpg', 'Service Center', 'Factory-trained technicians, genuine parts, and online scheduling for everything from oil changes to major repairs.'],
+    ['photo-3.jpg', 'Test Drives', "Book a no-pressure drive online — we'll have the vehicle warmed up and out front when you arrive."],
+    ['vehicle-2.jpg', 'Financing', 'Flexible terms, first-time buyer programs, and pre-approval in minutes without a hit to your credit score.'],
+    ['vehicle-4.jpg', 'Trade-In Appraisal', 'Get a real number for your current vehicle in minutes — good for seven days or 500 miles.'],
+    ['photo-6.jpg', 'Parts &amp; Accessories', 'OEM parts counter, accessories, and installation — ordered to your VIN so it fits the first time.'],
+    ['photo-2.jpg', 'Body Shop &amp; Detailing', 'Collision repair, paintless dent removal, and full detailing with insurance-claim assistance.'],
+  ].map(([f, name, blurb]) => ({ img: `img/${f}`, name, blurb, alt: '', href: '#' }));
+
+  // Photos carrying a category, for the filterable gallery.
+  const TAGGED = [
+    ['photo-1.jpg', 'exterior', 'Blue Chevrolet Camaro in the desert at dusk'],
+    ['photo-2.jpg', 'exterior', 'White Ford Mustang in a neon-lit parking garage'],
+    ['photo-4.jpg', 'exterior', 'Audi R8 tail lights on a city street at sunset'],
+    ['photo-3.jpg', 'interior', 'Hands on the steering wheel at dusk'],
+    ['photo-5.jpg', 'service', 'Technician topping up engine oil'],
+    ['photo-6.jpg', 'service', 'Classic BMW grilles lined up in a museum'],
+  ].map(([f, tag, alt]) => ({ img: `img/${f}`, tag, alt }));
+
   // A pattern is content plus defaults. `look` means it draws its cards with a
   // shared component and the look chooser applies; `slides` means it draws its
   // own markup because no card look describes it - a hero is a photo, a video
@@ -140,6 +191,254 @@
           (m) => `<button type="button" class="dlx-video" data-video="${m.name}">${pic(m)}<span class="dlx-play" aria-hidden="true">&#9654;</span><span class="dlx-name">${m.name}</span></button>`,
         ),
     },
+
+    tabs: {
+      label: 'Model bar with tabs',
+      blurb:
+        'The same strip under body-style tabs. Each pane holds its own slider, and a pane revealed later measures itself correctly — so none of slick’s hidden-pane refresh hacks are needed. This is how Chevrolet has shipped its bar since Nov 2025.',
+      look: 'tile',
+      models: cutouts,
+      data: { 'data-step': 'slide' },
+      props: { '--dlc-gap': '0.5rem', '--dlc-controls-space': '0.1px', '--dlc-arrow-bg': 'transparent', '--dlc-arrow-fg': '#262626' },
+      hideDots: true,
+      panes: [
+        ['Trucks', [0, 1]],
+        ['SUVs', [2, 3, 4]],
+        ['Crossovers', [5, 6, 7]],
+      ],
+      css: `.dlx-tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-block-end: 1rem; border-block-end: 1px solid var(--wbx-line, #e2e5ea); }
+.dlx-tabs [role="tab"] { padding: 0.6rem 1.1rem; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: 0.65; }
+.dlx-tabs [role="tab"][aria-selected="true"] { opacity: 1; border-block-end-color: currentcolor; }
+.dlx-pane[hidden] { display: none; }`,
+      script: `document.querySelectorAll('[data-tabs]').forEach((wrap) => {
+  const tabs = [...wrap.querySelectorAll('[role="tab"]')];
+  const panes = tabs.map((t) => document.getElementById(t.getAttribute('aria-controls')));
+  const show = (i) => tabs.forEach((t, j) => {
+    t.setAttribute('aria-selected', String(i === j));
+    t.tabIndex = i === j ? 0 : -1;
+    panes[j].hidden = i !== j;
+  });
+  tabs.forEach((t, i) => t.addEventListener('click', () => show(i)));
+  wrap.addEventListener('keydown', (e) => {
+    const i = tabs.indexOf(e.target);
+    if (i < 0) return;
+    const to = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : -1;
+    if (to < 0) return;
+    e.preventDefault();
+    const n = (to + tabs.length) % tabs.length;
+    show(n);
+    tabs[n].focus();
+  });
+  show(0);
+});`,
+    },
+
+    models: {
+      label: 'Model cards — tall photos',
+      blurb: 'Portrait photography instead of cutouts, name set over the image. Arrows stop at the ends rather than wrapping (data-rewind="false"), which suits a short finite list.',
+      data: { 'data-rewind': 'false' },
+      props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      perView: { base: 1, 768: 2, 992: 3, 1200: 4 },
+      minCard: 190,
+      models: MODELS,
+      css: `.dlx-model { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; border-radius: 10px; }
+.dlx-model img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; transition: transform 0.35s ease; }
+.dlx-model:hover img { transform: scale(1.05); }
+.dlx-model h4 { position: absolute; inset-inline: 0; inset-block-end: 0; padding: 2.5rem 1rem 1rem; margin: 0; font-size: 1.15rem; line-height: 1.3; background: linear-gradient(transparent, rgb(0 0 0 / 78%)); }`,
+      slides: (models) => models.map((m) => `<a class="dlx-model" href="${m.href}"><img src="${m.img}" width="600" height="1000" alt="" loading="lazy" decoding="async"><h4>${m.name}</h4></a>`),
+    },
+
+    mixed: {
+      label: 'Mixed image sizes',
+      blurb: 'Six source files at six different aspect ratios, all cropped to one shape by the CSS. Dealers upload whatever they have — aspect-ratio plus object-fit is what keeps the row even.',
+      props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
+      minCard: 230,
+      models: MIXED,
+      css: `.dlx-mix { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; background: var(--wbx-card, #fff); border: 1px solid var(--wbx-line, #e2e5ea); border-radius: 10px; }
+.dlx-mix img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+.dlx-mix h4 { margin: 0.8rem 0.9rem 0.2rem; font-size: 0.95rem; line-height: 1.3; }
+.dlx-mix p { margin: 0 0.9rem 0.9rem; font-size: 0.85rem; line-height: 1.45; opacity: 0.75; }`,
+      slides: (models) =>
+        models.map((m) => `<article class="dlx-mix"><img src="${m.img}" width="${m.w}" height="${m.h}" alt="${m.alt}" loading="lazy" decoding="async"><h4>${m.name}</h4><p>${m.blurb}</p></article>`),
+    },
+
+    service: {
+      label: 'Service cards',
+      blurb: 'Photo, heading, a paragraph and a read-more affordance. One card per arrow click, because the copy is long enough that a full-page jump loses your place.',
+      data: { 'data-step': 'slide' },
+      props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
+      minCard: 250,
+      models: SERVICES,
+      css: `.dlx-svc { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: var(--wbx-card, #fff); border: 1px solid var(--wbx-line, #e2e5ea); border-radius: 10px; }
+.dlx-svc-media { overflow: hidden; }
+.dlx-svc img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.35s ease; }
+.dlx-svc:hover img { transform: scale(1.05); }
+.dlx-svc h4 { margin: 1rem 1.1rem 0.35rem; font-size: 1.1rem; line-height: 1.3; }
+.dlx-svc p { margin: 0 1.1rem; font-size: 0.9rem; line-height: 1.5; opacity: 0.75; }
+.dlx-svc-more { margin: 0.9rem 1.1rem 1.1rem; font-size: 0.85rem; font-weight: 700; }`,
+      slides: (models) =>
+        models.map(
+          (m) =>
+            `<a class="dlx-svc" href="${m.href}"><span class="dlx-svc-media"><img src="${m.img}" width="1200" height="750" alt="" loading="lazy" decoding="async"></span><h4>${m.name}</h4><p>${m.blurb}</p><span class="dlx-svc-more" aria-hidden="true">Read more →</span></a>`,
+        ),
+    },
+
+    reviews: {
+      label: 'Customer reviews',
+      blurb: 'Quotes in a real figure/blockquote, with the star rating exposed as an image plus a text label rather than bare glyphs a screen reader would spell out one at a time.',
+      props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'transparent', '--dlc-arrow-fg': 'currentcolor' },
+      perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
+      minCard: 250,
+      models: REVIEWS,
+      css: `.dlx-review { block-size: 100%; padding: 1.25rem; margin: 0; background: var(--wbx-card, #fff); border: 1px solid var(--wbx-line, #e2e5ea); border-radius: 10px; }
+.dlx-review figcaption { display: flex; gap: 0.7rem; align-items: center; }
+.dlx-avatar { display: grid; flex: none; place-items: center; inline-size: 40px; block-size: 40px; font-weight: 700; color: #fff; background: var(--avatar-bg); border-radius: 50%; }
+.dlx-byline { display: flex; flex-direction: column; line-height: 1.35; }
+.dlx-byline small { font-size: 0.8rem; opacity: 0.7; }
+.dlx-stars { margin: 0.7rem 0 0.4rem; font-size: 1rem; line-height: 1; color: #e0a012; letter-spacing: 0.1em; }
+.dlx-review blockquote { margin: 0; }
+.dlx-review blockquote p { margin: 0; font-size: 0.95rem; line-height: 1.55; }`,
+      slides: (models) =>
+        models.map(
+          (m) => `<figure class="dlx-review">
+  <figcaption>
+    <span class="dlx-avatar" aria-hidden="true" style="--avatar-bg: ${m.bg}">${m.name[0]}</span>
+    <span class="dlx-byline"><strong>${m.name}</strong><small>${m.when}</small></span>
+  </figcaption>
+  <p class="dlx-stars" role="img" aria-label="Rated ${m.stars} out of 5">${'★'.repeat(m.stars)}${'☆'.repeat(5 - m.stars)}</p>
+  <blockquote><p>${m.quote}</p></blockquote>
+</figure>`,
+        ),
+    },
+
+    'gallery-filter': {
+      label: 'Filterable gallery',
+      blurb:
+        'A gallery whose slides carry a category. Filtering rebuilds the slider over the matching slides rather than hiding the rest — hiding leaves them in the thumb strip and in the announced "3 of 6".',
+      data: { 'data-gallery': '' },
+      props: { '--dlc-gap': '0px', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
+      minCard: 240,
+      track: 'div',
+      models: TAGGED,
+      filters: ['', 'exterior', 'interior', 'service'],
+      css: `.dlx-filterbar { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-end: 1rem; }
+.dlx-filterbar button { padding: 0.4rem 0.9rem; font: inherit; font-size: 0.87rem; color: inherit; cursor: pointer; background: var(--wbx-card, #fff); border: 1px solid var(--wbx-line, #e2e5ea); border-radius: 999px; }
+.dlx-filterbar button[aria-pressed="true"] { color: var(--wbx-onaccent, #fff); background: var(--wbx-accent, #16324f); border-color: var(--wbx-accent, #16324f); }
+.dlx-photo { display: block; }
+.dlx-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }`,
+      slides: (models) => models.map((m) => `<span class="dlx-photo" data-tag="${m.tag}">${pic(m)}</span>`),
+      script: `document.querySelectorAll('[data-filter-gallery]').forEach((wrap) => {
+  const root = wrap.querySelector('.dl-carousel');
+  const all = [...root.querySelectorAll('.dl-carousel-slide')].map((s) => s.cloneNode(true));
+  wrap.querySelectorAll('[data-filter]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const tag = btn.dataset.filter;
+      wrap.querySelectorAll('[data-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+      if (root._dlCarousel) root._dlCarousel.destroy();
+      // Re-query AFTER destroy(). destroy() puts the root's original markup
+      // back, so any element captured before it is now detached and writing
+      // to it changes nothing you can see.
+      const track = root.querySelector('.dl-carousel-track');
+      track.replaceChildren(...all.filter((s) => !tag || s.querySelector('[data-tag]').dataset.tag === tag).map((s) => s.cloneNode(true)));
+      new DLCarousel(root);
+    });
+  });
+});`,
+    },
+
+    'media-gallery': {
+      label: 'Gallery with photos and video',
+      blurb: 'A gallery where some slides are video posters. The poster is a real button that opens a dialog — video never plays inline, and the thumb strip treats it like any other slide.',
+      data: { 'data-gallery': '' },
+      props: { '--dlc-gap': '0px', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
+      minCard: 240,
+      track: 'div',
+      models: PHOTOS.map((m, i) => ({ ...m, video: i === 2 || i === 4 })),
+      css: `.dlx-photo { display: block; }
+.dlx-photo img, .dlx-mv img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
+.dlx-mv { position: relative; display: block; inline-size: 100%; padding: 0; font: inherit; cursor: pointer; background: none; border: 0; }
+.dlx-mv-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.3rem; color: #16324f; background: rgb(255 255 255 / 92%); border-radius: 50%; transform: translate(-50%, -50%); }`,
+      slides: (models) =>
+        models.map((m) =>
+          m.video
+            ? `<button type="button" class="dlx-mv" data-video="${m.alt}">${pic(m)}<span class="dlx-mv-play" aria-hidden="true">&#9654;</span></button>`
+            : `<span class="dlx-photo">${pic(m)}</span>`,
+        ),
+    },
+
+    lightbox: {
+      label: 'Fullscreen gallery in a dialog',
+      blurb:
+        'A thumbnail that opens the full gallery in a native dialog. Built with data-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure.',
+      data: { 'data-gallery': '', 'data-init': 'manual' },
+      props: { '--dlc-gap': '0px', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
+      minCard: 240,
+      track: 'div',
+      models: PHOTOS,
+      css: `.dlx-lb-open { display: inline-flex; gap: 0.7rem; align-items: center; padding: 0.6rem 1rem; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: var(--wbx-card, #fff); border: 1px solid var(--wbx-line, #e2e5ea); border-radius: 10px; }
+.dlx-lb-open img { inline-size: 68px; block-size: 44px; object-fit: cover; border-radius: 5px; }
+.dlx-lb { inline-size: min(94vw, 1100px); padding: 0; background: #111; border: 0; border-radius: 12px; }
+.dlx-lb::backdrop { background: rgb(0 0 0 / 80%); }
+.dlx-lb-head { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.9rem; font-size: 0.9rem; color: #fff; }
+.dlx-lb-close { padding: 0.35rem 0.85rem; font: inherit; color: #fff; cursor: pointer; background: rgb(255 255 255 / 15%); border: 0; border-radius: 6px; }
+.dlx-photo { display: block; }
+.dlx-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: contain; }`,
+      slides: (models) => models.map((m) => `<span class="dlx-photo">${pic(m)}</span>`),
+      script: `document.querySelectorAll('[data-lightbox]').forEach((wrap) => {
+  const dlg = wrap.querySelector('dialog');
+  const root = dlg.querySelector('.dl-carousel');
+  wrap.querySelector('[data-lb-open]').addEventListener('click', () => {
+    dlg.showModal();
+    // Init AFTER the dialog is visible: a slider measured while display:none
+    // has no width, so every slide would come out the same wrong size.
+    if (!root._dlCarousel) new DLCarousel(root);
+  });
+  dlg.querySelector('[data-lb-close]').addEventListener('click', () => dlg.close());
+});`,
+    },
+
+    'card-gallery': {
+      label: 'Vehicle cards with a mini gallery',
+      blurb:
+        'The SRP pattern: a grid of cards, each holding its own small slider of that vehicle’s photos. Many instances on one page is fine — each is independent, and none of them is the page’s main carousel.',
+      props: { '--dlc-gap': '0px', '--dlc-controls-space': '0.1px', '--dlc-arrow-size': '32px', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
+      minCard: 200,
+      models: VEHICLES,
+      cardGrid: true,
+      hideDots: true,
+      css: `.dlx-wrap { display: grid; grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
+.dlx-cg-card { overflow: hidden; background: var(--wbx-card, #fff); border: 1px solid var(--wbx-line, #e2e5ea); border-radius: 10px; }
+.dlx-cg-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+.dlx-cg-body { padding: 0.8rem 0.9rem 1rem; }
+.dlx-cg-body h4 { margin: 0; font-size: 0.95rem; line-height: 1.35; }
+.dlx-cg-body p { margin: 0.2rem 0 0; font-size: 0.85rem; line-height: 1.4; opacity: 0.8; }`,
+    },
+
+    stock: {
+      label: 'Stock look — the base',
+      blurb:
+        'The engine with nothing styled on top: default arrows, default dots, no card CSS at all. This is what you get before setting a single property, and the honest starting point for anything new.',
+      props: {},
+      perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
+      minCard: 200,
+      models: [
+        ['Default controls', 'Arrows overlay the content edges; dots sit in space the CSS reserved before JS ran.'],
+        ['One knob per look', 'Every other example here is <code>--dlc-*</code> custom properties and plain site CSS.'],
+        ['Works without JS', 'The track is a native scroll-snap container — turn JavaScript off and it still swipes.'],
+        ['Start here', 'Copy the markup, add your <code>--dlc-per-view</code> breakpoints, then restyle.'],
+      ].map(([name, blurb]) => ({ name, blurb })),
+      css: `.dlx-stock { block-size: 100%; padding: 1.1rem; background: var(--wbx-sunken, #f0f2f5); border-radius: 8px; }
+.dlx-stock h4 { margin: 0 0 0.35rem; font-size: 1rem; line-height: 1.3; }
+.dlx-stock p { margin: 0; font-size: 0.9rem; line-height: 1.5; opacity: 0.8; }
+.dlx-stock code { font-size: 0.85em; }`,
+      slides: (models) => models.map((m) => `<article class="dlx-stock"><h4>${m.name}</h4><p>${m.blurb}</p></article>`),
+    },
   };
 
   /* ---- state ------------------------------------------------------------ */
@@ -170,6 +469,13 @@
   /* ---- the single source: settings -> CSS text -------------------------- */
 
   // `sel` is the only difference between what runs and what you copy.
+  // The patterns that wrap the carousel in something: tabs, a filter bar, a
+  // lightbox trigger, or a grid of cards each holding one.
+  const hasWrap = () => {
+    const p = PATTERNS[state.pattern];
+    return !!(p.panes || p.filters || p.cardGrid || state.pattern === 'lightbox');
+  };
+
   function cssFor(sel) {
     const p = PATTERNS[state.pattern];
     const base = { ...state.lookProps, ...state.props, '--dlc-per-view': state.perView.base };
@@ -187,7 +493,17 @@
     // Scope every selector, wherever it starts. Matching only at line start
     // silently left rules inside @media blocks unscoped, so they matched
     // nothing - the phone overrides were generated and did nothing at all.
-    const scope = (css) => css.replace(/(^|[{}\n,]\s*)\.dlx/g, (_, pre) => `${pre}${sel} .dlx`).replace(new RegExp(`${sel.replace('.', '\\.')} \\.dlx(?=[\\s{])`, 'g'), sel);
+    //
+    // `.dlx` means the carousel itself and `.dlx-wrap` the outer element the
+    // few structural patterns add (tabs, filter bar, lightbox, card grid);
+    // anything else is a descendant of whichever of those is the real root.
+    const root = hasWrap() ? `${sel}-wrap` : sel;
+    const scope = (css) =>
+      css.replace(/(^|[{}\n,]\s*)(\.dlx[\w-]*)/g, (_, pre, tok) => {
+        if (tok === '.dlx') return `${pre}${sel}`;
+        if (tok === '.dlx-wrap') return `${pre}${sel}-wrap`;
+        return `${pre}${root} ${tok}`;
+      });
 
     const body = [state.look ? scope(LOOKS[state.look].css) : '', p.css ? scope(p.css) : ''].filter(Boolean).join('\n');
     return [`${sel} {\n${decls}\n}`, steps, dots, arrows, body].filter(Boolean).join('\n\n');
@@ -199,7 +515,9 @@
     // see what the slider does at 12 cards, and what it does when everything
     // already fits and it correctly stops drawing arrows and dots.
     const models = Array.from({ length: state.count }, (_, i) => p.models[i % p.models.length]);
-    let items = p.slides ? p.slides(models) : models.map((m) => LOOKS[state.look].markup(m));
+    // A pattern draws its slides one of three ways: its own slides(), a shared
+    // card look, or - for the card grid - entirely inside its own branch below.
+    let items = p.slides ? p.slides(models) : state.look ? models.map((m) => LOOKS[state.look].markup(m)) : [];
 
     // The two-row grid puts a COLUMN in each slide, not a card - one slide is
     // one scroll stop, which is what keeps the dots and the count honest.
@@ -211,11 +529,71 @@
 
     const tag = p.track === 'div' ? 'div' : 'ul';
     const item = tag === 'ul' ? 'li' : 'div';
-    const slides = items.map((h) => `    <${item} class="dl-carousel-slide">${h}</${item}>`).join('\n');
     const attrs = Object.entries(state.data)
       .map(([k, v]) => (v === '' ? ` ${k}` : ` ${k}="${v}"`))
       .join('');
-    return `<div class="${cls} dl-carousel" data-slider${attrs} aria-label="${p.label}">\n  <${tag} class="dl-carousel-track">\n${slides}\n  </${tag}>\n</div>`;
+
+    // One carousel, over whichever slides it is given. Patterns that need more
+    // than one (the tabs) or need it wrapped in something (the lightbox) build
+    // from this rather than hand-writing a second copy of the markup.
+    const carousel = (list, label, pad = '') =>
+      [
+        `${pad}<div class="${cls} dl-carousel" data-slider${attrs} aria-label="${label}">`,
+        `${pad}  <${tag} class="dl-carousel-track">`,
+        ...list.map((h) => `${pad}    <${item} class="dl-carousel-slide">${h}</${item}>`),
+        `${pad}  </${tag}>`,
+        `${pad}</div>`,
+      ].join('\n');
+
+    // Body-style tabs: one carousel per pane, each over its own subset.
+    if (p.panes) {
+      const ids = p.panes.map(([name]) => name.toLowerCase().replace(/\W+/g, '-'));
+      const tabs = p.panes.map(([name], i) => `    <button type="button" role="tab" id="tab-${ids[i]}" aria-controls="pane-${ids[i]}" aria-selected="${i === 0}">${name}</button>`).join('\n');
+      const panes = p.panes
+        .map(([, idx], i) => {
+          const sub = idx.map((n) => items[n % items.length]);
+          return `  <div class="dlx-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}"${i === 0 ? '' : ' hidden'}>\n${carousel(sub, p.panes[i][0], '  ')}\n  </div>`;
+        })
+        .join('\n');
+      return `<div class="${cls}-wrap" data-tabs>\n  <div class="dlx-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n${panes}\n</div>`;
+    }
+
+    // Filter buttons above a gallery; the script rebuilds it per category.
+    if (p.filters) {
+      const bar = p.filters
+        .map((f) => `    <button type="button" data-filter="${f}" aria-pressed="${f === '' ? 'true' : 'false'}">${f === '' ? 'All' : f[0].toUpperCase() + f.slice(1)}</button>`)
+        .join('\n');
+      return `<div class="${cls}-wrap" data-filter-gallery>\n  <div class="dlx-filterbar" role="group" aria-label="Filter photos">\n${bar}\n  </div>\n${carousel(items, p.label, '  ')}\n</div>`;
+    }
+
+    // A thumbnail that opens the gallery in a dialog.
+    if (state.pattern === 'lightbox') {
+      const m = p.models[0];
+      return [
+        `<div class="${cls}-wrap" data-lightbox>`,
+        `  <button type="button" class="dlx-lb-open" data-lb-open>`,
+        `    <img src="${m.img}" width="68" height="44" alt="" loading="lazy" decoding="async">`,
+        `    <span>View all ${items.length} photos</span>`,
+        `  </button>`,
+        `  <dialog class="dlx-lb">`,
+        `    <div class="dlx-lb-head"><span>Vehicle photos</span><button type="button" class="dlx-lb-close" data-lb-close>Close</button></div>`,
+        carousel(items, 'Vehicle photos', '    '),
+        `  </dialog>`,
+        `</div>`,
+      ].join('\n');
+    }
+
+    // A grid of cards, each with its own small slider of that vehicle's photos.
+    if (p.cardGrid) {
+      const shots = PHOTOS.map((x) => x.img);
+      const cards = p.models.slice(0, state.count).map((m, i) => {
+        const pics = [m.img, shots[i % shots.length], shots[(i + 2) % shots.length]].map((src) => `<img src="${src}" width="800" height="600" alt="${m.alt}" loading="lazy" decoding="async">`);
+        return [`  <div class="dlx-cg-card">`, carousel(pics, `Photos of the ${m.name}`, '    '), `    <div class="dlx-cg-body"><h4>${m.name}</h4><p>${m.sub}</p></div>`, `  </div>`].join('\n');
+      });
+      return `<div class="${cls}-wrap">\n${cards.join('\n')}\n</div>`;
+    }
+
+    return carousel(items, p.label);
   }
 
   /* ---- render ----------------------------------------------------------- */
@@ -234,15 +612,27 @@
     stage.innerHTML = htmlFor('wb-live');
     live = globalThis.DLCarousel.autoInit(stage);
     wireVideo();
+
+    // A few patterns need page script - tabs, the gallery filter, the lightbox.
+    // The SAME string runs here and is printed in the code panel, so what you
+    // copy is what you just watched work.
+    const p = PATTERNS[state.pattern];
+    if (p.script) {
+      try {
+        new Function(p.script).call(stage);
+      } catch (e) {
+        console.error(`${state.pattern}: page script failed`, e);
+      }
+    }
     checkFit();
 
-    const p = PATTERNS[state.pattern];
     $('wb-title').textContent = p.label;
     $('wb-blurb').textContent = p.blurb;
     // Same generator, different selector - that is the parity guarantee.
     // Kept as text as well as highlighted markup: the clipboard gets the text,
     // never the spans.
-    state.codeText = `<style>\n${cssFor('.my-slider')}\n</style>\n\n${htmlFor('my-slider')}`;
+    const script = p.script ? `\n\n<script>\n${p.script}\n</script>` : '';
+    state.codeText = `<style>\n${cssFor('.my-slider')}\n</style>\n\n${htmlFor('my-slider')}${script}`;
     codeEl.innerHTML = globalThis.DLX.hl.snippet(state.codeText);
   }
 
@@ -266,6 +656,12 @@
     const slide = stage.querySelector('.dl-carousel-slide');
     if (!slide) return;
     const w = Math.round(slide.getBoundingClientRect().width);
+    // A slider inside a closed <dialog> measures 0. There is nothing to judge
+    // until it is opened, so say nothing rather than cry "cramped".
+    if (w === 0) {
+      warn.hidden = true;
+      return;
+    }
     const min = minCard();
     warn.hidden = w >= min;
     warn.textContent = warn.hidden ? '' : `Each card is ${w}px here, and this look needs about ${min}px before the text starts colliding. Show fewer across, or pick a look that suits narrow cards.`;

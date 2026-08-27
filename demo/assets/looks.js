@@ -150,15 +150,23 @@ const LOOKS = {
 .dlx-pill { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: var(--pill-fg); background: var(--pill-bg); border-radius: 999px; }
 @media (max-width: 600px) { .dlx-copy { gap: 0.35rem; padding: 1rem; } .dlx-name { font-size: 1.15rem; } .dlx-pill { padding: 0.45rem 1rem; font-size: 0.8rem; white-space: nowrap; } }
 @media (max-width: 480px) { .dlx-card { flex-direction: column; } .dlx-card img { flex: none; inline-size: 100%; aspect-ratio: 16 / 9; } }`,
-    markup: (m) => `<a class="dlx-card" href="${m.href}">
-  <img src="${m.img}" width="800" height="800" alt="${m.alt}" loading="lazy" decoding="async">
-  <span class="dlx-copy">
-    <small class="dlx-sub">${m.sub ?? ''}</small>
-    <p class="dlx-name">${m.name}</p>
-    <span class="dlx-blurb">${m.blurb ?? ''}</span>
-    <span class="dlx-pill">Shop Now</span>
-  </span>
-</a>`,
+    // An absent field emits NO element. Rendering an empty <span> left the copy
+    // column with a blank row, and the pill's `margin-block-start: auto` then
+    // pushed it to the bottom of a card that looked like it had lost its text.
+    markup: (m) =>
+      [
+        `<a class="dlx-card" href="${m.href}">`,
+        `  <img src="${m.img}" width="800" height="800" alt="${m.alt}" loading="lazy" decoding="async">`,
+        `  <span class="dlx-copy">`,
+        m.sub ? `    <small class="dlx-sub">${m.sub}</small>` : null,
+        `    <p class="dlx-name">${m.name}</p>`,
+        m.blurb ? `    <span class="dlx-blurb">${m.blurb}</span>` : null,
+        `    <span class="dlx-pill">Shop Now</span>`,
+        `  </span>`,
+        `</a>`,
+      ]
+        .filter((l) => l !== null)
+        .join('\n'),
   },
 
   portrait: {
@@ -232,12 +240,18 @@ const LOOKS = {
 .dlx-name { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; font-weight: 700; line-height: 1.3; color: #222; }
 .dlx-card p { margin: 0 0 0.9rem; font-size: 0.9rem; color: #5f6368; }
 .dlx-cta { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.8rem; font-weight: 700; color: var(--cta-fg); background: var(--cta-bg); border-radius: 999px; }`,
-    markup: (m) => `<a class="dlx-card" href="${m.href}">
-  <img src="${m.img}" width="240" height="160" alt="${m.alt}" loading="lazy" decoding="async">
-  <span class="dlx-name">${m.name}</span>
-  <p>${m.sub ?? ''}</p>
-  <span class="dlx-cta">Visit</span>
-</a>`,
+    // An absent field emits NO element - see the note on the split look.
+    markup: (m) =>
+      [
+        `<a class="dlx-card" href="${m.href}">`,
+        `  <img src="${m.img}" width="240" height="160" alt="${m.alt}" loading="lazy" decoding="async">`,
+        `  <span class="dlx-name">${m.name}</span>`,
+        m.sub ? `  <p>${m.sub}</p>` : null,
+        `  <span class="dlx-cta">Visit</span>`,
+        `</a>`,
+      ]
+        .filter((l) => l !== null)
+        .join('\n'),
   },
 };
 

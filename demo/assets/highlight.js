@@ -86,8 +86,11 @@
   // The workbench panel is a <style> block followed by markup, so it needs both.
   const snippet = (src) =>
     src
-      .split(/(<style>[\s\S]*?<\/style>)/)
-      .map((p, i) => (i % 2 ? tag('<style>') + css(p.slice(7, -8)) + tag('</style>') : html(p)))
+      .split(/(<style>[\s\S]*?<\/style>|<script>[\s\S]*?<\/script>)/)
+      .map((p, i) => {
+        if (!(i % 2)) return html(p);
+        return p.startsWith('<style>') ? tag('<style>') + css(p.slice(7, -8)) + tag('</style>') : tag('<script>') + js(p.slice(8, -9)) + tag('</script>');
+      })
       .join('');
 
   globalThis.DLX = Object.assign(globalThis.DLX || {}, { hl: { css, js, html, snippet } });
