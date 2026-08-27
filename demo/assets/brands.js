@@ -40,6 +40,57 @@
   // Twelve of the 32 have imagery. The rest fall back to the Chevrolet
   // cutouts and say so in the picker rather than pretending otherwise.
   const ROSTERS = {
+    gmc: [
+      'gmc',
+      [
+        ['sierra-1500.png', 320, 240, 'Sierra 1500'],
+        ['sierra-hd.png', 320, 240, 'Sierra HD'],
+        ['terrain.png', 320, 240, 'Terrain'],
+        ['acadia.png', 320, 240, 'Acadia'],
+        ['yukon.png', 320, 240, 'Yukon'],
+        ['canyon.png', 320, 240, 'Canyon'],
+      ],
+    ],
+    kia: [
+      'kia',
+      [
+        ['k4.png', 320, 240, 'K4'],
+        ['k5.png', 320, 240, 'K5'],
+        ['seltos.png', 320, 240, 'Seltos'],
+        ['sportage.png', 320, 240, 'Sportage'],
+        ['sorento.png', 320, 240, 'Sorento'],
+        ['telluride.png', 320, 240, 'Telluride'],
+        ['sorento-hybrid.png', 320, 240, 'Sorento Hybrid'],
+        ['niro.png', 320, 240, 'Niro'],
+        ['ev6.png', 320, 240, 'EV6'],
+        ['ev9.png', 320, 240, 'EV9'],
+        ['niro-ev.png', 320, 240, 'Niro EV'],
+        ['niro-plug-in-hybrid.png', 320, 240, 'Niro Plug-In Hybrid'],
+      ],
+    ],
+    mini: [
+      'mini',
+      [
+        ['hardtop-2-door.png', 320, 240, 'Hardtop 2 Door'],
+        ['countryman.png', 320, 240, 'Countryman'],
+      ],
+    ],
+    nissan: [
+      'nissan',
+      [
+        ['rogue.png', 320, 240, 'Rogue'],
+        ['rogue-phev.png', 320, 240, 'Rogue PHEV'],
+        ['kicks.png', 320, 240, 'Kicks'],
+        ['murano.png', 320, 240, 'Murano'],
+        ['pathfinder.png', 320, 240, 'Pathfinder'],
+        ['armada.png', 320, 240, 'Armada'],
+        ['sentra.png', 320, 240, 'Sentra'],
+        ['altima.png', 320, 240, 'Altima'],
+        ['versa.png', 320, 240, 'Versa'],
+        ['frontier.png', 320, 240, 'Frontier'],
+        ['z.png', 320, 240, 'Z'],
+      ],
+    ],
     acura: [
       'acura',
       [
