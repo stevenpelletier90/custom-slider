@@ -84,7 +84,10 @@
     // letting them overlay the cards.
     const arrows = [`${sel} .dl-carousel-arrow--prev { inset-inline-start: 0; }`, `${sel} .dl-carousel-arrow--next { inset-inline-end: 0; }`].join('\n');
     // Scope the look's own rules to this slider so two on one page cannot clash.
-    const lookCss = look.css.replace(/^\.dlx/gm, `${sel} .dlx`).replace(new RegExp(`${sel.replace('.', '\\.')} \\.dlx \\{`, 'g'), `${sel} {`);
+    // Scope every selector, wherever it starts. Matching only at line start
+    // silently left rules inside @media blocks unscoped, so they matched
+    // nothing - the phone overrides were being emitted and doing nothing.
+    const lookCss = look.css.replace(/(^|[{}\n,]\s*)\.dlx/g, (_, pre) => `${pre}${sel} .dlx`).replace(new RegExp(`${sel.replace('.', '\\.')} \\.dlx(?=[\\s{])`, 'g'), sel);
 
     return [`${sel} {\n${decls}\n}`, steps, dots, arrows, lookCss].filter(Boolean).join('\n\n');
   }
@@ -125,11 +128,31 @@
     stage.innerHTML = htmlFor('wb-live');
     live = globalThis.DLCarousel.autoInit(stage);
 
+    checkFit();
+
     const p = PATTERNS[state.pattern];
     titleEl.textContent = p.label;
     blurbEl.textContent = p.blurb;
     // Same generator, different selector - that is the parity guarantee.
     codeEl.textContent = `<link rel="stylesheet" href="dl-carousel.css">\n<script src="dl-carousel.js" defer></script>\n\n<style>\n${cssFor('.my-slider')}\n</style>\n\n${htmlFor('my-slider')}`;
+  }
+
+  // Measured, not asserted: compare the card actually rendered against the
+  // narrowest this look's content fits in. Catches "crammed" before it ships,
+  // which reading the numbers alone never would.
+  function checkFit() {
+    const warn = document.getElementById('wb-warn');
+    const slide = stage.querySelector('.dl-carousel-slide');
+    const min = LOOKS[state.look].minCard;
+    if (!slide) return;
+    const w = Math.round(slide.getBoundingClientRect().width);
+    if (w < min) {
+      warn.hidden = false;
+      warn.textContent = `At this width each card is ${w}px, and ${LOOKS[state.look].label.toLowerCase()} needs about ${min}px before the text starts colliding. Show fewer across, or pick a look that suits narrow cards.`;
+    } else {
+      warn.hidden = true;
+      warn.textContent = '';
+    }
   }
 
   /* ---- settings UI ------------------------------------------------------ */
@@ -179,6 +202,9 @@
       b.addEventListener('click', () => {
         state.look = id;
         state.lookProps = { ...LOOKS[id].settings };
+        // Each look carries the ladder that suits it. A split photo card at
+        // five across is unreadable; a cutout tile at one across is a waste.
+        state.perView = { ...LOOKS[id].perView };
         buildPanel();
         render();
       });

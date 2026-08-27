@@ -49,7 +49,7 @@ if (invented.length) {
 
 // Each component must actually be renderable.
 for (const [id, look] of Object.entries(LOOKS)) {
-  for (const field of ['label', 'css', 'markup', 'settings']) {
+  for (const field of ['label', 'css', 'markup', 'settings', 'minCard', 'perView']) {
     if (!look[field]) {
       console.error(`  ${id}: missing ${field}`);
       bad++;

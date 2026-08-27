@@ -18,6 +18,10 @@
 const LOOKS = {
   tile: {
     label: 'Cutout tile',
+    // Narrowest card this look's content fits in, measured by narrowing it
+    // until text overflowed. The workbench warns rather than letting you cram it.
+    minCard: 150,
+    perView: { base: 2, 768: 3, 992: 4, 1200: 5 },
     // The workhorse: 14 of 24 brands ship this. Vehicle cutout, name under it.
     absorbs: ['white', 'counts', 'tile', 'band-gray', 'band-flat', 'band-dark', 'cdjr-dark', 'category-tile', 'brand-logo', 'photo-overlay', 'name-top-chip'],
     settings: {
@@ -37,7 +41,8 @@ const LOOKS = {
       '--plate-bg': 'transparent', // coloured plate behind the vehicle
     },
     css: `.dlx { background: var(--strip-bg); padding-block: var(--strip-pad); padding-inline: var(--strip-pad-x); }
-.dlx-arrow-prev { inset-inline-start: 0; }
+@media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; padding-inline: 0; } }
+@media (max-width: 380px) { .dlx { --dlc-per-view: 1; } }
 .dlx-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .dlx-plate { display: block; padding: 8% 6%; background: var(--plate-bg); }
 .dlx-card img { inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); object-fit: contain; filter: var(--img-filter); transition: filter 0.2s, transform 0.25s ease; }
@@ -52,6 +57,10 @@ const LOOKS = {
 
   wordmark: {
     label: 'Wordmark above',
+    // Narrowest card this look's content fits in, measured by narrowing it
+    // until text overflowed. The workbench warns rather than letting you cram it.
+    minCard: 165,
+    perView: { base: 1, 768: 2, 992: 3, 1200: 4 },
     // The model's wordmark set above the vehicle - an element the tile has no
     // slot for, which is why this is its own component and not a tile setting.
     absorbs: ['wordmark-dark', 'spotlight'],
@@ -77,6 +86,10 @@ const LOOKS = {
 
   split: {
     label: 'Split photo card',
+    // Narrowest card this look's content fits in, measured by narrowing it
+    // until text overflowed. The workbench warns rather than letting you cram it.
+    minCard: 260,
+    perView: { base: 1, 768: 1, 992: 2, 1200: 2 },
     // Photo beside a copy column. Measured on toyotademo2: the card is 2:1 with
     // a SQUARE photo filling half, so the height follows the card's own width
     // rather than the source photo's aspect.
@@ -94,7 +107,8 @@ const LOOKS = {
 .dlx-name { margin: 0; font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
 .dlx-blurb { font-size: 0.95rem; line-height: 1.4; color: #d9d9d9; }
 .dlx-pill { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: var(--pill-fg); background: var(--pill-bg); border-radius: 999px; }
-@media (max-width: 600px) { .dlx-copy { gap: 0.35rem; padding: 1rem; } .dlx-name { font-size: 1.15rem; } .dlx-pill { padding: 0.45rem 1rem; font-size: 0.8rem; white-space: nowrap; } }`,
+@media (max-width: 600px) { .dlx-copy { gap: 0.35rem; padding: 1rem; } .dlx-name { font-size: 1.15rem; } .dlx-pill { padding: 0.45rem 1rem; font-size: 0.8rem; white-space: nowrap; } }
+@media (max-width: 480px) { .dlx-card { flex-direction: column; } .dlx-card img { flex: none; inline-size: 100%; aspect-ratio: 16 / 9; } }`,
     markup: (m) => `<a class="dlx-card" href="${m.href}">
   <img src="${m.img}" width="800" height="800" alt="${m.alt}" loading="lazy" decoding="async">
   <span class="dlx-copy">
@@ -108,6 +122,10 @@ const LOOKS = {
 
   portrait: {
     label: 'Tall tile with CTA',
+    // Narrowest card this look's content fits in, measured by narrowing it
+    // until text overflowed. The workbench warns rather than letting you cram it.
+    minCard: 165,
+    perView: { base: 1, 768: 3, 992: 4, 1200: 4 },
     // Name ABOVE a portrait photo, button underneath. The button is markup the
     // tile has no slot for.
     absorbs: ['tall-tile'],
@@ -132,6 +150,10 @@ const LOOKS = {
 
   logo: {
     label: 'Logo panel',
+    // Narrowest card this look's content fits in, measured by narrowing it
+    // until text overflowed. The workbench warns rather than letting you cram it.
+    minCard: 165,
+    perView: { base: 2, 768: 3, 992: 4, 1200: 6 },
     // A bordered panel with a centred mark, no name at all - the card IS the
     // panel, which no tile setting produces.
     absorbs: ['logo-strip'],
@@ -141,6 +163,7 @@ const LOOKS = {
       '--card-fg': '#fff',
     },
     css: `.dlx { padding: 1.5rem 1rem; background: var(--strip-bg); }
+@media (max-width: 460px) { .dlx { --dlc-per-view: 1; padding: 1rem 0.5rem; } }
 .dlx-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; color: var(--card-fg); background: var(--card-bg); border: 1px solid rgb(255 255 255 / 7%); border-radius: 10px; transition: background 0.2s; }
 .dlx-card img { inline-size: 75%; block-size: auto; object-fit: contain; }`,
     markup: (m) => `<a class="dlx-card" href="${m.href}" aria-label="${m.alt}">
@@ -150,6 +173,10 @@ const LOOKS = {
 
   location: {
     label: 'Location card',
+    // Narrowest card this look's content fits in, measured by narrowing it
+    // until text overflowed. The workbench warns rather than letting you cram it.
+    minCard: 170,
+    perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
     // Name, address line and a Visit button. Not a vehicle card at all.
     absorbs: ['location-card'],
     settings: {
