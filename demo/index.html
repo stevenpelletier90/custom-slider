@@ -1834,7 +1834,16 @@
 @media (min-width: 768px) { .my-hero img { aspect-ratio: 16 / 6; } }
 .my-hero-copy { position: absolute; inset-block-end: 0; inline-size: 100%; padding: 2.5rem 1.25rem 1.25rem; color: #fff; background: linear-gradient(to top, rgb(0 0 0 / 78%), rgb(0 0 0 / 0%)); }
 .my-hero-copy strong { display: block; font-size: clamp(1.25rem, 3.2vw, 2rem); }
-.my-hero-copy span { display: inline-block; margin-block-start: 0.6rem; padding: 0.45rem 1rem; font-weight: 600; color: #16324f; background: #fff; border-radius: 4px; }</code></pre>
+.my-hero-copy span { display: inline-block; margin-block-start: 0.6rem; padding: 0.45rem 1rem; font-weight: 600; color: #16324f; background: #fff; border-radius: 4px; }
+
+/* Control theming the example above uses. Without it the engine ships its
+   stock dark discs on top of the cards instead of arrows in a gutter. */
+.my-hero {
+  --dlc-controls-space: 2rem;
+  --dlc-arrow-bg: rgb(0 0 0 / 55%);
+  --dlc-arrow-fg: #fff;
+  --dlc-dot-current: #16324f;
+}</code></pre>
           </details>
         </section>
 
@@ -2137,7 +2146,17 @@
 
 .my-modelbar-card { display: block; color: inherit; text-align: center; text-decoration: none; }
 .my-modelbar-card img { inline-size: 100%; block-size: auto; object-fit: contain; }
-.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }</code></pre>
+.my-modelbar-card p { margin: 0.25rem 0 0; font-weight: 600; }
+
+/* Control theming the example above uses. Without it the engine ships its
+   stock dark discs on top of the cards instead of arrows in a gutter. */
+.my-modelbar {
+  --dlc-arrow-bg: transparent;
+  --dlc-arrow-fg: #262626;
+  padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+}
+.my-modelbar .dl-carousel-arrow--prev { inset-inline-start: 0; }
+.my-modelbar .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
           </details>
         </section>
 
@@ -2475,7 +2494,17 @@
 
 .my-tabs [role="tablist"] { display: flex; flex-wrap: wrap; gap: 0.5rem; justify-content: center; margin-block-end: 1rem; }
 .my-tabs [role="tab"] { padding: 0.5rem 1rem; cursor: pointer; background: #fff; border: 1px solid #c4ced8; border-radius: 999px; }
-.my-tabs [role="tab"][aria-selected="true"] { color: #fff; background: #16324f; border-color: #16324f; }</code></pre>
+.my-tabs [role="tab"][aria-selected="true"] { color: #fff; background: #16324f; border-color: #16324f; }
+
+/* Control theming the example above uses. Without it the engine ships its
+   stock dark discs on top of the cards instead of arrows in a gutter. */
+.my-modelbar {
+  --dlc-arrow-bg: transparent;
+  --dlc-arrow-fg: #262626;
+  padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+}
+.my-modelbar .dl-carousel-arrow--prev { inset-inline-start: 0; }
+.my-modelbar .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
           </details>
         </section>
 
@@ -2699,7 +2728,16 @@
 /* Fade the peeking slivers at both edges. The fade width matches --dlc-peek. */
 .my-peek .dl-carousel-track {
   mask-image: linear-gradient(to right, transparent, #000 48px, #000 calc(100% - 48px), transparent);
-}</code></pre>
+}
+
+/* Control theming the example above uses. Without it the engine ships its
+   stock dark discs on top of the cards instead of arrows in a gutter. */
+.my-peek {
+  --dlc-arrow-bg: transparent;
+  --dlc-arrow-fg: #262626;
+}
+.my-peek .dl-carousel-arrow--prev { inset-inline-start: 0.25rem; }
+.my-peek .dl-carousel-arrow--next { inset-inline-end: 0.25rem; }</code></pre>
           </details>
         </section>
       </section>
@@ -2995,7 +3033,17 @@
 
 /* The gallery itself is the standard thumbnail-gallery recipe. */
 .my-fgallery { --dlc-per-view: 1; --dlc-thumb-w: 96px; --dlc-thumb-h: 64px; }
-.my-fgallery img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; }</code></pre>
+.my-fgallery img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; }
+
+/* Control theming the example above uses. Without it the engine ships its
+   stock dark discs on top of the cards instead of arrows in a gutter. */
+.my-fgallery {
+  --dlc-arrow-bg: transparent;
+  --dlc-arrow-fg: #262626;
+  padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+}
+.my-fgallery .dl-carousel-arrow--prev { inset-inline-start: 0; }
+.my-fgallery .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
           </details>
         </section>
 
@@ -3057,7 +3105,17 @@
 
 .my-mgallery-video { position: relative; display: block; inline-size: 100%; padding: 0; cursor: pointer; background: none; border: 0; }
 .my-mgallery-video:focus-visible { outline: 3px solid var(--dlc-focus, #16324f); outline-offset: 2px; }
-.my-mgallery-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.4rem; color: #fff; background: rgb(0 0 0 / 60%); border-radius: 50%; transform: translate(-50%, -50%); }</code></pre>
+.my-mgallery-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.4rem; color: #fff; background: rgb(0 0 0 / 60%); border-radius: 50%; transform: translate(-50%, -50%); }
+
+/* Control theming the example above uses. Without it the engine ships its
+   stock dark discs on top of the cards instead of arrows in a gutter. */
+.my-mgallery {
+  --dlc-arrow-bg: transparent;
+  --dlc-arrow-fg: #262626;
+  padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+}
+.my-mgallery .dl-carousel-arrow--prev { inset-inline-start: 0; }
+.my-mgallery .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
           </details>
         </section>
 
@@ -3164,7 +3222,17 @@
 .my-lightbox-close:focus-visible { outline: 3px solid #16324f; outline-offset: 2px; }
 
 .my-lbgallery { --dlc-per-view: 1; --dlc-thumb-w: 96px; --dlc-thumb-h: 64px; }
-.my-lbgallery img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; }</code></pre>
+.my-lbgallery img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; }
+
+/* Control theming the example above uses. Without it the engine ships its
+   stock dark discs on top of the cards instead of arrows in a gutter. */
+.my-lbgallery {
+  --dlc-arrow-bg: transparent;
+  --dlc-arrow-fg: #262626;
+  padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+}
+.my-lbgallery .dl-carousel-arrow--prev { inset-inline-start: 0; }
+.my-lbgallery .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
           </details>
         </section>
       </section>
@@ -3291,7 +3359,17 @@
 /* Makes the WHOLE card clickable without nesting links: the one real link
    stretches an invisible layer over the card. */
 .my-vehicle a::after { content: ""; position: absolute; inset: 0; }
-.my-vehicle:focus-within { outline: 3px solid var(--dlc-focus, #16324f); outline-offset: 2px; }</code></pre>
+.my-vehicle:focus-within { outline: 3px solid var(--dlc-focus, #16324f); outline-offset: 2px; }
+
+/* Control theming the example above uses. Without it the engine ships its
+   stock dark discs on top of the cards instead of arrows in a gutter. */
+.my-vehicles {
+  --dlc-arrow-bg: transparent;
+  --dlc-arrow-fg: #262626;
+  padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+}
+.my-vehicles .dl-carousel-arrow--prev { inset-inline-start: 0; }
+.my-vehicles .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
           </details>
         </section>
 
@@ -3378,7 +3456,20 @@
 @media (min-width: 992px) { .my-models { --dlc-per-view: 4; } }
 .my-model-card { position: relative; display: block; color: #fff; text-decoration: none; }
 .my-model-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; border-radius: 6px; }
-.my-model-card h3 { position: absolute; inset-block-end: 0; inline-size: 100%; margin: 0; padding: 2rem 1rem 1rem; font-size: 1.1rem; background: linear-gradient(to top, rgb(0 0 0 / 75%), rgb(0 0 0 / 0%)); }</code></pre>
+.my-model-card h3 { position: absolute; inset-block-end: 0; inline-size: 100%; margin: 0; padding: 2rem 1rem 1rem; font-size: 1.1rem; background: linear-gradient(to top, rgb(0 0 0 / 75%), rgb(0 0 0 / 0%)); }
+
+/* Control theming the example above uses. Without it the engine ships its
+   stock dark discs on top of the cards instead of arrows in a gutter. */
+.my-models {
+  --dlc-arrow-bg: transparent;
+  --dlc-arrow-fg: #262626;
+  --dlc-dot-fg: #949494;
+  --dlc-dot-current: #949494;
+  --dlc-controls-space: 3rem;
+  padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+}
+.my-models .dl-carousel-arrow--prev { inset-inline-start: 0; }
+.my-models .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
           </details>
         </section>
 
@@ -3482,7 +3573,17 @@ object-fit: cover;</code></pre>
   block-size: auto;
   aspect-ratio: 4 / 3;
   object-fit: cover;
-}</code></pre>
+}
+
+/* Control theming the example above uses. Without it the engine ships its
+   stock dark discs on top of the cards instead of arrows in a gutter. */
+.my-mixed {
+  --dlc-arrow-bg: transparent;
+  --dlc-arrow-fg: #262626;
+  padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+}
+.my-mixed .dl-carousel-arrow--prev { inset-inline-start: 0; }
+.my-mixed .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
           </details>
         </section>
 
@@ -3594,7 +3695,18 @@ object-fit: cover;</code></pre>
 .my-card-media img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
 .my-card-body { display: flex; flex-direction: column; flex-grow: 1; gap: 0.5rem; padding: 1rem; }
 .my-card-body strong { font-size: 1.1rem; }
-.my-card-more { margin-block-start: auto; font-weight: 600; color: #16324f; }</code></pre>
+.my-card-more { margin-block-start: auto; font-weight: 600; color: #16324f; }
+
+/* Control theming the example above uses. Without it the engine ships its
+   stock dark discs on top of the cards instead of arrows in a gutter. */
+.my-cards {
+  --dlc-controls-space: 0px;
+  --dlc-arrow-bg: transparent;
+  --dlc-arrow-fg: #262626;
+  padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+}
+.my-cards .dl-carousel-arrow--prev { inset-inline-start: 0; }
+.my-cards .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
           </details>
         </section>
 
@@ -3746,7 +3858,19 @@ object-fit: cover;</code></pre>
 .my-video-dialog::backdrop { background: rgb(0 0 0 / 65%); }
 .my-video-head { display: flex; align-items: center; justify-content: space-between; padding: 0.75rem 1rem; }
 .my-video-frame { aspect-ratio: 16 / 9; background: #111; }
-.my-video-embed { inline-size: 100%; block-size: 100%; border: 0; }</code></pre>
+.my-video-embed { inline-size: 100%; block-size: 100%; border: 0; }
+
+/* Control theming the example above uses. Without it the engine ships its
+   stock dark discs on top of the cards instead of arrows in a gutter. */
+.my-videos {
+  --dlc-controls-space: 0px;
+  --dlc-arrow-bg: transparent;
+  --dlc-arrow-fg: #fff;
+  --dlc-focus: #fff;
+  padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+}
+.my-videos .dl-carousel-arrow--prev { inset-inline-start: 0; }
+.my-videos .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
           </details>
         </section>
 

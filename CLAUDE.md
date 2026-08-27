@@ -13,12 +13,15 @@ A dependency-free scroll-snap carousel (`dl-carousel`) built to replace third-pa
 ```bash
 npm run build          # src → dist via esbuild (bundle+minify JS, minify CSS)
 npm run size           # build + gzip budget gate — FAILS at ≥ 6144 B total
-npm run validate       # stylelint + eslint + prettier --check  (the gate before committing)
+npm run validate       # stylelint + eslint + prettier --check + check:recipes  (the gate before committing)
+npm run check:recipes  # asserts every copy-paste recipe declares the --dlc-* knobs its live example sets
 npm run lint:css:fix   # stylelint --fix on src/**/*.css and demo/assets/*.css
 npm run lint:js:fix    # eslint --fix on src/**/*.js, demo/assets/*.js and scripts/
 npm run format         # prettier --write .
 npm run serve          # esbuild static server on http://127.0.0.1:8137 (for Lighthouse/demo)
 ```
+
+**Recipe parity is enforced, not remembered.** `demo/index.html`'s copy-paste recipes are hand-written beside the live examples, so they drifted: every one of them omitted `--dlc-arrow-bg`/`--dlc-arrow-fg`, and pasting one gave you the engine's stock dark discs on the cards instead of the gutter arrows the demo shows. `scripts/check-recipes.mjs` now fails `npm run validate` when a recipe omits a knob its live example sets; `--fix` transplants the missing declarations. It deliberately ignores the HTML — recipe markup is CMS-adapted on purpose (`#MISCPATH#` tokens, `aria-label` rather than `aria-labelledby` since the heading doesn't travel with the snippet, one `<li>` plus a "repeat this" comment), and those differences must survive.
 
 There is no test framework (deliberate, spec §1 non-goals). Verification is the browser checklist in README "Verification checklist" — run it, don't skip to a size check and call it verified.
 
