@@ -3,8 +3,8 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>Custom Slider — demo</title>
-    <meta name="description" content="Demo of the in-house dependency-free scroll-snap slider: multi-card, thumbnail gallery, and autoplay variations." />
+    <title>dl-carousel — example catalog</title>
+    <meta name="description" content="Copy-paste catalog for the in-house dependency-free scroll-snap slider: one example at a time, with the exact HTML and CSS that renders it." />
     <!-- inline so the page makes no request the repo can't serve (a missing favicon was a 404 in the console) -->
     <link
       rel="icon"
@@ -12,1402 +12,2306 @@
     />
     <link rel="stylesheet" href="../dist/dl-carousel.css" />
     <script src="../dist/dl-carousel.js" defer></script>
+    <!-- Used by the "Bootstrap Icons arrows" example only. Sites that don't
+         restyle the arrows never need this. -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" />
     <style>
-      /* Demo page chrome only — slider styling lives in the library CSS. */
-      body {
-        font-family: system-ui, sans-serif;
-        margin: 0;
-        color: #222;
-        line-height: 1.5;
+      /* ==========================================================================
+         Demo-app chrome ONLY — the sidebar, stage, and code panel.
+         Nothing here styles a slider. Every example ships its own CSS inside its
+         <template>, which is the same string the Copy button hands you, so what
+         renders in the stage and what you paste can never drift apart.
+         ========================================================================== */
+
+      :root {
+        --app-bg: #f6f7f9;
+        --app-panel: #fff;
+        --app-ink: #1c1f23;
+        --app-muted: #5b6470;
+        --app-line: #e2e5ea;
+        --app-accent: #1a5fb4;
+        --app-code-bg: #1c2128;
+        --app-rail: 16rem;
       }
-      main {
-        max-width: 72rem;
-        margin: 0 auto;
-        padding: 1rem;
-      }
-      .demo-section {
-        margin-block: 3rem;
-      }
-      .demo-toc {
-        margin-block: 1rem;
-      }
-      /* Stock section: the engine look is untouched — this pads the CARD text
-         clear of the default overlaid arrows (card styling, not engine CSS). */
-      .demo-stock .demo-card h3,
-      .demo-stock .demo-card p {
-        margin-inline: 4rem;
-      }
-      .demo-toc a {
-        color: #1a5fb4;
-      }
-      /* Slides-per-view is site configuration: plain media queries, no JS breakpoints. */
-      .demo-vehicles,
-      .demo-reviews {
-        --dlc-per-view: 1;
-      }
-      @media (min-width: 640px) {
-        .demo-vehicles,
-        .demo-reviews {
-          --dlc-per-view: 2;
-        }
-      }
-      @media (min-width: 1024px) {
-        .demo-vehicles,
-        .demo-reviews {
-          --dlc-per-view: 3;
-        }
-      }
-      /* All four carousels: bare arrows in a gutter OUTSIDE the content —
-         site-CSS override of the generated controls (the escape hatch). */
-      .demo-vehicles,
-      .demo-gallery,
-      .demo-reviews,
-      .demo-models {
-        --dlc-arrow-bg: transparent;
-        --dlc-arrow-fg: #262626;
-        padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
-      }
-      .demo-vehicles .dl-carousel-arrow--prev,
-      .demo-gallery .dl-carousel-arrow--prev,
-      .demo-reviews .dl-carousel-arrow--prev,
-      .demo-models .dl-carousel-arrow--prev {
-        inset-inline-start: 0;
-      }
-      .demo-vehicles .dl-carousel-arrow--next,
-      .demo-gallery .dl-carousel-arrow--next,
-      .demo-reviews .dl-carousel-arrow--next,
-      .demo-models .dl-carousel-arrow--next {
-        inset-inline-end: 0;
-      }
-      .demo-vehicles .dl-carousel-arrow svg,
-      .demo-gallery .dl-carousel-arrow svg,
-      .demo-reviews .dl-carousel-arrow svg,
-      .demo-models .dl-carousel-arrow svg {
-        width: 28px;
-        height: 28px;
-      }
-      .demo-vehicles .dl-carousel-arrow:hover,
-      .demo-gallery .dl-carousel-arrow:hover,
-      .demo-reviews .dl-carousel-arrow:hover,
-      .demo-models .dl-carousel-arrow:hover {
-        color: #000;
-      }
-      /* keep the thumb strip aligned with the narrowed photo */
-      .demo-gallery .dl-carousel-thumbs {
-        inset-inline: calc(var(--dlc-arrow-size) + 0.25rem);
-        cursor: grab; /* the page script adds mouse drag-scrolling */
-      }
-      /* keep the pause button over the cards, not in the gutter */
-      .demo-reviews .dl-carousel-pause {
-        inset-inline-end: calc(var(--dlc-arrow-size) + 0.5rem);
-      }
-      .demo-card {
-        border: 1px solid #ddd;
-        border-radius: 8px;
-        overflow: hidden;
-        block-size: 100%;
+
+      * {
         box-sizing: border-box;
       }
-      /* Vehicles: one section — the photo IS the card, text overlaid on a
-         gradient (keeps the real <img> in the HTML for SEO/alt text). */
-      .demo-vehicles .demo-card {
-        position: relative;
-        border: 0;
-      }
-      .demo-card-body {
-        position: absolute;
-        inset-inline: 0;
-        inset-block-end: 0;
-        padding: 4rem 1rem 1rem;
-        /* strong enough to hold white text over bright photos (sky, chrome) */
-        background: linear-gradient(rgb(0 0 0 / 0%), rgb(0 0 0 / 50%) 40%, rgb(0 0 0 / 88%));
-        color: #fff;
-        text-shadow: 0 1px 2px rgb(0 0 0 / 70%);
-      }
-      .demo-card-body h3 {
+
+      body {
         margin: 0;
+        font-family:
+          system-ui,
+          -apple-system,
+          'Segoe UI',
+          sans-serif;
+        line-height: 1.5;
+        color: var(--app-ink);
+        background: var(--app-bg);
       }
-      .demo-card-body p {
-        margin: 0.15rem 0 0.5rem;
-        color: #f0f0f0;
-      }
-      /* the later .demo-card p rule (#555) ties on specificity and wins —
-         this outranks both so the overlay price stays white */
-      .demo-vehicles .demo-card-body p {
-        color: #fff;
-      }
-      .demo-card-body a {
-        margin: 0;
-        color: #fff;
-      }
-      /* Whole card clickable (stretched link): the existing "View details" link
-         grows an ::after over the card. The overlay's containing block is the
-         absolutely-positioned card body (not the card), so the top offset
-         overshoots and the card's overflow: hidden trims the hit area to the
-         card box. Focus ring moves to the card via :has() — drawn inset
-         because the track clips outset rings (WCAG 2.4.7 kept). */
-      .demo-vehicles .demo-card-body a::after {
-        content: '';
-        position: absolute;
-        inset: -999px 0 0;
-      }
-      .demo-vehicles .demo-card-body a:focus-visible {
-        outline: none;
-      }
-      .demo-vehicles .demo-card:has(.demo-card-body a:focus-visible) {
-        outline: 3px solid var(--dlc-focus);
-        outline-offset: -3px;
-      }
-      /* Round the moving children themselves: Chromium drops a parent's
-         rounded overflow clip while the track is animating, which flashed
-         square corners during arrow scrolls. */
-      .demo-vehicles .demo-card img {
-        border-radius: 8px;
-      }
-      .demo-vehicles .demo-card-body {
-        border-end-start-radius: 8px;
-        border-end-end-radius: 8px;
-      }
-      /* Narrow screens: 16:10 is too short to hold the overlay — crop the
-         photo taller (object-fit) so the text sits in the lower third and
-         the vertically-centered side arrows keep room to live. */
-      @media (max-width: 767.98px) {
-        .demo-vehicles .demo-card img {
-          aspect-ratio: 4 / 3;
-          inline-size: 100%;
-          object-fit: cover;
-        }
-      }
-      @media (max-width: 639.98px) {
-        .demo-vehicles .demo-card img {
-          aspect-ratio: 3 / 4;
-        }
-      }
-      /* "Explore Chevrolet models" — rebuild of the leadscience practice-area
-         carousel design on the plain page: portrait overlay cards, bare
-         centered arrows, and a solid progress bar that fills to the current
-         position. Everything below is site CSS over stock dl-carousel — no
-         library changes and no copied markup from the source site. */
-      /* break out of the 72rem column to 1440px, centered */
-      .demo-wide {
-        position: relative;
-        inset-inline-start: 50%;
-        inline-size: min(1440px, 100vw - 2rem);
-        transform: translateX(-50%);
-      }
-      .demo-models-section h2 {
-        text-align: center;
-        text-transform: uppercase;
-        letter-spacing: 0.06em;
-      }
-      .demo-models-section h2::after {
-        content: '';
-        display: block;
-        inline-size: 64px;
-        block-size: 4px;
-        margin: 0.5rem auto 0;
-        background: #262626;
-      }
-      .demo-models {
-        --dlc-per-view: 1;
-        --dlc-gap: 0px; /* keep units — an unitless 0 breaks the basis calc */
-        /* Segments are all track — the sliding ::before thumb marks the page.
-           #949494 is 3.03:1 on white: the segments are real "go to page"
-           buttons, so their extent has to meet WCAG 1.4.11 (was #e0e0e0 at
-           1.32:1, which made the control invisible against the page). */
-        --dlc-dot-fg: #949494;
-        --dlc-dot-current: #949494;
-        --dlc-controls-space: 3rem;
-      }
-      @media (min-width: 640px) {
-        .demo-models {
-          --dlc-per-view: 2;
-        }
-      }
-      @media (min-width: 1024px) {
-        .demo-models {
-          --dlc-per-view: 4;
-          --dlc-arrow-size: 56px;
-        }
-        .demo-models .dl-carousel-arrow svg {
-          width: 36px;
-          height: 36px;
-        }
-      }
-      /* Stock dots restyled into one solid bar with a SLIDING thumb: the
-         segments are the track (each still a real, labeled "go to page"
-         button); the thumb is a ::before whose translate follows
-         --bar-index/--bar-count, set by the small script at the end of the
-         page whenever the library moves its current-dot class. */
-      .demo-models .dl-carousel-dots {
-        gap: 0;
-        inset-inline: 25%; /* the bar spans half the carousel, centered */
-      }
-      .demo-models .dl-carousel-dots::before {
-        content: '';
-        position: absolute;
-        inset-inline-start: 0;
-        inset-block-start: calc(50% - 2px);
-        inline-size: calc(100% / var(--bar-count, 1));
-        block-size: 4px;
-        border-radius: 2px;
-        background: #262626;
-        translate: calc(var(--bar-index, 0) * 100%);
-        pointer-events: none;
-      }
-      @media (prefers-reduced-motion: no-preference) {
-        .demo-models .dl-carousel-dots::before {
-          transition: translate 0.35s ease;
-        }
-      }
-      .demo-models .dl-carousel-dot {
-        flex: 1 1 auto;
-      }
-      .demo-models .dl-carousel-dot::after {
-        inline-size: 100%;
-        block-size: 4px;
-        border-radius: 0;
-      }
-      .demo-models .dl-carousel-dot:first-child::after {
-        border-start-start-radius: 2px;
-        border-end-start-radius: 2px;
-      }
-      .demo-models .dl-carousel-dot:last-child::after {
-        border-start-end-radius: 2px;
-        border-end-end-radius: 2px;
-      }
-      .demo-model-card {
-        position: relative;
-        display: block;
-        overflow: hidden;
-        text-decoration: none;
-      }
-      .demo-model-card img {
-        inline-size: 100%;
-        block-size: auto;
-        display: block;
-      }
-      /* small hover: gentle zoom, same on keyboard focus, off under PRM */
-      .demo-model-card:hover img,
-      .demo-model-card:focus-visible img {
-        transform: scale(1.05);
-      }
-      @media (prefers-reduced-motion: no-preference) {
-        .demo-model-card img {
-          transition: transform 0.5s ease-out;
-        }
-      }
-      .demo-model-card::after {
-        content: '';
-        position: absolute;
-        inset: 0;
-        background: linear-gradient(rgb(0 0 0 / 0%) 45%, rgb(0 0 0 / 88%) 100%);
-      }
-      .demo-model-card h3 {
-        position: absolute;
-        inset-inline: 0;
-        inset-block-end: 0;
-        z-index: 1;
-        margin: 0;
-        padding: 1rem;
-        font-size: 1.35rem;
-        text-transform: uppercase;
-        letter-spacing: 0.04em;
-        color: #fff;
-        text-shadow: 0 1px 2px rgb(0 0 0 / 70%);
-      }
-      /* inset ring — the track clips anything drawn outside the slide */
-      .demo-model-card:focus-visible {
-        outline: 3px solid var(--dlc-focus);
-        outline-offset: -3px;
-      }
-      /* Model bar — dealer-style strip of cutouts: one card per arrow step
-         (data-step="slide"), whole card is the link, dots hidden (arrows +
-         swipe remain), gutter arrows like the other sections. */
-      .demo-modelbar {
-        --dlc-per-view: 2;
-        --dlc-gap: 0.5rem;
-        --dlc-controls-space: 0px; /* keep the unit — unitless 0 breaks the arrow-centering calc */
-        --dlc-arrow-bg: transparent;
-        --dlc-arrow-fg: #262626;
-        padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
-      }
-      @media (min-width: 640px) {
-        .demo-modelbar {
-          --dlc-per-view: 3;
-        }
-      }
-      @media (min-width: 1024px) {
-        .demo-modelbar {
-          --dlc-per-view: 5;
-        }
-      }
-      .demo-modelbar .dl-carousel-dots {
-        display: none;
-      }
-      .demo-modelbar .dl-carousel-arrow--prev {
-        inset-inline-start: 0;
-      }
-      .demo-modelbar .dl-carousel-arrow--next {
-        inset-inline-end: 0;
-      }
-      .demo-modelbar-card {
-        display: block;
-        color: #262626;
-        text-align: center;
-        text-decoration: none;
-      }
-      .demo-modelbar-card img {
-        inline-size: 100%;
-        block-size: auto;
-      }
-      .demo-modelbar-card p {
-        margin: 0;
-        font-weight: 600;
-      }
-      .demo-modelbar-card:hover img,
-      .demo-modelbar-card:focus-visible img {
-        transform: scale(1.05);
-      }
-      @media (prefers-reduced-motion: no-preference) {
-        .demo-modelbar-card img {
-          transition: transform 0.3s ease-out;
-        }
-      }
-      /* inset ring — the track clips anything drawn outside the slide */
-      .demo-modelbar-card:focus-visible {
-        outline: 3px solid var(--dlc-focus);
-        outline-offset: -3px;
-      }
-      /* Model bar with tabs (Ford-style): each tab pane wraps its own
-         dl-carousel instance. Panes hide with [hidden] (display: none) — the
-         engine's ResizeObserver re-measures when a pane is revealed, so no
-         slick-style height: 0 hack is needed. Tabs are page script (APG). */
-      .demo-modelbar-tabs-section .demo-modelbar {
-        --dlc-per-view: 2;
-      }
-      @media (min-width: 640px) {
-        .demo-modelbar-tabs-section .demo-modelbar {
-          --dlc-per-view: 3;
-        }
-      }
-      .demo-tabs [role='tablist'] {
+
+      /* ---- header ------------------------------------------------------------ */
+
+      .app-header {
         display: flex;
-        gap: 0.5rem;
-        justify-content: center;
-        margin-block-end: 1rem;
+        flex-wrap: wrap;
+        gap: 0.5rem 1.5rem;
+        align-items: baseline;
+        padding: 0.9rem 1.25rem;
+        background: var(--app-panel);
+        border-bottom: 1px solid var(--app-line);
       }
-      .demo-tabs [role='tab'] {
-        padding: 0.5rem 1.25rem;
+
+      .app-header h1 {
+        margin: 0;
+        font-size: 1.05rem;
+        letter-spacing: -0.01em;
+      }
+
+      .app-header p {
+        flex: 1;
+        margin: 0;
+        font-size: 0.85rem;
+        color: var(--app-muted);
+      }
+
+      .app-header a {
+        font-size: 0.85rem;
+        color: var(--app-accent);
+      }
+
+      /* ---- shell ------------------------------------------------------------- */
+
+      .app {
+        display: grid;
+        grid-template-columns: var(--app-rail) minmax(0, 1fr);
+        align-items: start;
+      }
+
+      /* ---- sidebar picker ---------------------------------------------------- */
+
+      .app-nav {
+        position: sticky;
+        top: 0;
+        max-height: 100vh;
+        padding: 1rem 0.75rem 2rem;
+        overflow-y: auto;
+        border-right: 1px solid var(--app-line);
+      }
+
+      .app-nav h2 {
+        margin: 1.25rem 0 0.35rem 0.5rem;
+        font-size: 0.7rem;
+        font-weight: 700;
+        color: var(--app-muted);
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+      }
+
+      .app-nav h2:first-child {
+        margin-top: 0;
+      }
+
+      .app-nav ul {
+        padding: 0;
+        margin: 0;
+        list-style: none;
+      }
+
+      .app-nav button {
+        display: block;
+        inline-size: 100%;
+        padding: 0.4rem 0.5rem;
         font: inherit;
+        font-size: 0.9rem;
+        color: inherit;
+        text-align: start;
         cursor: pointer;
-        background: transparent;
-        border: 1px solid #949494;
-        border-radius: 999px;
+        background: none;
+        border: 0;
+        border-radius: 6px;
+        transition:
+          background-color 150ms ease-in-out,
+          color 150ms ease-in-out;
       }
-      .demo-tabs [role='tab'][aria-selected='true'] {
-        color: #fff;
-        background: #262626;
-        border-color: #262626;
+
+      .app-nav button:hover {
+        background: #eceff3;
       }
-      .demo-tabs [role='tab']:focus-visible {
-        outline: 3px solid var(--dlc-focus);
+
+      .app-nav button[aria-current='true'] {
+        font-weight: 600;
+        color: var(--app-accent);
+        background: #e7effa;
+      }
+
+      .app-nav button:focus-visible,
+      .app-tabs button:focus-visible,
+      .app-copy:focus-visible {
+        outline: 3px solid var(--app-accent);
         outline-offset: 2px;
       }
-      /* Faded peek — a sliver of the neighboring slides shows at each edge
-         (--dlc-peek, stock engine knob) and fades out via a mask on the track:
-         same technique the gallery thumb strip uses. At the ends the fade covers
-         empty peek padding, so nothing readable is ever lost. Pure CSS, no JS.
-         Arrows float OVER the faded edge (no outer gutter) — the fade zone is
-         near page-white under them, so a bare dark chevron stays legible and
-         there is no dead space beside the arrow at the ends. */
-      .demo-peek {
-        --dlc-per-view: 1;
-        --dlc-peek: 12vw;
-        --dlc-arrow-bg: transparent;
-        --dlc-arrow-fg: #262626;
+
+      /* ---- main -------------------------------------------------------------- */
+
+      .app-main {
+        min-width: 0;
+        padding: 1.5rem 1.75rem 4rem;
       }
-      @media (min-width: 1024px) {
-        .demo-peek {
-          --dlc-per-view: 2;
-          --dlc-peek: 6rem;
-        }
+
+      .app-title {
+        margin: 0 0 0.25rem;
+        font-size: 1.5rem;
+        letter-spacing: -0.02em;
       }
-      .demo-peek .dl-carousel-arrow--prev {
-        inset-inline-start: 0.25rem;
+
+      .app-blurb {
+        max-width: 62ch;
+        margin: 0 0 0.75rem;
+        color: var(--app-muted);
       }
-      .demo-peek .dl-carousel-arrow--next {
-        inset-inline-end: 0.25rem;
-      }
-      .demo-peek .dl-carousel-track {
-        mask-image: linear-gradient(to right, transparent, #000 var(--dlc-peek), #000 calc(100% - var(--dlc-peek)), transparent);
-      }
-      .demo-peek img {
-        border-radius: 8px;
-      }
-      /* Mixed image sizes — the default card recipe is indifferent to source
-         dimensions: a fixed aspect-ratio box + object-fit: cover normalizes
-         whatever the CMS user uploads (use contain for cutouts/logos). */
-      .demo-mixed {
-        --dlc-per-view: 1;
-        --dlc-arrow-bg: transparent;
-        --dlc-arrow-fg: #262626;
-        padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
-      }
-      @media (min-width: 640px) {
-        .demo-mixed {
-          --dlc-per-view: 2;
-        }
-      }
-      @media (min-width: 1024px) {
-        .demo-mixed {
-          --dlc-per-view: 3;
-        }
-      }
-      .demo-mixed .dl-carousel-arrow--prev {
-        inset-inline-start: 0;
-      }
-      .demo-mixed .dl-carousel-arrow--next {
-        inset-inline-end: 0;
-      }
-      .demo-mixed .demo-card img {
-        aspect-ratio: 4 / 3;
-        inline-size: 100%;
-        block-size: auto;
-        object-fit: cover;
-      }
-      /* Service cards — rebuild of the Skaug Law (client32811) practice-area
-         carousel: whole-card links, image in a fixed-aspect cover box,
-         equal-height cards (the track is flex; the copy flex-grows), one card
-         per arrow step, arrows only. */
-      .demo-cards {
-        --dlc-per-view: 1;
-        --dlc-controls-space: 0px; /* keep the unit — unitless 0 breaks the arrow-centering calc */
-        --dlc-arrow-bg: transparent;
-        --dlc-arrow-fg: #262626;
-        padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
-      }
-      @media (min-width: 640px) {
-        .demo-cards {
-          --dlc-per-view: 2;
-        }
-      }
-      @media (min-width: 1024px) {
-        .demo-cards {
-          --dlc-per-view: 3;
-        }
-      }
-      .demo-cards .dl-carousel-dots {
-        display: none;
-      }
-      .demo-cards .dl-carousel-arrow--prev {
-        inset-inline-start: 0;
-      }
-      .demo-cards .dl-carousel-arrow--next {
-        inset-inline-end: 0;
-      }
-      .demo-service-card {
+
+      .app-meta {
         display: flex;
-        flex-direction: column;
-        box-sizing: border-box;
-        block-size: 100%;
-        overflow: hidden;
-        color: inherit;
-        text-decoration: none;
-        background: #fff;
-        border: 1px solid #ddd;
-        border-radius: 8px;
-      }
-      .demo-service-media {
-        aspect-ratio: 8 / 5;
-        overflow: hidden; /* clips the hover zoom, like the source site */
-      }
-      .demo-service-card img {
-        inline-size: 100%;
-        block-size: 100%;
-        object-fit: cover;
-      }
-      .demo-service-card h3 {
-        margin: 0.75rem 1rem 0.25rem;
-        font-size: 1.05rem;
-      }
-      .demo-service-card p {
-        flex-grow: 1;
-        margin: 0 1rem 0.5rem;
-        color: #555;
-      }
-      .demo-service-more {
-        margin: 0 1rem 1rem;
-        font-weight: 600;
-        color: #1a5fb4;
-      }
-      .demo-service-card:hover img,
-      .demo-service-card:focus-visible img {
-        transform: scale(1.06);
-      }
-      @media (prefers-reduced-motion: no-preference) {
-        .demo-service-card img {
-          transition: transform 0.4s ease-out;
-        }
-      }
-      /* inset ring — the track clips anything drawn outside the slide */
-      .demo-service-card:focus-visible {
-        outline: 3px solid var(--dlc-focus);
-        outline-offset: -3px;
-      }
-      /* Video testimonials — rebuild of the Bordas video-scroller: dark band,
-         one slide per view (poster left, name + tagline + Click-to-Watch
-         right), video NEVER plays inline — posters open the <dialog> at the
-         end of the page (page script). No autoplay: the source site rotates
-         video cards every 3 s, which fights the content. */
-      .demo-video-section {
-        box-sizing: border-box; /* demo-wide sets the full width — padding must not add to it */
-        padding: 1.5rem 1rem 2rem;
-        background: #16324f;
-        border-radius: 8px;
-      }
-      .demo-video-section h2 {
-        color: #fff;
-        text-align: center;
-      }
-      .demo-video-section details {
-        color: #d8e2ec;
-      }
-      .demo-video {
-        --dlc-per-view: 1;
-        --dlc-controls-space: 0px; /* keep the unit — unitless 0 breaks the arrow-centering calc */
-        --dlc-arrow-bg: transparent;
-        --dlc-arrow-fg: #fff;
-        --dlc-focus: #fff; /* blue ring is invisible on the navy band */
-        padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
-      }
-      .demo-video .dl-carousel-dots {
-        display: none;
-      }
-      .demo-video .dl-carousel-arrow--prev {
-        inset-inline-start: 0;
-      }
-      .demo-video .dl-carousel-arrow--next {
-        inset-inline-end: 0;
-      }
-      .demo-video-card {
-        display: grid;
-        gap: 1.5rem;
-        align-items: center;
-        color: #fff;
-      }
-      @media (min-width: 768px) {
-        .demo-video-card {
-          grid-template-columns: 1fr 1fr;
-        }
-      }
-      .demo-video-poster {
-        position: relative;
-        display: block;
+        flex-wrap: wrap;
+        gap: 0.4rem;
+        margin: 0 0 1.25rem;
         padding: 0;
-        cursor: pointer;
-        background: none;
-        border: 0;
+        list-style: none;
       }
-      .demo-video-poster img {
-        display: block;
-        inline-size: 100%;
-        block-size: auto;
-        border-radius: 8px;
+
+      .app-meta li {
+        padding: 0.15rem 0.5rem;
+        font-family: ui-monospace, 'SFMono-Regular', Consolas, monospace;
+        font-size: 0.75rem;
+        color: var(--app-muted);
+        background: var(--app-panel);
+        border: 1px solid var(--app-line);
+        border-radius: 999px;
       }
-      .demo-video-play {
-        position: absolute;
-        inset: 0;
-        display: grid;
-        place-items: center;
+
+      /* The live example. Generous padding so overlaid arrows in the gutter have
+         somewhere to sit without touching the panel edge. */
+      .app-stage {
+        padding: 1.5rem;
+        margin-bottom: 1.5rem;
+        background: var(--app-panel);
+        border: 1px solid var(--app-line);
+        border-radius: 10px;
       }
-      .demo-video-body h3 {
-        margin: 0 0 0.5rem;
-        font-size: 1.6rem;
+
+      /* ---- code panel -------------------------------------------------------- */
+
+      .app-code {
+        overflow: hidden;
+        background: var(--app-code-bg);
+        border-radius: 10px;
       }
-      .demo-video-body p {
-        margin: 0 0 1rem;
-        color: #d8e2ec;
+
+      .app-code-bar {
+        display: flex;
+        gap: 0.25rem;
+        align-items: center;
+        padding: 0.4rem 0.5rem;
+        border-bottom: 1px solid #2c333d;
       }
-      .demo-video-open {
-        padding: 0 0 0.35rem;
+
+      .app-tabs {
+        display: flex;
+        flex: 1;
+        gap: 0.25rem;
+      }
+
+      .app-tabs button {
+        padding: 0.3rem 0.7rem;
         font: inherit;
-        font-weight: 600;
-        color: #fff;
+        font-size: 0.82rem;
+        color: #aeb6c2;
         cursor: pointer;
         background: none;
         border: 0;
-        border-block-end: 1px solid rgb(255 255 255 / 45%);
-      }
-      .demo-video-poster:focus-visible,
-      .demo-video-open:focus-visible {
-        outline: 3px solid #fff;
-        outline-offset: -3px;
-      }
-      .demo-video-dialog {
-        inline-size: min(720px, 90vw);
-        padding: 1rem;
-        border: 0;
-        border-radius: 8px;
-      }
-      .demo-video-dialog::backdrop {
-        background: rgb(0 0 0 / 60%);
-      }
-      .demo-video-dialog-head {
-        display: flex;
-        align-items: center;
-        justify-content: space-between;
-        gap: 1rem;
-        margin-block-end: 0.75rem;
-      }
-      .demo-video-dialog-head h3 {
-        margin: 0;
-      }
-      .demo-video-close {
-        display: grid;
-        place-items: center;
-        inline-size: 36px;
-        block-size: 36px;
-        font-size: 1.25rem;
-        cursor: pointer;
-        background: #f0f0f0;
-        border: 0;
-        border-radius: 50%;
-      }
-      .demo-video-frame {
-        display: grid;
-        place-items: center;
-        aspect-ratio: 16 / 9;
-        padding: 1rem;
-        color: #eee;
-        text-align: center;
-        background: #111;
         border-radius: 6px;
+        transition:
+          background-color 150ms ease-in-out,
+          color 150ms ease-in-out;
       }
-      .demo-card h3 {
-        margin: 0.75rem 1rem 0.25rem;
-        font-size: 1.05rem;
-      }
-      .demo-card p {
-        margin: 0 1rem 0.5rem;
-        color: #555;
-      }
-      .demo-card a {
-        display: inline-block;
-        margin: 0 1rem 1rem;
-      }
-      details {
-        margin-block-start: 1rem;
-      }
-      pre {
-        background: #f6f6f6;
-        padding: 1rem;
-        overflow-x: auto;
-        border-radius: 6px;
-      }
-      table {
-        border-collapse: collapse;
-        margin-block: 0.5rem;
-      }
-      th,
-      td {
-        border: 1px solid #ccc;
-        padding: 0.35rem 0.6rem;
-        text-align: left;
-      }
-      /* Reviews: Google-review-style cards */
-      .demo-review {
-        margin: 0;
-        block-size: 100%;
-        box-sizing: border-box;
-        padding: 1rem;
-        border: 1px solid #dadce0;
-        border-radius: 8px;
-        background: #fff;
-      }
-      .demo-review figcaption {
-        display: flex;
-        align-items: center;
-        gap: 0.75rem;
-      }
-      .demo-review-avatar {
-        display: grid;
-        place-items: center;
-        inline-size: 40px;
-        block-size: 40px;
-        border-radius: 50%;
-        background: var(--avatar-bg, #5f6368);
+
+      .app-tabs button:hover {
         color: #fff;
-        font-weight: 500;
       }
-      .demo-review-byline {
-        display: flex;
-        flex-direction: column;
-        line-height: 1.35;
+
+      .app-tabs button[aria-pressed='true'] {
+        color: #fff;
+        background: #2c333d;
       }
-      .demo-review-byline strong {
-        color: #202124;
-        font-weight: 500;
+
+      .app-copy {
+        padding: 0.3rem 0.8rem;
+        font: inherit;
+        font-size: 0.82rem;
+        color: #cfd6e0;
+        cursor: pointer;
+        background: #2c333d;
+        border: 0;
+        border-radius: 6px;
+        transition:
+          background-color 150ms ease-in-out,
+          color 150ms ease-in-out;
       }
-      .demo-review-byline small {
-        color: #5f6368;
+
+      .app-copy:hover {
+        color: #fff;
+        background: #3a434f;
       }
-      .demo-review-stars {
-        /* rating is carried by the aria-label; ≥3:1 amber for the glyphs */
-        margin: 0.6rem 0 0.3rem;
-        color: #c77800;
-        letter-spacing: 2px;
-      }
-      .demo-review blockquote {
+
+      .app-code pre {
+        max-height: 60vh;
+        padding: 1rem;
         margin: 0;
+        overflow: auto;
+        font-size: 0.8rem;
+        line-height: 1.55;
+        color: #dde3ec;
       }
-      .demo-review blockquote p {
-        margin: 0;
-        color: #3c4043;
+
+      .app-note {
+        max-width: 72ch;
+        padding: 0.75rem 1rem;
+        margin-top: 1.25rem;
+        font-size: 0.87rem;
+        color: var(--app-muted);
+        background: var(--app-panel);
+        border: 1px solid var(--app-line);
+        border-inline-start: 3px solid var(--app-accent);
+        border-radius: 0 8px 8px 0;
+      }
+
+      .app-note code,
+      .app-blurb code {
+        font-size: 0.85em;
+        background: #eceff3;
+        border-radius: 4px;
+        padding: 0.05rem 0.3rem;
+      }
+
+      /* ---- narrow: the rail becomes a scrolling strip above the stage -------- */
+
+      @media (max-width: 767.98px) {
+        .app {
+          display: block;
+        }
+
+        .app-nav {
+          position: static;
+          display: flex;
+          gap: 1rem;
+          max-height: none;
+          padding: 0.5rem 0.75rem;
+          overflow-x: auto;
+          white-space: nowrap;
+          border-right: 0;
+          border-bottom: 1px solid var(--app-line);
+        }
+
+        .app-nav > div {
+          flex: 0 0 auto;
+        }
+
+        .app-nav h2 {
+          margin: 0 0 0.15rem 0.5rem;
+        }
+
+        .app-nav ul {
+          display: flex;
+          gap: 0.25rem;
+        }
+
+        .app-main {
+          padding: 1.25rem 1rem 3rem;
+        }
+
+        /* 1.5rem of stage padding eats a phone's width — the example needs it more. */
+        .app-stage {
+          padding: 0.75rem;
+        }
       }
     </style>
   </head>
   <body>
-    <main>
-      <h1>Custom Slider</h1>
-      <p>Dependency-free scroll-snap slider. Try this page with JavaScript disabled — every variation remains a readable, swipeable strip.</p>
+    <header class="app-header">
+      <h1>dl-carousel</h1>
+      <p>Dependency-free scroll-snap slider. Pick an example — the code below it is exactly what renders above it.</p>
+      <a href="../README.md">API reference</a>
+    </header>
 
-      <nav class="demo-toc" aria-label="On this page">
-        <a href="#vehicles">Featured vehicles</a> · <a href="#modelbar">Model bar</a> · <a href="#modelbar-tabs">Model bar (tabs)</a> · <a href="#models">Model cards</a> ·
-        <a href="#peek">Faded peek</a> · <a href="#mixed">Mixed image sizes</a> · <a href="#cards">Service cards</a> · <a href="#video">Video testimonials</a> · <a href="#gallery">Gallery</a> ·
-        <a href="#reviews">Reviews</a> · <a href="#stock">Stock look</a>
-      </nav>
+    <div class="app">
+      <!-- Populated from the templates at the end of this file. -->
+      <nav class="app-nav" aria-label="Examples"></nav>
 
-      <!-- The carousel itself is the labelled landmark (role=region + aria-labelledby).
-           Naming this wrapper from the same heading would nest two identically-named
-           landmarks, so the wrapper stays an unnamed section. -->
-      <section class="demo-section demo-wide" id="vehicles">
-        <h2 id="vehicles-h">Featured vehicles</h2>
-        <div class="dl-carousel demo-vehicles" data-slider aria-labelledby="vehicles-h">
-          <ul class="dl-carousel-track">
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <img src="img/vehicle-1.jpg" width="800" height="500" alt="Black Porsche Panamera driving on a highway, rear three-quarter view" fetchpriority="high" />
-                <div class="demo-card-body">
-                  <h3>2021 Porsche Panamera</h3>
-                  <p>$82,900 · 18,300 mi</p>
-                  <a href="#vehicle-1" aria-label="View details: 2021 Porsche Panamera">View details</a>
-                </div>
-              </article>
-            </li>
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <img src="img/vehicle-2.jpg" width="800" height="500" alt="Blue BMW 4 Series coupe parked on a city street, side view" />
-                <div class="demo-card-body">
-                  <h3>2023 BMW 430i Coupe</h3>
-                  <p>$42,750 · 9,100 mi</p>
-                  <a href="#vehicle-2" aria-label="View details: 2023 BMW 430i Coupe">View details</a>
-                </div>
-              </article>
-            </li>
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <img src="img/vehicle-3.jpg" width="800" height="500" alt="White Ford Expedition on a desert road between red rock cliffs" />
-                <div class="demo-card-body">
-                  <h3>2022 Ford Expedition Limited</h3>
-                  <p>$47,988 · 26,400 mi</p>
-                  <a href="#vehicle-3" aria-label="View details: 2022 Ford Expedition Limited">View details</a>
-                </div>
-              </article>
-            </li>
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <img src="img/vehicle-4.jpg" width="800" height="500" alt="White Honda CR-V parked near snowy mountains" loading="lazy" decoding="async" />
-                <div class="demo-card-body">
-                  <h3>2023 Honda CR-V EX-L</h3>
-                  <p>$33,450 · 12,900 mi</p>
-                  <a href="#vehicle-4" aria-label="View details: 2023 Honda CR-V EX-L">View details</a>
-                </div>
-              </article>
-            </li>
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <img src="img/vehicle-5.jpg" width="800" height="500" alt="White Nissan GT-R from behind on an open country road" loading="lazy" decoding="async" />
-                <div class="demo-card-body">
-                  <h3>2020 Nissan GT-R Premium</h3>
-                  <p>$98,500 · 7,200 mi</p>
-                  <a href="#vehicle-5" aria-label="View details: 2020 Nissan GT-R Premium">View details</a>
-                </div>
-              </article>
-            </li>
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <img src="img/vehicle-6.jpg" width="800" height="500" alt="Light blue Fiat 500 parked beside a stone building, side view" loading="lazy" decoding="async" />
-                <div class="demo-card-body">
-                  <h3>2019 Fiat 500 Lounge</h3>
-                  <p>$13,995 · 31,800 mi</p>
-                  <a href="#vehicle-6" aria-label="View details: 2019 Fiat 500 Lounge">View details</a>
-                </div>
-              </article>
-            </li>
-          </ul>
-        </div>
-        <details>
-          <summary>Copy-paste HTML + options</summary>
-          <pre><code>&lt;div class="dl-carousel" data-slider aria-label="Featured vehicles"&gt;
-  &lt;ul class="dl-carousel-track"&gt;
-    &lt;li class="dl-carousel-slide"&gt;…card content…&lt;/li&gt;
-    &lt;!-- more slides --&gt;
-  &lt;/ul&gt;
-&lt;/div&gt;</code></pre>
-          <p>
-            Card images need <code>width</code>/<code>height</code> (that is what holds CLS at 0) and, on a real site, <code>srcset</code>/<code>sizes</code> — size <code>sizes</code> to ONE slide's
-            rendered width, never <code>100vw</code>. The six photos on this page are single full-size JPEGs, which is why the demo weighs ~1.8&nbsp;MB; a responsive set is the single biggest
-            performance win when you implement.
-          </p>
-          <p>
-            The whole card is clickable via a stretched link: the card's "View details" <code>&lt;a&gt;</code> carries an <code>::after</code> overlay. Watch the containing block — here the link sits
-            inside the absolutely-positioned card body, so the overlay's top offset overshoots (<code>inset: -999px 0 0</code>) and the card's <code>overflow: hidden</code> trims the hit area to the
-            card box. Keep the link's <code>aria-label</code> short — it is the card's accessible name.
-          </p>
-          <p>Set slides-per-view in CSS (no JS breakpoints):</p>
-          <pre><code>.my-slider { --dlc-per-view: 1; }
-@media (min-width: 640px)  { .my-slider { --dlc-per-view: 2; } }
-@media (min-width: 1024px) { .my-slider { --dlc-per-view: 3; } }</code></pre>
-          <table>
-            <caption>
-              Data attributes
-            </caption>
-            <tr>
-              <th>Attribute</th>
-              <th>Default</th>
-              <th>Effect</th>
-            </tr>
-            <tr>
-              <td><code>data-slider</code></td>
-              <td>—</td>
-              <td>Auto-initialize this element</td>
-            </tr>
-            <tr>
-              <td><code>data-autoplay="4000"</code></td>
-              <td>0 (off)</td>
-              <td>Advance every N ms; adds a pause button</td>
-            </tr>
-            <tr>
-              <td><code>data-rewind="false"</code></td>
-              <td>rewind on</td>
-              <td>Stop at the ends instead of wrapping; end arrows disable</td>
-            </tr>
-            <tr>
-              <td><code>data-step="slide"</code></td>
-              <td>page</td>
-              <td>Arrows/autoplay advance one card at a time (see the model bar)</td>
-            </tr>
-            <tr>
-              <td><code>data-drag="false"</code></td>
-              <td>drag on</td>
-              <td>Opt out of mouse drag-to-scroll (touch swiping is native either way)</td>
-            </tr>
-            <tr>
-              <td><code>data-gallery</code></td>
-              <td>off</td>
-              <td>Thumbnail-gallery (tabbed) variant</td>
-            </tr>
-            <tr>
-              <td><code>data-roledescription="…"</code></td>
-              <td>carousel</td>
-              <td>Screen-reader role description; empty string to omit</td>
-            </tr>
-          </table>
-        </details>
-      </section>
+      <main class="app-main">
+        <h2 class="app-title" id="ex-title"></h2>
+        <p class="app-blurb" id="ex-blurb"></p>
+        <ul class="app-meta" id="ex-meta"></ul>
 
-      <section class="demo-section demo-models-section demo-wide" id="models">
-        <h2 id="models-h">Explore Chevrolet Models</h2>
-        <div class="dl-carousel demo-models" data-slider data-rewind="false" aria-labelledby="models-h">
-          <ul class="dl-carousel-track">
-            <li class="dl-carousel-slide">
-              <a class="demo-model-card" href="#silverado">
-                <img src="img/model-silverado.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
-                <h3>Silverado</h3>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-model-card" href="#equinox">
-                <img src="img/model-equinox.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
-                <h3>Equinox</h3>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-model-card" href="#tahoe">
-                <img src="img/model-tahoe.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
-                <h3>Tahoe</h3>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-model-card" href="#malibu">
-                <img src="img/model-malibu.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
-                <h3>Malibu</h3>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-model-card" href="#camaro">
-                <img src="img/model-camaro.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
-                <h3>Camaro</h3>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-model-card" href="#corvette">
-                <img src="img/model-corvette.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
-                <h3>Corvette</h3>
-              </a>
-            </li>
-          </ul>
-        </div>
-        <details>
-          <summary>How this variant is built</summary>
-          <p>
-            Stock <code>dl-carousel</code> — every visual difference is site CSS: bare arrows repositioned into the gutters (<code>--dlc-arrow-bg: transparent</code>), portrait overlay cards, and the
-            dots restyled into a bar with a sliding thumb: the page script at the end of this file watches the library's current-dot class and sets <code>--bar-index</code>/<code>--bar-count</code>,
-            which a <code>::before</code> translates across — the "custom callback" escape hatch in action. <code>data-rewind="false"</code> stops the carousel at the ends (the arrow disables) instead
-            of wrapping.
-          </p>
-          <p>
-            <strong>Alt text on a real site:</strong> these photos are stand-ins, so they carry <code>alt=""</code> and the heading names the card. With real OEM photography, give the image a
-            descriptive <code>alt</code> (<code>alt="2026 Chevrolet Silverado 1500 LT in Summit White"</code>) for image search, and put an explicit <code>aria-label="Explore the Silverado"</code> on
-            the wrapping link so its accessible name stays short instead of concatenating the alt text and the heading.
-          </p>
-        </details>
-      </section>
+        <div class="app-stage" id="stage"></div>
 
-      <section class="demo-section demo-modelbar-section demo-wide" id="modelbar">
-        <h2 id="modelbar-h">Chevrolet model bar</h2>
-        <div class="dl-carousel demo-modelbar" data-slider data-step="slide" aria-labelledby="modelbar-h">
-          <ul class="dl-carousel-track">
-            <li class="dl-carousel-slide">
-              <a class="demo-modelbar-card" href="#silverado-1500" aria-label="Explore the Silverado 1500">
-                <img
-                  src="img/chrome-silverado-1500.png"
-                  srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2026 Chevrolet Silverado 1500"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Silverado 1500</p>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-modelbar-card" href="#colorado" aria-label="Explore the Colorado">
-                <img
-                  src="img/chrome-colorado.png"
-                  srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Colorado"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Colorado</p>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-modelbar-card" href="#tahoe" aria-label="Explore the Tahoe">
-                <img
-                  src="img/chrome-tahoe.png"
-                  srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Tahoe"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Tahoe</p>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-modelbar-card" href="#suburban" aria-label="Explore the Suburban">
-                <img
-                  src="img/chrome-suburban.png"
-                  srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Suburban"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Suburban</p>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-modelbar-card" href="#traverse" aria-label="Explore the Traverse">
-                <img
-                  src="img/chrome-traverse.png"
-                  srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Traverse"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Traverse</p>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-modelbar-card" href="#equinox" aria-label="Explore the Equinox">
-                <img
-                  src="img/chrome-equinox.png"
-                  srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Equinox"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Equinox</p>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-modelbar-card" href="#trailblazer" aria-label="Explore the Trailblazer">
-                <img
-                  src="img/chrome-trailblazer.png"
-                  srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Trailblazer"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Trailblazer</p>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-modelbar-card" href="#trax" aria-label="Explore the Trax">
-                <img
-                  src="img/chrome-trax.png"
-                  srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
-                  sizes="(min-width: 1024px) 250px, (min-width: 640px) 30vw, 45vw"
-                  width="320"
-                  height="240"
-                  alt="2025 Chevrolet Trax"
-                  loading="lazy"
-                  decoding="async"
-                />
-                <p>Trax</p>
-              </a>
-            </li>
-          </ul>
-        </div>
-        <details>
-          <summary>How this variant is built</summary>
-          <p>
-            The dealer "model bar": <code>data-step="slide"</code> advances one card per arrow click (the slick <code>slidesToScroll: 1</code> feel), the whole card is the link, dots are hidden with
-            site CSS (arrows + swipe remain — matching every production model bar we sampled). Images are ChromeData cutouts from the Chrome Photo Builder (angle 1, transparent PNG); on a DealerOn
-            site reference them as <code>#CHROMEPHOTOPATH|StyleID|1|640p#</code> and re-theme with <code>--dlc-*</code> per OEM.
-          </p>
-        </details>
-      </section>
-
-      <section class="demo-section demo-modelbar-section demo-modelbar-tabs-section demo-wide" id="modelbar-tabs">
-        <h2 id="modelbar-tabs-h">Model bar with tabs</h2>
-        <div class="demo-tabs" data-tabs>
-          <div role="tablist" aria-labelledby="modelbar-tabs-h">
-            <button type="button" role="tab" id="tab-trucks" aria-controls="pane-trucks" aria-selected="true">Trucks &amp; full-size SUVs</button>
-            <button type="button" role="tab" id="tab-crossovers" aria-controls="pane-crossovers" aria-selected="false" tabindex="-1">Crossovers</button>
-          </div>
-          <div id="pane-trucks" role="tabpanel" aria-labelledby="tab-trucks">
-            <div class="dl-carousel demo-modelbar" data-slider data-step="slide" aria-label="Trucks and full-size SUVs">
-              <ul class="dl-carousel-track">
-                <li class="dl-carousel-slide">
-                  <a class="demo-modelbar-card" href="#silverado-1500" aria-label="Explore the Silverado 1500">
-                    <img
-                      src="img/chrome-silverado-1500.png"
-                      srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
-                      sizes="(min-width: 640px) 30vw, 45vw"
-                      width="320"
-                      height="240"
-                      alt="2026 Chevrolet Silverado 1500"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <p>Silverado 1500</p>
-                  </a>
-                </li>
-                <li class="dl-carousel-slide">
-                  <a class="demo-modelbar-card" href="#colorado" aria-label="Explore the Colorado">
-                    <img
-                      src="img/chrome-colorado.png"
-                      srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
-                      sizes="(min-width: 640px) 30vw, 45vw"
-                      width="320"
-                      height="240"
-                      alt="2025 Chevrolet Colorado"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <p>Colorado</p>
-                  </a>
-                </li>
-                <li class="dl-carousel-slide">
-                  <a class="demo-modelbar-card" href="#tahoe" aria-label="Explore the Tahoe">
-                    <img
-                      src="img/chrome-tahoe.png"
-                      srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
-                      sizes="(min-width: 640px) 30vw, 45vw"
-                      width="320"
-                      height="240"
-                      alt="2025 Chevrolet Tahoe"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <p>Tahoe</p>
-                  </a>
-                </li>
-                <li class="dl-carousel-slide">
-                  <a class="demo-modelbar-card" href="#suburban" aria-label="Explore the Suburban">
-                    <img
-                      src="img/chrome-suburban.png"
-                      srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
-                      sizes="(min-width: 640px) 30vw, 45vw"
-                      width="320"
-                      height="240"
-                      alt="2025 Chevrolet Suburban"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <p>Suburban</p>
-                  </a>
-                </li>
-              </ul>
+        <section class="app-code" aria-label="Source for this example">
+          <div class="app-code-bar">
+            <div class="app-tabs" role="group" aria-label="Which source to show">
+              <button type="button" data-pane="full" aria-pressed="true">Full page</button>
+              <button type="button" data-pane="html" aria-pressed="false">HTML</button>
+              <button type="button" data-pane="css" aria-pressed="false">CSS</button>
             </div>
+            <button type="button" class="app-copy">Copy</button>
           </div>
-          <div id="pane-crossovers" role="tabpanel" aria-labelledby="tab-crossovers" hidden>
-            <div class="dl-carousel demo-modelbar" data-slider data-step="slide" aria-label="Crossover SUVs">
-              <ul class="dl-carousel-track">
-                <li class="dl-carousel-slide">
-                  <a class="demo-modelbar-card" href="#traverse" aria-label="Explore the Traverse">
-                    <img
-                      src="img/chrome-traverse.png"
-                      srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
-                      sizes="(min-width: 640px) 30vw, 45vw"
-                      width="320"
-                      height="240"
-                      alt="2025 Chevrolet Traverse"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <p>Traverse</p>
-                  </a>
-                </li>
-                <li class="dl-carousel-slide">
-                  <a class="demo-modelbar-card" href="#equinox" aria-label="Explore the Equinox">
-                    <img
-                      src="img/chrome-equinox.png"
-                      srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
-                      sizes="(min-width: 640px) 30vw, 45vw"
-                      width="320"
-                      height="240"
-                      alt="2025 Chevrolet Equinox"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <p>Equinox</p>
-                  </a>
-                </li>
-                <li class="dl-carousel-slide">
-                  <a class="demo-modelbar-card" href="#trailblazer" aria-label="Explore the Trailblazer">
-                    <img
-                      src="img/chrome-trailblazer.png"
-                      srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
-                      sizes="(min-width: 640px) 30vw, 45vw"
-                      width="320"
-                      height="240"
-                      alt="2025 Chevrolet Trailblazer"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <p>Trailblazer</p>
-                  </a>
-                </li>
-                <li class="dl-carousel-slide">
-                  <a class="demo-modelbar-card" href="#trax" aria-label="Explore the Trax">
-                    <img
-                      src="img/chrome-trax.png"
-                      srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
-                      sizes="(min-width: 640px) 30vw, 45vw"
-                      width="320"
-                      height="240"
-                      alt="2025 Chevrolet Trax"
-                      loading="lazy"
-                      decoding="async"
-                    />
-                    <p>Trax</p>
-                  </a>
-                </li>
-              </ul>
-            </div>
+          <pre><code id="code-out"></code></pre>
+        </section>
+
+        <p class="app-note" id="ex-note"></p>
+      </main>
+    </div>
+
+    <!-- ====================================================================
+         EXAMPLES. One <template> each: its own <style> plus its markup.
+         The stage renders a clone; the code panel prints the same source.
+         Add an example by adding a <template> — the sidebar builds itself.
+         ==================================================================== -->
+
+    <template
+      data-ex="stock"
+      data-group="Start here"
+      data-title="Stock look — the base"
+      data-tags="1 per view|default arrows|dots|no options"
+      data-blurb="Untouched engine defaults: dark arrows overlaying the content edges, one dot per page sitting in space the CSS reserved <em>before</em> JS ran (which is why CLS is 0), and native snap scrolling. Every other example is site CSS layered over this."
+      data-note="Start here when building a new slider: paste the <strong>Full page</strong> tab, then add <code>--dlc-per-view</code> breakpoints and restyle. Nothing below this line is engine behaviour — it is all site CSS."
+    >
+      <style>
+        .demo-card {
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          overflow: hidden;
+          block-size: 100%;
+          box-sizing: border-box;
+        }
+
+        .demo-card-body {
+          position: absolute;
+          inset-inline: 0;
+          inset-block-end: 0;
+          padding: 4rem 1rem 1rem;
+          /* strong enough to hold white text over bright photos (sky, chrome) */
+          background: linear-gradient(rgb(0 0 0 / 0%), rgb(0 0 0 / 50%) 40%, rgb(0 0 0 / 88%));
+          color: #fff;
+          text-shadow: 0 1px 2px rgb(0 0 0 / 70%);
+        }
+
+        .demo-card-body h3 {
+          margin: 0;
+        }
+
+        .demo-card-body p {
+          margin: 0.15rem 0 0.5rem;
+          color: #f0f0f0;
+        }
+
+        .demo-card-body a {
+          margin: 0;
+          color: #fff;
+        }
+
+        .demo-card h3 {
+          margin: 0.75rem 1rem 0.25rem;
+          font-size: 1.05rem;
+        }
+
+        .demo-card p {
+          margin: 0 1rem 0.5rem;
+          color: #555;
+        }
+
+        .demo-card a {
+          display: inline-block;
+          margin: 0 1rem 1rem;
+        }
+
+        .demo-stock .demo-card h3,
+        .demo-stock .demo-card p {
+          margin-inline: 4rem;
+        }
+      </style>
+
+      <div class="dl-carousel demo-stock" data-slider aria-label="Stock look">
+        <ul class="dl-carousel-track">
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <h3>Default controls</h3>
+              <p>Arrows overlay the content edges; dots live in space the CSS reserved before JS ran.</p>
+            </article>
+          </li>
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <h3>One knob per look</h3>
+              <p>Every visual above this section is <code>--dlc-*</code> custom properties and plain site CSS.</p>
+            </article>
+          </li>
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <h3>Works without JS</h3>
+              <p>The track is a native scroll-snap container — disable JavaScript and it still swipes.</p>
+            </article>
+          </li>
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <h3>Start here</h3>
+              <p>Copy the markup below, add <code>--dlc-per-view</code> breakpoints, then restyle.</p>
+            </article>
+          </li>
+        </ul>
+      </div>
+    </template>
+
+    <template
+      data-ex="vehicles"
+      data-group="Cards"
+      data-title="Featured vehicles"
+      data-tags="1 / 2 / 3 per view|stretched link|step: page"
+      data-blurb="Photo-as-card with the text overlaid on a gradient, and the whole card clickable via a stretched link. 1 up on phones, 2 from 576px, 3 from 992px."
+      data-note="The whole card is clickable through a stretched <code>::after</code> on the existing “View details” link — no nested-link or duplicate-announcement problems, and keyboard focus still lands on one control per card."
+    >
+      <style>
+        .demo-card {
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          overflow: hidden;
+          block-size: 100%;
+          box-sizing: border-box;
+        }
+
+        .demo-card-body {
+          position: absolute;
+          inset-inline: 0;
+          inset-block-end: 0;
+          padding: 4rem 1rem 1rem;
+          /* strong enough to hold white text over bright photos (sky, chrome) */
+          background: linear-gradient(rgb(0 0 0 / 0%), rgb(0 0 0 / 50%) 40%, rgb(0 0 0 / 88%));
+          color: #fff;
+          text-shadow: 0 1px 2px rgb(0 0 0 / 70%);
+        }
+
+        .demo-card-body h3 {
+          margin: 0;
+        }
+
+        .demo-card-body p {
+          margin: 0.15rem 0 0.5rem;
+          color: #f0f0f0;
+        }
+
+        .demo-card-body a {
+          margin: 0;
+          color: #fff;
+        }
+
+        .demo-card h3 {
+          margin: 0.75rem 1rem 0.25rem;
+          font-size: 1.05rem;
+        }
+
+        .demo-card p {
+          margin: 0 1rem 0.5rem;
+          color: #555;
+        }
+
+        .demo-card a {
+          display: inline-block;
+          margin: 0 1rem 1rem;
+        }
+
+        .demo-vehicles {
+          --dlc-per-view: 1;
+        }
+
+        @media (min-width: 576px) {
+          .demo-vehicles {
+            --dlc-per-view: 2;
+          }
+        }
+
+        @media (min-width: 992px) {
+          .demo-vehicles {
+            --dlc-per-view: 3;
+          }
+        }
+
+        .demo-vehicles {
+          --dlc-arrow-bg: transparent;
+          --dlc-arrow-fg: #262626;
+          padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+        }
+
+        .demo-vehicles .dl-carousel-arrow--prev {
+          inset-inline-start: 0;
+        }
+
+        .demo-vehicles .dl-carousel-arrow--next {
+          inset-inline-end: 0;
+        }
+
+        .demo-vehicles .dl-carousel-arrow svg {
+          width: 28px;
+          height: 28px;
+        }
+
+        .demo-vehicles .dl-carousel-arrow:hover {
+          color: #000;
+        }
+
+        .demo-vehicles .demo-card {
+          position: relative;
+          border: 0;
+        }
+
+        .demo-vehicles .demo-card-body p {
+          color: #fff;
+        }
+
+        .demo-vehicles .demo-card-body a::after {
+          content: '';
+          position: absolute;
+          inset: -999px 0 0;
+        }
+
+        .demo-vehicles .demo-card-body a:focus-visible {
+          outline: none;
+        }
+
+        .demo-vehicles .demo-card:has(.demo-card-body a:focus-visible) {
+          outline: 3px solid var(--dlc-focus);
+          outline-offset: -3px;
+        }
+
+        .demo-vehicles .demo-card img {
+          border-radius: 8px;
+        }
+
+        .demo-vehicles .demo-card-body {
+          border-end-start-radius: 8px;
+          border-end-end-radius: 8px;
+        }
+
+        @media (max-width: 767.98px) {
+          .demo-vehicles .demo-card img {
+            aspect-ratio: 4 / 3;
+            inline-size: 100%;
+            object-fit: cover;
+          }
+        }
+
+        @media (max-width: 575.98px) {
+          .demo-vehicles .demo-card img {
+            aspect-ratio: 3 / 4;
+          }
+        }
+      </style>
+
+      <div class="dl-carousel demo-vehicles" data-slider aria-label="Featured vehicles">
+        <ul class="dl-carousel-track">
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <img src="img/vehicle-1.jpg" width="800" height="500" alt="Black Porsche Panamera driving on a highway, rear three-quarter view" fetchpriority="high" />
+              <div class="demo-card-body">
+                <h3>2021 Porsche Panamera</h3>
+                <p>$82,900 · 18,300 mi</p>
+                <a href="#vehicle-1" aria-label="View details: 2021 Porsche Panamera">View details</a>
+              </div>
+            </article>
+          </li>
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <img src="img/vehicle-2.jpg" width="800" height="500" alt="Blue BMW 4 Series coupe parked on a city street, side view" />
+              <div class="demo-card-body">
+                <h3>2023 BMW 430i Coupe</h3>
+                <p>$42,750 · 9,100 mi</p>
+                <a href="#vehicle-2" aria-label="View details: 2023 BMW 430i Coupe">View details</a>
+              </div>
+            </article>
+          </li>
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <img src="img/vehicle-3.jpg" width="800" height="500" alt="White Ford Expedition on a desert road between red rock cliffs" />
+              <div class="demo-card-body">
+                <h3>2022 Ford Expedition Limited</h3>
+                <p>$47,988 · 26,400 mi</p>
+                <a href="#vehicle-3" aria-label="View details: 2022 Ford Expedition Limited">View details</a>
+              </div>
+            </article>
+          </li>
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <img src="img/vehicle-4.jpg" width="800" height="500" alt="White Honda CR-V parked near snowy mountains" loading="lazy" decoding="async" />
+              <div class="demo-card-body">
+                <h3>2023 Honda CR-V EX-L</h3>
+                <p>$33,450 · 12,900 mi</p>
+                <a href="#vehicle-4" aria-label="View details: 2023 Honda CR-V EX-L">View details</a>
+              </div>
+            </article>
+          </li>
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <img src="img/vehicle-5.jpg" width="800" height="500" alt="White Nissan GT-R from behind on an open country road" loading="lazy" decoding="async" />
+              <div class="demo-card-body">
+                <h3>2020 Nissan GT-R Premium</h3>
+                <p>$98,500 · 7,200 mi</p>
+                <a href="#vehicle-5" aria-label="View details: 2020 Nissan GT-R Premium">View details</a>
+              </div>
+            </article>
+          </li>
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <img src="img/vehicle-6.jpg" width="800" height="500" alt="Light blue Fiat 500 parked beside a stone building, side view" loading="lazy" decoding="async" />
+              <div class="demo-card-body">
+                <h3>2019 Fiat 500 Lounge</h3>
+                <p>$13,995 · 31,800 mi</p>
+                <a href="#vehicle-6" aria-label="View details: 2019 Fiat 500 Lounge">View details</a>
+              </div>
+            </article>
+          </li>
+        </ul>
+      </div>
+    </template>
+
+    <template
+      data-ex="cards"
+      data-group="Cards"
+      data-title="Service cards"
+      data-tags="1 / 2 / 3 per view|data-step=slide|equal height"
+      data-blurb="Rebuild of the Skaug Law practice-area strip: equal-height cards with a fixed-aspect cover image, and arrows that advance <em>one card</em> at a time."
+      data-note='<code>data-step="slide"</code> is the slick-style feel — one card per arrow click instead of a whole page. Dots stay one-per-page either way.'
+    >
+      <style>
+        .demo-cards {
+          --dlc-per-view: 1;
+          --dlc-controls-space: 0px; /* keep the unit — unitless 0 breaks the arrow-centering calc */
+          --dlc-arrow-bg: transparent;
+          --dlc-arrow-fg: #262626;
+          padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+        }
+
+        @media (min-width: 576px) {
+          .demo-cards {
+            --dlc-per-view: 2;
+          }
+        }
+
+        @media (min-width: 992px) {
+          .demo-cards {
+            --dlc-per-view: 3;
+          }
+        }
+
+        .demo-cards .dl-carousel-dots {
+          display: none;
+        }
+
+        .demo-cards .dl-carousel-arrow--prev {
+          inset-inline-start: 0;
+        }
+
+        .demo-cards .dl-carousel-arrow--next {
+          inset-inline-end: 0;
+        }
+
+        .demo-service-card {
+          display: flex;
+          flex-direction: column;
+          box-sizing: border-box;
+          block-size: 100%;
+          overflow: hidden;
+          color: inherit;
+          text-decoration: none;
+          background: #fff;
+          border: 1px solid #ddd;
+          border-radius: 8px;
+        }
+
+        .demo-service-media {
+          aspect-ratio: 8 / 5;
+          overflow: hidden; /* clips the hover zoom, like the source site */
+        }
+
+        .demo-service-card img {
+          inline-size: 100%;
+          block-size: 100%;
+          object-fit: cover;
+        }
+
+        .demo-service-card h3 {
+          margin: 0.75rem 1rem 0.25rem;
+          font-size: 1.05rem;
+        }
+
+        .demo-service-card p {
+          flex-grow: 1;
+          margin: 0 1rem 0.5rem;
+          color: #555;
+        }
+
+        .demo-service-more {
+          margin: 0 1rem 1rem;
+          font-weight: 600;
+          color: #1a5fb4;
+        }
+
+        .demo-service-card:hover img,
+        .demo-service-card:focus-visible img {
+          transform: scale(1.06);
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+          .demo-service-card img {
+            transition: transform 0.4s ease-out;
+          }
+        }
+
+        .demo-service-card:focus-visible {
+          outline: 3px solid var(--dlc-focus);
+          outline-offset: -3px;
+        }
+      </style>
+
+      <div class="dl-carousel demo-cards" data-slider data-step="slide" aria-label="Service cards">
+        <ul class="dl-carousel-track">
+          <li class="dl-carousel-slide">
+            <a class="demo-service-card" href="#service" aria-label="Learn about the service center">
+              <div class="demo-service-media"><img src="img/photo-5.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" /></div>
+              <h3>Service Center</h3>
+              <p>Factory-trained technicians, genuine parts, and online scheduling for everything from oil changes to major repairs.</p>
+              <span class="demo-service-more" aria-hidden="true">Read more →</span>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-service-card" href="#test-drive" aria-label="Learn about test drives">
+              <div class="demo-service-media"><img src="img/photo-3.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" /></div>
+              <h3>Test Drives</h3>
+              <p>Book a no-pressure drive online — we'll have the vehicle warmed up and out front when you arrive.</p>
+              <span class="demo-service-more" aria-hidden="true">Read more →</span>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-service-card" href="#financing" aria-label="Learn about financing">
+              <div class="demo-service-media"><img src="img/vehicle-2.jpg" width="800" height="500" alt="" loading="lazy" decoding="async" /></div>
+              <h3>Financing</h3>
+              <p>Flexible terms, first-time buyer programs, and pre-approval in minutes without a hit to your credit score.</p>
+              <span class="demo-service-more" aria-hidden="true">Read more →</span>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-service-card" href="#trade-in" aria-label="Learn about trade-in appraisals">
+              <div class="demo-service-media"><img src="img/vehicle-4.jpg" width="800" height="500" alt="" loading="lazy" decoding="async" /></div>
+              <h3>Trade-In Appraisal</h3>
+              <p>Get a real number for your current vehicle in minutes — good for seven days or 500 miles.</p>
+              <span class="demo-service-more" aria-hidden="true">Read more →</span>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-service-card" href="#parts" aria-label="Learn about parts and accessories">
+              <div class="demo-service-media"><img src="img/photo-6.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" /></div>
+              <h3>Parts &amp; Accessories</h3>
+              <p>OEM parts counter, accessories, and installation — ordered to your VIN so it fits the first time.</p>
+              <span class="demo-service-more" aria-hidden="true">Read more →</span>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-service-card" href="#body-shop" aria-label="Learn about the body shop">
+              <div class="demo-service-media"><img src="img/photo-2.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" /></div>
+              <h3>Body Shop &amp; Detailing</h3>
+              <p>Collision repair, paintless dent removal, and full detailing with insurance-claim assistance.</p>
+              <span class="demo-service-more" aria-hidden="true">Read more →</span>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </template>
+
+    <template
+      data-ex="reviews"
+      data-group="Cards"
+      data-title="Customer reviews"
+      data-tags="1 / 2 / 3 per view|data-autoplay=5000|pause button"
+      data-blurb="Google-review-style cards on a 5 second autoplay. The pause button is generated automatically and comes first in the tab order."
+      data-note="Autoplay never starts under <code>prefers-reduced-motion</code>, pauses on hover, and stops for good on focus or drag — only the pause button restarts it. Turning the OS setting on mid-session stops a rotation already running."
+    >
+      <style>
+        .demo-reviews {
+          --dlc-per-view: 1;
+        }
+
+        @media (min-width: 576px) {
+          .demo-reviews {
+            --dlc-per-view: 2;
+          }
+        }
+
+        @media (min-width: 992px) {
+          .demo-reviews {
+            --dlc-per-view: 3;
+          }
+        }
+
+        .demo-reviews {
+          --dlc-arrow-bg: transparent;
+          --dlc-arrow-fg: #262626;
+          padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+        }
+
+        .demo-reviews .dl-carousel-arrow--prev {
+          inset-inline-start: 0;
+        }
+
+        .demo-reviews .dl-carousel-arrow--next {
+          inset-inline-end: 0;
+        }
+
+        .demo-reviews .dl-carousel-arrow svg {
+          width: 28px;
+          height: 28px;
+        }
+
+        .demo-reviews .dl-carousel-arrow:hover {
+          color: #000;
+        }
+
+        .demo-reviews .dl-carousel-pause {
+          inset-inline-end: calc(var(--dlc-arrow-size) + 0.5rem);
+        }
+
+        .demo-review {
+          margin: 0;
+          block-size: 100%;
+          box-sizing: border-box;
+          padding: 1rem;
+          border: 1px solid #dadce0;
+          border-radius: 8px;
+          background: #fff;
+        }
+
+        .demo-review figcaption {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+        }
+
+        .demo-review-avatar {
+          display: grid;
+          place-items: center;
+          inline-size: 40px;
+          block-size: 40px;
+          border-radius: 50%;
+          background: var(--avatar-bg, #5f6368);
+          color: #fff;
+          font-weight: 500;
+        }
+
+        .demo-review-byline {
+          display: flex;
+          flex-direction: column;
+          line-height: 1.35;
+        }
+
+        .demo-review-byline strong {
+          color: #202124;
+          font-weight: 500;
+        }
+
+        .demo-review-byline small {
+          color: #5f6368;
+        }
+
+        .demo-review-stars {
+          /* rating is carried by the aria-label; ≥3:1 amber for the glyphs */
+          margin: 0.6rem 0 0.3rem;
+          color: #c77800;
+          letter-spacing: 2px;
+        }
+
+        .demo-review blockquote {
+          margin: 0;
+        }
+
+        .demo-review blockquote p {
+          margin: 0;
+          color: #3c4043;
+        }
+      </style>
+
+      <div class="dl-carousel demo-reviews" data-slider data-autoplay="5000" aria-label="Customer reviews">
+        <ul class="dl-carousel-track">
+          <li class="dl-carousel-slide">
+            <figure class="demo-review">
+              <figcaption>
+                <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #7b1fa2">D</span>
+                <span class="demo-review-byline">
+                  <strong>Dana W.</strong>
+                  <small>2 weeks ago</small>
+                </span>
+              </figcaption>
+              <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
+              <blockquote>
+                <p>Painless from test drive to paperwork — in and out in two hours.</p>
+              </blockquote>
+            </figure>
+          </li>
+          <li class="dl-carousel-slide">
+            <figure class="demo-review">
+              <figcaption>
+                <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #1565c0">M</span>
+                <span class="demo-review-byline">
+                  <strong>Marcus T.</strong>
+                  <small>a month ago</small>
+                </span>
+              </figcaption>
+              <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
+              <blockquote>
+                <p>Fair trade-in value and no pressure. Second car we've bought here.</p>
+              </blockquote>
+            </figure>
+          </li>
+          <li class="dl-carousel-slide">
+            <figure class="demo-review">
+              <figcaption>
+                <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #00796b">P</span>
+                <span class="demo-review-byline">
+                  <strong>Priya S.</strong>
+                  <small>3 months ago</small>
+                </span>
+              </figcaption>
+              <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
+              <blockquote>
+                <p>Service department caught a recall I didn't know about. Honest people.</p>
+              </blockquote>
+            </figure>
+          </li>
+          <li class="dl-carousel-slide">
+            <figure class="demo-review">
+              <figcaption>
+                <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #e65100">C</span>
+                <span class="demo-review-byline">
+                  <strong>Colin R.</strong>
+                  <small>3 weeks ago</small>
+                </span>
+              </figcaption>
+              <p class="demo-review-stars" role="img" aria-label="Rated 4 out of 5">★★★★☆</p>
+              <blockquote>
+                <p>Found the exact trim I wanted and they delivered it to my office.</p>
+              </blockquote>
+            </figure>
+          </li>
+          <li class="dl-carousel-slide">
+            <figure class="demo-review">
+              <figcaption>
+                <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #c2185b">A</span>
+                <span class="demo-review-byline">
+                  <strong>Aisha B.</strong>
+                  <small>2 months ago</small>
+                </span>
+              </figcaption>
+              <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
+              <blockquote>
+                <p>First-time buyer — they walked me through financing without the runaround.</p>
+              </blockquote>
+            </figure>
+          </li>
+          <li class="dl-carousel-slide">
+            <figure class="demo-review">
+              <figcaption>
+                <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #2e7d32">G</span>
+                <span class="demo-review-byline">
+                  <strong>Gene &amp; Marta L.</strong>
+                  <small>a week ago</small>
+                </span>
+              </figcaption>
+              <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
+              <blockquote>
+                <p>Five years of oil changes and never an upsell. That's why we come back.</p>
+              </blockquote>
+            </figure>
+          </li>
+        </ul>
+      </div>
+    </template>
+
+    <template
+      data-ex="mixed"
+      data-group="Cards"
+      data-title="Mixed image sizes"
+      data-tags="1 / 2 / 3 per view|aspect-ratio box|object-fit: cover"
+      data-blurb="Six deliberately mismatched source images (500×500, 375×500, 800×350, 640×480, 300×500, 800×500) in one strip. The fixed-aspect cover box makes the layout indifferent to what the CMS hands it."
+      data-note="Nobody in this space lets source dimensions drive layout — every reference site normalises with a fixed-aspect cover box. This is that recipe."
+    >
+      <style>
+        .demo-card {
+          border: 1px solid #ddd;
+          border-radius: 8px;
+          overflow: hidden;
+          block-size: 100%;
+          box-sizing: border-box;
+        }
+
+        .demo-card-body {
+          position: absolute;
+          inset-inline: 0;
+          inset-block-end: 0;
+          padding: 4rem 1rem 1rem;
+          /* strong enough to hold white text over bright photos (sky, chrome) */
+          background: linear-gradient(rgb(0 0 0 / 0%), rgb(0 0 0 / 50%) 40%, rgb(0 0 0 / 88%));
+          color: #fff;
+          text-shadow: 0 1px 2px rgb(0 0 0 / 70%);
+        }
+
+        .demo-card-body h3 {
+          margin: 0;
+        }
+
+        .demo-card-body p {
+          margin: 0.15rem 0 0.5rem;
+          color: #f0f0f0;
+        }
+
+        .demo-card-body a {
+          margin: 0;
+          color: #fff;
+        }
+
+        .demo-card h3 {
+          margin: 0.75rem 1rem 0.25rem;
+          font-size: 1.05rem;
+        }
+
+        .demo-card p {
+          margin: 0 1rem 0.5rem;
+          color: #555;
+        }
+
+        .demo-card a {
+          display: inline-block;
+          margin: 0 1rem 1rem;
+        }
+
+        .demo-mixed {
+          --dlc-per-view: 1;
+          --dlc-arrow-bg: transparent;
+          --dlc-arrow-fg: #262626;
+          padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+        }
+
+        @media (min-width: 576px) {
+          .demo-mixed {
+            --dlc-per-view: 2;
+          }
+        }
+
+        @media (min-width: 992px) {
+          .demo-mixed {
+            --dlc-per-view: 3;
+          }
+        }
+
+        .demo-mixed .dl-carousel-arrow--prev {
+          inset-inline-start: 0;
+        }
+
+        .demo-mixed .dl-carousel-arrow--next {
+          inset-inline-end: 0;
+        }
+
+        .demo-mixed .demo-card img {
+          aspect-ratio: 4 / 3;
+          inline-size: 100%;
+          block-size: auto;
+          object-fit: cover;
+        }
+      </style>
+
+      <div class="dl-carousel demo-mixed" data-slider aria-label="Mixed image sizes">
+        <ul class="dl-carousel-track">
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <img src="img/mixed-1.jpg" width="500" height="500" alt="Black Porsche Panamera, square crop" loading="lazy" decoding="async" />
+              <h3>500 × 500 source</h3>
+              <p>Square upload — cover-cropped to 4:3.</p>
+            </article>
+          </li>
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <img src="img/mixed-2.jpg" width="375" height="500" alt="Blue BMW 4 Series coupe, portrait crop" loading="lazy" decoding="async" />
+              <h3>375 × 500 source</h3>
+              <p>Portrait upload — same rendered box.</p>
+            </article>
+          </li>
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <img src="img/mixed-3.jpg" width="800" height="350" alt="White Ford Expedition on a desert road, wide crop" loading="lazy" decoding="async" />
+              <h3>800 × 350 source</h3>
+              <p>Wide banner upload — same rendered box.</p>
+            </article>
+          </li>
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <img src="img/mixed-4.jpg" width="640" height="480" alt="White Honda CR-V near snowy mountains, 4:3 crop" loading="lazy" decoding="async" />
+              <h3>640 × 480 source</h3>
+              <p>Already 4:3 — renders untouched.</p>
+            </article>
+          </li>
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <img src="img/mixed-5.jpg" width="300" height="500" alt="White Nissan GT-R, tall narrow crop" loading="lazy" decoding="async" />
+              <h3>300 × 500 source</h3>
+              <p>Tall narrow upload — same rendered box.</p>
+            </article>
+          </li>
+          <li class="dl-carousel-slide">
+            <article class="demo-card">
+              <img src="img/vehicle-6.jpg" width="800" height="500" alt="Light blue Fiat 500 parked beside a stone building" loading="lazy" decoding="async" />
+              <h3>800 × 500 source</h3>
+              <p>Standard landscape upload.</p>
+            </article>
+          </li>
+        </ul>
+      </div>
+    </template>
+
+    <template
+      data-ex="modelbar"
+      data-group="Model bars"
+      data-title="Chevrolet model bar"
+      data-tags="2 / 3 / 4 / 5 per view|data-step=slide|no dots"
+      data-blurb="Dealer-style strip of transparent model cutouts, one card per arrow step. Images are Chrome Photo Builder renders (ChromeData, angle 1, transparent PNG at 320/640)."
+      data-note="On a real DealerOn site, reference the renders as <code>#CHROMEPHOTOPATH|StyleID|1|640p#</code> rather than copying image files."
+    >
+      <style>
+        .demo-modelbar {
+          --dlc-per-view: 2;
+          --dlc-gap: 0.5rem;
+          --dlc-controls-space: 0px; /* keep the unit — unitless 0 breaks the arrow-centering calc */
+          --dlc-arrow-bg: transparent;
+          --dlc-arrow-fg: #262626;
+          padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+        }
+
+        @media (min-width: 768px) {
+          .demo-modelbar {
+            --dlc-per-view: 3;
+          }
+        }
+
+        @media (min-width: 992px) {
+          .demo-modelbar {
+            --dlc-per-view: 4;
+          }
+        }
+
+        @media (min-width: 1200px) {
+          .demo-modelbar {
+            --dlc-per-view: 5;
+          }
+        }
+
+        .demo-modelbar .dl-carousel-dots {
+          display: none;
+        }
+
+        .demo-modelbar .dl-carousel-arrow--prev {
+          inset-inline-start: 0;
+        }
+
+        .demo-modelbar .dl-carousel-arrow--next {
+          inset-inline-end: 0;
+        }
+
+        .demo-modelbar-card {
+          display: block;
+          color: #262626;
+          text-align: center;
+          text-decoration: none;
+        }
+
+        .demo-modelbar-card img {
+          inline-size: 100%;
+          block-size: auto;
+        }
+
+        .demo-modelbar-card p {
+          margin: 0;
+          font-weight: 600;
+        }
+
+        .demo-modelbar-card:hover img,
+        .demo-modelbar-card:focus-visible img {
+          transform: scale(1.05);
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+          .demo-modelbar-card img {
+            transition: transform 0.3s ease-out;
+          }
+        }
+
+        .demo-modelbar-card:focus-visible {
+          outline: 3px solid var(--dlc-focus);
+          outline-offset: -3px;
+        }
+      </style>
+
+      <div class="dl-carousel demo-modelbar" data-slider data-step="slide" aria-label="Chevrolet model bar">
+        <ul class="dl-carousel-track">
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="#silverado-1500" aria-label="Explore the Silverado 1500">
+              <img
+                src="img/chrome-silverado-1500.png"
+                srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                sizes="(min-width: 992px) 250px, (min-width: 576px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2026 Chevrolet Silverado 1500"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Silverado 1500</p>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="#colorado" aria-label="Explore the Colorado">
+              <img
+                src="img/chrome-colorado.png"
+                srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                sizes="(min-width: 992px) 250px, (min-width: 576px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2025 Chevrolet Colorado"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Colorado</p>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="#tahoe" aria-label="Explore the Tahoe">
+              <img
+                src="img/chrome-tahoe.png"
+                srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                sizes="(min-width: 992px) 250px, (min-width: 576px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2025 Chevrolet Tahoe"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Tahoe</p>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="#suburban" aria-label="Explore the Suburban">
+              <img
+                src="img/chrome-suburban.png"
+                srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                sizes="(min-width: 992px) 250px, (min-width: 576px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2025 Chevrolet Suburban"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Suburban</p>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="#traverse" aria-label="Explore the Traverse">
+              <img
+                src="img/chrome-traverse.png"
+                srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                sizes="(min-width: 992px) 250px, (min-width: 576px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2025 Chevrolet Traverse"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Traverse</p>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="#equinox" aria-label="Explore the Equinox">
+              <img
+                src="img/chrome-equinox.png"
+                srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                sizes="(min-width: 992px) 250px, (min-width: 576px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2025 Chevrolet Equinox"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Equinox</p>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="#trailblazer" aria-label="Explore the Trailblazer">
+              <img
+                src="img/chrome-trailblazer.png"
+                srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                sizes="(min-width: 992px) 250px, (min-width: 576px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2025 Chevrolet Trailblazer"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Trailblazer</p>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="#trax" aria-label="Explore the Trax">
+              <img
+                src="img/chrome-trax.png"
+                srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                sizes="(min-width: 992px) 250px, (min-width: 576px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2025 Chevrolet Trax"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Trax</p>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </template>
+
+    <template
+      data-ex="modelbar-tabs"
+      data-group="Model bars"
+      data-title="Model bar with tabs"
+      data-tags="5 tabs|one instance per pane|data-step=slide"
+      data-blurb="The chevroletdemo1.dealeron.com lineup, rebuilt: five tabs, each wrapping its own carousel instance. Note that Performance and Commercial hold a single model — fewer slides than fit, so no arrows render at all."
+      data-note="slick needs two hacks to live inside Bootstrap tabs — <code>display:none</code> until init to stop FOUC, and <code>height:0</code> on hidden panes so it can measure. dl-carousel needs neither: a pane revealed later re-measures itself through the engine's ResizeObserver."
+    >
+      <style>
+        .demo-modelbar {
+          --dlc-per-view: 2;
+          --dlc-gap: 0.5rem;
+          --dlc-controls-space: 0px; /* keep the unit — unitless 0 breaks the arrow-centering calc */
+          --dlc-arrow-bg: transparent;
+          --dlc-arrow-fg: #262626;
+          padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+        }
+
+        @media (min-width: 768px) {
+          .demo-modelbar {
+            --dlc-per-view: 3;
+          }
+        }
+
+        @media (min-width: 992px) {
+          .demo-modelbar {
+            --dlc-per-view: 4;
+          }
+        }
+
+        @media (min-width: 1200px) {
+          .demo-modelbar {
+            --dlc-per-view: 5;
+          }
+        }
+
+        .demo-modelbar .dl-carousel-dots {
+          display: none;
+        }
+
+        .demo-modelbar .dl-carousel-arrow--prev {
+          inset-inline-start: 0;
+        }
+
+        .demo-modelbar .dl-carousel-arrow--next {
+          inset-inline-end: 0;
+        }
+
+        .demo-modelbar-card {
+          display: block;
+          color: #262626;
+          text-align: center;
+          text-decoration: none;
+        }
+
+        .demo-modelbar-card img {
+          inline-size: 100%;
+          block-size: auto;
+        }
+
+        .demo-modelbar-card p {
+          margin: 0;
+          font-weight: 600;
+        }
+
+        .demo-modelbar-card:hover img,
+        .demo-modelbar-card:focus-visible img {
+          transform: scale(1.05);
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+          .demo-modelbar-card img {
+            transition: transform 0.3s ease-out;
+          }
+        }
+
+        .demo-modelbar-card:focus-visible {
+          outline: 3px solid var(--dlc-focus);
+          outline-offset: -3px;
+        }
+
+        .demo-tabs [role='tablist'] {
+          display: flex;
+          flex-wrap: wrap;
+          gap: 0.5rem;
+          justify-content: center;
+          margin-block-end: 1rem;
+        }
+
+        .demo-tabs [role='tab'] {
+          padding: 0.5rem 1.25rem;
+          font: inherit;
+          cursor: pointer;
+          background: transparent;
+          border: 1px solid #949494;
+          border-radius: 999px;
+        }
+
+        .demo-tabs [role='tab'][aria-selected='true'] {
+          color: #fff;
+          background: #262626;
+          border-color: #262626;
+        }
+
+        .demo-tabs [role='tab']:focus-visible {
+          outline: 3px solid var(--dlc-focus);
+          outline-offset: 2px;
+        }
+      </style>
+
+      <div class="demo-tabs" data-tabs>
+        <div role="tablist" aria-label="Model categories">
+          <button type="button" role="tab" id="tab-trucks" aria-controls="pane-trucks" aria-selected="true">Trucks</button>
+          <button type="button" role="tab" id="tab-electric" aria-controls="pane-electric" aria-selected="false" tabindex="-1">Electric</button>
+          <button type="button" role="tab" id="tab-suvs" aria-controls="pane-suvs" aria-selected="false" tabindex="-1">Crossovers/SUVs</button>
+          <button type="button" role="tab" id="tab-performance" aria-controls="pane-performance" aria-selected="false" tabindex="-1">Performance</button>
+          <button type="button" role="tab" id="tab-commercial" aria-controls="pane-commercial" aria-selected="false" tabindex="-1">Commercial</button>
+        </div>
+        <div id="pane-trucks" role="tabpanel" aria-labelledby="tab-trucks">
+          <div class="dl-carousel demo-modelbar" data-slider data-step="slide" aria-label="Chevrolet trucks">
+            <ul class="dl-carousel-track">
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Silverado%20EV" aria-label="Shop new Silverado EV">
+                  <img
+                    src="img/chrome-silverado-ev.png"
+                    srcset="img/chrome-silverado-ev.png 320w, img/chrome-silverado-ev-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Silverado EV"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Silverado EV</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Silverado%201500" aria-label="Shop new Silverado 1500">
+                  <img
+                    src="img/chrome-silverado-1500.png"
+                    srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Silverado 1500"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Silverado 1500</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Silverado%202500HD" aria-label="Shop new Silverado 2500HD">
+                  <img
+                    src="img/chrome-silverado-2500hd.png"
+                    srcset="img/chrome-silverado-2500hd.png 320w, img/chrome-silverado-2500hd-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Silverado 2500HD"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Silverado 2500HD</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Silverado%203500HD" aria-label="Shop new Silverado 3500HD">
+                  <img
+                    src="img/chrome-silverado-3500hd.png"
+                    srcset="img/chrome-silverado-3500hd.png 320w, img/chrome-silverado-3500hd-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Silverado 3500HD"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Silverado 3500HD</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Colorado" aria-label="Shop new Colorado">
+                  <img
+                    src="img/chrome-colorado.png"
+                    srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Colorado"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Colorado</p>
+                </a>
+              </li>
+            </ul>
           </div>
         </div>
-        <details>
-          <summary>How this variant is built</summary>
-          <p>
-            The Ford-style tabbed model bar: each tab pane wraps its <em>own</em> carousel instance (same class, one selector). The tabs are the small APG page script at the end of this file — not the
-            engine. Hidden panes use the <code>hidden</code> attribute; the engine's ResizeObserver re-measures the strip when its pane is revealed, so no slick-style <code>height: 0</code> hack is
-            needed. Both instances share the model-bar recipe (<code>data-step="slide"</code>, hidden dots, whole-card links).
-          </p>
-        </details>
-      </section>
-
-      <section class="demo-section demo-wide" id="peek">
-        <h2 id="peek-h">Faded peek</h2>
-        <div class="dl-carousel demo-peek" data-slider aria-labelledby="peek-h">
-          <ul class="dl-carousel-track">
-            <li class="dl-carousel-slide"><img src="img/photo-1.jpg" width="1200" height="750" alt="Blue Chevrolet Camaro in the desert at dusk" loading="lazy" decoding="async" /></li>
-            <li class="dl-carousel-slide"><img src="img/photo-2.jpg" width="1200" height="750" alt="White Ford Mustang in a neon-lit parking garage" loading="lazy" decoding="async" /></li>
-            <li class="dl-carousel-slide"><img src="img/photo-3.jpg" width="1200" height="750" alt="Hands on the steering wheel at dusk" loading="lazy" decoding="async" /></li>
-            <li class="dl-carousel-slide"><img src="img/photo-4.jpg" width="1200" height="750" alt="Audi R8 tail lights on a city street at sunset" loading="lazy" decoding="async" /></li>
-            <li class="dl-carousel-slide"><img src="img/photo-5.jpg" width="1200" height="750" alt="Technician topping up engine oil" loading="lazy" decoding="async" /></li>
-            <li class="dl-carousel-slide"><img src="img/photo-6.jpg" width="1200" height="750" alt="Classic BMW grilles lined up in a museum" loading="lazy" decoding="async" /></li>
-          </ul>
+        <div id="pane-electric" role="tabpanel" aria-labelledby="tab-electric" hidden>
+          <div class="dl-carousel demo-modelbar" data-slider data-step="slide" aria-label="Chevrolet electric vehicles">
+            <ul class="dl-carousel-track">
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Bolt%20EV" aria-label="Shop new Bolt EV">
+                  <img src="img/chrome-bolt.png" width="320" height="240" alt="2026 Chevrolet Bolt EV" loading="lazy" decoding="async" />
+                  <p>Bolt EV</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Silverado%20EV" aria-label="Shop new Silverado EV">
+                  <img
+                    src="img/chrome-silverado-ev.png"
+                    srcset="img/chrome-silverado-ev.png 320w, img/chrome-silverado-ev-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Silverado EV"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Silverado EV</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Equinox%20EV" aria-label="Shop new Equinox EV">
+                  <img
+                    src="img/chrome-equinox-ev.png"
+                    srcset="img/chrome-equinox-ev.png 320w, img/chrome-equinox-ev-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Equinox EV"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Equinox EV</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Blazer%20EV" aria-label="Shop new Blazer EV">
+                  <img
+                    src="img/chrome-blazer-ev.png"
+                    srcset="img/chrome-blazer-ev.png 320w, img/chrome-blazer-ev-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Blazer EV"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Blazer EV</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=BrightDrop" aria-label="Shop new BrightDrop">
+                  <img
+                    src="img/chrome-brightdrop.png"
+                    srcset="img/chrome-brightdrop.png 320w, img/chrome-brightdrop-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet BrightDrop"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>BrightDrop</p>
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
-        <details>
-          <summary>How this variant is built</summary>
-          <p>
-            Two stock knobs and one mask: <code>--dlc-peek</code> (engine CSS — pads the track and shifts the snap points so a sliver of each neighbor stays visible) plus a
-            <code>mask-image</code> gradient on the track whose fade width equals the peek. No page script, no engine changes, safe under reduced motion.
-          </p>
-        </details>
-      </section>
-
-      <section class="demo-section demo-wide" id="mixed">
-        <h2 id="mixed-h">Mixed image sizes</h2>
-        <div class="dl-carousel demo-mixed" data-slider aria-labelledby="mixed-h">
-          <ul class="dl-carousel-track">
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <img src="img/mixed-1.jpg" width="500" height="500" alt="Black Porsche Panamera, square crop" loading="lazy" decoding="async" />
-                <h3>500 × 500 source</h3>
-                <p>Square upload — cover-cropped to 4:3.</p>
-              </article>
-            </li>
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <img src="img/mixed-2.jpg" width="375" height="500" alt="Blue BMW 4 Series coupe, portrait crop" loading="lazy" decoding="async" />
-                <h3>375 × 500 source</h3>
-                <p>Portrait upload — same rendered box.</p>
-              </article>
-            </li>
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <img src="img/mixed-3.jpg" width="800" height="350" alt="White Ford Expedition on a desert road, wide crop" loading="lazy" decoding="async" />
-                <h3>800 × 350 source</h3>
-                <p>Wide banner upload — same rendered box.</p>
-              </article>
-            </li>
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <img src="img/mixed-4.jpg" width="640" height="480" alt="White Honda CR-V near snowy mountains, 4:3 crop" loading="lazy" decoding="async" />
-                <h3>640 × 480 source</h3>
-                <p>Already 4:3 — renders untouched.</p>
-              </article>
-            </li>
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <img src="img/mixed-5.jpg" width="300" height="500" alt="White Nissan GT-R, tall narrow crop" loading="lazy" decoding="async" />
-                <h3>300 × 500 source</h3>
-                <p>Tall narrow upload — same rendered box.</p>
-              </article>
-            </li>
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <img src="img/vehicle-6.jpg" width="800" height="500" alt="Light blue Fiat 500 parked beside a stone building" loading="lazy" decoding="async" />
-                <h3>800 × 500 source</h3>
-                <p>Standard landscape upload.</p>
-              </article>
-            </li>
-          </ul>
+        <div id="pane-suvs" role="tabpanel" aria-labelledby="tab-suvs" hidden>
+          <div class="dl-carousel demo-modelbar" data-slider data-step="slide" aria-label="Chevrolet crossovers and SUVs">
+            <ul class="dl-carousel-track">
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Bolt" aria-label="Shop new Bolt">
+                  <img src="img/chrome-bolt.png" width="320" height="240" alt="2026 Chevrolet Bolt" loading="lazy" decoding="async" />
+                  <p>Bolt</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Trax" aria-label="Shop new Trax">
+                  <img
+                    src="img/chrome-trax.png"
+                    srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Trax"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Trax</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Trailblazer" aria-label="Shop new Trailblazer">
+                  <img
+                    src="img/chrome-trailblazer.png"
+                    srcset="img/chrome-trailblazer.png 320w, img/chrome-trailblazer-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Trailblazer"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Trailblazer</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Equinox" aria-label="Shop new Equinox">
+                  <img
+                    src="img/chrome-equinox.png"
+                    srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Equinox"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Equinox</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Equinox%20EV" aria-label="Shop new Equinox EV">
+                  <img
+                    src="img/chrome-equinox-ev.png"
+                    srcset="img/chrome-equinox-ev.png 320w, img/chrome-equinox-ev-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Equinox EV"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Equinox EV</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Blazer" aria-label="Shop new Blazer">
+                  <img
+                    src="img/chrome-blazer.png"
+                    srcset="img/chrome-blazer.png 320w, img/chrome-blazer-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Blazer"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Blazer</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Blazer%20EV" aria-label="Shop new Blazer EV">
+                  <img
+                    src="img/chrome-blazer-ev.png"
+                    srcset="img/chrome-blazer-ev.png 320w, img/chrome-blazer-ev-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Blazer EV"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Blazer EV</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Tahoe" aria-label="Shop new Tahoe">
+                  <img
+                    src="img/chrome-tahoe.png"
+                    srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Tahoe"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Tahoe</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Traverse" aria-label="Shop new Traverse">
+                  <img
+                    src="img/chrome-traverse.png"
+                    srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Traverse"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Traverse</p>
+                </a>
+              </li>
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Suburban" aria-label="Shop new Suburban">
+                  <img
+                    src="img/chrome-suburban.png"
+                    srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Suburban"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Suburban</p>
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
-        <details>
-          <summary>The recipe (why nothing here breaks)</summary>
-          <p>
-            Every card image gets <code>aspect-ratio: 4 / 3; inline-size: 100%; object-fit: cover;</code> — the box is fixed, the source fills it, and any upload dimensions render identically. Keep
-            real <code>width</code>/<code>height</code> attributes (CLS stays 0) and prefer uniform assets anyway: cover-cropping costs edges, and consistent art always looks better than rescued art.
-            Use <code>object-fit: contain</code> instead for cutouts and logos.
-          </p>
-        </details>
-      </section>
-
-      <section class="demo-section demo-wide" id="cards">
-        <h2 id="cards-h">Service cards</h2>
-        <div class="dl-carousel demo-cards" data-slider data-step="slide" aria-labelledby="cards-h">
-          <ul class="dl-carousel-track">
-            <li class="dl-carousel-slide">
-              <a class="demo-service-card" href="#service" aria-label="Learn about the service center">
-                <div class="demo-service-media"><img src="img/photo-5.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" /></div>
-                <h3>Service Center</h3>
-                <p>Factory-trained technicians, genuine parts, and online scheduling for everything from oil changes to major repairs.</p>
-                <span class="demo-service-more" aria-hidden="true">Read more →</span>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-service-card" href="#test-drive" aria-label="Learn about test drives">
-                <div class="demo-service-media"><img src="img/photo-3.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" /></div>
-                <h3>Test Drives</h3>
-                <p>Book a no-pressure drive online — we'll have the vehicle warmed up and out front when you arrive.</p>
-                <span class="demo-service-more" aria-hidden="true">Read more →</span>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-service-card" href="#financing" aria-label="Learn about financing">
-                <div class="demo-service-media"><img src="img/vehicle-2.jpg" width="800" height="500" alt="" loading="lazy" decoding="async" /></div>
-                <h3>Financing</h3>
-                <p>Flexible terms, first-time buyer programs, and pre-approval in minutes without a hit to your credit score.</p>
-                <span class="demo-service-more" aria-hidden="true">Read more →</span>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-service-card" href="#trade-in" aria-label="Learn about trade-in appraisals">
-                <div class="demo-service-media"><img src="img/vehicle-4.jpg" width="800" height="500" alt="" loading="lazy" decoding="async" /></div>
-                <h3>Trade-In Appraisal</h3>
-                <p>Get a real number for your current vehicle in minutes — good for seven days or 500 miles.</p>
-                <span class="demo-service-more" aria-hidden="true">Read more →</span>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-service-card" href="#parts" aria-label="Learn about parts and accessories">
-                <div class="demo-service-media"><img src="img/photo-6.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" /></div>
-                <h3>Parts &amp; Accessories</h3>
-                <p>OEM parts counter, accessories, and installation — ordered to your VIN so it fits the first time.</p>
-                <span class="demo-service-more" aria-hidden="true">Read more →</span>
-              </a>
-            </li>
-            <li class="dl-carousel-slide">
-              <a class="demo-service-card" href="#body-shop" aria-label="Learn about the body shop">
-                <div class="demo-service-media"><img src="img/photo-2.jpg" width="1200" height="750" alt="" loading="lazy" decoding="async" /></div>
-                <h3>Body Shop &amp; Detailing</h3>
-                <p>Collision repair, paintless dent removal, and full detailing with insurance-claim assistance.</p>
-                <span class="demo-service-more" aria-hidden="true">Read more →</span>
-              </a>
-            </li>
-          </ul>
+        <div id="pane-performance" role="tabpanel" aria-labelledby="tab-performance" hidden>
+          <div class="dl-carousel demo-modelbar" data-slider data-step="slide" aria-label="Chevrolet performance cars">
+            <ul class="dl-carousel-track">
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Corvette" aria-label="Shop new Corvette">
+                  <img
+                    src="img/chrome-corvette.png"
+                    srcset="img/chrome-corvette.png 320w, img/chrome-corvette-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet Corvette"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>Corvette</p>
+                </a>
+              </li>
+            </ul>
+          </div>
         </div>
-        <details>
-          <summary>How this variant is built</summary>
-          <p>
-            The model-bar mechanics with full content cards — a rebuild of the Lead Science practice-area carousel (whole card is the link, <code>data-step="slide"</code> one-card advance, arrows
-            only). The image sits in a fixed-aspect cover box (any upload dimensions fit), and the cards stay equal height for free: the track is already flex, so slides stretch, and
-            <code>flex-grow</code> on the copy pushes every "Read more" to the same baseline. The "Read more" line is <code>aria-hidden</code> decoration — the link's short <code>aria-label</code> is
-            the card's accessible name.
-          </p>
-        </details>
-      </section>
+        <div id="pane-commercial" role="tabpanel" aria-labelledby="tab-commercial" hidden>
+          <div class="dl-carousel demo-modelbar" data-slider data-step="slide" aria-label="Chevrolet commercial vehicles">
+            <ul class="dl-carousel-track">
+              <li class="dl-carousel-slide">
+                <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=BrightDrop" aria-label="Shop new BrightDrop">
+                  <img
+                    src="img/chrome-brightdrop.png"
+                    srcset="img/chrome-brightdrop.png 320w, img/chrome-brightdrop-640.png 640w"
+                    sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                    width="320"
+                    height="240"
+                    alt="2026 Chevrolet BrightDrop"
+                    loading="lazy"
+                    decoding="async"
+                  />
+                  <p>BrightDrop</p>
+                </a>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </template>
 
-      <section class="demo-section demo-video-section demo-wide" id="video">
-        <h2 id="video-h">Video testimonials</h2>
-        <div class="dl-carousel demo-video" data-slider aria-labelledby="video-h">
+    <template
+      data-ex="models"
+      data-group="Model bars"
+      data-title="Explore Chevrolet models"
+      data-tags="1 / 2 / 3 per view|progress bar|rewind: false"
+      data-blurb="Rebuild of the LeadScience practice-area carousel: the stock dots restyled into one solid bar with a sliding thumb, driven entirely from the library's own dot state by a few lines of page script."
+      data-note="The progress bar is <em>not</em> an engine feature. Page script watches the generated dots and sets two custom properties — the pattern for extending behaviour without touching the library. Listen for <code>dlc:change</code> or read <code>element._dlCarousel</code>."
+    >
+      <style>
+        .demo-models {
+          --dlc-arrow-bg: transparent;
+          --dlc-arrow-fg: #262626;
+          padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+        }
+
+        .demo-models .dl-carousel-arrow--prev {
+          inset-inline-start: 0;
+        }
+
+        .demo-models .dl-carousel-arrow--next {
+          inset-inline-end: 0;
+        }
+
+        .demo-models .dl-carousel-arrow svg {
+          width: 28px;
+          height: 28px;
+        }
+
+        .demo-models .dl-carousel-arrow:hover {
+          color: #000;
+        }
+
+        .demo-models {
+          --dlc-per-view: 1;
+          --dlc-gap: 0px; /* keep units — an unitless 0 breaks the basis calc */
+          /* Segments are all track — the sliding ::before thumb marks the page.
+          #949494 is 3.03:1 on white: the segments are real "go to page"
+          buttons, so their extent has to meet WCAG 1.4.11 (was #e0e0e0 at
+          1.32:1, which made the control invisible against the page). */
+          --dlc-dot-fg: #949494;
+          --dlc-dot-current: #949494;
+          --dlc-controls-space: 3rem;
+        }
+
+        @media (min-width: 576px) {
+          .demo-models {
+            --dlc-per-view: 2;
+          }
+        }
+
+        @media (min-width: 992px) {
+          .demo-models {
+            --dlc-per-view: 4;
+            --dlc-arrow-size: 56px;
+          }
+          .demo-models .dl-carousel-arrow svg {
+            width: 36px;
+            height: 36px;
+          }
+        }
+
+        .demo-models .dl-carousel-dots {
+          gap: 0;
+          inset-inline: 25%; /* the bar spans half the carousel, centered */
+        }
+
+        .demo-models .dl-carousel-dots::before {
+          content: '';
+          position: absolute;
+          inset-inline-start: 0;
+          inset-block-start: calc(50% - 2px);
+          inline-size: calc(100% / var(--bar-count, 1));
+          block-size: 4px;
+          border-radius: 2px;
+          background: #262626;
+          translate: calc(var(--bar-index, 0) * 100%);
+          pointer-events: none;
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+          .demo-models .dl-carousel-dots::before {
+            transition: translate 0.35s ease;
+          }
+        }
+
+        .demo-models .dl-carousel-dot {
+          flex: 1 1 auto;
+        }
+
+        .demo-models .dl-carousel-dot::after {
+          inline-size: 100%;
+          block-size: 4px;
+          border-radius: 0;
+        }
+
+        .demo-models .dl-carousel-dot:first-child::after {
+          border-start-start-radius: 2px;
+          border-end-start-radius: 2px;
+        }
+
+        .demo-models .dl-carousel-dot:last-child::after {
+          border-start-end-radius: 2px;
+          border-end-end-radius: 2px;
+        }
+
+        .demo-model-card {
+          position: relative;
+          display: block;
+          overflow: hidden;
+          text-decoration: none;
+        }
+
+        .demo-model-card img {
+          inline-size: 100%;
+          block-size: auto;
+          display: block;
+        }
+
+        .demo-model-card:hover img,
+        .demo-model-card:focus-visible img {
+          transform: scale(1.05);
+        }
+
+        @media (prefers-reduced-motion: no-preference) {
+          .demo-model-card img {
+            transition: transform 0.5s ease-out;
+          }
+        }
+
+        .demo-model-card::after {
+          content: '';
+          position: absolute;
+          inset: 0;
+          background: linear-gradient(rgb(0 0 0 / 0%) 45%, rgb(0 0 0 / 88%) 100%);
+        }
+
+        .demo-model-card h3 {
+          position: absolute;
+          inset-inline: 0;
+          inset-block-end: 0;
+          z-index: 1;
+          margin: 0;
+          padding: 1rem;
+          font-size: 1.35rem;
+          text-transform: uppercase;
+          letter-spacing: 0.04em;
+          color: #fff;
+          text-shadow: 0 1px 2px rgb(0 0 0 / 70%);
+        }
+
+        .demo-model-card:focus-visible {
+          outline: 3px solid var(--dlc-focus);
+          outline-offset: -3px;
+        }
+      </style>
+
+      <div class="dl-carousel demo-models" data-slider data-rewind="false" aria-label="Explore Chevrolet models">
+        <ul class="dl-carousel-track">
+          <li class="dl-carousel-slide">
+            <a class="demo-model-card" href="#silverado">
+              <img src="img/model-silverado.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
+              <h3>Silverado</h3>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-model-card" href="#equinox">
+              <img src="img/model-equinox.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
+              <h3>Equinox</h3>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-model-card" href="#tahoe">
+              <img src="img/model-tahoe.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
+              <h3>Tahoe</h3>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-model-card" href="#malibu">
+              <img src="img/model-malibu.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
+              <h3>Malibu</h3>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-model-card" href="#camaro">
+              <img src="img/model-camaro.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
+              <h3>Camaro</h3>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-model-card" href="#corvette">
+              <img src="img/model-corvette.jpg" width="600" height="1000" alt="" loading="lazy" decoding="async" />
+              <h3>Corvette</h3>
+            </a>
+          </li>
+        </ul>
+      </div>
+    </template>
+
+    <template
+      data-ex="gallery"
+      data-group="Images & media"
+      data-title="Photo gallery"
+      data-tags="data-gallery|thumbnail tabs|1 per view"
+      data-blurb="The tabbed thumbnail variant: <code>data-gallery</code> turns the thumb strip into a full APG tablist with roving tabindex and arrow keys. Thumbs are generated from the slide images."
+      data-note="Thumbs are built as fresh <code>&lt;img&gt;</code> elements rather than clones, so site ids and srcset never leak into them. Tab order is prev → next → panel → selected thumb."
+    >
+      <style>
+        .demo-gallery {
+          --dlc-arrow-bg: transparent;
+          --dlc-arrow-fg: #262626;
+          padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+        }
+
+        .demo-gallery .dl-carousel-arrow--prev {
+          inset-inline-start: 0;
+        }
+
+        .demo-gallery .dl-carousel-arrow--next {
+          inset-inline-end: 0;
+        }
+
+        .demo-gallery .dl-carousel-arrow svg {
+          width: 28px;
+          height: 28px;
+        }
+
+        .demo-gallery .dl-carousel-arrow:hover {
+          color: #000;
+        }
+
+        .demo-gallery .dl-carousel-thumbs {
+          inset-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+          cursor: grab; /* the page script adds mouse drag-scrolling */
+        }
+      </style>
+
+      <div class="dl-carousel demo-gallery" data-slider data-gallery aria-label="Photo gallery">
+        <div class="dl-carousel-track">
+          <div class="dl-carousel-slide">
+            <img src="img/photo-1.jpg" width="1200" height="750" alt="Blue Chevrolet Camaro in the desert at dusk" />
+          </div>
+          <div class="dl-carousel-slide">
+            <img src="img/photo-2.jpg" width="1200" height="750" alt="White Ford Mustang in a neon-lit parking garage" loading="lazy" decoding="async" />
+          </div>
+          <div class="dl-carousel-slide">
+            <img src="img/photo-3.jpg" width="1200" height="750" alt="Hands on the steering wheel at dusk" loading="lazy" decoding="async" />
+          </div>
+          <div class="dl-carousel-slide">
+            <img src="img/photo-4.jpg" width="1200" height="750" alt="Audi R8 tail lights on a city street at sunset" loading="lazy" decoding="async" />
+          </div>
+          <div class="dl-carousel-slide">
+            <img src="img/photo-5.jpg" width="1200" height="750" alt="Technician topping up engine oil" loading="lazy" decoding="async" />
+          </div>
+          <div class="dl-carousel-slide">
+            <img src="img/photo-6.jpg" width="1200" height="750" alt="Classic BMW grilles lined up in a museum" loading="lazy" decoding="async" />
+          </div>
+        </div>
+      </div>
+    </template>
+
+    <template
+      data-ex="peek"
+      data-group="Images & media"
+      data-title="Faded peek"
+      data-tags="--dlc-peek|edge mask|1 per view"
+      data-blurb="A sliver of the neighbouring slides stays visible at both edges, faded out by a mask, so it always reads as “there is more this way”."
+      data-note="<strong>Peek is one custom property.</strong> <code>--dlc-peek: 0px</code> (the default) turns it off; any length turns it on — <code>--dlc-peek: 3rem</code> shows a 3rem sliver each side. It pads the track and sets <code>scroll-padding-inline</code> together, so snapping stays correct. The edge fade is separate: a <code>mask-image</code> on the track, which you can drop if you want a hard edge."
+    >
+      <style>
+        .demo-peek {
+          --dlc-per-view: 1;
+          --dlc-peek: 12vw;
+          --dlc-arrow-bg: transparent;
+          --dlc-arrow-fg: #262626;
+        }
+
+        @media (min-width: 992px) {
+          .demo-peek {
+            --dlc-per-view: 2;
+            --dlc-peek: 6rem;
+          }
+        }
+
+        .demo-peek .dl-carousel-arrow--prev {
+          inset-inline-start: 0.25rem;
+        }
+
+        .demo-peek .dl-carousel-arrow--next {
+          inset-inline-end: 0.25rem;
+        }
+
+        .demo-peek .dl-carousel-track {
+          mask-image: linear-gradient(to right, transparent, #000 var(--dlc-peek), #000 calc(100% - var(--dlc-peek)), transparent);
+        }
+
+        .demo-peek img {
+          border-radius: 8px;
+        }
+      </style>
+
+      <div class="dl-carousel demo-peek" data-slider aria-label="Faded peek">
+        <ul class="dl-carousel-track">
+          <li class="dl-carousel-slide"><img src="img/photo-1.jpg" width="1200" height="750" alt="Blue Chevrolet Camaro in the desert at dusk" loading="lazy" decoding="async" /></li>
+          <li class="dl-carousel-slide"><img src="img/photo-2.jpg" width="1200" height="750" alt="White Ford Mustang in a neon-lit parking garage" loading="lazy" decoding="async" /></li>
+          <li class="dl-carousel-slide"><img src="img/photo-3.jpg" width="1200" height="750" alt="Hands on the steering wheel at dusk" loading="lazy" decoding="async" /></li>
+          <li class="dl-carousel-slide"><img src="img/photo-4.jpg" width="1200" height="750" alt="Audi R8 tail lights on a city street at sunset" loading="lazy" decoding="async" /></li>
+          <li class="dl-carousel-slide"><img src="img/photo-5.jpg" width="1200" height="750" alt="Technician topping up engine oil" loading="lazy" decoding="async" /></li>
+          <li class="dl-carousel-slide"><img src="img/photo-6.jpg" width="1200" height="750" alt="Classic BMW grilles lined up in a museum" loading="lazy" decoding="async" /></li>
+        </ul>
+      </div>
+    </template>
+
+    <template
+      data-ex="video"
+      data-group="Images & media"
+      data-title="Video testimonials"
+      data-tags="1 per view|native dialog|no autoplay"
+      data-blurb="Rebuild of the Bordas video-scroller: dark band, two-column card, poster with a play badge. Video never plays inline — the poster opens a native <code>&lt;dialog&gt;</code>."
+      data-note="Native <code>&lt;dialog&gt;</code> gives Esc-to-close and focus trapping for free — only the backdrop click needs wiring. The source site rotates these every 3 seconds; that fights the content, so autoplay is deliberately off here."
+    >
+      <style>
+        .demo-video-section {
+          box-sizing: border-box; /* demo-wide sets the full width — padding must not add to it */
+          padding: 1.5rem 1rem 2rem;
+          background: #16324f;
+          border-radius: 8px;
+        }
+
+        .demo-video {
+          --dlc-per-view: 1;
+          --dlc-controls-space: 0px; /* keep the unit — unitless 0 breaks the arrow-centering calc */
+          --dlc-arrow-bg: transparent;
+          --dlc-arrow-fg: #fff;
+          --dlc-focus: #fff; /* blue ring is invisible on the navy band */
+          padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
+        }
+
+        .demo-video .dl-carousel-dots {
+          display: none;
+        }
+
+        .demo-video .dl-carousel-arrow--prev {
+          inset-inline-start: 0;
+        }
+
+        .demo-video .dl-carousel-arrow--next {
+          inset-inline-end: 0;
+        }
+
+        .demo-video-card {
+          display: grid;
+          gap: 1.5rem;
+          align-items: center;
+          color: #fff;
+        }
+
+        @media (min-width: 768px) {
+          .demo-video-card {
+            grid-template-columns: 1fr 1fr;
+          }
+        }
+
+        .demo-video-poster {
+          position: relative;
+          display: block;
+          padding: 0;
+          cursor: pointer;
+          background: none;
+          border: 0;
+        }
+
+        .demo-video-poster img {
+          display: block;
+          inline-size: 100%;
+          block-size: auto;
+          border-radius: 8px;
+        }
+
+        .demo-video-play {
+          position: absolute;
+          inset: 0;
+          display: grid;
+          place-items: center;
+        }
+
+        .demo-video-body h3 {
+          margin: 0 0 0.5rem;
+          font-size: 1.6rem;
+        }
+
+        .demo-video-body p {
+          margin: 0 0 1rem;
+          color: #d8e2ec;
+        }
+
+        .demo-video-open {
+          padding: 0 0 0.35rem;
+          font: inherit;
+          font-weight: 600;
+          color: #fff;
+          cursor: pointer;
+          background: none;
+          border: 0;
+          border-block-end: 1px solid rgb(255 255 255 / 45%);
+        }
+
+        .demo-video-poster:focus-visible,
+        .demo-video-open:focus-visible {
+          outline: 3px solid #fff;
+          outline-offset: -3px;
+        }
+
+        .demo-video-dialog {
+          inline-size: min(720px, 90vw);
+          padding: 1rem;
+          border: 0;
+          border-radius: 8px;
+        }
+
+        .demo-video-dialog::backdrop {
+          background: rgb(0 0 0 / 60%);
+        }
+
+        .demo-video-dialog-head {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          margin-block-end: 0.75rem;
+        }
+
+        .demo-video-dialog-head h3 {
+          margin: 0;
+        }
+
+        .demo-video-close {
+          display: grid;
+          place-items: center;
+          inline-size: 36px;
+          block-size: 36px;
+          font-size: 1.25rem;
+          cursor: pointer;
+          background: #f0f0f0;
+          border: 0;
+          border-radius: 50%;
+        }
+
+        .demo-video-frame {
+          display: grid;
+          place-items: center;
+          aspect-ratio: 16 / 9;
+          padding: 1rem;
+          color: #eee;
+          text-align: center;
+          background: #111;
+          border-radius: 6px;
+        }
+      </style>
+
+      <div class="demo-video-section">
+        <div class="dl-carousel demo-video" data-slider aria-label="Video testimonials">
           <ul class="dl-carousel-track">
             <li class="dl-carousel-slide">
               <article class="demo-video-card">
@@ -1465,349 +2369,532 @@
             </li>
           </ul>
         </div>
-        <details>
-          <summary>How this variant is built</summary>
-          <p>
-            Rebuild of the video-testimonial scroller pattern: one slide per view, poster + play button left, name and tagline right. The video <em>never</em> plays inline — both the poster and "Click
-            to watch" open the native <code>&lt;dialog&gt;</code> at the end of this page (page script; Esc and backdrop-click close for free). The dialog ships a placeholder frame — on a real site
-            drop your YouTube/Vimeo <code>&lt;iframe&gt;</code> in and remember to stop playback on close. No autoplay on this carousel: the reference site rotates video cards every 3 seconds, which
-            fights the content.
-          </p>
-        </details>
-      </section>
-
-      <section class="demo-section" id="gallery">
-        <h2 id="gallery-h">Photo gallery</h2>
-        <div class="dl-carousel demo-gallery" data-slider data-gallery aria-labelledby="gallery-h">
-          <div class="dl-carousel-track">
-            <div class="dl-carousel-slide">
-              <img src="img/photo-1.jpg" width="1200" height="750" alt="Blue Chevrolet Camaro in the desert at dusk" />
-            </div>
-            <div class="dl-carousel-slide">
-              <img src="img/photo-2.jpg" width="1200" height="750" alt="White Ford Mustang in a neon-lit parking garage" loading="lazy" decoding="async" />
-            </div>
-            <div class="dl-carousel-slide">
-              <img src="img/photo-3.jpg" width="1200" height="750" alt="Hands on the steering wheel at dusk" loading="lazy" decoding="async" />
-            </div>
-            <div class="dl-carousel-slide">
-              <img src="img/photo-4.jpg" width="1200" height="750" alt="Audi R8 tail lights on a city street at sunset" loading="lazy" decoding="async" />
-            </div>
-            <div class="dl-carousel-slide">
-              <img src="img/photo-5.jpg" width="1200" height="750" alt="Technician topping up engine oil" loading="lazy" decoding="async" />
-            </div>
-            <div class="dl-carousel-slide">
-              <img src="img/photo-6.jpg" width="1200" height="750" alt="Classic BMW grilles lined up in a museum" loading="lazy" decoding="async" />
-            </div>
+        <dialog class="demo-video-dialog" id="video-dialog" aria-label="Video player">
+          <div class="demo-video-dialog-head">
+            <h3 class="demo-video-dialog-title">Video</h3>
+            <button type="button" class="demo-video-close" aria-label="Close video">✕</button>
           </div>
-        </div>
-        <details>
-          <summary>Copy-paste HTML + options</summary>
-          <pre><code>&lt;div class="dl-carousel" data-slider data-gallery aria-label="Vehicle photos"&gt;
-  &lt;div class="dl-carousel-track"&gt;
-    &lt;div class="dl-carousel-slide"&gt;&lt;img src="…" width="1200" height="750" alt="Describe the photo"&gt;&lt;/div&gt;
-    &lt;!-- more photos; use divs (slides become tabpanels), not ul/li --&gt;
-  &lt;/div&gt;
-&lt;/div&gt;</code></pre>
-          <p>
-            Thumbnails are generated from each slide's image; the image
-            <code>alt</code> names the thumbnail tab. Real photos should also carry <code>srcset</code>/<code>sizes</code> — size <code>sizes</code> to ONE slide's rendered width, never
-            <code>100vw</code>.
-          </p>
-        </details>
-      </section>
+          <div class="demo-video-frame">
+            <p>Placeholder — on a real site your YouTube/Vimeo <code>&lt;iframe&gt;</code> goes here.</p>
+          </div>
+        </dialog>
+      </div>
+    </template>
 
-      <section class="demo-section" id="reviews">
-        <h2 id="reviews-h">Customer reviews</h2>
-        <div class="dl-carousel demo-reviews" data-slider data-autoplay="5000" aria-labelledby="reviews-h">
-          <ul class="dl-carousel-track">
-            <li class="dl-carousel-slide">
-              <figure class="demo-review">
-                <figcaption>
-                  <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #7b1fa2">D</span>
-                  <span class="demo-review-byline">
-                    <strong>Dana W.</strong>
-                    <small>2 weeks ago</small>
-                  </span>
-                </figcaption>
-                <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
-                <blockquote>
-                  <p>Painless from test drive to paperwork — in and out in two hours.</p>
-                </blockquote>
-              </figure>
-            </li>
-            <li class="dl-carousel-slide">
-              <figure class="demo-review">
-                <figcaption>
-                  <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #1565c0">M</span>
-                  <span class="demo-review-byline">
-                    <strong>Marcus T.</strong>
-                    <small>a month ago</small>
-                  </span>
-                </figcaption>
-                <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
-                <blockquote>
-                  <p>Fair trade-in value and no pressure. Second car we've bought here.</p>
-                </blockquote>
-              </figure>
-            </li>
-            <li class="dl-carousel-slide">
-              <figure class="demo-review">
-                <figcaption>
-                  <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #00796b">P</span>
-                  <span class="demo-review-byline">
-                    <strong>Priya S.</strong>
-                    <small>3 months ago</small>
-                  </span>
-                </figcaption>
-                <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
-                <blockquote>
-                  <p>Service department caught a recall I didn't know about. Honest people.</p>
-                </blockquote>
-              </figure>
-            </li>
-            <li class="dl-carousel-slide">
-              <figure class="demo-review">
-                <figcaption>
-                  <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #e65100">C</span>
-                  <span class="demo-review-byline">
-                    <strong>Colin R.</strong>
-                    <small>3 weeks ago</small>
-                  </span>
-                </figcaption>
-                <p class="demo-review-stars" role="img" aria-label="Rated 4 out of 5">★★★★☆</p>
-                <blockquote>
-                  <p>Found the exact trim I wanted and they delivered it to my office.</p>
-                </blockquote>
-              </figure>
-            </li>
-            <li class="dl-carousel-slide">
-              <figure class="demo-review">
-                <figcaption>
-                  <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #c2185b">A</span>
-                  <span class="demo-review-byline">
-                    <strong>Aisha B.</strong>
-                    <small>2 months ago</small>
-                  </span>
-                </figcaption>
-                <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
-                <blockquote>
-                  <p>First-time buyer — they walked me through financing without the runaround.</p>
-                </blockquote>
-              </figure>
-            </li>
-            <li class="dl-carousel-slide">
-              <figure class="demo-review">
-                <figcaption>
-                  <span class="demo-review-avatar" aria-hidden="true" style="--avatar-bg: #2e7d32">G</span>
-                  <span class="demo-review-byline">
-                    <strong>Gene &amp; Marta L.</strong>
-                    <small>a week ago</small>
-                  </span>
-                </figcaption>
-                <p class="demo-review-stars" role="img" aria-label="Rated 5 out of 5">★★★★★</p>
-                <blockquote>
-                  <p>Five years of oil changes and never an upsell. That's why we come back.</p>
-                </blockquote>
-              </figure>
-            </li>
-          </ul>
-        </div>
-        <details>
-          <summary>Copy-paste HTML + options</summary>
-          <pre><code>&lt;div class="dl-carousel" data-slider data-autoplay="5000" aria-label="Customer reviews"&gt;
-  &lt;ul class="dl-carousel-track"&gt;
-    &lt;li class="dl-carousel-slide"&gt;…review…&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/div&gt;</code></pre>
-          <p>
-            Autoplay pauses on hover, stops permanently on keyboard focus or drag (the pause button restarts it), never starts under
-            <code>prefers-reduced-motion</code>, and rewinds at the end — no cloned slides.
-          </p>
-        </details>
-      </section>
+    <template
+      data-ex="bi-arrows"
+      data-group="Styling recipes"
+      data-title="Bootstrap Icons arrows"
+      data-tags="icon font|CSS-only swap|no engine edit"
+      data-blurb="Swapping the arrow glyph for a Bootstrap Icons one — the exact pair chevroletdemo1 uses. Four lines of CSS, no engine edit and no JavaScript."
+      data-note="The arrows are plain <code>&lt;button&gt;</code>s carrying their own accessible name, so replacing the glyph is purely visual — the screen-reader label is untouched. Any icon font works the same way."
+    >
+      <style>
+        /* Bootstrap Icons arrows — the chevroletdemo1.dealeron.com look.
+        NOTE the wrapper class is .icon-arrows, not .bi-arrows: every class the
+        icon font defines starts with bi-, and .bi-arrows is a real one (6a2),
+        so naming your wrapper that paints a stray glyph on your own container.
+        Needs the icon font on the page (once, in <head>):
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
 
-      <section class="demo-section" id="stock">
-        <h2 id="stock-h">Stock look — the base</h2>
-        <p>Everything above is site CSS over this. Untouched engine defaults: overlaid dark arrows, per-page dots in reserved space (CLS 0), snap scrolling.</p>
-        <div class="dl-carousel demo-stock" data-slider aria-labelledby="stock-h">
-          <ul class="dl-carousel-track">
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <h3>Default controls</h3>
-                <p>Arrows overlay the content edges; dots live in space the CSS reserved before JS ran.</p>
-              </article>
-            </li>
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <h3>One knob per look</h3>
-                <p>Every visual above this section is <code>--dlc-*</code> custom properties and plain site CSS.</p>
-              </article>
-            </li>
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <h3>Works without JS</h3>
-                <p>The track is a native scroll-snap container — disable JavaScript and it still swipes.</p>
-              </article>
-            </li>
-            <li class="dl-carousel-slide">
-              <article class="demo-card">
-                <h3>Start here</h3>
-                <p>Copy the markup below, add <code>--dlc-per-view</code> breakpoints, then restyle.</p>
-              </article>
-            </li>
-          </ul>
-        </div>
-        <details>
-          <summary>Copy-paste HTML — the base for every variation</summary>
-          <pre><code>&lt;link rel="stylesheet" href="dl-carousel.css"&gt;
-&lt;script src="dl-carousel.js" defer&gt;&lt;/script&gt;
+        No engine edit and no JS: the arrows are plain buttons, so hiding the
+        built-in SVG and drawing a font glyph in its place is the whole swap. */
+        .icon-arrows {
+          --dlc-per-view: 2;
+          --dlc-gap: 1.5rem;
+          --dlc-arrow-size: 42px;
+          --dlc-arrow-bg: transparent;
+          --dlc-arrow-fg: #666;
+          --dlc-arrow-bg-hover: transparent;
+          --dlc-arrow-fg-hover: #111;
+          padding-inline: 3rem;
+        }
 
-&lt;div class="dl-carousel my-slider" data-slider aria-label="Describe the strip"&gt;
-  &lt;ul class="dl-carousel-track"&gt;
-    &lt;li class="dl-carousel-slide"&gt;…card content…&lt;/li&gt;
-  &lt;/ul&gt;
-&lt;/div&gt;</code></pre>
-        </details>
-      </section>
+        @media (min-width: 768px) {
+          .icon-arrows {
+            --dlc-per-view: 3;
+          }
+        }
 
-      <footer class="demo-section">
-        <h2>Notes</h2>
-        <ul>
-          <li><strong>No JavaScript?</strong> Every slider degrades to a swipeable snap strip; all content stays visible and indexable.</li>
-          <li><strong>SEO:</strong> all slides ship in the initial HTML, nothing is cloned — every heading and link exists exactly once.</li>
-          <li>
-            <strong>Include once per page:</strong>
-            <code>dl-carousel.css</code> + <code>dl-carousel.js</code> (defer). See the <a href="../README.md">README</a> for the JS API and the verification checklist.
+        @media (min-width: 992px) {
+          .icon-arrows {
+            --dlc-per-view: 5;
+          }
+        }
+
+        /* 1 — hide the engine's built-in SVG chevron */
+        .icon-arrows .dl-carousel-arrow svg {
+          display: none;
+        }
+
+        /* 2 — draw a Bootstrap Icons glyph in its place.
+        \f12a / \f134 are bi-arrow-left-circle / bi-arrow-right-circle, the exact
+        pair chevroletdemo1 uses. For plain chevrons swap in \f284 / \f285. */
+        .icon-arrows .dl-carousel-arrow::before {
+          font-family: bootstrap-icons;
+          font-size: 38px;
+          line-height: 1;
+        }
+
+        .icon-arrows .dl-carousel-arrow--prev::before {
+          content: '\f12a';
+        }
+
+        .icon-arrows .dl-carousel-arrow--next::before {
+          content: '\f134';
+        }
+
+        /* 3 — park them in the gutter the padding reserved, not over the cards */
+        .icon-arrows .dl-carousel-arrow--prev {
+          inset-inline-start: 0;
+        }
+
+        .icon-arrows .dl-carousel-arrow--next {
+          inset-inline-end: 0;
+        }
+
+        .icon-arrows .dl-carousel-dots {
+          display: none;
+        }
+
+        .icon-arrows .demo-modelbar-card {
+          display: block;
+          color: inherit;
+          text-align: center;
+          text-decoration: none;
+        }
+
+        .icon-arrows .demo-modelbar-card img {
+          inline-size: 100%;
+          block-size: auto;
+        }
+
+        .icon-arrows .demo-modelbar-card p {
+          margin: 0.25rem 0 0;
+          font-size: 0.95rem;
+        }
+      </style>
+
+      <div class="dl-carousel icon-arrows" data-slider data-step="slide" aria-label="Chevrolet lineup">
+        <ul class="dl-carousel-track">
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Silverado%201500" aria-label="Shop new Silverado 1500">
+              <img
+                src="img/chrome-silverado-1500.png"
+                srcset="img/chrome-silverado-1500.png 320w, img/chrome-silverado-1500-640.png 640w"
+                sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2026 Chevrolet Silverado 1500"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Silverado 1500</p>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Colorado" aria-label="Shop new Colorado">
+              <img
+                src="img/chrome-colorado.png"
+                srcset="img/chrome-colorado.png 320w, img/chrome-colorado-640.png 640w"
+                sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2026 Chevrolet Colorado"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Colorado</p>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Equinox" aria-label="Shop new Equinox">
+              <img
+                src="img/chrome-equinox.png"
+                srcset="img/chrome-equinox.png 320w, img/chrome-equinox-640.png 640w"
+                sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2026 Chevrolet Equinox"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Equinox</p>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Tahoe" aria-label="Shop new Tahoe">
+              <img
+                src="img/chrome-tahoe.png"
+                srcset="img/chrome-tahoe.png 320w, img/chrome-tahoe-640.png 640w"
+                sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2026 Chevrolet Tahoe"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Tahoe</p>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Traverse" aria-label="Shop new Traverse">
+              <img
+                src="img/chrome-traverse.png"
+                srcset="img/chrome-traverse.png 320w, img/chrome-traverse-640.png 640w"
+                sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2026 Chevrolet Traverse"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Traverse</p>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Suburban" aria-label="Shop new Suburban">
+              <img
+                src="img/chrome-suburban.png"
+                srcset="img/chrome-suburban.png 320w, img/chrome-suburban-640.png 640w"
+                sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2026 Chevrolet Suburban"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Suburban</p>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Trax" aria-label="Shop new Trax">
+              <img
+                src="img/chrome-trax.png"
+                srcset="img/chrome-trax.png 320w, img/chrome-trax-640.png 640w"
+                sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2026 Chevrolet Trax"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Trax</p>
+            </a>
+          </li>
+          <li class="dl-carousel-slide">
+            <a class="demo-modelbar-card" href="/searchnew.aspx?Make=Chevrolet&amp;ModelAndTrim=Blazer" aria-label="Shop new Blazer">
+              <img
+                src="img/chrome-blazer.png"
+                srcset="img/chrome-blazer.png 320w, img/chrome-blazer-640.png 640w"
+                sizes="(min-width: 1200px) 250px, (min-width: 768px) 30vw, 45vw"
+                width="320"
+                height="240"
+                alt="2026 Chevrolet Blazer"
+                loading="lazy"
+                decoding="async"
+              />
+              <p>Blazer</p>
+            </a>
           </li>
         </ul>
-      </footer>
-    </main>
-    <dialog class="demo-video-dialog" id="video-dialog" aria-label="Video player">
-      <div class="demo-video-dialog-head">
-        <h3 class="demo-video-dialog-title">Video</h3>
-        <button type="button" class="demo-video-close" aria-label="Close video">✕</button>
       </div>
-      <div class="demo-video-frame">
-        <p>Placeholder — on a real site your YouTube/Vimeo <code>&lt;iframe&gt;</code> goes here.</p>
-      </div>
-    </dialog>
+    </template>
+
     <script>
-      // Site-level enhancement (models carousel): drive the sliding bar
-      // thumb from the library's own state — no library changes needed.
-      addEventListener('DOMContentLoaded', () => {
-        const bar = document.querySelector('.demo-models .dl-carousel-dots');
-        if (!bar) return;
-        const sync = () => {
-          const dots = [...bar.children];
-          const i = dots.findIndex((d) => d.classList.contains('dl-carousel-dot--current'));
-          bar.style.setProperty('--bar-count', dots.length || 1);
-          bar.style.setProperty('--bar-index', Math.max(0, i));
+      /* ==========================================================================
+         Demo-app controller. Renders ONE example at a time into the stage and
+         prints the exact same source into the code panel.
+
+         The parity rule: an example lives in a single <template> that holds its
+         own <style> plus its markup. The stage gets a clone of that template; the
+         code panel gets the template's own innerHTML. One source, two consumers —
+         so "what you see" and "what you copy" cannot drift.
+         ========================================================================== */
+
+      (() => {
+        const templates = [...document.querySelectorAll('template[data-ex]')];
+        const nav = document.querySelector('.app-nav');
+        const stage = document.getElementById('stage');
+        const elTitle = document.getElementById('ex-title');
+        const elBlurb = document.getElementById('ex-blurb');
+        const elMeta = document.getElementById('ex-meta');
+        const elNote = document.getElementById('ex-note');
+        const out = document.getElementById('code-out');
+        const tabs = [...document.querySelectorAll('.app-tabs button')];
+        const copyBtn = document.querySelector('.app-copy');
+
+        const STYLE_RE = /[ \t]*<style>([\s\S]*?)<\/style>\n?/;
+        const BASE = '<link rel="stylesheet" href="dl-carousel.css">\n<script src="dl-carousel.js" defer></' + 'script>';
+
+        /** Strip the common leading indentation the template picked up from the page. */
+        const dedent = (s) => {
+          const lines = s.replace(/^\n+/, '').replace(/\s+$/, '').split('\n');
+          const widths = lines.filter((l) => l.trim()).map((l) => l.match(/^[ \t]*/)[0].length);
+          const pad = widths.length ? Math.min(...widths) : 0;
+          return lines.map((l) => l.slice(pad)).join('\n');
         };
-        // class flips on page change (instantly, on activation); children
-        // are rebuilt when a breakpoint changes the page count.
-        new MutationObserver(sync).observe(bar, {
-          subtree: true,
-          childList: true,
-          attributes: true,
-          attributeFilter: ['class'],
-        });
-        sync();
-      });
-      // Video testimonial modal: native <dialog> — Esc closes and focus is
-      // trapped for free; backdrop click is the only wiring needed. The
-      // carousel is untouched (posters are plain buttons in authored HTML).
-      addEventListener('DOMContentLoaded', () => {
-        const dialog = document.getElementById('video-dialog');
-        if (!dialog) return;
-        const title = dialog.querySelector('.demo-video-dialog-title');
-        for (const btn of document.querySelectorAll('[data-video-title]')) {
-          btn.addEventListener('click', () => {
-            title.textContent = btn.dataset.videoTitle;
-            dialog.showModal();
+
+        const sources = new Map(); // id -> { html, css, full }
+        for (const t of templates) {
+          const raw = t.innerHTML;
+          const m = raw.match(STYLE_RE);
+          const css = m ? dedent(m[1]) : '';
+          const html = dedent(raw.replace(STYLE_RE, ''));
+          sources.set(t.dataset.ex, {
+            html,
+            css,
+            full: BASE + '\n\n<style>\n' + css + '\n</style>\n\n' + html,
           });
         }
-        dialog.querySelector('.demo-video-close').addEventListener('click', () => dialog.close());
-        dialog.addEventListener('click', (e) => {
-          if (e.target === dialog) dialog.close();
-        });
-      });
-      // Site-level tabs (model bar with tabs): APG tabs pattern with automatic
-      // activation — arrow keys move focus AND selection, panes toggle via
-      // [hidden]. The carousels inside are untouched: each pane holds its own
-      // auto-inited instance, and the engine's ResizeObserver re-measures a
-      // strip when its pane is revealed.
-      addEventListener('DOMContentLoaded', () => {
-        for (const wrap of document.querySelectorAll('[data-tabs]')) {
-          const tabs = [...wrap.querySelectorAll('[role="tab"]')];
-          const panes = tabs.map((t) => document.getElementById(t.getAttribute('aria-controls')));
-          const select = (i) => {
-            tabs.forEach((t, j) => {
-              t.setAttribute('aria-selected', String(i === j));
-              t.tabIndex = i === j ? 0 : -1;
-              panes[j].hidden = i !== j;
+
+        /* ---- per-example page script (site-level enhancement, not engine) ------ */
+
+        const ENHANCERS = {
+          // Sliding progress-bar thumb: driven from the library's own dot state.
+          models(scope, signal) {
+            const bar = scope.querySelector('.demo-models .dl-carousel-dots');
+            if (!bar) return;
+            const sync = () => {
+              const dots = [...bar.children];
+              const i = dots.findIndex((d) => d.classList.contains('dl-carousel-dot--current'));
+              bar.style.setProperty('--bar-count', dots.length || 1);
+              bar.style.setProperty('--bar-index', Math.max(0, i));
+            };
+            const mo = new MutationObserver(sync);
+            mo.observe(bar, {
+              subtree: true,
+              childList: true,
+              attributes: true,
+              attributeFilter: ['class'],
             });
-          };
-          tabs.forEach((t, i) => t.addEventListener('click', () => select(i)));
-          wrap.querySelector('[role="tablist"]').addEventListener('keydown', (e) => {
-            const i = tabs.indexOf(e.target);
-            if (i === -1) return;
-            let n = null;
-            if (e.key === 'ArrowRight') n = (i + 1) % tabs.length;
-            else if (e.key === 'ArrowLeft') n = (i - 1 + tabs.length) % tabs.length;
-            else if (e.key === 'Home') n = 0;
-            else if (e.key === 'End') n = tabs.length - 1;
-            if (n === null) return;
-            e.preventDefault();
-            tabs[n].focus();
-            select(n);
-          });
-        }
-      });
-      // Mouse drag-scrolling for thumbnail strips (touch swiping is native
-      // scrolling already). A small threshold keeps plain clicks working;
-      // after a real drag the trailing click is swallowed so the thumb
-      // under the cursor isn't accidentally activated.
-      addEventListener('DOMContentLoaded', () => {
-        for (const strip of document.querySelectorAll('.dl-carousel-thumbs')) {
-          let startX = 0;
-          let startLeft = 0;
-          let dragging = false;
-          let moved = false;
-          strip.addEventListener('pointerdown', (e) => {
-            if (e.pointerType !== 'mouse' || e.button !== 0) return;
-            dragging = true;
-            moved = false;
-            startX = e.clientX;
-            startLeft = strip.scrollLeft;
-          });
-          strip.addEventListener('pointermove', (e) => {
-            if (!dragging) return;
-            const dx = e.clientX - startX;
-            if (!moved && Math.abs(dx) > 4) {
-              moved = true;
-              strip.setPointerCapture(e.pointerId);
+            signal.addEventListener('abort', () => mo.disconnect());
+            sync();
+          },
+
+          // Native <dialog>: Esc and focus trapping come free; only the backdrop
+          // click and the title swap need wiring.
+          video(scope, signal) {
+            const dialog = scope.querySelector('.demo-video-dialog');
+            if (!dialog) return;
+            const title = dialog.querySelector('.demo-video-dialog-title');
+            for (const btn of scope.querySelectorAll('[data-video-title]')) {
+              btn.addEventListener(
+                'click',
+                () => {
+                  title.textContent = btn.dataset.videoTitle;
+                  dialog.showModal();
+                },
+                { signal },
+              );
             }
-            if (moved) strip.scrollLeft = startLeft - dx;
-          });
-          const end = () => {
-            dragging = false;
-          };
-          strip.addEventListener('pointerup', end);
-          strip.addEventListener('pointercancel', end);
-          strip.addEventListener('dragstart', (e) => e.preventDefault());
-          strip.addEventListener(
-            'click',
-            (e) => {
-              if (moved) {
-                e.preventDefault();
-                e.stopPropagation();
+            dialog.querySelector('.demo-video-close').addEventListener('click', () => dialog.close(), { signal });
+            dialog.addEventListener(
+              'click',
+              (e) => {
+                if (e.target === dialog) dialog.close();
+              },
+              { signal },
+            );
+            // Leaving the example while the modal is open would strand the backdrop.
+            signal.addEventListener('abort', () => dialog.open && dialog.close());
+          },
+
+          // APG tabs, automatic activation. Each pane holds its own auto-inited
+          // carousel; the engine's ResizeObserver re-measures a strip when its pane
+          // is revealed, so none of slick's hidden-pane height hacks are needed.
+          'modelbar-tabs'(scope, signal) {
+            for (const wrap of scope.querySelectorAll('[data-tabs]')) {
+              const tabEls = [...wrap.querySelectorAll('[role="tab"]')];
+              const panes = tabEls.map((t) => scope.querySelector('#' + t.getAttribute('aria-controls')));
+              const select = (i) =>
+                tabEls.forEach((t, j) => {
+                  t.setAttribute('aria-selected', String(i === j));
+                  t.tabIndex = i === j ? 0 : -1;
+                  panes[j].hidden = i !== j;
+                });
+              tabEls.forEach((t, i) => t.addEventListener('click', () => select(i), { signal }));
+              wrap.querySelector('[role="tablist"]').addEventListener(
+                'keydown',
+                (e) => {
+                  const i = tabEls.indexOf(e.target);
+                  if (i === -1) return;
+                  let n = null;
+                  if (e.key === 'ArrowRight') n = (i + 1) % tabEls.length;
+                  else if (e.key === 'ArrowLeft') n = (i - 1 + tabEls.length) % tabEls.length;
+                  else if (e.key === 'Home') n = 0;
+                  else if (e.key === 'End') n = tabEls.length - 1;
+                  if (n === null) return;
+                  e.preventDefault();
+                  tabEls[n].focus();
+                  select(n);
+                },
+                { signal },
+              );
+            }
+          },
+
+          // Mouse drag on the THUMB STRIP. The engine's own drag covers the track,
+          // not this strip, so it still needs its own wiring.
+          gallery(scope, signal) {
+            for (const strip of scope.querySelectorAll('.dl-carousel-thumbs')) {
+              let startX = 0,
+                startLeft = 0,
+                dragging = false,
                 moved = false;
-              }
-            },
-            true,
+              strip.addEventListener(
+                'pointerdown',
+                (e) => {
+                  if (e.pointerType !== 'mouse' || e.button !== 0) return;
+                  dragging = true;
+                  moved = false;
+                  startX = e.clientX;
+                  startLeft = strip.scrollLeft;
+                },
+                { signal },
+              );
+              strip.addEventListener(
+                'pointermove',
+                (e) => {
+                  if (!dragging) return;
+                  const dx = e.clientX - startX;
+                  if (!moved && Math.abs(dx) > 4) {
+                    moved = true;
+                    strip.setPointerCapture(e.pointerId);
+                  }
+                  if (moved) strip.scrollLeft = startLeft - dx;
+                },
+                { signal },
+              );
+              const end = () => {
+                dragging = false;
+              };
+              strip.addEventListener('pointerup', end, { signal });
+              strip.addEventListener('pointercancel', end, { signal });
+              strip.addEventListener('dragstart', (e) => e.preventDefault(), {
+                signal,
+              });
+              strip.addEventListener(
+                'click',
+                (e) => {
+                  if (moved) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    moved = false;
+                  }
+                },
+                { signal, capture: true },
+              );
+            }
+          },
+        };
+
+        /* ---- rendering --------------------------------------------------------- */
+
+        let live = [];
+        let ac = null;
+        let current = null;
+
+        function render(id) {
+          const tpl = templates.find((t) => t.dataset.ex === id) || templates[0];
+          id = tpl.dataset.ex;
+          current = id;
+
+          // Tear the previous example down completely: engine instances first
+          // (destroy() restores their original markup), then every page-script
+          // listener and observer via the shared signal, then the DOM itself. The
+          // outgoing example's <style> leaves with its clone, so nothing it defined
+          // can bleed into the next one — that isolation is why each snippet is
+          // genuinely self-contained.
+          live.forEach((s) => s.destroy());
+          live = [];
+          ac?.abort();
+          ac = new AbortController();
+          stage.replaceChildren(tpl.content.cloneNode(true));
+          live = window.DLCarousel.autoInit(stage);
+          ENHANCERS[id]?.(stage, ac.signal);
+
+          elTitle.textContent = tpl.dataset.title;
+          elBlurb.innerHTML = tpl.dataset.blurb || '';
+          elMeta.replaceChildren(
+            ...(tpl.dataset.tags || '')
+              .split('|')
+              .filter(Boolean)
+              .map((t) => {
+                const li = document.createElement('li');
+                li.textContent = t;
+                return li;
+              }),
           );
+          elNote.innerHTML = tpl.dataset.note || '';
+          elNote.hidden = !tpl.dataset.note;
+
+          for (const b of nav.querySelectorAll('button')) b.setAttribute('aria-current', String(b.dataset.go === id));
+          paint();
+          if (location.hash.slice(1) !== id) history.replaceState(null, '', '#' + id);
         }
-      });
+
+        const activeTab = () => tabs.find((t) => t.getAttribute('aria-pressed') === 'true').dataset.pane;
+        const paint = () => {
+          out.textContent = sources.get(current)[activeTab()];
+        };
+
+        /* ---- wiring ------------------------------------------------------------ */
+
+        for (const group of new Set(templates.map((t) => t.dataset.group))) {
+          const box = document.createElement('div');
+          const h = document.createElement('h2');
+          h.textContent = group;
+          const ul = document.createElement('ul');
+          for (const t of templates.filter((x) => x.dataset.group === group)) {
+            const li = document.createElement('li');
+            const b = document.createElement('button');
+            b.type = 'button';
+            b.textContent = t.dataset.title;
+            b.dataset.go = t.dataset.ex;
+            b.addEventListener('click', () => render(t.dataset.ex));
+            li.append(b);
+            ul.append(li);
+          }
+          box.append(h, ul);
+          nav.append(box);
+        }
+
+        for (const t of tabs) {
+          t.addEventListener('click', () => {
+            tabs.forEach((x) => x.setAttribute('aria-pressed', String(x === t)));
+            paint();
+          });
+        }
+
+        copyBtn.addEventListener('click', async () => {
+          const label = 'Copy';
+          try {
+            await navigator.clipboard.writeText(out.textContent);
+            copyBtn.textContent = 'Copied';
+          } catch {
+            // The Clipboard API is blocked on file:// in some browsers — select the
+            // text so Ctrl+C still works rather than failing silently.
+            getSelection().selectAllChildren(out);
+            copyBtn.textContent = 'Press Ctrl+C';
+          }
+          setTimeout(() => {
+            copyBtn.textContent = label;
+          }, 1600);
+        });
+
+        addEventListener('hashchange', () => {
+          const id = location.hash.slice(1);
+          if (id && id !== current && templates.some((t) => t.dataset.ex === id)) render(id);
+        });
+
+        // This script is inline, so it parses BEFORE the deferred engine script
+        // executes and defines window.DLCarousel. Wait for DOMContentLoaded, which
+        // fires after every deferred script has run.
+        const boot = () => render(location.hash.slice(1) || templates[0].dataset.ex);
+        if (window.DLCarousel) boot();
+        else addEventListener('DOMContentLoaded', boot);
+      })();
     </script>
   </body>
 </html>
