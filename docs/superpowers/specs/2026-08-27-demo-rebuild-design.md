@@ -35,6 +35,12 @@ already `--dlc-per-view`, a setting the engine has always had. We built 54
 copies of roughly 13 things and called a difference of one integer a different
 slider.
 
+**The brands themselves already collapse.** 24 brands render using 11 card
+looks, and **14 of the 24 share one look** — Acura, Audi, Buick, Chevrolet,
+Ford, GMC, Honda, Hyundai, Jaguar, Kia, Mitsubishi, Nissan, Subaru and Volvo
+all use the plain white cutout tile. The library rendered those 14 as separate
+strips regardless. That is the duplication, measured.
+
 It is also confusing at the point of use. The pages are organised by car brand,
 so someone building a Mazda site is offered "the Acura ladder". That label is
 meaningless to them. We published our research notes as if they were a menu.
@@ -140,11 +146,46 @@ reach a look we never anticipated.
   produced them.
 - Not a design-system or theme builder. It configures this one engine.
 
-## Open question for review
+## Brand presets: all 32
 
-**Brand presets: which brands, and what does each preset actually set?** The
-census has 32. Presets are cheap (a few numbers each) but each one is a claim
-that we know that brand's correct look. Options: ship presets only for brands
-we have shipped work for; ship all 32; or ship none at first and add them when
-a ticket needs one. Recommend the last — it keeps the first version honest and
-the data is in `docs/` when a brand comes up.
+Every brand in the census ships a preset. The tool exists to be ready when a
+designer picks up a ticket; making them reconstruct Mazda from scratch when we
+already measured Mazda is a worse tool that merely costs us less. A preset is a
+row of values — card style, per-view at each breakpoint, gap, a colour or two,
+and which cars — applied to the component that already exists.
+
+This is the line that keeps the picker from becoming the library again:
+
+- **Library:** adding a brand adds a rendered strip. Coverage costs page weight,
+  and fourteen brands paid it to display the same look.
+- **Preset:** adding a brand adds a row of values. Coverage costs almost nothing,
+  and those fourteen brands share one component.
+
+Presets carry the date they were measured. When a brand redesigns, ten numbers
+get rechecked — far cheaper than re-rendering a strip.
+
+## The card-style chooser is visual
+
+The one thing the library did genuinely well is let someone browse looks they
+could not have named. A text dropdown reading "split photo card" does not help
+anyone who does not already know they want it. So the card-style setting is
+shown as thumbnails of the 11 looks — browsing, at a twentieth of the weight.
+
+## Constraint: this must not become the next overengineered thing
+
+The workbench is **a settings object, a `setProperty` loop, and a template
+string.** The settings are CSS custom properties, so changing "how many across"
+is `el.style.setProperty('--dlc-per-view', 3)` and the browser does the rest.
+Generating the code is reading that object back out.
+
+No framework. No build step. No reactivity system. If the implementation starts
+wanting one, that is the signal to stop and re-think, not to add it.
+
+## Sequencing note on check-recipes.mjs
+
+`scripts/check-recipes.mjs` polices drift between the hand-written copy-paste
+recipes and the live examples. Generated code removes the gap it watches, so it
+is deleted — the bug becomes impossible rather than detected.
+
+It must be deleted **in the same change that lands generation**, not before.
+Removing it first would leave a window where nothing catches drift.
