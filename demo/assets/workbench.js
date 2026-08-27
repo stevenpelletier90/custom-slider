@@ -206,11 +206,7 @@
       data: { 'data-step': 'slide' },
       props: { '--dlc-gap': '0.5rem', '--dlc-controls-space': '0.1px', '--dlc-arrow-bg': 'transparent', '--dlc-arrow-fg': '#262626' },
       hideDots: true,
-      panes: [
-        ['Trucks', [0, 1]],
-        ['SUVs', [2, 3, 4]],
-        ['Crossovers', [5, 6, 7]],
-      ],
+      panes: ['Trucks', 'SUVs', 'Crossovers'],
       css: `.dlx-tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-block-end: 1rem; border-block-end: 1px solid #e2e5ea; }
 .dlx-tabs [role="tab"] { padding: 0.6rem 1.1rem; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: 0.65; }
 .dlx-tabs [role="tab"][aria-selected="true"] { opacity: 1; border-block-end-color: currentcolor; }
@@ -566,7 +562,13 @@
     const body = [state.look ? scope(LOOKS[state.look].css) : '', p.css ? scope(p.css) : ''].filter(Boolean).join('\n');
     // Arrows either sit in a gutter beside the content or float over it. Last
     // in the sheet so it beats the padding-inline a card look sets for itself.
-    const gutter = state.gutter ? `${sel} { padding-inline: calc(var(--dlc-arrow-size) + 0.4rem); }` : `${sel} { padding-inline: 0; }`;
+    // The fallback matters: --dlc-arrow-size is defined on .dl-carousel, and the
+    // tab strip sits OUTSIDE the carousel, so without one the calc() references
+    // an undefined variable and the whole declaration is dropped.
+    const gw = state.gutter ? 'calc(var(--dlc-arrow-size, 44px) + 0.4rem)' : '0px';
+    // Tabs and filter buttons sit outside the carousel, so they have to be told
+    // about the gutter or they hang off the left edge of their own cards.
+    const gutter = [`${sel} { padding-inline: ${gw}; }`, hasWrap() ? `${sel}-wrap .dlx-tabs, ${sel}-wrap .dlx-filterbar { padding-inline: ${gw}; }` : ''].filter(Boolean).join('\n');
     return [`${sel} {\n${decls}\n}`, steps, dots, arrows, body, gutter].filter(Boolean).join('\n\n');
   }
 
@@ -576,10 +578,13 @@
     // see what the slider does at 12 cards, and what it does when everything
     // already fits and it correctly stops drawing arrows and dots.
     const source = modelsFor(p);
-    const models = Array.from({ length: state.count }, (_, i) => source[i % source.length]);
+    // Take `n` models from the roster starting at `from`, cycling if the
+    // roster is shorter than asked for.
+    const take = (n, from = 0) => Array.from({ length: n }, (_, i) => source[(from + i) % source.length]);
     // A pattern draws its slides one of three ways: its own slides(), a shared
     // card look, or - for the card grid - entirely inside its own branch below.
-    let items = p.slides ? p.slides(models) : state.look ? models.map((m) => LOOKS[state.look].markup(m)) : [];
+    const draw = (list) => (p.slides ? p.slides(list) : state.look ? list.map((m) => LOOKS[state.look].markup(m)) : []);
+    let items = draw(take(state.count));
 
     // The two-row grid puts a COLUMN in each slide, not a card - one slide is
     // one scroll stop, which is what keeps the dots and the count honest.
@@ -614,12 +619,17 @@
 
     // Body-style tabs: one carousel per pane, each over its own subset.
     if (p.panes) {
-      const ids = p.panes.map(([name]) => name.toLowerCase().replace(/\W+/g, '-'));
-      const tabs = p.panes.map(([name], i) => `    <button type="button" role="tab" id="tab-${ids[i]}" aria-controls="pane-${ids[i]}" aria-selected="${i === 0}">${name}</button>`).join('\n');
+      const ids = p.panes.map((name) => name.toLowerCase().replace(/\W+/g, '-'));
+      const tabs = p.panes.map((name, i) => `    <button type="button" role="tab" id="tab-${ids[i]}" aria-controls="pane-${ids[i]}" aria-selected="${i === 0}">${name}</button>`).join('\n');
+      // Each pane draws the requested number of cards from the roster at its
+      // own offset, so "slides in this example" means slides PER PANE and no
+      // pane comes out half empty. Models repeating across panes is faithful:
+      // the real Chevrolet bar does it too.
+      const stride = Math.max(1, Math.ceil(source.length / p.panes.length));
       const panes = p.panes
-        .map(([, idx], i) => {
-          const sub = idx.map((n) => items[n % items.length]);
-          return `  <div class="dlx-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}"${i === 0 ? '' : ' hidden'}>\n${carousel(sub, p.panes[i][0], '  ')}\n  </div>`;
+        .map((name, i) => {
+          const sub = draw(take(state.count, i * stride));
+          return `  <div class="dlx-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}"${i === 0 ? '' : ' hidden'}>\n${carousel(sub, name, '  ')}\n  </div>`;
         })
         .join('\n');
       return `<div class="${cls}-wrap" data-tabs>\n  <div class="dlx-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n${panes}\n</div>`;
@@ -759,15 +769,30 @@
     set('spec-stops', String(stops));
     set('spec-controls', fits ? 'hidden — all fits' : 'arrows' + (state.hideDots ? '' : ' + dots'));
 
+    // The workbench chrome often leaves the preview column narrower than the
+    // .container a real page would give at this window. Judge the card against
+    // what that container would produce, or the gauge cries "cramped" about a
+    // layout that is fine in production.
+    const tier = innerWidth >= 1200 ? 1170 : innerWidth >= 992 ? 970 : innerWidth >= 768 ? 750 : innerWidth - 30;
+    const frame = Math.round(stage.getBoundingClientRect().width);
+    const capped = frame < tier - 2;
+    const would = capped ? Math.round((w * tier) / frame) : w;
+
     // Full bar at twice the minimum; amber inside the last 15% before it.
-    const head = w / min;
+    const head = would / min;
     $('spec-gauge').style.inlineSize = `${Math.max(4, Math.min(100, (head / 2) * 100))}%`;
-    const tight = head < 1.15;
-    spec.dataset.fit = tight ? 'tight' : 'ok';
-    warn.hidden = w >= min;
-    warn.textContent = warn.hidden
-      ? ''
-      : `Each card is ${w}px here and this look needs about ${min}px before the text starts colliding. Show fewer across, or pick a card style that suits narrow cards.`;
+    spec.dataset.fit = head < 1.15 ? 'tight' : 'ok';
+
+    if (capped && w < min) {
+      // The preview is the thing that is short, not the settings.
+      warn.hidden = false;
+      warn.textContent = `Preview is ${frame}px wide; a real page at this window gives the slider about ${tier}px, where each card would be ${would}px. Widen the window to judge this properly.`;
+    } else {
+      warn.hidden = would >= min;
+      warn.textContent = warn.hidden
+        ? ''
+        : `Each card is ${would}px here and this look needs about ${min}px before the text starts colliding. Show fewer across, or pick a card style that suits narrow cards.`;
+    }
   }
 
   /* ---- settings UI ------------------------------------------------------ */
