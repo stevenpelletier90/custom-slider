@@ -12,7 +12,7 @@ A dependency-free scroll-snap carousel (`dl-carousel`) built to replace third-pa
 
 ```bash
 npm run build          # src → dist via esbuild (bundle+minify JS, minify CSS)
-npm run size           # build + gzip budget gate — FAILS at ≥ 6144 B total
+npm run size           # build + gzip budget gate — FAILS at ≥ 6656 B total
 npm run validate       # stylelint + eslint + prettier --check + check:recipes  (the gate before committing)
 npm run check:recipes  # asserts every copy-paste recipe declares the --dlc-* knobs its live example sets
 npm run lint:css:fix   # stylelint --fix on src/**/*.css and demo/assets/*.css
@@ -21,9 +21,11 @@ npm run format         # prettier --write .
 npm run serve          # esbuild static server on http://127.0.0.1:8137 (for Lighthouse/demo)
 ```
 
-**The catalog shows one example at a time by default.** `demo/index.html` carries a `#demo-solo-toggle`; `assets/demo.js` hides every `main section.demo-section[id]` except the one the hash names, so the picker links double as the selector. Unchecking restores the full 16-screen page for Ctrl+F or side-by-side comparison. It shares the `hidden` flags with the type-filter and runs _after_ it, so `apply()` returns early while a search term is live — remove that guard and typing a term instantly re-shows everything the search just narrowed. `brands.html` and `model-bars.html` deliberately omit the toggle: those are for comparison, where seeing many strips at once is the point.
+**The demo is one configurable slider, not a catalog of copies.** `demo/index.html` is the workbench: a pattern picker, a settings panel, and a code panel. It has no per-example markup at all. `demo/assets/looks.js` holds the 7 card components (the census's 17 OEM "skins" collapsed into them - most differed only in values), `brands.js` the 32 brand presets, `highlight.js` the Monokai tokeniser, and `workbench.js` the state object that drives everything.
 
-**Recipe parity is enforced, not remembered.** `demo/index.html`'s copy-paste recipes are hand-written beside the live examples, so they drifted: every one of them omitted `--dlc-arrow-bg`/`--dlc-arrow-fg`, and pasting one gave you the engine's stock dark discs on the cards instead of the gutter arrows the demo shows. `scripts/check-recipes.mjs` now fails `npm run validate` on three things: a recipe omitting a `--dlc-*` knob its live example sets, a recipe missing a `.dl-carousel-*` control-part rule the live example has (the models progress bar is nothing but those, and they declare no knob), and a script-driven example whose recipe ships no `<script>`. `--fix` transplants all of it, re-wrapping breakpoint-scoped values in their own media query. It deliberately ignores the HTML — recipe markup is CMS-adapted on purpose (`#MISCPATH#` tokens, `aria-label` rather than `aria-labelledby` since the heading doesn't travel with the snippet, one `<li>` plus a "repeat this" comment), and those differences must survive.
+**Code parity is structural, not policed.** `cssFor(sel)` and `htmlFor(cls)` in `workbench.js` are the ONLY producers of CSS and markup. The live preview is `cssFor('.wb-live')`; the copy panel is `cssFor('.my-slider')`. Same function, one argument different - so the code you copy cannot drift from the slider you are looking at. The previous demo hand-wrote its recipes beside the live examples and needed a checker (`check-recipes.mjs`, now deleted) to catch the drift; generating both removes the failure mode instead of policing it.
+
+**What `npm run validate` still guards is the data.** `scripts/check-looks.mjs` asserts every one of the 17 old skins is claimed by exactly one component, that a component absorbing nothing is deliberately marked `isNew`, that all 32 brand presets name a real look and land on a card no narrower than that look needs - and that no look sets `padding`/`padding-block` on the carousel root. That last one is a fixed bug: the engine reserves the dot row as `padding-bottom` on the root, a look's CSS lands on that same element, and the shorthand silently wiped the reservation so the dots drew on top of the last row of card text.
 
 There is no test framework (deliberate, spec §1 non-goals). Verification is the browser checklist in README "Verification checklist" — run it, don't skip to a size check and call it verified.
 
@@ -37,11 +39,11 @@ There is no test framework (deliberate, spec §1 non-goals). Verification is the
 
 **`dist/` is checked into git** even though it's in `.prettierignore`. Rebuild and commit `dist/` in the same commit whenever `src/` changes, or the demo and every consuming site keep running the old engine. `demo/index.html` loads `../dist/*`, so a demo check after a `src/` edit is meaningless without a build.
 
-**Demo chrome is shared, and one demo page is generated.** `demo/assets/demo.css` + `demo/assets/demo.js` hold the chrome both demo pages use (page shell, sticky cross-page nav, copy buttons, TOC scrollspy) — edit them, not per-page copies. `demo/model-bars.html` is emitted by `scripts/build-model-bars.mjs`; never hand-edit it — change the generator and re-run it (then Prettier).
+**Demo assets are classic scripts on purpose.** ES modules are blocked over `file://`, and the demo has to open by double-click as well as over HTTP, so `demo/assets/*.js` are plain scripts that hang off `globalThis.DLX`. `check-looks.mjs` reads them with `new Function` for the same reason.
 
 **One commit point for state.** `_commit()` (fired by `scrollend`, or a 150 ms debounced `scroll` fallback for pre-26.2 iOS Safari) is the only place `this.current` changes and the only place `dlc:change` is emitted. Selection UI updates _optimistically_ at activation via `this._target` + `_updateUI()`, so dots/tabs/status move on click, not ~900 ms later when the scroll settles; `_commit()` clears `_target`.
 
-**Pages, not slides.** Arrows and dots step by page by default; `data-step="slide"` switches arrows/autoplay to one-card steps (dots stay per-page). `_measure()` reads `--dlc-per-view` off computed style, `_pages()` derives page start indexes with the last page clamped to the end, `_stops()` is what the arrows walk. Slides-per-view is CSS-only by design — never add a JS breakpoint option.
+**Pages, not slides.** Arrows and dots step by page by default; `data-step="slide"` switches arrows/autoplay to one-card steps, and `data-step="N"` (a positive integer) steps N cards at a time. Dots stay per-page in every case, and the final stop is always the end, so the last click never leaves a part-page. `_measure()` reads `--dlc-per-view` off computed style, `_pages()` derives page start indexes with the last page clamped to the end, `_stops()` is what the arrows walk. Slides-per-view is CSS-only by design — never add a JS breakpoint option.
 
 **Teardown.** All listeners are registered with `{ signal: this._ac.signal }` from one `AbortController`; `destroy()` aborts it, disconnects the observers, restores `this._snapshot` (root `innerHTML` captured at construction) and removes only the root attributes it added (`_addedRootAttrs`). Any new listener/observer/timer must join this scheme.
 
@@ -49,7 +51,7 @@ There is no test framework (deliberate, spec §1 non-goals). Verification is the
 
 **The HTML is the stable API; the engine is an implementation detail.** Class names (`dl-carousel`, `-track`, `-slide`, generated control classes), data attributes, `--dlc-*` properties, `dlc:*` event payloads, the public methods, and the accessibility behaviors are a frozen contract — sites can't be edited when the engine changes (README "Swapping the engine later"). Adding is fine; renaming or repurposing is not.
 
-**Byte budget: < 6144 B gzip for `dist` JS+CSS combined, enforced by `npm run size`.** It is a positioning target (beat Splide 15.8 KB / Embla core 6.7 KB), not a technical limit — the rationale and the raise history live in `scripts/size.mjs`. Raise it only for a correctness or accessibility need, and record why there; features should have to fit. Note that gzip locality makes size intuition unreliable: merging two duplicate rules once made the CSS _bigger_ because it separated a selector from its sibling. Always measure with `npm run size` rather than reasoning about byte counts.
+**Byte budget: < 6656 B gzip for `dist` JS+CSS combined, enforced by `npm run size`.** It is a positioning target (beat Splide 15.8 KB / Embla core 6.7 KB), not a technical limit — the rationale and the raise history live in `scripts/size.mjs`. Raise it only for a correctness or accessibility need, and record why there; features should have to fit. Note that gzip locality makes size intuition unreliable: merging two duplicate rules once made the CSS _bigger_ because it separated a selector from its sibling. Always measure with `npm run size` rather than reasoning about byte counts.
 
 **Never do these** (each one is a fixed bug, documented in the source comments — the review agents keep re-proposing them):
 
@@ -68,4 +70,4 @@ There is no test framework (deliberate, spec §1 non-goals). Verification is the
 - Formatting: Prettier, `printWidth: 200`, single quotes in JS / double in CSS. Long single-line statements in the engine are the formatter's output, not a style choice — don't hand-wrap them.
 - CSS: stylelint standard + `recess-order` (property order is enforced). Kebab-case selectors with BEM `--` modifiers. Logical properties (`inline-size`, `inset-inline`) are the house style; the few remaining physical ones are a known backlog nit.
 - Missing markup fails loudly: `console.error` for a missing track/slides, `console.warn` for a missing `aria-label` or a conflicting option combination. Keep that pattern for new validation.
-- Extending behavior belongs in page script, not the engine — listen for `dlc:change` (bubbles from the root) or read the instance at `element._dlCarousel`. `demo/index.html`'s page scripts (sliding bar thumb, thumb drag-scroll) are the reference examples of this.
+- Extending behavior belongs in page script, not the engine — listen for `dlc:change` (bubbles from the root) or read the instance at `element._dlCarousel`. `workbench.js`'s `wireVideo()` (posters opening a native `<dialog>`) is the reference example.

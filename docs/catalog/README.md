@@ -1,45 +1,17 @@
-# Catalog pages
+# OEM look reference shots
 
-Two shareable pages for the team, both self-contained single HTML files with no
-build step. Open either directly in a browser to preview before publishing.
+`shots/` holds the screenshots the card components in `demo/assets/looks.js`
+were built from — one per distinct OEM look found in the August 2026 census of
+76 demo homepages. They are the evidence behind each component's `absorbs`
+list: what "band-gray" or "name-top-chip" actually looked like on the site it
+came from.
 
-| Page                     | Published                                                              | What it answers                                                                                    |
-| ------------------------ | ---------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------- |
-| `model-bar-library.html` | <https://claude.ai/code/artifact/72367577-3336-4f58-abc1-5b0beb64ac08> | "Show me the model bars." Screenshots of every distinct variant, with its ladder and build recipe. |
-| `oem-slider-census.html` | <https://claude.ai/code/artifact/88715cca-344b-4643-be15-20c82a0860c8> | "What sliders exist across the estate, and which do we support?" The numbers.                      |
+The generators that once built browsable HTML pages from these
+(`build-library.mjs`, `capture.mjs`, `encode.mjs`, and the two generated pages)
+were deleted on 2026-08-27 when the demo became a single configurable
+workbench. Browsing a gallery of near-identical strips was the thing that made
+the old demo confusing; the looks now exist once each, as components you select.
 
-Both are private until shared from the page's own share menu.
-
-The source of truth for both is
-[docs/research/2026-08-18-oem-demo-slider-census.md](../research/2026-08-18-oem-demo-slider-census.md).
-When it changes, update the page and republish to the **same URL** so links
-already handed out keep working.
-
-## Regenerating the library
-
-`shots/` holds the 18 source screenshots, captured live at 1280px.
-
-    # 1. capture (needs playwright-core + a cached chromium; see capture.mjs)
-    node capture.mjs ./shots
-
-    # 2. rebuild the cards with the images inlined as data URIs
-    node build-library.mjs ./shots .
-
-`capture.mjs` picks one representative site per distinct breakpoint ladder plus
-the composition outliers; `build-library.mjs` holds the per-site spec table
-(ladder, tab count, dots, why it is interesting) that becomes each card.
-
-Note that `build-library.mjs` does not write into the page: it emits a
-standalone `cards.html` fragment (the `<section class="group">` blocks only).
-Merge it into `model-bar-library.html` by hand, replacing everything between
-the closing `</header>` and the `<footer>`, then run Prettier and the encoder
-(`node encode.mjs model-bar-library.html`) over the page.
-
-## Encoding
-
-**Both pages are pure ASCII** — every non-ASCII character is an HTML numeric
-entity. A plain `python3 -m http.server` sends `text/html` with no charset, and
-the em-dashes rendered as mojibake during preview. Entity-encoding makes the
-pages render correctly regardless of what charset the host declares. Keep it
-that way: after editing a page, run `node encode.mjs <page>.html` (idempotent),
-and verify with a byte check that nothing above 0x7E remains.
+The measurements taken from these shots live in
+`docs/research/2026-08-18-oem-demo-slider-census.md`, and the ladders they
+produced are recorded per brand in `demo/assets/brands.js`.

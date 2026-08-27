@@ -15,14 +15,22 @@ import { readFileSync } from 'node:fs';
 const src = readFileSync('demo/assets/looks.js', 'utf8');
 const sandbox = {};
 new Function('globalThis', src).call(sandbox, sandbox);
-const { LOOKS, OLD_SKINS } = sandbox.DLX;
+new Function('globalThis', readFileSync('demo/assets/brands.js', 'utf8')).call(sandbox, sandbox);
+const { LOOKS, OLD_SKINS, BRANDS, perViewFor } = sandbox.DLX;
 
 const claimed = new Map();
 let bad = 0;
 
 for (const [id, look] of Object.entries(LOOKS)) {
-  if (!Array.isArray(look.absorbs) || look.absorbs.length === 0) {
+  if (!Array.isArray(look.absorbs)) {
     console.error(`  ${id}: has no "absorbs" list — every component must say which skins it replaces`);
+    bad++;
+    continue;
+  }
+  // A component that replaces nothing must say so deliberately, so "absorbs
+  // nothing" can never be how a merge quietly loses a look.
+  if (look.absorbs.length === 0 && !look.isNew) {
+    console.error(`  ${id}: absorbs nothing and is not marked isNew — did a skin get dropped?`);
     bad++;
     continue;
   }
@@ -64,12 +72,69 @@ for (const [id, look] of Object.entries(LOOKS)) {
   }
 }
 
+// The engine reserves the dot row as padding-bottom on the carousel root, and
+// a look's CSS lands on that same element. A `padding:` or `padding-block:`
+// shorthand there silently wipes the reservation, and the dots then draw on top
+// of the last row of card text — which is exactly what happened to the two-row
+// grid. Bottom padding on the root is therefore never allowed; use
+// padding-block-start and padding-inline.
+for (const [id, look] of Object.entries(LOOKS)) {
+  for (const rule of look.css.match(/\.dlx\s*\{[^}]*\}/g) ?? []) {
+    const hit = rule.match(/(?:^|[;{]\s*)(padding|padding-block|padding-bottom|padding-block-end)\s*:/);
+    if (hit) {
+      console.error(`  ${id}: "${hit[1]}" on the carousel root wipes the reserved dot space — use padding-block-start / padding-inline`);
+      bad++;
+    }
+  }
+}
+
+// The brand presets. The roster is the census's 32-brand table; a preset that
+// names a look which no longer exists would fail silently in the picker, and a
+// ladder that lands a card under its look's minCard would ship a preset that
+// trips the workbench's own cramped warning the moment you select it.
+const ROSTER = 32;
+const brands = Object.entries(BRANDS ?? {});
+if (brands.length !== ROSTER) {
+  console.error(`  brands: ${brands.length} presets, expected ${ROSTER} (the census roster)`);
+  bad++;
+}
+for (const [id, b] of brands) {
+  if (!b.label) {
+    console.error(`  ${id}: no label`);
+    bad++;
+  }
+  if (!LOOKS[b.look]) {
+    console.error(`  ${id}: look "${b.look}" does not exist`);
+    bad++;
+    continue;
+  }
+  if (b.ladder === null) continue;
+  if (!Array.isArray(b.ladder) || !b.ladder.length || b.ladder[0][0] !== 0) {
+    console.error(`  ${id}: ladder must start at 0 or be null when nothing is recorded`);
+    bad++;
+    continue;
+  }
+  // Both gaps in use across the patterns: the model bar's 8px and the two-row
+  // grid's 16px. A preset has to hold at whichever it is dropped into.
+  for (const gap of [8, 16]) {
+    const pv = perViewFor(b.ladder, LOOKS[b.look].minCard, gap, b.look);
+    for (const [tier, n] of Object.entries(pv)) {
+      const box = sandbox.DLX.TIER_BOX[tier] - (sandbox.DLX.CHROME[b.look] ?? 0);
+      const card = (box - (n - 1) * gap) / n;
+      if (n > 1 && card < LOOKS[b.look].minCard + sandbox.DLX.MARGIN) {
+        console.error(`  ${id}: ${n} across at ${tier} with a ${gap}px gap is a ${Math.round(card)}px card, under ${b.look}'s ${LOOKS[b.look].minCard}px`);
+        bad++;
+      }
+    }
+  }
+}
+
 if (bad) {
   console.error(`\ncheck-looks: ${bad} problem(s).`);
   process.exit(1);
 }
 
-console.log(`check-looks: ${OLD_SKINS.length} old skins -> ${Object.keys(LOOKS).length} components, all accounted for.`);
+console.log(`check-looks: ${OLD_SKINS.length} old skins -> ${Object.keys(LOOKS).length} components, ${brands.length} brand presets, all accounted for.`);
 for (const [id, look] of Object.entries(LOOKS)) {
   console.log(`  ${id.padEnd(10)} ${String(look.absorbs.length).padStart(2)}  ${look.absorbs.join(', ')}`);
 }

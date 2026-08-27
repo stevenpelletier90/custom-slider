@@ -109,6 +109,12 @@
   outline-offset: 2px;
 }
 
+/* When every slide already fits, the engine hides the arrows and dots. Their
+   own display rules would otherwise beat [hidden]'s UA display:none. */
+.dl-carousel [hidden] {
+  display: none;
+}
+
 .dl-carousel-arrow {
   position: absolute;
   top: calc((100% - var(--dlc-controls-space)) / 2);

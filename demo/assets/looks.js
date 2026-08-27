@@ -39,12 +39,17 @@ const LOOKS = {
       '--img-filter': 'none',
       '--img-aspect': 'auto',
       '--plate-bg': 'transparent', // coloured plate behind the vehicle
+      // The cutouts already carry 13-17% transparent margin below the vehicle
+      // (measured across the set), so the plate adds very little underneath or
+      // the name drifts away from the car. Raise it when --plate-bg is a real
+      // colour and you want the plate to read as a plate.
+      '--plate-pad': '6% 6% 1%',
     },
-    css: `.dlx { background: var(--strip-bg); padding-block: var(--strip-pad); padding-inline: var(--strip-pad-x); }
+    css: `.dlx { background: var(--strip-bg); padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); }
 @media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; padding-inline: 0; } }
 @media (max-width: 380px) { .dlx { --dlc-per-view: 1; } }
 .dlx-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
-.dlx-plate { display: block; padding: 8% 6%; background: var(--plate-bg); }
+.dlx-plate { display: block; padding: var(--plate-pad); background: var(--plate-bg); }
 .dlx-card img { inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); object-fit: contain; filter: var(--img-filter); transition: filter 0.2s, transform 0.25s ease; }
 .dlx-card:hover img { filter: none; }
 .dlx-name { order: var(--name-order); margin: 0.4rem 0 0; line-height: 1.35; font-size: var(--name-size); font-weight: var(--name-weight); text-transform: var(--name-case); letter-spacing: var(--name-tracking); color: var(--name-color); }
@@ -52,6 +57,42 @@ const LOOKS = {
     markup: (m) => `<a class="dlx-card" href="${m.href}">
   <span class="dlx-plate"><img src="${m.img}" width="320" height="240" alt="${m.alt}" loading="lazy" decoding="async"></span>
   <p class="dlx-name">${m.name}</p>${m.sub ? `\n  <small class="dlx-sub">${m.sub}</small>` : ''}
+</a>`,
+  },
+
+  vcard: {
+    label: 'Vehicle card',
+    // Narrowest card this look's content fits in, measured by narrowing it
+    // until text overflowed. The workbench warns rather than letting you cram it.
+    minCard: 240,
+    perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
+    // New, not a merge of anything: the estate had no photo-with-price card,
+    // and every SRP-style ask ends up needing one.
+    absorbs: [],
+    isNew: true,
+    settings: {
+      '--strip-bg': 'transparent',
+      '--strip-pad': '0px',
+      '--card-bg': '#ffffff',
+      '--card-radius': '10px',
+      '--name-color': '#1c1f23',
+      '--name-size': '1rem',
+      '--price-color': '#16324f',
+    },
+    css: `.dlx { background: var(--strip-bg); padding-block-start: var(--strip-pad); }
+.dlx-card { position: relative; display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: var(--card-bg); border: 1px solid #e2e5ea; border-radius: var(--card-radius); }
+.dlx-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; transition: transform 0.3s ease; }
+.dlx-card:hover img { transform: scale(1.04); }
+.dlx-body { padding: 0.85rem 0.9rem 1rem; }
+.dlx-name { margin: 0; font-size: var(--name-size); font-weight: 700; line-height: 1.35; color: var(--name-color); }
+.dlx-sub { display: block; margin-block-start: 0.2rem; font-size: 0.85rem; line-height: 1.4; color: var(--price-color); }`,
+    // One stretched link over the whole card: the anchor IS the card, so there
+    // is no nested link and nothing announces twice.
+    markup: (m) => `<a class="dlx-card" href="${m.href}">
+  <img src="${m.img}" width="1200" height="900" alt="${m.alt}" loading="lazy" decoding="async">
+  <span class="dlx-body">
+    <span class="dlx-name">${m.name}</span>${m.sub ? `\n    <small class="dlx-sub">${m.sub}</small>` : ''}
+  </span>
 </a>`,
   },
 
@@ -72,7 +113,7 @@ const LOOKS = {
       '--name-size': '1rem',
       '--name-case': 'uppercase',
     },
-    css: `.dlx { background: var(--strip-bg); padding-block: var(--strip-pad); }
+    css: `.dlx { background: var(--strip-bg); padding-block-start: var(--strip-pad); }
 .dlx-card { display: block; color: var(--name-color); text-align: center; text-decoration: none; }
 .dlx-mark { display: block; margin-block-end: 0.6rem; font-size: var(--mark-size); font-style: italic; font-weight: 700; line-height: 1.2; letter-spacing: 0.06em; }
 .dlx-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.25s ease; }
@@ -136,7 +177,7 @@ const LOOKS = {
       '--cta-fg': '#14161b',
       '--img-aspect': '3 / 5',
     },
-    css: `.dlx { background: var(--strip-bg); padding: 1.5rem; }
+    css: `.dlx { background: var(--strip-bg); padding-block-start: 1.5rem; padding-inline: 1.5rem; }
 .dlx-card { display: block; color: var(--card-fg); text-align: center; text-decoration: none; }
 .dlx-name { margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 700; line-height: 1.3; text-align: start; text-transform: uppercase; letter-spacing: 0.08em; }
 .dlx-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); object-fit: cover; }
@@ -162,8 +203,8 @@ const LOOKS = {
       '--card-bg': '#253a5e',
       '--card-fg': '#fff',
     },
-    css: `.dlx { padding: 1.5rem 1rem; background: var(--strip-bg); }
-@media (max-width: 460px) { .dlx { --dlc-per-view: 1; padding: 1rem 0.5rem; } }
+    css: `.dlx { padding-block-start: 1.5rem; padding-inline: 1rem; background: var(--strip-bg); }
+@media (max-width: 460px) { .dlx { --dlc-per-view: 1; padding-block-start: 1rem; padding-inline: 0.5rem; } }
 .dlx-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; color: var(--card-fg); background: var(--card-bg); border: 1px solid rgb(255 255 255 / 7%); border-radius: 10px; transition: background 0.2s; }
 .dlx-card img { inline-size: 75%; block-size: auto; object-fit: contain; }`,
     markup: (m) => `<a class="dlx-card" href="${m.href}" aria-label="${m.alt}">
@@ -185,7 +226,7 @@ const LOOKS = {
       '--cta-bg': '#c8102e',
       '--cta-fg': '#fff',
     },
-    css: `.dlx { padding: 1.5rem 1rem; background: var(--strip-bg); }
+    css: `.dlx { padding-block-start: 1.5rem; padding-inline: 1rem; background: var(--strip-bg); }
 .dlx-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.25rem; text-align: center; text-decoration: none; background: var(--card-bg); border-radius: 10px; }
 .dlx-card img { inline-size: 55%; block-size: auto; object-fit: contain; }
 .dlx-name { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; font-weight: 700; line-height: 1.3; color: #222; }

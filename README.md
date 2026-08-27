@@ -10,8 +10,11 @@ variant — plus the one physics gap browsers leave open: mouse drag-to-scroll
 (native scroll containers don't drag with a mouse; `data-drag="false"` opts out). Rewind instead of infinite loop: no cloned slides, so no duplicate
 content for SEO and no screen-reader confusion.
 
-The demo page (`demo/index.html`) doubles as the variation catalog — every
-section is a copy-paste recipe over the same two files.
+The demo page (`demo/index.html`) is a workbench: pick a pattern, set it up
+(how many across at each breakpoint, card style, brand preset, arrow colours,
+how many cards an arrow moves), and copy code generated from those same
+settings — so the snippet is always exactly the slider on screen. It also hands
+you `dl-carousel.css` and `dl-carousel.js` themselves, to link or to paste.
 
 ## Quick start (CMS / classic script)
 
@@ -54,17 +57,17 @@ JS options override data attributes, which override defaults.
 
 ## Options
 
-| Option            | Data attribute         | Default         | Effect                                                                                                                       |
-| ----------------- | ---------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------- |
-| `autoplay`        | `data-autoplay="4000"` | `0`             | Advance every N ms; adds pause button (first in tab order)                                                                   |
-| `rewind`          | `data-rewind="false"`  | `true`          | Arrows wrap at the ends; `false` stops there and `aria-disable`s the end arrow (ignored with autoplay, which needs the wrap) |
-| `step`            | `data-step="slide"`    | `"page"`        | `"slide"` advances one card per arrow click / autoplay tick instead of a full page; dots still represent pages               |
-| `drag`            | `data-drag="false"`    | `true`          | Mouse drag-to-scroll on the track (click-through suppressed after a real drag); touch/pen swiping is native and unaffected   |
-| `fade`            | `data-fade`            | `false`         | Stacked crossfade instead of a scrolling track — 1-up heroes; no drag/peek, ignored with `gallery`                           |
-| `gallery`         | `data-gallery`         | `false`         | Tabbed thumbnail gallery (thumbs generated from slide images)                                                                |
-| `roledescription` | `data-roledescription` | `"carousel"`    | Empty string to omit                                                                                                         |
-| `labels`          | — (JS only)            | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/dl-carousel.js`                                                |
-| —                 | `data-init="manual"`   | auto            | Skip auto-init; construct via `new DLCarousel(el, opts)` from page script                                                    |
+| Option            | Data attribute         | Default         | Effect                                                                                                                                                                                                       |
+| ----------------- | ---------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| `autoplay`        | `data-autoplay="4000"` | `0`             | Advance every N ms; adds pause button (first in tab order)                                                                                                                                                   |
+| `rewind`          | `data-rewind="false"`  | `true`          | Arrows wrap at the ends; `false` stops there and `aria-disable`s the end arrow (ignored with autoplay, which needs the wrap)                                                                                 |
+| `step`            | `data-step="slide"`    | `"page"`        | `"slide"` advances one card per arrow click / autoplay tick instead of a full page; a positive integer (`data-step="3"`) advances that many. Dots still represent pages, and the last stop is always the end |
+| `drag`            | `data-drag="false"`    | `true`          | Mouse drag-to-scroll on the track (click-through suppressed after a real drag); touch/pen swiping is native and unaffected                                                                                   |
+| `fade`            | `data-fade`            | `false`         | Stacked crossfade instead of a scrolling track — 1-up heroes; no drag/peek, ignored with `gallery`                                                                                                           |
+| `gallery`         | `data-gallery`         | `false`         | Tabbed thumbnail gallery (thumbs generated from slide images)                                                                                                                                                |
+| `roledescription` | `data-roledescription` | `"carousel"`    | Empty string to omit                                                                                                                                                                                         |
+| `labels`          | — (JS only)            | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/dl-carousel.js`                                                                                                                                |
+| —                 | `data-init="manual"`   | auto            | Skip auto-init; construct via `new DLCarousel(el, opts)` from page script                                                                                                                                    |
 
 ## CSS custom properties
 
@@ -88,6 +91,11 @@ Events (bubble from the root): `dlc:change` `{index, page, slidesInView}`,
   the "N of 6" count announcements in Safari/VoiceOver — don't remove it.
 - Dots are one per PAGE of slides, plain buttons (not tabs); current dot is
   `aria-disabled`, still focusable.
+- When every slide already fits, the arrows and dots are hidden and the root
+  gains `data-fits` — controls that cannot move anything must not be focusable,
+  and a one-of-one dot group announces a choice that isn't one. It is
+  re-evaluated on resize, because slides-per-view is CSS. Style on `data-fits`
+  if you want the reserved control space to collapse too.
 - Gallery: full APG tabbed-carousel — thumbs are a `tablist` with roving
   tabindex and arrow keys; non-visible panels are `inert`. The visible panel
   takes `tabindex="0"`: it holds no focusable content, and without it Chrome
@@ -166,7 +174,10 @@ Rebuild and re-commit `dist/` whenever `src/` changes.
 5. Screenshots at 375 / 768 / 1280 look right; slides-per-view matches the
    breakpoints.
 6. With JavaScript disabled the strips still scroll and all content is visible.
-7. Spot-checks: Windows Firefox at 125–150 % DPI; Tab into cards in Safari;
+7. Widen until every slide fits: the arrows and dots disappear (the root gains
+   `data-fits`), and narrowing brings them back. Controls that cannot move
+   anything must not be focusable.
+8. Spot-checks: Windows Firefox at 125–150 % DPI; Tab into cards in Safari;
    one pre-2025 iPhone (scrollend fallback).
 
 ## Known limitations (v1)

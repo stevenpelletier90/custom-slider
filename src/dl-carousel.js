@@ -111,7 +111,7 @@ export class Slider {
     const data = {};
     if (d.autoplay !== undefined) data.autoplay = parseInt(d.autoplay, 10) || 0;
     if (d.rewind !== undefined) data.rewind = d.rewind !== 'false';
-    if (d.step !== undefined) data.step = d.step === 'slide' ? 'slide' : 'page';
+    if (d.step !== undefined) data.step = +d.step > 0 ? +d.step : d.step === 'slide' ? 'slide' : 'page';
     if (d.drag !== undefined) data.drag = d.drag !== 'false';
     if (d.gallery !== undefined) data.gallery = d.gallery !== 'false';
     if (d.fade !== undefined) data.fade = d.fade !== 'false';
@@ -291,9 +291,16 @@ export class Slider {
     // What the arrows step through: page starts (default), or every reachable
     // start index in slide mode (the last start is clamped like _pages does).
     if (this.opts.fade) return this.slides.map((_, i) => i); // every slide is its own stop
-    if (this.opts.step !== 'slide') return this._pages();
+    const s = this.opts.step;
+    if (s === 'page') return this._pages();
+    // 'slide' is a step of one; a number steps by that many cards. The final
+    // stop is always the end, so the last click never leaves a part-page.
+    const n = s === 'slide' ? 1 : s;
     const last = Math.max(0, this.slides.length - this.perView);
-    return Array.from({ length: last + 1 }, (_, i) => i);
+    const out = [];
+    for (let i = 0; i < last; i += n) out.push(i);
+    out.push(last);
+    return out;
   }
 
   _nearest(arr) {
@@ -534,6 +541,15 @@ export class Slider {
   }
 
   _updateUI() {
+    // Everything already fits: one stop means the arrows and dots are controls
+    // that cannot do anything. Leaving them is a focus trap for keyboard users
+    // and announces a "1 of 1" choice that isn't one. Re-evaluated here rather
+    // than at build time because --dlc-per-view is CSS, so a resize across a
+    // breakpoint can make a strip fit (or stop fitting) at any moment.
+    const fits = this._stops().length <= 1;
+    this.root.toggleAttribute('data-fits', fits);
+    if (this.prevBtn) this.prevBtn.hidden = this.nextBtn.hidden = fits;
+    if (this.dots) this.dots.hidden = fits;
     this._updateDots();
     this._updateArrows();
     this._updateStatus();
