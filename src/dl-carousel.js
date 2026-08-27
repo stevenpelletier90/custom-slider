@@ -251,6 +251,27 @@ export class Slider {
     this.perView = Math.max(1, parseInt(getComputedStyle(this.root).getPropertyValue('--dlc-per-view'), 10) || 1);
   }
 
+  // Index of the slide nearest scroll position x, read from real offsets
+  // rather than index x stride. Several slides can share one offset - a
+  // two-row grid stacks two per column - and the multiplication then drifts
+  // by however many share it, desyncing the dots and the announced count
+  // from where the track actually is. goTo() already scrolls to the slide's
+  // measured position; this reverse mapping was the only arithmetic left.
+  _at(x) {
+    const t = this.track,
+      origin = t.getBoundingClientRect().left - t.scrollLeft;
+    let idx = 0,
+      best = Infinity;
+    this.slides.forEach((s, i) => {
+      const d = Math.abs(s.getBoundingClientRect().left - origin - x);
+      if (d < best) {
+        best = d;
+        idx = i;
+      }
+    });
+    return idx;
+  }
+
   _pages() {
     if (this.opts.fade) return this.slides.map((_, i) => i);
     // Page start indexes, stepping by perView, last page clamped to the end.
@@ -463,8 +484,8 @@ export class Slider {
       // Mouse drag has no momentum to carry it over the midpoint the way a
       // touch flick does, so a decisive gesture must count for a slide on its
       // own — direction, not just distance travelled.
-      const from = Math.round(startLeft / this.stride);
-      let to = Math.round(t.scrollLeft / this.stride);
+      const from = this._at(startLeft);
+      let to = this._at(t.scrollLeft);
       const moved = t.scrollLeft - startLeft;
       if (to === from && Math.abs(moved) > this.stride * 0.15) to = from + Math.sign(moved);
       this.goTo(to);
@@ -503,7 +524,7 @@ export class Slider {
     if (!this._dragActive && this.track.style.scrollSnapType) this.track.style.scrollSnapType = '';
     this._target = null;
     this._measure();
-    const idx = Math.max(0, Math.min(this.slides.length - 1, Math.round(this.track.scrollLeft / this.stride)));
+    const idx = this._at(this.track.scrollLeft);
     const changed = idx !== this.current;
     this.current = idx;
     this._updateUI();
