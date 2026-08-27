@@ -197,7 +197,7 @@ const SKINS = {
 @media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
 .my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${e.name}">${imgTag(e)}<p>${e.name}</p></a>`),
-    snippetHtml: (r) => `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=${r[0].name}" aria-label="Explore the ${r[0].name}">
+    snippetHtml: (r) => `<a class="my-modelbar-card" href="/searchnew.aspx?Model=${r[0].name}" aria-label="Explore the ${r[0].name}">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="${r[0].alt}">
         <p>${r[0].name}</p>
       </a>`,
@@ -214,7 +214,7 @@ const SKINS = {
 @media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
 .my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${e.name}">${imgTag(e)}<p>${e.name}</p></a>`),
-    snippetHtml: (r) => `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=${r[0].name}" aria-label="Explore the ${r[0].name}">
+    snippetHtml: (r) => `<a class="my-modelbar-card" href="/searchnew.aspx?Model=${r[0].name}" aria-label="Explore the ${r[0].name}">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="${r[0].alt}">
         <p>${r[0].name}</p>
       </a>`,
@@ -231,7 +231,7 @@ const SKINS = {
 @media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
 .my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${e.name}">${imgTag(e)}<p>${e.name}</p></a>`),
-    snippetHtml: (r) => `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=${r[0].name}" aria-label="Explore the ${r[0].name}">
+    snippetHtml: (r) => `<a class="my-modelbar-card" href="/searchnew.aspx?Model=${r[0].name}" aria-label="Explore the ${r[0].name}">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="${r[0].alt}">
         <p>${r[0].name}</p>
       </a>`,
@@ -248,7 +248,7 @@ const SKINS = {
 @media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
 .my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar">${imgTag(e)}<p>${e.name}</p><small>${e.count ?? 12} Available</small></a>`),
-    snippetHtml: (r) => `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=${r[0].name}">
+    snippetHtml: (r) => `<a class="my-modelbar-card" href="/searchnew.aspx?Model=${r[0].name}">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="${r[0].alt}">
         <p>${r[0].name}</p>
         <small>${r[0].count ?? 12} Available</small>
@@ -272,7 +272,7 @@ const SKINS = {
         ([slug, name, alt], i) =>
           `<a class="my-modelbar-card${i === 2 ? ' my-modelbar-card--feature' : ''}" href="index.html#modelbar" aria-label="Explore the ${name}"><span class="my-modelbar-tile">${cutoutImg(slug, alt)}</span><p>${name}</p></a>`,
       ),
-    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Atlas" aria-label="Explore the Atlas">
+    snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?Model=Atlas" aria-label="Explore the Atlas">
         <span class="my-modelbar-tile"><img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Volkswagen Atlas"></span>
         <p>Atlas</p>
       </a>
@@ -290,7 +290,7 @@ const SKINS = {
 @media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
 .my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: () => CUTOUTS.map(([slug, name, alt]) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${name}">${cutoutImg(slug, alt)}<p>${name}</p></a>`),
-    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=LYRIQ" aria-label="Explore the LYRIQ">
+    snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?Model=LYRIQ" aria-label="Explore the LYRIQ">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Cadillac LYRIQ">
         <p>LYRIQ</p>
       </a>`,
@@ -308,7 +308,7 @@ const SKINS = {
 @media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }
 .my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar">${imgTag(e)}<p>${e.name}</p><small>${e.count ?? 9} Available</small></a>`),
-    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=CX-5">
+    snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?Model=CX-5">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Mazda CX-5">
         <p>Mazda CX-5</p>
         <small>108 Available</small>
@@ -337,7 +337,7 @@ const SKINS = {
         const year = (e.alt.match(/\b(20\d\d)\b/) || [])[1];
         return `<a class="my-modelbar-card" href="index.html#vehicles">${imgTag(e)}<span class="my-modelbar-copy"><small>${year ? `${year} | ` : ''}${e.count ?? 5} Available</small><p class="my-modelbar-name">${e.name}</p><span class="my-modelbar-shop">Shop Now</span></span></a>`;
       }),
-    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Highlander">
+    snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?Model=Highlander">
         <img src="#MISCPATH#/highlander.jpg" width="800" height="500" alt="Blue Toyota Highlander on a forest road">
         <span class="my-modelbar-copy">
           <small>2026 | 4 Available</small>
@@ -358,7 +358,7 @@ const SKINS = {
 @media (prefers-reduced-motion: reduce) { .my-modelbar-cta { transition: none; } }`,
     liveSlides: (r) =>
       r.map((e) => `<a class="my-modelbar-card" href="index.html#models"><p class="my-modelbar-name">${e.name}</p>${imgTag(e, '')}<span class="my-modelbar-cta">Browse inventory</span></a>`),
-    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Giulia">
+    snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?Model=Giulia">
         <p class="my-modelbar-name">Giulia</p>
         <img src="#MISCPATH#/giulia-tall.jpg" width="600" height="1000" alt="">
         <span class="my-modelbar-cta">Browse inventory</span>
@@ -374,7 +374,7 @@ const SKINS = {
 .my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .my-modelbar-card img { transition: none; } }`,
     liveSlides: (r) => r.map((e) => `<a class="my-modelbar-card" href="index.html#modelbar" aria-label="Explore the ${e.name}">${imgTag(e)}<p>${e.name}</p></a>`),
-    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Wrangler" aria-label="Explore the Wrangler">
+    snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?Model=Wrangler" aria-label="Explore the Wrangler">
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="2026 Jeep Wrangler">
         <p>Wrangler</p>
       </a>`,
@@ -428,7 +428,7 @@ const SKINS = {
     // caption), and an "Explore the X" label would fail label-in-name (WCAG
     // 2.5.3). Content names the link; the cutout is decorative (alt="").
     liveSlides: () => CUTOUTS.map(([slug, name]) => `<a class="my-modelbar-card" href="index.html#modelbar"><span class="my-modelbar-wordmark">${name}</span>${cutoutImg(slug, '')}<p>${name}</p></a>`),
-    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Roma">
+    snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?Model=Roma">
         <span class="my-modelbar-wordmark">Roma</span>
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="">
         <p>Roma</p>
@@ -454,7 +454,7 @@ const SKINS = {
         ([slug, name, alt]) =>
           `<a class="my-modelbar-card" href="index.html#vehicles"><img src="img/${slug}.jpg" width="800" height="500" alt="${alt}" loading="lazy" decoding="async" /><p>${name}</p></a>`,
       ),
-    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=Purosangue">
+    snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?Model=Purosangue">
         <img src="#MISCPATH#/purosangue.jpg" width="800" height="500" alt="Red Ferrari Purosangue on a coastal road">
         <p>Purosangue</p>
       </a>`,
@@ -474,7 +474,7 @@ const SKINS = {
 .my-modelbar-card:focus-visible { outline: 3px solid currentcolor; outline-offset: 3px; }`,
     // Same label-in-name reasoning as the wordmark-dark skin above.
     liveSlides: () => CUTOUTS.map(([slug, name]) => `<a class="my-modelbar-card" href="index.html#modelbar"><span class="my-modelbar-wordmark">${name}</span>${cutoutImg(slug, '')}<p>${name}</p></a>`),
-    snippetHtml: `<a class="my-modelbar-card" href="/new-inventory/index.htm?model=GranTurismo">
+    snippetHtml: `<a class="my-modelbar-card" href="/searchnew.aspx?Model=GranTurismo">
         <span class="my-modelbar-wordmark">GranTurismo</span>
         <img src="#CHROMEPHOTOPATH|StyleID|1|640p#" width="320" height="240" alt="">
         <p>GranTurismo</p>
@@ -939,7 +939,7 @@ const STATICS = [
     <img src="#MISCPATH#macan.jpg" width="640" height="640" alt="">
     <div class="my-tile-cover">
       <p>Macan</p>
-      <a href="/new-inventory/index.htm?model=Macan">Search New</a>
+      <a href="/searchnew.aspx?Model=Macan">Search New</a>
       <a href="/used-inventory/index.htm?model=Macan">Search Used</a>
     </div>
   </div>
@@ -972,7 +972,7 @@ const STATICS = [
     <img src="#MISCPATH#qx60.jpg" width="800" height="350" alt="">
     <div class="my-tilewide-cover">
       <p>QX60</p>
-      <a href="/new-inventory/index.htm?model=QX60">Explore</a>
+      <a href="/searchnew.aspx?Model=QX60">Explore</a>
     </div>
   </div>
   <!-- repeat the unit for each model -->
@@ -1261,7 +1261,7 @@ ${snippetTabs}
     </div>
   </div>
 ${stubPanes}
-  <a class="my-modelbar-cta" href="/new-inventory/index.htm">Explore All New Inventory</a>
+  <a class="my-modelbar-cta" href="/searchnew.aspx">Explore All New Inventory</a>
 </div>`)}</code></pre>
           <p class="code-label">Tab script &mdash; once per page</p>
           <pre><code>${esc(TAB_SCRIPT)}</code></pre>

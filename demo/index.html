@@ -2938,7 +2938,12 @@
 .my-gallery .dl-carousel-arrow--next { inset-inline-end: 0; }
 .my-gallery .dl-carousel-thumbs { inset-inline: calc(var(--dlc-arrow-size) + 0.25rem); }
 
-.my-gallery img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; }</code></pre>
+.my-gallery img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 6px; }
+
+/* Control styling the example above uses. Without it you get the stock
+   look: dark discs on the cards, and plain dots instead of the bar. */
+.my-gallery .dl-carousel-arrow svg { width: 28px; height: 28px; }
+.my-gallery .dl-carousel-arrow:hover { color: #000; }</code></pre>
           </details>
         </section>
 
@@ -3043,7 +3048,12 @@
   padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
 }
 .my-fgallery .dl-carousel-arrow--prev { inset-inline-start: 0; }
-.my-fgallery .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
+.my-fgallery .dl-carousel-arrow--next { inset-inline-end: 0; }
+
+/* Control styling the example above uses. Without it you get the stock
+   look: dark discs on the cards, and plain dots instead of the bar. */
+.my-fgallery .dl-carousel-arrow svg { width: 28px; height: 28px; }
+.my-fgallery .dl-carousel-thumbs { inset-inline: calc(var(--dlc-arrow-size) + 0.25rem); }</code></pre>
           </details>
         </section>
 
@@ -3115,7 +3125,12 @@
   padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
 }
 .my-mgallery .dl-carousel-arrow--prev { inset-inline-start: 0; }
-.my-mgallery .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
+.my-mgallery .dl-carousel-arrow--next { inset-inline-end: 0; }
+
+/* Control styling the example above uses. Without it you get the stock
+   look: dark discs on the cards, and plain dots instead of the bar. */
+.my-mgallery .dl-carousel-arrow svg { width: 28px; height: 28px; }
+.my-mgallery .dl-carousel-thumbs { inset-inline: calc(var(--dlc-arrow-size) + 0.25rem); }</code></pre>
           </details>
         </section>
 
@@ -3232,7 +3247,12 @@
   padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
 }
 .my-lbgallery .dl-carousel-arrow--prev { inset-inline-start: 0; }
-.my-lbgallery .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
+.my-lbgallery .dl-carousel-arrow--next { inset-inline-end: 0; }
+
+/* Control styling the example above uses. Without it you get the stock
+   look: dark discs on the cards, and plain dots instead of the bar. */
+.my-lbgallery .dl-carousel-arrow svg { width: 28px; height: 28px; }
+.my-lbgallery .dl-carousel-thumbs { inset-inline: calc(var(--dlc-arrow-size) + 0.25rem); }</code></pre>
           </details>
         </section>
       </section>
@@ -3369,7 +3389,12 @@
   padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
 }
 .my-vehicles .dl-carousel-arrow--prev { inset-inline-start: 0; }
-.my-vehicles .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
+.my-vehicles .dl-carousel-arrow--next { inset-inline-end: 0; }
+
+/* Control styling the example above uses. Without it you get the stock
+   look: dark discs on the cards, and plain dots instead of the bar. */
+.my-vehicles .dl-carousel-arrow svg { width: 28px; height: 28px; }
+.my-vehicles .dl-carousel-arrow:hover { color: #000; }</code></pre>
           </details>
         </section>
 
@@ -3449,7 +3474,32 @@
     &lt;/li&gt;
     &lt;!-- repeat the &lt;li&gt; for each model --&gt;
   &lt;/ul&gt;
-&lt;/div&gt;</code></pre>
+&lt;/div&gt;
+
+&lt;!-- The sliding bar is page script, not an engine feature: it watches the
+     dots the engine generated and sets two custom properties. This is the
+     standard way to extend the slider without touching the library. --&gt;
+&lt;script&gt;
+  addEventListener('DOMContentLoaded', () =&gt; {
+    const bar = document.querySelector('.my-models .dl-carousel-dots');
+    if (!bar) return;
+    const sync = () =&gt; {
+      const dots = [...bar.children];
+      const i = dots.findIndex((d) =&gt; d.classList.contains('dl-carousel-dot--current'));
+      bar.style.setProperty('--bar-count', dots.length || 1);
+      bar.style.setProperty('--bar-index', Math.max(0, i));
+    };
+    // The current class flips on page change; the dots are rebuilt when a
+    // breakpoint changes the page count. Watch for both.
+    new MutationObserver(sync).observe(bar, {
+      subtree: true,
+      childList: true,
+      attributes: true,
+      attributeFilter: ['class'],
+    });
+    sync();
+  });
+&lt;/script&gt;</code></pre>
             <p class="code-label">CSS</p>
             <pre><code>.my-models { --dlc-per-view: 1; --dlc-gap: 1rem; }
 @media (min-width: 768px)  { .my-models { --dlc-per-view: 2; } }
@@ -3469,7 +3519,25 @@
   padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
 }
 .my-models .dl-carousel-arrow--prev { inset-inline-start: 0; }
-.my-models .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
+.my-models .dl-carousel-arrow--next { inset-inline-end: 0; }
+
+/* Control styling the example above uses. Without it you get the stock
+   look: dark discs on the cards, and plain dots instead of the bar. */
+.my-models .dl-carousel-arrow svg { width: 28px; height: 28px; }
+.my-models .dl-carousel-arrow:hover { color: #000; }
+@media (min-width: 992px) { .my-models .dl-carousel-arrow svg { width: 36px; height: 36px; } }
+.my-models .dl-carousel-dots { gap: 0; inset-inline: 25%; }
+.my-models .dl-carousel-dots::before { content: ''; position: absolute; inset-inline-start: 0; inset-block-start: calc(50% - 2px); inline-size: calc(100% / var(--bar-count, 1)); block-size: 4px; border-radius: 2px; background: #262626; translate: calc(var(--bar-index, 0) * 100%); pointer-events: none; }
+@media (prefers-reduced-motion: no-preference) { .my-models .dl-carousel-dots::before { transition: translate 0.35s ease; } }
+.my-models .dl-carousel-dot { flex: 1 1 auto; }
+.my-models .dl-carousel-dot::after { inline-size: 100%; block-size: 4px; border-radius: 0; }
+.my-models .dl-carousel-dot:first-child::after { border-start-start-radius: 2px; border-end-start-radius: 2px; }
+.my-models .dl-carousel-dot:last-child::after { border-start-end-radius: 2px; border-end-end-radius: 2px; }
+@media (min-width: 992px) {
+  .my-models {
+    --dlc-arrow-size: 56px;
+  }
+}</code></pre>
           </details>
         </section>
 
@@ -3706,7 +3774,11 @@ object-fit: cover;</code></pre>
   padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
 }
 .my-cards .dl-carousel-arrow--prev { inset-inline-start: 0; }
-.my-cards .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
+.my-cards .dl-carousel-arrow--next { inset-inline-end: 0; }
+
+/* Control styling the example above uses. Without it you get the stock
+   look: dark discs on the cards, and plain dots instead of the bar. */
+.my-cards .dl-carousel-dots { display: none; }</code></pre>
           </details>
         </section>
 
@@ -3870,7 +3942,11 @@ object-fit: cover;</code></pre>
   padding-inline: calc(var(--dlc-arrow-size) + 0.25rem);
 }
 .my-videos .dl-carousel-arrow--prev { inset-inline-start: 0; }
-.my-videos .dl-carousel-arrow--next { inset-inline-end: 0; }</code></pre>
+.my-videos .dl-carousel-arrow--next { inset-inline-end: 0; }
+
+/* Control styling the example above uses. Without it you get the stock
+   look: dark discs on the cards, and plain dots instead of the bar. */
+.my-videos .dl-carousel-dots { display: none; }</code></pre>
           </details>
         </section>
 
@@ -4019,7 +4095,12 @@ object-fit: cover;</code></pre>
 .my-review-byline small { color: #5f6368; }
 /* The rating is carried by the aria-label; the glyphs just need enough contrast. */
 .my-review-stars { margin: 0.6rem 0 0.3rem; color: #c77800; letter-spacing: 2px; }
-.my-review blockquote, .my-review blockquote p { margin: 0; }</code></pre>
+.my-review blockquote, .my-review blockquote p { margin: 0; }
+
+/* Control styling the example above uses. Without it you get the stock
+   look: dark discs on the cards, and plain dots instead of the bar. */
+.my-reviews .dl-carousel-arrow svg { width: 28px; height: 28px; }
+.my-reviews .dl-carousel-arrow:hover { color: #000; }</code></pre>
           </details>
         </section>
       </section>
