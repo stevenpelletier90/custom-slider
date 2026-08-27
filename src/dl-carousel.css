@@ -14,6 +14,8 @@
   --dlc-arrow-size: 44px; /* prev/next tap target */
   --dlc-arrow-fg: #fff;
   --dlc-arrow-bg: rgb(0 0 0 / 55%);
+  --dlc-arrow-fg-hover: #fff;
+  --dlc-arrow-bg-hover: rgb(0 0 0 / 80%);
   --dlc-dot-size: 12px;
   --dlc-dot-fg: #757575; /* ≥3:1 on white (WCAG 1.4.11) */
   --dlc-dot-current: #333;
@@ -21,6 +23,12 @@
   --dlc-thumb-w: 88px;
   --dlc-thumb-h: 56px;
   --dlc-focus: #1a5fb4;
+
+  /* Shared duration/easing for every control's state change. Deliberately a
+     property LIST at each use site, never `transition: all`: `all` also
+     animates layout and scroll-related properties, which fights the snap
+     container and janks the strip mid-gesture. */
+  --dlc-transition: 250ms ease-in-out;
 
   position: relative;
 
@@ -181,6 +189,36 @@
   background: var(--dlc-dot-current);
 }
 
+/* ---- hover / motion ---------------------------------------------------- */
+
+/* Grouped so the property list ships once instead of four times. */
+.dl-carousel-arrow,
+.dl-carousel-pause,
+.dl-carousel-dot::after,
+.dl-carousel-thumb {
+  transition:
+    color var(--dlc-transition),
+    background-color var(--dlc-transition),
+    border-color var(--dlc-transition),
+    opacity var(--dlc-transition),
+    transform var(--dlc-transition);
+}
+
+/* A disabled end arrow (rewind:false) must not light up on hover. */
+.dl-carousel-arrow:hover:not([aria-disabled="true"]),
+.dl-carousel-pause:hover {
+  color: var(--dlc-arrow-fg-hover);
+  background: var(--dlc-arrow-bg-hover);
+}
+
+.dl-carousel-dot:hover::after {
+  background: var(--dlc-dot-current);
+}
+
+.dl-carousel-thumb:hover {
+  border-color: var(--dlc-dot-fg);
+}
+
 /* ---- gallery (tabbed) variant ------------------------------------------ */
 
 .dl-carousel-thumbs {
@@ -281,5 +319,13 @@
 @media (prefers-reduced-motion: reduce) {
   .dl-carousel[data-fade-on] .dl-carousel-slide {
     transition: none;
+  }
+
+  /* Not `none` — a 1ms transition still fires transitionend for listeners. */
+  .dl-carousel-arrow,
+  .dl-carousel-pause,
+  .dl-carousel-dot::after,
+  .dl-carousel-thumb {
+    transition-duration: 1ms;
   }
 }
