@@ -531,6 +531,25 @@ const SKINS = {
 };
 
 // One entry per distinct ladder; strips = the looks that ladder ships with.
+//
+// Ladder pairs are [minWidth, perView] for --dlc-per-view, derived from each
+// site's live slick config. THE RULE: slick compares `windowWidth <
+// breakpoint` (slick.js:619, a strict <), so `breakpoint: N` means the tier
+// ABOVE starts at exactly min-width N -- NOT N+1.
+//
+// An earlier hand-conversion added 1 at every rung. That put every strip one
+// pixel out of step with the Bootstrap 3 grid the platform actually runs
+// (768/992/1200, measured in the DealerOn CSS bundle -- there is no 576): at
+// 768px, iPad portrait, the page went md while the slider stayed on its phone
+// tier. The tell that it was an error rather than a record: the same real
+// breakpoint appeared both ways across entries -- 540/541, 600/601, 768/769,
+// 991/992/993, 1200/1201.
+//
+// Where a corrected value lands 1px under a grid tier it is snapped onto it
+// (Chevrolet's 991/1199 -> 992/1200). Our engine reads min-width directly and
+// has no slick quirk to reproduce, and a builder wants the strip to flip where
+// the page flips. The raw max-width configs stay verbatim in the census:
+// docs/research/2026-08-18-oem-demo-slider-census.md
 const VARIANTS = [
   {
     key: 'acura',
@@ -540,8 +559,8 @@ const VARIANTS = [
     demos: 'acura 1-4, ford 2-4, gmc 1-2, honda 2-5, kia 2-3, mitsubishi 1-2, mitsubishi 4, toyota 9',
     ladder: [
       [0, 2],
-      [461, 3],
-      [769, 5],
+      [460, 3],
+      [768, 5],
     ],
     why: 'The most common ladder in the estate — tied with the Chevrolet tiers at 19 sites apiece. The same tiers also ship branded as Lexus on live client sites: a centered underlined heading and small cutouts that scale up a touch on hover.',
     strips: [{ skin: 'white', copy: 'Acura, plain white', label: 'Plain white, name below — how all 19 ship it' }],
@@ -554,7 +573,7 @@ const VARIANTS = [
     demos: 'buickgmc 1-4, cadillac 1-3, chevrolet 1-4, ford 6-7, subaru 1-4, volvo 1-2',
     ladder: [
       [0, 2],
-      [540, 3],
+      [539, 3],
       [992, 4],
       [1200, 5],
     ],
@@ -586,8 +605,8 @@ const VARIANTS = [
     demos: 'lexus 1-4, lexus 7, nissan 2-5, toyota 1, toyota 4-7',
     ladder: [
       [0, 1],
-      [401, 2],
-      [601, 3],
+      [400, 2],
+      [600, 3],
       [992, 5],
     ],
     why: 'Drops to a single card on the narrowest phones.',
@@ -601,8 +620,8 @@ const VARIANTS = [
     demos: 'buick 1-2, jaguar 1, jaguar 3, landrover 1, landrover 3-4',
     ladder: [
       [0, 2],
-      [461, 3],
-      [769, 4],
+      [460, 3],
+      [768, 4],
     ],
     why: 'Four-up ceiling — roomier cards than the five-up brands. Jaguar and Land Rover wear these same tiers as photo cards: a background photo per model with a dark hover overlay and an uppercase name plus tagline below (their imagery is pending, so the look is described rather than shown).',
     strips: [{ skin: 'white', copy: 'Buick, plain white', label: 'Plain white, name below' }],
@@ -615,9 +634,9 @@ const VARIANTS = [
     demos: 'genesis 1-3, vw 1-2',
     ladder: [
       [0, 1],
-      [541, 2],
-      [993, 3],
-      [1201, 4],
+      [540, 2],
+      [992, 3],
+      [1200, 4],
     ],
     why: 'A gentle four-step climb — shipped two ways: Genesis plain with inventory counts, Volkswagen with a colour tile behind every car.',
     strips: [
@@ -629,8 +648,8 @@ const VARIANTS = [
         recipeName: 'Genesis new-platform ladder',
         ladder: [
           [0, 1],
-          [600, 2],
-          [991, 3],
+          [599, 2],
+          [990, 3],
         ],
         label:
           'The new-platform ladder (base 1 &middot; &ge;600px 2 &middot; &ge;991px 3) — the newest platform generation runs this shorter climb, and hides its arrows when every model already fits',
@@ -645,8 +664,8 @@ const VARIANTS = [
     demos: 'lincoln 1-4',
     ladder: [
       [0, 2],
-      [461, 3],
-      [993, 4],
+      [460, 3],
+      [992, 4],
     ],
     why: 'Holds three cards across a wide tablet range. Client builds sometimes cut the 4-up tier at 992px instead of 993 — one pixel, same ladder.',
     strips: [{ skin: 'band-flat', copy: 'Lincoln, flat gray band', label: 'On a flat light-gray band, spaced capitals' }],
@@ -659,7 +678,7 @@ const VARIANTS = [
     demos: 'ford 1, honda 1',
     ladder: [
       [0, 1],
-      [461, 3],
+      [460, 3],
       [992, 5],
     ],
     why: 'Jumps 1 → 3 in one step; no two-up state at all.',
@@ -673,9 +692,9 @@ const VARIANTS = [
     demos: 'hyundai 2-4',
     ladder: [
       [0, 1],
-      [461, 3],
-      [993, 4],
-      [1201, 5],
+      [460, 3],
+      [992, 4],
+      [1200, 5],
     ],
     why: 'Also skips two-up on the way from phone to tablet.',
     strips: [{ skin: 'white', copy: 'Hyundai, plain white', label: 'Plain white, name below' }],
@@ -688,7 +707,7 @@ const VARIANTS = [
     demos: 'mazda 1-2',
     ladder: [
       [0, 1],
-      [769, 2],
+      [768, 2],
       [992, 3],
     ],
     dots: true,
@@ -703,7 +722,7 @@ const VARIANTS = [
     demos: 'toyota 2-3',
     ladder: [
       [0, 1],
-      [541, 2],
+      [540, 2],
     ],
     why: 'Never more than two across — the roomiest cards of any standard bar.',
     strips: [
@@ -718,10 +737,10 @@ const VARIANTS = [
     demos: 'alfaromeo 1',
     ladder: [
       [0, 1],
-      [541, 2],
-      [993, 3],
-      [1201, 4],
-      [1801, 6],
+      [540, 2],
+      [992, 3],
+      [1200, 4],
+      [1800, 6],
     ],
     why: 'Six-up, but only past 1800px — the widest breakpoint in the estate.',
     strips: [{ skin: 'tall-tile', copy: 'Alfa Romeo, tall dark tiles', label: 'Tall dark tiles with a browse button — the most styled bar in the estate' }],
@@ -734,10 +753,10 @@ const VARIANTS = [
     demos: 'audi 1',
     ladder: [
       [0, 1],
-      [361, 2],
-      [769, 3],
-      [993, 4],
-      [1201, 6],
+      [360, 2],
+      [768, 3],
+      [992, 4],
+      [1200, 6],
     ],
     why: 'Five rungs, the most granular ladder anywhere.',
     strips: [{ skin: 'white', copy: 'Audi, plain white', label: 'Plain white, name below' }],
@@ -750,7 +769,7 @@ const VARIANTS = [
     demos: 'cdjr 1-4',
     ladder: [
       [0, 2],
-      [461, 3],
+      [460, 3],
       [992, 6],
     ],
     why: 'The only six-up ladder that gets there in three rungs — and the only ladder from the 19 Aug sweep worn by more than one site. A Fiat-including client variant drops the colored band, uses pipe-divider tabs, and starts at one card — moot, since that variant hides the whole bar below 768px.',
@@ -770,8 +789,8 @@ const VARIANTS = [
     demos: 'powersports 2',
     ladder: [
       [0, 2],
-      [461, 3],
-      [993, 5],
+      [460, 3],
+      [992, 5],
     ],
     why: 'Same engine, different content contract: the slides are body-style categories (motorcycles, ATVs, scooters), not models.',
     strips: [
@@ -789,8 +808,8 @@ const VARIANTS = [
     demos: 'powersports 1',
     ladder: [
       [0, 2],
-      [461, 3],
-      [769, 6],
+      [460, 3],
+      [768, 6],
     ],
     why: 'A brand-logo strip standing where the model bar would be — the Acura tiers with a six-up ceiling.',
     strips: [
@@ -827,9 +846,9 @@ const VARIANTS = [
     demos: 'ferrari 2',
     ladder: [
       [0, 1],
-      [769, 2],
-      [993, 3],
-      [1441, 4],
+      [768, 2],
+      [992, 3],
+      [1440, 4],
     ],
     why: 'The estate&rsquo;s only 1441px tier — a fourth card appears only past 1440px.',
     strips: [{ skin: 'photo-overlay', copy: 'Ferrari, photo cards', label: 'Lifestyle photo cards with a bottom gradient overlay and the name bottom-left' }],
@@ -859,8 +878,8 @@ const VARIANTS = [
         recipeName: 'Group makes strip',
         ladder: [
           [0, 2],
-          [769, 4],
-          [993, 7],
+          [768, 4],
+          [992, 7],
         ],
         autoplay: 4000,
         label: 'Make logos, seven across past 992px (base 2 &middot; &ge;769px 4 &middot; &ge;993px 7) — the cutouts stand in for OEM logos',
@@ -871,8 +890,8 @@ const VARIANTS = [
         recipeName: 'Group locations strip',
         ladder: [
           [0, 1],
-          [769, 2],
-          [993, 4],
+          [768, 2],
+          [992, 4],
         ],
         autoplay: 4000,
         label: 'Rooftop location cards (base 1 &middot; &ge;769px 2 &middot; &ge;993px 4)',
