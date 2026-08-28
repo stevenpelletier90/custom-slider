@@ -13,7 +13,7 @@ The demo grew one page per question instead of one page per job.
 | `demo/brands.html` — "Find your brand"                               |      5,324 |            266 |
 | `docs/catalog/model-bar-library.html` — **also** "Model Bar Library" |      1,170 |              0 |
 | `docs/catalog/oem-slider-census.html`                                |      1,641 |              0 |
-| `docs/superpowers/plans/*.md` — finished work logs                   |      3,386 |              — |
+| `docs/superpowers/plans/*.md` — finished work logs                   |      3,138 |              — |
 | **total**                                                            | **21,734** |        **701** |
 
 Two different files are titled "Model Bar Library". Every page renders every
@@ -136,7 +136,7 @@ reach a look we never anticipated.
   `docs/catalog/encode.mjs`, `docs/catalog/shots/`
 - `scripts/build-model-bars.mjs` — the generator for the deleted pages
 - `scripts/check-recipes.mjs` — guarded hand-written recipes that no longer exist
-- `docs/superpowers/plans/*.md` — 3,386 lines of logs for work that shipped
+- `docs/superpowers/plans/*.md` — 3,138 lines of logs for work that shipped (removed 2026-08-27; the two engine invariants that lived only there are now in CLAUDE.md)
 
 ## What is kept, untouched
 

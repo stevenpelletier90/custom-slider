@@ -61,7 +61,8 @@ There is no test framework (deliberate, spec §1 non-goals). Verification is the
 
 - Never set CSS `scroll-behavior` on the track. Safari hijacks intended-instant programmatic scrolls. Every scroll passes `behavior` per call, resolved from `prefers-reduced-motion` _at call time_.
 - Never `inert`/`aria-hidden` off-screen cards in the multi-card variants — hiding them corrupts announced counts. (`inert` on non-visible panels is correct in `gallery` mode only, and never on a panel containing focus.)
-- Never use Chromium-only platform features (`::scroll-marker`, `scrollsnapchange`, `scroll-state()`, `scrollIntoView({container})`) in the core.
+- Never use Chromium-only platform features in the core. The full list from the original plan: `scrollsnapchange` / `scrollsnapchanging`, `::scroll-button`, `::scroll-marker` / `scroll-marker-group`, `scroll-state()`, `interactivity: inert`, `scrollIntoView({container})`.
+- `scroll-snap-type: x mandatory` goes on the TRACK, never on the root scroller, and the track carries `overscroll-behavior-x: contain` so a horizontal flick never turns into a page-level back-navigation. Moving the snap type up to the root breaks the reserved-space layout the controls depend on.
 - Never `scroll-snap-stop: always` — it blocks multi-slide flicks and hit a Firefox bug.
 - Never make the track itself the live region; the terse `.dl-carousel-status` region exists precisely so multi-card moves don't announce every card.
 - Never inject slide content. The engine generates controls only — all headings, links, and images come from the authored HTML (SEO + no-JS requirement). Thumbs build a fresh `<img>` rather than cloning, so site ids/srcset don't leak.
