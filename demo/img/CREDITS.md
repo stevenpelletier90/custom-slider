@@ -40,11 +40,20 @@ fetched from a live DealerOn storefront. Internal demo use for DealerOn team
 presentation; on a production DealerOn site reference them with
 `#CHROMEPHOTOPATH|StyleID|1|640p#` instead of copying files.
 
-These eight are the only images the copy panel maps by MODEL rather than by
-bytes — the WebP conversion means no hash can equal the platform's PNG, so a
-pasted Silverado is a current Silverado render that may wear a different colour
-than the preview. Undoing the conversion to close that gap costs ~530 KB for a
-difference nobody copying a stock cutout depends on.
+These eight are the only images not byte-identical to the path they map to, and
+they cannot be: they are WebP, the platform serves PNG, so no hash can ever
+match. They are instead **re-cut from the exact render they map to** — the
+harvest downloads that PNG and converts it — so the preview and the pasted path
+show the same truck in the same paint, and only the encoding differs.
+
+They stay WebP on purpose. The model bar is the demo's default view, so all
+eight load on every visit: 110 KB of WebP against 640 KB of PNG is the
+difference between a page that appears instantly and one that does not. Lossy
+encoding is invisible at card size; a different colour was not, which is why
+that gap got closed and this one is left alone.
+
+Re-cutting needs `cwebp` on PATH. Without it the harvest says so and leaves the
+files untouched rather than shipping a mismatch.
 
 ## Where the copy panel's image paths come from
 

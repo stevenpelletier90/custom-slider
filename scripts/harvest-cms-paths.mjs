@@ -14,7 +14,9 @@
 // an honest gap, because it 404s silently on a live page.
 
 import { createHash } from 'node:crypto';
-import { readdir, readFile, writeFile, stat } from 'node:fs/promises';
+import { readdir, readFile, writeFile, stat, unlink } from 'node:fs/promises';
+import { execFile } from 'node:child_process';
+import { promisify } from 'node:util';
 import { join, posix } from 'node:path';
 
 const ROOT = new URL('..', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '$1');
@@ -282,6 +284,7 @@ if (stillMissing.length) {
 // - only the bytes-equal-the-preview guarantee is relaxed here, never the
 // works-on-any-dealer-site one.
 const named = new Set();
+const derived = [];
 await pool(Object.entries(NAMED), 4, async ([file, model]) => {
   const res = await grab(`https://${NAMED_HOST}.dealeron.com/searchnew.aspx?Model=${encodeURIComponent(model)}`);
   if (!res) return;
@@ -293,7 +296,31 @@ await pool(Object.entries(NAMED), 4, async ([file, model]) => {
   if (!probe) return;
   map[file] = path;
   named.add(file);
+  // Re-cut the local preview FROM the render we just mapped to, so the demo
+  // shows the same truck in the same paint the pasted path serves. These stay
+  // WebP: the model bar is the demo's default view, so all eight load on every
+  // visit, and 110 KB of WebP against 640 KB of PNG is the difference between a
+  // page that appears instantly and one that does not. Lossy encoding is
+  // invisible at card size; a different colour was not.
+  const png = Buffer.from(await probe.arrayBuffer());
+  const dest = join(ROOT, 'demo', 'img', file);
+  const tmp = `${dest}.src.png`;
+  try {
+    await writeFile(tmp, png);
+    // -q 85 matches the size the original conversion produced (13.7 KB vs 13.6
+    // KB on the Tahoe); alpha_q 100 keeps the cutout edge clean against any
+    // band colour the card sits on.
+    await promisify(execFile)('cwebp', ['-quiet', '-q', '85', '-alpha_q', '100', tmp, '-o', dest]);
+    derived.push(file);
+  } catch (e) {
+    console.error(`  ${file}: could not re-cut from ${path} (${e.code === 'ENOENT' ? 'cwebp not installed' : e.message}) — left as it was`);
+  } finally {
+    await unlink(tmp).catch(() => {});
+  }
 });
+if (derived.length)
+  console.log(`
+re-cut ${derived.length} Chevrolet cutout(s) from the render they map to`);
 if (named.size !== Object.keys(NAMED).length) {
   console.log(
     `\nname-matched ${named.size}/${Object.keys(NAMED).length} Chevrolet fallback cutouts — missing: ${Object.keys(NAMED)
