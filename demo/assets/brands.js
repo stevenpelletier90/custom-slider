@@ -227,12 +227,12 @@
     hyundai: [
       'hyundai',
       [
-        ['kona.png', 420, 260, 'Kona'],
-        ['tucson.png', 420, 260, 'Tucson'],
-        ['santa-fe.png', 320, 240, 'Santa Fe'],
-        ['palisade.png', 320, 240, 'Palisade'],
-        ['ioniq-5.png', 420, 260, 'IONIQ 5'],
-        ['elantra.png', 420, 260, 'Elantra'],
+        ['kona.png', 340, 213, 'Kona'],
+        ['tucson.png', 340, 213, 'Tucson'],
+        ['santa-fe.png', 340, 213, 'Santa Fe'],
+        ['palisade.png', 340, 213, 'Palisade'],
+        ['ioniq-5.png', 340, 213, 'IONIQ 5'],
+        ['elantra.png', 340, 213, 'Elantra'],
       ],
     ],
     mazda: [

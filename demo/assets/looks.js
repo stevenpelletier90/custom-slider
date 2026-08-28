@@ -99,7 +99,7 @@ const LOOKS = {
     // One stretched link over the whole card: the anchor IS the card, so there
     // is no nested link and nothing announces twice.
     markup: (m) => `<a class="dlx-card" href="${m.href}">
-  <img src="${m.img}" width="1200" height="900" alt="${m.alt}" loading="lazy" decoding="async">
+  <img src="${m.img}" width="${m.w ?? 1200}" height="${m.h ?? 900}" alt="${m.alt}" loading="lazy" decoding="async">
   <span class="dlx-body">
     <span class="dlx-name">${m.name}</span>${m.sub ? `\n    <small class="dlx-sub">${m.sub}</small>` : ''}
   </span>
@@ -180,7 +180,7 @@ const LOOKS = {
     markup: (m) =>
       [
         `<a class="dlx-card" href="${m.href}">`,
-        `  <img src="${m.img}" width="800" height="800" alt="${m.alt}" loading="lazy" decoding="async">`,
+        `  <img src="${m.img}" width="${m.w ?? 800}" height="${m.h ?? 800}" alt="${m.alt}" loading="lazy" decoding="async">`,
         `  <span class="dlx-copy">`,
         m.sub ? `    <small class="dlx-sub">${m.sub}</small>` : null,
         `    <span class="dlx-name">${m.name}</span>`,
@@ -219,7 +219,7 @@ const LOOKS = {
 .dlx-cta { display: inline-block; margin-block-start: 0.75rem; padding: 0.6rem 1.4rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--cta-fg); background: var(--cta-bg); }`,
     markup: (m) => `<a class="dlx-card" href="${m.href}">
   <p class="dlx-name">${m.name}</p>
-  <img src="${m.img}" width="320" height="533" alt="${m.alt}" loading="lazy" decoding="async">
+  <img src="${m.img}" width="${m.w ?? 320}" height="${m.h ?? 533}" alt="${m.alt}" loading="lazy" decoding="async">
   <span class="dlx-cta">Browse inventory</span>
 </a>`,
   },
@@ -247,7 +247,7 @@ const LOOKS = {
 .dlx-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; color: var(--card-fg); background: var(--card-bg); border: 1px solid rgb(255 255 255 / 7%); border-radius: 10px; transition: background 0.2s; }
 .dlx-card img { inline-size: 75%; block-size: auto; object-fit: contain; }`,
     markup: (m) => `<a class="dlx-card" href="${m.href}" aria-label="${m.alt}">
-  <img src="${m.img}" width="240" height="160" alt="" loading="lazy" decoding="async">
+  <img src="${m.img}" width="${m.w ?? 240}" height="${m.h ?? 160}" alt="" loading="lazy" decoding="async">
 </a>`,
   },
 
@@ -278,7 +278,7 @@ const LOOKS = {
     markup: (m) =>
       [
         `<a class="dlx-card" href="${m.href}">`,
-        `  <img src="${m.img}" width="240" height="160" alt="${m.alt}" loading="lazy" decoding="async">`,
+        `  <img src="${m.img}" width="${m.w ?? 240}" height="${m.h ?? 160}" alt="${m.alt}" loading="lazy" decoding="async">`,
         `  <span class="dlx-name">${m.name}</span>`,
         m.sub ? `  <p>${m.sub}</p>` : null,
         `  <span class="dlx-cta">Visit</span>`,

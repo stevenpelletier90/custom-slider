@@ -9,7 +9,7 @@
 //
 // Run from `npm run validate`.
 
-import { readFileSync } from 'node:fs';
+import { readFileSync, existsSync } from 'node:fs';
 
 // looks.js is a classic script (see the note at its foot), so it cannot be
 // imported. Evaluate it and read the global it sets.
@@ -139,12 +139,95 @@ for (const [id, b] of brands) {
   }
 }
 
+// A roster records each cutout's REAL intrinsic size, because that pair becomes
+// the width/height attributes on a live page and a wrong one is a layout shift.
+// Nothing checked it until refreshing six Hyundai cutouts from the platform
+// silently changed them from 420x260 to 340x213 - the declared values stayed,
+// and every Hyundai card would have jumped on load. OEMs re-cut this art on
+// their own schedule, so the check belongs here rather than in the memory of
+// whoever runs the harvest next.
+function pixelSize(buf) {
+  if (buf.readUInt32BE(0) === 0x89504e47) return [buf.readUInt32BE(16), buf.readUInt32BE(20)];
+  if (buf.toString('ascii', 0, 4) === 'RIFF' && buf.toString('ascii', 8, 12) === 'WEBP') {
+    const fmt = buf.toString('ascii', 12, 16);
+    if (fmt === 'VP8X') return [1 + buf.readUIntLE(24, 3), 1 + buf.readUIntLE(27, 3)];
+    if (fmt === 'VP8 ') return [buf.readUInt16LE(26) & 0x3fff, buf.readUInt16LE(28) & 0x3fff];
+    if (fmt === 'VP8L') {
+      const bits = buf.readUInt32LE(21);
+      return [(bits & 0x3fff) + 1, ((bits >> 14) & 0x3fff) + 1];
+    }
+  }
+  if (buf[0] === 0xff && buf[1] === 0xd8) {
+    let o = 2;
+    while (o < buf.length - 8) {
+      if (buf[o] !== 0xff) {
+        o++;
+        continue;
+      }
+      const marker = buf[o + 1];
+      if (marker >= 0xc0 && marker <= 0xcf && ![0xc4, 0xc8, 0xcc].includes(marker)) return [buf.readUInt16BE(o + 7), buf.readUInt16BE(o + 5)];
+      o += 2 + buf.readUInt16BE(o + 2);
+    }
+  }
+  return null;
+}
+
+// Checked against the RENDERED attributes, not the roster values, because those
+// are two different things and only one of them ships. The portrait look
+// hardcoded width="320" height="533" and ignored the roster entirely, so Alfa
+// Romeo's 300x500 art went out declaring a size it never had - a roster-only
+// check would have called that clean.
+for (const [id, b] of brands) {
+  const look = LOOKS[b.look];
+  for (const m of b.models ?? []) {
+    const dim = pixelSize(readFileSync(`demo/${m.img}`));
+    if (!dim) {
+      console.error(`  ${id}: cannot read the pixel size of ${m.img}`);
+      bad++;
+      continue;
+    }
+    const tag = (look?.markup?.(m) ?? '').match(/<img[^>]*>/)?.[0];
+    if (!tag) continue;
+    const w = +(tag.match(/\bwidth="(\d+)"/)?.[1] ?? 0);
+    const h = +(tag.match(/\bheight="(\d+)"/)?.[1] ?? 0);
+    if (w !== dim[0] || h !== dim[1]) {
+      console.error(`  ${id}: ${m.img} is ${dim[0]}x${dim[1]} but the ${b.look} look renders width="${w}" height="${h}" — that pair ships as-is, so it is a layout shift`);
+      bad++;
+    }
+  }
+}
+
+// The CMS path map is what the copy panel emits, so a stale entry ships a
+// broken image to every designer who pastes the snippet. Two ways it goes
+// stale, both caught here: a key naming an image that no longer exists (the
+// swap silently stops happening), and a per-dealer /static/dealer-<id>/ path
+// creeping in (it would resolve on the one site it was harvested from and 404
+// on every other, which is the exact failure this map exists to remove).
+new Function('globalThis', readFileSync('demo/assets/cms-paths.js', 'utf8')).call(sandbox, sandbox);
+const CMS = sandbox.DLX.CMS ?? {};
+if (!Object.keys(CMS).length) {
+  console.error('  cms-paths: empty — re-run scripts/harvest-cms-paths.mjs');
+  bad++;
+}
+for (const [rel, path] of Object.entries(CMS)) {
+  if (!existsSync(`demo/img/${rel}`)) {
+    console.error(`  cms-paths: "${rel}" is mapped but not in demo/img — re-run the harvest`);
+    bad++;
+  }
+  if (!/^\/(?:assets\/stock|static\/(?!dealer-)[a-z0-9_-]+)\//.test(path)) {
+    console.error(`  cms-paths: "${rel}" -> "${path}" is not a shared platform collection`);
+    bad++;
+  }
+}
+
 if (bad) {
   console.error(`\ncheck-looks: ${bad} problem(s).`);
   process.exit(1);
 }
 
-console.log(`check-looks: ${OLD_SKINS.length} old skins -> ${Object.keys(LOOKS).length} components, ${brands.length} brand presets, all accounted for.`);
+console.log(
+  `check-looks: ${OLD_SKINS.length} old skins -> ${Object.keys(LOOKS).length} components, ${brands.length} brand presets, ${Object.keys(CMS).length} platform image paths, all accounted for.`,
+);
 for (const [id, look] of Object.entries(LOOKS)) {
   console.log(`  ${id.padEnd(10)} ${String(look.absorbs.length).padStart(2)}  ${look.absorbs.join(', ')}`);
 }

@@ -36,10 +36,40 @@
     grid.append(card);
   }
 
+  // The card looks, same treatment. Each one is a real slider rather than a
+  // picture of one, so what you see here is what the builder gives you.
+  const looksGrid = document.getElementById('gx-looks');
+  const { LOOKS, renderLook } = globalThis.DLX;
+  if (looksGrid && LOOKS && renderLook) {
+    for (const [id, look] of Object.entries(LOOKS)) {
+      const cls = `gl-${id}`;
+      const { css: sheet, html } = renderLook(id, cls);
+      css.push(sheet);
+
+      const card = document.createElement('section');
+      card.className = 'gx-card';
+      card.innerHTML = `
+        <div class="gx-head">
+          <span class="wb-glyph"></span>
+          <div>
+            <h2>${look.label}</h2>
+            <p>${look.note ?? ''}</p>
+          </div>
+          <a class="ui-btn" href="index.html#modelbar">Open in the builder</a>
+        </div>
+        <div class="gx-stage"></div>`;
+      card.querySelector('.wb-glyph').innerHTML = look.icon ?? '';
+      card.querySelector('.gx-stage').innerHTML = html;
+      looksGrid.append(card);
+    }
+  }
+
   styleEl.textContent = css.join('\n\n');
 
   // Init after every example is in the DOM, so each measures a real width.
-  for (const root of grid.querySelectorAll('.dl-carousel')) {
+  // Both grids: a slider left uninitialised is a static row of cards that
+  // silently claims the pattern does not scroll.
+  for (const root of document.querySelectorAll('.gx-stage .dl-carousel')) {
     if (!root.dataset.init) live.push(new globalThis.DLCarousel(root));
   }
 

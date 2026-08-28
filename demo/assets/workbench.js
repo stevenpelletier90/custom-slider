@@ -32,47 +32,61 @@
     blurb: 'Built for the way you actually drive.',
   }));
 
+  // Each card names the vehicle its render actually depicts, and the model year
+  // is the one in the ChromeData code behind it — so nothing here claims a car
+  // it is not showing. All six are 640x480, which is the 4:3 the card crops to.
   const VEHICLES = [
-    ['vehicle-1.jpg', '2021 Porsche Panamera', '$82,900 · 18,300 mi', 'Grey Porsche Panamera, rear three-quarter view'],
-    ['vehicle-2.jpg', '2023 BMW 430i Coupe', '$54,200 · 9,100 mi', 'White BMW 430i coupe on a city street'],
-    ['vehicle-3.jpg', '2022 Ford Expedition', '$61,750 · 22,400 mi', 'Black Ford Expedition on a mountain road'],
-    ['vehicle-4.jpg', '2023 Honda CR-V EX-L', '$34,900 · 12,800 mi', 'Silver Honda CR-V parked by trees'],
-    ['vehicle-5.jpg', '2020 Nissan GT-R', '$96,500 · 14,200 mi', 'Blue Nissan GT-R on a race circuit'],
-    ['vehicle-6.jpg', '2019 Fiat 500 Lounge', '$12,400 · 31,900 mi', 'Red Fiat 500 on a cobbled street'],
-  ].map(([f, name, sub, alt]) => ({ img: `img/${f}`, name, sub, alt, href: '/used-inventory/index.htm' }));
+    ['vehicle-1.png', '2025 Honda Pilot EX-L', '$41,900 · 11,200 mi', 'Honda Pilot, front three-quarter studio view'],
+    ['vehicle-2.png', '2026 Toyota RAV4', '$34,600 · 6,400 mi', 'Toyota RAV4, front three-quarter studio view'],
+    ['vehicle-3.png', '2023 Nissan Rogue SV', '$24,800 · 31,500 mi', 'Nissan Rogue, front three-quarter studio view'],
+    ['vehicle-4.png', '2026 Ford Explorer', '$43,200 · 8,900 mi', 'Ford Explorer, front three-quarter studio view'],
+    ['vehicle-5.png', '2026 Hyundai Tucson', '$31,400 · 7,300 mi', 'Hyundai Tucson, front three-quarter studio view'],
+    ['vehicle-6.png', '2026 Subaru Outback', '$35,700 · 5,100 mi', 'Subaru Outback, front three-quarter studio view'],
+  ].map(([f, name, sub, alt]) => ({ img: `img/${f}`, w: 640, h: 480, name, sub, alt, href: '/used-inventory/index.htm' }));
 
+  // From the platform's own industry-automotive collection, not from Unsplash:
+  // every dealer can see it, so these copy out as paths that resolve instead of
+  // as placeholders. Sizes are the library's real ones and they are not uniform,
+  // which is why pic() reads them rather than asserting one shape for all six.
   const PHOTOS = [
-    ['photo-1.jpg', 'Blue Chevrolet Camaro in the desert at dusk'],
-    ['photo-2.jpg', 'White Ford Mustang in a neon-lit parking garage'],
-    ['photo-3.jpg', 'Hands on the steering wheel at dusk'],
-    ['photo-4.jpg', 'Audi R8 tail lights on a city street at sunset'],
-    ['photo-5.jpg', 'Technician topping up engine oil'],
-    ['photo-6.jpg', 'Classic BMW grilles lined up in a museum'],
-  ].map(([f, alt]) => ({ img: `img/${f}`, alt }));
+    ['photo-1.jpg', 900, 600, 'Technician inspecting a car raised on a lift'],
+    ['photo-2.jpg', 900, 600, 'Technician checking a tyre in the service bay'],
+    ['photo-3.jpg', 800, 534, 'Technician polishing a car in the detailing bay'],
+    ['photo-4.jpg', 800, 534, 'Hand washing the bonnet of a red car'],
+    ['photo-5.jpg', 800, 600, 'Driver smiling at the wheel'],
+    ['photo-6.jpg', 1200, 717, 'Pressure washing a wheel arch'],
+  ].map(([f, w, h, alt]) => ({ img: `img/${f}`, w, h, alt }));
 
-  const pic = (m) => `<img src="${m.img}" width="1200" height="750" alt="${m.alt}" loading="lazy" decoding="async">`;
+  const pic = (m) => `<img src="${m.img}" width="${m.w ?? 1200}" height="${m.h ?? 750}" alt="${m.alt}" loading="lazy" decoding="async">`;
 
   // Tall 3:5 model photography — the "model cards" look, and the reason
   // model-*.jpg is in demo/img.
-  const MODELS = [
-    ['silverado', 'Silverado'],
-    ['equinox', 'Equinox'],
-    ['tahoe', 'Tahoe'],
-    ['malibu', 'Malibu'],
-    ['camaro', 'Camaro'],
-    ['corvette', 'Corvette'],
-  ].map(([slug, name]) => ({ img: `img/model-${slug}.jpg`, name, href: `/searchnew.aspx?Model=${name}`, alt: `${name}` }));
+  // Tall model cards need genuinely tall photography. The only real portrait
+  // model art on the platform is Alfa Romeo's, and it is 300x500 - exactly the
+  // 3/5 this card crops to, so the crop throws nothing away.
+  //
+  // It replaced six stock stand-ins captioned Silverado, Equinox, Tahoe,
+  // Malibu, Camaro and Corvette that pictured none of those vehicles. A card
+  // that names a model has to show that model; the library has no Chevrolet
+  // portrait art (only Equinox, Silverado 1500 and Trax exist, and only as
+  // 1000x1000 squares), so the pattern uses the marque whose art fits it.
+  // Picking a brand in the workbench still swaps the whole roster.
+  const MODELS = BRANDS.alfaromeo.models;
 
   // Deliberately mismatched source files. The point of the example is that the
   // CSS crops them to one shape, so a dealer uploading whatever they have still
   // gets an even row.
+  // Real library files at genuinely different shapes — the numbers printed on
+  // each card are its actual source size, so they have to be true. Two of the
+  // six are files already in the tree rather than fresh copies of the same
+  // bytes under a second name.
   const MIXED = [
-    ['mixed-1.jpg', 500, 500, 'Black Porsche Panamera, square crop', '500 × 500 source', 'Square upload — cover-cropped to 4:3.'],
-    ['mixed-2.jpg', 375, 500, 'Blue BMW 4 Series coupe, portrait crop', '375 × 500 source', 'Portrait upload — the sides are what get cropped.'],
-    ['mixed-3.jpg', 800, 350, 'White Ford Expedition on a desert road, wide crop', '800 × 350 source', 'Ultra-wide upload — top and bottom get cropped.'],
-    ['mixed-4.jpg', 640, 480, 'White Honda CR-V near snowy mountains, 4:3 crop', '640 × 480 source', 'Already 4:3 — nothing is lost.'],
-    ['mixed-5.jpg', 300, 500, 'White Nissan GT-R, tall narrow crop', '300 × 500 source', 'Tall and narrow — the most aggressive crop of the set.'],
-    ['vehicle-6.jpg', 800, 500, 'Light blue Fiat 500 parked beside a stone building', '800 × 500 source', 'Landscape upload — a light trim.'],
+    ['mixed-1.jpg', 1000, 1000, 'Chevrolet Silverado 1500 pickup, square source', '1000 × 1000 source', 'Square upload — cover-cropped to 4:3.'],
+    ['mixed-3.jpg', 1920, 600, 'Buick Enclave on a coastal road, ultra-wide source', '1920 × 600 source', 'Ultra-wide upload — top and bottom get cropped.'],
+    ['oem/alfaromeo/giulia-quadrifoglio.jpg', 300, 500, 'Alfa Romeo Giulia Quadrifoglio, tall narrow source', '300 × 500 source', 'Tall and narrow — the most aggressive crop of the set.'],
+    ['oem/toyota/corolla.jpg', 800, 744, 'Toyota Corolla, nearly square source', '800 × 744 source', 'Almost square — a light trim off the sides.'],
+    ['mixed-2.jpg', 800, 400, 'Nissan Altima sedan, wide source', '800 × 400 source', 'Wide upload — a heavier trim top and bottom.'],
+    ['vehicle-3.png', 640, 480, 'Nissan Rogue, 4:3 source', '640 × 480 source', 'Already 4:3 — nothing is lost.'],
   ].map(([f, w, h, alt, name, blurb]) => ({ img: `img/${f}`, w, h, alt, name, blurb }));
 
   const REVIEWS = [
@@ -188,7 +202,14 @@
       perView: { base: 1, 768: 2, 992: 2, 1200: 3 },
       minCard: 260,
       models: PHOTOS.slice(0, 3).map((m, i) => ({ ...m, name: ['Dana W.', 'Marcus T.', 'Gene & Marta L.'][i] })),
-      css: `.dlx-video { position: relative; display: block; inline-size: 100%; padding: 0; overflow: hidden; font: inherit; text-align: start; cursor: pointer; background: none; border: 0; border-radius: 8px; }
+      // `color: inherit` is load-bearing, not tidiness. A <button> takes the UA's
+      // `buttontext` system colour unless told otherwise, and `font: inherit`
+      // does not carry colour with it. `buttontext` follows color-scheme, so in
+      // dark mode it resolves to WHITE - and the name under the poster went
+      // white-on-white and vanished. On a dealer site the same card lands on
+      // whatever band it is dropped into, so the card has to take the
+      // surrounding text colour the way every non-button card already does.
+      css: `.dlx-video { position: relative; display: block; inline-size: 100%; padding: 0; overflow: hidden; font: inherit; color: inherit; text-align: start; cursor: pointer; background: none; border: 0; border-radius: 8px; }
 .dlx-video img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
 .dlx-play { position: absolute; inset-block-start: 42%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 56px; block-size: 56px; color: #16324f; background: rgb(255 255 255 / 92%); border-radius: 50%; transform: translate(-50%, -50%); }
 .dlx-name { display: block; margin: 0.6rem 0 0; font-size: 1rem; font-weight: 700; line-height: 1.3; }`,
@@ -275,7 +296,8 @@
 .dlx-model img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; transition: transform 0.35s ease; }
 .dlx-model:hover img { transform: scale(1.05); }
 .dlx-model h4 { position: absolute; inset-inline: 0; inset-block-end: 0; padding: 2.5rem 1rem 1rem; margin: 0; font-size: 1.15rem; line-height: 1.3; background: linear-gradient(transparent, rgb(0 0 0 / 78%)); }`,
-      slides: (models) => models.map((m) => `<a class="dlx-model" href="${m.href}"><img src="${m.img}" width="600" height="1000" alt="" loading="lazy" decoding="async"><h4>${m.name}</h4></a>`),
+      slides: (models) =>
+        models.map((m) => `<a class="dlx-model" href="${m.href}"><img src="${m.img}" width="${m.w ?? 600}" height="${m.h ?? 1000}" alt="" loading="lazy" decoding="async"><h4>${m.name}</h4></a>`),
       // Site-level enhancement, not an engine feature: it reads the engine's
       // own current-dot class and writes two custom properties. Nothing in the
       // engine knows the bar exists.
@@ -414,7 +436,7 @@
       models: PHOTOS.map((m, i) => ({ ...m, video: i === 2 || i === 4 })),
       css: `.dlx-photo { display: block; }
 .dlx-photo img, .dlx-mv img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
-.dlx-mv { position: relative; display: block; inline-size: 100%; padding: 0; font: inherit; cursor: pointer; background: none; border: 0; }
+.dlx-mv { position: relative; display: block; inline-size: 100%; padding: 0; font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
 .dlx-mv-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.3rem; color: #16324f; background: rgb(255 255 255 / 92%); border-radius: 50%; transform: translate(-50%, -50%); }`,
       slides: (models) =>
         models.map((m) =>
@@ -680,7 +702,7 @@
           // Each photo carries its OWN description. Stamping the vehicle's alt
           // on all three put "2021 Porsche Panamera" over a steering wheel.
           const pics = [{ img: m.img, alt: m.alt }, PHOTOS[i % PHOTOS.length], PHOTOS[(i + 2) % PHOTOS.length]].map(
-            (x) => `<img src="${x.img}" width="800" height="600" alt="${x.alt}" loading="lazy" decoding="async">`,
+            (x) => `<img src="${x.img}" width="${x.w ?? 800}" height="${x.h ?? 600}" alt="${x.alt}" loading="lazy" decoding="async">`,
           );
           return [`  <div class="dlx-cg-card">`, carousel(pics, `Photos of the ${m.name}`, '    '), `    <div class="dlx-cg-body"><h4>${m.name}</h4><p>${m.sub}</p></div>`, `  </div>`].join('\n');
         });
@@ -689,6 +711,31 @@
 
     return carousel(items, p.label);
   }
+
+  // The preview keeps the relative image paths; the copy panel emits the
+  // PLATFORM ones. Designers were re-adding every image by hand after each
+  // paste, because a repo-relative src means nothing on a dealer site, and that
+  // cost is paid again by every designer who reuses the snippet.
+  //
+  // cms-paths.js maps each cutout to the path the platform itself serves it
+  // from - /assets/stock/ (the ChromeData ColorMatched service) or
+  // /static/brand-<make>/ (the shared OEM collection). Both are global: no
+  // dealer id anywhere in the path, byte-identical on any dealer domain, so a
+  // pasted model bar draws its cars with nothing uploaded. Every pair in that
+  // file was proved by SHA-1 against the image this demo displays, which is why
+  // the swap cannot quietly point at a different car than the preview shows.
+  //
+  // An image with no platform equivalent - the Unsplash photography behind the
+  // gallery, review and service patterns - becomes `#MISCPATH#<file>`, the house
+  // convention for the dealer's own gallery upload. It does not resolve until
+  // they upload one, which is the honest answer for a slot that is theirs to
+  // fill, and it reads as "put your image here" rather than as a link that
+  // looks like it might already work.
+  //
+  // Done as one pass over the finished markup on purpose: every producer -
+  // look, pattern slides(), card grid, lightbox thumb - emits src="img/...",
+  // so nothing can add a new image slot that this quietly misses.
+  const toCms = (html) => html.replace(/src="img\/([^"]+)"/g, (_, rel) => `src="${globalThis.DLX.CMS?.[rel] ?? `#MISCPATH#${rel.split('/').pop()}`}"`);
 
   /* ---- render ----------------------------------------------------------- */
 
@@ -706,6 +753,21 @@
     PATTERNS,
     renderPattern(id, cls) {
       loadPattern(id);
+      return { css: cssFor(`.${cls}`), html: htmlFor(cls) };
+    },
+    // The card LOOKS, drawn the same way. A look is not a pattern - it is the
+    // card inside one - but a style you can only reach by guessing which brand
+    // wears it is a style nobody finds. Alfa Romeo's tall dark tiles are the
+    // case in point: a completely different-looking strip with no entry in the
+    // catalogue. This puts each look on the page beside the patterns, built by
+    // the same cssFor/htmlFor pair, so it cannot drift from the builder either.
+    renderLook(id, cls) {
+      loadPattern('modelbar');
+      const look = LOOKS[id];
+      state.look = id;
+      state.lookProps = { ...look.settings };
+      state.perView = { ...look.perView };
+      state.gutter = true;
       return { css: cssFor(`.${cls}`), html: htmlFor(cls) };
     },
   });
@@ -740,7 +802,7 @@
     // Kept as text as well as highlighted markup: the clipboard gets the text,
     // never the spans.
     const script = p.script ? `\n\n<script>\n${p.script}\n</script>` : '';
-    state.codeText = `<style>\n${cssFor('.my-slider')}\n</style>\n\n${htmlFor('my-slider')}${script}`;
+    state.codeText = `<style>\n${cssFor('.my-slider')}\n</style>\n\n${toCms(htmlFor('my-slider'))}${script}`;
     codeEl.innerHTML = globalThis.DLX.hl.snippet(state.codeText);
   }
 

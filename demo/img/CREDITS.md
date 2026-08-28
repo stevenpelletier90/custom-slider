@@ -1,34 +1,34 @@
-# Demo photo credits
+# Demo image credits
 
-Photos are from [Unsplash](https://unsplash.com) under the
-[Unsplash License](https://unsplash.com/license) (free to use, no attribution
-required — credited here anyway). Fetched via the Unsplash CDN with crop
-parameters. Model-card photos are visual stand-ins, not the named Chevrolet
-models (except the Camaro) — swap in official OEM assets for real use.
+**The demo ships no third-party stock photography.** Every image in this folder
+comes from the DealerOn platform itself, and every one of them is served by a
+path that resolves on any dealer site — which is why the copy panel can hand a
+designer working image sources instead of links into this repo.
 
-| File | Unsplash photo ID |
-| --- | --- |
-| vehicle-1.jpg | photo-1503376780353-7e6692767b70 |
-| vehicle-2.jpg | photo-1502877338535-766e1452684a |
-| vehicle-3.jpg | photo-1533473359331-0135ef1b58bf |
-| vehicle-4.jpg | photo-1519641471654-76ce0107ad1b |
-| vehicle-5.jpg | photo-1568605117036-5fe5e7bab0b7 |
-| vehicle-6.jpg | photo-1549317661-bd32c8ce0db2 |
-| photo-1.jpg | photo-1552519507-da3b142c6e3d |
-| photo-2.jpg | photo-1533106418989-88406c7cc8ca |
-| photo-3.jpg | photo-1449965408869-eaa3f722e40d |
-| photo-4.jpg | photo-1493238792000-8113da705763 |
-| photo-5.jpg | photo-1487754180451-c456f719a1fc |
-| photo-6.jpg | photo-1526726538690-5cbf956ae2fd |
-| model-silverado.jpg | photo-1533473359331-0135ef1b58bf |
-| model-equinox.jpg | photo-1519641471654-76ce0107ad1b |
-| model-tahoe.jpg | photo-1590362891991-f776e747a588 |
-| model-malibu.jpg | photo-1571987502227-9231b837d92a |
-| model-camaro.jpg | photo-1552519507-da3b142c6e3d |
-| model-corvette.jpg | photo-1605559424843-9e4c228bf1c2 |
+There are three sources, and nothing else:
 
-`mixed-*.jpg` are crops of the `vehicle-*.jpg` files above (same Unsplash sources),
-deliberately mismatched dimensions for the "Mixed image sizes" demo section.
+| Files | Source | What it is |
+| --- | --- | --- |
+| `vehicle-*.png`, `chrome-*.webp`, `oem/**` | `/assets/stock/…` | ChromeData (JD Power) ColorMatched and Expanded renders, licensed to DealerOn and served by the platform's own render service |
+| `photo-*.jpg`, `mixed-1.jpg` … `mixed-3.jpg` | `/static/industry-automotive/…`, `/static/brand-<make>/…` | The shared library collections every dealer can see |
+| `oem/**` (model-bar art) | `/static/brand-<make>/…` | OEM-syndicated model-bar photography |
+
+The exact path behind each file is recorded in `demo/assets/cms-paths.js`, and
+`node scripts/harvest-cms-paths.mjs` re-derives the whole map from the live
+platform. Internal demo use for DealerOn work — these are licensed OEM and
+ChromeData assets, not freely redistributable imagery.
+
+Two notes on what the images are allowed to claim:
+
+- **A card that names a vehicle shows that vehicle.** The used-inventory cards
+  carry the model year in the ChromeData code behind each render, and the tall
+  model cards use Alfa Romeo's 300×500 portrait art because it is the only real
+  portrait model photography on the platform — and it is exactly the 3/5 the
+  card crops to. Six Unsplash stand-ins captioned Silverado, Equinox, Tahoe,
+  Malibu, Camaro and Corvette pictured none of those vehicles; they are gone.
+- **The mixed-size example prints its real source dimensions.** Each card states
+  the size of the file behind it and what the crop removed, so those numbers are
+  load-bearing and have to match the files.
 
 ## Chrome model cutouts
 
@@ -39,6 +39,47 @@ the DealerOn platform (Chrome Photo Builder, angle 1, transparent PNG at 320/640
 fetched from a live DealerOn storefront. Internal demo use for DealerOn team
 presentation; on a production DealerOn site reference them with
 `#CHROMEPHOTOPATH|StyleID|1|640p#` instead of copying files.
+
+These eight are the only images the copy panel maps by MODEL rather than by
+bytes — the WebP conversion means no hash can equal the platform's PNG, so a
+pasted Silverado is a current Silverado render that may wear a different colour
+than the preview. Undoing the conversion to close that gap costs ~530 KB for a
+difference nobody copying a stock cutout depends on.
+
+## Where the copy panel's image paths come from
+
+`demo/assets/cms-paths.js` maps every image here to the path the DealerOn
+platform serves the same bytes from, and the code panel emits that instead of
+the repo-relative `img/…` the preview uses. Regenerate it with
+`node scripts/harvest-cms-paths.mjs`, which re-derives the whole map from the
+live OEM demo estates and fails loudly rather than guessing.
+
+Two platform sources, both global — no dealer id in the path, identical bytes on
+every dealer domain, nothing to upload:
+
+- `/assets/stock/…` — the ChromeData ColorMatched/Expanded render service (70 of
+  the cutouts). Proved global by fetching each one from an unrelated dealer
+  domain rather than the estate it was found on.
+- `/static/brand-<make>/…` — the shared OEM model-bar collection (56 cutouts).
+- `/static/industry-automotive/…` — the shared photography collection, which is
+  where `photo-1.jpg` … `photo-6.jpg` now come from.
+
+One finding worth recording so nobody repeats the search: `industry-automotive`
+is people, service bays and scenery — it holds no vehicle beauty shots, and
+querying it for a Silverado returns a green semi truck. Vehicle imagery
+therefore comes from the render service and the `brand-<make>` collections
+instead, which is why the used-inventory cards are ChromeData renders and the
+tall model cards are OEM portrait art.
+
+`#MISCPATH#<file>` is still what the copy panel emits for any image with no
+platform equivalent. Nothing in the demo needs it now, but the rule stays: that
+is the house convention for a dealer's own gallery upload, and a real listing
+card ultimately wants that dealer's own inventory photo.
+
+The Hyundai roster plus `bmw/x3.png` and `landrover/defender.png` were refreshed
+on 2026-08-28 from the current platform renders: OEMs rotate model-year art, and
+the August captures no longer matched anything being served, which would have
+left the copy panel pointing at a render that had moved.
 
 ## Video testimonials
 
