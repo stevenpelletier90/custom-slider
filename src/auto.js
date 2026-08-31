@@ -1,13 +1,13 @@
 /**
- * CMS entry point: bundled to dist/dl-carousel.js (classic script).
- * Auto-initializes every [data-slider] on the page; exposes the class
- * as window.DLCarousel for page-level scripting.
+ * CMS entry point: bundled to dist/custom-slider.js (classic script).
+ * Auto-initializes every [data-cs] on the page; exposes the class
+ * as window.CustomSlider for page-level scripting.
  */
-import { Slider } from './dl-carousel.js';
+import { CustomSlider } from './custom-slider.js';
 
-window.DLCarousel = Slider;
+window.CustomSlider = CustomSlider;
 
-const run = () => Slider.autoInit();
+const run = () => CustomSlider.autoInit();
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', run);
 } else {

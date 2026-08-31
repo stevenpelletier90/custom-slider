@@ -98,8 +98,8 @@ All 55 instances share an identical anatomy. Option prevalence:
 | `fade`           | **absent on 55/55**                                    |
 | `rows`           | `2` on 1 (hyundaidemo1)                                |
 
-Three of these directly validate existing dl-carousel decisions: `slidesToScroll: 1` is exactly
-`data-step="slide"`; `centerPadding: 60px` is exactly `--dlc-peek`; `autoplay: false` everywhere
+Three of these directly validate existing Custom Slider decisions: `slidesToScroll: 1` is exactly
+`data-cs-step="slide"`; `centerPadding: 60px` is exactly `--cs-peek`; `autoplay: false` everywhere
 confirms card strips must never auto-rotate.
 
 ### 4.1 Thirty of the 55 group several model bars under tabs
@@ -133,7 +133,7 @@ grouping — it is why a naive `role="tab"` count returns 6-8 tabs on sites that
 ### The fourteen ladders
 
 slick breakpoints are max-width. `5 | 768:3 460:2` reads: 5 per view above 768, 3 at ≤768,
-2 at ≤460. Translating to dl-carousel's min-width CSS means inverting these.
+2 at ≤460. Translating to Custom Slider's min-width CSS means inverting these.
 
 | Per view | Ladder (max-width)           | Sites | Hosts                                                      |
 | -------- | ---------------------------- | ----- | ---------------------------------------------------------- |
@@ -181,7 +181,7 @@ Further gaps in the platform hero:
 - `aria-live="off"` on `.carousel-inner`.
 - No `prefers-reduced-motion` handling observed on the rotation.
 
-dl-carousel already handles all of these correctly: a full-size pause button first in tab order,
+Custom Slider already handles all of these correctly: a full-size pause button first in tab order,
 real `<button>` dots, a terse dedicated status region, and reduced-motion resolved per scroll call.
 
 ## 6. Implications for the library
@@ -265,7 +265,7 @@ covered with no engine work**.
 | kiademo1 model bar   | 3 up, `centerPadding: 10px` | **Visually yes**, see caveat          |
 | lexusdemo2 quick-nav | 3 up, `centerPadding: 9%`   | **Visually yes**, see caveat          |
 
-`--dlc-peek` already pads both edges and shifts the snap points, so at **one card per view** a
+`--cs-peek` already pads both edges and shifts the snap points, so at **one card per view** a
 large peek puts the active card dead centre with slices of its neighbours either side —
 measured at exactly 0px off centre. That is slick's centre mode, reproduced with a CSS custom
 property we already ship.
@@ -281,8 +281,8 @@ CSS only — the track becomes a two-row grid with columns flowing across. Shipp
 `#grid` demo section.
 
 **The one thing to get right:** the engine counts _cards_, not columns, and in two rows the
-next card along is the one directly underneath. So `--dlc-per-view` must be the number of
-cards on screen (columns × 2), with a separate `--dlc-cols` sizing the columns. Get that
+next card along is the one directly underneath. So `--cs-per-view` must be the number of
+cards on screen (columns × 2), with a separate `--cs-cols` sizing the columns. Get that
 pairing wrong and an arrow click moves half a screen or nothing at all — which is exactly what
 happened on the first attempt, before it was measured.
 
@@ -327,12 +327,12 @@ model-detail and service pages.
 The two universal ones first, because they reframe the pitch:
 
 1. **The VDP photo gallery is DealerOn's own component, and it is architecturally
-   dl-carousel.** Every VDP runs `data-dlron-type="vehicle-image-carousel"` — a native CSS
+   Custom Slider.** Every VDP runs `data-dlron-type="vehicle-image-carousel"` — a native CSS
    scroll-snap track (`.hero-carousel__items`) with hover arrows, an image counter, and
    thumbnail strips, plus a second instance inside a fullscreen modal
    (`.vehicle-image-gallery`) with a vertical thumbnail rail and video-thumb support.
    **slick is not loaded on VDPs at all.** The platform's newest slider already made the
-   native-scroll-snap bet dl-carousel makes.
+   native-scroll-snap bet Custom Slider makes.
 2. **The SRP per-card image carousel is runtime-injected.** Universal across every SRP and
    SRP-shaped model landing page on all 24 sites (~50+ pages) — the biggest slider surface on
    inner pages — but confirmable only live, per the limitation above.
@@ -374,10 +374,10 @@ Four patterns had no demo counterpart. All four now do — added to `demo/index.
 
 | New section                                                                             | Covers                                                                                           |
 | --------------------------------------------------------------------------------------- | ------------------------------------------------------------------------------------------------ |
-| [#card-gallery](../../demo/index.html#card-gallery) — Vehicle cards with a mini gallery | The SRP per-card carousel: a small dl-carousel instance nested inside each card of a grid        |
+| [#card-gallery](../../demo/index.html#card-gallery) — Vehicle cards with a mini gallery | The SRP per-card carousel: a small Custom Slider instance nested inside each card of a grid      |
 | [#gallery-filter](../../demo/index.html#gallery-filter) — Filterable gallery            | Kia's `slickFilter` pattern: filter buttons narrowing a synced main+thumb pair, page script only |
 | [#media-gallery](../../demo/index.html#media-gallery) — Gallery with photos and video   | Mixed photo+video slides with video-badged thumbnails                                            |
-| [#lightbox](../../demo/index.html#lightbox) — Fullscreen gallery in a dialog            | The VDP fullscreen viewer: dl-carousel in a modal with a vertical thumb rail                     |
+| [#lightbox](../../demo/index.html#lightbox) — Fullscreen gallery in a dialog            | The VDP fullscreen viewer: Custom Slider in a modal with a vertical thumb rail                   |
 
 ### Dead weight, for the positioning notes
 
@@ -387,7 +387,7 @@ Two findings worth quoting when the byte budget comes up:
   still calls `$('.maverick-gallery').slick(...)` — but the entire target markup block is
   commented out, replaced by a static grid. The library is 100% dead payload on that page,
   and its font-face path leaks onto Acura/Alfa Romeo/Audi SRPs.
-- **Every SRP estate-wide loads slick JS + CSS for a runtime card carousel** that dl-carousel
+- **Every SRP estate-wide loads slick JS + CSS for a runtime card carousel** that Custom Slider
   could replace inside its entire < 6 KB gzip budget — less than slick's own CSS-and-JS
   freight, before counting jQuery.
 
@@ -480,7 +480,7 @@ false on all eight; the two `group` strips are the only autoplaying ones.
 | Powersports category 5-up: base 2 → ≥460px 3 → ≥992px 5 (slick: slidesToShow 5 \| 992:3 @40px pad, 460:2 @40px pad)                                                           | powersportsdemo2 | One-off tier set: like Acura (2/3/5) but the 5-up threshold is 992 instead of 768; like Lincoln's 460/992 thresholds but 5-up. Slides are body-style category tiles (Motorcycles/ATVs/Scooters), not models.                                                                                                                                                     |
 | Ferrari flat 3-up: base 1 → ≥768px 3 (slick: slidesToShow 3, infinite:true, cssEase linear, centerPadding '60'/'40', centerMode:false \| 767:1)                               | ferraridemo1     | Near-twin of the Kia1 1/3@768 centre-mode ladder but _not_ centre-mode; its raw slick boundary is 767 where Kia1's is 768, a one-pixel difference both recipes snap onto the 768 grid tier, and it is the estate's only `infinite: true` untabbed bar besides ferraridemo2. No swipeToSlide/autoplay keys — a different slick recipe from the volume-brand bars. |
 | Ferrari photo 4-up: base 1 → ≥768px 2 → ≥992px 3 → ≥1440px 4 (slick: slidesToShow 4, infinite:true, cssEase linear \| 1440:3, 992:2, 768:1)                                   | ferraridemo2     | Only ladder anywhere with a 1440 tier; reaches 4-up at and above 1440px. Slides are photo cards, not cutouts.                                                                                                                                                                                                                                                    |
-| Maserati spotlight: 1-up centre-mode at every width; centerPadding 20% base → 23% at ≥992px (slick: centerMode:true, slidesToShow 1, infinite:true \| 991: centerPadding 20%) | maseratidemo4    | Structurally the lexusdemo2 gallery recipe (1-up + large `--dlc-peek`, already proven 0px-off-centre reproducible in §8) applied to a model bar — first model bar in the estate to use it.                                                                                                                                                                       |
+| Maserati spotlight: 1-up centre-mode at every width; centerPadding 20% base → 23% at ≥992px (slick: centerMode:true, slidesToShow 1, infinite:true \| 991: centerPadding 20%) | maseratidemo4    | Structurally the lexusdemo2 gallery recipe (1-up + large `--cs-peek`, already proven 0px-off-centre reproducible in §8) applied to a model bar — first model bar in the estate to use it.                                                                                                                                                                        |
 | Group makes logo strip: base 2 → ≥768px 4 → ≥992px 7, **autoplay on** (slick: slidesToShow 7, arrows:true \| 992:4, 768:2)                                                    | groupdemo1       | Selector `.makes` — transparent-black OEM logo links to `/searchnew.aspx?make=X`. First autoplaying homepage card strip in the estate (§4 had `autoplay: false` on 55/55 model bars); 7-up is the widest per-view seen anywhere.                                                                                                                                 |
 | Group locations 4-up: base 1 → ≥768px 2 → ≥992px 4, **autoplay on** (slick: slidesToShow 4, arrows:true \| 992:2, 768:1)                                                      | groupdemo1       | Selector `.locations` — dealership-location cards (logo, address, phone, Visit Website CTA). A genuinely new content type for a strip: multi-rooftop group navigation.                                                                                                                                                                                           |
 
@@ -544,7 +544,7 @@ Things the 18 Aug census had no example of at all:
 About 14 visually distinct new dressings ride on top of these — the CDJR dark logo-tab band,
 the Ford family road-backdrop, the JLR and Ferrari photo cards, the Maserati spotlight and
 the Toyota boxed tab tiles being the ones worth screenshots in the library page. None of it
-needs engine work: **everything remains covered by dl-carousel as shipped** — the work is
+needs engine work: **everything remains covered by Custom Slider as shipped** — the work is
 catalog entries (ladders + looks), not engine changes.
 
 ### 10.6 The 53 new sites, fingerprint by fingerprint

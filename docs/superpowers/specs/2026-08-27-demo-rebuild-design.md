@@ -31,7 +31,7 @@ differing only in the final count or one breakpoint:
 ```
 
 That is one slider. The thing that changes is a number — and that number is
-already `--dlc-per-view`, a setting the engine has always had. We built 54
+already `--cs-per-view`, a setting the engine has always had. We built 54
 copies of roughly 13 things and called a difference of one integer a different
 slider.
 
@@ -84,12 +84,12 @@ and the code for whatever is currently on screen.
 **Settings** — every one of these is an existing engine knob. Nothing new is
 invented:
 
-- Per view at each breakpoint (`--dlc-per-view` under 768 / 992 / 1200)
-- `--dlc-gap`, `--dlc-peek`
-- Arrows: `--dlc-arrow-size`, `-fg`, `-bg`, `-fg-hover`, `-bg-hover`
-- Dots: `--dlc-dot-size`, `-fg`, `-current`, or hidden
-- `--dlc-transition`
-- Behaviour: `data-step`, `data-autoplay`, `data-rewind`, `data-drag`
+- Per view at each breakpoint (`--cs-per-view` under 768 / 992 / 1200)
+- `--cs-gap`, `--cs-peek`
+- Arrows: `--cs-arrow-size`, `-fg`, `-bg`, `-fg-hover`, `-bg-hover`
+- Dots: `--cs-dot-size`, `-fg`, `-current`, or hidden
+- `--cs-transition`
+- Behaviour: `data-cs-step`, `data-cs-autoplay`, `data-cs-rewind`, `data-cs-drag`
 
 **Card styles.** There are **17** distinct looks today, across two separate
 skin systems that grew independently: 13 in `SKINS` (used by the library
@@ -184,7 +184,7 @@ shown as thumbnails of the 11 looks — browsing, at a twentieth of the weight.
 
 The workbench is **a settings object, a `setProperty` loop, and a template
 string.** The settings are CSS custom properties, so changing "how many across"
-is `el.style.setProperty('--dlc-per-view', 3)` and the browser does the rest.
+is `el.style.setProperty('--cs-per-view', 3)` and the browser does the rest.
 Generating the code is reading that object back out.
 
 No framework. No build step. No reactivity system. If the implementation starts

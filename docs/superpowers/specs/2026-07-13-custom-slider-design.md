@@ -35,29 +35,29 @@ mode, no grid, no video, no infinite loop), test framework.
 
 ## 3. Decisions made (with rationale)
 
-| Decision                                                                                                                 | Choice                                                                                         | Why                                                                                                                     |
-| ------------------------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------- |
-| 3 demo variations                                                                                                        | Multi-card carousel; thumbnail gallery; autoplay multi-card                                    | User-selected; covers responsive per-view, sync, and autoplay — no fade/hero mode needed                                |
-| End-of-track behavior                                                                                                    | **Rewind** (animate back to slide 1)                                                           | No cloned slides → clean SEO, sane screen readers, ~half the engine code                                                |
-| Architecture                                                                                                             | **CSS scroll-snap engine**                                                                     | Browser owns physics (touch/drag/momentum/snap); JS only wires controls/state/sync/autoplay; scrollable without JS      |
-| Packaging                                                                                                                | `src/` ES module (canonical) + `dist/` minified classic script that auto-inits `[data-slider]` | CMS blocks need one self-contained file; devs get the module                                                            |
-| Responsive slides-per-view                                                                                               | CSS only: `--dlc-per-view` overridden in media queries                                         | No JS breakpoint config, no resize listeners, no CLS                                                                    |
-| Controls                                                                                                                 | JS-generated prev/next/dots/pause                                                              | No dead buttons without JS; arrows overlay the track and dot-row space is reserved in CSS → CLS 0.000                   |
-| `aria-roledescription="carousel"`                                                                                        | Keep, overridable via option                                                                   | APG-conformant; option allows localization or removal (Roselli's JAWS double-announce concern)                          |
-| Thumbnail activation                                                                                                     | Automatic (arrow-focus switches photo)                                                         | Conventional for galleries; instant under reduced-motion                                                                |
-| Chromium-only platform features (`::scroll-marker`, `scrollsnapchange`, `scroll-state()`, `scrollIntoView({container})`) | **Not used**                                                                                   | Verified Chromium-only as of July 2026; core must be cross-engine                                                       |
-| `scroll-snap-stop`                                                                                                       | `normal` (never `always`)                                                                      | `always` blocks multi-slide flicks and was implicated in Firefox bug 1959811; adds no value (iOS already limits flicks) |
+| Decision                                                                                                                 | Choice                                                                                     | Why                                                                                                                     |
+| ------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------------- |
+| 3 demo variations                                                                                                        | Multi-card carousel; thumbnail gallery; autoplay multi-card                                | User-selected; covers responsive per-view, sync, and autoplay — no fade/hero mode needed                                |
+| End-of-track behavior                                                                                                    | **Rewind** (animate back to slide 1)                                                       | No cloned slides → clean SEO, sane screen readers, ~half the engine code                                                |
+| Architecture                                                                                                             | **CSS scroll-snap engine**                                                                 | Browser owns physics (touch/drag/momentum/snap); JS only wires controls/state/sync/autoplay; scrollable without JS      |
+| Packaging                                                                                                                | `src/` ES module (canonical) + `dist/` minified classic script that auto-inits `[data-cs]` | CMS blocks need one self-contained file; devs get the module                                                            |
+| Responsive slides-per-view                                                                                               | CSS only: `--cs-per-view` overridden in media queries                                      | No JS breakpoint config, no resize listeners, no CLS                                                                    |
+| Controls                                                                                                                 | JS-generated prev/next/dots/pause                                                          | No dead buttons without JS; arrows overlay the track and dot-row space is reserved in CSS → CLS 0.000                   |
+| `aria-roledescription="carousel"`                                                                                        | Keep, overridable via option                                                               | APG-conformant; option allows localization or removal (Roselli's JAWS double-announce concern)                          |
+| Thumbnail activation                                                                                                     | Automatic (arrow-focus switches photo)                                                     | Conventional for galleries; instant under reduced-motion                                                                |
+| Chromium-only platform features (`::scroll-marker`, `scrollsnapchange`, `scroll-state()`, `scrollIntoView({container})`) | **Not used**                                                                               | Verified Chromium-only as of July 2026; core must be cross-engine                                                       |
+| `scroll-snap-stop`                                                                                                       | `normal` (never `always`)                                                                  | `always` blocks multi-slide flicks and was implicated in Firefox bug 1959811; adds no value (iOS already limits flicks) |
 
 ## 4. Repo layout
 
 ```
 custom-slider/
 ├─ src/
-│  ├─ dl-carousel.js      # the whole engine — one ES module, heavily commented
-│  └─ dl-carousel.css     # all layout + theming via CSS custom properties
+│  ├─ custom-slider.js      # the whole engine — one ES module, heavily commented
+│  └─ custom-slider.css     # all layout + theming via CSS custom properties
 ├─ dist/             # built by one esbuild command; checked in
-│  ├─ dl-carousel.js  # classic script for CMS paste-in, auto-initializes
-│  └─ dl-carousel.css
+│  ├─ custom-slider.js  # classic script for CMS paste-in, auto-initializes
+│  └─ custom-slider.css
 ├─ demo/index.html   # the 3 variations + copy-paste usage docs
 ├─ docs/superpowers/specs/
 ├─ package.json      # esbuild devDependency + build/size scripts only
@@ -69,31 +69,31 @@ custom-slider/
 **CMS editor (declarative):** include the two dist files once; paste blocks like:
 
 ```html
-<section class="dl-carousel" data-slider data-autoplay="4000" aria-label="Customer reviews">
-  <ul class="dl-carousel-track">
-    <li class="dl-carousel-slide">…real content, real links, real images…</li>
+<section class="cs" data-cs data-cs-autoplay="4000" aria-label="Customer reviews">
+  <ul class="cs-track">
+    <li class="cs-slide">…real content, real links, real images…</li>
     …
   </ul>
 </section>
 ```
 
-The dist script runs `Slider.autoInit()` on `DOMContentLoaded`: finds every
-`[data-slider]`, reads data-attributes, wires it up.
+The dist script runs `CustomSlider.autoInit()` on `DOMContentLoaded`: finds every
+`[data-cs]`, reads data-attributes, wires it up.
 
-**Developer (imperative):** `import { Slider } from './dl-carousel.js'`;
-`new Slider(el, options)`. Precedence: JS options > data-attributes > defaults.
+**Developer (imperative):** `import { CustomSlider } from './custom-slider.js'`;
+`new CustomSlider(el, options)`. Precedence: JS options > data-attributes > defaults.
 
 **Options (v1):** `autoplay` (ms interval, 0/absent = off), `gallery` (bool — tabbed
 variant), `label` strings bundle (all UI text, for localization), `roledescription`
-(string|null). Layout knobs (`--dlc-per-view`, `--dlc-gap`, `--dlc-peek`, arrow/dot theme
+(string|null). Layout knobs (`--cs-per-view`, `--cs-gap`, `--cs-peek`, arrow/dot theme
 vars) are CSS custom properties, not JS options.
 
-**Events:** `dlc:change` (detail: index, slidesInView), `dlc:autoplay-start`,
-`dlc:autoplay-stop`, `dlc:destroy` — all CustomEvents on the root element, for
+**Events:** `cs:change` (detail: index, slidesInView), `cs:autoplay-start`,
+`cs:autoplay-stop`, `cs:destroy` — all CustomEvents on the root element, for
 customization without editing the engine. Public methods: `goTo(n)`, `next()`, `prev()`,
 `pause()`, `play()`, `destroy()`.
 
-## 6. Engine design (`dl-carousel.js`, ~6 sections)
+## 6. Engine design (`custom-slider.js`, ~6 sections)
 
 1. **options** — merge defaults ← data-attrs ← JS options (~20 lines).
 2. **setup** — validate markup, apply ARIA per variation (§7), generate controls.
@@ -104,7 +104,7 @@ customization without editing the engine. Public methods: `goTo(n)`, `next()`, `
    `currentIndex = Math.round(track.scrollLeft / stride)` where `stride` = slide width +
    gap (read via `getBoundingClientRect`/`getComputedStyle` on demand; recomputed on
    `ResizeObserver`). All input paths (buttons, drag, autoplay, thumbs) converge here;
-   `dlc:change`, dot state, disabled states, and status-region text update only here.
+   `cs:change`, dot state, disabled states, and status-region text update only here.
    Optional eager dot updates mid-drag via `IntersectionObserver {root: track,
 threshold: 0.6}` — cosmetic only.
 4. **goTo(n)** — idempotent (`if n === current && settled, return` — `scrollend` never
@@ -152,7 +152,7 @@ inline:'nearest'})` on the strip only). The strip's own scroll events drive noth
   semantics. **One dot per page**, not per slide (page = `slidesInView` slides; page
   count = `ceil(count / slidesInView)`, last page clamps to the track end). Button names
   match the status wording: "Go to slides 4–6" (single-per-view: "Go to slide 4"). Dot
-  count recomputes when `--dlc-per-view` changes across a breakpoint (ResizeObserver).
+  count recomputes when `--cs-per-view` changes across a breakpoint (ResizeObserver).
 - Track itself not focusable (it has focusable children; buttons satisfy WCAG 2.1.1).
 - Status region (hidden, terse: "Slides 4–6 of 12"), updated at the commit point;
   `aria-live="polite"` normally, `"off"` while auto-rotating, `aria-atomic="false"`.
@@ -172,34 +172,34 @@ inline:'nearest'})` on the strip only). The strip's own scroll events drive noth
 **Motion:** every programmatic scroll resolves `behavior` from
 `prefers-reduced-motion` at call time; reduced motion ⇒ instant jumps and no autoplay.
 
-## 8. CSS design (`dl-carousel.css`)
+## 8. CSS design (`custom-slider.css`)
 
 ```css
-.dl-carousel-track {
+.cs-track {
   display: flex;
   overflow-x: auto;
   scroll-snap-type: x mandatory; /* on the track, never the root scroller */
-  gap: var(--dlc-gap, 1rem);
-  scroll-padding-inline: var(--dlc-peek, 0px);
+  gap: var(--cs-gap, 1rem);
+  scroll-padding-inline: var(--cs-peek, 0px);
   overscroll-behavior-x: contain; /* no scroll chaining / back-gesture */
   scrollbar-width: none;
 }
-.dl-carousel-track::-webkit-scrollbar {
+.cs-track::-webkit-scrollbar {
   display: none;
 } /* older WebKit */
-.dl-carousel-slide {
-  flex: 0 0 calc((100% - (var(--dlc-per-view) - 1) * var(--dlc-gap, 1rem)) / var(--dlc-per-view)); /* explicit basis — Safari snap-item sizing */
+.cs-slide {
+  flex: 0 0 calc((100% - (var(--cs-per-view) - 1) * var(--cs-gap, 1rem)) / var(--cs-per-view)); /* explicit basis — Safari snap-item sizing */
   scroll-snap-align: start;
   scroll-snap-stop: normal;
 }
 ```
 
-- `--dlc-per-view: 1` → `2` → `3` in plain media queries per variation; thumbnails strip
-  uses a small fixed basis. Partial next-card peek (`--dlc-peek`) on mobile as the
+- `--cs-per-view: 1` → `2` → `3` in plain media queries per variation; thumbnails strip
+  uses a small fixed basis. Partial next-card peek (`--cs-peek`) on mobile as the
   scrollability affordance (scrollbar is hidden — buttons/dots/keyboard remain, plus peek).
 - Arrows absolutely positioned over the track; dot-row height reserved — JS injecting
   controls shifts nothing (CLS 0.000 by construction).
-- Every visual knob is a `--dlc-*` custom property. Theming never touches the engine.
+- Every visual knob is a `--cs-*` custom property. Theming never touches the engine.
 - Pre-JS state is a correctly laid-out, swipeable, snap-scrolling strip.
 
 ## 9. SEO / images

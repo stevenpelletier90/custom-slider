@@ -25,13 +25,13 @@ Full per-site findings (exact slick/Splide/Bootstrap configs, card anatomy, brea
   carousel instance (with a `height: 0` hidden-tab hack so slick can measure).
 - **client32811 (Skaug) practice areas**: slick, 3-up desktop, `slidesToScroll: 1`, whole card is the link, equal-height cards, images normalized in a **fixed-aspect `cover` box**
   (`padding-top: 62%`). Mobile is Cliff's exact look: `centerMode` with 15% peek and **non-active slides dimmed to opacity 0.3**.
-- **legaldemo7 (LS)**: three Splide carousels, all **page-at-a-time** (`perPage == perMove`) — matches dl-carousel's stepping natively. Practice-area tiles are `aspect-ratio: 10/16`
+- **legaldemo7 (LS)**: three Splide carousels, all **page-at-a-time** (`perPage == perMove`) — matches Custom Slider's stepping natively. Practice-area tiles are `aspect-ratio: 10/16`
   cover boxes; results carousel fades only the last visible card as a "more content" cue; pagination restyled as a segmented bar (which our models section already rebuilds).
 - **bordaslaw / gregoryhoag / michaelgreer** (Casey's law examples): all slick or Bootstrap, all arrows-only (dots absent or commented out), all `slidesToScroll: 1`. Notable shapes:
   text-stat strip with whole-card links (Bordas results, 5–6-up), video+text card opening a modal player, fade-mode quote carousel with a **fixed-height internally-scrollable quote
   box** (equal heights despite wildly different review lengths), fading two-image collage gallery feeding a grouped lightbox.
 - **Cross-cutting**: nobody lets mixed image sizes drive layout — every site normalizes with fixed-ratio cover boxes or uniform cutouts. Autoplay appears only on the Ford hero (which
-  ships a pause control), never on card carousels. Fade transitions appear three times (Ford hero, Hoag quotes, Greer gallery) — fade mode is a documented dl-carousel v1 non-goal.
+  ships a pause control), never on card carousels. Fade transitions appear three times (Ford hero, Hoag quotes, Greer gallery) — fade mode is a documented Custom Slider v1 non-goal.
 
 ## 3. Design
 
@@ -48,18 +48,18 @@ engine change. Scope: **this section only** — the models strip already wraps i
 
 - Anatomy per card: cutout-style image + model name below, **whole card is a link** (`<a>` wrapping, `aria-label="Explore the <model>"`), hover/focus zoom guarded by
   `prefers-reduced-motion` — same pattern as the existing models strip.
-- Layout: `--dlc-per-view: 2 / 3 / 5` (mobile / tablet / desktop), arrows in gutters, **dots hidden** (`display: none` + `--dlc-controls-space: 0px` — keep the unit, unitless 0 breaks the engine's `calc()`s) to match every researched dealer
+- Layout: `--cs-per-view: 2 / 3 / 5` (mobile / tablet / desktop), arrows in gutters, **dots hidden** (`display: none` + `--cs-controls-space: 0px` — keep the unit, unitless 0 breaks the engine's `calc()`s) to match every researched dealer
   implementation; the track stays swipeable and arrows remain, so no navigation is lost. Default rewind (wrap at ends ≈ the infinite-loop feel without clones).
 - With the demo's 6 models at 5-up, page stepping already lands one card per click (pages clamp to `[0, 1]`), so **this section needs no engine change**. The step-by-one gap only
   appears with real lineup counts — that is D6.
 - **Assets**: Ford uses OEM press cutouts, which we can't put in a public repo. Ship 6 placeholder **SVG vehicle silhouettes** (uniform scale, tiny, no licensing risk, obviously
-  placeholders) with a docs note to swap in licensed OEM cutout PNGs per brand — and re-theme via `--dlc-*` to show the across-OEMs point. Open question 2 offers the alternative of
+  placeholders) with a docs note to swap in licensed OEM cutout PNGs per brand — and re-theme via `--cs-*` to show the across-OEMs point. Open question 2 offers the alternative of
   waiting for Steven's planned slider image library.
 
 ### D3 — New section: Faded peek preview (Cliff's ask)
 
-- Built entirely from existing knobs: `--dlc-peek` (already in the engine: track padding + `scroll-padding-inline`) shows a sliver of the previous/next slide at each edge; a static
-  `mask-image: linear-gradient(to right, transparent, #000 <peek>, #000 calc(100% - <peek>), transparent)` on `.dl-carousel-track` fades those slivers out — the same technique the
+- Built entirely from existing knobs: `--cs-peek` (already in the engine: track padding + `scroll-padding-inline`) shows a sliver of the previous/next slide at each edge; a static
+  `mask-image: linear-gradient(to right, transparent, #000 <peek>, #000 calc(100% - <peek>), transparent)` on `.cs-track` fades those slivers out — the same technique the
   thumb strip already uses. At the ends the fade covers empty peek padding, so nothing readable is ever lost. Pure CSS, zero JS, PRM-safe; arrows/dots sit outside the track and are
   unaffected.
 - Reuses the existing gallery photos (no new image weight). 1-per-view mobile → 3-per-view desktop.
@@ -83,14 +83,14 @@ normalizes with a fixed-ratio cover box; none lets ragged image sizes drive layo
   copy-paste markup. This is the "base version for customization".
 - **Pre-built variations**: each demo section keeps being a complete copy-paste recipe (markup + the exact site CSS in its details block). The demo page gets a short jump-link TOC —
   at 7+ sections it needs one.
-- A shipped `dist/dl-carousel-variants.css` of named variant classes is **deferred**: it adds a second maintained contract surface, and per-site restyling is the actual deployment
+- A shipped `dist/cs-variants.css` of named variant classes is **deferred**: it adds a second maintained contract surface, and per-site restyling is the actual deployment
   model (DealerOn styleCode). Promotion criterion: when 2–3 real sites adopt the same recipe verbatim, promote that recipe to a variants file (outside the core size gate, with its own
   size note).
 
-### D6 — The one engine candidate: `data-step="slide"` (optional, Steven's call)
+### D6 — The one engine candidate: `data-cs-step="slide"` (optional, Steven's call)
 
-Both researched **dealer/slick** implementations advance one card at a time regardless of cards-in-view; the **Splide/LS** ones step by page like dl-carousel. To reproduce the dealer
-feel on real lineup counts (e.g. 8 models at 3–5-up, where pages jump 3–5 cards), the engine would need an additive option: `data-step="slide"` → `next()`/`prev()` move `index ± 1`
+Both researched **dealer/slick** implementations advance one card at a time regardless of cards-in-view; the **Splide/LS** ones step by page like Custom Slider. To reproduce the dealer
+feel on real lineup counts (e.g. 8 models at 3–5-up, where pages jump 3–5 cards), the engine would need an additive option: `data-cs-step="slide"` → `next()`/`prev()` move `index ± 1`
 instead of page math; dots stay per-page (dealer implementations hide dots anyway); rewind semantics unchanged. Additive to the frozen contract (allowed), estimated ~100–200 B gzip
 (**unverified — must be measured with `npm run size`**; current 5121/6144). Fallback if declined: a documented page-script escape hatch (capture-phase listener on the arrows calling
 `goTo(index ± 1)`), or simply accept page stepping. Recommendation: approve it, but it can also be deferred until the first real site needs it — nothing else in this spec depends on
@@ -106,7 +106,7 @@ reusing the same Chrome cutouts.
 ### D8 — Service cards (added mid-implementation at Steven's request, 2026-08-07)
 
 Steven flagged the Skaug (client32811) practice-area carousel as "the model bar but with cards." Shipped as the `#cards` demo section: whole-card-link content cards (fixed-aspect
-cover image box, heading, copy, decorative "Read more" line), `data-step="slide"`, arrows only, dots hidden, 1/2/3 per view. Equal heights come free from the flex track plus
+cover image box, heading, copy, decorative "Read more" line), `data-cs-step="slide"`, arrows only, dots hidden, 1/2/3 per view. Equal heights come free from the flex track plus
 `flex-grow` on the copy. The source site's mobile center-mode dim remains out of scope (§4 center-mode snapping).
 
 ### D9 — Video testimonials (added mid-implementation at Steven's request, 2026-08-07)
@@ -120,9 +120,9 @@ onto the faded edge itself — at the ends the outer-gutter layout doubled up wi
 
 James reported mobile swipe "left out" — disproved with an emulated-touch test (swipe moved the vehicles track 0→263 px, model bar 0→255 px; swiping is native CSS scroll and works
 with JS off). What he actually hit is that native scroll containers never mouse-drag on desktop — a gap in every version. Fixed in the engine: `_wireDrag()` (default on,
-`data-drag="false"` opts out) — mouse-only pointer drag with a 4 px click threshold, snap disabled only during the gesture and restored in `_commit()` at the settled snap position
+`data-cs-drag="false"` opts out) — mouse-only pointer drag with a 4 px click threshold, snap disabled only during the gesture and restored in `_commit()` at the settled snap position
 (no jump), trailing click suppressed after a real drag so card links don't fire, text selection suspended while dragging. Cursor cues (James's follow-up, same date): `grab` on the
-strip at rest (links keep their pointer), `grabbing` over everything in the dragged track while the drag is live — via a `data-dragging` attribute + scoped `!important` CSS override,
+strip at rest (links keep their pointer), `grabbing` over everything in the dragged track while the drag is live — via a `data-cs-dragging` attribute + scoped `!important` CSS override,
 because links resolve their own pointer cursor and an inline cursor on the track alone never shows over the cards. Measured cost 376 B gzip total (5645/6144). Verified in-browser:
 drag settles snap-aligned, drag-over-a-link doesn't navigate, plain click still does, cursor states measured at rest / mid-drag / after release and scoped to the dragged track only.
 
@@ -140,14 +140,14 @@ drag settles snap-aligned, drag-over-a-link doesn't navigate, plain click still 
 ## 5. Implementation shape (for the plan, after approval)
 
 Files touched: `demo/index.html` (D1 + four new sections + TOC), `demo/img/` (SVG silhouettes, mixed-size derivatives, CREDITS.md update), `README.md` (one-line pointer to the
-variations demo). Only if D6 approved: `src/dl-carousel.js` + rebuilt `dist/` in the same commit, measured with `npm run size`. Nothing else.
+variations demo). Only if D6 approved: `src/custom-slider.js` + rebuilt `dist/` in the same commit, measured with `npm run size`. Nothing else.
 
 Verification: full README checklist (not just the size gate) — Lighthouse a11y 100 / CLS 0, keyboard walk including the new stretched links and the dots-hidden model bar, JS-disabled
 pass, 375/768/1280 screenshots, spot-check the scripted image derivatives, `npm run validate`.
 
 ## 6. Open questions for Steven
 
-1. **D6 `data-step="slide"`**: approve the engine bytes now, defer until a real site needs it, or decline? (Recommended: approve; measured cost gate still applies.)
+1. **D6 `data-cs-step="slide"`**: approve the engine bytes now, defer until a real site needs it, or decline? (Recommended: approve; measured cost gate still applies.)
 2. **Model bar placeholders**: SVG silhouettes now (recommended), or hold the section until your slider image library has licensed cutouts?
-3. **Packaging**: recipes-on-the-demo-page only (recommended), or also ship `dist/dl-carousel-variants.css` now?
+3. **Packaging**: recipes-on-the-demo-page only (recommended), or also ship `dist/cs-variants.css` now?
 4. Confirm whole-card-clickable is wanted **only** on Featured Vehicles (models strip already has it; reviews/gallery cards have nothing to link to).

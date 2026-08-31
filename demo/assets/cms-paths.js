@@ -15,7 +15,7 @@
 // 126 of 126 cutouts byte-proved, 8 name-matched, 15 library photos.
 // Harvested 2026-08-28 by re-running the script above.
 
-globalThis.DLX = Object.assign(globalThis.DLX || {}, {
+globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
   CMS: {
     'chrome-colorado.webp': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026CHT35_01_320/cc_2026CHT351988840_01_320_G42.png',
     'chrome-equinox.webp': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026CHS15_01_320/cc_2026CHS152039715_01_320_G4J.png',

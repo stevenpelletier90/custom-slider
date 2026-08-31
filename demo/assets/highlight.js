@@ -93,5 +93,5 @@
       })
       .join('');
 
-  globalThis.DLX = Object.assign(globalThis.DLX || {}, { hl: { css, js, html, snippet } });
+  globalThis.CARGO = Object.assign(globalThis.CARGO || {}, { hl: { css, js, html, snippet } });
 })();

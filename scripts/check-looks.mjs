@@ -17,7 +17,7 @@ const src = readFileSync('demo/assets/looks.js', 'utf8');
 const sandbox = {};
 new Function('globalThis', src).call(sandbox, sandbox);
 new Function('globalThis', readFileSync('demo/assets/brands.js', 'utf8')).call(sandbox, sandbox);
-const { LOOKS, OLD_SKINS, BRANDS, perViewFor } = sandbox.DLX;
+const { LOOKS, OLD_SKINS, BRANDS, perViewFor } = sandbox.CARGO;
 
 const claimed = new Map();
 let bad = 0;
@@ -66,8 +66,8 @@ for (const [id, look] of Object.entries(LOOKS)) {
   }
   if (typeof look.markup === 'function') {
     const out = look.markup({ href: '#', img: 'x.png', alt: 'a', name: 'N', sub: 's', blurb: 'b', mark: 'm' });
-    if (!out.includes('dlx-card')) {
-      console.error(`  ${id}: markup() does not produce a .dlx-card root`);
+    if (!out.includes('cargo-card')) {
+      console.error(`  ${id}: markup() does not produce a .cargo-card root`);
       bad++;
     }
     // Not every content set carries a sub or a blurb. A look that renders the
@@ -89,7 +89,7 @@ for (const [id, look] of Object.entries(LOOKS)) {
 // grid. Bottom padding on the root is therefore never allowed; use
 // padding-block-start and padding-inline.
 for (const [id, look] of Object.entries(LOOKS)) {
-  for (const rule of look.css.match(/\.dlx\s*\{[^}]*\}/g) ?? []) {
+  for (const rule of look.css.match(/%root%\s*\{[^}]*\}/g) ?? []) {
     const hit = rule.match(/(?:^|[;{]\s*)(padding|padding-block|padding-bottom|padding-block-end)\s*:/);
     if (hit) {
       console.error(`  ${id}: "${hit[1]}" on the carousel root wipes the reserved dot space — use padding-block-start / padding-inline`);
@@ -129,9 +129,9 @@ for (const [id, b] of brands) {
   for (const gap of [8, 16]) {
     const pv = perViewFor(b.ladder, LOOKS[b.look].minCard, gap, b.look);
     for (const [tier, n] of Object.entries(pv)) {
-      const box = sandbox.DLX.TIER_BOX[tier] - (sandbox.DLX.CHROME[b.look] ?? 0);
+      const box = sandbox.CARGO.TIER_BOX[tier] - (sandbox.CARGO.CHROME[b.look] ?? 0);
       const card = (box - (n - 1) * gap) / n;
-      if (n > 1 && card < LOOKS[b.look].minCard + sandbox.DLX.MARGIN) {
+      if (n > 1 && card < LOOKS[b.look].minCard + sandbox.CARGO.MARGIN) {
         console.error(`  ${id}: ${n} across at ${tier} with a ${gap}px gap is a ${Math.round(card)}px card, under ${b.look}'s ${LOOKS[b.look].minCard}px`);
         bad++;
       }
@@ -204,7 +204,7 @@ for (const [id, b] of brands) {
 // creeping in (it would resolve on the one site it was harvested from and 404
 // on every other, which is the exact failure this map exists to remove).
 new Function('globalThis', readFileSync('demo/assets/cms-paths.js', 'utf8')).call(sandbox, sandbox);
-const CMS = sandbox.DLX.CMS ?? {};
+const CMS = sandbox.CARGO.CMS ?? {};
 if (!Object.keys(CMS).length) {
   console.error('  cms-paths: empty — re-run scripts/harvest-cms-paths.mjs');
   bad++;

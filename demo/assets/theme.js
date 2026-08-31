@@ -23,7 +23,7 @@
     const next = current() === 'dark' ? 'light' : 'dark';
     root.dataset.theme = next;
     try {
-      localStorage.setItem('dlx-theme', next);
+      localStorage.setItem('cs-theme', next);
     } catch {
       /* private mode: the choice just lasts this page view */
     }
@@ -52,7 +52,7 @@
     const stream = new Blob([buf]).stream().pipeThrough(new CompressionStream('gzip'));
     return (await new Response(stream).blob()).size;
   };
-  Promise.all(['../dist/dl-carousel.css', '../dist/dl-carousel.js'].map(gz))
+  Promise.all(['../dist/custom-slider.css', '../dist/custom-slider.js'].map(gz))
     .then(([css, js]) => {
       size.textContent = `${((css + js) / 1024).toFixed(1)} KB gzip · no dependencies`;
     })

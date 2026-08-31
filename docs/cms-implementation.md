@@ -1,4 +1,4 @@
-# Putting dl-carousel on a DealerOn site
+# Putting Custom Slider on a DealerOn site
 
 > **Status: not deployed.** As of 2026-08-18 the files are not on FTP and no
 > live site uses them. This documents the intended process so it is ready to go,
@@ -13,10 +13,10 @@
 
 Two files, no dependencies, no build step on the site side:
 
-| File              | Gzip    | What it does                                 |
-| ----------------- | ------- | -------------------------------------------- |
-| `dl-carousel.css` | ~1.2 KB | Layout, scroll-snap physics, control styling |
-| `dl-carousel.js`  | ~4.8 KB | Wires controls, state, autoplay, fade, drag  |
+| File                | Gzip    | What it does                                 |
+| ------------------- | ------- | -------------------------------------------- |
+| `custom-slider.css` | ~1.2 KB | Layout, scroll-snap physics, control styling |
+| `custom-slider.js`  | ~4.8 KB | Wires controls, state, autoplay, fade, drag  |
 
 Both come from `dist/` in this repo — never from `src/`, which is the readable
 source and is not minified.
@@ -27,11 +27,11 @@ The platform already hosts shared third-party slider code at
 `/assets/shared/CustomHTMLFiles/slick/slick.min.js`, so the natural home is
 alongside it. **This is the open question to settle before launch:**
 
-- **Shared path** (e.g. `/assets/shared/CustomHTMLFiles/dl-carousel/`) — one
+- **Shared path** (e.g. `/assets/shared/CustomHTMLFiles/cs/`) — one
   copy, every site gets fixes at once. This is the whole point of a replacement
   code, and the reason the HTML is a frozen contract: the engine can be replaced
   underneath every site without touching a single page.
-- **Per-dealer Media Gallery** (`#MISCPATH#dl-carousel.js`) — works today with no
+- **Per-dealer Media Gallery** (`#MISCPATH#custom-slider.js`) — works today with no
   platform involvement, but every site is then pinned to whatever version it got,
   and a fix means re-uploading to each one.
 
@@ -40,8 +40,8 @@ is not available, and it should be treated as temporary.
 
 ### How a page loads them
 
-    <link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/dl-carousel/dl-carousel.css">
-    <script src="/assets/shared/CustomHTMLFiles/dl-carousel/dl-carousel.js" defer></script>
+    <link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/cs/custom-slider.css">
+    <script src="/assets/shared/CustomHTMLFiles/cs/custom-slider.js" defer></script>
 
 `defer` matters: the engine auto-initializes on `DOMContentLoaded`, and the CSS
 already reserves the control space, so nothing shifts when the JS lands (CLS 0).
@@ -59,19 +59,19 @@ two tags:
     <script>
       (function () {
         var boot = function () {
-          if (!document.querySelector('.dl-carousel')) return;
+          if (!document.querySelector('.cs')) return;
           var css = document.createElement('link');
           css.rel = 'stylesheet';
-          css.href = '/assets/shared/CustomHTMLFiles/dl-carousel/dl-carousel.css';
+          css.href = '/assets/shared/CustomHTMLFiles/cs/custom-slider.css';
           // PREPEND, never append: the engine stylesheet carries the default
-          // --dlc-* values at the same specificity as your recipe CSS, so it
+          // --cs-* values at the same specificity as your recipe CSS, so it
           // must land BEFORE the page's Style Only CSS in the cascade.
           // Appended at the end of <head> it silently overrides every recipe
-          // override (--dlc-per-view snaps back to 1, peek to 0) — found live
+          // override (--cs-per-view snaps back to 1, peek to 0) — found live
           // on the spelletier test site, 2026-08-20.
           document.head.insertBefore(css, document.head.firstChild);
           var js = document.createElement('script');
-          js.src = '/assets/shared/CustomHTMLFiles/dl-carousel/dl-carousel.js';
+          js.src = '/assets/shared/CustomHTMLFiles/cs/custom-slider.js';
           document.head.appendChild(js);
         };
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
@@ -79,14 +79,14 @@ two tags:
       })();
     </script>
 
-It looks for a `.dl-carousel` on the page and injects the stylesheet and script
+It looks for a `.cs` on the page and injects the stylesheet and script
 only if it finds one. Pages with no slider load zero slider bytes.
 
 Injecting the engine this late is fine because its entry point does not blindly
 wait for `DOMContentLoaded`: it checks `document.readyState` and initializes
 **immediately** when the document has already finished parsing (see
 `src/auto.js`). A script tag added after the page loaded therefore still
-auto-inits every `[data-slider]` — there is no event it sits waiting for.
+auto-inits every `[data-cs]` — there is no event it sits waiting for.
 
 **The trade-off is real.** On pages that _do_ have a slider, the CSS now starts
 downloading only after the DOM is parsed — one extra round-trip — so the
@@ -103,14 +103,14 @@ turns "every page pays ~6 KB" into "only slider pages pay, slightly later".
 
 There is nothing further to conditionally load. Autoplay and fade are not
 separate resources or plugins — both ship inside the same two files
-(~4.8 KB JS + ~1.2 KB CSS gzip, just under 6 KB combined), and both are gated
+(~4.8 KB JS + ~1.2 KB CSS gzip, just over 6 KB combined), and both are gated
 at runtime:
 
 - Autoplay setup early-returns before creating any timer or observer when
-  `data-autoplay` is absent, so a page without it executes essentially none of
+  `data-cs-autoplay` is absent, so a page without it executes essentially none of
   the autoplay code.
-- The fade transition CSS applies only under the `data-fade-on` attribute,
-  which the engine sets only when a block opts in with `data-fade`. Without it
+- The fade transition CSS applies only under the `data-cs-fade-on` attribute,
+  which the engine sets only when a block opts in with `data-cs-fade`. Without it
   the rules never match and the transition is inert.
 
 A page that uses neither pays for neither beyond the bytes already counted
@@ -120,10 +120,10 @@ above. The conditional loader is the whole story.
 
 Everything the engine needs, and nothing it generates for you:
 
-    <div class="dl-carousel my-strip" data-slider aria-label="Featured vehicles">
-      <ul class="dl-carousel-track">
-        <li class="dl-carousel-slide">…authored content…</li>
-        <li class="dl-carousel-slide">…authored content…</li>
+    <div class="cs my-strip" data-cs aria-label="Featured vehicles">
+      <ul class="cs-track">
+        <li class="cs-slide">…authored content…</li>
+        <li class="cs-slide">…authored content…</li>
       </ul>
     </div>
 
@@ -150,18 +150,18 @@ it. Do not put slider CSS in the block itself.
 The styleCode minifier has two behaviors every recipe must respect:
 
 - **Modern function values inside custom-property declarations fail the whole
-  sheet.** `--dlc-peek: clamp(32px, 9vw, 60px)` and
-  `--dlc-arrow-bg: rgb(0 0 0 / 40%)` each kill minification — and the
+  sheet.** `--cs-peek: clamp(32px, 9vw, 60px)` and
+  `--cs-arrow-bg: rgb(0 0 0 / 40%)` each kill minification — and the
   storefront then **silently serves the last successfully-minified styleCode**
   (or nothing, if there was none). No error surfaces anywhere; your CSS just
   never appears. The same functions are fine in _normal_ properties
   (`width: clamp(...)`, `color: rgb(0 0 0 / 40%)`, slash-rgb in box-shadows) —
   the failure is specific to `--*:` declarations. Every recipe in the library
-  therefore uses plain values and classic `rgba(r, g, b, a)` inside `--dlc-*`
+  therefore uses plain values and classic `rgba(r, g, b, a)` inside `--cs-*`
   declarations, with media queries instead of `clamp()`.
 - **Zero lengths lose their unit** (`0px` → `0`). Chrome resolves the engine's
-  `calc(100% - var(--dlc-controls-space))` with a unitless `0` today, but that
-  is lenient behavior — treat `--dlc-*: 0px` values as a cross-browser watch
+  `calc(100% - var(--cs-controls-space))` with a unitless `0` today, but that
+  is lenient behavior — treat `--cs-*: 0px` values as a cross-browser watch
   item after pasting.
 
 Also expect **site CSS to outrank recipe classes**: OEM styles commonly set
@@ -178,13 +178,13 @@ at each breakpoint and which card style it wears, and the code panel prints the
 markup and CSS for exactly what is on screen. `demo/patterns.html` shows all
 seventeen at once; `demo/reference.html` is the API.
 
-| You want                         | Use                                            |
-| -------------------------------- | ---------------------------------------------- |
-| Rotating homepage banner         | `data-fade` + `data-autoplay="5000"`, 1-up     |
-| Model bar (cutouts, arrows only) | `data-step="slide"`, dots hidden, `--dlc-peek` |
-| Model bar grouped by body style  | The above, one instance per tab pane           |
-| Vehicle / service / offer cards  | Default page stepping, 1-2-3 per view          |
-| Photo gallery with thumbnails    | `data-gallery`                                 |
+| You want                         | Use                                              |
+| -------------------------------- | ------------------------------------------------ |
+| Rotating homepage banner         | `data-cs-fade` + `data-cs-autoplay="5000"`, 1-up |
+| Model bar (cutouts, arrows only) | `data-cs-step="slide"`, dots hidden, `--cs-peek` |
+| Model bar grouped by body style  | The above, one instance per tab pane             |
+| Vehicle / service / offer cards  | Default page stepping, 1-2-3 per view            |
+| Photo gallery with thumbnails    | `data-cs-gallery`                                |
 
 **For a model bar, start from the brand preset.** The OEM demo estate shares one
 anatomy and differs only in how many cards are across at each width. Every one of
@@ -206,14 +206,14 @@ phone tier. That off-by-one was live in this repo until 2026-08-27.
 Override custom properties in `styleCode`. Never edit the engine:
 
     .my-strip {
-      --dlc-per-view: 2;
-      --dlc-gap: 1rem;
-      --dlc-peek: 60px;
-      --dlc-arrow-bg: #0b2a4a;
-      --dlc-arrow-fg: #fff;
-      --dlc-dot-current: #0b2a4a;
+      --cs-per-view: 2;
+      --cs-gap: 1rem;
+      --cs-peek: 60px;
+      --cs-arrow-bg: #0b2a4a;
+      --cs-arrow-fg: #fff;
+      --cs-dot-current: #0b2a4a;
     }
-    @media (min-width: 768px) { .my-strip { --dlc-per-view: 5; } }
+    @media (min-width: 768px) { .my-strip { --cs-per-view: 5; } }
 
 Full list in the README under "CSS custom properties".
 
@@ -252,8 +252,8 @@ The slider is ordinary block HTML, so the usual rules apply unchanged:
   cannot do, that is a request against this repo, not a local copy. A forked
   copy silently opts that site out of every future fix.
 - **Do not add slider CSS to the block.** It belongs in `styleCode`.
-- **Do not rename the classes or data attributes.** `dl-carousel`,
-  `-track`, `-slide`, the `data-*` options and the `--dlc-*` properties are a
+- **Do not rename the classes or data attributes.** `cs`,
+  `-track`, `-slide`, the `data-*` options and the `--cs-*` properties are a
   frozen contract precisely so the engine can be swapped later without editing
   any site.
 - **Do not add autoplay to a card strip.** Zero of the 55 OEM model bars

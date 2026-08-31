@@ -12,7 +12,7 @@
 // starts wanting one, stop and re-open the design.
 
 (() => {
-  const { LOOKS, BRANDS, perViewFor } = globalThis.DLX;
+  const { LOOKS, BRANDS, perViewFor } = globalThis.CARGO;
 
   // The platform's Bootstrap 3 grid, measured in its CSS bundle. Not the
   // estate's 461 / 539 / 599 / 990 / 1440 - several of those were an
@@ -127,8 +127,8 @@
       blurb: 'A strip of vehicle cutouts, arrows only, one card per step. The most requested thing on the platform.',
       look: 'tile',
       models: cutouts,
-      data: { 'data-step': 'slide' },
-      props: { '--dlc-gap': '0.5rem', '--dlc-controls-space': '0.1px', '--dlc-arrow-bg': 'transparent', '--dlc-arrow-fg': '#262626' },
+      data: { 'data-cs-step': 'slide' },
+      props: { '--cs-gap': '0.5rem', '--cs-controls-space': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       hideDots: true,
     },
     cards: {
@@ -137,35 +137,35 @@
       look: 'vcard',
       models: VEHICLES,
       data: {},
-      props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'transparent', '--dlc-arrow-fg': '#262626' },
+      props: { '--cs-gap': '1rem', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
     },
     hero: {
       gutter: false,
       label: 'Hero banner',
       blurb: 'Full width, one at a time, crossfading on a timer. Autoplay adds the pause button and never starts under reduced motion.',
-      data: { 'data-fade': '', 'data-autoplay': '5000' },
-      props: { '--dlc-gap': '0px', '--dlc-controls-space': '2rem', '--dlc-dot-current': '#16324f' },
+      data: { 'data-cs-fade': '', 'data-cs-autoplay': '5000' },
+      props: { '--cs-gap': '0px', '--cs-controls-space': '2rem', '--cs-dot-current': '#16324f' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       models: PHOTOS.slice(0, 3),
-      css: `.dlx-photo { display: block; }
-.dlx-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 21 / 9; object-fit: cover; border-radius: 8px; }
-@media (max-width: 600px) { .dlx-photo img { aspect-ratio: 4 / 3; } }`,
-      slides: (models) => models.map((m) => `<span class="dlx-photo">${pic(m)}</span>`),
+      css: `.cargo-photo { display: block; }
+.cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 21 / 9; object-fit: cover; border-radius: 8px; }
+@media (max-width: 600px) { .cargo-photo img { aspect-ratio: 4 / 3; } }`,
+      slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),
     },
     gallery: {
       gutter: false,
       label: 'Photo gallery',
       blurb: 'Thumbnails generated from the slide images and wired as a real tab list with arrow keys. Thumbs are fresh elements, so site ids and srcset never leak into them.',
-      data: { 'data-gallery': '' },
-      props: { '--dlc-gap': '0px', '--dlc-arrow-bg': 'transparent', '--dlc-arrow-fg': '#262626' },
+      data: { 'data-cs-gallery': '' },
+      props: { '--cs-gap': '0px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
       models: PHOTOS,
-      css: `.dlx-photo { display: block; }
-.dlx-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }`,
-      slides: (models) => models.map((m) => `<span class="dlx-photo">${pic(m)}</span>`),
+      css: `.cargo-photo { display: block; }
+.cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }`,
+      slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),
     },
     grid: {
       label: 'Two-row grid',
@@ -173,32 +173,32 @@
       look: 'tile',
       models: cutouts,
       data: {},
-      props: { '--dlc-gap': '1rem', '--dlc-controls-space': '2rem', '--dlc-arrow-bg': 'transparent', '--dlc-arrow-fg': '#262626' },
+      props: { '--cs-gap': '1rem', '--cs-controls-space': '2rem', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       pairUp: true,
-      css: `.dlx-col { display: grid; grid-template-rows: repeat(2, auto); gap: var(--dlc-gap); }
-@media (max-width: 600px) { .dlx { padding-inline: calc(var(--dlc-arrow-size) + 0.3rem); } }`,
+      css: `.cargo-col { display: grid; grid-template-rows: repeat(2, auto); gap: var(--cs-gap); }
+@media (max-width: 600px) { %root% { padding-inline: calc(var(--cs-arrow-size) + 0.3rem); } }`,
     },
     peek: {
       gutter: false,
       label: 'Peek at the next slide',
-      blurb: 'A sliver of the neighbours stays visible so it always reads as "there is more this way". One property — --dlc-peek. Zero turns it off.',
+      blurb: 'A sliver of the neighbours stays visible so it always reads as "there is more this way". One property — --cs-peek. Zero turns it off.',
       data: {},
-      props: { '--dlc-gap': '1rem', '--dlc-peek': '3rem', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      props: { '--cs-gap': '1rem', '--cs-peek': '3rem', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
       perView: { base: 1, 768: 1, 992: 2, 1200: 2 },
       minCard: 240,
       models: PHOTOS,
-      css: `.dlx-photo { display: block; }
-.dlx-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
-@media (max-width: 600px) { .dlx { --dlc-peek: 1.5rem; } }`,
-      slides: (models) => models.map((m) => `<span class="dlx-photo">${pic(m)}</span>`),
+      css: `.cargo-photo { display: block; }
+.cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
+@media (max-width: 600px) { %root% { --cs-peek: 1.5rem; } }`,
+      slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),
     },
     video: {
       gutter: false,
       label: 'Video testimonials',
       blurb: 'Posters open a native dialog, which gives Esc-to-close and focus trapping for free. Video never plays inline — autoplay on video cards fights the content.',
       data: {},
-      props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      props: { '--cs-gap': '1rem', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
       perView: { base: 1, 768: 2, 992: 2, 1200: 3 },
       minCard: 260,
       models: PHOTOS.slice(0, 3).map((m, i) => ({ ...m, name: ['Dana W.', 'Marcus T.', 'Gene & Marta L.'][i] })),
@@ -209,13 +209,14 @@
       // white-on-white and vanished. On a dealer site the same card lands on
       // whatever band it is dropped into, so the card has to take the
       // surrounding text colour the way every non-button card already does.
-      css: `.dlx-video { position: relative; display: block; inline-size: 100%; padding: 0; overflow: hidden; font: inherit; color: inherit; text-align: start; cursor: pointer; background: none; border: 0; border-radius: 8px; }
-.dlx-video img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
-.dlx-play { position: absolute; inset-block-start: 42%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 56px; block-size: 56px; color: #16324f; background: rgb(255 255 255 / 92%); border-radius: 50%; transform: translate(-50%, -50%); }
-.dlx-name { display: block; margin: 0.6rem 0 0; font-size: 1rem; font-weight: 700; line-height: 1.3; }`,
+      css: `.cargo-video { position: relative; display: block; inline-size: 100%; padding: 0; overflow: hidden; font: inherit; color: inherit; text-align: start; cursor: pointer; background: none; border: 0; border-radius: 8px; }
+.cargo-video img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
+.cargo-play { position: absolute; inset-block-start: 42%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 56px; block-size: 56px; color: #16324f; background: rgb(255 255 255 / 92%); border-radius: 50%; transform: translate(-50%, -50%); }
+.cargo-name { display: block; margin: 0.6rem 0 0; font-size: 1rem; font-weight: 700; line-height: 1.3; }`,
       slides: (models) =>
         models.map(
-          (m) => `<button type="button" class="dlx-video" data-video="${m.name}">${pic(m)}<span class="dlx-play" aria-hidden="true">&#9654;</span><span class="dlx-name">${m.name}</span></button>`,
+          (m) =>
+            `<button type="button" class="cargo-video" data-video="${m.name}">${pic(m)}<span class="cargo-play" aria-hidden="true">&#9654;</span><span class="cargo-name">${m.name}</span></button>`,
         ),
     },
 
@@ -225,14 +226,14 @@
         'The same strip under body-style tabs. Each pane holds its own slider, and a pane revealed later measures itself correctly — so none of slick’s hidden-pane refresh hacks are needed. This is how Chevrolet has shipped its bar since Nov 2025.',
       look: 'tile',
       models: cutouts,
-      data: { 'data-step': 'slide' },
-      props: { '--dlc-gap': '0.5rem', '--dlc-controls-space': '0.1px', '--dlc-arrow-bg': 'transparent', '--dlc-arrow-fg': '#262626' },
+      data: { 'data-cs-step': 'slide' },
+      props: { '--cs-gap': '0.5rem', '--cs-controls-space': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       hideDots: true,
       panes: ['Trucks', 'SUVs', 'Crossovers'],
-      css: `.dlx-tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-block-end: 1rem; border-block-end: 1px solid #e2e5ea; }
-.dlx-tabs [role="tab"] { padding: 0.6rem 1.1rem; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: 0.65; }
-.dlx-tabs [role="tab"][aria-selected="true"] { opacity: 1; border-block-end-color: currentcolor; }
-.dlx-pane[hidden] { display: none; }`,
+      css: `.cargo-tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-block-end: 1rem; border-block-end: 1px solid #e2e5ea; }
+.cargo-tabs [role="tab"] { padding: 0.6rem 1.1rem; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: 0.65; }
+.cargo-tabs [role="tab"][aria-selected="true"] { opacity: 1; border-block-end-color: currentcolor; }
+.cargo-pane[hidden] { display: none; }`,
       script: `document.querySelectorAll('[data-tabs]').forEach((wrap, w) => {
   const tabs = [...wrap.querySelectorAll('[role="tab"]')];
   const panes = [...wrap.querySelectorAll('[role="tabpanel"]')];
@@ -240,8 +241,8 @@
   // getElementById. The markup ships fixed ids, so two of these on one page
   // would otherwise share them and each tab would drive the other's panes.
   tabs.forEach((t, i) => {
-    const tid = 'dlx-tab-' + w + '-' + i;
-    const pid = 'dlx-pane-' + w + '-' + i;
+    const tid = 'cargo-tab-' + w + '-' + i;
+    const pid = 'cargo-pane-' + w + '-' + i;
     t.id = tid;
     panes[i].id = pid;
     t.setAttribute('aria-controls', pid);
@@ -272,40 +273,40 @@
       label: 'Model cards — tall photos',
       blurb:
         'Portrait photography instead of cutouts, and the dot row restyled into a solid bar with a marker that slides along it. The marker is page script watching the engine’s own state — the segments underneath are still real "go to page" buttons.',
-      data: { 'data-rewind': 'false', 'data-bar': '' },
-      props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      data: { 'data-cs-rewind': 'false', 'data-bar': '' },
+      props: { '--cs-gap': '1rem', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
       perView: { base: 1, 768: 2, 992: 4, 1200: 4 },
       minCard: 190,
       models: MODELS,
-      css: `.dlx { --dlc-dot-fg: #949494; --dlc-dot-current: #949494; --dlc-controls-space: 3rem; }
-@media (min-width: 992px) { .dlx { --dlc-arrow-size: 56px; } }
+      css: `%root% { --cs-dot-fg: #949494; --cs-dot-current: #949494; --cs-controls-space: 3rem; }
+@media (min-width: 992px) { %root% { --cs-arrow-size: 56px; } }
 
 /* The dots become one solid bar. Every segment is still a real, labelled
    button; the marker is a ::before whose translate follows --bar-index and
    --bar-count, set by the script below. #949494 is 3.03:1 on white, because
    the segments ARE the control and their extent has to meet WCAG 1.4.11. */
-.dlx .dl-carousel-dots { gap: 0; inset-inline: 25%; }
-.dlx .dl-carousel-dots::before { content: ""; position: absolute; inset-block-start: calc(50% - 2px); inset-inline-start: 0; inline-size: calc(100% / var(--bar-count, 1)); block-size: 4px; background: #262626; border-radius: 2px; translate: calc(var(--bar-index, 0) * 100%); pointer-events: none; }
-@media (prefers-reduced-motion: no-preference) { .dlx .dl-carousel-dots::before { transition: translate 0.35s ease; } }
-.dlx .dl-carousel-dot { flex: 1 1 auto; }
-.dlx .dl-carousel-dot::after { inline-size: 100%; block-size: 4px; border-radius: 0; }
-.dlx .dl-carousel-dot:first-child::after { border-start-start-radius: 2px; border-end-start-radius: 2px; }
-.dlx .dl-carousel-dot:last-child::after { border-start-end-radius: 2px; border-end-end-radius: 2px; }
+%root% .cs-dots { gap: 0; inset-inline: 25%; }
+%root% .cs-dots::before { content: ""; position: absolute; inset-block-start: calc(50% - 2px); inset-inline-start: 0; inline-size: calc(100% / var(--bar-count, 1)); block-size: 4px; background: #262626; border-radius: 2px; translate: calc(var(--bar-index, 0) * 100%); pointer-events: none; }
+@media (prefers-reduced-motion: no-preference) { %root% .cs-dots::before { transition: translate 0.35s ease; } }
+%root% .cs-dot { flex: 1 1 auto; }
+%root% .cs-dot::after { inline-size: 100%; block-size: 4px; border-radius: 0; }
+%root% .cs-dot:first-child::after { border-start-start-radius: 2px; border-end-start-radius: 2px; }
+%root% .cs-dot:last-child::after { border-start-end-radius: 2px; border-end-end-radius: 2px; }
 
-.dlx-model { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; border-radius: 10px; }
-.dlx-model img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; transition: transform 0.35s ease; }
-.dlx-model:hover img { transform: scale(1.05); }
-.dlx-model h4 { position: absolute; inset-inline: 0; inset-block-end: 0; padding: 2.5rem 1rem 1rem; margin: 0; font-size: 1.15rem; line-height: 1.3; background: linear-gradient(transparent, rgb(0 0 0 / 78%)); }`,
+.cargo-model { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; border-radius: 10px; }
+.cargo-model img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; transition: transform 0.35s ease; }
+.cargo-model:hover img { transform: scale(1.05); }
+.cargo-model h4 { position: absolute; inset-inline: 0; inset-block-end: 0; padding: 2.5rem 1rem 1rem; margin: 0; font-size: 1.15rem; line-height: 1.3; background: linear-gradient(transparent, rgb(0 0 0 / 78%)); }`,
       slides: (models) =>
-        models.map((m) => `<a class="dlx-model" href="${m.href}"><img src="${m.img}" width="${m.w ?? 600}" height="${m.h ?? 1000}" alt="" loading="lazy" decoding="async"><h4>${m.name}</h4></a>`),
+        models.map((m) => `<a class="cargo-model" href="${m.href}"><img src="${m.img}" width="${m.w ?? 600}" height="${m.h ?? 1000}" alt="" loading="lazy" decoding="async"><h4>${m.name}</h4></a>`),
       // Site-level enhancement, not an engine feature: it reads the engine's
       // own current-dot class and writes two custom properties. Nothing in the
       // engine knows the bar exists.
-      script: `document.querySelectorAll('[data-bar] .dl-carousel-dots').forEach((bar) => {
+      script: `document.querySelectorAll('[data-bar] .cs-dots').forEach((bar) => {
   const sync = () => {
     const dots = [...bar.children];
     bar.style.setProperty('--bar-count', dots.length || 1);
-    bar.style.setProperty('--bar-index', Math.max(0, dots.findIndex((d) => d.classList.contains('dl-carousel-dot--current'))));
+    bar.style.setProperty('--bar-index', Math.max(0, dots.findIndex((d) => d.classList.contains('cs-dot--current'))));
   };
   // The class flips on page change; the children are rebuilt when a
   // breakpoint changes the page count, so watch for both.
@@ -318,41 +319,41 @@
       gutter: true,
       label: 'Mixed image sizes',
       blurb: 'Six source files at six different aspect ratios, all cropped to one shape by the CSS. Dealers upload whatever they have — aspect-ratio plus object-fit is what keeps the row even.',
-      props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      props: { '--cs-gap': '1rem', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 230,
       models: MIXED,
-      css: `.dlx { padding-inline: calc(var(--dlc-arrow-size) + 0.4rem); }
-@media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; } }
-.dlx-mix { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
-.dlx-mix img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
-.dlx-mix h4 { margin: 0.8rem 0.9rem 0.2rem; font-size: 0.95rem; line-height: 1.3; }
-.dlx-mix p { margin: 0 0.9rem 0.9rem; font-size: 0.85rem; line-height: 1.45; opacity: 0.75; }`,
+      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4rem); }
+@media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
+.cargo-mix { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
+.cargo-mix img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+.cargo-mix h4 { margin: 0.8rem 0.9rem 0.2rem; font-size: 0.95rem; line-height: 1.3; }
+.cargo-mix p { margin: 0 0.9rem 0.9rem; font-size: 0.85rem; line-height: 1.45; opacity: 0.75; }`,
       slides: (models) =>
-        models.map((m) => `<article class="dlx-mix"><img src="${m.img}" width="${m.w}" height="${m.h}" alt="${m.alt}" loading="lazy" decoding="async"><h4>${m.name}</h4><p>${m.blurb}</p></article>`),
+        models.map((m) => `<article class="cargo-mix"><img src="${m.img}" width="${m.w}" height="${m.h}" alt="${m.alt}" loading="lazy" decoding="async"><h4>${m.name}</h4><p>${m.blurb}</p></article>`),
     },
 
     service: {
       gutter: true,
       label: 'Service cards',
       blurb: 'Photo, heading, a paragraph and a read-more affordance. One card per arrow click, because the copy is long enough that a full-page jump loses your place.',
-      data: { 'data-step': 'slide' },
-      props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      data: { 'data-cs-step': 'slide' },
+      props: { '--cs-gap': '1rem', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 250,
       models: SERVICES,
-      css: `.dlx { padding-inline: calc(var(--dlc-arrow-size) + 0.4rem); }
-@media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; } }
-.dlx-svc { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
-.dlx-svc img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.35s ease; }
-.dlx-svc:hover img { transform: scale(1.05); }
-.dlx-svc h4 { margin: 1rem 1.1rem 0.35rem; font-size: 1.1rem; line-height: 1.3; }
-.dlx-svc p { margin: 0 1.1rem; font-size: 0.9rem; line-height: 1.5; opacity: 0.75; }
-.dlx-svc-more { display: block; margin: 0.9rem 1.1rem 1.1rem; font-size: 0.85rem; font-weight: 700; line-height: 1.35; }`,
+      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4rem); }
+@media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
+.cargo-svc { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
+.cargo-svc img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.35s ease; }
+.cargo-svc:hover img { transform: scale(1.05); }
+.cargo-svc h4 { margin: 1rem 1.1rem 0.35rem; font-size: 1.1rem; line-height: 1.3; }
+.cargo-svc p { margin: 0 1.1rem; font-size: 0.9rem; line-height: 1.5; opacity: 0.75; }
+.cargo-svc-more { display: block; margin: 0.9rem 1.1rem 1.1rem; font-size: 0.85rem; font-weight: 700; line-height: 1.35; }`,
       slides: (models) =>
         models.map(
           (m) =>
-            `<a class="dlx-svc" href="${m.href}"><img src="${m.img}" width="1200" height="750" alt="" loading="lazy" decoding="async"><h4>${m.name}</h4><p>${m.blurb}</p><span class="dlx-svc-more" aria-hidden="true">Read more →</span></a>`,
+            `<a class="cargo-svc" href="${m.href}"><img src="${m.img}" width="1200" height="750" alt="" loading="lazy" decoding="async"><h4>${m.name}</h4><p>${m.blurb}</p><span class="cargo-svc-more" aria-hidden="true">Read more →</span></a>`,
         ),
     },
 
@@ -360,28 +361,28 @@
       gutter: true,
       label: 'Customer reviews',
       blurb: 'Quotes in a real figure/blockquote, with the star rating exposed as an image plus a text label rather than bare glyphs a screen reader would spell out one at a time.',
-      props: { '--dlc-gap': '1rem', '--dlc-arrow-bg': 'transparent', '--dlc-arrow-fg': '#262626' },
+      props: { '--cs-gap': '1rem', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 250,
       models: REVIEWS,
-      css: `.dlx { padding-inline: calc(var(--dlc-arrow-size) + 0.4rem); }
-@media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; } }
-.dlx-review { block-size: 100%; padding: 1.25rem; margin: 0; line-height: 1.5; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
-.dlx-review figcaption { display: flex; gap: 0.7rem; align-items: center; line-height: 1.35; }
-.dlx-avatar { display: grid; flex: none; place-items: center; inline-size: 40px; block-size: 40px; font-weight: 700; line-height: 1; color: #fff; background: var(--avatar-bg); border-radius: 50%; }
-.dlx-byline { display: flex; flex-direction: column; font-size: 0.95rem; line-height: 1.35; }
-.dlx-byline small { font-size: 0.8rem; opacity: 0.7; }
-.dlx-stars { margin: 0.7rem 0 0.4rem; font-size: 1rem; line-height: 1; color: #e0a012; letter-spacing: 0.1em; }
-.dlx-review blockquote { margin: 0; }
-.dlx-review blockquote p { margin: 0; font-size: 0.95rem; line-height: 1.55; }`,
+      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4rem); }
+@media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
+.cargo-review { block-size: 100%; padding: 1.25rem; margin: 0; line-height: 1.5; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
+.cargo-review figcaption { display: flex; gap: 0.7rem; align-items: center; line-height: 1.35; }
+.cargo-avatar { display: grid; flex: none; place-items: center; inline-size: 40px; block-size: 40px; font-weight: 700; line-height: 1; color: #fff; background: var(--avatar-bg); border-radius: 50%; }
+.cargo-byline { display: flex; flex-direction: column; font-size: 0.95rem; line-height: 1.35; }
+.cargo-byline small { font-size: 0.8rem; opacity: 0.7; }
+.cargo-stars { margin: 0.7rem 0 0.4rem; font-size: 1rem; line-height: 1; color: #e0a012; letter-spacing: 0.1em; }
+.cargo-review blockquote { margin: 0; }
+.cargo-review blockquote p { margin: 0; font-size: 0.95rem; line-height: 1.55; }`,
       slides: (models) =>
         models.map(
-          (m) => `<figure class="dlx-review">
+          (m) => `<figure class="cargo-review">
   <figcaption>
-    <span class="dlx-avatar" aria-hidden="true" style="--avatar-bg: ${m.bg}">${m.name[0]}</span>
-    <span class="dlx-byline"><strong>${m.name}</strong><small>${m.when}</small></span>
+    <span class="cargo-avatar" aria-hidden="true" style="--avatar-bg: ${m.bg}">${m.name[0]}</span>
+    <span class="cargo-byline"><strong>${m.name}</strong><small>${m.when}</small></span>
   </figcaption>
-  <p class="dlx-stars" role="img" aria-label="Rated ${m.stars} out of 5">${'★'.repeat(m.stars)}${'☆'.repeat(5 - m.stars)}</p>
+  <p class="cargo-stars" role="img" aria-label="Rated ${m.stars} out of 5">${'★'.repeat(m.stars)}${'☆'.repeat(5 - m.stars)}</p>
   <blockquote><p>${m.quote}</p></blockquote>
 </figure>`,
         ),
@@ -392,33 +393,33 @@
       label: 'Filterable gallery',
       blurb:
         'A gallery whose slides carry a category. Filtering rebuilds the slider over the matching slides rather than hiding the rest — hiding leaves them in the thumb strip and in the announced "3 of 6".',
-      data: { 'data-gallery': '' },
-      props: { '--dlc-gap': '0px', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      data: { 'data-cs-gallery': '' },
+      props: { '--cs-gap': '0px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
       models: TAGGED,
       filters: ['', 'exterior', 'interior', 'service'],
-      css: `.dlx-filterbar { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-end: 1rem; }
-.dlx-filterbar button { padding: 0.4rem 0.9rem; font: inherit; font-size: 0.87rem; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 999px; }
-.dlx-filterbar button[aria-pressed="true"] { color: #fff; background: #16324f; border-color: #16324f; }
-.dlx-photo { display: block; }
-.dlx-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }`,
-      slides: (models) => models.map((m) => `<span class="dlx-photo" data-tag="${m.tag}">${pic(m)}</span>`),
+      css: `.cargo-filterbar { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-end: 1rem; }
+.cargo-filterbar button { padding: 0.4rem 0.9rem; font: inherit; font-size: 0.87rem; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 999px; }
+.cargo-filterbar button[aria-pressed="true"] { color: #fff; background: #16324f; border-color: #16324f; }
+.cargo-photo { display: block; }
+.cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }`,
+      slides: (models) => models.map((m) => `<span class="cargo-photo" data-tag="${m.tag}">${pic(m)}</span>`),
       script: `document.querySelectorAll('[data-filter-gallery]').forEach((wrap) => {
-  const root = wrap.querySelector('.dl-carousel');
-  const all = [...root.querySelectorAll('.dl-carousel-slide')].map((s) => s.cloneNode(true));
+  const root = wrap.querySelector('.cs');
+  const all = [...root.querySelectorAll('.cs-slide')].map((s) => s.cloneNode(true));
   wrap.querySelectorAll('[data-filter]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const tag = btn.dataset.filter;
       wrap.querySelectorAll('[data-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-      if (root._dlCarousel) root._dlCarousel.destroy();
+      if (root._cs) root._cs.destroy();
       // Re-query AFTER destroy(). destroy() puts the root's original markup
       // back, so any element captured before it is now detached and writing
       // to it changes nothing you can see.
-      const track = root.querySelector('.dl-carousel-track');
+      const track = root.querySelector('.cs-track');
       track.replaceChildren(...all.filter((s) => !tag || s.querySelector('[data-tag]').dataset.tag === tag).map((s) => s.cloneNode(true)));
-      new DLCarousel(root);
+      new CustomSlider(root);
     });
   });
 });`,
@@ -428,21 +429,21 @@
       gutter: false,
       label: 'Gallery with photos and video',
       blurb: 'A gallery where some slides are video posters. The poster is a real button that opens a dialog — video never plays inline, and the thumb strip treats it like any other slide.',
-      data: { 'data-gallery': '' },
-      props: { '--dlc-gap': '0px', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      data: { 'data-cs-gallery': '' },
+      props: { '--cs-gap': '0px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
       models: PHOTOS.map((m, i) => ({ ...m, video: i === 2 || i === 4 })),
-      css: `.dlx-photo { display: block; }
-.dlx-photo img, .dlx-mv img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
-.dlx-mv { position: relative; display: block; inline-size: 100%; padding: 0; font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
-.dlx-mv-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.3rem; color: #16324f; background: rgb(255 255 255 / 92%); border-radius: 50%; transform: translate(-50%, -50%); }`,
+      css: `.cargo-photo { display: block; }
+.cargo-photo img, .cargo-mv img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
+.cargo-mv { position: relative; display: block; inline-size: 100%; padding: 0; font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
+.cargo-mv-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.3rem; color: #16324f; background: rgb(255 255 255 / 92%); border-radius: 50%; transform: translate(-50%, -50%); }`,
       slides: (models) =>
         models.map((m) =>
           m.video
-            ? `<button type="button" class="dlx-mv" data-video="${m.alt}">${pic(m)}<span class="dlx-mv-play" aria-hidden="true">&#9654;</span></button>`
-            : `<span class="dlx-photo">${pic(m)}</span>`,
+            ? `<button type="button" class="cargo-mv" data-video="${m.alt}">${pic(m)}<span class="cargo-mv-play" aria-hidden="true">&#9654;</span></button>`
+            : `<span class="cargo-photo">${pic(m)}</span>`,
         ),
     },
 
@@ -450,30 +451,30 @@
       gutter: false,
       label: 'Fullscreen gallery in a dialog',
       blurb:
-        'A thumbnail that opens the full gallery in a native dialog. Built with data-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure.',
-      data: { 'data-gallery': '', 'data-init': 'manual' },
-      props: { '--dlc-gap': '0px', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+        'A thumbnail that opens the full gallery in a native dialog. Built with data-cs-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure.',
+      data: { 'data-cs-gallery': '', 'data-cs-init': 'manual' },
+      props: { '--cs-gap': '0px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
       models: PHOTOS,
-      css: `.dlx-lb-open { display: inline-flex; gap: 0.7rem; align-items: center; padding: 0.6rem 1rem; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
-.dlx-lb-open img { inline-size: 68px; block-size: 44px; object-fit: cover; border-radius: 5px; }
-.dlx-lb { inline-size: min(94vw, 1100px); padding: 0; background: #111; border: 0; border-radius: 12px; }
-.dlx-lb::backdrop { background: rgb(0 0 0 / 80%); }
-.dlx-lb-head { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.9rem; font-size: 0.9rem; color: #fff; }
-.dlx-lb-close { padding: 0.35rem 0.85rem; font: inherit; color: #fff; cursor: pointer; background: rgb(255 255 255 / 15%); border: 0; border-radius: 6px; }
-.dlx-photo { display: block; }
-.dlx-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: contain; }`,
-      slides: (models) => models.map((m) => `<span class="dlx-photo">${pic(m)}</span>`),
+      css: `.cargo-lb-open { display: inline-flex; gap: 0.7rem; align-items: center; padding: 0.6rem 1rem; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
+.cargo-lb-open img { inline-size: 68px; block-size: 44px; object-fit: cover; border-radius: 5px; }
+.cargo-lb { inline-size: min(94vw, 1100px); padding: 0; background: #111; border: 0; border-radius: 12px; }
+.cargo-lb::backdrop { background: rgb(0 0 0 / 80%); }
+.cargo-lb-head { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.9rem; font-size: 0.9rem; color: #fff; }
+.cargo-lb-close { padding: 0.35rem 0.85rem; font: inherit; color: #fff; cursor: pointer; background: rgb(255 255 255 / 15%); border: 0; border-radius: 6px; }
+.cargo-photo { display: block; }
+.cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: contain; }`,
+      slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),
       script: `document.querySelectorAll('[data-lightbox]').forEach((wrap) => {
   const dlg = wrap.querySelector('dialog');
-  const root = dlg.querySelector('.dl-carousel');
+  const root = dlg.querySelector('.cs');
   wrap.querySelector('[data-lb-open]').addEventListener('click', () => {
     dlg.showModal();
     // Init AFTER the dialog is visible: a slider measured while display:none
     // has no width, so every slide would come out the same wrong size.
-    if (!root._dlCarousel) new DLCarousel(root);
+    if (!root._cs) new CustomSlider(root);
   });
   dlg.querySelector('[data-lb-close]').addEventListener('click', () => dlg.close());
 });`,
@@ -484,18 +485,18 @@
       label: 'Vehicle cards with a mini gallery',
       blurb:
         'The SRP pattern: a grid of cards, each holding its own small slider of that vehicle’s photos. Many instances on one page is fine — each is independent, and none of them is the page’s main carousel.',
-      props: { '--dlc-gap': '0px', '--dlc-controls-space': '0.1px', '--dlc-arrow-size': '32px', '--dlc-arrow-bg': 'rgb(0 0 0 / 55%)', '--dlc-arrow-fg': '#ffffff' },
+      props: { '--cs-gap': '0px', '--cs-controls-space': '0.1px', '--cs-arrow-size': '32px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 200,
       models: VEHICLES,
       cardGrid: true,
       hideDots: true,
-      css: `.dlx-wrap { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); gap: 1rem; }
-.dlx-cg-card { overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
-.dlx-cg-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
-.dlx-cg-body { padding: 0.8rem 0.9rem 1rem; }
-.dlx-cg-body h4 { margin: 0; font-size: 0.95rem; line-height: 1.35; }
-.dlx-cg-body p { margin: 0.2rem 0 0; font-size: 0.85rem; line-height: 1.4; opacity: 0.8; }`,
+      css: `%wrap% { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); gap: 1rem; }
+.cargo-cg-card { overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
+.cargo-cg-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
+.cargo-cg-body { padding: 0.8rem 0.9rem 1rem; }
+.cargo-cg-body h4 { margin: 0; font-size: 0.95rem; line-height: 1.35; }
+.cargo-cg-body p { margin: 0.2rem 0 0; font-size: 0.85rem; line-height: 1.4; opacity: 0.8; }`,
     },
 
     stock: {
@@ -508,17 +509,17 @@
       minCard: 200,
       models: [
         ['Default controls', 'Arrows overlay the content edges; dots sit in space the CSS reserved before JS ran.'],
-        ['One knob per look', 'Every other example here is <code>--dlc-*</code> custom properties and plain site CSS.'],
+        ['One knob per look', 'Every other example here is <code>--cs-*</code> custom properties and plain site CSS.'],
         ['Works without JS', 'The track is a native scroll-snap container — turn JavaScript off and it still swipes.'],
-        ['Start here', 'Copy the markup, add your <code>--dlc-per-view</code> breakpoints, then restyle.'],
+        ['Start here', 'Copy the markup, add your <code>--cs-per-view</code> breakpoints, then restyle.'],
       ].map(([name, blurb]) => ({ name, blurb })),
-      css: `.dlx { padding-inline: calc(var(--dlc-arrow-size) + 0.4rem); }
-@media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; } }
-.dlx-stock { block-size: 100%; padding: 1.1rem; background: #f0f2f5; border-radius: 8px; }
-.dlx-stock h4 { margin: 0 0 0.35rem; font-size: 1rem; line-height: 1.3; }
-.dlx-stock p { margin: 0; font-size: 0.9rem; line-height: 1.5; opacity: 0.8; }
-.dlx-stock code { font-size: 0.85em; }`,
-      slides: (models) => models.map((m) => `<article class="dlx-stock"><h4>${m.name}</h4><p>${m.blurb}</p></article>`),
+      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4rem); }
+@media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
+.cargo-stock { block-size: 100%; padding: 1.1rem; background: #f0f2f5; border-radius: 8px; }
+.cargo-stock h4 { margin: 0 0 0.35rem; font-size: 1rem; line-height: 1.3; }
+.cargo-stock p { margin: 0; font-size: 0.9rem; line-height: 1.5; opacity: 0.8; }
+.cargo-stock code { font-size: 0.85em; }`,
+      slides: (models) => models.map((m) => `<article class="cargo-stock"><h4>${m.name}</h4><p>${m.blurb}</p></article>`),
     },
   };
 
@@ -548,9 +549,9 @@
 
   const minCard = () => PATTERNS[state.pattern].minCard ?? (state.look ? LOOKS[state.look].minCard : 200);
 
-  // --dlc-gap as a number. Values here are always rem or px.
+  // --cs-gap as a number. Values here are always rem or px.
   const gapPx = () => {
-    const g = state.props['--dlc-gap'] ?? '1rem';
+    const g = state.props['--cs-gap'] ?? '1rem';
     return g.endsWith('rem') ? parseFloat(g) * 16 : parseFloat(g) || 0;
   };
 
@@ -566,43 +567,43 @@
 
   function cssFor(sel) {
     const p = PATTERNS[state.pattern];
-    const base = { ...state.lookProps, ...state.props, '--dlc-per-view': state.perView.base };
+    const base = { ...state.lookProps, ...state.props, '--cs-per-view': state.perView.base };
     const decls = Object.entries(base)
       .map(([k, v]) => `  ${k}: ${v};`)
       .join('\n');
 
     const steps = BPS.filter((bp) => state.perView[bp] != null)
-      .map((bp) => `@media (min-width: ${bp}px) {\n  ${sel} { --dlc-per-view: ${state.perView[bp]}; }\n}`)
+      .map((bp) => `@media (min-width: ${bp}px) {\n  ${sel} { --cs-per-view: ${state.perView[bp]}; }\n}`)
       .join('\n');
 
-    const dots = state.hideDots ? `${sel} .dl-carousel-dots { display: none; }` : '';
-    const arrows = [`${sel} .dl-carousel-arrow--prev { inset-inline-start: 0; }`, `${sel} .dl-carousel-arrow--next { inset-inline-end: 0; }`].join('\n');
+    const dots = state.hideDots ? `${sel} .cs-dots { display: none; }` : '';
+    const arrows = [`${sel} .cs-arrow--prev { inset-inline-start: 0; }`, `${sel} .cs-arrow--next { inset-inline-end: 0; }`].join('\n');
 
     // Scope every selector, wherever it starts. Matching only at line start
     // silently left rules inside @media blocks unscoped, so they matched
     // nothing - the phone overrides were generated and did nothing at all.
     //
-    // `.dlx` means the carousel itself and `.dlx-wrap` the outer element the
+    // `%root%` means the carousel itself and `%wrap%` the outer element the
     // few structural patterns add (tabs, filter bar, lightbox, card grid);
     // anything else is a descendant of whichever of those is the real root.
     const root = hasWrap() ? `${sel}-wrap` : sel;
     const scope = (css) =>
-      css.replace(/(^|[{}\n,]\s*)(\.dlx[\w-]*)/g, (_, pre, tok) => {
-        if (tok === '.dlx') return `${pre}${sel}`;
-        if (tok === '.dlx-wrap') return `${pre}${sel}-wrap`;
+      css.replace(/(^|[{}\n,]\s*)(%root%|%wrap%|\.cargo[\w-]*)/g, (_, pre, tok) => {
+        if (tok === '%root%') return `${pre}${sel}`;
+        if (tok === '%wrap%') return `${pre}${sel}-wrap`;
         return `${pre}${root} ${tok}`;
       });
 
     const body = [state.look ? scope(LOOKS[state.look].css) : '', p.css ? scope(p.css) : ''].filter(Boolean).join('\n');
     // Arrows either sit in a gutter beside the content or float over it. Last
     // in the sheet so it beats the padding-inline a card look sets for itself.
-    // The fallback matters: --dlc-arrow-size is defined on .dl-carousel, and the
+    // The fallback matters: --cs-arrow-size is defined on .cs, and the
     // tab strip sits OUTSIDE the carousel, so without one the calc() references
     // an undefined variable and the whole declaration is dropped.
-    const gw = state.gutter ? 'calc(var(--dlc-arrow-size, 44px) + 0.4rem)' : '0px';
+    const gw = state.gutter ? 'calc(var(--cs-arrow-size, 44px) + 0.4rem)' : '0px';
     // Tabs and filter buttons sit outside the carousel, so they have to be told
     // about the gutter or they hang off the left edge of their own cards.
-    const gutter = [`${sel} { padding-inline: ${gw}; }`, hasWrap() ? `${sel}-wrap .dlx-tabs, ${sel}-wrap .dlx-filterbar { padding-inline: ${gw}; }` : ''].filter(Boolean).join('\n');
+    const gutter = [`${sel} { padding-inline: ${gw}; }`, hasWrap() ? `${sel}-wrap .cargo-tabs, ${sel}-wrap .cargo-filterbar { padding-inline: ${gw}; }` : ''].filter(Boolean).join('\n');
     return [`${sel} {\n${decls}\n}`, steps, dots, arrows, body, gutter].filter(Boolean).join('\n\n');
   }
 
@@ -624,7 +625,7 @@
     // one scroll stop, which is what keeps the dots and the count honest.
     if (p.pairUp) {
       const cols = [];
-      for (let i = 0; i < items.length; i += 2) cols.push(`<div class="dlx-col">${items.slice(i, i + 2).join('')}</div>`);
+      for (let i = 0; i < items.length; i += 2) cols.push(`<div class="cargo-col">${items.slice(i, i + 2).join('')}</div>`);
       items = cols;
     }
 
@@ -639,13 +640,13 @@
     // from this rather than hand-writing a second copy of the markup.
     const carousel = (list, label, pad = '') =>
       [
-        `${pad}<div class="${cls} dl-carousel" data-slider${attrs} aria-label="${label}">`,
-        `${pad}  <${tag} class="dl-carousel-track">`,
+        `${pad}<div class="${cls} cs" data-cs${attrs} aria-label="${label}">`,
+        `${pad}  <${tag} class="cs-track">`,
         // Indent the card's own lines to match, so what you paste is not a
         // wall of markup starting at column zero inside a nested list item.
         ...list.map((h) => {
           const inner = h.includes('\n') ? ['', h.replace(/^/gm, `${pad}      `), `${pad}    `].join('\n') : h;
-          return `${pad}    <${item} class="dl-carousel-slide">${inner}</${item}>`;
+          return `${pad}    <${item} class="cs-slide">${inner}</${item}>`;
         }),
         `${pad}  </${tag}>`,
         `${pad}</div>`,
@@ -663,10 +664,10 @@
       const panes = p.panes
         .map((name, i) => {
           const sub = draw(take(state.count, i * stride));
-          return `  <div class="dlx-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}"${i === 0 ? '' : ' hidden'}>\n${carousel(sub, name, '  ')}\n  </div>`;
+          return `  <div class="cargo-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}"${i === 0 ? '' : ' hidden'}>\n${carousel(sub, name, '  ')}\n  </div>`;
         })
         .join('\n');
-      return `<div class="${cls}-wrap" data-tabs>\n  <div class="dlx-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n${panes}\n</div>`;
+      return `<div class="${cls}-wrap" data-tabs>\n  <div class="cargo-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n${panes}\n</div>`;
     }
 
     // Filter buttons above a gallery; the script rebuilds it per category.
@@ -674,7 +675,7 @@
       const bar = p.filters
         .map((f) => `    <button type="button" data-filter="${f}" aria-pressed="${f === '' ? 'true' : 'false'}">${f === '' ? 'All' : f[0].toUpperCase() + f.slice(1)}</button>`)
         .join('\n');
-      return `<div class="${cls}-wrap" data-filter-gallery>\n  <div class="dlx-filterbar" role="group" aria-label="Filter photos">\n${bar}\n  </div>\n${carousel(items, p.label, '  ')}\n</div>`;
+      return `<div class="${cls}-wrap" data-filter-gallery>\n  <div class="cargo-filterbar" role="group" aria-label="Filter photos">\n${bar}\n  </div>\n${carousel(items, p.label, '  ')}\n</div>`;
     }
 
     // A thumbnail that opens the gallery in a dialog.
@@ -682,12 +683,12 @@
       const m = p.models[0];
       return [
         `<div class="${cls}-wrap" data-lightbox>`,
-        `  <button type="button" class="dlx-lb-open" data-lb-open>`,
+        `  <button type="button" class="cargo-lb-open" data-lb-open>`,
         `    <img src="${m.img}" width="68" height="44" alt="" loading="lazy" decoding="async">`,
         `    <span>View all ${items.length} photos</span>`,
         `  </button>`,
-        `  <dialog class="dlx-lb" aria-label="Vehicle photos">`,
-        `    <div class="dlx-lb-head"><span>Vehicle photos</span><button type="button" class="dlx-lb-close" data-lb-close>Close</button></div>`,
+        `  <dialog class="cargo-lb" aria-label="Vehicle photos">`,
+        `    <div class="cargo-lb-head"><span>Vehicle photos</span><button type="button" class="cargo-lb-close" data-lb-close>Close</button></div>`,
         carousel(items, 'Vehicle photos', '    '),
         `  </dialog>`,
         `</div>`,
@@ -704,7 +705,7 @@
           const pics = [{ img: m.img, alt: m.alt }, PHOTOS[i % PHOTOS.length], PHOTOS[(i + 2) % PHOTOS.length]].map(
             (x) => `<img src="${x.img}" width="${x.w ?? 800}" height="${x.h ?? 600}" alt="${x.alt}" loading="lazy" decoding="async">`,
           );
-          return [`  <div class="dlx-cg-card">`, carousel(pics, `Photos of the ${m.name}`, '    '), `    <div class="dlx-cg-body"><h4>${m.name}</h4><p>${m.sub}</p></div>`, `  </div>`].join('\n');
+          return [`  <div class="cargo-cg-card">`, carousel(pics, `Photos of the ${m.name}`, '    '), `    <div class="cargo-cg-body"><h4>${m.name}</h4><p>${m.sub}</p></div>`, `  </div>`].join('\n');
         });
       return `<div class="${cls}-wrap">\n${cards.join('\n')}\n</div>`;
     }
@@ -735,7 +736,7 @@
   // Done as one pass over the finished markup on purpose: every producer -
   // look, pattern slides(), card grid, lightbox thumb - emits src="img/...",
   // so nothing can add a new image slot that this quietly misses.
-  const toCms = (html) => html.replace(/src="img\/([^"]+)"/g, (_, rel) => `src="${globalThis.DLX.CMS?.[rel] ?? `#MISCPATH#${rel.split('/').pop()}`}"`);
+  const toCms = (html) => html.replace(/src="img\/([^"]+)"/g, (_, rel) => `src="${globalThis.CARGO.CMS?.[rel] ?? `#MISCPATH#${rel.split('/').pop()}`}"`);
 
   /* ---- render ----------------------------------------------------------- */
 
@@ -749,7 +750,7 @@
   // The index page (patterns.html) loads this file for the generator alone: one
   // example of every pattern, built by the same cssFor/htmlFor pair the builder
   // uses, so an example there cannot drift from the same example here.
-  globalThis.DLX = Object.assign(globalThis.DLX || {}, {
+  globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
     PATTERNS,
     renderPattern(id, cls) {
       loadPattern(id);
@@ -780,7 +781,7 @@
     live = [];
     styleEl.textContent = cssFor('.wb-live');
     stage.innerHTML = htmlFor('wb-live');
-    live = globalThis.DLCarousel.autoInit(stage);
+    live = globalThis.CustomSlider.autoInit(stage);
     wireVideo();
 
     // A few patterns need page script - tabs, the gallery filter, the lightbox.
@@ -803,7 +804,7 @@
     // never the spans.
     const script = p.script ? `\n\n<script>\n${p.script}\n</script>` : '';
     state.codeText = `<style>\n${cssFor('.my-slider')}\n</style>\n\n${toCms(htmlFor('my-slider'))}${script}`;
-    codeEl.innerHTML = globalThis.DLX.hl.snippet(state.codeText);
+    codeEl.innerHTML = globalThis.CARGO.hl.snippet(state.codeText);
   }
 
   // Posters open a native dialog. Kept here rather than in the snippet because
@@ -829,8 +830,8 @@
     const warn = $('wb-warn');
     const spec = $('wb-spec');
     const set = (id, v) => ($(id).textContent = v);
-    const root = stage.querySelector('.dl-carousel');
-    const slide = stage.querySelector('.dl-carousel-slide');
+    const root = stage.querySelector('.cs');
+    const slide = stage.querySelector('.cs-slide');
     if (!root || !slide) return;
 
     const w = Math.round(slide.getBoundingClientRect().width);
@@ -850,13 +851,13 @@
 
     const cs = getComputedStyle(root);
     const min = minCard();
-    const stops = root._dlCarousel ? root._dlCarousel._stops().length : 1;
-    const fits = root.hasAttribute('data-fits');
-    const n = stage.querySelectorAll('.dl-carousel').length;
+    const stops = root._cs ? root._cs._stops().length : 1;
+    const fits = root.hasAttribute('data-cs-fits');
+    const n = stage.querySelectorAll('.cs').length;
 
     set('spec-card', `${w}px in ${Math.round(stage.getBoundingClientRect().width)}px`);
-    set('spec-across', `${cs.getPropertyValue('--dlc-per-view').trim()} of ${stage.querySelectorAll('.dl-carousel-slide').length}${n > 1 ? ` · ${n} sliders` : ''}`);
-    set('spec-gap', cs.getPropertyValue('--dlc-gap').trim() || '0');
+    set('spec-across', `${cs.getPropertyValue('--cs-per-view').trim()} of ${stage.querySelectorAll('.cs-slide').length}${n > 1 ? ` · ${n} sliders` : ''}`);
+    set('spec-gap', cs.getPropertyValue('--cs-gap').trim() || '0');
     set('spec-stops', String(stops));
     set('spec-controls', fits ? 'hidden — all fits' : 'arrows' + (state.hideDots ? '' : ' + dots'));
 
@@ -1078,23 +1079,23 @@
     }
 
     const colors = document.createElement('div');
-    colors.append(colorRow('Arrow colour', '--dlc-arrow-fg', state.props));
-    colors.append(colorRow('Arrow background', '--dlc-arrow-bg', state.props));
-    if (state.props['--dlc-peek'] != null) {
+    colors.append(colorRow('Arrow colour', '--cs-arrow-fg', state.props));
+    colors.append(colorRow('Arrow background', '--cs-arrow-bg', state.props));
+    if (state.props['--cs-peek'] != null) {
       const peek = document.createElement('input');
       peek.type = 'text';
-      peek.value = state.props['--dlc-peek'];
+      peek.value = state.props['--cs-peek'];
       peek.addEventListener('input', () => {
-        state.props['--dlc-peek'] = peek.value;
+        state.props['--cs-peek'] = peek.value;
         render();
       });
       colors.append(control('Peek', peek));
     }
     const gap = document.createElement('input');
     gap.type = 'text';
-    gap.value = state.props['--dlc-gap'] ?? '1rem';
+    gap.value = state.props['--cs-gap'] ?? '1rem';
     gap.addEventListener('input', () => {
-      state.props['--dlc-gap'] = gap.value;
+      state.props['--cs-gap'] = gap.value;
       render();
     });
     colors.append(control('Gap', gap));
@@ -1121,7 +1122,7 @@
 
     const beh = document.createElement('div');
     const step = document.createElement('select');
-    // data-step takes a number as of 2026-08-27: how many cards one arrow
+    // data-cs-step takes a number as of 2026-08-27: how many cards one arrow
     // click moves. 'page' is a whole screenful; 'slide' is the old name for 1.
     for (const [v, label] of [
       ['page', 'a full page'],
@@ -1133,12 +1134,12 @@
       const o = document.createElement('option');
       o.value = v;
       o.textContent = label;
-      o.selected = (state.data['data-step'] ?? 'page') === v;
+      o.selected = (state.data['data-cs-step'] ?? 'page') === v;
       step.append(o);
     }
     step.addEventListener('change', () => {
-      if (step.value === 'page') delete state.data['data-step'];
-      else state.data['data-step'] = step.value;
+      if (step.value === 'page') delete state.data['data-cs-step'];
+      else state.data['data-cs-step'] = step.value;
       render();
     });
     beh.append(control('Arrows move', step));
@@ -1254,12 +1255,12 @@
   // Built here rather than read out of the DOM: the markup on disk may carry
   // CRLF, and a stray carriage return inside a pasted tag is a nasty thing to
   // have to debug on someone else's site.
-  const TAGS = ['<link rel="stylesheet" href="/path/dl-carousel.css">', '<script src="/path/dl-carousel.js" defer></script>'].join('\n');
+  const TAGS = ['<link rel="stylesheet" href="/path/custom-slider.css">', '<script src="/path/custom-slider.js" defer></script>'].join('\n');
   $('wb-copy-tags').addEventListener('click', (e) => copyText(e.target, TAGS));
 
   // The engine files, fetched at click time from the very files this page is
   // running - so what lands on the clipboard can never be a stale copy.
-  const ENGINE = { css: '../dist/dl-carousel.css', js: '../dist/dl-carousel.js' };
+  const ENGINE = { css: '../dist/custom-slider.css', js: '../dist/custom-slider.js' };
   const grab = (k) => fetch(ENGINE[k]).then((r) => r.text());
 
   for (const btn of document.querySelectorAll('[data-file]')) {
@@ -1270,13 +1271,13 @@
       if (btn.dataset.act === 'view') {
         const box = $('wb-file-view');
         box.hidden = false;
-        box.querySelector('code').innerHTML = kind === 'css' ? globalThis.DLX.hl.css(text) : globalThis.DLX.hl.js(text);
+        box.querySelector('code').innerHTML = kind === 'css' ? globalThis.CARGO.hl.css(text) : globalThis.CARGO.hl.js(text);
         box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         return;
       }
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([text], { type: kind === 'js' ? 'text/javascript' : 'text/css' }));
-      a.download = `dl-carousel.${kind}`;
+      a.download = `custom-slider.${kind}`;
       a.click();
       URL.revokeObjectURL(a.href);
       flash(btn, 'Downloaded');
@@ -1296,6 +1297,6 @@
     });
     fitWidths();
   };
-  if (globalThis.DLCarousel) boot();
+  if (globalThis.CustomSlider) boot();
   else addEventListener('DOMContentLoaded', boot);
 })();

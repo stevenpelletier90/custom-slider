@@ -7,7 +7,7 @@
 // from the preview.
 
 (() => {
-  const { PATTERNS, renderPattern } = globalThis.DLX;
+  const { PATTERNS, renderPattern } = globalThis.CARGO;
   const grid = document.getElementById('gx-grid');
   if (!grid || !renderPattern) return;
 
@@ -39,7 +39,7 @@
   // The card looks, same treatment. Each one is a real slider rather than a
   // picture of one, so what you see here is what the builder gives you.
   const looksGrid = document.getElementById('gx-looks');
-  const { LOOKS, renderLook } = globalThis.DLX;
+  const { LOOKS, renderLook } = globalThis.CARGO;
   if (looksGrid && LOOKS && renderLook) {
     for (const [id, look] of Object.entries(LOOKS)) {
       const cls = `gl-${id}`;
@@ -69,8 +69,8 @@
   // Init after every example is in the DOM, so each measures a real width.
   // Both grids: a slider left uninitialised is a static row of cards that
   // silently claims the pattern does not scroll.
-  for (const root of document.querySelectorAll('.gx-stage .dl-carousel')) {
-    if (!root.dataset.init) live.push(new globalThis.DLCarousel(root));
+  for (const root of document.querySelectorAll('.gx-stage .cs')) {
+    if (!root.dataset.csInit) live.push(new globalThis.CustomSlider(root));
   }
 
   // The few patterns that need page script get it here too, once each.

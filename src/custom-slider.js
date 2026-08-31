@@ -1,11 +1,11 @@
 /**
  * Custom Slider — dependency-free scroll-snap carousel engine.
  *
- * The CSS (dl-carousel.css) owns layout and physics: the track is a native
+ * The CSS (custom-slider.css) owns layout and physics: the track is a native
  * scroll container with scroll-snap. This file only wires controls,
  * state, autoplay, and the gallery (tabbed) variant onto that.
  *
- * Markup contract (see README): .dl-carousel[data-slider] > .dl-carousel-track > .dl-carousel-slide+
+ * Markup contract (see README): .cs[data-cs] > .cs-track > .cs-slide+
  * Use <ul>/<li> for card carousels (list semantics announce counts),
  * plain <div>s for the gallery variant (slides become tabpanels).
  */
@@ -50,35 +50,35 @@ const ICONS = {
   play: '<svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>',
 };
 
-export class Slider {
+export class CustomSlider {
   constructor(root, options = {}) {
     this.root = root;
-    this.track = root.querySelector('.dl-carousel-track');
+    this.track = root.querySelector('.cs-track');
     if (!this.track) {
-      console.error('[dl-carousel] missing required .dl-carousel-track element in', root);
+      console.error('[custom-slider] missing required .cs-track element in', root);
       return;
     }
-    this.slides = [...this.track.querySelectorAll(':scope > .dl-carousel-slide')];
+    this.slides = [...this.track.querySelectorAll(':scope > .cs-slide')];
     if (!this.slides.length) {
-      console.error('[dl-carousel] .dl-carousel-track has no .dl-carousel-slide children in', root);
+      console.error('[custom-slider] .cs-track has no .cs-slide children in', root);
       return;
     }
 
     this._snapshot = root.innerHTML; // destroy() restores this
-    this.uid = `dlc-${++uidCounter}`;
+    this.uid = `cs-${++uidCounter}`;
     this.opts = this._parseOptions(options);
     this.current = 0;
     this._target = null; // pending goTo destination (rapid clicks)
     this._pointerDown = false;
     this._addedRootAttrs = [];
-    // CSS reserves the thumb-strip space via [data-gallery] — mirror the JS
+    // CSS reserves the thumb-strip space via [data-cs-gallery] — mirror the JS
     // option onto the attribute so manual construction lays out correctly.
-    if (this.opts.gallery) this._setRootAttr('data-gallery', '');
+    if (this.opts.gallery) this._setRootAttr('data-cs-gallery', '');
     // Fade stacks the slides into one grid cell and JS owns which one is
     // visible — so the stacking CSS must key off an attribute only the ENGINE
-    // sets, never the authored data-fade. Keyed off the authored one, a
+    // sets, never the authored data-cs-fade. Keyed off the authored one, a
     // no-JS visitor gets every slide at opacity 0 and the hero disappears.
-    if (this.opts.fade) this._setRootAttr('data-fade-on', '');
+    if (this.opts.fade) this._setRootAttr('data-cs-fade-on', '');
     this._prm = matchMedia('(prefers-reduced-motion: reduce)');
     this._ac = new AbortController();
 
@@ -97,11 +97,11 @@ export class Slider {
     this._listen();
     this._setupAutoplay();
     this._commit();
-    root._dlCarousel = this;
+    root._cs = this;
   }
 
   static autoInit(scope = document) {
-    return [...scope.querySelectorAll('[data-slider]')].filter((el) => !el._dlCarousel && el.dataset.init !== 'manual').map((el) => new Slider(el));
+    return [...scope.querySelectorAll('[data-cs]')].filter((el) => !el._cs && el.dataset.csInit !== 'manual').map((el) => new CustomSlider(el));
   }
 
   /* ---- options ---------------------------------------------------------- */
@@ -109,24 +109,24 @@ export class Slider {
   _parseOptions(js) {
     const d = this.root.dataset;
     const data = {};
-    if (d.autoplay !== undefined) data.autoplay = parseInt(d.autoplay, 10) || 0;
-    if (d.rewind !== undefined) data.rewind = d.rewind !== 'false';
-    if (d.step !== undefined) data.step = +d.step > 0 ? +d.step : d.step === 'slide' ? 'slide' : 'page';
-    if (d.drag !== undefined) data.drag = d.drag !== 'false';
-    if (d.gallery !== undefined) data.gallery = d.gallery !== 'false';
-    if (d.fade !== undefined) data.fade = d.fade !== 'false';
-    if (d.roledescription !== undefined) data.roledescription = d.roledescription;
+    if (d.csAutoplay !== undefined) data.autoplay = parseInt(d.csAutoplay, 10) || 0;
+    if (d.csRewind !== undefined) data.rewind = d.csRewind !== 'false';
+    if (d.csStep !== undefined) data.step = +d.csStep > 0 ? +d.csStep : d.csStep === 'slide' ? 'slide' : 'page';
+    if (d.csDrag !== undefined) data.drag = d.csDrag !== 'false';
+    if (d.csGallery !== undefined) data.gallery = d.csGallery !== 'false';
+    if (d.csFade !== undefined) data.fade = d.csFade !== 'false';
+    if (d.csRoledescription !== undefined) data.roledescription = d.csRoledescription;
     const opts = { ...DEFAULTS, ...data, ...js, labels: { ...DEFAULTS.labels, ...(js.labels || {}) } };
     if (opts.gallery && opts.autoplay) {
-      console.warn('[dl-carousel] autoplay is ignored in gallery mode', this.root);
+      console.warn('[custom-slider] autoplay is ignored in gallery mode', this.root);
       opts.autoplay = 0;
     }
     if (opts.fade && opts.gallery) {
-      console.warn('[dl-carousel] fade is ignored in gallery mode', this.root);
+      console.warn('[custom-slider] fade is ignored in gallery mode', this.root);
       opts.fade = false;
     }
     if (opts.autoplay && !opts.rewind) {
-      console.warn('[dl-carousel] rewind:false is ignored with autoplay', this.root);
+      console.warn('[custom-slider] rewind:false is ignored with autoplay', this.root);
       opts.rewind = true;
     }
     return opts;
@@ -143,7 +143,7 @@ export class Slider {
     if (this.root.tagName !== 'SECTION') this._setRootAttr('role', 'region');
     if (this.opts.roledescription) this._setRootAttr('aria-roledescription', this.opts.roledescription);
     if (!this.root.hasAttribute('aria-label') && !this.root.hasAttribute('aria-labelledby')) {
-      console.warn('[dl-carousel] give the slider an aria-label or aria-labelledby', this.root);
+      console.warn('[custom-slider] give the slider an aria-label or aria-labelledby', this.root);
     }
     if (this.opts.gallery) return; // gallery slides become tabpanels later
     // <ul>/<li> carries the count announcements — but our own CSS sets
@@ -183,10 +183,10 @@ export class Slider {
   _buildControls() {
     const L = this.opts.labels;
     const c = document.createElement('div');
-    c.className = 'dl-carousel-controls';
+    c.className = 'cs-controls';
     if (this.opts.autoplay > 0) {
       // WCAG 2.2.2: a visible pause mechanism, FIRST in the tab sequence.
-      this.pauseBtn = this._btn('dl-carousel-pause', L.pause, ICONS.pause);
+      this.pauseBtn = this._btn('cs-pause', L.pause, ICONS.pause);
       this.pauseBtn.addEventListener(
         'click',
         () => {
@@ -196,7 +196,7 @@ export class Slider {
       );
       c.append(this.pauseBtn);
     }
-    const prev = (this.prevBtn = this._btn('dl-carousel-arrow dl-carousel-arrow--prev', L.prev, ICONS.prev));
+    const prev = (this.prevBtn = this._btn('cs-arrow cs-arrow--prev', L.prev, ICONS.prev));
     prev.addEventListener(
       'click',
       () => {
@@ -205,7 +205,7 @@ export class Slider {
       },
       { signal: this._ac.signal },
     );
-    const next = (this.nextBtn = this._btn('dl-carousel-arrow dl-carousel-arrow--next', L.next, ICONS.next));
+    const next = (this.nextBtn = this._btn('cs-arrow cs-arrow--next', L.next, ICONS.next));
     next.addEventListener(
       'click',
       () => {
@@ -217,7 +217,7 @@ export class Slider {
     c.append(prev, next);
     if (!this.opts.gallery) {
       this.dots = document.createElement('div');
-      this.dots.className = 'dl-carousel-dots';
+      this.dots.className = 'cs-dots';
       this.dots.setAttribute('role', 'group');
       this.dots.setAttribute('aria-label', L.dots);
       c.append(this.dots);
@@ -225,7 +225,7 @@ export class Slider {
     // Terse hidden status ("Slides 4–6 of 12"). Separate region, NOT the
     // track: a live track would announce every card on multi-card moves.
     this.status = document.createElement('div');
-    this.status.className = 'dl-carousel-status dl-carousel-sr-only';
+    this.status.className = 'cs-status cs-sr-only';
     this.status.setAttribute('aria-live', 'polite');
     c.append(this.status);
     // DOM order = tab order: [pause] → prev → next → dots → track.
@@ -248,7 +248,7 @@ export class Slider {
     const r0 = s[0].getBoundingClientRect();
     this.stride = s.length > 1 ? s[1].getBoundingClientRect().left - r0.left : r0.width || 1;
     if (this.stride <= 0) this.stride = r0.width || 1; // LTR assumed (v1)
-    this.perView = Math.max(1, parseInt(getComputedStyle(this.root).getPropertyValue('--dlc-per-view'), 10) || 1);
+    this.perView = Math.max(1, parseInt(getComputedStyle(this.root).getPropertyValue('--cs-per-view'), 10) || 1);
   }
 
   // Index of the slide nearest scroll position x, read from real offsets
@@ -327,7 +327,7 @@ export class Slider {
       this.current = n;
       this._target = null;
       this._updateUI();
-      if (moved) this._emit('dlc:change', { index: n, page: n, slidesInView: 1 });
+      if (moved) this._emit('cs:change', { index: n, page: n, slidesInView: 1 });
       return;
     }
     const t = this.track;
@@ -436,7 +436,7 @@ export class Slider {
       t = this.track;
     let startX = 0,
       startLeft = 0;
-    t.setAttribute('data-draggable', ''); // grab-cursor hook — see the cursor rules in the CSS
+    t.setAttribute('data-cs-draggable', ''); // grab-cursor hook — see the cursor rules in the CSS
     t.addEventListener(
       'pointerdown',
       (e) => {
@@ -448,7 +448,7 @@ export class Slider {
         // Closed hand from the instant the button goes down, not once the drag
         // threshold trips — pressing and holding without moving still has to
         // look grabbed, or the strip feels dead under the cursor.
-        t.setAttribute('data-dragging', '');
+        t.setAttribute('data-cs-dragging', '');
       },
       { signal: sig },
     );
@@ -477,7 +477,7 @@ export class Slider {
       this._dragActive = false;
       // Before the early return: a press that never became a drag still put the
       // closed hand up, so it still has to come back down.
-      t.removeAttribute('data-dragging');
+      t.removeAttribute('data-cs-dragging');
       if (!this._dragMoved) return;
       t.style.userSelect = '';
       // This pointerup reaches the track before the window listener flips
@@ -536,7 +536,7 @@ export class Slider {
     this.current = idx;
     this._updateUI();
     if (changed) {
-      this._emit('dlc:change', { index: idx, page: this._currentPage(), slidesInView: this.perView });
+      this._emit('cs:change', { index: idx, page: this._currentPage(), slidesInView: this.perView });
     }
   }
 
@@ -544,10 +544,10 @@ export class Slider {
     // Everything already fits: one stop means the arrows and dots are controls
     // that cannot do anything. Leaving them is a focus trap for keyboard users
     // and announces a "1 of 1" choice that isn't one. Re-evaluated here rather
-    // than at build time because --dlc-per-view is CSS, so a resize across a
+    // than at build time because --cs-per-view is CSS, so a resize across a
     // breakpoint can make a strip fit (or stop fitting) at any moment.
     const fits = this._stops().length <= 1;
-    this.root.toggleAttribute('data-fits', fits);
+    this.root.toggleAttribute('data-cs-fits', fits);
     if (this.prevBtn) this.prevBtn.hidden = this.nextBtn.hidden = fits;
     if (this.dots) this.dots.hidden = fits;
     this._updateDots();
@@ -590,7 +590,7 @@ export class Slider {
         const from = start + 1,
           to = Math.min(start + this.perView, total);
         const label = this.perView > 1 ? fmt(L.gotoPage, { from, to }) : fmt(L.gotoSlide, { n: from });
-        const b = this._btn('dl-carousel-dot', label, '');
+        const b = this._btn('cs-dot', label, '');
         b.addEventListener(
           'click',
           () => {
@@ -609,7 +609,7 @@ export class Slider {
     if (!this.dots) return;
     const page = this._currentPage();
     [...this.dots.children].forEach((b, i) => {
-      b.classList.toggle('dl-carousel-dot--current', i === page);
+      b.classList.toggle('cs-dot--current', i === page);
       setDisabled(b, i === page);
     });
   }
@@ -702,7 +702,7 @@ export class Slider {
     const L = this.opts.labels;
     this.pauseBtn.setAttribute('aria-label', this.rotating ? L.pause : L.play);
     this.pauseBtn.innerHTML = this.rotating ? ICONS.pause : ICONS.play;
-    if (!first) this._emit(this.rotating ? 'dlc:autoplay-start' : 'dlc:autoplay-stop', {});
+    if (!first) this._emit(this.rotating ? 'cs:autoplay-start' : 'cs:autoplay-stop', {});
   }
 
   /* ---- gallery (APG tabbed carousel) ------------------------------------ */
@@ -713,7 +713,7 @@ export class Slider {
     // Per APG tabbed-carousel: the panels wrapper is a polite live region.
     this.track.setAttribute('aria-live', 'polite');
     const list = document.createElement('div');
-    list.className = 'dl-carousel-thumbs';
+    list.className = 'cs-thumbs';
     list.setAttribute('role', 'tablist');
     list.setAttribute('aria-label', L.thumbs);
     this.tabs = this.slides.map((s, i) => {
@@ -728,7 +728,7 @@ export class Slider {
       // children — the track is one — so the strip announces its photo name
       // instead of an unnamed region. (inert keeps the other panels out.)
       s.tabIndex = 0;
-      const b = this._btn('dl-carousel-thumb', name, '');
+      const b = this._btn('cs-thumb', name, '');
       b.id = `${this.uid}-tab-${i}`;
       b.setAttribute('role', 'tab');
       b.setAttribute('aria-controls', s.id);
@@ -772,13 +772,13 @@ export class Slider {
       { signal: sig },
     );
     // The strip scrolls with its scrollbar hidden — expose "more thumbs this
-    // way" via data-overflow so the CSS can fade the clipped edge instead of
+    // way" via data-cs-overflow so the CSS can fade the clipped edge instead of
     // leaving thumbnails looking sliced off (mobile especially).
     this._syncThumbFade = () => {
       const max = list.scrollWidth - list.clientWidth - 1;
       const start = list.scrollLeft > 0,
         end = list.scrollLeft < max;
-      list.setAttribute('data-overflow', start && end ? 'both' : end ? 'end' : start ? 'start' : 'none');
+      list.setAttribute('data-cs-overflow', start && end ? 'both' : end ? 'end' : start ? 'start' : 'none');
     };
     list.addEventListener('scroll', this._syncThumbFade, { passive: true, signal: sig });
     this.root.append(list);
@@ -824,7 +824,7 @@ export class Slider {
 
   destroy() {
     if (!this._ac) return;
-    this._emit('dlc:destroy', {});
+    this._emit('cs:destroy', {});
     this._ac.abort();
     clearInterval(this._timer);
     clearTimeout(this._debounce);
@@ -833,6 +833,6 @@ export class Slider {
     this._io?.disconnect();
     this.root.innerHTML = this._snapshot;
     for (const a of this._addedRootAttrs) this.root.removeAttribute(a);
-    delete this.root._dlCarousel;
+    delete this.root._cs;
   }
 }

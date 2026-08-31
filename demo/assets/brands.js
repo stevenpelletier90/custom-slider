@@ -648,7 +648,7 @@
   // 140px card - narrower than a cutout with a name under it can be.
   // Horizontal space a look takes before any card is drawn. The cutout tile
   // reserves the arrow gutter on both sides (--strip-pad-x is one arrow plus
-  // 0.25rem, and --dlc-arrow-size defaults to 44px), which is 96px that never
+  // 0.25rem, and --cs-arrow-size defaults to 44px), which is 96px that never
   // belongs to a card. Leaving it out of the clamp is what let Acura's real
   // 5-across ladder through at 768px as a 134px card - measured in the browser,
   // where the workbench's own fit warning caught it.
@@ -681,5 +681,5 @@
     if (list) b.models = list;
   }
 
-  globalThis.DLX = Object.assign(globalThis.DLX || {}, { BRANDS, perViewFor, TIER_BOX, CHROME, MARGIN });
+  globalThis.CARGO = Object.assign(globalThis.CARGO || {}, { BRANDS, perViewFor, TIER_BOX, CHROME, MARGIN });
 })();

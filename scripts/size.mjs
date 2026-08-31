@@ -12,7 +12,7 @@
 // Raised to 6.5 KB on 2026-08-27, again for accessibility. A carousel whose
 // slides all fit still rendered both arrows and a dot: two focusable controls
 // that do nothing, and a dot group announcing a one-of-one choice. Because
-// --dlc-per-view is CSS, whether a strip fits changes at any resize, so the
+// --cs-per-view is CSS, whether a strip fits changes at any resize, so the
 // check has to live in _updateUI and cost real bytes (that, plus the CSS rule
 // letting [hidden] beat the controls' own display values, came to 49 B). The
 // alternative was shipping a known keyboard and screen-reader defect to stay
@@ -24,7 +24,7 @@ import { readFileSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 
 const BUDGET = 6656;
-const files = ['dist/dl-carousel.js', 'dist/dl-carousel.css'];
+const files = ['dist/custom-slider.js', 'dist/custom-slider.css'];
 let total = 0;
 for (const f of files) {
   const gz = gzipSync(readFileSync(f), { level: 9 }).length;

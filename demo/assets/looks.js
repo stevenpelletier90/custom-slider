@@ -33,7 +33,7 @@ const LOOKS = {
       '--strip-pad': '0px',
       // Reserves the gutter the arrows sit in. Without it transparent arrows
       // overlay the vehicles instead of standing beside them.
-      '--strip-pad-x': 'calc(var(--dlc-arrow-size) + 0.25rem)',
+      '--strip-pad-x': 'calc(var(--cs-arrow-size) + 0.25rem)',
       '--name-color': '#222',
       '--name-size': '1rem',
       '--name-weight': '600',
@@ -49,17 +49,17 @@ const LOOKS = {
       // colour and you want the plate to read as a plate.
       '--plate-pad': '6% 6% 1%',
     },
-    css: `.dlx { background: var(--strip-bg); padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); }
-@media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; padding-inline: 0; } }
-@media (max-width: 380px) { .dlx { --dlc-per-view: 1; } }
-.dlx-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
-.dlx-card img { box-sizing: border-box; inline-size: 100%; block-size: auto; padding: var(--plate-pad); aspect-ratio: var(--img-aspect); object-fit: contain; background: var(--plate-bg); filter: var(--img-filter); transition: filter 0.2s, transform 0.25s ease; }
-.dlx-card:hover img { filter: none; }
-.dlx-name { order: var(--name-order); margin: 0.4rem 0 0; line-height: 1.35; font-size: var(--name-size); font-weight: var(--name-weight); text-transform: var(--name-case); letter-spacing: var(--name-tracking); color: var(--name-color); }
-.dlx-sub { display: block; margin-block-start: 0.15rem; font-size: 0.8rem; line-height: 1.35; color: #5f6368; }`,
-    markup: (m) => `<a class="dlx-card" href="${m.href}">
+    css: `%root% { background: var(--strip-bg); padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); }
+@media (max-width: 600px) { %root% { --cs-arrow-size: 36px; padding-inline: 0; } }
+@media (max-width: 380px) { %root% { --cs-per-view: 1; } }
+.cargo-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
+.cargo-card img { box-sizing: border-box; inline-size: 100%; block-size: auto; padding: var(--plate-pad); aspect-ratio: var(--img-aspect); object-fit: contain; background: var(--plate-bg); filter: var(--img-filter); transition: filter 0.2s, transform 0.25s ease; }
+.cargo-card:hover img { filter: none; }
+.cargo-name { order: var(--name-order); margin: 0.4rem 0 0; line-height: 1.35; font-size: var(--name-size); font-weight: var(--name-weight); text-transform: var(--name-case); letter-spacing: var(--name-tracking); color: var(--name-color); }
+.cargo-sub { display: block; margin-block-start: 0.15rem; font-size: 0.8rem; line-height: 1.35; color: #5f6368; }`,
+    markup: (m) => `<a class="cargo-card" href="${m.href}">
   <img src="${m.img}" width="${m.w ?? 320}" height="${m.h ?? 240}" alt="${m.alt}" loading="lazy" decoding="async">
-  <p class="dlx-name">${m.name}</p>${m.sub ? `\n  <small class="dlx-sub">${m.sub}</small>` : ''}
+  <p class="cargo-name">${m.name}</p>${m.sub ? `\n  <small class="cargo-sub">${m.sub}</small>` : ''}
 </a>`,
   },
 
@@ -81,27 +81,27 @@ const LOOKS = {
       '--strip-pad': '0px',
       // Reserves the gutter the arrows sit in. Without it a transparent
       // arrow lands on the card's own text instead of beside it.
-      '--strip-pad-x': 'calc(var(--dlc-arrow-size) + 0.4rem)',
+      '--strip-pad-x': 'calc(var(--cs-arrow-size) + 0.4rem)',
       '--card-bg': '#ffffff',
       '--card-radius': '10px',
       '--name-color': '#1c1f23',
       '--name-size': '1rem',
       '--price-color': '#16324f',
     },
-    css: `.dlx { background: var(--strip-bg); padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); }
-@media (max-width: 600px) { .dlx { --dlc-arrow-size: 36px; } }
-.dlx-card { position: relative; display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: var(--card-bg); border: 1px solid #e2e5ea; border-radius: var(--card-radius); }
-.dlx-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; transition: transform 0.3s ease; }
-.dlx-card:hover img { transform: scale(1.04); }
-.dlx-body { display: block; padding: 0.85rem 0.9rem 1rem; line-height: 1.4; }
-.dlx-name { display: block; margin: 0; font-size: var(--name-size); font-weight: 700; line-height: 1.35; color: var(--name-color); }
-.dlx-sub { display: block; margin-block-start: 0.2rem; font-size: 0.85rem; line-height: 1.4; color: var(--price-color); }`,
+    css: `%root% { background: var(--strip-bg); padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); }
+@media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
+.cargo-card { position: relative; display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: var(--card-bg); border: 1px solid #e2e5ea; border-radius: var(--card-radius); }
+.cargo-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; transition: transform 0.3s ease; }
+.cargo-card:hover img { transform: scale(1.04); }
+.cargo-body { display: block; padding: 0.85rem 0.9rem 1rem; line-height: 1.4; }
+.cargo-name { display: block; margin: 0; font-size: var(--name-size); font-weight: 700; line-height: 1.35; color: var(--name-color); }
+.cargo-sub { display: block; margin-block-start: 0.2rem; font-size: 0.85rem; line-height: 1.4; color: var(--price-color); }`,
     // One stretched link over the whole card: the anchor IS the card, so there
     // is no nested link and nothing announces twice.
-    markup: (m) => `<a class="dlx-card" href="${m.href}">
+    markup: (m) => `<a class="cargo-card" href="${m.href}">
   <img src="${m.img}" width="${m.w ?? 1200}" height="${m.h ?? 900}" alt="${m.alt}" loading="lazy" decoding="async">
-  <span class="dlx-body">
-    <span class="dlx-name">${m.name}</span>${m.sub ? `\n    <small class="dlx-sub">${m.sub}</small>` : ''}
+  <span class="cargo-body">
+    <span class="cargo-name">${m.name}</span>${m.sub ? `\n    <small class="cargo-sub">${m.sub}</small>` : ''}
   </span>
 </a>`,
   },
@@ -127,19 +127,19 @@ const LOOKS = {
       '--name-size': '1rem',
       '--name-case': 'uppercase',
     },
-    css: `.dlx { background: var(--strip-bg); padding-block-start: var(--strip-pad); }
-.dlx-card { display: block; color: var(--name-color); text-align: center; text-decoration: none; }
-.dlx-mark { display: block; margin-block-end: 0.6rem; font-size: var(--mark-size); font-style: italic; font-weight: 700; line-height: 1.2; letter-spacing: 0.06em; }
-.dlx-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.25s ease; }
-.dlx-name { margin: 0.5rem 0 0; font-size: var(--name-size); font-weight: 600; line-height: 1.35; text-transform: var(--name-case); letter-spacing: 0.1em; }`,
+    css: `%root% { background: var(--strip-bg); padding-block-start: var(--strip-pad); }
+.cargo-card { display: block; color: var(--name-color); text-align: center; text-decoration: none; }
+.cargo-mark { display: block; margin-block-end: 0.6rem; font-size: var(--mark-size); font-style: italic; font-weight: 700; line-height: 1.2; letter-spacing: 0.06em; }
+.cargo-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.25s ease; }
+.cargo-name { margin: 0.5rem 0 0; font-size: var(--name-size); font-weight: 600; line-height: 1.35; text-transform: var(--name-case); letter-spacing: 0.1em; }`,
     // No `mark` means no wordmark element - falling back to the model name
     // printed it twice in every card.
     markup: (m) =>
       [
-        `<a class="dlx-card" href="${m.href}">`,
-        m.mark ? `  <span class="dlx-mark">${m.mark}</span>` : null,
+        `<a class="cargo-card" href="${m.href}">`,
+        m.mark ? `  <span class="cargo-mark">${m.mark}</span>` : null,
         `  <img src="${m.img}" width="${m.w ?? 320}" height="${m.h ?? 240}" alt="${m.alt}" loading="lazy" decoding="async">`,
-        `  <p class="dlx-name">${m.name}</p>`,
+        `  <p class="cargo-name">${m.name}</p>`,
         `</a>`,
       ]
         .filter((l) => l !== null)
@@ -165,27 +165,27 @@ const LOOKS = {
       '--pill-bg': '#fff',
       '--pill-fg': '#222',
     },
-    css: `.dlx-card { display: flex; overflow: hidden; color: var(--card-fg); text-decoration: none; background: var(--card-bg); border-radius: 8px; }
-.dlx-card img { flex: 0 0 50%; inline-size: 50%; aspect-ratio: 1; object-fit: cover; }
-.dlx-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; min-inline-size: 0; padding: 28px; }
-.dlx-sub { font-size: 0.85rem; color: #d9d9d9; }
-.dlx-name { display: block; margin: 0; font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
-.dlx-blurb { font-size: 0.95rem; line-height: 1.4; color: #d9d9d9; }
-.dlx-pill { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: var(--pill-fg); background: var(--pill-bg); border-radius: 999px; }
-@media (max-width: 600px) { .dlx-copy { gap: 0.35rem; padding: 1rem; } .dlx-name { font-size: 1.15rem; } .dlx-pill { padding: 0.45rem 1rem; font-size: 0.8rem; white-space: nowrap; } }
-@media (max-width: 480px) { .dlx-card { flex-direction: column; } .dlx-card img { flex: none; inline-size: 100%; aspect-ratio: 16 / 9; } }`,
+    css: `.cargo-card { display: flex; overflow: hidden; color: var(--card-fg); text-decoration: none; background: var(--card-bg); border-radius: 8px; }
+.cargo-card img { flex: 0 0 50%; inline-size: 50%; aspect-ratio: 1; object-fit: cover; }
+.cargo-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; min-inline-size: 0; padding: 28px; }
+.cargo-sub { font-size: 0.85rem; color: #d9d9d9; }
+.cargo-name { display: block; margin: 0; font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
+.cargo-blurb { font-size: 0.95rem; line-height: 1.4; color: #d9d9d9; }
+.cargo-pill { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: var(--pill-fg); background: var(--pill-bg); border-radius: 999px; }
+@media (max-width: 600px) { .cargo-copy { gap: 0.35rem; padding: 1rem; } .cargo-name { font-size: 1.15rem; } .cargo-pill { padding: 0.45rem 1rem; font-size: 0.8rem; white-space: nowrap; } }
+@media (max-width: 480px) { .cargo-card { flex-direction: column; } .cargo-card img { flex: none; inline-size: 100%; aspect-ratio: 16 / 9; } }`,
     // An absent field emits NO element. Rendering an empty <span> left the copy
     // column with a blank row, and the pill's `margin-block-start: auto` then
     // pushed it to the bottom of a card that looked like it had lost its text.
     markup: (m) =>
       [
-        `<a class="dlx-card" href="${m.href}">`,
+        `<a class="cargo-card" href="${m.href}">`,
         `  <img src="${m.img}" width="${m.w ?? 800}" height="${m.h ?? 800}" alt="${m.alt}" loading="lazy" decoding="async">`,
-        `  <span class="dlx-copy">`,
-        m.sub ? `    <small class="dlx-sub">${m.sub}</small>` : null,
-        `    <span class="dlx-name">${m.name}</span>`,
-        m.blurb ? `    <span class="dlx-blurb">${m.blurb}</span>` : null,
-        `    <span class="dlx-pill">Shop Now</span>`,
+        `  <span class="cargo-copy">`,
+        m.sub ? `    <small class="cargo-sub">${m.sub}</small>` : null,
+        `    <span class="cargo-name">${m.name}</span>`,
+        m.blurb ? `    <span class="cargo-blurb">${m.blurb}</span>` : null,
+        `    <span class="cargo-pill">Shop Now</span>`,
         `  </span>`,
         `</a>`,
       ]
@@ -212,15 +212,15 @@ const LOOKS = {
       '--cta-fg': '#14161b',
       '--img-aspect': '3 / 5',
     },
-    css: `.dlx { background: var(--strip-bg); padding-block-start: 1.5rem; padding-inline: 1.5rem; }
-.dlx-card { display: block; color: var(--card-fg); text-align: center; text-decoration: none; }
-.dlx-name { margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 700; line-height: 1.3; text-align: start; text-transform: uppercase; letter-spacing: 0.08em; }
-.dlx-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); object-fit: cover; }
-.dlx-cta { display: inline-block; margin-block-start: 0.75rem; padding: 0.6rem 1.4rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--cta-fg); background: var(--cta-bg); }`,
-    markup: (m) => `<a class="dlx-card" href="${m.href}">
-  <p class="dlx-name">${m.name}</p>
+    css: `%root% { background: var(--strip-bg); padding-block-start: 1.5rem; padding-inline: 1.5rem; }
+.cargo-card { display: block; color: var(--card-fg); text-align: center; text-decoration: none; }
+.cargo-name { margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 700; line-height: 1.3; text-align: start; text-transform: uppercase; letter-spacing: 0.08em; }
+.cargo-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); object-fit: cover; }
+.cargo-cta { display: inline-block; margin-block-start: 0.75rem; padding: 0.6rem 1.4rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--cta-fg); background: var(--cta-bg); }`,
+    markup: (m) => `<a class="cargo-card" href="${m.href}">
+  <p class="cargo-name">${m.name}</p>
   <img src="${m.img}" width="${m.w ?? 320}" height="${m.h ?? 533}" alt="${m.alt}" loading="lazy" decoding="async">
-  <span class="dlx-cta">Browse inventory</span>
+  <span class="cargo-cta">Browse inventory</span>
 </a>`,
   },
 
@@ -241,12 +241,12 @@ const LOOKS = {
       '--card-bg': '#253a5e',
       '--card-fg': '#fff',
     },
-    css: `.dlx { padding-block-start: 1.5rem; padding-inline: 1rem; background: var(--strip-bg); }
-.dlx .dl-carousel-track { padding-block-end: 1.5rem; }
-@media (max-width: 460px) { .dlx { --dlc-per-view: 1; padding-block-start: 1rem; padding-inline: 0.5rem; } .dlx .dl-carousel-track { padding-block-end: 1rem; } }
-.dlx-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; color: var(--card-fg); background: var(--card-bg); border: 1px solid rgb(255 255 255 / 7%); border-radius: 10px; transition: background 0.2s; }
-.dlx-card img { inline-size: 75%; block-size: auto; object-fit: contain; }`,
-    markup: (m) => `<a class="dlx-card" href="${m.href}" aria-label="${m.alt}">
+    css: `%root% { padding-block-start: 1.5rem; padding-inline: 1rem; background: var(--strip-bg); }
+%root% .cs-track { padding-block-end: 1.5rem; }
+@media (max-width: 460px) { %root% { --cs-per-view: 1; padding-block-start: 1rem; padding-inline: 0.5rem; } %root% .cs-track { padding-block-end: 1rem; } }
+.cargo-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; color: var(--card-fg); background: var(--card-bg); border: 1px solid rgb(255 255 255 / 7%); border-radius: 10px; transition: background 0.2s; }
+.cargo-card img { inline-size: 75%; block-size: auto; object-fit: contain; }`,
+    markup: (m) => `<a class="cargo-card" href="${m.href}" aria-label="${m.alt}">
   <img src="${m.img}" width="${m.w ?? 240}" height="${m.h ?? 160}" alt="" loading="lazy" decoding="async">
 </a>`,
   },
@@ -268,20 +268,20 @@ const LOOKS = {
       '--cta-bg': '#c8102e',
       '--cta-fg': '#fff',
     },
-    css: `.dlx { padding-block-start: 1.5rem; padding-inline: 1rem; background: var(--strip-bg); }
-.dlx-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.25rem; text-align: center; text-decoration: none; background: var(--card-bg); border-radius: 10px; }
-.dlx-card img { inline-size: 55%; block-size: auto; object-fit: contain; }
-.dlx-name { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; font-weight: 700; line-height: 1.3; color: #222; }
-.dlx-card p { margin: 0 0 0.9rem; font-size: 0.9rem; color: #5f6368; }
-.dlx-cta { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.8rem; font-weight: 700; color: var(--cta-fg); background: var(--cta-bg); border-radius: 999px; }`,
+    css: `%root% { padding-block-start: 1.5rem; padding-inline: 1rem; background: var(--strip-bg); }
+.cargo-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.25rem; text-align: center; text-decoration: none; background: var(--card-bg); border-radius: 10px; }
+.cargo-card img { inline-size: 55%; block-size: auto; object-fit: contain; }
+.cargo-name { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; font-weight: 700; line-height: 1.3; color: #222; }
+.cargo-card p { margin: 0 0 0.9rem; font-size: 0.9rem; color: #5f6368; }
+.cargo-cta { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.8rem; font-weight: 700; color: var(--cta-fg); background: var(--cta-bg); border-radius: 999px; }`,
     // An absent field emits NO element - see the note on the split look.
     markup: (m) =>
       [
-        `<a class="dlx-card" href="${m.href}">`,
+        `<a class="cargo-card" href="${m.href}">`,
         `  <img src="${m.img}" width="${m.w ?? 240}" height="${m.h ?? 160}" alt="${m.alt}" loading="lazy" decoding="async">`,
-        `  <span class="dlx-name">${m.name}</span>`,
+        `  <span class="cargo-name">${m.name}</span>`,
         m.sub ? `  <p>${m.sub}</p>` : null,
-        `  <span class="dlx-cta">Visit</span>`,
+        `  <span class="cargo-cta">Visit</span>`,
         `</a>`,
       ]
         .filter((l) => l !== null)
@@ -312,4 +312,4 @@ const OLD_SKINS = [
 
 // Classic script, not an ES module, on purpose: modules are blocked over
 // file://, and this demo has always had to work when opened by double-click.
-globalThis.DLX = { LOOKS, OLD_SKINS };
+globalThis.CARGO = { LOOKS, OLD_SKINS };

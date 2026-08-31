@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>dl-carousel — build a slider</title>
+    <title>Custom Slider — build a slider</title>
     <meta name="description" content="Pick a slider pattern, set it up, and copy code generated from the same settings. Seventeen patterns and 32 brand presets over one dependency-free engine." />
     <link
       rel="icon"
@@ -16,20 +16,20 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" href="../dist/dl-carousel.css" />
+    <link rel="stylesheet" href="../dist/custom-slider.css" />
     <link rel="stylesheet" href="assets/ui.css" />
 
     <!-- Set before first paint so a dark-mode reload never flashes white. -->
     <script>
       try {
-        const t = localStorage.getItem('dlx-theme');
+        const t = localStorage.getItem('cs-theme');
         if (t) document.documentElement.dataset.theme = t;
       } catch {
         /* private mode: fall through to the system preference */
       }
     </script>
 
-    <script src="../dist/dl-carousel.js" defer></script>
+    <script src="../dist/custom-slider.js" defer></script>
     <script src="assets/looks.js" defer></script>
     <script src="assets/brands.js" defer></script>
     <!-- Demo image -> platform path, so the code panel emits sources that
@@ -47,7 +47,7 @@
   <body>
     <header class="ui-head">
       <div class="ui-head-in">
-        <h1 class="ui-brand">dl-carousel <span id="ui-size">no dependencies</span></h1>
+        <h1 class="ui-brand">Custom Slider <span id="ui-size">no dependencies</span></h1>
         <nav class="ui-tabs" aria-label="Sections">
           <a href="patterns.html">Patterns</a>
           <a href="index.html" aria-current="page">Build</a>
@@ -113,8 +113,8 @@
           <div>
             <h4>Link to the files</h4>
             <p>Best choice — every page that links them shares one cached copy.</p>
-            <pre class="ui-tags"><code>&lt;link rel="stylesheet" href="/path/dl-carousel.css"&gt;
-&lt;script src="/path/dl-carousel.js" defer&gt;&lt;/script&gt;</code></pre>
+            <pre class="ui-tags"><code>&lt;link rel="stylesheet" href="/path/custom-slider.css"&gt;
+&lt;script src="/path/custom-slider.js" defer&gt;&lt;/script&gt;</code></pre>
             <div class="ui-where">
               <b>Where these go</b>
               The <code>&lt;link&gt;</code> in <strong>Style Only → Head Section</strong>, the <code>&lt;script&gt;</code> in <strong>Body Section, Bottom</strong>. Swap <code>/path/</code> for
@@ -127,13 +127,13 @@
             <h4>Or paste the code</h4>
             <p>For a site where you can’t upload files. Fetched live from this page, so it can never be a stale copy.</p>
             <div class="ui-file">
-              <code>dl-carousel.css</code>
+              <code>custom-slider.css</code>
               <button type="button" class="ui-btn" data-file="css" data-act="copy">Copy</button>
               <button type="button" class="ui-btn" data-file="css" data-act="view">View</button>
               <button type="button" class="ui-btn" data-file="css" data-act="download">Download</button>
             </div>
             <div class="ui-file">
-              <code>dl-carousel.js</code>
+              <code>custom-slider.js</code>
               <button type="button" class="ui-btn" data-file="js" data-act="copy">Copy</button>
               <button type="button" class="ui-btn" data-file="js" data-act="view">View</button>
               <button type="button" class="ui-btn" data-file="js" data-act="download">Download</button>

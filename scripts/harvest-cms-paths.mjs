@@ -23,7 +23,7 @@ const ROOT = new URL('..', import.meta.url).pathname.replace(/^\/([A-Za-z]:)/, '
 const OEM = join(ROOT, 'demo', 'img', 'oem');
 // A classic script, not JSON: the demo has to open by double-click, and a
 // fetch() of a .json file is blocked over file://. Same reason every other
-// demo asset hangs off globalThis.DLX.
+// demo asset hangs off globalThis.CARGO.
 const OUT = join(ROOT, 'demo', 'assets', 'cms-paths.js');
 
 const UA = 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/140.0 Safari/537.36';
@@ -387,5 +387,5 @@ const banner = [
   `// ${matched.length - named.size - libCount} of ${files.length} cutouts byte-proved, ${named.size} name-matched, ${libCount} library photos.`,
   `// Harvested ${new Date().toISOString().slice(0, 10)} by re-running the script above.`,
 ].join('\n');
-await writeFile(OUT, `${banner}\n\nglobalThis.DLX = Object.assign(globalThis.DLX || {}, {\n  CMS: {\n${entries}\n  },\n});\n`);
+await writeFile(OUT, `${banner}\n\nglobalThis.CARGO = Object.assign(globalThis.CARGO || {}, {\n  CMS: {\n${entries}\n  },\n});\n`);
 console.log(`\nwrote ${OUT}`);

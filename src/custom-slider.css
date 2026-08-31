@@ -1,52 +1,52 @@
 /* ==========================================================================
-   Custom Slider — dl-carousel.css
+   Custom Slider — custom-slider.css
    The CSS owns layout AND physics: the track is a native scroll container
    with scroll-snap, so the strip works (swipe, scroll, snap) before any JS
    runs. JS only adds controls into space this file has already reserved.
-   Every knob is a --dlc-* custom property; override them on .dl-carousel or a wrapper.
+   Every knob is a --cs-* custom property; override them on .cs or a wrapper.
    ========================================================================== */
 
-.dl-carousel {
+.cs {
   /* ---- knobs ---------------------------------------------------------- */
-  --dlc-per-view: 1; /* slides visible at once (integer; set per breakpoint) */
-  --dlc-gap: 1rem; /* space between slides */
-  --dlc-peek: 0px; /* sliver of next slide visible at the edges */
-  --dlc-arrow-size: 44px; /* prev/next tap target */
-  --dlc-arrow-fg: #fff;
-  --dlc-arrow-bg: rgb(0 0 0 / 55%);
-  --dlc-arrow-fg-hover: #fff;
-  --dlc-arrow-bg-hover: rgb(0 0 0 / 80%);
-  --dlc-dot-size: 12px;
-  --dlc-dot-fg: #757575; /* ≥3:1 on white (WCAG 1.4.11) */
-  --dlc-dot-current: #333;
-  --dlc-controls-space: 2.5rem; /* reserved dot-row height — keeps CLS at 0 */
-  --dlc-thumb-w: 88px;
-  --dlc-thumb-h: 56px;
-  --dlc-focus: #1a5fb4;
-  --dlc-fade-ms: 500ms; /* crossfade duration in fade mode */
+  --cs-per-view: 1; /* slides visible at once (integer; set per breakpoint) */
+  --cs-gap: 1rem; /* space between slides */
+  --cs-peek: 0px; /* sliver of next slide visible at the edges */
+  --cs-arrow-size: 44px; /* prev/next tap target */
+  --cs-arrow-fg: #fff;
+  --cs-arrow-bg: rgb(0 0 0 / 55%);
+  --cs-arrow-fg-hover: #fff;
+  --cs-arrow-bg-hover: rgb(0 0 0 / 80%);
+  --cs-dot-size: 12px;
+  --cs-dot-fg: #757575; /* ≥3:1 on white (WCAG 1.4.11) */
+  --cs-dot-current: #333;
+  --cs-controls-space: 2.5rem; /* reserved dot-row height — keeps CLS at 0 */
+  --cs-thumb-w: 88px;
+  --cs-thumb-h: 56px;
+  --cs-focus: #1a5fb4;
+  --cs-fade-ms: 500ms; /* crossfade duration in fade mode */
 
   /* Shared duration/easing for every control's state change. Deliberately a
      property LIST at each use site, never `transition: all`: `all` also
      animates layout and scroll-related properties, which fights the snap
      container and janks the strip mid-gesture. */
-  --dlc-transition: 250ms ease-in-out;
+  --cs-transition: 250ms ease-in-out;
 
   position: relative;
 
   /* Dots (or the gallery thumb strip) are injected later, absolutely
      positioned into this reserved space, so JS init shifts nothing. */
-  padding-bottom: var(--dlc-controls-space);
+  padding-bottom: var(--cs-controls-space);
 }
 
-.dl-carousel[data-gallery] {
-  --dlc-controls-space: calc(var(--dlc-thumb-h) + 1rem);
+.cs[data-cs-gallery] {
+  --cs-controls-space: calc(var(--cs-thumb-h) + 1rem);
 }
 
-.dl-carousel-track {
+.cs-track {
   position: relative; /* slide offsets measured against the track */
   display: flex;
-  gap: var(--dlc-gap);
-  padding: 0 var(--dlc-peek);
+  gap: var(--cs-gap);
+  padding: 0 var(--cs-peek);
   margin: 0;
   overflow-x: auto;
 
@@ -56,7 +56,7 @@
 
   /* Snap on the track only — never the root scroller. */
   scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--dlc-peek);
+  scroll-padding-inline: var(--cs-peek);
 
   /* Scrollbar hidden: arrows, dots, keyboard, and the peek remain as
      affordances. NEVER set scroll-behavior here — Safari would hijack
@@ -64,28 +64,28 @@
   scrollbar-width: none;
 }
 
-.dl-carousel-track::-webkit-scrollbar {
+.cs-track::-webkit-scrollbar {
   display: none;
 }
 
-/* Cursor cues for mouse drag. JS marks a drag-enabled track data-draggable at
-   init and data-dragging only while a drag is live. Both rules must reach
+/* Cursor cues for mouse drag. JS marks a drag-enabled track data-cs-draggable at
+   init and data-cs-dragging only while a drag is live. Both rules must reach
    every child: links carry their own pointer cursor, so a cursor set on the
    track alone never shows the hand over the cards themselves — and the cards
    cover most of the strip. */
-.dl-carousel-track[data-draggable],
-.dl-carousel-track[data-draggable] * {
+.cs-track[data-cs-draggable],
+.cs-track[data-cs-draggable] * {
   cursor: grab;
 }
 
-.dl-carousel-track[data-dragging],
-.dl-carousel-track[data-dragging] * {
+.cs-track[data-cs-dragging],
+.cs-track[data-cs-dragging] * {
   cursor: grabbing !important;
 }
 
-.dl-carousel-slide {
+.cs-slide {
   /* Explicit flex basis — Safari mis-sizes snap items without one. */
-  flex: 0 0 calc((100% - (var(--dlc-per-view) - 1) * var(--dlc-gap)) / var(--dlc-per-view));
+  flex: 0 0 calc((100% - (var(--cs-per-view) - 1) * var(--cs-gap)) / var(--cs-per-view));
   scroll-snap-align: start;
 
   /* scroll-snap-stop is deliberately left at its initial `normal`: 'always'
@@ -93,7 +93,7 @@
      initial value shipped bytes for nothing, so the note carries the intent. */
 }
 
-.dl-carousel-slide img {
+.cs-slide img {
   display: block;
   max-inline-size: 100%;
   block-size: auto;
@@ -101,52 +101,52 @@
 
 /* ---- generated controls (JS creates these; CSS already reserved room) -- */
 
-.dl-carousel-arrow:focus-visible,
-.dl-carousel-pause:focus-visible,
-.dl-carousel-dot:focus-visible,
-.dl-carousel-thumb:focus-visible,
-.dl-carousel-track:focus-visible {
-  outline: 3px solid var(--dlc-focus);
+.cs-arrow:focus-visible,
+.cs-pause:focus-visible,
+.cs-dot:focus-visible,
+.cs-thumb:focus-visible,
+.cs-track:focus-visible {
+  outline: 3px solid var(--cs-focus);
   outline-offset: 2px;
 }
 
 /* When every slide already fits, the engine hides the arrows and dots. Their
    own display rules would otherwise beat [hidden]'s UA display:none. */
-.dl-carousel [hidden] {
+.cs [hidden] {
   display: none;
 }
 
-.dl-carousel-arrow {
+.cs-arrow {
   position: absolute;
-  top: calc((100% - var(--dlc-controls-space)) / 2);
+  top: calc((100% - var(--cs-controls-space)) / 2);
   z-index: 1;
   display: grid;
   place-items: center;
-  inline-size: var(--dlc-arrow-size);
-  block-size: var(--dlc-arrow-size);
-  color: var(--dlc-arrow-fg);
+  inline-size: var(--cs-arrow-size);
+  block-size: var(--cs-arrow-size);
+  color: var(--cs-arrow-fg);
   cursor: pointer;
-  background: var(--dlc-arrow-bg);
+  background: var(--cs-arrow-bg);
   border: 0;
   border-radius: 50%;
   transform: translateY(-50%);
 }
 
-.dl-carousel-arrow--prev {
+.cs-arrow--prev {
   inset-inline-start: 0.5rem;
 }
 
-.dl-carousel-arrow--next {
+.cs-arrow--next {
   inset-inline-end: 0.5rem;
 }
 
 /* rewind:false parks the end arrows on aria-disabled (still focusable) */
-.dl-carousel-arrow[aria-disabled="true"] {
+.cs-arrow[aria-disabled="true"] {
   cursor: default;
   opacity: 0.35;
 }
 
-.dl-carousel-pause {
+.cs-pause {
   position: absolute;
   inset-block-start: 0.5rem;
   inset-inline-end: 0.5rem;
@@ -155,14 +155,14 @@
   place-items: center;
   inline-size: 36px;
   block-size: 36px;
-  color: var(--dlc-arrow-fg);
+  color: var(--cs-arrow-fg);
   cursor: pointer;
-  background: var(--dlc-arrow-bg);
+  background: var(--cs-arrow-bg);
   border: 0;
   border-radius: 50%;
 }
 
-.dl-carousel-dots {
+.cs-dots {
   position: absolute;
   inset-block-end: 0;
   inset-inline: 0;
@@ -171,7 +171,7 @@
   justify-content: center;
 }
 
-.dl-carousel-dot {
+.cs-dot {
   display: grid;
   place-items: center;
 
@@ -184,81 +184,81 @@
   border: 0;
 }
 
-.dl-carousel-dot::after {
-  inline-size: var(--dlc-dot-size);
-  block-size: var(--dlc-dot-size);
+.cs-dot::after {
+  inline-size: var(--cs-dot-size);
+  block-size: var(--cs-dot-size);
   content: "";
-  background: var(--dlc-dot-fg);
+  background: var(--cs-dot-fg);
   border-radius: 50%;
 }
 
-.dl-carousel-dot--current::after {
-  background: var(--dlc-dot-current);
+.cs-dot--current::after {
+  background: var(--cs-dot-current);
 }
 
 /* ---- hover / motion ---------------------------------------------------- */
 
 /* Grouped so the property list ships once instead of four times. */
-.dl-carousel-arrow,
-.dl-carousel-pause,
-.dl-carousel-dot::after,
-.dl-carousel-thumb {
+.cs-arrow,
+.cs-pause,
+.cs-dot::after,
+.cs-thumb {
   transition:
-    color var(--dlc-transition),
-    background-color var(--dlc-transition),
-    border-color var(--dlc-transition),
-    opacity var(--dlc-transition),
-    transform var(--dlc-transition);
+    color var(--cs-transition),
+    background-color var(--cs-transition),
+    border-color var(--cs-transition),
+    opacity var(--cs-transition),
+    transform var(--cs-transition);
 }
 
 /* A disabled end arrow (rewind:false) must not light up on hover. */
-.dl-carousel-arrow:hover:not([aria-disabled="true"]),
-.dl-carousel-pause:hover {
-  color: var(--dlc-arrow-fg-hover);
-  background: var(--dlc-arrow-bg-hover);
+.cs-arrow:hover:not([aria-disabled="true"]),
+.cs-pause:hover {
+  color: var(--cs-arrow-fg-hover);
+  background: var(--cs-arrow-bg-hover);
 }
 
-.dl-carousel-dot:hover::after {
-  background: var(--dlc-dot-current);
+.cs-dot:hover::after {
+  background: var(--cs-dot-current);
 }
 
-.dl-carousel-thumb:hover {
-  border-color: var(--dlc-dot-fg);
+.cs-thumb:hover {
+  border-color: var(--cs-dot-fg);
 }
 
 /* ---- gallery (tabbed) variant ------------------------------------------ */
 
-.dl-carousel-thumbs {
+.cs-thumbs {
   position: absolute;
   inset-block-end: 0;
   inset-inline: 0;
   display: flex;
   gap: 0.5rem;
-  block-size: var(--dlc-thumb-h);
+  block-size: var(--cs-thumb-h);
   overflow-x: auto;
   scrollbar-width: none;
 }
 
-.dl-carousel-thumbs::-webkit-scrollbar {
+.cs-thumbs::-webkit-scrollbar {
   display: none;
 }
 
-/* JS keeps data-overflow current; fading the clipped edge signals "more
+/* JS keeps data-cs-overflow current; fading the clipped edge signals "more
    thumbs this way" since the scrollbar is hidden. LTR (v1, like the engine). */
-.dl-carousel-thumbs[data-overflow="start"] {
+.cs-thumbs[data-cs-overflow="start"] {
   mask-image: linear-gradient(to right, transparent, #000 32px);
 }
 
-.dl-carousel-thumbs[data-overflow="end"] {
+.cs-thumbs[data-cs-overflow="end"] {
   mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
 }
 
-.dl-carousel-thumbs[data-overflow="both"] {
+.cs-thumbs[data-cs-overflow="both"] {
   mask-image: linear-gradient(to right, transparent, #000 32px, #000 calc(100% - 32px), transparent);
 }
 
-.dl-carousel-thumb {
-  flex: 0 0 var(--dlc-thumb-w);
+.cs-thumb {
+  flex: 0 0 var(--cs-thumb-w);
   padding: 0;
   overflow: hidden;
   cursor: pointer;
@@ -267,29 +267,29 @@
   border-radius: 4px;
 }
 
-.dl-carousel-thumb img {
+.cs-thumb img {
   display: block;
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
 }
 
-.dl-carousel-thumb[aria-selected="true"] {
-  border-color: var(--dlc-dot-current);
+.cs-thumb[aria-selected="true"] {
+  border-color: var(--cs-dot-current);
 }
 
 /* Both sit flush inside a scroll container, which clips anything drawn outside
    them — draw the ring inset or it's invisible (WCAG 2.4.7). The gallery
    tabpanel is focusable, so it needs this as much as the thumbs do. */
-.dl-carousel-thumb:focus-visible,
-.dl-carousel-slide:focus-visible {
-  outline: 3px solid var(--dlc-focus);
+.cs-thumb:focus-visible,
+.cs-slide:focus-visible {
+  outline: 3px solid var(--cs-focus);
   outline-offset: -3px;
 }
 
 /* ---- visually hidden (status region) ----------------------------------- */
 
-.dl-carousel-sr-only {
+.cs-sr-only {
   position: absolute;
   inline-size: 1px;
   block-size: 1px;
@@ -306,33 +306,33 @@
 /* Stacked crossfade for 1-up heroes. The track stops being a scroll container
    entirely; slides pile up in one grid cell so the tallest defines the height
    (no absolute positioning = no collapsed box, no CLS). JS owns .is-current. */
-.dl-carousel[data-fade-on] .dl-carousel-track {
+.cs[data-cs-fade-on] .cs-track {
   display: grid;
   padding: 0;
   overflow: hidden;
   scroll-snap-type: none;
 }
 
-.dl-carousel[data-fade-on] .dl-carousel-slide {
+.cs[data-cs-fade-on] .cs-slide {
   grid-area: 1 / 1;
   opacity: 0;
-  transition: opacity var(--dlc-fade-ms, 500ms) ease;
+  transition: opacity var(--cs-fade-ms, 500ms) ease;
 }
 
-.dl-carousel[data-fade-on] .dl-carousel-slide.is-current {
+.cs[data-cs-fade-on] .cs-slide.is-current {
   opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .dl-carousel[data-fade-on] .dl-carousel-slide {
+  .cs[data-cs-fade-on] .cs-slide {
     transition: none;
   }
 
   /* Not `none` — a 1ms transition still fires transitionend for listeners. */
-  .dl-carousel-arrow,
-  .dl-carousel-pause,
-  .dl-carousel-dot::after,
-  .dl-carousel-thumb {
+  .cs-arrow,
+  .cs-pause,
+  .cs-dot::after,
+  .cs-thumb {
     transition-duration: 1ms;
   }
 }

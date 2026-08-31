@@ -1,54 +1,54 @@
 # Custom Slider
 
-Dependency-free scroll-snap slider/carousel. ~6.1 KB gzip total (JS+CSS), no build
+Dependency-free scroll-snap slider/carousel. ~6.0 KB gzip total (JS+CSS), no build
 step required to use, themed entirely with CSS custom properties. Built to be
-maintained in-house: the whole engine is one commented file, `src/dl-carousel.js`.
+maintained in-house: the whole engine is one commented file, `src/custom-slider.js`.
 
 The browser owns the physics (touch, drag, momentum, snapping — CSS
 `scroll-snap`); the JS only wires controls, state, autoplay, and the gallery
 variant — plus the one physics gap browsers leave open: mouse drag-to-scroll
-(native scroll containers don't drag with a mouse; `data-drag="false"` opts out). Rewind instead of infinite loop: no cloned slides, so no duplicate
+(native scroll containers don't drag with a mouse; `data-cs-drag="false"` opts out). Rewind instead of infinite loop: no cloned slides, so no duplicate
 content for SEO and no screen-reader confusion.
 
 The demo page (`demo/index.html`) is a workbench: pick a pattern, set it up
 (how many across at each breakpoint, card style, brand preset, arrow colours,
 how many cards an arrow moves), and copy code generated from those same
 settings — so the snippet is always exactly the slider on screen. It also hands
-you `dl-carousel.css` and `dl-carousel.js` themselves, to link or to paste.
+you `custom-slider.css` and `custom-slider.js` themselves, to link or to paste.
 
 ## Quick start (CMS / classic script)
 
-    <link rel="stylesheet" href="dl-carousel.css">
-    <script src="dl-carousel.js" defer></script>
+    <link rel="stylesheet" href="custom-slider.css">
+    <script src="custom-slider.js" defer></script>
 
-    <div class="dl-carousel my-slider" data-slider aria-label="Featured vehicles">
-      <ul class="dl-carousel-track">
-        <li class="dl-carousel-slide">…</li>
-        <li class="dl-carousel-slide">…</li>
+    <div class="cs my-slider" data-cs aria-label="Featured vehicles">
+      <ul class="cs-track">
+        <li class="cs-slide">…</li>
+        <li class="cs-slide">…</li>
       </ul>
     </div>
 
     <style>
-      .my-slider { --dlc-per-view: 1; }
-      @media (min-width: 640px)  { .my-slider { --dlc-per-view: 2; } }
-      @media (min-width: 1024px) { .my-slider { --dlc-per-view: 3; } }
+      .my-slider { --cs-per-view: 1; }
+      @media (min-width: 640px)  { .my-slider { --cs-per-view: 2; } }
+      @media (min-width: 1024px) { .my-slider { --cs-per-view: 3; } }
     </style>
 
-Every `[data-slider]` element initializes automatically. Slides-per-view is CSS,
-not a JS option — set `--dlc-per-view` per breakpoint.
+Every `[data-cs]` element initializes automatically. Slides-per-view is CSS,
+not a JS option — set `--cs-per-view` per breakpoint.
 
 ## Quick start (ES module)
 
-    import { Slider } from './src/dl-carousel.js';
-    const slider = new Slider(document.querySelector('.my-slider'), { autoplay: 4000 });
+    import { CustomSlider } from './src/custom-slider.js';
+    const slider = new CustomSlider(document.querySelector('.my-slider'), { autoplay: 4000 });
 
 JS options override data attributes, which override defaults.
 
 ## Markup contract
 
-- Root: `class="dl-carousel"` (+ `data-slider` for auto-init) with `aria-label` or `aria-labelledby`.
-- Track: one `.dl-carousel-track` child — `<ul>` for card carousels, `<div>` for `data-gallery`.
-- Slides: `.dl-carousel-slide` children. All real content (headings, links, images) goes
+- Root: `class="cs"` (+ `data-cs` for auto-init) with `aria-label` or `aria-labelledby`.
+- Track: one `.cs-track` child — `<ul>` for card carousels, `<div>` for `data-cs-gallery`.
+- Slides: `.cs-slide` children. All real content (headings, links, images) goes
   in the HTML — the engine never injects content, only controls.
 - Images: always `width`/`height`; first visible image eager (add
   `fetchpriority="high"` only if the slider is above the fold); later slides
@@ -57,30 +57,32 @@ JS options override data attributes, which override defaults.
 
 ## Options
 
-| Option            | Data attribute         | Default         | Effect                                                                                                                                                                                                       |
-| ----------------- | ---------------------- | --------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| `autoplay`        | `data-autoplay="4000"` | `0`             | Advance every N ms; adds pause button (first in tab order)                                                                                                                                                   |
-| `rewind`          | `data-rewind="false"`  | `true`          | Arrows wrap at the ends; `false` stops there and `aria-disable`s the end arrow (ignored with autoplay, which needs the wrap)                                                                                 |
-| `step`            | `data-step="slide"`    | `"page"`        | `"slide"` advances one card per arrow click / autoplay tick instead of a full page; a positive integer (`data-step="3"`) advances that many. Dots still represent pages, and the last stop is always the end |
-| `drag`            | `data-drag="false"`    | `true`          | Mouse drag-to-scroll on the track (click-through suppressed after a real drag); touch/pen swiping is native and unaffected                                                                                   |
-| `fade`            | `data-fade`            | `false`         | Stacked crossfade instead of a scrolling track — 1-up heroes; no drag/peek, ignored with `gallery`                                                                                                           |
-| `gallery`         | `data-gallery`         | `false`         | Tabbed thumbnail gallery (thumbs generated from slide images)                                                                                                                                                |
-| `roledescription` | `data-roledescription` | `"carousel"`    | Empty string to omit                                                                                                                                                                                         |
-| `labels`          | — (JS only)            | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/dl-carousel.js`                                                                                                                                |
-| —                 | `data-init="manual"`   | auto            | Skip auto-init; construct via `new DLCarousel(el, opts)` from page script                                                                                                                                    |
+| Option            | Data attribute            | Default         | Effect                                                                                                                                                                                                          |
+| ----------------- | ------------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `autoplay`        | `data-cs-autoplay="4000"` | `0`             | Advance every N ms; adds pause button (first in tab order)                                                                                                                                                      |
+| `rewind`          | `data-cs-rewind="false"`  | `true`          | Arrows wrap at the ends; `false` stops there and `aria-disable`s the end arrow (ignored with autoplay, which needs the wrap)                                                                                    |
+| `step`            | `data-cs-step="slide"`    | `"page"`        | `"slide"` advances one card per arrow click / autoplay tick instead of a full page; a positive integer (`data-cs-step="3"`) advances that many. Dots still represent pages, and the last stop is always the end |
+| `drag`            | `data-cs-drag="false"`    | `true`          | Mouse drag-to-scroll on the track (click-through suppressed after a real drag); touch/pen swiping is native and unaffected                                                                                      |
+| `fade`            | `data-cs-fade`            | `false`         | Stacked crossfade instead of a scrolling track — 1-up heroes; no drag/peek, ignored with `gallery`                                                                                                              |
+| `gallery`         | `data-cs-gallery`         | `false`         | Tabbed thumbnail gallery (thumbs generated from slide images)                                                                                                                                                   |
+| `roledescription` | `data-cs-roledescription` | `"carousel"`    | Empty string to omit                                                                                                                                                                                            |
+| `labels`          | — (JS only)               | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/custom-slider.js`                                                                                                                                 |
+| —                 | `data-cs-init="manual"`   | auto            | Skip auto-init; construct via `new CustomSlider(el, opts)` from page script                                                                                                                                     |
 
 ## CSS custom properties
 
-`--dlc-per-view`, `--dlc-gap`, `--dlc-peek` (edge sliver of the next slide),
-`--dlc-arrow-size/fg/bg`, `--dlc-dot-size/fg/current`, `--dlc-controls-space`,
-`--dlc-thumb-w/h`, `--dlc-focus`, `--dlc-fade-ms` (crossfade duration in fade mode). Set them on the `.dl-carousel` element or any wrapper.
+All seventeen: `--cs-per-view`, `--cs-gap`, `--cs-peek` (edge sliver of the next
+slide), `--cs-arrow-size/fg/bg`, `--cs-arrow-fg-hover/bg-hover`,
+`--cs-dot-size/fg/current`, `--cs-controls-space`, `--cs-thumb-w/h`, `--cs-focus`,
+`--cs-transition` (duration+easing for control colour transitions),
+`--cs-fade-ms` (crossfade duration in fade mode). Set them on the `.cs` element or any wrapper.
 
 ## JS API
 
 Methods: `goTo(n)`, `next()`, `prev()`, `pause()`, `play()`, `destroy()`,
-`DLCarousel.autoInit(scope?)` (classic script) / `Slider.autoInit(scope?)` (ES module). Instance is at `element._dlCarousel`.
-Events (bubble from the root): `dlc:change` `{index, page, slidesInView}`,
-`dlc:autoplay-start`, `dlc:autoplay-stop`, `dlc:destroy`.
+`CustomSlider.autoInit(scope?)` — the same name whether loaded as a classic script (`window.CustomSlider`) or imported as an ES module. Instance is at `element._cs`.
+Events (bubble from the root): `cs:change` `{index, page, slidesInView}`,
+`cs:autoplay-start`, `cs:autoplay-stop`, `cs:destroy`.
 
 ## Accessibility behavior (by design — don't "fix" these)
 
@@ -92,9 +94,9 @@ Events (bubble from the root): `dlc:change` `{index, page, slidesInView}`,
 - Dots are one per PAGE of slides, plain buttons (not tabs); current dot is
   `aria-disabled`, still focusable.
 - When every slide already fits, the arrows and dots are hidden and the root
-  gains `data-fits` — controls that cannot move anything must not be focusable,
+  gains `data-cs-fits` — controls that cannot move anything must not be focusable,
   and a one-of-one dot group announces a choice that isn't one. It is
-  re-evaluated on resize, because slides-per-view is CSS. Style on `data-fits`
+  re-evaluated on resize, because slides-per-view is CSS. Style on `data-cs-fits`
   if you want the reserved control space to collapse too.
 - Gallery: full APG tabbed-carousel — thumbs are a `tablist` with roving
   tabindex and arrow keys; non-visible panels are `inert`. The visible panel
@@ -111,8 +113,8 @@ Events (bubble from the root): `dlc:change` `{index, page, slidesInView}`,
   "never inert off-screen cards" rule does not apply here (fade is 1-up, so no
   count is corrupted). A slide containing focus is never inerted. Fade never
   scrolls, so `goTo()` is its commit point instead of `scrollend`.
-- Fade's stacking CSS is keyed to `data-fade-on`, which **the engine sets at
-  init** — never to the authored `data-fade`. JS decides which slide is visible,
+- Fade's stacking CSS is keyed to `data-cs-fade-on`, which **the engine sets at
+  init** — never to the authored `data-cs-fade`. JS decides which slide is visible,
   so if the stacking applied without JS every slide would sit at opacity 0 and
   the whole carousel would vanish. With JS off the track stays an ordinary
   scrollable strip with all slides visible. `destroy()` removes the marker.
@@ -121,28 +123,28 @@ Events (bubble from the root): `dlc:change` `{index, page, slidesInView}`,
 
 ## Advanced use (escape hatches)
 
-- **Manual init:** add `data-init="manual"` and construct from page script:
-  `new DLCarousel(el, { autoplay: 6000, labels: { next: 'Next vehicles' } })`.
-- **Custom callbacks:** listen for `dlc:change` on the root (bubbles) — e.g. update
+- **Manual init:** add `data-cs-init="manual"` and construct from page script:
+  `new CustomSlider(el, { autoplay: 6000, labels: { next: 'Next vehicles' } })`.
+- **Custom callbacks:** listen for `cs:change` on the root (bubbles) — e.g. update
   a counter, lazy-init a map, sync anything to the current slide.
 - **Synchronized sliders:** wire two instances in page script:
-  `a.addEventListener('dlc:change', e => b._dlCarousel.goTo(e.detail.index))` —
+  `a.addEventListener('cs:change', e => b._cs.goTo(e.detail.index))` —
   `goTo` is idempotent, so feedback loops settle naturally.
-- **OEM styling:** override `--dlc-*` custom properties per site/brand — no engine edits.
+- **OEM styling:** override `--cs-*` custom properties per site/brand — no engine edits.
 
-## Swapping the engine later (the dl-carousel contract)
+## Swapping the engine later (the Custom Slider contract)
 
 The HTML on the sites is the stable API; this engine is an implementation detail.
 Any future engine (third-party or rewrite) must honor the same contract, and then
 replacing it = replacing the contents of the two dist files, with zero site edits:
 
-1. Consume `.dl-carousel[data-slider] > .dl-carousel-track > .dl-carousel-slide+`
+1. Consume `.cs[data-cs] > .cs-track > .cs-slide+`
    with all content authored in the HTML; generate its own controls (never require
    control markup in the CMS).
-2. Honor the data attributes (`data-autoplay`, `data-rewind`, `data-step`,
-   `data-drag`, `data-fade`, `data-gallery`, `data-roledescription`, `data-init`) and the `--dlc-*` theming knobs.
-3. Emit the `dlc:*` events with the same payloads and expose
-   `goTo/next/prev/pause/play/destroy` + `DLCarousel.autoInit`.
+2. Honor the data attributes (`data-cs-autoplay`, `data-cs-rewind`, `data-cs-step`,
+   `data-cs-drag`, `data-cs-fade`, `data-cs-gallery`, `data-cs-roledescription`, `data-cs-init`) and the `--cs-*` theming knobs.
+3. Emit the `cs:*` events with the same payloads and expose
+   `goTo/next/prev/pause/play/destroy` + `CustomSlider.autoInit`.
 4. Keep the accessibility behaviors listed above — they are part of the contract,
    not this engine's private choices.
 
@@ -150,8 +152,19 @@ replacing it = replacing the contents of the two dist files, with zero site edit
 
 [docs/cms-implementation.md](docs/cms-implementation.md) — where the files go,
 the markup contract, replacement codes, per-OEM theming, and the ladder for each
-brand's model bar. Nothing is deployed yet; that doc records the intended
-process and the one open question (shared path vs. per-dealer upload).
+brand's model bar.
+
+**The shared-path question is answered: the engine IS hosted**, at
+`/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/`. Verified
+2026-08-31: `dl-carousel.js` served from there is byte-identical to this repo's
+build, and at least one designer test page is already built against it using the
+old `dl-carousel` classes and `data-slider`.
+
+That matters more than a filename. **The contract is only free to rename while
+nothing consumes it, and something now does** — so before republishing under the
+`custom-slider.{css,js}` / `cs-*` names, find every page pointing at the old
+files and move it, or host both side by side. Re-uploading renamed files over
+the old paths silently strips the controls off every existing page.
 
 ## Development
 
@@ -175,7 +188,7 @@ Rebuild and re-commit `dist/` whenever `src/` changes.
    breakpoints.
 6. With JavaScript disabled the strips still scroll and all content is visible.
 7. Widen until every slide fits: the arrows and dots disappear (the root gains
-   `data-fits`), and narrowing brings them back. Controls that cannot move
+   `data-cs-fits`), and narrowing brings them back. Controls that cannot move
    anything must not be focusable.
 8. Paste parity: drop a generated snippet into a page with hostile typography
    (serif, 19px, line-height 2.1) at the same container width. The rendered
@@ -187,7 +200,7 @@ Rebuild and re-commit `dist/` whenever `src/` changes.
 ## Known limitations (v1)
 
 - LTR only. No infinite loop — the ends rewind by default, or stop with
-  `data-rewind="false"`. `gallery` + `autoplay` together is
+  `data-cs-rewind="false"`. `gallery` + `autoplay` together is
   unsupported (autoplay is ignored, console warning).
 - iOS flicks advance ~one slide per gesture (WebKit limitation) — arrows/dots
   are the primary traversal there.

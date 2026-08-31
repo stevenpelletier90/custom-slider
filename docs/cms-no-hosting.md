@@ -1,4 +1,4 @@
-# Using dl-carousel before the files are hosted
+# Using Custom Slider before the files are hosted
 
 The [normal setup](cms-implementation.md) links two hosted files. Until those are
 on FTP, the whole engine can be **pasted into a page** — no hosting, no ticket,
@@ -26,7 +26,7 @@ Open `dist/paste/2-body-bottom.html`, select all, paste. It already includes its
 own `<script>` tags, which that field emits verbatim.
 
 **One copy per page**, however many sliders the page has — the engine finds every
-`[data-slider]` on the page by itself. Two copies is not fatal (the second
+`[data-cs]` on the page by itself. Two copies is not fatal (the second
 init skips carousels that are already running) but it doubles the weight for
 nothing.
 
@@ -37,18 +37,18 @@ there is no load-order race to think about.
 
 Ordinary block content, exactly as in the hosted setup:
 
-    <div class="dl-carousel my-strip" data-slider aria-label="Featured vehicles">
-      <ul class="dl-carousel-track">
-        <li class="dl-carousel-slide">…your content…</li>
-        <li class="dl-carousel-slide">…your content…</li>
+    <div class="cs my-strip" data-cs aria-label="Featured vehicles">
+      <ul class="cs-track">
+        <li class="cs-slide">…your content…</li>
+        <li class="cs-slide">…your content…</li>
       </ul>
     </div>
 
-Per-slider theming (`--dlc-per-view`, colours, peek) goes in the same Style Only
+Per-slider theming (`--cs-per-view`, colours, peek) goes in the same Style Only
 tab as step 1, under your own class:
 
-    .my-strip { --dlc-per-view: 2; }
-    @media (min-width: 768px) { .my-strip { --dlc-per-view: 5; } }
+    .my-strip { --cs-per-view: 2; }
+    @media (min-width: 768px) { .my-strip { --cs-per-view: 5; } }
 
 Model bars: start from your OEM's ladder — the fourteen are tabulated in the
 [census](research/2026-08-18-oem-demo-slider-census.md) and shown per brand in the

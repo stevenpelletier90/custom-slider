@@ -35,7 +35,7 @@ $('.modelBarS').slick({
   `.carImage { transform: scale(0.85) } .carImage:hover { transform: scale(0.9) }`.
 - Infrastructure hacks worth knowing: anti-FOUC `.modelBarS { display:none; visibility:hidden }` until `.slick-initialized`; Bootstrap hidden-tab hack so slick can measure inside
   inactive panes: `.tab-content>.tab-pane { display:block; height:0; overflow-y:hidden } .tab-content>.active { height:auto }`.
-  **dl-carousel does not need either** — verified 2026-08-07: an instance auto-inited inside a `[hidden]` pane re-measures itself on reveal (ResizeObserver).
+  **Custom Slider does not need either** — verified 2026-08-07: an instance auto-inited inside a `[hidden]` pane re-measures itself on reveal (ResizeObserver).
 
 ## 2. legaldemo7.leadscience.com (Sarah's LS demo)
 
@@ -102,20 +102,20 @@ All slick. Three carousels:
 ## 6. michaelgreerpools.com (Casey's gallery)
 
 - `aside.galleryS`, slick in **fade mode** (`fade: true, speed: 500`), `infinite: true`, arrows only, no dots/autoplay. 3 slides; each slide is a **two-image collage** (flex row,
-  deliberately staggered heights 535×585 + 535×435). Every image is a link (`data-toggle="lightbox"`, ekko-lightbox) and `data-gallery="gallery"` groups all 6 photos so lightbox
+  deliberately staggered heights 535×585 + 535×435). Every image is a link (`data-toggle="lightbox"`, ekko-lightbox) and `data-cs-gallery="gallery"` groups all 6 photos so lightbox
   arrows page across every image regardless of source slide.
-- All carousel images are cover-cropped CSS `background-image` divs — no real `<img>` elements (SEO/no-JS liability dl-carousel's authored-HTML rule avoids). Site also hides the
+- All carousel images are cover-cropped CSS `background-image` divs — no real `<img>` elements (SEO/no-JS liability Custom Slider's authored-HTML rule avoids). Site also hides the
   whole gallery pre-init (`.galleryS { display: none }`) — a CLS/no-JS liability the CSS-first design avoids.
 
 ## Cross-site patterns (what drove the variation designs)
 
 - **Libraries**: slick everywhere on the DealerOn-style builds (Ford, Skaug, Bordas, Hoag, Greer), Splide v4 on the newer LS demo, Bootstrap 3 for hero/fade cases. No owl/swiper/glide.
-- **Two advance models**: slick sites always `slidesToScroll: 1` (card-at-a-time); Splide sites always `perPage == perMove` (page-at-a-time, dl-carousel's native model). This split is
-  why `data-step="slide"` was added.
+- **Two advance models**: slick sites always `slidesToScroll: 1` (card-at-a-time); Splide sites always `perPage == perMove` (page-at-a-time, Custom Slider's native model). This split is
+  why `data-cs-step="slide"` was added.
 - **Dots are dead** in this space: absent or commented out on every card carousel; arrows-only is the norm. Segmented progress bars replace dots on the LS demo (the existing
   "Explore Chevrolet Models" demo section already rebuilds that).
 - **Nobody lets mixed image sizes drive layout**: fixed-aspect cover boxes (`padding-top: 62%`, `aspect-ratio: 10/16`, 55% ratio) or uniform cutouts everywhere — basis for the
   demo's aspect-box recipe.
 - **Autoplay only on heroes** (with a pause control) — never on card strips, except Hoag/Bordas testimonial-ish strips at an aggressive 3 s.
-- **Fade mode appears three times** (Ford hero, Hoag quotes, Greer gallery) — still a deliberate dl-carousel v1 non-goal; substitution is slide-in-place.
+- **Fade mode appears three times** (Ford hero, Hoag quotes, Greer gallery) — still a deliberate Custom Slider v1 non-goal; substitution is slide-in-place.
 - **Tabs wrapping same-class carousel instances** (Ford ×4, Skaug ×2, Hoag ×2) — rebuilt as the demo's "Model bar with tabs" without slick's `height: 0`/anti-FOUC hacks.

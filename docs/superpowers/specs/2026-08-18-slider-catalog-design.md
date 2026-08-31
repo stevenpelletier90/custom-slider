@@ -11,7 +11,7 @@ census of all 76 DealerOn OEM demo sites:
 
 The census overturned the assumption that drove the 2026-08-07 priority order. Fade was filed
 there as a deferred nice-to-have. It is in fact the **most deployed slider pattern in the
-estate — 68 of 76 sites** — and dl-carousel cannot do it. The prior research missed it because
+estate — 68 of 76 sites** — and Custom Slider cannot do it. The prior research missed it because
 it is a Bootstrap `carousel-fade` hero, while that research read slick configs, and `fade`
 appears in **0 of 55** slick configs.
 
@@ -26,7 +26,7 @@ site CSS.** One engine addition is proposed (D1), measured before approval.
 
 ### D1 — Fade mode (engine, additive)
 
-`data-fade` / `fade: true`. A stacked-slides mode: the track stops being a scroll container,
+`data-cs-fade` / `fade: true`. A stacked-slides mode: the track stops being a scroll container,
 slides pile into one CSS grid cell, and opacity transitions between them.
 
 - **Measured cost: +263 B gzip** (JS +163, CSS +100) → **5913 / 6144**, 231 B headroom left.
@@ -46,7 +46,7 @@ slides pile into one CSS grid cell, and opacity transitions between them.
   strips; fade is 1-up, the same carve-out `gallery` mode already has. A slide containing
   focus is never inerted.
 - **Reduced motion:** the opacity transition is removed under `prefers-reduced-motion`.
-- **Constraint:** fade is 1-up only. `--dlc-per-view > 1` with `data-fade` is a console warning.
+- **Constraint:** fade is 1-up only. `--cs-per-view > 1` with `data-cs-fade` is a console warning.
 
 Verified in-browser on the prototype: exactly one slide at opacity 1, `inert` on non-current
 only, track height stable (no CLS), `scrollLeft` never moves, autoplay + pause + per-slide dots
@@ -58,11 +58,11 @@ the 263 B figure may move slightly as a result.
 New full-bleed hero section rebuilding the platform pattern, deliberately fixing what it gets
 wrong. This is the section that makes the ADA argument concrete:
 
-| Platform hero                                         | dl-carousel hero                                      |
+| Platform hero                                         | Custom Slider hero                                    |
 | ----------------------------------------------------- | ----------------------------------------------------- |
 | pause button 16 × 6 px, `id="hiddenPlayPauseControl"` | full-size pause button, ≥ 24 × 24, first in tab order |
 | dots are `<li role="button" tabindex="0">`            | real `<button>` dots, one per slide                   |
-| `aria-live="off"` on the track                        | terse dedicated `.dl-carousel-status` region          |
+| `aria-live="off"` on the track                        | terse dedicated `.cs-status` region                   |
 | no reduced-motion handling observed                   | never auto-rotates under `prefers-reduced-motion`     |
 
 Anatomy matches the estate: 1-up, whole-slide link, `<picture>` with mobile/desktop `srcset`,
@@ -70,8 +70,8 @@ Anatomy matches the estate: 1-up, whole-slide link, `<picture>` with mobile/desk
 
 ### D3 — Model bar ladder recipes
 
-Document all 14 ladders as copy-paste `--dlc-per-view` breakpoint blocks. slick breakpoints are
-max-width and dl-carousel's are min-width, so **each ladder is inverted** when translated — the
+Document all 14 ladders as copy-paste `--cs-per-view` breakpoint blocks. slick breakpoints are
+max-width and Custom Slider's are min-width, so **each ladder is inverted** when translated — the
 recipes must ship pre-inverted, since that is exactly the step a builder would get wrong.
 
 Presented as a table keyed by OEM, so a Cadillac build starts from the Cadillac ladder. No engine
@@ -85,7 +85,7 @@ model bar (D7 of the prior spec), so this is a skin plus the background transiti
 page script per the house rule that behavior extensions live outside the engine.
 
 Note: kiademo1's own model bar uses `centerMode: true` — out of scope per D9. The rebuild
-approximates its edge treatment with `--dlc-peek`.
+approximates its edge treatment with `--cs-peek`.
 
 ### D5 — Video testimonials fixes (08/11 action items)
 
@@ -121,7 +121,7 @@ technically overwhelmed — 55 sites on one recipe. It is still deferred, for a 
 about evidence:
 
 **Class names in a shipped variants file join the frozen contract permanently.** Once a live site
-uses `.dl-carousel--modelbar`, it can never be renamed or repurposed. Committing to permanent
+uses `.cs--modelbar`, it can never be renamed or repurposed. Committing to permanent
 names _before anything is deployed_ (D6: not FTP-ready) is the wrong order. Recipes are
 reversible; a shipped contract is not.
 
@@ -151,9 +151,9 @@ returns as its own decision, per the hard constraint in CLAUDE.md.
 
 ## 4. Files touched
 
-- `src/dl-carousel.js`, `src/dl-carousel.css` + rebuilt `dist/` in the same commit (D1 only)
+- `src/custom-slider.js`, `src/custom-slider.css` + rebuilt `dist/` in the same commit (D1 only)
 - `demo/index.html` — hero section (D2), Kia model bar (D4), video fixes (D5), TOC
-- `README.md` — `data-fade` option row, CSS property, the fade a11y carve-out
+- `README.md` — `data-cs-fade` option row, CSS property, the fade a11y carve-out
 - `docs/` — census (written), this spec, CMS instructions (D6)
 - `scripts/size.mjs` — budget note if D1's measured cost changes on final build
 

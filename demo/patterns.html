@@ -3,7 +3,7 @@
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
-    <title>dl-carousel — every pattern</title>
+    <title>Custom Slider — every pattern</title>
     <meta name="description" content="Every slider pattern the engine ships, one live example each, with a link straight into the builder." />
     <link
       rel="icon"
@@ -14,19 +14,19 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" href="../dist/dl-carousel.css" />
+    <link rel="stylesheet" href="../dist/custom-slider.css" />
     <link rel="stylesheet" href="assets/ui.css" />
 
     <script>
       try {
-        const t = localStorage.getItem('dlx-theme');
+        const t = localStorage.getItem('cs-theme');
         if (t) document.documentElement.dataset.theme = t;
       } catch {
         /* private mode: fall through to the system preference */
       }
     </script>
 
-    <script src="../dist/dl-carousel.js" defer></script>
+    <script src="../dist/custom-slider.js" defer></script>
     <script src="assets/looks.js" defer></script>
     <script src="assets/brands.js" defer></script>
     <script src="assets/highlight.js" defer></script>
@@ -40,7 +40,7 @@
   <body>
     <header class="ui-head">
       <div class="ui-head-in">
-        <h1 class="ui-brand">dl-carousel <span id="ui-size">no dependencies</span></h1>
+        <h1 class="ui-brand">Custom Slider <span id="ui-size">no dependencies</span></h1>
         <nav class="ui-tabs" aria-label="Sections">
           <a href="patterns.html" aria-current="page">Patterns</a>
           <a href="index.html">Build</a>
