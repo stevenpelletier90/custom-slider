@@ -242,6 +242,7 @@ const LOOKS = {
       '--cs-arrow-bg-hover': 'rgb(255 255 255 / 26%)',
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1.5em; background: var(--strip-bg); }
+%root% .cs-track { padding-block-end: 1.5em; }
 .cargo-card { display: block; color: var(--card-fg); text-align: center; text-decoration: none; }
 .cargo-name { min-block-size: 2.6em; margin: 0 0 0.5em; font-size: 1.25em; font-weight: 700; line-height: 1.3; color: var(--card-fg); text-align: start; text-transform: uppercase; letter-spacing: 0.08em; }
 .cargo-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); object-fit: cover; }
@@ -304,6 +305,7 @@ const LOOKS = {
       '--cta-fg': '#fff',
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1em; background: var(--strip-bg); }
+%root% .cs-track { padding-block-end: 1.5em; }
 .cargo-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.25em; text-align: center; text-decoration: none; background: var(--card-bg); border-radius: 10px; }
 .cargo-card img { inline-size: 55%; block-size: auto; object-fit: contain; }
 .cargo-name { margin: 0.5em 0 0.4em; font-size: 1.1em; font-weight: 700; line-height: 1.3; color: #222; }

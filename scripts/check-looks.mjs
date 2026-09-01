@@ -98,6 +98,21 @@ for (const [id, look] of Object.entries(LOOKS)) {
   }
 }
 
+// A look that paints its own strip background turns it into a visible box, so
+// the cards cannot sit flush against its bottom edge - it reads as cut off. Two
+// of the three looks that paint one (location and portrait) shipped with 23px
+// above the cards and 0 below; only the logo panel had it right. The space goes
+// on the TRACK, because the root's padding-bottom is the engine's reserved dot
+// row and the rule above forbids touching it.
+for (const [id, look] of Object.entries(LOOKS)) {
+  const bg = look.settings?.['--strip-bg'] ?? '';
+  if (!/^#|rgb/.test(bg)) continue; // transparent strip: no box, nothing to balance
+  if (!/%root% \.cs-track \{[^}]*padding-block-end/.test(look.css)) {
+    console.error(`  ${id}: paints --strip-bg ${bg} but reserves no space under the cards — add "%root% .cs-track { padding-block-end: … }"`);
+    bad++;
+  }
+}
+
 // The brand presets. The roster is the census's 32-brand table; a preset that
 // names a look which no longer exists would fail silently in the picker, and a
 // ladder that lands a card under its look's minCard would ship a preset that
