@@ -126,6 +126,8 @@
       'Height reserved for the dot row. This reservation is why the slider scores CLS 0 — never remove it, and never set <code>padding</code> or <code>padding-block</code> on the root, which would wipe it.',
     '--cs-thumb-w': 'Gallery thumbnail width.',
     '--cs-thumb-h': 'Gallery thumbnail height.',
+    '--cs-thumb-hover-scale':
+      'Zoom applied to a gallery thumbnail’s image on hover. The thumb box itself never moves, so neighbours stay put. <code>1</code> turns it off, and reduced motion drops it regardless.',
     '--cs-focus': 'Focus ring colour.',
     '--cs-transition': 'Duration and easing for control state changes.',
     '--cs-fade-ms': 'Crossfade duration in fade mode. Ignored unless <code>data-cs-fade</code> is set.',

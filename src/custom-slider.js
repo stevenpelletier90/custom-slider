@@ -435,7 +435,13 @@ export class CustomSlider {
     const sig = this._ac.signal,
       t = this.track;
     let startX = 0,
-      startLeft = 0;
+      startLeft = 0,
+      // Separate from _dragMoved on purpose. _dragMoved (4 px) is "follow the
+      // hand"; this is "that was a drag, not a click", and only this one
+      // swallows the click. A hand moves a few px between press and release,
+      // and at one threshold every such click was eaten — a video poster or a
+      // lightbox button inside the track then opened only sometimes.
+      far = false;
     t.setAttribute('data-cs-draggable', ''); // grab-cursor hook — see the cursor rules in the CSS
     t.addEventListener(
       'pointerdown',
@@ -443,6 +449,7 @@ export class CustomSlider {
         if (e.pointerType !== 'mouse' || e.button !== 0) return;
         this._dragActive = true;
         this._dragMoved = false;
+        far = false;
         startX = e.clientX;
         startLeft = t.scrollLeft;
         // Closed hand from the instant the button goes down, not once the drag
@@ -458,15 +465,25 @@ export class CustomSlider {
         if (!this._dragActive) return;
         const dx = e.clientX - startX;
         // Small threshold keeps plain clicks (card links!) working; past it,
-        // capture the pointer, stop text selection, and turn snap off so the
-        // track follows the hand instead of fighting it. Snap is restored at
-        // _commit, when the settle scroll has landed ON a snap position —
-        // restoring it here would jump the track before the smooth settle.
+        // stop text selection and turn snap off so the track follows the hand
+        // instead of fighting it. Snap is restored at _commit, when the settle
+        // scroll has landed ON a snap position — restoring it here would jump
+        // the track before the smooth settle.
         if (!this._dragMoved && Math.abs(dx) > 4) {
           this._dragMoved = true;
-          t.setPointerCapture(e.pointerId);
           t.style.scrollSnapType = 'none';
           t.style.userSelect = 'none';
+        }
+        // Capture only once the gesture is unmistakably a drag, and NOT at the
+        // 4 px mark above. A captured pointer retargets the click that follows
+        // to the capturing element, so every click inside the strip arrived at
+        // the track instead of the button under the cursor — a video poster or
+        // a lightbox trigger then opened only when the hand happened to hold
+        // perfectly still. Capture is what a drag past the edge of the track
+        // needs; a 5 px wobble is not that drag.
+        if (!far && Math.abs(dx) > 10) {
+          far = true;
+          t.setPointerCapture(e.pointerId);
         }
         if (this._dragMoved) t.scrollLeft = startLeft - dx;
       },
@@ -505,11 +522,14 @@ export class CustomSlider {
     t.addEventListener('dragstart', (e) => this._dragActive && e.preventDefault(), { signal: sig });
     // After a real drag the browser still fires a click on whatever card is
     // under the cursor — swallow that one click so links don't navigate.
+    // Only a gesture that travelled past `far` counts: under it the strip
+    // springs back to the slide it started on, so the user pressed a control
+    // and wobbled, and that click has to reach the button.
     t.addEventListener(
       'click',
       (e) => {
-        if (this._dragMoved) {
-          this._dragMoved = false;
+        if (far) {
+          far = false;
           e.preventDefault();
           e.stopPropagation();
         }

@@ -9,7 +9,7 @@
 .cs {
   /* ---- knobs ---------------------------------------------------------- */
   --cs-per-view: 1; /* slides visible at once (integer; set per breakpoint) */
-  --cs-gap: 1rem; /* space between slides */
+  --cs-gap: 1em; /* space between slides */
   --cs-peek: 0px; /* sliver of next slide visible at the edges */
   --cs-arrow-size: 44px; /* prev/next tap target */
   --cs-arrow-fg: #fff;
@@ -19,9 +19,10 @@
   --cs-dot-size: 12px;
   --cs-dot-fg: #757575; /* ≥3:1 on white (WCAG 1.4.11) */
   --cs-dot-current: #333;
-  --cs-controls-space: 2.5rem; /* reserved dot-row height — keeps CLS at 0 */
+  --cs-controls-space: 2.5em; /* reserved dot-row height — keeps CLS at 0 */
   --cs-thumb-w: 88px;
   --cs-thumb-h: 56px;
+  --cs-thumb-hover-scale: 1.06; /* thumb-strip zoom on hover; 1 turns it off */
   --cs-focus: #1a5fb4;
   --cs-fade-ms: 500ms; /* crossfade duration in fade mode */
 
@@ -39,7 +40,7 @@
 }
 
 .cs[data-cs-gallery] {
-  --cs-controls-space: calc(var(--cs-thumb-h) + 1rem);
+  --cs-controls-space: calc(var(--cs-thumb-h) + 1em);
 }
 
 .cs-track {
@@ -116,6 +117,19 @@
   display: none;
 }
 
+/* Every generated control is a <button>, and a UA button does NOT inherit
+   typography — it takes 13.33px Arial. The spacing below is in em (so it
+   tracks the host's type instead of <html>, which Bootstrap 3 pins to 10px),
+   and --cs-controls-space is read inside .cs-arrow to centre it. Without this
+   those em resolved against 13.33px while the same em on .cs resolved against
+   the real size, and the arrows sat off-centre by a few px. */
+.cs-arrow,
+.cs-pause,
+.cs-dot,
+.cs-thumb {
+  font: inherit;
+}
+
 .cs-arrow {
   position: absolute;
   top: calc((100% - var(--cs-controls-space)) / 2);
@@ -133,11 +147,11 @@
 }
 
 .cs-arrow--prev {
-  inset-inline-start: 0.5rem;
+  inset-inline-start: 0.5em;
 }
 
 .cs-arrow--next {
-  inset-inline-end: 0.5rem;
+  inset-inline-end: 0.5em;
 }
 
 /* rewind:false parks the end arrows on aria-disabled (still focusable) */
@@ -148,8 +162,8 @@
 
 .cs-pause {
   position: absolute;
-  inset-block-start: 0.5rem;
-  inset-inline-end: 0.5rem;
+  inset-block-start: 0.5em;
+  inset-inline-end: 0.5em;
   z-index: 1;
   display: grid;
   place-items: center;
@@ -202,7 +216,8 @@
 .cs-arrow,
 .cs-pause,
 .cs-dot::after,
-.cs-thumb {
+.cs-thumb,
+.cs-thumb img {
   transition:
     color var(--cs-transition),
     background-color var(--cs-transition),
@@ -226,6 +241,13 @@
   border-color: var(--cs-dot-fg);
 }
 
+/* The thumb box never moves — only the picture inside it zooms, clipped by the
+   thumb's own overflow:hidden. Scaling the button instead would shift its
+   neighbours and nudge the scroll position of the strip it sits in. */
+.cs-thumb:hover img {
+  transform: scale(var(--cs-thumb-hover-scale));
+}
+
 /* ---- gallery (tabbed) variant ------------------------------------------ */
 
 .cs-thumbs {
@@ -233,7 +255,13 @@
   inset-block-end: 0;
   inset-inline: 0;
   display: flex;
-  gap: 0.5rem;
+  gap: 0.5em;
+
+  /* `safe` is load-bearing, not decoration: plain `center` in a scroll
+     container pushes the overflow off the start edge, where scrollLeft 0
+     cannot reach it and the first thumbs become unreachable. `safe` centres
+     a short strip and falls back to start-aligned the moment it overflows. */
+  justify-content: safe center;
   block-size: var(--cs-thumb-h);
   overflow-x: auto;
   scrollbar-width: none;
@@ -332,7 +360,13 @@
   .cs-arrow,
   .cs-pause,
   .cs-dot::after,
-  .cs-thumb {
+  .cs-thumb,
+  .cs-thumb img {
     transition-duration: 1ms;
+  }
+
+  /* The zoom is motion, not just a fast transition — drop it entirely. */
+  .cs-thumb:hover img {
+    transform: none;
   }
 }

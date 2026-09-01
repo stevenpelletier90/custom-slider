@@ -71,11 +71,21 @@ JS options override data attributes, which override defaults.
 
 ## CSS custom properties
 
-All seventeen: `--cs-per-view`, `--cs-gap`, `--cs-peek` (edge sliver of the next
+All eighteen: `--cs-per-view`, `--cs-gap`, `--cs-peek` (edge sliver of the next
 slide), `--cs-arrow-size/fg/bg`, `--cs-arrow-fg-hover/bg-hover`,
-`--cs-dot-size/fg/current`, `--cs-controls-space`, `--cs-thumb-w/h`, `--cs-focus`,
-`--cs-transition` (duration+easing for control colour transitions),
+`--cs-dot-size/fg/current`, `--cs-controls-space`, `--cs-thumb-w/h`,
+`--cs-thumb-hover-scale` (gallery thumb zoom on hover; `1` turns it off),
+`--cs-focus`, `--cs-transition` (duration+easing for control colour transitions),
 `--cs-fade-ms` (crossfade duration in fade mode). Set them on the `.cs` element or any wrapper.
+
+Spacing defaults are **`em`, never `rem`**. `rem` is locked to `<html>`, and
+Bootstrap 3 — which the storefronts run — sets `html { font-size: 10px }`, so
+every `rem` shipped at 62.5% of its intended size on a real dealer page (the
+reserved dot row fell to 25px against a 24px dot hit box). `em` tracks whatever
+the host sets on `body`, so the slider scales with the page it is pasted into.
+The generated controls carry `font: inherit` for the same reason: a `<button>`
+otherwise takes 13.33px Arial, and `em` inside it would mean something different
+from `em` outside it.
 
 ## JS API
 
