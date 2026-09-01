@@ -1,0 +1,23 @@
+{
+  "extends": ["stylelint-config-standard", "stylelint-config-recess-order"],
+  "rules": {
+    "selector-class-pattern": ["^[a-z][a-z0-9]*([_-]+[a-z0-9]+)*$", { "message": "Expected class selector to be kebab-case (BEM `--` modifiers allowed, e.g. .cs-arrow--prev)" }],
+    "no-descending-specificity": null,
+    "selector-max-compound-selectors": 5,
+
+    "unit-disallowed-list": [
+      ["rem"],
+      {
+        "message": "Use em, not rem. rem is locked to <html>, and Bootstrap 3 — which the storefronts run — sets `html { font-size: 10px }`, so a rem here ships at 62.5% on a real dealer page. em tracks the host's body size instead."
+      }
+    ],
+
+    "declaration-block-single-line-max-declarations": null,
+    "at-rule-empty-line-before": null,
+    "declaration-empty-line-before": null,
+    "rule-empty-line-before": null,
+    "comment-empty-line-before": null,
+    "media-feature-range-notation": null,
+    "no-duplicate-selectors": null
+  }
+}
