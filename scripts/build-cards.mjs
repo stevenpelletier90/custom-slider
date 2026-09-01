@@ -1,12 +1,14 @@
-// Builds dist/custom-slider-cards.css — the OPTIONAL card-looks stylesheet.
+// Builds the card-styles half of dist/custom-slider.css, and appends it.
 //
-// Why it exists: the engine ships zero card styling on purpose (cs-* is
-// mechanism, cargo-* is content), so putting a slider on a page meant pasting a
-// <style> block AND markup for every single one — 300–990 B gzip of near-
-// duplicate CSS per slider, and two things to paste instead of one. Link this
-// file once and a slider becomes an HTML paste:
+// The engine styles no cards on purpose (cs-* is mechanism, cargo-* is content),
+// so without this every slider had to paste its own card CSS — 810 B gzip per
+// model bar, in the page HTML, repeated per slider and cached by nothing. With
+// the card styles in the linked stylesheet a slider becomes a markup paste:
 //
 //   <div class="cs cargo-tile cs-xs-2 cs-sm-3 cs-md-4 cs-lg-5" data-cs> …
+//
+// and a preset nobody should edit — a Chevrolet model bar — can ship as HTML
+// with no style block at all, which is the point of a replacement code.
 //
 // It is generated from the SAME LOOKS object demo/assets/looks.js gives the
 // builder, never hand-written. That is the whole point: a hand-kept copy of
@@ -60,9 +62,9 @@ const scope = (css, sel) =>
   });
 
 const out = [
-  '/*! Custom Slider — card looks. Optional: the engine runs without this file.',
-  '   Generated from demo/assets/looks.js by scripts/build-cards.mjs — do not',
-  '   edit by hand, the next build overwrites it. */',
+  '/*! Custom Slider — card styles. Generated from demo/assets/looks.js by',
+  '   scripts/build-cards.mjs and appended to the engine stylesheet — do not',
+  '   edit by hand, the next build overwrites everything below this line. */',
   '',
   '/* ---- columns ---------------------------------------------------------',
   '   Per-breakpoint so a ladder is a set of classes rather than one class per',
@@ -101,10 +103,30 @@ if (stray) {
   process.exit(1);
 }
 
-// Minified like the engine file, and for the same reason: it is a build
-// artefact a dealer site links, not something anyone reads. The /*! header
-// survives minification, so the generated-not-hand-written warning ships too.
+// Minified like the engine, and for the same reason: it is a build artefact a
+// dealer site links, not something anyone reads.
 const min = (await transform(css, { loader: 'css', minify: true })).code;
+
+// APPENDED to the engine stylesheet rather than shipped beside it. Two files
+// was the wrong trade once the house rule became "every site links both": the
+// separate file saves 1742 B gzip only on a site that uses no card style, and
+// there are none - while the alternative made every snippet carry its own card
+// CSS, 810 B gzip per model bar, in the page HTML where it is neither cached
+// nor shared. Three model bars on a site already cost more than the whole card
+// library does once.
+//
+// The marker is load-bearing: scripts/size.mjs splits on it to weigh the ENGINE
+// against its budget, so merging the cards in does not quietly turn a number
+// that means "smaller than Embla's core" into one that means something else.
 mkdirSync('dist', { recursive: true });
-writeFileSync('dist/custom-slider-cards.css', min);
-console.log(`dist/custom-slider-cards.css: ${Object.keys(LOOKS).length} looks, ${TIERS.length * MAX_COLS} column classes, ${min.length} B min`);
+const ENGINE_CSS = 'dist/custom-slider.css';
+// Strip any cards half a previous build appended, so this is idempotent.
+const engine = readFileSync(ENGINE_CSS, 'utf8').replace(/\s*\/\*! cards \*\/[\s\S]*$/, '');
+writeFileSync(
+  ENGINE_CSS,
+  `${engine.trimEnd()}
+/*! cards */
+${min}
+`,
+);
+console.log(`dist/custom-slider.css: engine + ${Object.keys(LOOKS).length} card styles, ${TIERS.length * MAX_COLS} column classes (${min.length} B of cards)`);

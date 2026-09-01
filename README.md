@@ -90,17 +90,16 @@ class `dl-carousel`, `--dlc-*` properties, `window.DLCarousel`. A page linking
 those and pasting a snippet from the current builder gets an unstyled list, so
 they should be removed rather than left alongside.
 
-## The optional card-looks file
+## Card styles come with the stylesheet
 
-`dist/custom-slider-cards.css` (~2 KB gzip) is a **separate, optional** stylesheet
-holding the seven card looks and a set of column classes. The engine ships no card
-styling on purpose — `cs-*` is mechanism, `cargo-*` is content — so without it every
-slider has to paste its own `<style>` block. Link it once and a slider becomes a
-markup paste:
+`dist/custom-slider.css` is the engine **plus** a small library of card styling:
+the seven card looks and a set of column classes, about 2 KB gzip of the file. The
+engine itself styles no cards on purpose — `cs-*` is mechanism, `cargo-*` is content
+— but every site that links it gets the card half too, so a slider is mostly just
+its markup:
 
 ```html
 <link rel="stylesheet" href="/path/custom-slider.css" />
-<link rel="stylesheet" href="/path/custom-slider-cards.css" />
 <script src="/path/custom-slider.js" defer></script>
 
 <div class="cs cargo-tile cs-xs-2 cs-sm-3 cs-md-4 cs-lg-5" data-cs aria-label="Our models">
@@ -115,9 +114,15 @@ Looks: `cargo-tile`, `cargo-vcard`, `cargo-wordmark`, `cargo-split`, `cargo-port
 for N of 1–8, on Bootstrap 3's tiers. Anything you change from a look's defaults goes
 in a short `<style>` block beside the markup — the builder writes only the differences.
 
-It is **generated** from the same look definitions the builder draws with
-(`scripts/build-cards.mjs`), so the file and the preview cannot disagree. It is not
-counted against the byte budget below: a site that links no card looks pays none of it.
+The card half is **generated** from the same look definitions the builder draws with
+(`scripts/build-cards.mjs` appends it behind a `/*! cards */` marker), so the file and
+the preview cannot disagree. `npm run size` splits on that marker and weighs only the
+engine against the budget below — the budget's job is to show the engine undercuts
+Embla's core and Splide, and neither of those ships a card library.
+
+A page that can't link the stylesheet — a one-off block on a site where you have no
+file access — can still work: tick **Paste the card styles too** in the builder and the
+snippet carries its own styling, rendering identically.
 
 ## CSS custom properties
 

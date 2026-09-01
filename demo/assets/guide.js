@@ -219,6 +219,30 @@
         ])}
       </section>
 
+      <section id="g-classes"><h3>Ready-made card classes</h3>
+        <p>The stylesheet carries seven card styles and a set of column classes, so a slider can be written by hand as markup alone. Name a card style and a column ladder on the same element as
+        <code>cs</code>:</p>
+        <pre class="g-code"><code>${esc('<div class="cs cargo-tile cs-xs-2 cs-sm-3 cs-md-4 cs-lg-5" data-cs aria-label="Our models">')}</code></pre>
+        ${table(
+          ['Class', 'What it is'],
+          [
+            ['cargo-tile', 'Cutout tile — a vehicle cutout with its name under it. The workhorse.'],
+            ['cargo-vcard', 'Vehicle card — photo, title, price, on a card background.'],
+            ['cargo-wordmark', 'Wordmark above — the model wordmark over the vehicle.'],
+            ['cargo-split', 'Split photo card — photo one side, copy the other.'],
+            ['cargo-portrait', 'Tall tile with a call to action.'],
+            ['cargo-logo', 'Logo panel — a grid of brand logos.'],
+            ['cargo-location', 'Location card — address and hours.'],
+            ['cs-xs-N', 'Cards across on a phone. N is 1 to 8.'],
+            ['cs-sm-N', 'Cards across from 768px up.'],
+            ['cs-md-N', 'Cards across from 992px up.'],
+            ['cs-lg-N', 'Cards across from 1200px up.'],
+          ],
+        )}
+        <p class="g-sub">To change something about a card style, set the property from the table below on your own slider — you do not need to copy the whole style. The builder writes only what you
+        changed, which is why the code it gives you is a few lines rather than forty.</p>
+      </section>
+
       <section id="g-options"><h3>Options</h3>
         <p>All set as attributes on the root. The workbench writes these for you; this is what they mean.</p>
         ${table(['Attribute', 'Default', 'What it does'], OPTIONS)}
@@ -230,7 +254,7 @@
       </section>
 
       <section id="g-card-props"><h3>Card style properties</h3>
-        <p>The engine styles no cards at all — <code>cs-*</code> is the machinery, <code>cargo-*</code> is the card. These are the settings the card styles bring, the same ones the builder lists under
+        <p><code>cs-*</code> is the machinery, <code>cargo-*</code> is the card, and the stylesheet ships both. These are the settings the card styles bring, the same ones the builder lists under
         <strong>This card style</strong>. Each is a CSS custom property: set it on your slider to change it. A card style only reads the ones in its own row of the <strong>Used by</strong> column.</p>
         ${cards.length ? table(['Property', 'Default', 'Used by', 'What it does'], cards) : '<p class="g-sub">Open this page over HTTP to list them.</p>'}
         <p class="g-sub">Two card styles also set the engine's own arrow colours, because they bring a dark background and the default arrows disappear on it.</p>

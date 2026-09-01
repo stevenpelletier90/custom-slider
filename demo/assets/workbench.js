@@ -537,7 +537,20 @@
 
   /* ---- state ------------------------------------------------------------ */
 
-  const state = { pattern: 'modelbar', brand: null, look: null, perView: null, props: null, lookProps: null, data: null, hideDots: false, content: null, label: null, name: 'my-slider' };
+  const state = {
+    pattern: 'modelbar',
+    brand: null,
+    look: null,
+    perView: null,
+    props: null,
+    lookProps: null,
+    data: null,
+    hideDots: false,
+    content: null,
+    label: null,
+    name: 'my-slider',
+    standalone: false,
+  };
 
   // A look that sets --cs-* is choosing how the ENGINE's controls sit on the
   // background it brings, so those belong in props - where the panel edits them
@@ -670,14 +683,33 @@
     return !!(p.panes || p.filters || p.cardGrid || state.pattern === 'lightbox');
   };
 
+  // The card styles ship inside dist/custom-slider.css, which every site links,
+  // so a snippet does not repeat them - it carries only what THIS slider changed
+  // from its card style's defaults. The delta is computed, never trusted: a
+  // value equal to the default is dropped, so the block cannot go stale against
+  // the file. `standalone` is the escape hatch for a block that has to work
+  // somewhere the stylesheet is not linked.
+  //
+  // A pattern that draws its own cards has nothing in the file, so its CSS comes
+  // along either way and the flag changes nothing for it - which the panel says,
+  // rather than disabling a control, the mistake the old version made on 13 of
+  // the 17 patterns.
+  const shared = () => !!state.look && !state.standalone;
+
+  // Properties whose default is written by the shared stylesheet rather than by
+  // the look's own settings, so restating them in a snippet is a line that
+  // changes nothing. build-cards.mjs emits `font-size: var(--cargo-font, 1em)`
+  // on every card class, which is the whole list.
+  const SHARED_DEFAULTS = { '--cargo-font': '1em' };
+
   function cssFor(sel, preview) {
     const p = PATTERNS[state.pattern];
-    // Library mode: the look's rules AND its default values already come from
-    // custom-slider-cards.css, so the snippet carries only what this slider
-    // changed. That is the difference between a 40-line paste and a 3-line one,
-    // and it is computed rather than trusted - a value equal to the look's
-    // default is dropped, so the delta block can never go stale against it.
-    const base = { ...state.lookProps, ...state.props, '--cs-per-view': state.perView.base };
+    const lib = shared();
+    const defaults = lib ? { ...SHARED_DEFAULTS, ...LOOKS[state.look].settings } : {};
+    const merged = { ...state.lookProps, ...state.props };
+    const kept = lib ? Object.fromEntries(Object.entries(merged).filter(([k, v]) => defaults[k] !== v)) : merged;
+    // Per-view is cs-xs-N / cs-sm-N classes when the styles are shared.
+    const base = lib ? kept : { ...kept, '--cs-per-view': state.perView.base };
     const decls = Object.entries(base)
       .map(([k, v]) => `  ${k}: ${v};`)
       .join('\n');
@@ -689,11 +721,13 @@
     // at 10px on a real dealer site while the demo showed 16. Defaulting to 1em
     // makes the cards inherit the site's own body size, so they match the copy
     // around them; setting --cargo-font to a length pins them instead.
-    const font = `  font-size: var(--cargo-font, 1em);`;
+    const font = lib ? '' : `  font-size: var(--cargo-font, 1em);`;
 
-    const steps = BPS.filter((bp) => state.perView[bp] != null)
-      .map((bp) => `@media (min-width: ${bp}px) {\n  ${sel} { --cs-per-view: ${state.perView[bp]}; }\n}`)
-      .join('\n');
+    const steps = lib
+      ? '' // the ladder is cs-xs-N / cs-sm-N classes from the shared stylesheet
+      : BPS.filter((bp) => state.perView[bp] != null)
+          .map((bp) => `@media (min-width: ${bp}px) {\n  ${sel} { --cs-per-view: ${state.perView[bp]}; }\n}`)
+          .join('\n');
 
     // The preview is a fixed-width box inside a window that is usually much
     // wider, and a media query asks the WINDOW - so whatever the box was set
@@ -721,10 +755,10 @@
         return `${pre}${root} ${tok}`;
       });
 
-    // The look's rules are skipped in library mode; a pattern's own CSS never
-    // is, because structural patterns (tabs, filter bar, lightbox) are not card
-    // looks and have no entry in the file.
-    const body = [state.look ? scope(LOOKS[state.look].css) : '', p.css ? scope(p.css) : ''].filter(Boolean).join('\n');
+    // The card style's rules come from the shared stylesheet; a pattern's own
+    // CSS never does, because structural patterns (tabs, filter bar, lightbox)
+    // are not card styles and have no entry in it.
+    const body = [state.look && !lib ? scope(LOOKS[state.look].css) : '', p.css ? scope(p.css) : ''].filter(Boolean).join('\n');
     // Arrows either sit in a gutter beside the content or float over it. Last
     // in the sheet so it beats the padding-inline a card look sets for itself.
     // The fallback matters: --cs-arrow-size is defined on .cs, and the
@@ -739,6 +773,23 @@
 
   function htmlFor(cls) {
     const p = PATTERNS[state.pattern];
+    // The carousel names its card style and its column ladder so the shared
+    // stylesheet can reach it. Two things this must NOT do, both learned the
+    // hard way: replace the instance class (the overrides hook onto it, and
+    // dropping it detached every one of them), or end up inside `cls` itself
+    // (the structural patterns build their wrapper as `${cls}-wrap`, so an
+    // augmented cls glued "-wrap" onto the last column class). It is a suffix
+    // applied at the carousel element and nowhere else.
+    let libCls = '';
+    if (shared()) {
+      const tiers = [['xs', 'base'], ...BPS.map((bp, i) => [['sm', 'md', 'lg'][i], bp])];
+      libCls =
+        ` cargo-${state.look}` +
+        tiers
+          .filter(([, k]) => state.perView[k] != null)
+          .map(([t, k]) => ` cs-${t}-${state.perView[k]}`)
+          .join('');
+    }
     // Cycle the content up or down to the requested count. Repeats are how you
     // see what the slider does at 12 cards, and what it does when everything
     // already fits and it correctly stops drawing arrows and dots.
@@ -770,7 +821,7 @@
     // from this rather than hand-writing a second copy of the markup.
     const carousel = (list, label, pad = '') =>
       [
-        `${pad}<div class="${cls} cs" data-cs${attrs} aria-label="${label}">`,
+        `${pad}<div class="${cls}${libCls} cs" data-cs${attrs} aria-label="${label}">`,
         `${pad}  <${tag} class="cs-track">`,
         // Indent the card's own lines to match, so what you paste is not a
         // wall of markup starting at column zero inside a nested list item.
@@ -939,16 +990,21 @@
     state.codeText = `<style>\n${css}\n</style>\n\n${html}${script}`;
 
     // Say what is in the box and where each part goes, counted off the snippet
-    // itself so it can never name a part that is not there. This replaced a
-    // "use the card-looks file" checkbox that was greyed out on 13 of the 17
-    // patterns and, where it did work, still left 13-21 lines of CSS behind -
-    // a control for something that was never the designer's decision to make.
+    // itself so it can never name a part that is not there.
+    //
+    // An earlier "use the card-looks file" checkbox failed because it was a
+    // question: greyed out on 13 of the 17 patterns, and where it did work it
+    // still left 13-21 lines of CSS behind. The card styles now ship inside
+    // custom-slider.css, so using them is the default and no longer a decision
+    // anyone has to make - the toggle survives only as an escape hatch for a
+    // page that cannot link the file, and it is never greyed out.
     const lines = (t) => t.trim().split('\n').length;
     const parts = [
       ['HTML', lines(html), 'a <strong>Custom HTML</strong> block'],
       ['CSS', lines(css), '<strong>Style Only &rarr; Head Section</strong>'],
       ['Named', `.${state.name}`, 'give a second slider on the same page a different name, or they overwrite each other'],
     ];
+    if (shared()) parts.push(['Card style', `.cargo-${state.look}`, 'comes from <strong>custom-slider.css</strong> — nothing to paste for it']);
     if (p.script) parts.push(['JavaScript', lines(p.script), '<strong>Body Section, Bottom</strong>']);
     // The demo images resolve to real platform paths, which is what makes them
     // usable - and exactly why this warning belongs here. They are Chevrolet
@@ -1485,6 +1541,24 @@
     });
     beh.append(control('Name for this slider', nameBox));
 
+    // Never disabled. On a pattern that draws its own cards this changes
+    // nothing, and the note below says so - a greyed-out control that will not
+    // explain itself is what the previous version of this got wrong.
+    const alone = document.createElement('input');
+    alone.type = 'checkbox';
+    alone.checked = state.standalone;
+    alone.addEventListener('change', () => {
+      state.standalone = alone.checked;
+      render();
+    });
+    beh.append(control('Paste the card styles too', alone));
+    const aloneNote = document.createElement('p');
+    aloneNote.className = 'wb-note';
+    aloneNote.textContent = state.look
+      ? 'Leave this off: the card styling comes from custom-slider.css, which is what keeps the snippet short. Tick it only for a page that cannot link that file — the slider looks the same either way.'
+      : 'This pattern draws its own cards, so its styling comes with the snippet either way — this setting changes nothing here.';
+    beh.append(aloneNote);
+
     if (!state.content) beh.append(control('Slides in this example', count));
     panel.append(section('Behaviour', beh));
   }
@@ -1777,14 +1851,12 @@
   // Built here rather than read out of the DOM: the markup on disk may carry
   // CRLF, and a stray carriage return inside a pasted tag is a nasty thing to
   // have to debug on someone else's site.
-  const TAGS = ['<link rel="stylesheet" href="/path/custom-slider.css">', '<link rel="stylesheet" href="/path/custom-slider-cards.css">', '<script src="/path/custom-slider.js" defer></script>'].join(
-    '\n',
-  );
+  const TAGS = ['<link rel="stylesheet" href="/path/custom-slider.css">', '<script src="/path/custom-slider.js" defer></script>'].join('\n');
   $('wb-copy-tags').addEventListener('click', (e) => copyText(e.target, TAGS));
 
   // The engine files, fetched at click time from the very files this page is
   // running - so what lands on the clipboard can never be a stale copy.
-  const ENGINE = { css: '../dist/custom-slider.css', js: '../dist/custom-slider.js', cards: '../dist/custom-slider-cards.css' };
+  const ENGINE = { css: '../dist/custom-slider.css', js: '../dist/custom-slider.js' };
   const grab = (k) => fetch(ENGINE[k]).then((r) => r.text());
 
   for (const btn of document.querySelectorAll('[data-file]')) {
@@ -1801,7 +1873,7 @@
       }
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([text], { type: kind === 'js' ? 'text/javascript' : 'text/css' }));
-      a.download = kind === 'cards' ? 'custom-slider-cards.css' : `custom-slider.${kind}`;
+      a.download = `custom-slider.${kind}`;
       a.click();
       URL.revokeObjectURL(a.href);
       flash(btn, 'Downloaded');

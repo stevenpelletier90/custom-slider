@@ -8,6 +8,8 @@
 import { readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { gzipSync } from 'node:zlib';
 
+// Reads the built stylesheet whole, cards included, so a pasted page gets the
+// card styles too and its snippets can be the short shared-class kind.
 const css = readFileSync('dist/custom-slider.css', 'utf8').trim();
 const js = readFileSync('dist/custom-slider.js', 'utf8').trim();
 mkdirSync('dist/paste', { recursive: true });
