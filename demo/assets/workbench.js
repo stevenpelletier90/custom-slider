@@ -1688,11 +1688,36 @@
 
   /* ---- pattern picker ---------------------------------------------------- */
 
+  // The rail shows a short name; `label` stays the descriptive title used for
+  // the page heading and the patterns page. At the width the rail has to be for
+  // the preview to reach 1170px, a sentence wraps to three or four lines - 16 of
+  // the 17 did - and a column of wrapped sentences cannot be scanned.
+  const SHORT = {
+    modelbar: 'Model bar',
+    cards: 'Vehicle cards',
+    hero: 'Hero banner',
+    gallery: 'Photo gallery',
+    grid: 'Two-row grid',
+    peek: 'Peek',
+    video: 'Testimonials',
+    tabs: 'Tabbed bar',
+    models: 'Tall photos',
+    mixed: 'Mixed sizes',
+    service: 'Service cards',
+    reviews: 'Reviews',
+    'gallery-filter': 'Filter gallery',
+    'media-gallery': 'Photos + video',
+    lightbox: 'Lightbox',
+    'card-gallery': 'Card gallery',
+    stock: 'Stock look',
+  };
+
   const nav = $('wb-nav');
   for (const [id, p] of Object.entries(PATTERNS)) {
     const b = document.createElement('button');
     b.type = 'button';
-    b.innerHTML = `<span class="wb-glyph wb-glyph--${id}"></span><span>${p.label}</span>`;
+    b.innerHTML = `<span class="wb-glyph wb-glyph--${id}"></span><span>${SHORT[id] ?? p.label}</span>`;
+    b.title = p.label;
     b.dataset.go = id;
     b.addEventListener('click', () => {
       loadPattern(id);

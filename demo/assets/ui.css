@@ -38,6 +38,10 @@
   --code-bg: #272822;
   --sans: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", "Consolas", monospace;
+
+  /* 11rem, not more: the ceiling is whatever still leaves the work column
+     1170px at a 1440 window, and 12rem missed it by 11px. The rail earns its
+     legibility from short labels instead of width. */
   --rail: 11rem;
   --shell: 1760px;
 }
@@ -247,7 +251,7 @@ body {
   position: sticky;
   inset-block-start: 3.5rem;
   max-block-size: calc(100vh - 3.5rem);
-  padding: 1.25rem 1rem 2.5rem;
+  padding: 1.25rem 0.75rem 2.5rem;
   overflow-y: auto;
   overscroll-behavior: contain;
   border-inline-end: 1px solid var(--rule);
@@ -332,9 +336,9 @@ body {
 
 #wb-nav button {
   display: flex;
-  gap: 0.6rem;
+  gap: 0.5rem;
   align-items: center;
-  padding: 0.35rem 0.5rem;
+  padding: 0.35rem 0.4rem;
   font: inherit;
   font-size: 0.87rem;
   color: var(--ink-soft);
