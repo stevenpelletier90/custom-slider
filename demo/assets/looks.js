@@ -90,7 +90,7 @@ const LOOKS = {
     // Photo on top, title and price under it, all inside one card.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="6.5" y="3.5" width="31" height="23" rx="3" stroke="currentColor" opacity=".5"/><rect x="9" y="6" width="26" height="11" rx="1.6" fill="currentColor" opacity=".85"/><rect x="9" y="19" width="18" height="2.2" rx="1.1" fill="currentColor" opacity=".55"/><rect x="9" y="22.6" width="11" height="2" rx="1" fill="currentColor" opacity=".3"/></svg>`,
     label: 'Vehicle card',
-    note: 'Photo, title and price in one card, made clickable by a single stretched link.',
+    note: 'Photo, title and price in one card. The whole card is one link, so nothing is announced twice.',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
     minCard: 240,
@@ -236,6 +236,10 @@ const LOOKS = {
       '--cta-bg': '#fff',
       '--cta-fg': '#14161b',
       '--img-aspect': '3 / 5',
+      // Same reason as the logo panel: dark strip, so light arrows. 1.20:1 before.
+      '--cs-arrow-fg': '#fff',
+      '--cs-arrow-bg': 'rgb(255 255 255 / 14%)',
+      '--cs-arrow-bg-hover': 'rgb(255 255 255 / 26%)',
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1.5em; background: var(--strip-bg); }
 .cargo-card { display: block; color: var(--card-fg); text-align: center; text-decoration: none; }
@@ -253,7 +257,7 @@ const LOOKS = {
     // A logo centred on a filled panel - brand strips, nothing else.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="5.5" y="5.5" width="33" height="19" rx="3" fill="currentColor" opacity=".85"/><circle cx="22" cy="15" r="5" fill="var(--wb-icon-bg, #fff)" opacity=".9"/><rect x="17" y="14" width="10" height="2" rx="1" fill="currentColor" opacity=".85"/></svg>`,
     label: 'Logo panel',
-    note: 'Built for a strip of manufacturer logos on a dark panel, not for vehicles - which is why it looks odd under a model bar. The navy is only --strip-bg and --card-bg; change them below.',
+    note: 'Made for a row of manufacturer logos on a dark panel, not for vehicles - which is why it looks odd holding cars. The navy is just a colour setting; change it in the panel.',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
     minCard: 165,
@@ -265,6 +269,12 @@ const LOOKS = {
       '--strip-bg': '#16294f',
       '--card-bg': '#253a5e',
       '--card-fg': '#fff',
+      // The strip is dark, so the arrows have to be light. A look that sets its
+      // own background owns the contrast of the controls sitting on it - the
+      // navy panel with the engine's dark arrows measured 1.06:1.
+      '--cs-arrow-fg': '#fff',
+      '--cs-arrow-bg': 'rgb(255 255 255 / 14%)',
+      '--cs-arrow-bg-hover': 'rgb(255 255 255 / 26%)',
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1em; background: var(--strip-bg); }
 %root% .cs-track { padding-block-end: 1.5em; }

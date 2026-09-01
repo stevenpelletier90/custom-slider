@@ -1490,6 +1490,15 @@ code {
   border-radius: 10px;
 }
 
+/* The white card is scaffolding for looks that assume a light page. A look that
+   paints its own strip supplies that itself, so the frame just doubles up. */
+.gx-stage--bare {
+  padding: 0;
+  color: inherit;
+  background: none;
+  border: 0;
+}
+
 @media (width <= 700px) {
   .gx-head {
     flex-wrap: wrap;

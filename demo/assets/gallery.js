@@ -58,6 +58,11 @@
           <a class="ui-btn" href="index.html#modelbar">Open in the builder</a>
         </div>
         <div class="gx-stage"></div>`;
+      // A look that brings its own strip colour does not need a white card
+      // behind it: that is a container around a container, and it read as a
+      // white frame bolted onto the navy logo panel. The frame exists so
+      // light-background cards stay legible on a dark page, and nothing else.
+      if (/^#|rgb/.test(look.settings?.['--strip-bg'] ?? '')) card.querySelector('.gx-stage').classList.add('gx-stage--bare');
       card.querySelector('.wb-glyph').innerHTML = look.icon ?? '';
       card.querySelector('.gx-stage').innerHTML = html;
       looksGrid.append(card);

@@ -538,6 +538,22 @@
 
   const state = { pattern: 'modelbar', brand: null, look: null, perView: null, props: null, lookProps: null, data: null, hideDots: false, content: null, label: null, lib: false };
 
+  // A look that sets --cs-* is choosing how the ENGINE's controls sit on the
+  // background it brings, so those belong in props - where the panel edits them
+  // as "Arrow colour" and the pattern's own values are overridden rather than
+  // overriding. A logo panel that brings navy has to bring arrows you can see on
+  // navy; leaving them in lookProps let the model bar's dark arrows win at 1.06:1.
+  const applyLook = (id) => {
+    state.look = id;
+    state.lookProps = { ...LOOKS[id].settings };
+    for (const k of Object.keys(state.lookProps)) {
+      if (k.startsWith('--cs-')) {
+        state.props[k] = state.lookProps[k];
+        delete state.lookProps[k];
+      }
+    }
+  };
+
   function loadPattern(id) {
     const p = PATTERNS[id];
     state.pattern = id;
@@ -554,7 +570,8 @@
     state.label = null; // only renderLook overrides it — see the note there
     // Beside the content wherever a card has text an arrow could land on.
     state.gutter = p.gutter ?? !!p.look;
-    state.lookProps = p.look ? { ...LOOKS[p.look].settings } : {};
+    state.lookProps = {};
+    if (p.look) applyLook(p.look);
   }
 
   // A brand preset brings its own vehicles where the estate gave us the
@@ -853,8 +870,7 @@
     renderLook(id, cls) {
       loadPattern('modelbar');
       const look = LOOKS[id];
-      state.look = id;
-      state.lookProps = { ...look.settings };
+      applyLook(id);
       state.perView = { ...look.perView };
       state.gutter = true;
       // Named for the look it is showing, not the pattern it borrows to show it.
@@ -1251,8 +1267,7 @@
         const b = BRANDS[state.brand];
         if (b) {
           if (b.models) state.count = b.models.length;
-          state.look = b.look;
-          state.lookProps = { ...LOOKS[b.look].settings };
+          applyLook(b.look);
           // A recorded ladder is read at the platform's tiers and clamped;
           // a brand with none keeps the look's own sensible ladder.
           // The gap in effect, not a default: the two-row grid runs a 16px gap
@@ -1282,8 +1297,7 @@
         b.innerHTML = `<span class="wb-look-icon">${look.icon}</span><span>${look.label}</span>`;
         b.addEventListener('click', () => {
           state.brand = null;
-          state.look = id;
-          state.lookProps = { ...LOOKS[id].settings };
+          applyLook(id);
           // Each look brings the ladder that suits it: a split card at five
           // across is unreadable, a cutout at one across is a waste.
           state.perView = { ...LOOKS[id].perView };
