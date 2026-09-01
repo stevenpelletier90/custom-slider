@@ -29,7 +29,11 @@
   // this demo's stage, which is why the workbench's fit warning is checked
   // against the rendered card rather than against these numbers.
   // The look's own horizontal chrome comes off separately - see CHROME.
-  const TIER_BOX = { base: 360, 768: 750, 992: 970, 1200: 1170 };
+  // base is 330, not 360: below 768 Bootstrap 3's .container has no width, it
+  // is fluid with 15px of padding each side, so a 360px phone hands the
+  // slider 330px. 360 is the SCREEN, and mixing a screen width into a table
+  // of container widths credited every phone with 30px it does not have.
+  const TIER_BOX = { base: 330, 768: 750, 992: 970, 1200: 1170 };
 
   // The vehicles each brand actually shows, from the cutouts in demo/img/oem.
   // [folder, [[file, width, height, name], ...]] - real intrinsic sizes,

@@ -568,7 +568,11 @@
   // means "show me a page at the 768 tier". Everything downstream has to agree
   // on which tier that is: what the preview draws, and what the fit gauge
   // thinks a real page would give.
-  const FRAME_TIER = { 360: 0, 750: 768, 970: 992, 1170: 1200 };
+  // Container width -> the screen width whose tier it belongs to. Both numbers
+  // are Bootstrap 3's: 768 is what a media query asks, 750 is the .container it
+  // hands you at that size. The buttons preview the container, because that is
+  // the box the slider gets; the ladder keys on the screen.
+  const FRAME_TIER = { 330: 0, 750: 768, 970: 992, 1170: 1200 };
   let frameW = 1170; // the pressed width button, 0 for "fill"
   const frameTier = () => (frameW ? FRAME_TIER[frameW] : innerWidth >= 1200 ? 1200 : innerWidth >= 992 ? 992 : innerWidth >= 768 ? 768 : 0);
 
@@ -1653,7 +1657,8 @@
     for (const b of widthBtns()) {
       const w = +b.dataset.w;
       b.disabled = w > avail + 1;
-      b.title = b.disabled ? `Make the window about ${Math.round(w + (innerWidth - avail))}px wide to use this` : w ? `See it at ${w}px wide` : 'Use the whole column';
+      const SCREEN = { 330: 'under 768px', 750: '768px and up', 970: '992px and up', 1170: '1200px and up' };
+      b.title = b.disabled ? `Make the window about ${Math.round(w + (innerWidth - avail))}px wide to use this` : w ? `${SCREEN[w]} screen — the slider gets ${w}px` : 'Use the whole column';
       if (b.getAttribute('aria-pressed') === 'true') active = b;
     }
     if (active && active.disabled) {
