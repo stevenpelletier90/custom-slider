@@ -1472,9 +1472,55 @@ code {
   max-inline-size: 78rem;
 }
 
+/* The catalogue on one screen. Twenty-four live sliders is fifteen screens of
+   scrolling, and before this the only way to find one was to scroll past the
+   rest of them. Tiles rather than a list of links because the glyph is how the
+   builder's rail names these, and a designer recognises the shape first. */
+.gx-index {
+  display: grid;
+
+  /* Wide enough for the longest name in either index ("Tall tile with CTA"),
+     because a tile that ellipsises the thing it names is a tile you cannot
+     read. */
+  grid-template-columns: repeat(auto-fill, minmax(11.5rem, 1fr));
+  gap: 0.5rem;
+  margin-block-start: 1.25rem;
+}
+
+.gx-tile {
+  display: flex;
+  gap: 0.55rem;
+  align-items: center;
+  padding: 0.5rem 0.7rem;
+  font-size: 0.85rem;
+  color: inherit;
+  text-decoration: none;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 9px;
+}
+
+.gx-tile:hover {
+  border-color: var(--accent);
+}
+
+.gx-tile .wb-glyph {
+  flex: none;
+}
+
+.gx-tile-name {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
 .gx-card {
   padding: 1.25rem 1.4rem 1.5rem;
   margin-block-start: 1.5rem;
+
+  /* The site header is sticky, so a jump would otherwise land with the card's
+     own heading hidden underneath it. */
+  scroll-margin-block-start: 4.5rem;
   background: var(--surface);
   border: 1px solid var(--rule);
   border-radius: 12px;
@@ -1534,6 +1580,38 @@ code {
 
   .gx-head .ui-btn {
     margin-inline-start: 0;
+  }
+
+  /* A phone is too narrow for two 11.5rem tiles, so auto-fill drops to one and
+     the index becomes seventeen rows - a screenful of jump list before the
+     first example. Two fixed columns instead, with names wrapping rather than
+     ellipsising, since a wrapped name still reads and a clipped one does not. */
+  .gx-index {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .gx-tile-name {
+    overflow: visible;
+    white-space: normal;
+  }
+
+  /* Three nested paddings - page, card, stage - took 78px off each side of a
+     390px phone, so every example rendered in 273px and drew its own
+     conclusions from it: the tabbed bar stacked all three tabs on separate
+     rows and its cards came out 70px wide. None of that happens on a real
+     page, where the same slider gets the full width and puts the tabs on one
+     row. The examples were being judged in a box no dealer page has, so the
+     chrome gets out of the way here instead. */
+  .gx-doc {
+    padding-inline: 0.75rem;
+  }
+
+  .gx-card {
+    padding-inline: 0.6rem;
+  }
+
+  .gx-stage {
+    padding: 0.7rem;
   }
 }
 

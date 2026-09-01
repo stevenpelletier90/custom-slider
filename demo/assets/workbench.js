@@ -767,7 +767,23 @@
     const gw = state.gutter ? 'calc(var(--cs-arrow-size, 44px) + 0.4em)' : '0';
     // Tabs and filter buttons sit outside the carousel, so they have to be told
     // about the gutter or they hang off the left edge of their own cards.
-    const gutter = [`${sel} { padding-inline: ${gw}; }`, hasWrap() ? `${sel}-wrap .cargo-tabs, ${sel}-wrap .cargo-filterbar { padding-inline: ${gw}; }` : ''].filter(Boolean).join('\n');
+    //
+    // On a phone that alignment costs more than it buys: an arrow channel is
+    // ~42px a side, which on a 330px strip leaves 246px for the tabs, and the
+    // three body-style tabs Chevrolet ships need 259 - so they stacked one per
+    // row and the pattern looked broken. The carousel keeps its channel either
+    // way, because the arrows are still there; only the strip above it gives
+    // the alignment up, and it has no arrows beside it to line up with anyway.
+    // .98 for the same reason build-cards.mjs uses it: max-width 767px against
+    // min-width 768px leaves a dead zone at fractional viewport widths.
+    const gutter = [
+      `${sel} { padding-inline: ${gw}; }`,
+      hasWrap()
+        ? `${sel}-wrap .cargo-tabs, ${sel}-wrap .cargo-filterbar { padding-inline: ${gw}; }\n@media (max-width: 767.98px) {\n  ${sel}-wrap .cargo-tabs, ${sel}-wrap .cargo-filterbar { padding-inline: 0; }\n}`
+        : '',
+    ]
+      .filter(Boolean)
+      .join('\n');
     return [`${sel} {\n${decls}\n${font}\n}`, steps, pin, dots, arrows, body, gutter].filter(Boolean).join('\n\n');
   }
 
@@ -933,6 +949,9 @@
   // uses, so an example there cannot drift from the same example here.
   globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
     PATTERNS,
+    // The index on patterns.html labels its tiles from the same map the rail
+    // uses, so the two pages cannot call the same pattern different things.
+    SHORT,
     renderPattern(id, cls) {
       loadPattern(id);
       return { css: cssFor(`.${cls}`), html: htmlFor(cls) };
