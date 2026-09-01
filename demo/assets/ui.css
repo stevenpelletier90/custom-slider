@@ -228,6 +228,58 @@ body {
   margin: 0 auto;
 }
 
+/* Collapsed, the rail keeps only the width of its own toggle. A 312px rail at
+   every window size meant a 1440px laptop - the common case - could not preview
+   the 1170px desktop container at all, which is the width most dealer desktop
+   traffic actually gets. Giving that 312px back covers it with room over. */
+.ui-shell:has(#ui-collapse[aria-expanded="false"]) {
+  --rail: 2.6rem;
+}
+
+#ui-collapse[aria-expanded="false"] + #ui-rail-body {
+  display: none;
+}
+
+.ui-collapse {
+  display: flex;
+  gap: 0.4rem;
+  align-items: center;
+  inline-size: 100%;
+  padding: 0.35rem 0.4rem;
+  margin-block-end: 0.75rem;
+  font: inherit;
+  font-size: 0.78rem;
+  color: var(--ink-soft);
+  cursor: pointer;
+  background: none;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+}
+
+.ui-collapse:hover {
+  color: var(--ink);
+  background: var(--sunken);
+}
+
+.ui-collapse svg {
+  flex: none;
+  inline-size: 1rem;
+  block-size: 1rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 2;
+  stroke-linecap: round;
+}
+
+/* Collapsed: the arrow turns round and the label goes, leaving an icon strip. */
+.ui-collapse[aria-expanded="false"] span {
+  display: none;
+}
+
+.ui-collapse[aria-expanded="false"] svg {
+  rotate: 180deg;
+}
+
 .ui-rail {
   position: sticky;
   inset-block-start: 3.5rem;
@@ -1453,6 +1505,16 @@ code {
 @media (width <= 900px) {
   .ui-shell {
     grid-template-columns: 1fr;
+  }
+
+  /* Stacked layout: the rail is not stealing width from anything, so the
+     collapse control has nothing to buy and only hides the settings. */
+  .ui-collapse {
+    display: none;
+  }
+
+  #ui-rail-body {
+    display: block !important;
   }
 
   .ui-rail {

@@ -1653,23 +1653,81 @@
     const box = stage.parentElement;
     const cs = getComputedStyle(box);
     const avail = box.clientWidth - parseFloat(cs.paddingInlineStart) - parseFloat(cs.paddingInlineEnd);
+    // Collapsing the rail hands its width to the preview, so a button is only
+    // out of reach when it will not fit even then. Offering it and collapsing
+    // on click beats greying out the one width most desktop traffic actually
+    // gets, which is what a 1440px laptop used to see.
+    const reach = avail + railGain();
+    const SCREEN = { 330: 'under 768px', 750: '768px and up', 970: '992px and up', 1170: '1200px and up' };
     let active = null;
     for (const b of widthBtns()) {
       const w = +b.dataset.w;
-      b.disabled = w > avail + 1;
-      const SCREEN = { 330: 'under 768px', 750: '768px and up', 970: '992px and up', 1170: '1200px and up' };
-      b.title = b.disabled ? `Make the window about ${Math.round(w + (innerWidth - avail))}px wide to use this` : w ? `${SCREEN[w]} screen — the slider gets ${w}px` : 'Use the whole column';
+      b.disabled = w > reach + 1;
+      b.title = b.disabled
+        ? `Make the window about ${Math.round(w + (innerWidth - reach))}px wide to use this`
+        : w
+          ? `${SCREEN[w]} screen — the slider gets ${w}px${w > avail + 1 ? ' · hides the settings to fit' : ''}`
+          : 'Use the whole column';
       if (b.getAttribute('aria-pressed') === 'true') active = b;
     }
-    if (active && active.disabled) {
+    // A chosen width that no longer fits must not keep its label. Buttons stay
+    // enabled on `reach` so a collapse can still get you there, but the ACTIVE
+    // one is judged on the width available right now: re-opening the rail with
+    // Desktop selected rendered 999px and went on calling it Desktop.
+    if (active && +active.dataset.w > avail + 1) {
       const widest = widthBtns()
-        .filter((b) => !b.disabled)
+        .filter((b) => !b.disabled && +b.dataset.w <= avail + 1)
         .sort((a, b) => +b.dataset.w - +a.dataset.w)[0];
       if (widest) setFrame(widest);
     }
   }
 
-  for (const b of widthBtns()) b.addEventListener('click', () => setFrame(b));
+  /* ---- the collapsible rail --------------------------------------------- */
+
+  // A 312px rail at every window size put the 1170px desktop container out of
+  // reach on a 1440px laptop - the width most people here are working at, and
+  // the container most dealer desktop traffic gets. Collapsing gives that 312px
+  // to the preview.
+  const collapse = $('ui-collapse');
+  const setRail = (open, remember = true) => {
+    collapse.setAttribute('aria-expanded', String(open));
+    collapse.querySelector('span').textContent = open ? 'Hide settings' : 'Show settings';
+    collapse.title = open ? 'Hide the settings and give the width to the preview' : 'Show the settings again';
+    if (remember) {
+      try {
+        localStorage.setItem('cs-rail', open ? 'open' : 'shut');
+      } catch {
+        /* private mode: the rail just opens again next visit */
+      }
+    }
+    // The available width changed, so which width buttons fit changed with it.
+    requestAnimationFrame(() => {
+      fitWidths();
+      checkFit();
+    });
+  };
+  const railOpen = () => collapse.getAttribute('aria-expanded') === 'true';
+  collapse.addEventListener('click', () => setRail(!railOpen()));
+  try {
+    if (localStorage.getItem('cs-rail') === 'shut') setRail(false, false);
+  } catch {
+    /* private mode: leave it open */
+  }
+
+  for (const b of widthBtns())
+    b.addEventListener('click', () => {
+      setFrame(b);
+      // Asking for a width the open rail cannot give used to do nothing at all,
+      // because fitWidths had already disabled that button. Collapsing on
+      // demand is the difference between "that one is greyed out" and seeing it.
+      if (railOpen() && +b.dataset.w > stage.parentElement.clientWidth - 60) setRail(false);
+    });
+
+  // How much collapsing hands back. The rail is measured live so this stays
+  // true if --rail changes; 42 is the 2.6rem strip the collapsed rail keeps
+  // (.ui-shell:has(...) in ui.css).
+  const RAIL_SHUT = 42;
+  const railGain = () => (railOpen() ? Math.max(0, $('ui-rail').getBoundingClientRect().width - RAIL_SHUT) : 0);
 
   /* ---- pattern picker ---------------------------------------------------- */
 

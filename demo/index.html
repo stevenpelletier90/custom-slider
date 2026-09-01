@@ -58,10 +58,16 @@
     </header>
 
     <div class="ui-shell">
-      <aside class="ui-rail">
-        <h2>Patterns</h2>
-        <nav id="wb-nav" aria-label="Slider patterns"></nav>
-        <div class="ui-panel"><div id="wb-settings"></div></div>
+      <aside class="ui-rail" id="ui-rail">
+        <button type="button" class="ui-collapse" id="ui-collapse" aria-expanded="true" aria-controls="ui-rail-body">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="14 6 8 12 14 18" /></svg>
+          <span>Hide settings</span>
+        </button>
+        <div id="ui-rail-body">
+          <h2>Patterns</h2>
+          <nav id="wb-nav" aria-label="Slider patterns"></nav>
+          <div class="ui-panel"><div id="wb-settings"></div></div>
+        </div>
       </aside>
 
       <main class="ui-main">
