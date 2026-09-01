@@ -564,6 +564,22 @@
 
   const minCard = () => PATTERNS[state.pattern].minCard ?? (state.look ? LOOKS[state.look].minCard : 200);
 
+  // The width buttons are Bootstrap 3's own container widths, so choosing 750
+  // means "show me a page at the 768 tier". Everything downstream has to agree
+  // on which tier that is: what the preview draws, and what the fit gauge
+  // thinks a real page would give.
+  const FRAME_TIER = { 750: 768, 970: 992, 1170: 1200 };
+  let frameW = 1170; // the pressed width button, 0 for "fill"
+  const frameTier = () => (frameW ? FRAME_TIER[frameW] : innerWidth >= 1200 ? 1200 : innerWidth >= 992 ? 992 : innerWidth >= 768 ? 768 : 0);
+
+  // The ladder evaluated at one tier, the way the cascade would: every
+  // matching min-width rule applies and the last one wins.
+  const perViewAt = (tier) => {
+    let n = state.perView.base;
+    for (const bp of BPS) if (bp <= tier && state.perView[bp] != null) n = state.perView[bp];
+    return n;
+  };
+
   // --cs-gap as a number. Values here are always em or px. An em resolves
   // against the carousel root, which carries font-size: var(--cargo-font, 1em)
   // - so measure that off the live element rather than assuming 16. Assuming a
@@ -588,7 +604,7 @@
     return !!(p.panes || p.filters || p.cardGrid || state.pattern === 'lightbox');
   };
 
-  function cssFor(sel) {
+  function cssFor(sel, preview) {
     const p = PATTERNS[state.pattern];
     const base = { ...state.lookProps, ...state.props, '--cs-per-view': state.perView.base };
     const decls = Object.entries(base)
@@ -607,6 +623,14 @@
     const steps = BPS.filter((bp) => state.perView[bp] != null)
       .map((bp) => `@media (min-width: ${bp}px) {\n  ${sel} { --cs-per-view: ${state.perView[bp]}; }\n}`)
       .join('\n');
+
+    // The preview is a fixed-width box inside a window that is usually much
+    // wider, and a media query asks the WINDOW - so whatever the box was set
+    // to, the ladder's top tier won. With the frame at 750, editing "992 and
+    // up" changed nothing you could see. Pin the ladder resolved at the tier
+    // the frame stands in for, after the media queries so it wins. Preview
+    // only: the copied CSS ships the real ladder, which is what a page needs.
+    const pin = preview ? `${sel} { --cs-per-view: ${perViewAt(frameTier())}; }` : '';
 
     const dots = state.hideDots ? `${sel} .cs-dots { display: none; }` : '';
     const arrows = [`${sel} .cs-arrow--prev { inset-inline-start: 0; }`, `${sel} .cs-arrow--next { inset-inline-end: 0; }`].join('\n');
@@ -636,7 +660,7 @@
     // Tabs and filter buttons sit outside the carousel, so they have to be told
     // about the gutter or they hang off the left edge of their own cards.
     const gutter = [`${sel} { padding-inline: ${gw}; }`, hasWrap() ? `${sel}-wrap .cargo-tabs, ${sel}-wrap .cargo-filterbar { padding-inline: ${gw}; }` : ''].filter(Boolean).join('\n');
-    return [`${sel} {\n${decls}\n${font}\n}`, steps, dots, arrows, body, gutter].filter(Boolean).join('\n\n');
+    return [`${sel} {\n${decls}\n${font}\n}`, steps, pin, dots, arrows, body, gutter].filter(Boolean).join('\n\n');
   }
 
   function htmlFor(cls) {
@@ -813,7 +837,7 @@
   function render() {
     live.forEach((s) => s.destroy());
     live = [];
-    styleEl.textContent = cssFor('.wb-live');
+    styleEl.textContent = cssFor('.wb-live', true);
     stage.innerHTML = htmlFor('wb-live');
     live = globalThis.CustomSlider.autoInit(stage);
     wireVideo();
@@ -899,7 +923,9 @@
     // .container a real page would give at this window. Judge the card against
     // what that container would produce, or the gauge cries "cramped" about a
     // layout that is fine in production.
-    const tier = innerWidth >= 1200 ? 1170 : innerWidth >= 992 ? 970 : innerWidth >= 768 ? 750 : innerWidth - 30;
+    // A chosen width IS the container being simulated, so judge the card
+    // against that. Only "fill" has to guess from the window.
+    const tier = frameW || (innerWidth >= 1200 ? 1170 : innerWidth >= 992 ? 970 : innerWidth >= 768 ? 750 : innerWidth - 30);
     const frame = Math.round(stage.getBoundingClientRect().width);
     const capped = frame < tier - 2;
     const would = capped ? Math.round((w * tier) / frame) : w;
@@ -1526,7 +1552,13 @@
 
   const setFrame = (b) => {
     for (const x of widthBtns()) x.setAttribute('aria-pressed', String(x === b));
-    stage.style.setProperty('--frame', b.dataset.w === '0' ? '100%' : `${b.dataset.w}px`);
+    const w = +b.dataset.w;
+    stage.style.setProperty('--frame', w === 0 ? '100%' : `${w}px`);
+    const moved = w !== frameW;
+    frameW = w;
+    // The preview's per-view is resolved for this frame now, so changing the
+    // frame has to regenerate the CSS rather than only resize the box.
+    if (moved) render();
     requestAnimationFrame(checkFit);
   };
 
