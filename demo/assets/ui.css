@@ -568,9 +568,20 @@ body {
   accent-color: var(--signal);
 }
 
-#wb-settings select[style] {
+/* The brand picker is the one control that spans the rail rather than sitting in
+   the 9.5rem column, so it needs the field styling stated rather than inherited
+   from .wb-row. It was sized by an inline style and matched by a [style]
+   attribute selector, which meant it rendered as a raw browser select next to
+   fields that had a border, a radius and a size. */
+.wb-wide {
+  inline-size: 100%;
+  padding: 0.4rem 0.5rem;
   font-family: var(--sans);
   font-size: 0.85rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
 }
 
 .wb-note {

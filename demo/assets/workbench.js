@@ -1217,7 +1217,7 @@
       const wrap = document.createElement('div');
       const sel = document.createElement('select');
       sel.setAttribute('aria-label', 'Brand preset');
-      sel.style.inlineSize = '100%';
+      sel.className = 'wb-wide';
       const none = document.createElement('option');
       none.value = '';
       none.textContent = 'Start from the default';
