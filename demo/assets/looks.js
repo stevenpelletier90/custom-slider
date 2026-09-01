@@ -57,13 +57,14 @@ const LOOKS = {
 @media (max-width: 600px) { %root% { --cs-arrow-size: 36px; padding-inline: 0; } }
 @media (max-width: 380px) { %root% { --cs-per-view: 1; } }
 .cargo-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
+.cargo-media { display: block; overflow: hidden; }
 .cargo-card img { box-sizing: border-box; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); padding: var(--plate-pad); object-fit: contain; background: var(--plate-bg); filter: var(--img-filter); transition: filter 0.2s, transform 0.25s ease; }
 .cargo-card:hover img { filter: none; transform: scale(var(--img-hover-scale)); }
 @media (prefers-reduced-motion: reduce) { .cargo-card:hover img { transform: none; } }
 .cargo-name { order: var(--name-order); margin: 0.4em 0 0; font-size: var(--name-size); font-weight: var(--name-weight); line-height: 1.35; color: var(--name-color); text-transform: var(--name-case); letter-spacing: var(--name-tracking); }
 .cargo-sub { display: block; margin-block-start: 0.15em; font-size: 0.8em; line-height: 1.35; color: #5f6368; }`,
     markup: (m) => `<a class="cargo-card" href="${m.href}">
-  <img src="${m.img}" width="${m.w ?? 320}" height="${m.h ?? 240}" alt="${m.alt}" loading="lazy" decoding="async">
+  <span class="cargo-media"><img src="${m.img}" width="${m.w ?? 320}" height="${m.h ?? 240}" alt="${m.alt}" loading="lazy" decoding="async"></span>
   <p class="cargo-name">${m.name}</p>${m.sub ? `\n  <small class="cargo-sub">${m.sub}</small>` : ''}
 </a>`,
   },
@@ -96,15 +97,17 @@ const LOOKS = {
     css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
 @media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-card { position: relative; display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: var(--card-bg); border: 1px solid #e2e5ea; border-radius: var(--card-radius); }
+.cargo-media { display: block; overflow: hidden; }
 .cargo-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; transition: transform 0.3s ease; }
 .cargo-card:hover img { transform: scale(1.04); }
+@media (prefers-reduced-motion: reduce) { .cargo-card:hover img { transform: none; } }
 .cargo-body { display: block; padding: 0.85em 0.9em 1em; line-height: 1.4; }
 .cargo-name { display: block; margin: 0; font-size: var(--name-size); font-weight: 700; line-height: 1.35; color: var(--name-color); }
 .cargo-sub { display: block; margin-block-start: 0.2em; font-size: 0.85em; line-height: 1.4; color: var(--price-color); }`,
     // One stretched link over the whole card: the anchor IS the card, so there
     // is no nested link and nothing announces twice.
     markup: (m) => `<a class="cargo-card" href="${m.href}">
-  <img src="${m.img}" width="${m.w ?? 1200}" height="${m.h ?? 900}" alt="${m.alt}" loading="lazy" decoding="async">
+  <span class="cargo-media"><img src="${m.img}" width="${m.w ?? 1200}" height="${m.h ?? 900}" alt="${m.alt}" loading="lazy" decoding="async"></span>
   <span class="cargo-body">
     <span class="cargo-name">${m.name}</span>${m.sub ? `\n    <small class="cargo-sub">${m.sub}</small>` : ''}
   </span>
@@ -219,7 +222,7 @@ const LOOKS = {
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1.5em; background: var(--strip-bg); }
 .cargo-card { display: block; color: var(--card-fg); text-align: center; text-decoration: none; }
-.cargo-name { margin: 0 0 0.5em; font-size: 1.25em; font-weight: 700; line-height: 1.3; color: var(--card-fg); text-align: start; text-transform: uppercase; letter-spacing: 0.08em; }
+.cargo-name { min-block-size: 2.6em; margin: 0 0 0.5em; font-size: 1.25em; font-weight: 700; line-height: 1.3; color: var(--card-fg); text-align: start; text-transform: uppercase; letter-spacing: 0.08em; }
 .cargo-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); object-fit: cover; }
 .cargo-cta { display: inline-block; padding: 0.6em 1.4em; margin-block-start: 0.75em; font-size: 0.75em; font-weight: 700; color: var(--cta-fg); text-transform: uppercase; letter-spacing: 0.15em; background: var(--cta-bg); }`,
     markup: (m) => `<a class="cargo-card" href="${m.href}">

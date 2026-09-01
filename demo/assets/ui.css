@@ -487,23 +487,34 @@ body {
 
 /* ---- settings panel ---------------------------------------------------- */
 
+/* Two columns, not a flex row pushing the ends apart. space-between let every
+   control find its own left edge — a colour row started further right than a
+   text row because its swatch ate the difference, and a long label shoved its
+   field out of line. One grid column means one edge for everything in the
+   panel, whatever the control is. */
 .wb-row {
-  display: flex;
-  gap: 0.75rem;
+  display: grid;
+  grid-template-columns: 1fr 9.5rem;
+  gap: 0.6rem;
   align-items: center;
-  justify-content: space-between;
-  margin-block-end: 0.3rem;
+  margin-block-end: 0.35rem;
   font-size: 0.85rem;
 }
 
 .wb-row > span {
   color: var(--ink-soft);
+
+  /* Wrap rather than push the control column out of alignment. */
+  overflow-wrap: anywhere;
 }
 
 .wb-row input[type="text"],
+.wb-row input[type="url"],
 .wb-row input[type="number"],
-.wb-row select {
-  inline-size: 7.5rem;
+.wb-row select,
+.wb-row textarea {
+  inline-size: 100%;
+  min-inline-size: 0; /* a form control will not shrink below its size attribute without it */
   padding: 0.28rem 0.45rem;
   font-family: var(--mono);
   font-size: 0.78rem;
@@ -513,18 +524,13 @@ body {
   border-radius: 6px;
 }
 
-.wb-row select {
-  inline-size: 8.5rem;
-}
-
+/* The swatch is fixed and the field takes the rest, so a colour row lines up
+   with a plain text row on BOTH edges instead of just the right one. */
 .wb-color {
-  display: flex;
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr);
   gap: 0.35rem;
   align-items: center;
-}
-
-.wb-color input[type="text"] {
-  inline-size: 6.6rem;
 }
 
 .wb-row input[type="color"] {
@@ -537,9 +543,13 @@ body {
   border-radius: 6px;
 }
 
+/* justify-self, because a 1rem checkbox in a 9.5rem control column would
+   otherwise stretch across it and sit nowhere near the other controls' edge. */
 .wb-row input[type="checkbox"] {
+  justify-self: start;
   inline-size: 1rem;
   block-size: 1rem;
+  margin: 0;
   accent-color: var(--signal);
 }
 

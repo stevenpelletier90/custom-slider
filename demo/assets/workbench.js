@@ -345,16 +345,17 @@
       css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4em); }
 @media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-svc { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
-.cargo-svc-media { display: block; overflow: hidden; }
+.cargo-media { display: block; overflow: hidden; }
 .cargo-svc img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.35s ease; }
 .cargo-svc:hover img { transform: scale(1.05); }
+@media (prefers-reduced-motion: reduce) { .cargo-svc:hover img { transform: none; } }
 .cargo-svc h3 { margin: 1em 1.1em 0.35em; font-size: 1.1em; line-height: 1.3; }
 .cargo-svc p { margin: 0 1.1em; font-size: 0.9em; line-height: 1.5; color: #5f6368; }
 .cargo-svc-more { display: block; margin: 0.9em 1.1em 1.1em; font-size: 0.85em; font-weight: 700; line-height: 1.35; }`,
       slides: (models) =>
         models.map(
           (m) =>
-            `<a class="cargo-svc" href="${m.href}"><span class="cargo-svc-media"><img src="${m.img}" width="1200" height="750" alt="" loading="lazy" decoding="async"></span><h3>${m.name}</h3><p>${m.blurb}</p><span class="cargo-svc-more" aria-hidden="true">Read more →</span></a>`,
+            `<a class="cargo-svc" href="${m.href}"><span class="cargo-media"><img src="${m.img}" width="1200" height="750" alt="" loading="lazy" decoding="async"></span><h3>${m.name}</h3><p>${m.blurb}</p><span class="cargo-svc-more" aria-hidden="true">Read more →</span></a>`,
         ),
     },
 
@@ -922,6 +923,36 @@
 
   /* ---- settings UI ------------------------------------------------------ */
 
+  // The panel says what a property DOES; the raw custom-property name is still
+  // right there in the copied CSS for anyone who wants it. A column of
+  // 'strip-pad-x' next to 'Arrow colour' reads like two different tools.
+  const KNOB_LABELS = {
+    '--strip-bg': 'Strip background',
+    '--strip-pad': 'Space above',
+    '--strip-pad-x': 'Side gutter',
+    '--name-color': 'Name colour',
+    '--name-size': 'Name size',
+    '--name-weight': 'Name weight',
+    '--name-case': 'Name case',
+    '--name-tracking': 'Name tracking',
+    '--name-order': 'Name position',
+    '--img-filter': 'Photo filter',
+    '--img-aspect': 'Photo shape',
+    '--img-hover-scale': 'Zoom on hover',
+    '--plate-bg': 'Plate colour',
+    '--plate-pad': 'Plate padding',
+    '--card-bg': 'Card background',
+    '--card-fg': 'Card text',
+    '--card-radius': 'Corner radius',
+    '--price-color': 'Price colour',
+    '--cta-bg': 'Button background',
+    '--cta-fg': 'Button text',
+    '--pill-bg': 'Pill background',
+    '--pill-fg': 'Pill text',
+    '--mark-size': 'Wordmark size',
+  };
+  const knobLabel = (k) => KNOB_LABELS[k] ?? k.replace(/^--/, '').replace(/-/g, ' ');
+
   const control = (label, node) => {
     const row = document.createElement('label');
     row.className = 'wb-row';
@@ -1200,14 +1231,14 @@
     // page's body size, so the cards match the copy around them on whatever
     // site they are pasted into; a length here pins them to that size instead.
     state.props['--cargo-font'] ??= '1em';
-    colors.append(valueRow('Text size (1em = match the site)', '--cargo-font', state.props));
+    colors.append(valueRow('Card text size', '--cargo-font', state.props));
     // Only worth showing when there are dots to make room for - this is the
     // reserved strip they are drawn into, and shrinking it puts them on the
     // card text. A gallery fills that same strip with the thumb rail instead,
     // so it sizes itself off --cs-thumb-h and this knob would only confuse.
     if (!state.hideDots && state.data['data-cs-gallery'] == null) {
       state.props['--cs-controls-space'] ??= '2.5em'; // the engine's own default
-      colors.append(valueRow('Space under, for the dots', '--cs-controls-space', state.props));
+      colors.append(valueRow('Room for the dots', '--cs-controls-space', state.props));
     }
     panel.append(section('Arrows and spacing', colors));
 
@@ -1215,9 +1246,9 @@
       const knobs = document.createElement('div');
       for (const k of Object.keys(state.lookProps)) {
         const v = state.lookProps[k];
-        if (/^#|rgb|transparent/.test(v)) knobs.append(colorRow(k.replace('--', ''), k, state.lookProps));
-        else if (ENUMS[k]) knobs.append(control(k.replace('--', ''), enumSelect(k, state.lookProps)));
-        else knobs.append(valueRow(k.replace('--', ''), k, state.lookProps));
+        if (/^#|rgb|transparent/.test(v)) knobs.append(colorRow(knobLabel(k), k, state.lookProps));
+        else if (ENUMS[k]) knobs.append(control(knobLabel(k), enumSelect(k, state.lookProps)));
+        else knobs.append(valueRow(knobLabel(k), k, state.lookProps));
       }
       panel.append(section('This card style', knobs));
     }
