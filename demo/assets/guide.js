@@ -17,18 +17,22 @@
   // attributes read outside it: data-cs and data-cs-init, which autoInit()
   // looks at before any instance exists.
   const OPTIONS = [
-    ['data-cs', '—', 'Marks the element for auto-init on DOMContentLoaded. Without it you must construct the slider yourself.'],
-    ['data-cs-init="manual"', '—', 'Opts this slider out of auto-init, for when page script needs to control when it starts.'],
+    ['data-cs', '—', 'Marks the element as a slider. The engine starts it on its own as soon as the page HTML has loaded. Without this attribute nothing happens until your own script starts it.'],
+    [
+      'data-cs-init="manual"',
+      '—',
+      'Stops the engine starting this one automatically, for when your script needs to choose the moment — a slider inside a dialog cannot measure itself until the dialog opens.',
+    ],
     ['data-cs-autoplay', '0', 'Milliseconds between advances. Adds the pause button, which comes first in the tab order. Never starts under reduced motion.'],
     ['data-cs-rewind', 'true', 'Arrows wrap around at the ends. <code>false</code> stops there and <code>aria-disabled</code>s the end arrow. Ignored with autoplay, which needs the wrap.'],
     [
       'data-cs-step',
       'page',
-      'How far one arrow click moves: a full page, <code>slide</code> for one card, or a number for that many cards. Dots stay per-page either way, and the last stop is always the end.',
+      'How far one arrow click moves: a full screenful, <code>slide</code> for one card, or a number for that many cards. The dots stay one per screenful whatever you choose, and the last click always lands on the end rather than leaving a half-empty row.',
     ],
     ['data-cs-drag', 'true', 'Mouse drag-to-scroll on the track. Touch and pen swiping is native scrolling and is unaffected. <code>false</code> opts out.'],
     ['data-cs-gallery', 'false', 'The tabbed thumbnail gallery. Thumbs are generated from the slide images as a real tab list with arrow keys.'],
-    ['data-cs-fade', 'false', 'Stacked crossfade instead of a scrolling track — 1-up heroes only. No drag, no peek. Ignored with <code>data-cs-gallery</code>.'],
+    ['data-cs-fade', 'false', 'Slides fade into each other instead of sliding. One slide at a time only, so it suits a full-width hero. No drag, no peek. Ignored with <code>data-cs-gallery</code>.'],
     ['data-cs-roledescription', 'carousel', 'The announced role description. Set it to an empty string to omit it, which some localisations want.'],
   ];
 
@@ -36,14 +40,14 @@
     ['new CustomSlider(el, opts)', 'Construct one yourself. The class is <code>CustomSlider</code> in source and <code>window.CustomSlider</code> on the page — one name either way.'],
     [
       'CustomSlider.autoInit(scope)',
-      'Initialise every <code>[data-cs]</code> under <code>scope</code> that is not already running and not <code>data-cs-init="manual"</code>. Runs itself on DOMContentLoaded.',
+      'Starts every <code>[data-cs]</code> inside <code>scope</code> that is not already running and has not opted out. The engine calls this itself once the page HTML has loaded; you only call it for markup you added later.',
     ],
-    ['next()', 'Advance one stop.'],
-    ['prev()', 'Go back one stop.'],
+    ['next()', 'Move forward by whatever the arrows are set to move — a page, one card, or a set number.'],
+    ['prev()', 'Move back by the same amount.'],
     ['goTo(n, { behavior })', 'Jump to slide index <code>n</code>. <code>behavior</code> overrides the scroll behaviour for this call.'],
     ['play() / pause()', 'Start and stop autoplay.'],
     ['destroy()', 'Remove every listener and observer, restore the original markup.'],
-    ['element._cs', 'The instance, for page script that needs to reach in.'],
+    ['element._cs', 'The live slider object, if your own script on the page needs to reach it.'],
     [
       '{ labels: {…} }',
       'Constructor-only. Overrides every announced string (prev, next, pause, play, dots, gotoSlide, gotoPage, statusSingle, statusMulti, thumbs, photo) — the way to localise a slider. There is no data attribute for it.',
@@ -51,7 +55,7 @@
   ];
 
   const EVENTS = [
-    ['cs:change', '<code>{ index, page, slidesInView }</code> — fired from _commit(), once the scroll has settled on a stop.'],
+    ['cs:change', '<code>{ index, page, slidesInView }</code> — fires once the strip has finished moving and settled, not while it is still sliding.'],
     ['cs:autoplay-start', 'Rotation started, or restarted from the play button.'],
     ['cs:autoplay-stop', 'Rotation stopped. Only a real stop fires this — hover, focus and drag <em>suspend</em> rotation without changing whether it is playing, so they emit nothing.'],
     ['cs:destroy', 'The instance tore itself down.'],
@@ -60,12 +64,12 @@
   // Behaviours that look like bugs and are not. Every one of these was a real
   // fix; changing it back breaks screen-reader output or a browser.
   const A11Y = [
-    'All cards stay in the tab order and the accessibility tree. Off-screen cards are never <code>inert</code> or <code>aria-hidden</code> in the multi-card variants — hiding them corrupts the announced counts.',
+    'Every card stays reachable by keyboard and by a screen reader, including the ones scrolled out of sight. Hiding them would make the announced count wrong — “3 of 6” when there are twelve.',
     'A <code>&lt;ul&gt;</code> track gets <code>role="list"</code> put back at init. The <code>list-style: none</code> the design needs makes WebKit drop list semantics, which silently kills the "N of 6" announcement in Safari with VoiceOver.',
     'Dots are one per <strong>page</strong>, and are plain buttons rather than tabs. The current dot is <code>aria-disabled</code> but stays focusable.',
     'When every slide already fits, the arrows and dots are hidden and the root gains <code>data-cs-fits</code>. Controls that cannot move anything must not be focusable, and a one-of-one dot group announces a choice that is not one.',
-    'The live region is a separate terse status ("Slides 4–6 of 12"), never the track itself — a live track would read out every card on a multi-card move.',
-    'Nothing rotates under <code>prefers-reduced-motion</code>, and scroll behaviour is resolved per call rather than set in CSS, because Safari hijacks intended-instant programmatic scrolls.',
+    'A screen reader is told the position in one short line ("Slides 4–6 of 12") from a hidden element of its own. If the track itself announced changes, moving three cards would read all three out.',
+    'Nothing rotates under <code>prefers-reduced-motion</code>, and scroll behaviour is resolved per call rather than set in CSS, because Safari animates CSS-set scrolling even when the move is meant to be instant.',
     'The engine injects controls only. Every heading, link and image comes from your HTML, so the content is there for search engines and with JavaScript off.',
   ];
 
@@ -114,16 +118,16 @@
     '--cs-per-view': 'Slides visible at once. Set it per breakpoint in a media query — this is the only way to change how many are across.',
     '--cs-gap': 'Space between slides.',
     '--cs-peek': 'Sliver of the next slide left visible at the edges. Zero turns it off.',
-    '--cs-arrow-size': 'Arrow tap target. Keep it at 44px or above to stay a WCAG-sized target.',
+    '--cs-arrow-size': 'How big the arrow button is. Keep it at 44px or more so it stays comfortable to tap on a phone.',
     '--cs-arrow-fg': 'Arrow glyph colour.',
-    '--cs-arrow-bg': 'Arrow background. <code>transparent</code> gives the gutter-arrow look the model bars use.',
+    '--cs-arrow-bg': 'Arrow background. <code>transparent</code> leaves just the arrow shape, sitting in the space beside the cards instead of on a filled circle — how the model bars look.',
     '--cs-arrow-fg-hover': 'Arrow glyph colour on hover.',
     '--cs-arrow-bg-hover': 'Arrow background on hover.',
-    '--cs-dot-size': 'Drawn dot size. The hit box stays 24px regardless (WCAG 2.5.8).',
-    '--cs-dot-fg': 'Inactive dot. The default meets 3:1 on white.',
-    '--cs-dot-current': 'Current dot.',
+    '--cs-dot-size': 'How big the dot looks. The tappable area stays 24px whatever you set, so a small dot is still easy to hit.',
+    '--cs-dot-fg': 'The dots you are not on. The default is dark enough to see against white.',
+    '--cs-dot-current': 'The dot for the slide you are on.',
     '--cs-controls-space':
-      'Height reserved for the dot row. This reservation is why the slider scores CLS 0 — never remove it, and never set <code>padding</code> or <code>padding-block</code> on the root, which would wipe it.',
+      'Height set aside for the dot row before the dots exist, so nothing on the page jumps when the slider starts. Never remove it, and never set <code>padding</code> or <code>padding-block</code> on the root — either one wipes the reservation and the dots land on the card text.',
     '--cs-thumb-w': 'Gallery thumbnail width.',
     '--cs-thumb-h': 'Gallery thumbnail height.',
     '--cs-thumb-hover-scale':
@@ -163,7 +167,7 @@
       </section>
 
       <section id="g-props"><h3>CSS custom properties</h3>
-        <p>Every knob the engine has. ${props.length ? `Read live from the <code>dist/custom-slider.css</code> this page is running, so the ${props.length} below are the ones that actually ship.` : 'Open this page over HTTP to list them from the shipped stylesheet.'} Override them on the root or any wrapper.</p>
+        <p>Every setting the engine has. ${props.length ? `Read live from the <code>dist/custom-slider.css</code> this page is running, so the ${props.length} below are the ones that actually ship.` : 'Open this page over HTTP to list them from the shipped stylesheet.'} Override them on the root or any wrapper.</p>
         ${props.length ? table(['Property', 'Default', 'Notes'], propRows) : ''}
       </section>
 
@@ -173,7 +177,7 @@
       </section>
 
       <section id="g-api"><h3>JavaScript API</h3>
-        <p>Only needed if you are extending behaviour. Do that from page script rather than by editing the engine.</p>
+        <p>Only needed if you are adding behaviour of your own. Do that from a script on the page rather than by editing the engine.</p>
         ${table(['Method', 'What it does'], API)}
         <p class="g-sub">Events, all bubbling from the root:</p>
         ${table(['Event', 'Detail'], EVENTS)}
