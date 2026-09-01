@@ -419,6 +419,14 @@
       css: `.cargo-filterbar { display: flex; flex-wrap: wrap; gap: 0.4em; margin-block-end: 1em; }
 .cargo-filterbar button { padding: 0.4em 0.9em; font: inherit; font-size: 0.87em; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 999px; }
 .cargo-filterbar button[aria-pressed="true"] { color: #fff; background: #16324f; border-color: #16324f; }
+/* Four chips need 262px and a 320px phone leaves 236 - a 26px shortfall, and
+   only 2px at 344 - so they broke onto a second row for want of almost
+   nothing. 94px of that 262 is side padding, so the padding gives way here for
+   the same reason it does on the tab strip: trimming it saves 36px, keeps the
+   13px label, and leaves the smallest chip 31x32 against WCAG 2.5.8's 24x24. */
+@media (max-width: 767.98px) {
+  .cargo-filterbar button { padding-inline: 0.55em; }
+}
 .cargo-photo { display: block; }
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }`,
       slides: (models) => models.map((m) => `<span class="cargo-photo" data-tag="${m.tag}">${pic(m)}</span>`),
