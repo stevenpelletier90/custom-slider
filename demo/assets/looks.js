@@ -219,7 +219,7 @@ const LOOKS = {
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1.5em; background: var(--strip-bg); }
 .cargo-card { display: block; color: var(--card-fg); text-align: center; text-decoration: none; }
-.cargo-name { margin: 0 0 0.5em; font-size: 1.25em; font-weight: 700; line-height: 1.3; text-align: start; text-transform: uppercase; letter-spacing: 0.08em; }
+.cargo-name { margin: 0 0 0.5em; font-size: 1.25em; font-weight: 700; line-height: 1.3; color: var(--card-fg); text-align: start; text-transform: uppercase; letter-spacing: 0.08em; }
 .cargo-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); object-fit: cover; }
 .cargo-cta { display: inline-block; padding: 0.6em 1.4em; margin-block-start: 0.75em; font-size: 0.75em; font-weight: 700; color: var(--cta-fg); text-transform: uppercase; letter-spacing: 0.15em; background: var(--cta-bg); }`,
     markup: (m) => `<a class="cargo-card" href="${m.href}">

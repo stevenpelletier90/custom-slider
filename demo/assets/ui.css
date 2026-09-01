@@ -642,6 +642,15 @@ body {
   gap: 0.4rem;
 }
 
+/* The bar is shared with the code panel, whose colours assume the dark Monokai
+   ground underneath. On this light panel that grey-green measured 3.0:1 — the
+   bar keeps its shape here but takes the page's own ink. */
+.ui-content > .ui-code-bar {
+  color: var(--ink-soft);
+  background: var(--paper);
+  border-block-end-color: var(--rule);
+}
+
 #wb-content {
   padding: 0.8rem;
 }
@@ -659,23 +668,31 @@ body {
   gap: 0.7rem;
 }
 
+/* A fieldset, so the legend names the group for a screen reader. Its UA
+   `min-inline-size: min-content` is the catch: inside the grid above it stops
+   the card shrinking and the whole row overflows, so it has to be reset. */
 .wb-slide {
+  min-inline-size: 0;
   padding: 0.7rem;
+  margin: 0;
   background: var(--paper);
   border: 1px solid var(--rule);
   border-radius: 8px;
 }
 
-.wb-slide-head {
-  display: flex;
-  gap: 0.5rem;
-  align-items: center;
-  justify-content: space-between;
-  margin-block-end: 0.5rem;
+.wb-slide > legend {
+  padding-inline: 0.35rem;
+  font-size: 0.8rem;
+  font-weight: 700;
 }
 
-.wb-slide-head b {
-  font-size: 0.8rem;
+/* Remove sits on its own line under the legend rather than beside it: a legend
+   is laid out on the border box by the UA, and anything flexed next to it
+   fights that. */
+.wb-slide-head {
+  display: flex;
+  justify-content: flex-end;
+  margin-block-end: 0.5rem;
 }
 
 /* The panel's rows put label and field side by side in a narrow rail. In a

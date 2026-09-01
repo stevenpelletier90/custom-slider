@@ -328,7 +328,7 @@
 .cargo-mix { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-mix img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 .cargo-mix h3 { margin: 0.8em 0.9em 0.2em; font-size: 0.95em; line-height: 1.3; }
-.cargo-mix p { margin: 0 0.9em 0.9em; font-size: 0.85em; line-height: 1.45; opacity: 0.75; }`,
+.cargo-mix p { margin: 0 0.9em 0.9em; font-size: 0.85em; line-height: 1.45; color: #5f6368; }`,
       slides: (models) =>
         models.map((m) => `<article class="cargo-mix"><img src="${m.img}" width="${m.w}" height="${m.h}" alt="${m.alt}" loading="lazy" decoding="async"><h3>${m.name}</h3><p>${m.blurb}</p></article>`),
     },
@@ -349,7 +349,7 @@
 .cargo-svc img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.35s ease; }
 .cargo-svc:hover img { transform: scale(1.05); }
 .cargo-svc h3 { margin: 1em 1.1em 0.35em; font-size: 1.1em; line-height: 1.3; }
-.cargo-svc p { margin: 0 1.1em; font-size: 0.9em; line-height: 1.5; opacity: 0.75; }
+.cargo-svc p { margin: 0 1.1em; font-size: 0.9em; line-height: 1.5; color: #5f6368; }
 .cargo-svc-more { display: block; margin: 0.9em 1.1em 1.1em; font-size: 0.85em; font-weight: 700; line-height: 1.35; }`,
       slides: (models) =>
         models.map(
@@ -502,7 +502,7 @@
 .cargo-cg-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 .cargo-cg-body { padding: 0.8em 0.9em 1em; }
 .cargo-cg-body h3 { margin: 0; font-size: 0.95em; line-height: 1.35; }
-.cargo-cg-body p { margin: 0.2em 0 0; font-size: 0.85em; line-height: 1.4; opacity: 0.8; }`,
+.cargo-cg-body p { margin: 0.2em 0 0; font-size: 0.85em; line-height: 1.4; color: #5f6368; }`,
     },
 
     stock: {
@@ -523,7 +523,7 @@
 @media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-stock { block-size: 100%; padding: 1.1em; background: #f0f2f5; border-radius: 8px; }
 .cargo-stock h3 { margin: 0 0 0.35em; font-size: 1em; line-height: 1.3; }
-.cargo-stock p { margin: 0; font-size: 0.9em; line-height: 1.5; opacity: 0.8; }
+.cargo-stock p { margin: 0; font-size: 0.9em; line-height: 1.5; color: #5f6368; }
 /* Inline code sits INSIDE the paragraph, so this em is measured against the
    paragraph's 0.9em, not the card base - deliberately, since code should track
    the copy it interrupts. 0.94 of 0.9 is the 0.85-of-base this rendered at
@@ -535,7 +535,7 @@
 
   /* ---- state ------------------------------------------------------------ */
 
-  const state = { pattern: 'modelbar', brand: null, look: null, perView: null, props: null, lookProps: null, data: null, hideDots: false, content: null };
+  const state = { pattern: 'modelbar', brand: null, look: null, perView: null, props: null, lookProps: null, data: null, hideDots: false, content: null, label: null };
 
   function loadPattern(id) {
     const p = PATTERNS[id];
@@ -550,6 +550,7 @@
     // A pattern change is a shape change: a review row has a star rating and a
     // photo row has none, so edited slides can never carry across.
     state.content = null;
+    state.label = null; // only renderLook overrides it — see the note there
     // Beside the content wherever a card has text an arrow could land on.
     state.gutter = p.gutter ?? !!p.look;
     state.lookProps = p.look ? { ...LOOKS[p.look].settings } : {};
@@ -705,7 +706,7 @@
       const bar = p.filters
         .map((f) => `    <button type="button" data-filter="${f}" aria-pressed="${f === '' ? 'true' : 'false'}">${f === '' ? 'All' : f[0].toUpperCase() + f.slice(1)}</button>`)
         .join('\n');
-      return `<div class="${cls}-wrap" data-filter-gallery>\n  <div class="cargo-filterbar" role="group" aria-label="Filter photos">\n${bar}\n  </div>\n${carousel(items, p.label, '  ')}\n</div>`;
+      return `<div class="${cls}-wrap" data-filter-gallery>\n  <div class="cargo-filterbar" role="group" aria-label="Filter photos">\n${bar}\n  </div>\n${carousel(items, state.label ?? p.label, '  ')}\n</div>`;
     }
 
     // A thumbnail that opens the gallery in a dialog.
@@ -740,7 +741,7 @@
       return `<div class="${cls}-wrap">\n${cards.join('\n')}\n</div>`;
     }
 
-    return carousel(items, p.label);
+    return carousel(items, state.label ?? p.label);
   }
 
   // The preview keeps the relative image paths; the copy panel emits the
@@ -799,6 +800,8 @@
       state.lookProps = { ...look.settings };
       state.perView = { ...look.perView };
       state.gutter = true;
+      // Named for the look it is showing, not the pattern it borrows to show it.
+      state.label = `${look.label} cards`;
       return { css: cssFor(`.${cls}`), html: htmlFor(cls) };
     },
   });
@@ -1396,16 +1399,24 @@
     const list = document.createElement('div');
     list.className = 'wb-slides';
     rows.forEach((m, i) => {
-      const card = document.createElement('div');
+      // A fieldset, not a div: this is a group of related controls, and the
+      // legend is what makes a screen reader announce "Slide 3, Heading"
+      // instead of leaving eight identically-labelled fields with no way to
+      // tell which slide they belong to. The legend carries the caption ALONE
+      // — putting the Remove button inside it would fold "Remove" into the
+      // group's accessible name.
+      const card = document.createElement('fieldset');
       card.className = 'wb-slide';
+      const cap = document.createElement('legend');
+      cap.textContent = `Slide ${i + 1}`;
       const head = document.createElement('div');
       head.className = 'wb-slide-head';
-      const h = document.createElement('b');
-      h.textContent = `Slide ${i + 1}`;
       const del = document.createElement('button');
       del.type = 'button';
       del.className = 'ui-btn';
+      // "Remove" alone is eight identical buttons in the tab order.
       del.textContent = 'Remove';
+      del.setAttribute('aria-label', `Remove slide ${i + 1}`);
       // A slider with no slides has nothing to preview and nothing to copy.
       del.disabled = rows.length < 2;
       del.addEventListener('click', () => {
@@ -1417,8 +1428,8 @@
         buildContent();
         render();
       });
-      head.append(h, del);
-      card.append(head);
+      head.append(del);
+      card.append(cap, head); // legend must be the fieldset's first child
 
       for (const k of keys) {
         const f = FIELDS[k];
