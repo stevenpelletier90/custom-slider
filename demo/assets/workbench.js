@@ -537,7 +537,7 @@
 
   /* ---- state ------------------------------------------------------------ */
 
-  const state = { pattern: 'modelbar', brand: null, look: null, perView: null, props: null, lookProps: null, data: null, hideDots: false, content: null, label: null };
+  const state = { pattern: 'modelbar', brand: null, look: null, perView: null, props: null, lookProps: null, data: null, hideDots: false, content: null, label: null, name: 'my-slider' };
 
   // A look that sets --cs-* is choosing how the ENGINE's controls sit on the
   // background it brings, so those belong in props - where the panel edits them
@@ -566,6 +566,30 @@
     }
   };
 
+  // The rail shows a short name; `label` stays the descriptive title used for
+  // the page heading and the patterns page. At the width the rail has to be for
+  // the preview to reach 1170px, a sentence wraps to three or four lines - 16 of
+  // the 17 did - and a column of wrapped sentences cannot be scanned.
+  const SHORT = {
+    modelbar: 'Model bar',
+    cards: 'Vehicle cards',
+    hero: 'Hero banner',
+    gallery: 'Photo gallery',
+    grid: 'Two-row grid',
+    peek: 'Peek',
+    video: 'Testimonials',
+    tabs: 'Tabbed bar',
+    models: 'Tall photos',
+    mixed: 'Mixed sizes',
+    service: 'Service cards',
+    reviews: 'Reviews',
+    'gallery-filter': 'Filter gallery',
+    'media-gallery': 'Photos + video',
+    lightbox: 'Lightbox',
+    'card-gallery': 'Card gallery',
+    stock: 'Stock look',
+  };
+
   function loadPattern(id) {
     const p = PATTERNS[id];
     state.pattern = id;
@@ -580,6 +604,15 @@
     // photo row has none, so edited slides can never carry across.
     state.content = null;
     state.label = null; // only renderLook overrides it — see the note there
+    // The class this slider's CSS hangs off. Every snippet used to be
+    // `.my-slider`, so a second slider pasted on the same page redefined the
+    // first one's rules and both rendered as whichever was last in the
+    // document - reported as "adding a second slider breaks the first", and
+    // it was not a missed step, the tool handed out one name for everything.
+    state.name = (SHORT[id] ?? id)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-|-$/g, '');
     // Beside the content wherever a card has text an arrow could land on.
     state.gutter = p.gutter ?? !!p.look;
     state.lookProps = {};
@@ -901,8 +934,8 @@
     // Kept as text as well as highlighted markup: the clipboard gets the text,
     // never the spans.
     const script = p.script ? `\n\n<script>\n${p.script}\n</script>` : '';
-    const css = cssFor('.my-slider');
-    const html = toCms(htmlFor('my-slider'));
+    const css = cssFor(`.${state.name}`);
+    const html = toCms(htmlFor(state.name));
     state.codeText = `<style>\n${css}\n</style>\n\n${html}${script}`;
 
     // Say what is in the box and where each part goes, counted off the snippet
@@ -914,6 +947,7 @@
     const parts = [
       ['HTML', lines(html), 'a <strong>Custom HTML</strong> block'],
       ['CSS', lines(css), '<strong>Style Only &rarr; Head Section</strong>'],
+      ['Named', `.${state.name}`, 'give a second slider on the same page a different name, or they overwrite each other'],
     ];
     if (p.script) parts.push(['JavaScript', lines(p.script), '<strong>Body Section, Bottom</strong>']);
     // The demo images resolve to real platform paths, which is what makes them
@@ -921,7 +955,10 @@
     // stock art, so on any other brand's site they load perfectly and show the
     // wrong cars: worse than a broken image, because nothing looks wrong.
     const warn = /<img/.test(state.codeText) ? '<li class="ui-parts-warn"><b>Photos</b> <span>examples</span>the addresses point at Chevrolet stock art — put your own in step 1 above</li>' : '';
-    $('wb-parts').innerHTML = parts.map(([what, n, where]) => `<li><b>${what}</b> <span>${n} line${n === 1 ? '' : 's'}</span>goes into ${where}</li>`).join('') + warn;
+    $('wb-parts').innerHTML =
+      parts
+        .map(([what, n, where]) => `<li><b>${what}</b> <span>${typeof n === 'number' ? `${n} line${n === 1 ? '' : 's'}` : n}</span>${typeof n === 'number' ? 'goes into ' : ''}${where}</li>`)
+        .join('') + warn;
     codeEl.innerHTML = globalThis.CARGO.hl.snippet(state.codeText);
   }
 
@@ -1437,6 +1474,17 @@
     // Once the slides are the designer's own content, the roster length IS the
     // slide count - adding a card means writing one, not turning a dial. Two
     // controls for one number is how they drift apart.
+    const nameBox = document.createElement('input');
+    nameBox.type = 'text';
+    nameBox.value = state.name;
+    nameBox.addEventListener('input', () => {
+      // A CSS class, so only what can legally be one.
+      const clean = nameBox.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
+      state.name = clean || 'my-slider';
+      render();
+    });
+    beh.append(control('Name for this slider', nameBox));
+
     if (!state.content) beh.append(control('Slides in this example', count));
     panel.append(section('Behaviour', beh));
   }
@@ -1687,30 +1735,6 @@
   for (const b of widthBtns()) b.addEventListener('click', () => setFrame(b));
 
   /* ---- pattern picker ---------------------------------------------------- */
-
-  // The rail shows a short name; `label` stays the descriptive title used for
-  // the page heading and the patterns page. At the width the rail has to be for
-  // the preview to reach 1170px, a sentence wraps to three or four lines - 16 of
-  // the 17 did - and a column of wrapped sentences cannot be scanned.
-  const SHORT = {
-    modelbar: 'Model bar',
-    cards: 'Vehicle cards',
-    hero: 'Hero banner',
-    gallery: 'Photo gallery',
-    grid: 'Two-row grid',
-    peek: 'Peek',
-    video: 'Testimonials',
-    tabs: 'Tabbed bar',
-    models: 'Tall photos',
-    mixed: 'Mixed sizes',
-    service: 'Service cards',
-    reviews: 'Reviews',
-    'gallery-filter': 'Filter gallery',
-    'media-gallery': 'Photos + video',
-    lightbox: 'Lightbox',
-    'card-gallery': 'Card gallery',
-    stock: 'Stock look',
-  };
 
   const nav = $('wb-nav');
   for (const [id, p] of Object.entries(PATTERNS)) {
