@@ -744,6 +744,34 @@ body {
   opacity: 0.45;
 }
 
+/* The card-looks toggle in the code bar. It sits on the dark Monokai ground,
+   so it takes that bar's ink rather than the page's. */
+.ui-swap {
+  display: flex;
+  gap: 0.35rem;
+  align-items: center;
+  font-size: 0.78rem;
+  color: inherit;
+  cursor: pointer;
+}
+
+.ui-swap input {
+  inline-size: 0.95rem;
+  block-size: 0.95rem;
+  margin: 0;
+  accent-color: var(--signal);
+}
+
+.ui-swap input:disabled {
+  cursor: not-allowed;
+  opacity: 0.4;
+}
+
+.ui-swap:has(input:disabled) {
+  cursor: not-allowed;
+  opacity: 0.55;
+}
+
 /* ---- code -------------------------------------------------------------- */
 
 .ui-code {

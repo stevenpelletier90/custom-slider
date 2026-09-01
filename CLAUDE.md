@@ -11,7 +11,7 @@ A dependency-free scroll-snap carousel (`cs`) built to replace third-party slide
 ## Commands
 
 ```bash
-npm run build          # src → dist via esbuild (bundle+minify JS, minify CSS)
+npm run build          # src → dist via esbuild (bundle+minify JS, minify CSS) + the generated card-looks file
 npm run size           # build + gzip budget gate — FAILS at ≥ 6656 B total
 npm run validate       # stylelint (files + generated) + eslint + prettier --check + check:looks  (the gate before committing)
 npm run check:looks    # asserts the demo data holds: 17 old skins -> 7 components, 32 brand presets, no cramped preset
@@ -23,6 +23,8 @@ npm run serve          # esbuild static server on http://127.0.0.1:8137 (for Lig
 ```
 
 **Three demo pages.** `demo/index.html` is the workbench: a rail of 17 patterns, a settings panel, a live stage, a slide-content editor and a code panel, with no per-example markup at all. The content editor makes the slides themselves editable (headings, links, photos, alt text), so the snippet is a finished block rather than a template someone retypes into; `state.content` holds the edited rows, null means "use the example content", and it is kept per pattern in localStorage. `demo/patterns.html` renders every pattern and look at once, built by `gallery.js` from the same generator. `demo/reference.html` is the technical guide — markup contract, options, properties, accessibility, limits. `demo/assets/`: `looks.js` (7 card components, the census's 17 OEM "skins" collapsed into them — most differed only in values), `brands.js` (32 brand presets), `workbench.js` (the state object driving everything), `guide.js` (the reference content), `gallery.js` (the patterns page), `cms-paths.js` (the platform image paths), `highlight.js` (the Monokai tokeniser), `theme.js` (light/dark), `ui.css` (all demo chrome).
+
+**`dist/custom-slider-cards.css` is GENERATED, never hand-written.** It is the optional card-looks stylesheet (~2 KB gzip: the 7 looks plus `cs-xs-N`/`cs-sm-N`/`cs-md-N`/`cs-lg-N` column classes) that turns a slider into a markup paste. `scripts/build-cards.mjs` builds it from the SAME `LOOKS` the builder uses, with the same scoping rule — a hand-kept copy of seven card looks would drift within a week and the drift would only show on a dealer's page. It is reported by `npm run size` but deliberately NOT counted against the 6656 B budget: the budget exists to prove the ENGINE is smaller than Embla and Splide, and a site linking no card looks pays none of this. The code panel's "Use the card-looks file" toggle emits markup plus only the properties that differ from the look's defaults; verified pixel-identical to the self-contained snippet across every look-based pattern.
 
 **Card LOOKS collapse into components; PATTERNS do not.** A look is values on one card (a band colour, a type case). A pattern is a different structure — tabs over panes, a filter bar, a lightbox trigger, a grid of cards each holding a slider. Collapsing looks was right; a first pass also dropped ten patterns with them and they had to be restored. `htmlFor()` builds the structural ones from one `carousel()` helper, and `cssFor()` scopes to the wrapper for those: `%root%` means the carousel, `%wrap%` the outer element.
 

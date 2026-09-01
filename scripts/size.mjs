@@ -32,6 +32,20 @@ for (const f of files) {
   console.log(`${f}: ${gz} B gzip`);
 }
 console.log(`total: ${total} B gzip (budget ${BUDGET})`);
+
+// The card looks are a SEPARATE, optional file, reported but never counted.
+// The budget exists to prove the ENGINE is the smaller choice against Embla's
+// 6.7 KB core and Splide's 15.8 KB, and a site that links no card looks pays
+// none of this. A site that does link it is buying seven card designs, not
+// carousel machinery, so charging it against the engine's number would make
+// that number answer a different question than the one it was set to answer.
+try {
+  const gz = gzipSync(readFileSync('dist/custom-slider-cards.css'), { level: 9 }).length;
+  console.log(`dist/custom-slider-cards.css: ${gz} B gzip (optional, outside the budget)`);
+} catch {
+  /* not built yet — the engine gate above is what matters */
+}
+
 if (total >= BUDGET) {
   console.error(`FAIL: at or over the ${BUDGET} B gzip budget`);
   process.exit(1);

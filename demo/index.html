@@ -111,16 +111,21 @@
 
         <section class="ui-code" aria-label="Code for these settings">
           <div class="ui-code-bar">
-            <span>Styles into <strong>Style Only</strong>, markup into a <strong>Custom HTML</strong> block</span>
-            <button type="button" class="ui-btn" id="wb-copy">Copy</button>
+            <span id="wb-code-note">Styles into <strong>Style Only</strong>, markup into a <strong>Custom HTML</strong> block</span>
+            <span class="ui-content-acts">
+              <label class="ui-swap"
+                ><input type="checkbox" id="wb-lib" />
+                <span>Use the card-looks file</span>
+              </label>
+              <button type="button" class="ui-btn" id="wb-copy">Copy</button>
+            </span>
           </div>
           <pre tabindex="0"><code id="wb-code"></code></pre>
         </section>
 
         <h3 class="ui-h3">Put the engine on the site</h3>
         <p class="ui-blurb">
-          Once per site, not once per slider. Link the files if you can upload them; paste the code if you can’t. Either way it is the same two files, and the slider above is running the very ones you
-          would take.
+          Once per site, not once per slider. Link the files if you can upload them; paste the code if you can’t. Either way the slider above is running the very ones you would take.
         </p>
 
         <div class="ui-get">
@@ -128,7 +133,13 @@
             <h4>Link to the files</h4>
             <p>Best choice — every page that links them shares one cached copy.</p>
             <pre class="ui-tags"><code>&lt;link rel="stylesheet" href="/path/custom-slider.css"&gt;
+&lt;link rel="stylesheet" href="/path/custom-slider-cards.css"&gt;
 &lt;script src="/path/custom-slider.js" defer&gt;&lt;/script&gt;</code></pre>
+            <div class="ui-where">
+              <b>The third one is optional</b>
+              <code>custom-slider-cards.css</code> holds the seven card looks. Link it and a slider becomes a markup paste — tick
+              <strong>Use the card-looks file</strong> above the code. Skip it and every snippet carries its own styles instead; the engine works either way.
+            </div>
             <div class="ui-where">
               <b>Where these go</b>
               The <code>&lt;link&gt;</code> in <strong>Style Only → Head Section</strong>, the <code>&lt;script&gt;</code> in <strong>Body Section, Bottom</strong>. Swap <code>/path/</code> for
@@ -145,6 +156,12 @@
               <button type="button" class="ui-btn" data-file="css" data-act="copy">Copy</button>
               <button type="button" class="ui-btn" data-file="css" data-act="view">View</button>
               <button type="button" class="ui-btn" data-file="css" data-act="download">Download</button>
+            </div>
+            <div class="ui-file">
+              <code>custom-slider-cards.css</code>
+              <button type="button" class="ui-btn" data-file="cards" data-act="copy">Copy</button>
+              <button type="button" class="ui-btn" data-file="cards" data-act="view">View</button>
+              <button type="button" class="ui-btn" data-file="cards" data-act="download">Download</button>
             </div>
             <div class="ui-file">
               <code>custom-slider.js</code>

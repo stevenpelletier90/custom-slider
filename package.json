@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild src/auto.js --bundle --format=iife --minify --target=es2020 --outfile=dist/custom-slider.js && esbuild src/custom-slider.css --minify --outfile=dist/custom-slider.css && node scripts/paste.mjs",
+    "build": "esbuild src/auto.js --bundle --format=iife --minify --target=es2020 --outfile=dist/custom-slider.js && esbuild src/custom-slider.css --minify --outfile=dist/custom-slider.css && node scripts/build-cards.mjs && node scripts/paste.mjs",
     "size": "npm run build && node scripts/size.mjs",
     "serve": "esbuild --servedir=. --serve=127.0.0.1:8137",
     "lint:css": "npx stylelint \"src/**/*.css\" \"demo/assets/*.css\"",

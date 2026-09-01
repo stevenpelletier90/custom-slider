@@ -536,7 +536,7 @@
 
   /* ---- state ------------------------------------------------------------ */
 
-  const state = { pattern: 'modelbar', brand: null, look: null, perView: null, props: null, lookProps: null, data: null, hideDots: false, content: null, label: null };
+  const state = { pattern: 'modelbar', brand: null, look: null, perView: null, props: null, lookProps: null, data: null, hideDots: false, content: null, label: null, lib: false };
 
   function loadPattern(id) {
     const p = PATTERNS[id];
@@ -604,9 +604,18 @@
     return !!(p.panes || p.filters || p.cardGrid || state.pattern === 'lightbox');
   };
 
-  function cssFor(sel, preview) {
+  function cssFor(sel, preview, lib) {
     const p = PATTERNS[state.pattern];
-    const base = { ...state.lookProps, ...state.props, '--cs-per-view': state.perView.base };
+    // Library mode: the look's rules AND its default values already come from
+    // custom-slider-cards.css, so the snippet carries only what this slider
+    // changed. That is the difference between a 40-line paste and a 3-line one,
+    // and it is computed rather than trusted - a value equal to the look's
+    // default is dropped, so the delta block can never go stale against it.
+    const defaults = lib && state.look ? LOOKS[state.look].settings : {};
+    const merged = { ...state.lookProps, ...state.props };
+    const kept = lib ? Object.fromEntries(Object.entries(merged).filter(([k, v]) => defaults[k] !== v)) : merged;
+    // Per-view is cs-xs-N / cs-sm-N classes in library mode.
+    const base = lib ? kept : { ...kept, '--cs-per-view': state.perView.base };
     const decls = Object.entries(base)
       .map(([k, v]) => `  ${k}: ${v};`)
       .join('\n');
@@ -620,9 +629,11 @@
     // around them; setting --cargo-font to a length pins them instead.
     const font = `  font-size: var(--cargo-font, 1em);`;
 
-    const steps = BPS.filter((bp) => state.perView[bp] != null)
-      .map((bp) => `@media (min-width: ${bp}px) {\n  ${sel} { --cs-per-view: ${state.perView[bp]}; }\n}`)
-      .join('\n');
+    const steps = lib
+      ? '' // the ladder is cs-xs-N / cs-sm-N classes from the card-looks file
+      : BPS.filter((bp) => state.perView[bp] != null)
+          .map((bp) => `@media (min-width: ${bp}px) {\n  ${sel} { --cs-per-view: ${state.perView[bp]}; }\n}`)
+          .join('\n');
 
     // The preview is a fixed-width box inside a window that is usually much
     // wider, and a media query asks the WINDOW - so whatever the box was set
@@ -650,7 +661,10 @@
         return `${pre}${root} ${tok}`;
       });
 
-    const body = [state.look ? scope(LOOKS[state.look].css) : '', p.css ? scope(p.css) : ''].filter(Boolean).join('\n');
+    // The look's rules are skipped in library mode; a pattern's own CSS never
+    // is, because structural patterns (tabs, filter bar, lightbox) are not card
+    // looks and have no entry in the file.
+    const body = [state.look && !lib ? scope(LOOKS[state.look].css) : '', p.css ? scope(p.css) : ''].filter(Boolean).join('\n');
     // Arrows either sit in a gutter beside the content or float over it. Last
     // in the sheet so it beats the padding-inline a card look sets for itself.
     // The fallback matters: --cs-arrow-size is defined on .cs, and the
@@ -663,8 +677,22 @@
     return [`${sel} {\n${decls}\n${font}\n}`, steps, pin, dots, arrows, body, gutter].filter(Boolean).join('\n\n');
   }
 
-  function htmlFor(cls) {
+  function htmlFor(cls, lib) {
     const p = PATTERNS[state.pattern];
+    // In library mode the carousel ALSO names its look and its column ladder,
+    // so the card-looks file styles it. Two things this must NOT do:
+    //   - replace the instance class. That is what the delta block hooks onto,
+    //     and dropping it detached every override (arrow colours, the gutter,
+    //     the collapsed dot row) from the element it was written for.
+    //   - end up in `cls` itself. The structural patterns build their wrapper
+    //     as `${cls}-wrap`, so an augmented cls glued "-wrap" onto the last
+    //     column class and handed the wrapper the card look as well.
+    // So it is a suffix applied at the carousel element, and nowhere else.
+    let libCls = '';
+    if (lib && state.look) {
+      const tiers = [['xs', 'base'], ...BPS.map((bp, i) => [['sm', 'md', 'lg'][i], bp])];
+      libCls = [' ', `cargo-${state.look}`, ...tiers.filter(([, k]) => state.perView[k] != null).map(([t, k]) => `cs-${t}-${state.perView[k]}`)].join(' ').replace('  ', ' ');
+    }
     // Cycle the content up or down to the requested count. Repeats are how you
     // see what the slider does at 12 cards, and what it does when everything
     // already fits and it correctly stops drawing arrows and dots.
@@ -696,7 +724,7 @@
     // from this rather than hand-writing a second copy of the markup.
     const carousel = (list, label, pad = '') =>
       [
-        `${pad}<div class="${cls} cs" data-cs${attrs} aria-label="${label}">`,
+        `${pad}<div class="${cls}${libCls} cs" data-cs${attrs} aria-label="${label}">`,
         `${pad}  <${tag} class="cs-track">`,
         // Indent the card's own lines to match, so what you paste is not a
         // wall of markup starting at column zero inside a nested list item.
@@ -861,7 +889,29 @@
     // Kept as text as well as highlighted markup: the clipboard gets the text,
     // never the spans.
     const script = p.script ? `\n\n<script>\n${p.script}\n</script>` : '';
-    state.codeText = `<style>\n${cssFor('.my-slider')}\n</style>\n\n${toCms(htmlFor('my-slider'))}${script}`;
+    // Library mode is only offered where it can deliver: a pattern that draws
+    // its own cards has no entry in the card-looks file, so the toggle is
+    // disabled there rather than quietly producing a snippet that renders
+    // unstyled on a real page.
+    const lib = state.lib && !!state.look;
+    const libBox = $('wb-lib');
+    if (libBox) {
+      libBox.disabled = !state.look;
+      libBox.checked = lib;
+    }
+    const css = cssFor('.my-slider', false, lib);
+    // With nothing overridden there is no style block at all - the whole point.
+    const styleBlock = css.trim() ? `<style>\n${css}\n</style>\n\n` : '';
+    state.codeText = `${styleBlock}${toCms(htmlFor('my-slider', lib))}${script}`;
+    const note = $('wb-code-note');
+    if (note)
+      note.innerHTML = !state.look
+        ? 'This pattern draws its own cards, so its styles stay in the snippet — <strong>Style Only</strong>, markup into <strong>Custom HTML</strong>'
+        : lib
+          ? styleBlock
+            ? 'Link <strong>custom-slider-cards.css</strong> once, then this markup plus the few lines you changed'
+            : 'Link <strong>custom-slider-cards.css</strong> once — then this is markup only, nothing else to paste'
+          : 'Styles into <strong>Style Only</strong>, markup into a <strong>Custom HTML</strong> block';
     codeEl.innerHTML = globalThis.CARGO.hl.snippet(state.codeText);
   }
 
@@ -1653,15 +1703,22 @@
 
   $('wb-copy').addEventListener('click', (e) => copyText(e.target, state.codeText));
 
+  $('wb-lib')?.addEventListener('change', (e) => {
+    state.lib = e.target.checked;
+    render();
+  });
+
   // Built here rather than read out of the DOM: the markup on disk may carry
   // CRLF, and a stray carriage return inside a pasted tag is a nasty thing to
   // have to debug on someone else's site.
-  const TAGS = ['<link rel="stylesheet" href="/path/custom-slider.css">', '<script src="/path/custom-slider.js" defer></script>'].join('\n');
+  const TAGS = ['<link rel="stylesheet" href="/path/custom-slider.css">', '<link rel="stylesheet" href="/path/custom-slider-cards.css">', '<script src="/path/custom-slider.js" defer></script>'].join(
+    '\n',
+  );
   $('wb-copy-tags').addEventListener('click', (e) => copyText(e.target, TAGS));
 
   // The engine files, fetched at click time from the very files this page is
   // running - so what lands on the clipboard can never be a stale copy.
-  const ENGINE = { css: '../dist/custom-slider.css', js: '../dist/custom-slider.js' };
+  const ENGINE = { css: '../dist/custom-slider.css', js: '../dist/custom-slider.js', cards: '../dist/custom-slider-cards.css' };
   const grab = (k) => fetch(ENGINE[k]).then((r) => r.text());
 
   for (const btn of document.querySelectorAll('[data-file]')) {
@@ -1678,7 +1735,7 @@
       }
       const a = document.createElement('a');
       a.href = URL.createObjectURL(new Blob([text], { type: kind === 'js' ? 'text/javascript' : 'text/css' }));
-      a.download = `custom-slider.${kind}`;
+      a.download = kind === 'cards' ? 'custom-slider-cards.css' : `custom-slider.${kind}`;
       a.click();
       URL.revokeObjectURL(a.href);
       flash(btn, 'Downloaded');

@@ -69,6 +69,33 @@ JS options override data attributes, which override defaults.
 | `labels`          | — (JS only)               | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/custom-slider.js`                                                                                                                                 |
 | —                 | `data-cs-init="manual"`   | auto            | Skip auto-init; construct via `new CustomSlider(el, opts)` from page script                                                                                                                                     |
 
+## The optional card-looks file
+
+`dist/custom-slider-cards.css` (~2 KB gzip) is a **separate, optional** stylesheet
+holding the seven card looks and a set of column classes. The engine ships no card
+styling on purpose — `cs-*` is mechanism, `cargo-*` is content — so without it every
+slider has to paste its own `<style>` block. Link it once and a slider becomes a
+markup paste:
+
+```html
+<link rel="stylesheet" href="/path/custom-slider.css">
+<link rel="stylesheet" href="/path/custom-slider-cards.css">
+<script src="/path/custom-slider.js" defer></script>
+
+<div class="cs cargo-tile cs-xs-2 cs-sm-3 cs-md-4 cs-lg-5" data-cs aria-label="Our models">
+  <ul class="cs-track"> … </ul>
+</div>
+```
+
+Looks: `cargo-tile`, `cargo-vcard`, `cargo-wordmark`, `cargo-split`, `cargo-portrait`,
+`cargo-logo`, `cargo-location`. Columns: `cs-xs-N` / `cs-sm-N` / `cs-md-N` / `cs-lg-N`
+for N of 1–8, on Bootstrap 3's tiers. Anything you change from a look's defaults goes
+in a short `<style>` block beside the markup — the builder writes only the differences.
+
+It is **generated** from the same look definitions the builder draws with
+(`scripts/build-cards.mjs`), so the file and the preview cannot disagree. It is not
+counted against the byte budget below: a site that links no card looks pays none of it.
+
 ## CSS custom properties
 
 All eighteen: `--cs-per-view`, `--cs-gap`, `--cs-peek` (edge sliver of the next
