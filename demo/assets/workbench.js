@@ -150,7 +150,7 @@
       models: PHOTOS.slice(0, 3),
       css: `.cargo-photo { display: block; }
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 21 / 9; object-fit: cover; border-radius: 8px; }
-@media (max-width: 600px) { .cargo-photo img { aspect-ratio: 4 / 3; } }`,
+@media (max-width: 767.98px) { .cargo-photo img { aspect-ratio: 4 / 3; } }`,
       slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),
     },
     gallery: {
@@ -177,7 +177,7 @@
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       pairUp: true,
       css: `.cargo-col { display: grid; grid-template-rows: repeat(2, auto); gap: var(--cs-gap); }
-@media (max-width: 600px) { %root% { padding-inline: calc(var(--cs-arrow-size) + 0.3em); } }`,
+@media (max-width: 767.98px) { %root% { padding-inline: calc(var(--cs-arrow-size) + 0.3em); } }`,
     },
     peek: {
       gutter: false,
@@ -190,7 +190,7 @@
       models: PHOTOS,
       css: `.cargo-photo { display: block; }
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
-@media (max-width: 600px) { %root% { --cs-peek: 1.5em; } }`,
+@media (max-width: 767.98px) { %root% { --cs-peek: 1.5em; } }`,
       slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),
     },
     video: {
@@ -324,7 +324,7 @@
       minCard: 230,
       models: MIXED,
       css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4em); }
-@media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-mix { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-mix img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 .cargo-mix h3 { margin: 0.8em 0.9em 0.2em; font-size: 0.95em; line-height: 1.3; }
@@ -343,7 +343,7 @@
       minCard: 250,
       models: SERVICES,
       css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4em); }
-@media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-svc { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-media { display: block; overflow: hidden; }
 .cargo-svc img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.35s ease; }
@@ -368,7 +368,7 @@
       minCard: 250,
       models: REVIEWS,
       css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4em); }
-@media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-review { block-size: 100%; padding: 1.25em; margin: 0; line-height: 1.5; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-review figcaption { display: flex; gap: 0.7em; align-items: center; line-height: 1.35; }
 .cargo-avatar { display: grid; flex: none; place-items: center; inline-size: 40px; block-size: 40px; font-weight: 700; line-height: 1; color: #fff; background: var(--avatar-bg); border-radius: 50%; }
@@ -521,7 +521,7 @@
         ['Start here', 'Copy the markup, add your <code>--cs-per-view</code> breakpoints, then restyle.'],
       ].map(([name, blurb]) => ({ name, blurb })),
       css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4em); }
-@media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-stock { block-size: 100%; padding: 1.1em; background: #f0f2f5; border-radius: 8px; }
 .cargo-stock h3 { margin: 0 0 0.35em; font-size: 1em; line-height: 1.3; }
 .cargo-stock p { margin: 0; font-size: 0.9em; line-height: 1.5; color: #5f6368; }
@@ -1302,6 +1302,32 @@
       render();
     });
     beh.append(control('Arrows move', step));
+
+    // data-cs-rewind has been in the engine and the reference all along; it was
+    // just unreachable from here, so the only way to stop at the ends was to
+    // know the attribute and hand-edit the snippet.
+    const ends = document.createElement('select');
+    for (const [v, label] of [
+      ['', 'Wrap around'],
+      ['false', 'Stop at the ends'],
+    ]) {
+      const o = document.createElement('option');
+      o.value = v;
+      o.textContent = label;
+      o.selected = (state.data['data-cs-rewind'] ?? '') === v;
+      ends.append(o);
+    }
+    // The engine ignores rewind:false under autoplay (a rotating strip that
+    // stops dead at the last slide is a broken-looking page) and says so in a
+    // console warning. Say it here instead of letting the control lie.
+    const autoplaying = state.data['data-cs-autoplay'] != null;
+    ends.disabled = autoplaying;
+    ends.addEventListener('change', () => {
+      if (ends.value) state.data['data-cs-rewind'] = ends.value;
+      else delete state.data['data-cs-rewind'];
+      render();
+    });
+    beh.append(control(autoplaying ? 'At the ends (autoplay always wraps)' : 'At the ends', ends));
 
     const dots = document.createElement('input');
     dots.type = 'checkbox';

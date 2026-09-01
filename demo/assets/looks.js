@@ -15,6 +15,23 @@
 // values and the browser does the rendering. If a new brand needs something no
 // property can express, that is a new component - shared, so the next brand
 // that wants it selects it rather than getting a copy.
+//
+// BREAKPOINTS. Two kinds, and the difference is the point:
+//
+//   768 / 992 / 1200   Bootstrap 3's own sm/md/lg tiers, and 767 for its xs
+//                      ceiling. The page around the slider changes shape on
+//                      these lines, so the slider has to as well. Anything
+//                      that means "phone" or "small tablet" uses 767 - it was
+//                      600 for a while, which is a guess sitting 167px inside
+//                      the real boundary and is exactly the one-off-number
+//                      habit brands.js criticises the OEM builds for.
+//
+//   380 / 460 / 480    Below xs, where Bootstrap 3 has no tier at all. These
+//                      are measured per look, not a scale: a cutout tile still
+//                      holds two across at 380 (its content needs 150px and
+//                      gets ~222), a logo panel does not past 460, and a split
+//                      card has to stack by 480. Do not "tidy" them into one
+//                      number - each is the width its own card stops working.
 
 const LOOKS = {
   tile: {
@@ -54,7 +71,7 @@ const LOOKS = {
       '--plate-pad': '6% 6% 1%',
     },
     css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
-@media (max-width: 600px) { %root% { --cs-arrow-size: 36px; padding-inline: 0; } }
+@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; padding-inline: 0; } }
 @media (max-width: 380px) { %root% { --cs-per-view: 1; } }
 .cargo-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .cargo-media { display: block; overflow: hidden; }
@@ -95,7 +112,7 @@ const LOOKS = {
       '--price-color': '#16324f',
     },
     css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
-@media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-card { position: relative; display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: var(--card-bg); border: 1px solid #e2e5ea; border-radius: var(--card-radius); }
 .cargo-media { display: block; overflow: hidden; }
 .cargo-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; transition: transform 0.3s ease; }
@@ -180,7 +197,7 @@ const LOOKS = {
 .cargo-name { display: block; margin: 0; font-size: 1.5em; font-weight: 700; line-height: 1.2; }
 .cargo-blurb { font-size: 0.95em; line-height: 1.4; color: #d9d9d9; }
 .cargo-pill { padding: 0.5em 1.3em; margin-block-start: auto; font-size: 0.9em; font-weight: 600; color: var(--pill-fg); background: var(--pill-bg); border-radius: 999px; }
-@media (max-width: 600px) { .cargo-copy { gap: 0.35em; padding: 1em; } .cargo-name { font-size: 1.15em; } .cargo-pill { padding: 0.45em 1em; font-size: 0.8em; white-space: nowrap; } }
+@media (max-width: 767.98px) { .cargo-copy { gap: 0.35em; padding: 1em; } .cargo-name { font-size: 1.15em; } .cargo-pill { padding: 0.45em 1em; font-size: 0.8em; white-space: nowrap; } }
 @media (max-width: 480px) { .cargo-card { flex-direction: column; } .cargo-card img { flex: none; inline-size: 100%; aspect-ratio: 16 / 9; } }`,
     // An absent field emits NO element. Rendering an empty <span> left the copy
     // column with a blank row, and the pill's `margin-block-start: auto` then
