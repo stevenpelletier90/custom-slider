@@ -44,6 +44,11 @@ export default [
       sourceType: 'module',
       globals: {
         ...globals.nodeBuiltin,
+        // a11y.mjs is Node, but the callbacks it hands to page.evaluate are
+        // serialised and run in the browser, where document and window are
+        // real. Without these eslint reports no-undef on code it cannot see
+        // the execution context of.
+        ...globals.browser,
       },
     },
     rules: sharedRules,
