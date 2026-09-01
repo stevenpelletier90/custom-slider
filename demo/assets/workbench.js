@@ -537,7 +537,7 @@
 
   /* ---- state ------------------------------------------------------------ */
 
-  const state = { pattern: 'modelbar', brand: null, look: null, perView: null, props: null, lookProps: null, data: null, hideDots: false, content: null, label: null, lib: false };
+  const state = { pattern: 'modelbar', brand: null, look: null, perView: null, props: null, lookProps: null, data: null, hideDots: false, content: null, label: null };
 
   // A look that sets --cs-* is choosing how the ENGINE's controls sit on the
   // background it brings, so those belong in props - where the panel edits them
@@ -637,18 +637,14 @@
     return !!(p.panes || p.filters || p.cardGrid || state.pattern === 'lightbox');
   };
 
-  function cssFor(sel, preview, lib) {
+  function cssFor(sel, preview) {
     const p = PATTERNS[state.pattern];
     // Library mode: the look's rules AND its default values already come from
     // custom-slider-cards.css, so the snippet carries only what this slider
     // changed. That is the difference between a 40-line paste and a 3-line one,
     // and it is computed rather than trusted - a value equal to the look's
     // default is dropped, so the delta block can never go stale against it.
-    const defaults = lib && state.look ? LOOKS[state.look].settings : {};
-    const merged = { ...state.lookProps, ...state.props };
-    const kept = lib ? Object.fromEntries(Object.entries(merged).filter(([k, v]) => defaults[k] !== v)) : merged;
-    // Per-view is cs-xs-N / cs-sm-N classes in library mode.
-    const base = lib ? kept : { ...kept, '--cs-per-view': state.perView.base };
+    const base = { ...state.lookProps, ...state.props, '--cs-per-view': state.perView.base };
     const decls = Object.entries(base)
       .map(([k, v]) => `  ${k}: ${v};`)
       .join('\n');
@@ -662,11 +658,9 @@
     // around them; setting --cargo-font to a length pins them instead.
     const font = `  font-size: var(--cargo-font, 1em);`;
 
-    const steps = lib
-      ? '' // the ladder is cs-xs-N / cs-sm-N classes from the card-looks file
-      : BPS.filter((bp) => state.perView[bp] != null)
-          .map((bp) => `@media (min-width: ${bp}px) {\n  ${sel} { --cs-per-view: ${state.perView[bp]}; }\n}`)
-          .join('\n');
+    const steps = BPS.filter((bp) => state.perView[bp] != null)
+      .map((bp) => `@media (min-width: ${bp}px) {\n  ${sel} { --cs-per-view: ${state.perView[bp]}; }\n}`)
+      .join('\n');
 
     // The preview is a fixed-width box inside a window that is usually much
     // wider, and a media query asks the WINDOW - so whatever the box was set
@@ -697,7 +691,7 @@
     // The look's rules are skipped in library mode; a pattern's own CSS never
     // is, because structural patterns (tabs, filter bar, lightbox) are not card
     // looks and have no entry in the file.
-    const body = [state.look && !lib ? scope(LOOKS[state.look].css) : '', p.css ? scope(p.css) : ''].filter(Boolean).join('\n');
+    const body = [state.look ? scope(LOOKS[state.look].css) : '', p.css ? scope(p.css) : ''].filter(Boolean).join('\n');
     // Arrows either sit in a gutter beside the content or float over it. Last
     // in the sheet so it beats the padding-inline a card look sets for itself.
     // The fallback matters: --cs-arrow-size is defined on .cs, and the
@@ -710,22 +704,8 @@
     return [`${sel} {\n${decls}\n${font}\n}`, steps, pin, dots, arrows, body, gutter].filter(Boolean).join('\n\n');
   }
 
-  function htmlFor(cls, lib) {
+  function htmlFor(cls) {
     const p = PATTERNS[state.pattern];
-    // In library mode the carousel ALSO names its look and its column ladder,
-    // so the card-looks file styles it. Two things this must NOT do:
-    //   - replace the instance class. That is what the delta block hooks onto,
-    //     and dropping it detached every override (arrow colours, the gutter,
-    //     the collapsed dot row) from the element it was written for.
-    //   - end up in `cls` itself. The structural patterns build their wrapper
-    //     as `${cls}-wrap`, so an augmented cls glued "-wrap" onto the last
-    //     column class and handed the wrapper the card look as well.
-    // So it is a suffix applied at the carousel element, and nowhere else.
-    let libCls = '';
-    if (lib && state.look) {
-      const tiers = [['xs', 'base'], ...BPS.map((bp, i) => [['sm', 'md', 'lg'][i], bp])];
-      libCls = [' ', `cargo-${state.look}`, ...tiers.filter(([, k]) => state.perView[k] != null).map(([t, k]) => `cs-${t}-${state.perView[k]}`)].join(' ').replace('  ', ' ');
-    }
     // Cycle the content up or down to the requested count. Repeats are how you
     // see what the slider does at 12 cards, and what it does when everything
     // already fits and it correctly stops drawing arrows and dots.
@@ -757,7 +737,7 @@
     // from this rather than hand-writing a second copy of the markup.
     const carousel = (list, label, pad = '') =>
       [
-        `${pad}<div class="${cls}${libCls} cs" data-cs${attrs} aria-label="${label}">`,
+        `${pad}<div class="${cls} cs" data-cs${attrs} aria-label="${label}">`,
         `${pad}  <${tag} class="cs-track">`,
         // Indent the card's own lines to match, so what you paste is not a
         // wall of markup starting at column zero inside a nested list item.
@@ -921,31 +901,27 @@
     // Kept as text as well as highlighted markup: the clipboard gets the text,
     // never the spans.
     const script = p.script ? `\n\n<script>\n${p.script}\n</script>` : '';
-    // Library mode is only offered where it can deliver: a pattern that draws
-    // its own cards has no entry in the card-looks file, so the toggle is
-    // disabled there rather than quietly producing a snippet that renders
-    // unstyled on a real page.
-    const lib = state.lib && !!state.look;
-    const libBox = $('wb-lib');
-    if (libBox) {
-      libBox.disabled = !state.look;
-      libBox.checked = lib;
-    }
-    const css = cssFor('.my-slider', false, lib);
-    // With nothing overridden there is no style block at all - the whole point.
-    const styleBlock = css.trim() ? `<style>\n${css}\n</style>\n\n` : '';
-    state.codeText = `${styleBlock}${toCms(htmlFor('my-slider', lib))}${script}`;
-    const note = $('wb-code-note');
-    if (note)
-      note.innerHTML =
-        '<b class="ui-step">2</b> ' +
-        (!state.look
-          ? 'Copy this into your page. This card style is one of a kind, so its styling comes along with it.'
-          : lib
-            ? styleBlock
-              ? 'Copy this into your page — the markup, plus the few lines you changed.'
-              : 'Copy this into your page. Markup only, because the card looks come from the file in step 3.'
-            : 'Copy this into your page — the styling and the markup together.');
+    const css = cssFor('.my-slider');
+    const html = toCms(htmlFor('my-slider'));
+    state.codeText = `<style>\n${css}\n</style>\n\n${html}${script}`;
+
+    // Say what is in the box and where each part goes, counted off the snippet
+    // itself so it can never name a part that is not there. This replaced a
+    // "use the card-looks file" checkbox that was greyed out on 13 of the 17
+    // patterns and, where it did work, still left 13-21 lines of CSS behind -
+    // a control for something that was never the designer's decision to make.
+    const lines = (t) => t.trim().split('\n').length;
+    const parts = [
+      ['HTML', lines(html), 'a <strong>Custom HTML</strong> block'],
+      ['CSS', lines(css), '<strong>Style Only &rarr; Head Section</strong>'],
+    ];
+    if (p.script) parts.push(['JavaScript', lines(p.script), '<strong>Body Section, Bottom</strong>']);
+    // The demo images resolve to real platform paths, which is what makes them
+    // usable - and exactly why this warning belongs here. They are Chevrolet
+    // stock art, so on any other brand's site they load perfectly and show the
+    // wrong cars: worse than a broken image, because nothing looks wrong.
+    const warn = /<img/.test(state.codeText) ? '<li class="ui-parts-warn"><b>Photos</b> <span>examples</span>the addresses point at Chevrolet stock art — put your own in step 1 above</li>' : '';
+    $('wb-parts').innerHTML = parts.map(([what, n, where]) => `<li><b>${what}</b> <span>${n} line${n === 1 ? '' : 's'}</span>goes into ${where}</li>`).join('') + warn;
     codeEl.innerHTML = globalThis.CARGO.hl.snippet(state.codeText);
   }
 
@@ -1795,11 +1771,6 @@
   }
 
   $('wb-copy').addEventListener('click', (e) => copyText(e.target, state.codeText));
-
-  $('wb-lib')?.addEventListener('change', (e) => {
-    state.lib = e.target.checked;
-    render();
-  });
 
   // Built here rather than read out of the DOM: the markup on disk may carry
   // CRLF, and a stray carriage return inside a pasted tag is a nasty thing to

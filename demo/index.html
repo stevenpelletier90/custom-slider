@@ -151,14 +151,12 @@
         <section class="ui-code" aria-label="Code for these settings">
           <div class="ui-code-bar">
             <span id="wb-code-note"><b class="ui-step">2</b> Copy this into your page</span>
-            <span class="ui-content-acts">
-              <label class="ui-swap"
-                ><input type="checkbox" id="wb-lib" />
-                <span>Use the card-looks file</span>
-              </label>
-              <button type="button" class="ui-btn" id="wb-copy">Copy</button>
-            </span>
+            <button type="button" class="ui-btn" id="wb-copy">Copy</button>
           </div>
+          <!-- What is in the box and where each part goes. Written from the
+               snippet itself, so it can never describe a part that is not
+               there. -->
+          <ul class="ui-parts" id="wb-parts"></ul>
           <pre tabindex="0"><code id="wb-code"></code></pre>
         </section>
 
@@ -176,8 +174,8 @@
 &lt;script src="/path/custom-slider.js" defer&gt;&lt;/script&gt;</code></pre>
             <div class="ui-where">
               <b>The third one is optional</b>
-              <code>custom-slider-cards.css</code> holds the seven card looks. Link it and a slider becomes a markup paste — tick <strong>Use the card-looks file</strong> above the code. Skip it and
-              every snippet carries its own styles instead; the engine works either way.
+              <code>custom-slider-cards.css</code> holds the seven shared card styles as ready-made classes, so you can hand-write a slider without pasting its styling. The Copy button above always
+              gives you a self-contained block that works without it, so skip this file unless you want those classes.
             </div>
             <div class="ui-where">
               <b>Where these go</b>

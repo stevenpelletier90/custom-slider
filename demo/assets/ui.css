@@ -834,34 +834,6 @@ body {
   opacity: 0.45;
 }
 
-/* The card-looks toggle in the code bar. It sits on the dark Monokai ground,
-   so it takes that bar's ink rather than the page's. */
-.ui-swap {
-  display: flex;
-  gap: 0.35rem;
-  align-items: center;
-  font-size: 0.78rem;
-  color: inherit;
-  cursor: pointer;
-}
-
-.ui-swap input {
-  inline-size: 0.95rem;
-  block-size: 0.95rem;
-  margin: 0;
-  accent-color: var(--signal);
-}
-
-.ui-swap input:disabled {
-  cursor: not-allowed;
-  opacity: 0.4;
-}
-
-.ui-swap:has(input:disabled) {
-  cursor: not-allowed;
-  opacity: 0.55;
-}
-
 /* Step numbers. The page is a sequence — write the slides, copy the code, add
    the files — and the numbers are what make that readable at a glance instead
    of three unrelated panels stacked up. */
@@ -876,6 +848,52 @@ body {
   color: var(--on-signal);
   background: var(--signal);
   border-radius: 50%;
+}
+
+/* What is in the code box, and where each piece goes. Sits between the bar and
+   the code so it is read before the copy button is pressed, not after. */
+.ui-parts {
+  display: grid;
+  gap: 0.3rem;
+  padding: 0.7rem 0.9rem;
+  margin: 0;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  list-style: none;
+  background: var(--surface);
+  border-block-end: 1px solid var(--rule);
+}
+
+.ui-parts li {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+  align-items: baseline;
+}
+
+.ui-parts b {
+  min-inline-size: 5.5rem;
+  color: var(--ink);
+}
+
+.ui-parts span {
+  min-inline-size: 4.5rem;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+}
+
+.ui-parts strong {
+  color: var(--ink);
+}
+
+/* The photos warning is the one line here that is a caution, not a fact. */
+.ui-parts-warn {
+  padding-block-start: 0.4rem;
+  border-block-start: 1px dashed var(--rule);
+}
+
+.ui-parts-warn b {
+  color: var(--signal-text);
 }
 
 /* ---- code -------------------------------------------------------------- */
