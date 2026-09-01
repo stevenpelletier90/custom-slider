@@ -38,6 +38,81 @@ const seen = new Set();
 const findings = [];
 let states = 0;
 
+// The generated controls, checked against what is actually painted behind them.
+//
+// axe does not catch these and cannot be blamed for it: its colour-contrast rule
+// looks at TEXT, and an arrow is an SVG glyph, a dot is a ::after background and
+// a selected thumb is a border. A logo panel shipping black arrows on a navy
+// strip at 1.06:1 passed a clean axe run over all 31 states.
+//
+// Everything here composites. A translucent chip over a card over a page is
+// three layers, and judging the glyph against only the nearest one is how a
+// first pass at this reported fifteen white-on-white failures that were all fine.
+function controlContrast() {
+  const parse = (c) => {
+    const m = (c.match(/[0-9.]+/g) || [0, 0, 0]).map(Number);
+    return { r: m[0], g: m[1], b: m[2], a: m.length > 3 ? m[3] : 1 };
+  };
+  const over = (f, b) => ({ r: f.a * f.r + (1 - f.a) * b.r, g: f.a * f.g + (1 - f.a) * b.g, b: f.a * f.b + (1 - f.a) * b.b, a: 1 });
+  const lum = (c) => {
+    const t = (v) => {
+      v /= 255;
+      return v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4;
+    };
+    return 0.2126 * t(c.r) + 0.7152 * t(c.g) + 0.0722 * t(c.b);
+  };
+  const ratio = (a, b) => {
+    const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
+    return Math.round(((x + 0.05) / (y + 0.05)) * 100) / 100;
+  };
+  // Composite every translucent layer back to the first opaque one. A 55%-black
+  // chip over a white card over the page is three layers, and judging the glyph
+  // against only the nearest is how a first pass reported fifteen
+  // white-on-white failures that were all perfectly legible.
+  const ground = (el) => {
+    const layers = [];
+    for (let n = el.parentElement; n; n = n.parentElement) {
+      const bg = parse(getComputedStyle(n).backgroundColor);
+      if (bg.a === 0) continue;
+      layers.push(bg);
+      if (bg.a > 0.99) break;
+    }
+    let base = { r: 255, g: 255, b: 255, a: 1 };
+    for (let i = layers.length - 1; i >= 0; i--) base = over(layers[i], base);
+    return base;
+  };
+  const shown = (el) => el && !el.hidden && el.offsetParent !== null;
+  const rgb = (c) => 'rgb(' + [c.r, c.g, c.b].map(Math.round).join(' ') + ')';
+  const out = [];
+  for (const root of document.querySelectorAll('.cs')) {
+    const label = root.getAttribute('aria-label') || '(unlabelled)';
+    const add = (what, fg, behind) => {
+      const r = ratio(fg, behind);
+      if (r < 3) out.push({ label, what, fg: rgb(fg), behind: rgb(behind), ratio: r });
+    };
+    for (const [sel, what] of [
+      ['.cs-arrow', 'arrow'],
+      ['.cs-pause', 'pause button'],
+    ]) {
+      const el = root.querySelector(sel);
+      if (!shown(el)) continue;
+      const cs = getComputedStyle(el);
+      add(what, parse(cs.color), over(parse(cs.backgroundColor), ground(el)));
+    }
+    for (const [sel, what] of [
+      ['.cs-dot:not(.cs-dot--current)', 'dot'],
+      ['.cs-dot--current', 'current dot'],
+    ]) {
+      const el = root.querySelector(sel);
+      if (!shown(el)) continue;
+      add(what, parse(getComputedStyle(el, '::after').backgroundColor), ground(el));
+    }
+    const thumb = root.querySelector('.cs-thumb[aria-selected="true"]');
+    if (shown(thumb)) add('selected thumb outline', parse(getComputedStyle(thumb).borderTopColor), ground(thumb));
+  }
+  return out;
+}
+
 async function audit(where) {
   states++;
   await page.evaluate(AXE);
@@ -59,6 +134,23 @@ async function audit(where) {
         contrast: d.contrastRatio ? `${d.fgColor} on ${d.bgColor} = ${d.contrastRatio}:1, needs ${d.expectedContrastRatio}` : null,
       });
     }
+  }
+
+  // WCAG 1.4.11 wants 3:1 for a control against its background. These are the
+  // engine's own controls, which are the frozen part of the contract - a strip
+  // whose arrows cannot be seen is broken for everyone using that look.
+  for (const c of await page.evaluate(controlContrast)) {
+    const key = `control|${c.what}|${c.fg}|${c.behind}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    findings.push({
+      impact: 'serious',
+      id: 'control-contrast',
+      help: 'Slider controls must be visible against what is behind them',
+      where,
+      target: `${c.what} in “${c.label}”`,
+      contrast: `${c.fg} on ${c.behind} = ${c.ratio}:1, needs 3:1`,
+    });
   }
 }
 

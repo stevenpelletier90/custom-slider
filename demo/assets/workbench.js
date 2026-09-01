@@ -467,6 +467,7 @@
       models: PHOTOS,
       css: `.cargo-lb-open { display: inline-flex; gap: 0.7em; align-items: center; padding: 0.6em 1em; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-lb-open img { inline-size: 68px; block-size: 44px; object-fit: cover; border-radius: 5px; }
+%root% { --cs-dot-current: #fff; --cs-dot-fg: #9aa3ad; }
 .cargo-lb { inline-size: min(94vw, 1100px); padding: 0; background: #111; border: 0; border-radius: 12px; }
 .cargo-lb::backdrop { background: rgb(0 0 0 / 80%); }
 .cargo-lb-head { display: flex; align-items: center; justify-content: space-between; padding: 0.6em 0.9em; font-size: 0.9em; color: #fff; }
@@ -543,12 +544,23 @@
   // as "Arrow colour" and the pattern's own values are overridden rather than
   // overriding. A logo panel that brings navy has to bring arrows you can see on
   // navy; leaving them in lookProps let the model bar's dark arrows win at 1.06:1.
+  let lookCs = [];
   const applyLook = (id) => {
+    // Hand back whatever the PREVIOUS look borrowed, to the pattern's own value
+    // if it had one. Without this the logo panel's white arrows survived a
+    // switch to the location card and sat on its near-white strip at 1.07:1.
+    const own = PATTERNS[state.pattern].props ?? {};
+    for (const k of lookCs) {
+      if (k in own) state.props[k] = own[k];
+      else delete state.props[k];
+    }
+    lookCs = [];
     state.look = id;
     state.lookProps = { ...LOOKS[id].settings };
     for (const k of Object.keys(state.lookProps)) {
       if (k.startsWith('--cs-')) {
         state.props[k] = state.lookProps[k];
+        lookCs.push(k);
         delete state.lookProps[k];
       }
     }
