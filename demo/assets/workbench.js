@@ -101,8 +101,8 @@
   const SERVICES = [
     ['photo-5.jpg', 'Service Center', 'Factory-trained technicians, genuine parts, and online scheduling for everything from oil changes to major repairs.'],
     ['photo-3.jpg', 'Test Drives', "Book a no-pressure drive online — we'll have the vehicle warmed up and out front when you arrive."],
-    ['vehicle-2.jpg', 'Financing', 'Flexible terms, first-time buyer programs, and pre-approval in minutes without a hit to your credit score.'],
-    ['vehicle-4.jpg', 'Trade-In Appraisal', 'Get a real number for your current vehicle in minutes — good for seven days or 500 miles.'],
+    ['vehicle-2.png', 'Financing', 'Flexible terms, first-time buyer programs, and pre-approval in minutes without a hit to your credit score.'],
+    ['vehicle-4.png', 'Trade-In Appraisal', 'Get a real number for your current vehicle in minutes — good for seven days or 500 miles.'],
     ['photo-6.jpg', 'Parts &amp; Accessories', 'OEM parts counter, accessories, and installation — ordered to your VIN so it fits the first time.'],
     ['photo-2.jpg', 'Body Shop &amp; Detailing', 'Collision repair, paintless dent removal, and full detailing with insurance-claim assistance.'],
   ].map(([f, name, blurb]) => ({ img: `img/${f}`, name, blurb, alt: '', href: '#' }));
@@ -128,7 +128,7 @@
       look: 'tile',
       models: cutouts,
       data: { 'data-cs-step': 'slide' },
-      props: { '--cs-gap': '0.5rem', '--cs-controls-space': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      props: { '--cs-gap': '0.5em', '--cs-controls-space': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       hideDots: true,
     },
     cards: {
@@ -137,14 +137,14 @@
       look: 'vcard',
       models: VEHICLES,
       data: {},
-      props: { '--cs-gap': '1rem', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
     },
     hero: {
       gutter: false,
       label: 'Hero banner',
       blurb: 'Full width, one at a time, crossfading on a timer. Autoplay adds the pause button and never starts under reduced motion.',
       data: { 'data-cs-fade': '', 'data-cs-autoplay': '5000' },
-      props: { '--cs-gap': '0px', '--cs-controls-space': '2rem', '--cs-dot-current': '#16324f' },
+      props: { '--cs-gap': '0px', '--cs-controls-space': '2em', '--cs-dot-current': '#16324f' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       models: PHOTOS.slice(0, 3),
@@ -173,24 +173,24 @@
       look: 'tile',
       models: cutouts,
       data: {},
-      props: { '--cs-gap': '1rem', '--cs-controls-space': '2rem', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      props: { '--cs-gap': '1em', '--cs-controls-space': '2em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       pairUp: true,
       css: `.cargo-col { display: grid; grid-template-rows: repeat(2, auto); gap: var(--cs-gap); }
-@media (max-width: 600px) { %root% { padding-inline: calc(var(--cs-arrow-size) + 0.3rem); } }`,
+@media (max-width: 600px) { %root% { padding-inline: calc(var(--cs-arrow-size) + 0.3em); } }`,
     },
     peek: {
       gutter: false,
       label: 'Peek at the next slide',
       blurb: 'A sliver of the neighbours stays visible so it always reads as "there is more this way". One property — --cs-peek. Zero turns it off.',
       data: {},
-      props: { '--cs-gap': '1rem', '--cs-peek': '3rem', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
+      props: { '--cs-gap': '1em', '--cs-peek': '3em', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 2, 1200: 2 },
       minCard: 240,
       models: PHOTOS,
       css: `.cargo-photo { display: block; }
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
-@media (max-width: 600px) { %root% { --cs-peek: 1.5rem; } }`,
+@media (max-width: 600px) { %root% { --cs-peek: 1.5em; } }`,
       slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),
     },
     video: {
@@ -198,7 +198,7 @@
       label: 'Video testimonials',
       blurb: 'Posters open a native dialog, which gives Esc-to-close and focus trapping for free. Video never plays inline — autoplay on video cards fights the content.',
       data: {},
-      props: { '--cs-gap': '1rem', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 2, 1200: 3 },
       minCard: 260,
       models: PHOTOS.slice(0, 3).map((m, i) => ({ ...m, name: ['Dana W.', 'Marcus T.', 'Gene & Marta L.'][i] })),
@@ -212,7 +212,7 @@
       css: `.cargo-video { position: relative; display: block; inline-size: 100%; padding: 0; overflow: hidden; font: inherit; color: inherit; text-align: start; cursor: pointer; background: none; border: 0; border-radius: 8px; }
 .cargo-video img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
 .cargo-play { position: absolute; inset-block-start: 42%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 56px; block-size: 56px; color: #16324f; background: rgb(255 255 255 / 92%); border-radius: 50%; transform: translate(-50%, -50%); }
-.cargo-name { display: block; margin: 0.6rem 0 0; font-size: 1rem; font-weight: 700; line-height: 1.3; }`,
+.cargo-name { display: block; margin: 0.6em 0 0; font-size: 1em; font-weight: 700; line-height: 1.3; }`,
       slides: (models) =>
         models.map(
           (m) =>
@@ -227,12 +227,12 @@
       look: 'tile',
       models: cutouts,
       data: { 'data-cs-step': 'slide' },
-      props: { '--cs-gap': '0.5rem', '--cs-controls-space': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      props: { '--cs-gap': '0.5em', '--cs-controls-space': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       hideDots: true,
       panes: ['Trucks', 'SUVs', 'Crossovers'],
-      css: `.cargo-tabs { display: flex; flex-wrap: wrap; gap: 0.25rem; margin-block-end: 1rem; border-block-end: 1px solid #e2e5ea; }
-.cargo-tabs [role="tab"] { padding: 0.6rem 1.1rem; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: 0.65; }
-.cargo-tabs [role="tab"][aria-selected="true"] { opacity: 1; border-block-end-color: currentcolor; }
+      css: `.cargo-tabs { display: flex; flex-wrap: wrap; gap: 0.25em; margin-block-end: 1em; border-block-end: 1px solid #e2e5ea; }
+.cargo-tabs [role="tab"] { padding: 0.6em 1.1em; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: 0.65; }
+.cargo-tabs [role="tab"][aria-selected="true"] { border-block-end-color: currentcolor; opacity: 1; }
 .cargo-pane[hidden] { display: none; }`,
       script: `document.querySelectorAll('[data-tabs]').forEach((wrap, w) => {
   const tabs = [...wrap.querySelectorAll('[role="tab"]')];
@@ -274,19 +274,19 @@
       blurb:
         'Portrait photography instead of cutouts, and the dot row restyled into a solid bar with a marker that slides along it. The marker is page script watching the engine’s own state — the segments underneath are still real "go to page" buttons.',
       data: { 'data-cs-rewind': 'false', 'data-bar': '' },
-      props: { '--cs-gap': '1rem', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 4, 1200: 4 },
       minCard: 190,
       models: MODELS,
-      css: `%root% { --cs-dot-fg: #949494; --cs-dot-current: #949494; --cs-controls-space: 3rem; }
+      css: `%root% { --cs-dot-fg: #949494; --cs-dot-current: #949494; --cs-controls-space: 3em; }
 @media (min-width: 992px) { %root% { --cs-arrow-size: 56px; } }
 
 /* The dots become one solid bar. Every segment is still a real, labelled
    button; the marker is a ::before whose translate follows --bar-index and
    --bar-count, set by the script below. #949494 is 3.03:1 on white, because
    the segments ARE the control and their extent has to meet WCAG 1.4.11. */
-%root% .cs-dots { gap: 0; inset-inline: 25%; }
-%root% .cs-dots::before { content: ""; position: absolute; inset-block-start: calc(50% - 2px); inset-inline-start: 0; inline-size: calc(100% / var(--bar-count, 1)); block-size: 4px; background: #262626; border-radius: 2px; translate: calc(var(--bar-index, 0) * 100%); pointer-events: none; }
+%root% .cs-dots { inset-inline: 25%; gap: 0; }
+%root% .cs-dots::before { position: absolute; inset-block-start: calc(50% - 2px); inset-inline-start: 0; inline-size: calc(100% / var(--bar-count, 1)); block-size: 4px; pointer-events: none; content: ""; background: #262626; border-radius: 2px; translate: calc(var(--bar-index, 0) * 100%); }
 @media (prefers-reduced-motion: no-preference) { %root% .cs-dots::before { transition: translate 0.35s ease; } }
 %root% .cs-dot { flex: 1 1 auto; }
 %root% .cs-dot::after { inline-size: 100%; block-size: 4px; border-radius: 0; }
@@ -296,9 +296,9 @@
 .cargo-model { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; border-radius: 10px; }
 .cargo-model img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; transition: transform 0.35s ease; }
 .cargo-model:hover img { transform: scale(1.05); }
-.cargo-model h4 { position: absolute; inset-inline: 0; inset-block-end: 0; padding: 2.5rem 1rem 1rem; margin: 0; font-size: 1.15rem; line-height: 1.3; background: linear-gradient(transparent, rgb(0 0 0 / 78%)); }`,
+.cargo-model h3 { position: absolute; inset-block-end: 0; inset-inline: 0; padding: 2.5em 1em 1em; margin: 0; font-size: 1.15em; line-height: 1.3; background: linear-gradient(transparent, rgb(0 0 0 / 78%)); }`,
       slides: (models) =>
-        models.map((m) => `<a class="cargo-model" href="${m.href}"><img src="${m.img}" width="${m.w ?? 600}" height="${m.h ?? 1000}" alt="" loading="lazy" decoding="async"><h4>${m.name}</h4></a>`),
+        models.map((m) => `<a class="cargo-model" href="${m.href}"><img src="${m.img}" width="${m.w ?? 600}" height="${m.h ?? 1000}" alt="" loading="lazy" decoding="async"><h3>${m.name}</h3></a>`),
       // Site-level enhancement, not an engine feature: it reads the engine's
       // own current-dot class and writes two custom properties. Nothing in the
       // engine knows the bar exists.
@@ -319,18 +319,18 @@
       gutter: true,
       label: 'Mixed image sizes',
       blurb: 'Six source files at six different aspect ratios, all cropped to one shape by the CSS. Dealers upload whatever they have — aspect-ratio plus object-fit is what keeps the row even.',
-      props: { '--cs-gap': '1rem', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 230,
       models: MIXED,
-      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4rem); }
+      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4em); }
 @media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-mix { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-mix img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
-.cargo-mix h4 { margin: 0.8rem 0.9rem 0.2rem; font-size: 0.95rem; line-height: 1.3; }
-.cargo-mix p { margin: 0 0.9rem 0.9rem; font-size: 0.85rem; line-height: 1.45; opacity: 0.75; }`,
+.cargo-mix h3 { margin: 0.8em 0.9em 0.2em; font-size: 0.95em; line-height: 1.3; }
+.cargo-mix p { margin: 0 0.9em 0.9em; font-size: 0.85em; line-height: 1.45; opacity: 0.75; }`,
       slides: (models) =>
-        models.map((m) => `<article class="cargo-mix"><img src="${m.img}" width="${m.w}" height="${m.h}" alt="${m.alt}" loading="lazy" decoding="async"><h4>${m.name}</h4><p>${m.blurb}</p></article>`),
+        models.map((m) => `<article class="cargo-mix"><img src="${m.img}" width="${m.w}" height="${m.h}" alt="${m.alt}" loading="lazy" decoding="async"><h3>${m.name}</h3><p>${m.blurb}</p></article>`),
     },
 
     service: {
@@ -338,22 +338,23 @@
       label: 'Service cards',
       blurb: 'Photo, heading, a paragraph and a read-more affordance. One card per arrow click, because the copy is long enough that a full-page jump loses your place.',
       data: { 'data-cs-step': 'slide' },
-      props: { '--cs-gap': '1rem', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 250,
       models: SERVICES,
-      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4rem); }
+      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4em); }
 @media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-svc { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
+.cargo-svc-media { display: block; overflow: hidden; }
 .cargo-svc img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.35s ease; }
 .cargo-svc:hover img { transform: scale(1.05); }
-.cargo-svc h4 { margin: 1rem 1.1rem 0.35rem; font-size: 1.1rem; line-height: 1.3; }
-.cargo-svc p { margin: 0 1.1rem; font-size: 0.9rem; line-height: 1.5; opacity: 0.75; }
-.cargo-svc-more { display: block; margin: 0.9rem 1.1rem 1.1rem; font-size: 0.85rem; font-weight: 700; line-height: 1.35; }`,
+.cargo-svc h3 { margin: 1em 1.1em 0.35em; font-size: 1.1em; line-height: 1.3; }
+.cargo-svc p { margin: 0 1.1em; font-size: 0.9em; line-height: 1.5; opacity: 0.75; }
+.cargo-svc-more { display: block; margin: 0.9em 1.1em 1.1em; font-size: 0.85em; font-weight: 700; line-height: 1.35; }`,
       slides: (models) =>
         models.map(
           (m) =>
-            `<a class="cargo-svc" href="${m.href}"><img src="${m.img}" width="1200" height="750" alt="" loading="lazy" decoding="async"><h4>${m.name}</h4><p>${m.blurb}</p><span class="cargo-svc-more" aria-hidden="true">Read more →</span></a>`,
+            `<a class="cargo-svc" href="${m.href}"><span class="cargo-svc-media"><img src="${m.img}" width="1200" height="750" alt="" loading="lazy" decoding="async"></span><h3>${m.name}</h3><p>${m.blurb}</p><span class="cargo-svc-more" aria-hidden="true">Read more →</span></a>`,
         ),
     },
 
@@ -361,20 +362,25 @@
       gutter: true,
       label: 'Customer reviews',
       blurb: 'Quotes in a real figure/blockquote, with the star rating exposed as an image plus a text label rather than bare glyphs a screen reader would spell out one at a time.',
-      props: { '--cs-gap': '1rem', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 250,
       models: REVIEWS,
-      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4rem); }
+      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4em); }
 @media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
-.cargo-review { block-size: 100%; padding: 1.25rem; margin: 0; line-height: 1.5; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
-.cargo-review figcaption { display: flex; gap: 0.7rem; align-items: center; line-height: 1.35; }
+.cargo-review { block-size: 100%; padding: 1.25em; margin: 0; line-height: 1.5; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
+.cargo-review figcaption { display: flex; gap: 0.7em; align-items: center; line-height: 1.35; }
 .cargo-avatar { display: grid; flex: none; place-items: center; inline-size: 40px; block-size: 40px; font-weight: 700; line-height: 1; color: #fff; background: var(--avatar-bg); border-radius: 50%; }
-.cargo-byline { display: flex; flex-direction: column; font-size: 0.95rem; line-height: 1.35; }
-.cargo-byline small { font-size: 0.8rem; opacity: 0.7; }
-.cargo-stars { margin: 0.7rem 0 0.4rem; font-size: 1rem; line-height: 1; color: #e0a012; letter-spacing: 0.1em; }
+.cargo-byline { display: flex; flex-direction: column; line-height: 1.35; }
+.cargo-byline strong { font-size: 0.95em; }
+.cargo-byline small { font-size: 0.8em; opacity: 0.7; }
+.cargo-stars { display: block; margin: 0.7em 0 0.4em; font-size: 1em; line-height: 1; color: #e0a012; letter-spacing: 0.1em; }
 .cargo-review blockquote { margin: 0; }
-.cargo-review blockquote p { margin: 0; font-size: 0.95rem; line-height: 1.55; }`,
+.cargo-review blockquote p { margin: 0; font-size: 0.95em; line-height: 1.55; }`,
+      // The stars ship as HTML entities, not as the glyphs themselves. CMS
+      // block storage is Windows-1252 and U+2605/U+2606 are not in it, so a
+      // pasted literal star comes back mangled; an entity is plain ASCII and
+      // survives the round trip. Same reason the play triangle above is &#9654;.
       slides: (models) =>
         models.map(
           (m) => `<figure class="cargo-review">
@@ -382,7 +388,7 @@
     <span class="cargo-avatar" aria-hidden="true" style="--avatar-bg: ${m.bg}">${m.name[0]}</span>
     <span class="cargo-byline"><strong>${m.name}</strong><small>${m.when}</small></span>
   </figcaption>
-  <p class="cargo-stars" role="img" aria-label="Rated ${m.stars} out of 5">${'★'.repeat(m.stars)}${'☆'.repeat(5 - m.stars)}</p>
+  <span class="cargo-stars" role="img" aria-label="Rated ${m.stars} out of 5">${'&starf;'.repeat(m.stars)}${'&star;'.repeat(5 - m.stars)}</span>
   <blockquote><p>${m.quote}</p></blockquote>
 </figure>`,
         ),
@@ -394,14 +400,14 @@
       blurb:
         'A gallery whose slides carry a category. Filtering rebuilds the slider over the matching slides rather than hiding the rest — hiding leaves them in the thumb strip and in the announced "3 of 6".',
       data: { 'data-cs-gallery': '' },
-      props: { '--cs-gap': '0px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
+      props: { '--cs-gap': '0px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
       models: TAGGED,
       filters: ['', 'exterior', 'interior', 'service'],
-      css: `.cargo-filterbar { display: flex; flex-wrap: wrap; gap: 0.4rem; margin-block-end: 1rem; }
-.cargo-filterbar button { padding: 0.4rem 0.9rem; font: inherit; font-size: 0.87rem; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 999px; }
+      css: `.cargo-filterbar { display: flex; flex-wrap: wrap; gap: 0.4em; margin-block-end: 1em; }
+.cargo-filterbar button { padding: 0.4em 0.9em; font: inherit; font-size: 0.87em; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 999px; }
 .cargo-filterbar button[aria-pressed="true"] { color: #fff; background: #16324f; border-color: #16324f; }
 .cargo-photo { display: block; }
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }`,
@@ -430,7 +436,7 @@
       label: 'Gallery with photos and video',
       blurb: 'A gallery where some slides are video posters. The poster is a real button that opens a dialog — video never plays inline, and the thumb strip treats it like any other slide.',
       data: { 'data-cs-gallery': '' },
-      props: { '--cs-gap': '0px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
+      props: { '--cs-gap': '0px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
@@ -438,7 +444,7 @@
       css: `.cargo-photo { display: block; }
 .cargo-photo img, .cargo-mv img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
 .cargo-mv { position: relative; display: block; inline-size: 100%; padding: 0; font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
-.cargo-mv-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.3rem; color: #16324f; background: rgb(255 255 255 / 92%); border-radius: 50%; transform: translate(-50%, -50%); }`,
+.cargo-mv-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.3em; color: #16324f; background: rgb(255 255 255 / 92%); border-radius: 50%; transform: translate(-50%, -50%); }`,
       slides: (models) =>
         models.map((m) =>
           m.video
@@ -453,17 +459,17 @@
       blurb:
         'A thumbnail that opens the full gallery in a native dialog. Built with data-cs-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure.',
       data: { 'data-cs-gallery': '', 'data-cs-init': 'manual' },
-      props: { '--cs-gap': '0px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
+      props: { '--cs-gap': '0px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
       models: PHOTOS,
-      css: `.cargo-lb-open { display: inline-flex; gap: 0.7rem; align-items: center; padding: 0.6rem 1rem; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
+      css: `.cargo-lb-open { display: inline-flex; gap: 0.7em; align-items: center; padding: 0.6em 1em; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-lb-open img { inline-size: 68px; block-size: 44px; object-fit: cover; border-radius: 5px; }
 .cargo-lb { inline-size: min(94vw, 1100px); padding: 0; background: #111; border: 0; border-radius: 12px; }
 .cargo-lb::backdrop { background: rgb(0 0 0 / 80%); }
-.cargo-lb-head { display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.9rem; font-size: 0.9rem; color: #fff; }
-.cargo-lb-close { padding: 0.35rem 0.85rem; font: inherit; color: #fff; cursor: pointer; background: rgb(255 255 255 / 15%); border: 0; border-radius: 6px; }
+.cargo-lb-head { display: flex; align-items: center; justify-content: space-between; padding: 0.6em 0.9em; font-size: 0.9em; color: #fff; }
+.cargo-lb-close { padding: 0.35em 0.85em; font: inherit; color: #fff; cursor: pointer; background: rgb(255 255 255 / 15%); border: 0; border-radius: 6px; }
 .cargo-photo { display: block; }
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: contain; }`,
       slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),
@@ -485,18 +491,18 @@
       label: 'Vehicle cards with a mini gallery',
       blurb:
         'The SRP pattern: a grid of cards, each holding its own small slider of that vehicle’s photos. Many instances on one page is fine — each is independent, and none of them is the page’s main carousel.',
-      props: { '--cs-gap': '0px', '--cs-controls-space': '0.1px', '--cs-arrow-size': '32px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#ffffff' },
+      props: { '--cs-gap': '0px', '--cs-controls-space': '0.1px', '--cs-arrow-size': '32px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 200,
       models: VEHICLES,
       cardGrid: true,
       hideDots: true,
-      css: `%wrap% { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); gap: 1rem; }
+      css: `%wrap% { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(250px, 100%), 1fr)); gap: 1em; }
 .cargo-cg-card { overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-cg-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
-.cargo-cg-body { padding: 0.8rem 0.9rem 1rem; }
-.cargo-cg-body h4 { margin: 0; font-size: 0.95rem; line-height: 1.35; }
-.cargo-cg-body p { margin: 0.2rem 0 0; font-size: 0.85rem; line-height: 1.4; opacity: 0.8; }`,
+.cargo-cg-body { padding: 0.8em 0.9em 1em; }
+.cargo-cg-body h3 { margin: 0; font-size: 0.95em; line-height: 1.35; }
+.cargo-cg-body p { margin: 0.2em 0 0; font-size: 0.85em; line-height: 1.4; opacity: 0.8; }`,
     },
 
     stock: {
@@ -513,19 +519,23 @@
         ['Works without JS', 'The track is a native scroll-snap container — turn JavaScript off and it still swipes.'],
         ['Start here', 'Copy the markup, add your <code>--cs-per-view</code> breakpoints, then restyle.'],
       ].map(([name, blurb]) => ({ name, blurb })),
-      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4rem); }
+      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4em); }
 @media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
-.cargo-stock { block-size: 100%; padding: 1.1rem; background: #f0f2f5; border-radius: 8px; }
-.cargo-stock h4 { margin: 0 0 0.35rem; font-size: 1rem; line-height: 1.3; }
-.cargo-stock p { margin: 0; font-size: 0.9rem; line-height: 1.5; opacity: 0.8; }
-.cargo-stock code { font-size: 0.85em; }`,
-      slides: (models) => models.map((m) => `<article class="cargo-stock"><h4>${m.name}</h4><p>${m.blurb}</p></article>`),
+.cargo-stock { block-size: 100%; padding: 1.1em; background: #f0f2f5; border-radius: 8px; }
+.cargo-stock h3 { margin: 0 0 0.35em; font-size: 1em; line-height: 1.3; }
+.cargo-stock p { margin: 0; font-size: 0.9em; line-height: 1.5; opacity: 0.8; }
+/* Inline code sits INSIDE the paragraph, so this em is measured against the
+   paragraph's 0.9em, not the card base - deliberately, since code should track
+   the copy it interrupts. 0.94 of 0.9 is the 0.85-of-base this rendered at
+   before the rem-to-em pass; the two-decimal value is that ratio, not a guess. */
+.cargo-stock code { font-size: 0.94em; }`,
+      slides: (models) => models.map((m) => `<article class="cargo-stock"><h3>${m.name}</h3><p>${m.blurb}</p></article>`),
     },
   };
 
   /* ---- state ------------------------------------------------------------ */
 
-  const state = { pattern: 'modelbar', brand: null, look: null, perView: null, props: null, lookProps: null, data: null, hideDots: false };
+  const state = { pattern: 'modelbar', brand: null, look: null, perView: null, props: null, lookProps: null, data: null, hideDots: false, content: null };
 
   function loadPattern(id) {
     const p = PATTERNS[id];
@@ -537,6 +547,9 @@
     state.data = { ...p.data };
     state.hideDots = !!p.hideDots;
     state.count = p.models.length;
+    // A pattern change is a shape change: a review row has a star rating and a
+    // photo row has none, so edited slides can never carry across.
+    state.content = null;
     // Beside the content wherever a card has text an arrow could land on.
     state.gutter = p.gutter ?? !!p.look;
     state.lookProps = p.look ? { ...LOOKS[p.look].settings } : {};
@@ -545,14 +558,22 @@
   // A brand preset brings its own vehicles where the estate gave us the
   // cutouts. Seventeen of the 32 have none, and those keep the pattern's own
   // content rather than being shown someone else's cars under their name.
-  const modelsFor = (p) => (state.brand && BRANDS[state.brand]?.models ? BRANDS[state.brand].models : p.models);
+  const modelsFor = (p) => (state.content ? state.content : state.brand && BRANDS[state.brand]?.models ? BRANDS[state.brand].models : p.models);
 
   const minCard = () => PATTERNS[state.pattern].minCard ?? (state.look ? LOOKS[state.look].minCard : 200);
 
-  // --cs-gap as a number. Values here are always rem or px.
+  // --cs-gap as a number. Values here are always em or px. An em resolves
+  // against the carousel root, which carries font-size: var(--cargo-font, 1em)
+  // - so measure that off the live element rather than assuming 16. Assuming a
+  // 16px root is the exact mistake that made every rem render at 62.5% on a
+  // Bootstrap 3 storefront; it should not be re-made here. patterns.html has no
+  // stage, and 16 is the right guess when there is nothing to measure.
   const gapPx = () => {
-    const g = state.props['--cs-gap'] ?? '1rem';
-    return g.endsWith('rem') ? parseFloat(g) * 16 : parseFloat(g) || 0;
+    const g = state.props['--cs-gap'] ?? '1em';
+    const n = parseFloat(g) || 0;
+    if (!g.trim().endsWith('em')) return n;
+    const root = stage?.querySelector('.cs');
+    return n * (root ? parseFloat(getComputedStyle(root).fontSize) : 16);
   };
 
   /* ---- the single source: settings -> CSS text -------------------------- */
@@ -571,6 +592,15 @@
     const decls = Object.entries(base)
       .map(([k, v]) => `  ${k}: ${v};`)
       .join('\n');
+
+    // The base every em inside the card is measured from. It has to be stated
+    // here, on the carousel itself, because the card CSS cannot trust either
+    // end of the host page: rem follows <html>, and Bootstrap 3 - which the
+    // storefronts run - sets `html { font-size: 10px }`, so a 1rem name shipped
+    // at 10px on a real dealer site while the demo showed 16. Defaulting to 1em
+    // makes the cards inherit the site's own body size, so they match the copy
+    // around them; setting --cargo-font to a length pins them instead.
+    const font = `  font-size: var(--cargo-font, 1em);`;
 
     const steps = BPS.filter((bp) => state.perView[bp] != null)
       .map((bp) => `@media (min-width: ${bp}px) {\n  ${sel} { --cs-per-view: ${state.perView[bp]}; }\n}`)
@@ -600,11 +630,11 @@
     // The fallback matters: --cs-arrow-size is defined on .cs, and the
     // tab strip sits OUTSIDE the carousel, so without one the calc() references
     // an undefined variable and the whole declaration is dropped.
-    const gw = state.gutter ? 'calc(var(--cs-arrow-size, 44px) + 0.4rem)' : '0px';
+    const gw = state.gutter ? 'calc(var(--cs-arrow-size, 44px) + 0.4em)' : '0';
     // Tabs and filter buttons sit outside the carousel, so they have to be told
     // about the gutter or they hang off the left edge of their own cards.
     const gutter = [`${sel} { padding-inline: ${gw}; }`, hasWrap() ? `${sel}-wrap .cargo-tabs, ${sel}-wrap .cargo-filterbar { padding-inline: ${gw}; }` : ''].filter(Boolean).join('\n');
-    return [`${sel} {\n${decls}\n}`, steps, dots, arrows, body, gutter].filter(Boolean).join('\n\n');
+    return [`${sel} {\n${decls}\n${font}\n}`, steps, dots, arrows, body, gutter].filter(Boolean).join('\n\n');
   }
 
   function htmlFor(cls) {
@@ -705,7 +735,7 @@
           const pics = [{ img: m.img, alt: m.alt }, PHOTOS[i % PHOTOS.length], PHOTOS[(i + 2) % PHOTOS.length]].map(
             (x) => `<img src="${x.img}" width="${x.w ?? 800}" height="${x.h ?? 600}" alt="${x.alt}" loading="lazy" decoding="async">`,
           );
-          return [`  <div class="cargo-cg-card">`, carousel(pics, `Photos of the ${m.name}`, '    '), `    <div class="cargo-cg-body"><h4>${m.name}</h4><p>${m.sub}</p></div>`, `  </div>`].join('\n');
+          return [`  <div class="cargo-cg-card">`, carousel(pics, `Photos of the ${m.name}`, '    '), `    <div class="cargo-cg-body"><h3>${m.name}</h3><p>${m.sub}</p></div>`, `  </div>`].join('\n');
         });
       return `<div class="${cls}-wrap">\n${cards.join('\n')}\n</div>`;
     }
@@ -898,6 +928,80 @@
     return row;
   };
 
+  // Up/down arrows step the number under the caret, the way browser Inspect
+  // does: plain = 1, Shift = 10, Alt = 0.1. The unit rides along untouched, and
+  // in a multi-value string only the number the caret is in moves - `6% 6% 1%`
+  // steps one of the three, not all of them. Rounded to the decimals actually
+  // in play, or 0.1 steps drift into 0.30000000000000004.
+  const NUM = /-?\d*\.?\d+/g;
+  function stepper(input, commit) {
+    input.addEventListener('keydown', (e) => {
+      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
+      const v = input.value;
+      const hits = [...v.matchAll(NUM)];
+      if (!hits.length) return;
+      const caret = input.selectionStart ?? v.length;
+      // The number the caret sits in or just after; failing that, the first.
+      const hit = hits.find((m) => caret >= m.index && caret <= m.index + m[0].length) ?? hits.find((m) => m.index > caret) ?? hits[0];
+      const by = (e.shiftKey ? 10 : e.altKey ? 0.1 : 1) * (e.key === 'ArrowUp' ? 1 : -1);
+      const dp = Math.max((hit[0].split('.')[1] || '').length, e.altKey ? 1 : 0);
+      const next = (parseFloat(hit[0]) + by).toFixed(dp);
+      e.preventDefault();
+      input.value = v.slice(0, hit.index) + next + v.slice(hit.index + hit[0].length);
+      // Keep the caret on the number just changed so the key repeats on it.
+      input.setSelectionRange(hit.index, hit.index + next.length);
+      commit(input.value);
+    });
+  }
+
+  // Look properties whose values are a closed set. A free-text box for one of
+  // these is a guessing game - you have to already know that `capitalize` is
+  // spelled the CSS way and that `title-case` is not a thing. Add a key here
+  // and it becomes a dropdown; anything absent stays a text field.
+  const ENUMS = {
+    '--name-case': [
+      ['none', 'As typed'],
+      ['uppercase', 'UPPERCASE'],
+      ['lowercase', 'lowercase'],
+      ['capitalize', 'Capitalize Each Word'],
+    ],
+    '--name-order': [
+      ['0', 'Name below the vehicle'],
+      ['-1', 'Name above the vehicle'],
+    ],
+  };
+
+  function enumSelect(key, store) {
+    const sel = document.createElement('select');
+    for (const [value, label] of ENUMS[key]) {
+      const o = document.createElement('option');
+      o.value = value;
+      o.textContent = label;
+      o.selected = String(store[key]).trim() === value;
+      sel.append(o);
+    }
+    sel.addEventListener('change', () => {
+      store[key] = sel.value;
+      render();
+    });
+    return sel;
+  }
+
+  // A text field for a CSS value, with the arrow-key stepping wired on.
+  function valueRow(label, key, store, after) {
+    const input = document.createElement('input');
+    input.type = 'text';
+    input.value = store[key] ?? '';
+    const push = (v) => {
+      store[key] = v;
+      render();
+      after?.();
+    };
+    input.addEventListener('input', () => push(input.value));
+    stepper(input, push);
+    return control(label, input);
+  }
+
   const section = (heading, body) => {
     const s = document.createElement('section');
     const h = document.createElement('h3');
@@ -1024,6 +1128,10 @@
       };
       sel.addEventListener('change', () => {
         state.brand = sel.value || null;
+        // A preset brings its own vehicles, so it replaces the roster outright.
+        // Keeping edited rows here would show Ford copy under a Kia preset.
+        state.content = null;
+        clearContent();
         const b = BRANDS[state.brand];
         if (b) {
           if (b.models) state.count = b.models.length;
@@ -1037,6 +1145,7 @@
           state.perView = b.ladder ? perViewFor(b.ladder, LOOKS[b.look].minCard, gapPx(), b.look) : { ...LOOKS[b.look].perView };
         }
         buildPanel();
+        buildContent();
         render();
       });
       wrap.append(sel, note);
@@ -1081,24 +1190,22 @@
     const colors = document.createElement('div');
     colors.append(colorRow('Arrow colour', '--cs-arrow-fg', state.props));
     colors.append(colorRow('Arrow background', '--cs-arrow-bg', state.props));
-    if (state.props['--cs-peek'] != null) {
-      const peek = document.createElement('input');
-      peek.type = 'text';
-      peek.value = state.props['--cs-peek'];
-      peek.addEventListener('input', () => {
-        state.props['--cs-peek'] = peek.value;
-        render();
-      });
-      colors.append(control('Peek', peek));
+    if (state.props['--cs-peek'] != null) colors.append(valueRow('Peek', '--cs-peek', state.props));
+    state.props['--cs-gap'] ??= '1em';
+    colors.append(valueRow('Gap', '--cs-gap', state.props));
+    // Everything inside a card is sized in em off this. `1em` inherits the host
+    // page's body size, so the cards match the copy around them on whatever
+    // site they are pasted into; a length here pins them to that size instead.
+    state.props['--cargo-font'] ??= '1em';
+    colors.append(valueRow('Text size (1em = match the site)', '--cargo-font', state.props));
+    // Only worth showing when there are dots to make room for - this is the
+    // reserved strip they are drawn into, and shrinking it puts them on the
+    // card text. A gallery fills that same strip with the thumb rail instead,
+    // so it sizes itself off --cs-thumb-h and this knob would only confuse.
+    if (!state.hideDots && state.data['data-cs-gallery'] == null) {
+      state.props['--cs-controls-space'] ??= '2.5em'; // the engine's own default
+      colors.append(valueRow('Space under, for the dots', '--cs-controls-space', state.props));
     }
-    const gap = document.createElement('input');
-    gap.type = 'text';
-    gap.value = state.props['--cs-gap'] ?? '1rem';
-    gap.addEventListener('input', () => {
-      state.props['--cs-gap'] = gap.value;
-      render();
-    });
-    colors.append(control('Gap', gap));
     panel.append(section('Arrows and spacing', colors));
 
     if (Object.keys(state.lookProps).length) {
@@ -1106,16 +1213,8 @@
       for (const k of Object.keys(state.lookProps)) {
         const v = state.lookProps[k];
         if (/^#|rgb|transparent/.test(v)) knobs.append(colorRow(k.replace('--', ''), k, state.lookProps));
-        else {
-          const input = document.createElement('input');
-          input.type = 'text';
-          input.value = v;
-          input.addEventListener('input', () => {
-            state.lookProps[k] = input.value;
-            render();
-          });
-          knobs.append(control(k.replace('--', ''), input));
-        }
+        else if (ENUMS[k]) knobs.append(control(k.replace('--', ''), enumSelect(k, state.lookProps)));
+        else knobs.append(valueRow(k.replace('--', ''), k, state.lookProps));
       }
       panel.append(section('This card style', knobs));
     }
@@ -1149,6 +1248,17 @@
     dots.checked = !state.hideDots;
     dots.addEventListener('change', () => {
       state.hideDots = !dots.checked;
+      // A dots-off pattern collapses the reserved strip to nothing (the model
+      // bar ships 0.1px) because nothing is drawn there. Turning the dots back
+      // on without restoring that strip drops them straight onto the last line
+      // of card text - measured at 4px of overlap on the model bar. Give the
+      // room back with the dots, and take it away again with them, so the
+      // toggle is symmetrical and the pattern's own value is never lost.
+      const shipped = PATTERNS[state.pattern].props?.['--cs-controls-space'];
+      if (!state.hideDots) {
+        if (state.props['--cs-controls-space'] === shipped) state.props['--cs-controls-space'] = '2.5em';
+      } else if (shipped != null) state.props['--cs-controls-space'] = shipped;
+      buildPanel(); // the space knob appears and disappears with the dots
       render();
     });
     beh.append(control('Show dots', dots));
@@ -1174,9 +1284,198 @@
         render();
       }
     });
-    beh.append(control('Slides in this example', count));
+    // Once the slides are the designer's own content, the roster length IS the
+    // slide count - adding a card means writing one, not turning a dial. Two
+    // controls for one number is how they drift apart.
+    if (!state.content) beh.append(control('Slides in this example', count));
     panel.append(section('Behaviour', beh));
   }
+
+  /* ---- slide content ----------------------------------------------------- */
+
+  // Which model keys a designer can edit, in the order they read on a card, and
+  // the control each one wants. A pattern shows only the fields its own content
+  // actually carries, so a review card never asks for an image URL and a photo
+  // never asks for a star rating.
+  const FIELDS = {
+    img: { label: 'Image URL', type: 'url', hint: '#MISCPATH#your-photo.jpg' },
+    alt: { label: 'Alt text', type: 'text', hint: 'What the photo shows — leave empty only if the card text already says it' },
+    w: { label: 'Source width', type: 'number', hint: 'Real pixel width of the file' },
+    h: { label: 'Source height', type: 'number', hint: 'Real pixel height of the file' },
+    name: { label: 'Heading', type: 'text' },
+    mark: { label: 'Wordmark', type: 'text' },
+    sub: { label: 'Sub text', type: 'text' },
+    blurb: { label: 'Paragraph', type: 'textarea' },
+    quote: { label: 'Quote', type: 'textarea' },
+    when: { label: 'When', type: 'text' },
+    stars: { label: 'Stars out of 5', type: 'number' },
+    bg: { label: 'Avatar colour', type: 'text' },
+    tag: { label: 'Category', type: 'text', hint: 'Must match one of the filter buttons' },
+    href: { label: 'Link', type: 'url', hint: '/searchnew.aspx?Model=Tahoe' },
+    video: { label: 'Opens a video', type: 'checkbox' },
+  };
+
+  const contentBox = $('wb-content');
+
+  // The content is stored HTML-ready — "Parts &amp; Accessories" — because every
+  // markup() interpolates it straight into innerHTML and into the copied
+  // snippet. A designer must not have to know that. The editor shows plain text
+  // and re-escapes on the way back, so typing `Bob's Tyres & Co` renders as
+  // typed instead of injecting markup into the preview and shipping broken HTML
+  // in the copy panel. One table covers both contexts: everything lands either
+  // in text or in a double-quoted attribute.
+  const ESC = { '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' };
+  const UNESC = { amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'", apos: "'" };
+  const esc = (v) => String(v).replace(/[&<>"]/g, (c) => ESC[c]);
+  const unesc = (v) => String(v).replace(/&(amp|lt|gt|quot|apos|#39);/g, (m, e) => UNESC[e] ?? m);
+  const OWN_ROWS = 'These are your slides. The preview above and the code below are built from them — “Use the example content” puts the demo cars back.';
+  const EXAMPLE_ROWS = 'The example content, ready to edit. Change any field and it becomes yours; nothing here is saved to a server.';
+
+  // Typing eight cards of copy and losing it to a stray refresh is the fastest
+  // way to make a tool feel disposable. Keyed by pattern: the fields differ per
+  // pattern, and restoring one pattern's rows into another would put a star
+  // rating on a photo.
+  const CKEY = 'cs-content';
+  const saveContent = () => {
+    try {
+      localStorage.setItem(CKEY, JSON.stringify({ pattern: state.pattern, rows: state.content }));
+    } catch {
+      /* private mode — the editor still works, it just will not survive a reload */
+    }
+  };
+  const clearContent = () => {
+    try {
+      localStorage.removeItem(CKEY);
+    } catch {
+      /* as above */
+    }
+  };
+  function restoreContent() {
+    try {
+      const v = JSON.parse(localStorage.getItem(CKEY) || 'null');
+      if (v?.pattern === state.pattern && Array.isArray(v.rows) && v.rows.length) {
+        state.content = v.rows;
+        state.count = v.rows.length;
+      }
+    } catch {
+      /* a corrupt entry must not take the page down with it */
+    }
+  }
+
+  // The roster as it stands, ignoring any edits — the example content, or the
+  // brand's if one is picked.
+  const exampleRoster = () => {
+    const p = PATTERNS[state.pattern];
+    return state.brand && BRANDS[state.brand]?.models ? BRANDS[state.brand].models : p.models;
+  };
+
+  // Editing starts from what is already on screen, so the fields arrive filled
+  // in rather than blank. The worked example IS the starting point — nobody
+  // wants to type a whole model bar from nothing to see how one behaves.
+  function adoptContent() {
+    if (!state.content) {
+      const src = exampleRoster();
+      state.content = Array.from({ length: state.count }, (_, i) => ({ ...src[i % src.length] }));
+    }
+    return state.content;
+  }
+
+  function buildContent() {
+    if (!contentBox) return;
+    contentBox.replaceChildren();
+    const src = exampleRoster();
+    const rows = state.content ?? Array.from({ length: state.count }, (_, i) => src[i % src.length]);
+    // Only the fields this pattern's own content uses.
+    const keys = Object.keys(FIELDS).filter((k) => rows.some((m) => m[k] !== undefined));
+
+    const note = document.createElement('p');
+    note.className = 'wb-note';
+    note.textContent = state.content ? OWN_ROWS : EXAMPLE_ROWS;
+    contentBox.append(note);
+
+    const list = document.createElement('div');
+    list.className = 'wb-slides';
+    rows.forEach((m, i) => {
+      const card = document.createElement('div');
+      card.className = 'wb-slide';
+      const head = document.createElement('div');
+      head.className = 'wb-slide-head';
+      const h = document.createElement('b');
+      h.textContent = `Slide ${i + 1}`;
+      const del = document.createElement('button');
+      del.type = 'button';
+      del.className = 'ui-btn';
+      del.textContent = 'Remove';
+      // A slider with no slides has nothing to preview and nothing to copy.
+      del.disabled = rows.length < 2;
+      del.addEventListener('click', () => {
+        const r = adoptContent();
+        r.splice(i, 1);
+        state.count = r.length;
+        saveContent();
+        buildPanel();
+        buildContent();
+        render();
+      });
+      head.append(h, del);
+      card.append(head);
+
+      for (const k of keys) {
+        const f = FIELDS[k];
+        const input = document.createElement(f.type === 'textarea' ? 'textarea' : 'input');
+        if (f.type !== 'textarea') input.type = f.type;
+        const isText = f.type !== 'checkbox' && f.type !== 'number';
+        if (f.type === 'checkbox') input.checked = !!m[k];
+        else input.value = isText ? unesc(m[k] ?? '') : (m[k] ?? '');
+        if (f.hint) input.placeholder = f.hint;
+        if (f.type === 'textarea') input.rows = 2;
+        // `input` covers the checkbox too — it fires on state change, so a
+        // second `change` listener here would only double the work.
+        input.addEventListener('input', () => {
+          // Catch the moment the example content becomes the designer's own:
+          // the panel's slide-count dial has to go, or it and the row list are
+          // two controls fighting over one number.
+          const adopting = !state.content;
+          const r = adoptContent();
+          r[i][k] = f.type === 'checkbox' ? input.checked : f.type === 'number' ? Number(input.value) : esc(input.value);
+          saveContent();
+          if (adopting) {
+            buildPanel(); // the panel, never this editor — see below
+            contentBox.querySelector('.wb-note').textContent = OWN_ROWS;
+          }
+          // Deliberately NOT rebuilding this editor: it would replace the field
+          // being typed into and drop the caret on every keystroke.
+          render();
+        });
+        card.append(control(f.label, input));
+      }
+      list.append(card);
+    });
+    contentBox.append(list);
+  }
+
+  const contentAdd = $('wb-content-add');
+  const contentReset = $('wb-content-reset');
+  contentAdd?.addEventListener('click', () => {
+    const r = adoptContent();
+    // Copy the last card rather than pushing a blank: a blank row has no keys,
+    // so the look's markup() would emit an empty card and the field list would
+    // lose whichever columns only that row had.
+    r.push({ ...r[r.length - 1] });
+    state.count = r.length;
+    saveContent();
+    buildPanel();
+    buildContent();
+    render();
+  });
+  contentReset?.addEventListener('click', () => {
+    state.content = null;
+    state.count = exampleRoster().length;
+    clearContent();
+    buildPanel();
+    buildContent();
+    render();
+  });
 
   // Preview width. The column the stage sits in is not the width the slider
   // will have on a real page, so the default caps it at Bootstrap 3's 1170px
@@ -1225,7 +1524,9 @@
     b.dataset.go = id;
     b.addEventListener('click', () => {
       loadPattern(id);
+      restoreContent();
       buildPanel();
+      buildContent();
       render();
       for (const x of nav.querySelectorAll('button')) x.setAttribute('aria-current', String(x.dataset.go === id));
       history.replaceState(null, '', '#' + id);
@@ -1288,8 +1589,10 @@
   const boot = () => {
     const id = location.hash.slice(1);
     loadPattern(PATTERNS[id] ? id : 'modelbar');
+    restoreContent();
     for (const x of nav.querySelectorAll('button')) x.setAttribute('aria-current', String(x.dataset.go === state.pattern));
     buildPanel();
+    buildContent();
     render();
     addEventListener('resize', () => {
       fitWidths();

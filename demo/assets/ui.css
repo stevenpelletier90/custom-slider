@@ -627,6 +627,96 @@ body {
   border-radius: 6px;
 }
 
+/* ---- slide content ------------------------------------------------------ */
+
+.ui-content {
+  margin-block-end: 1.4rem;
+  overflow: hidden;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
+
+.ui-content-acts {
+  display: flex;
+  gap: 0.4rem;
+}
+
+#wb-content {
+  padding: 0.8rem;
+}
+
+#wb-content .wb-note {
+  margin-block: 0 0.8rem;
+}
+
+/* Auto-fit rather than a fixed column count: the same editor sits under a
+   1170px stage and in a narrow window, and a slide card stops being readable
+   below about 15rem. */
+.wb-slides {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(15rem, 1fr));
+  gap: 0.7rem;
+}
+
+.wb-slide {
+  padding: 0.7rem;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+}
+
+.wb-slide-head {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: 0.5rem;
+}
+
+.wb-slide-head b {
+  font-size: 0.8rem;
+}
+
+/* The panel's rows put label and field side by side in a narrow rail. In a
+   slide card the field needs the whole width — a URL or a paragraph in a
+   7.5rem box is unreadable — so the row stacks here instead. */
+.wb-slide .wb-row {
+  display: block;
+  margin-block-end: 0.5rem;
+}
+
+.wb-slide .wb-row > span {
+  display: block;
+  margin-block-end: 0.15rem;
+  font-size: 0.75rem;
+}
+
+.wb-slide .wb-row input,
+.wb-slide .wb-row textarea {
+  inline-size: 100%;
+  padding: 0.3rem 0.45rem;
+  font-family: var(--mono);
+  font-size: 0.75rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+}
+
+.wb-slide .wb-row textarea {
+  resize: vertical;
+}
+
+.wb-slide .wb-row input[type="checkbox"] {
+  inline-size: auto;
+}
+
+.wb-slide .ui-btn:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
 /* ---- code -------------------------------------------------------------- */
 
 .ui-code {

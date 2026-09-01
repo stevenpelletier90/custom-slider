@@ -95,6 +95,20 @@
           <span class="ui-spec-note" id="wb-warn" hidden></span>
         </div>
 
+        <!-- The slides themselves. Everything above shapes the strip; this is
+             what goes in it, so the code below is a finished block rather than
+             a template someone still has to retype the content into. -->
+        <section class="ui-content" aria-label="Slide content">
+          <div class="ui-code-bar">
+            <span>Your slides — headings, links and photos go in the code below</span>
+            <span class="ui-content-acts">
+              <button type="button" class="ui-btn" id="wb-content-add">Add a slide</button>
+              <button type="button" class="ui-btn" id="wb-content-reset">Use the example content</button>
+            </span>
+          </div>
+          <div id="wb-content"></div>
+        </section>
+
         <section class="ui-code" aria-label="Code for these settings">
           <div class="ui-code-bar">
             <span>Styles into <strong>Style Only</strong>, markup into a <strong>Custom HTML</strong> block</span>

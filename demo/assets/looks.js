@@ -33,15 +33,19 @@ const LOOKS = {
       '--strip-pad': '0px',
       // Reserves the gutter the arrows sit in. Without it transparent arrows
       // overlay the vehicles instead of standing beside them.
-      '--strip-pad-x': 'calc(var(--cs-arrow-size) + 0.25rem)',
+      '--strip-pad-x': 'calc(var(--cs-arrow-size) + 0.25em)',
       '--name-color': '#222',
-      '--name-size': '1rem',
+      '--name-size': '1em',
       '--name-weight': '600',
       '--name-case': 'none',
       '--name-tracking': 'normal',
       '--name-order': '0', // -1 puts the name ABOVE the vehicle
       '--img-filter': 'none',
       '--img-aspect': 'auto',
+      // Zoom on hover. 1 is off, and off is the default: a model bar sits above
+      // the fold on most of these sites and a strip that grows under the cursor
+      // is a decision to make deliberately, not one to inherit.
+      '--img-hover-scale': '1',
       '--plate-bg': 'transparent', // coloured plate behind the vehicle
       // The cutouts already carry 13-17% transparent margin below the vehicle
       // (measured across the set), so the plate adds very little underneath or
@@ -49,14 +53,15 @@ const LOOKS = {
       // colour and you want the plate to read as a plate.
       '--plate-pad': '6% 6% 1%',
     },
-    css: `%root% { background: var(--strip-bg); padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); }
+    css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
 @media (max-width: 600px) { %root% { --cs-arrow-size: 36px; padding-inline: 0; } }
 @media (max-width: 380px) { %root% { --cs-per-view: 1; } }
 .cargo-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
-.cargo-card img { box-sizing: border-box; inline-size: 100%; block-size: auto; padding: var(--plate-pad); aspect-ratio: var(--img-aspect); object-fit: contain; background: var(--plate-bg); filter: var(--img-filter); transition: filter 0.2s, transform 0.25s ease; }
-.cargo-card:hover img { filter: none; }
-.cargo-name { order: var(--name-order); margin: 0.4rem 0 0; line-height: 1.35; font-size: var(--name-size); font-weight: var(--name-weight); text-transform: var(--name-case); letter-spacing: var(--name-tracking); color: var(--name-color); }
-.cargo-sub { display: block; margin-block-start: 0.15rem; font-size: 0.8rem; line-height: 1.35; color: #5f6368; }`,
+.cargo-card img { box-sizing: border-box; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); padding: var(--plate-pad); object-fit: contain; background: var(--plate-bg); filter: var(--img-filter); transition: filter 0.2s, transform 0.25s ease; }
+.cargo-card:hover img { filter: none; transform: scale(var(--img-hover-scale)); }
+@media (prefers-reduced-motion: reduce) { .cargo-card:hover img { transform: none; } }
+.cargo-name { order: var(--name-order); margin: 0.4em 0 0; font-size: var(--name-size); font-weight: var(--name-weight); line-height: 1.35; color: var(--name-color); text-transform: var(--name-case); letter-spacing: var(--name-tracking); }
+.cargo-sub { display: block; margin-block-start: 0.15em; font-size: 0.8em; line-height: 1.35; color: #5f6368; }`,
     markup: (m) => `<a class="cargo-card" href="${m.href}">
   <img src="${m.img}" width="${m.w ?? 320}" height="${m.h ?? 240}" alt="${m.alt}" loading="lazy" decoding="async">
   <p class="cargo-name">${m.name}</p>${m.sub ? `\n  <small class="cargo-sub">${m.sub}</small>` : ''}
@@ -81,21 +86,21 @@ const LOOKS = {
       '--strip-pad': '0px',
       // Reserves the gutter the arrows sit in. Without it a transparent
       // arrow lands on the card's own text instead of beside it.
-      '--strip-pad-x': 'calc(var(--cs-arrow-size) + 0.4rem)',
-      '--card-bg': '#ffffff',
+      '--strip-pad-x': 'calc(var(--cs-arrow-size) + 0.4em)',
+      '--card-bg': '#fff',
       '--card-radius': '10px',
       '--name-color': '#1c1f23',
-      '--name-size': '1rem',
+      '--name-size': '1em',
       '--price-color': '#16324f',
     },
-    css: `%root% { background: var(--strip-bg); padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); }
+    css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
 @media (max-width: 600px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-card { position: relative; display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: var(--card-bg); border: 1px solid #e2e5ea; border-radius: var(--card-radius); }
 .cargo-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; transition: transform 0.3s ease; }
 .cargo-card:hover img { transform: scale(1.04); }
-.cargo-body { display: block; padding: 0.85rem 0.9rem 1rem; line-height: 1.4; }
+.cargo-body { display: block; padding: 0.85em 0.9em 1em; line-height: 1.4; }
 .cargo-name { display: block; margin: 0; font-size: var(--name-size); font-weight: 700; line-height: 1.35; color: var(--name-color); }
-.cargo-sub { display: block; margin-block-start: 0.2rem; font-size: 0.85rem; line-height: 1.4; color: var(--price-color); }`,
+.cargo-sub { display: block; margin-block-start: 0.2em; font-size: 0.85em; line-height: 1.4; color: var(--price-color); }`,
     // One stretched link over the whole card: the anchor IS the card, so there
     // is no nested link and nothing announces twice.
     markup: (m) => `<a class="cargo-card" href="${m.href}">
@@ -121,17 +126,17 @@ const LOOKS = {
     absorbs: ['wordmark-dark', 'spotlight'],
     settings: {
       '--strip-bg': 'transparent',
-      '--strip-pad': '1.75rem',
+      '--strip-pad': '1.75em',
       '--name-color': 'inherit',
-      '--mark-size': '1.4rem',
-      '--name-size': '1rem',
+      '--mark-size': '1.4em',
+      '--name-size': '1em',
       '--name-case': 'uppercase',
     },
-    css: `%root% { background: var(--strip-bg); padding-block-start: var(--strip-pad); }
+    css: `%root% { padding-block-start: var(--strip-pad); background: var(--strip-bg); }
 .cargo-card { display: block; color: var(--name-color); text-align: center; text-decoration: none; }
-.cargo-mark { display: block; margin-block-end: 0.6rem; font-size: var(--mark-size); font-style: italic; font-weight: 700; line-height: 1.2; letter-spacing: 0.06em; }
+.cargo-mark { display: block; margin-block-end: 0.6em; font-size: var(--mark-size); font-style: italic; font-weight: 700; line-height: 1.2; letter-spacing: 0.06em; }
 .cargo-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.25s ease; }
-.cargo-name { margin: 0.5rem 0 0; font-size: var(--name-size); font-weight: 600; line-height: 1.35; text-transform: var(--name-case); letter-spacing: 0.1em; }`,
+.cargo-name { margin: 0.5em 0 0; font-size: var(--name-size); font-weight: 600; line-height: 1.35; text-transform: var(--name-case); letter-spacing: 0.1em; }`,
     // No `mark` means no wordmark element - falling back to the model name
     // printed it twice in every card.
     markup: (m) =>
@@ -167,12 +172,12 @@ const LOOKS = {
     },
     css: `.cargo-card { display: flex; overflow: hidden; color: var(--card-fg); text-decoration: none; background: var(--card-bg); border-radius: 8px; }
 .cargo-card img { flex: 0 0 50%; inline-size: 50%; aspect-ratio: 1; object-fit: cover; }
-.cargo-copy { display: flex; flex-direction: column; gap: 0.5rem; align-items: flex-start; min-inline-size: 0; padding: 28px; }
-.cargo-sub { font-size: 0.85rem; color: #d9d9d9; }
-.cargo-name { display: block; margin: 0; font-size: 1.5rem; font-weight: 700; line-height: 1.2; }
-.cargo-blurb { font-size: 0.95rem; line-height: 1.4; color: #d9d9d9; }
-.cargo-pill { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.9rem; font-weight: 600; color: var(--pill-fg); background: var(--pill-bg); border-radius: 999px; }
-@media (max-width: 600px) { .cargo-copy { gap: 0.35rem; padding: 1rem; } .cargo-name { font-size: 1.15rem; } .cargo-pill { padding: 0.45rem 1rem; font-size: 0.8rem; white-space: nowrap; } }
+.cargo-copy { display: flex; flex-direction: column; gap: 0.5em; align-items: flex-start; min-inline-size: 0; padding: 28px; }
+.cargo-sub { font-size: 0.85em; color: #d9d9d9; }
+.cargo-name { display: block; margin: 0; font-size: 1.5em; font-weight: 700; line-height: 1.2; }
+.cargo-blurb { font-size: 0.95em; line-height: 1.4; color: #d9d9d9; }
+.cargo-pill { padding: 0.5em 1.3em; margin-block-start: auto; font-size: 0.9em; font-weight: 600; color: var(--pill-fg); background: var(--pill-bg); border-radius: 999px; }
+@media (max-width: 600px) { .cargo-copy { gap: 0.35em; padding: 1em; } .cargo-name { font-size: 1.15em; } .cargo-pill { padding: 0.45em 1em; font-size: 0.8em; white-space: nowrap; } }
 @media (max-width: 480px) { .cargo-card { flex-direction: column; } .cargo-card img { flex: none; inline-size: 100%; aspect-ratio: 16 / 9; } }`,
     // An absent field emits NO element. Rendering an empty <span> left the copy
     // column with a blank row, and the pill's `margin-block-start: auto` then
@@ -212,11 +217,11 @@ const LOOKS = {
       '--cta-fg': '#14161b',
       '--img-aspect': '3 / 5',
     },
-    css: `%root% { background: var(--strip-bg); padding-block-start: 1.5rem; padding-inline: 1.5rem; }
+    css: `%root% { padding-block-start: 1.5em; padding-inline: 1.5em; background: var(--strip-bg); }
 .cargo-card { display: block; color: var(--card-fg); text-align: center; text-decoration: none; }
-.cargo-name { margin: 0 0 0.5rem; font-size: 1.25rem; font-weight: 700; line-height: 1.3; text-align: start; text-transform: uppercase; letter-spacing: 0.08em; }
+.cargo-name { margin: 0 0 0.5em; font-size: 1.25em; font-weight: 700; line-height: 1.3; text-align: start; text-transform: uppercase; letter-spacing: 0.08em; }
 .cargo-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); object-fit: cover; }
-.cargo-cta { display: inline-block; margin-block-start: 0.75rem; padding: 0.6rem 1.4rem; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.15em; color: var(--cta-fg); background: var(--cta-bg); }`,
+.cargo-cta { display: inline-block; padding: 0.6em 1.4em; margin-block-start: 0.75em; font-size: 0.75em; font-weight: 700; color: var(--cta-fg); text-transform: uppercase; letter-spacing: 0.15em; background: var(--cta-bg); }`,
     markup: (m) => `<a class="cargo-card" href="${m.href}">
   <p class="cargo-name">${m.name}</p>
   <img src="${m.img}" width="${m.w ?? 320}" height="${m.h ?? 533}" alt="${m.alt}" loading="lazy" decoding="async">
@@ -241,10 +246,10 @@ const LOOKS = {
       '--card-bg': '#253a5e',
       '--card-fg': '#fff',
     },
-    css: `%root% { padding-block-start: 1.5rem; padding-inline: 1rem; background: var(--strip-bg); }
-%root% .cs-track { padding-block-end: 1.5rem; }
-@media (max-width: 460px) { %root% { --cs-per-view: 1; padding-block-start: 1rem; padding-inline: 0.5rem; } %root% .cs-track { padding-block-end: 1rem; } }
-.cargo-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1rem; color: var(--card-fg); background: var(--card-bg); border: 1px solid rgb(255 255 255 / 7%); border-radius: 10px; transition: background 0.2s; }
+    css: `%root% { padding-block-start: 1.5em; padding-inline: 1em; background: var(--strip-bg); }
+%root% .cs-track { padding-block-end: 1.5em; }
+@media (max-width: 460px) { %root% { --cs-per-view: 1; padding-block-start: 1em; padding-inline: 0.5em; } %root% .cs-track { padding-block-end: 1em; } }
+.cargo-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1em; color: var(--card-fg); background: var(--card-bg); border: 1px solid rgb(255 255 255 / 7%); border-radius: 10px; transition: background 0.2s; }
 .cargo-card img { inline-size: 75%; block-size: auto; object-fit: contain; }`,
     markup: (m) => `<a class="cargo-card" href="${m.href}" aria-label="${m.alt}">
   <img src="${m.img}" width="${m.w ?? 240}" height="${m.h ?? 160}" alt="" loading="lazy" decoding="async">
@@ -268,12 +273,12 @@ const LOOKS = {
       '--cta-bg': '#c8102e',
       '--cta-fg': '#fff',
     },
-    css: `%root% { padding-block-start: 1.5rem; padding-inline: 1rem; background: var(--strip-bg); }
-.cargo-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.25rem; text-align: center; text-decoration: none; background: var(--card-bg); border-radius: 10px; }
+    css: `%root% { padding-block-start: 1.5em; padding-inline: 1em; background: var(--strip-bg); }
+.cargo-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.25em; text-align: center; text-decoration: none; background: var(--card-bg); border-radius: 10px; }
 .cargo-card img { inline-size: 55%; block-size: auto; object-fit: contain; }
-.cargo-name { margin: 0.5rem 0 0.4rem; font-size: 1.1rem; font-weight: 700; line-height: 1.3; color: #222; }
-.cargo-card p { margin: 0 0 0.9rem; font-size: 0.9rem; color: #5f6368; }
-.cargo-cta { margin-block-start: auto; padding: 0.5rem 1.3rem; font-size: 0.8rem; font-weight: 700; color: var(--cta-fg); background: var(--cta-bg); border-radius: 999px; }`,
+.cargo-name { margin: 0.5em 0 0.4em; font-size: 1.1em; font-weight: 700; line-height: 1.3; color: #222; }
+.cargo-card p { margin: 0 0 0.9em; font-size: 0.9em; color: #5f6368; }
+.cargo-cta { padding: 0.5em 1.3em; margin-block-start: auto; font-size: 0.8em; font-weight: 700; color: var(--cta-fg); background: var(--cta-bg); border-radius: 999px; }`,
     // An absent field emits NO element - see the note on the split look.
     markup: (m) =>
       [
