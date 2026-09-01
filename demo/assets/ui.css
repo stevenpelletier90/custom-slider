@@ -38,7 +38,7 @@
   --code-bg: #272822;
   --sans: "Archivo", system-ui, -apple-system, "Segoe UI", sans-serif;
   --mono: "JetBrains Mono", ui-monospace, "Cascadia Code", "Consolas", monospace;
-  --rail: 19.5rem;
+  --rail: 11rem;
   --shell: 1760px;
 }
 
@@ -243,58 +243,6 @@ body {
   margin: 0 auto;
 }
 
-/* Collapsed, the rail keeps only the width of its own toggle. A 312px rail at
-   every window size meant a 1440px laptop - the common case - could not preview
-   the 1170px desktop container at all, which is the width most dealer desktop
-   traffic actually gets. Giving that 312px back covers it with room over. */
-.ui-shell:has(#ui-collapse[aria-expanded="false"]) {
-  --rail: 2.6rem;
-}
-
-#ui-collapse[aria-expanded="false"] + #ui-rail-body {
-  display: none;
-}
-
-.ui-collapse {
-  display: flex;
-  gap: 0.4rem;
-  align-items: center;
-  inline-size: 100%;
-  padding: 0.35rem 0.4rem;
-  margin-block-end: 0.75rem;
-  font: inherit;
-  font-size: 0.78rem;
-  color: var(--ink-soft);
-  cursor: pointer;
-  background: none;
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-}
-
-.ui-collapse:hover {
-  color: var(--ink);
-  background: var(--sunken);
-}
-
-.ui-collapse svg {
-  flex: none;
-  inline-size: 1rem;
-  block-size: 1rem;
-  fill: none;
-  stroke: currentcolor;
-  stroke-width: 2;
-  stroke-linecap: round;
-}
-
-/* Collapsed: the arrow turns round and the label goes, leaving an icon strip. */
-.ui-collapse[aria-expanded="false"] span {
-  display: none;
-}
-
-.ui-collapse[aria-expanded="false"] svg {
-  rotate: 180deg;
-}
-
 .ui-rail {
   position: sticky;
   inset-block-start: 3.5rem;
@@ -305,15 +253,62 @@ body {
   border-inline-end: 1px solid var(--rule);
 }
 
+/* The settings sit across the top of the work column, so the preview below can
+   have the full width. Sections flow into as many columns as fit rather than
+   stacking, which is what made them a 312px sidebar in the first place. */
 .ui-panel {
-  padding-block-start: 1.5rem;
-  margin-block-start: 1.25rem;
-  border-block-start: 1px solid var(--rule);
+  padding: 0.9rem 1rem 1rem;
+  margin-block-end: 1.25rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 12px;
+}
+
+/* Columns, not a grid. A grid aligns rows, so the 14-knob "This card style"
+   section set the height of everything beside it and the panel came out 952px
+   tall - the preview started at y=1157 and was off-screen on a 1440x900 laptop,
+   which is worse than the sidebar it replaced. Columns balance by height
+   instead, so the panel is as tall as the content divided by the columns rather
+   than as tall as its worst section. No height cap: capping a column layout
+   pushes the overflow SIDEWAYS, and two whole sections ended up off the right
+   edge behind a horizontal scrollbar. */
+#wb-settings {
+  columns: 16rem auto;
+  column-gap: 1.75rem;
+}
+
+#wb-settings > section {
+  margin-block-end: 0.9rem;
+
+  /* Keep a heading with its controls. */
+  break-inside: avoid;
+}
+
+/* Except a section long enough to set the panel's height on its own — marked in
+   workbench.js, where the row count is known. Keeping "This card style" whole
+   made the panel 623px and pushed the preview off a 1440x900 laptop. */
+#wb-settings > section[data-flow] {
+  break-inside: auto;
+}
+
+/* Vertical rhythm came from a single stacked column; in a grid each section
+   already starts level with its neighbours. */
+.ui-panel section + section h3 {
+  margin-block-start: 0;
 }
 
 .ui-main {
   min-inline-size: 0;
   padding: 1.5rem 1.75rem 4rem;
+}
+
+/* Below this the side margins give way before the preview does: a 1440 laptop
+   needs the pixels more than the page needs a comfortable gutter, and 1170 is
+   the container most dealer desktop traffic actually gets. */
+@media (width <= 1500px) {
+  .ui-main {
+    padding-inline: 1rem;
+  }
 }
 
 /* ---- the pattern index ------------------------------------------------- */
@@ -327,10 +322,6 @@ body {
   color: var(--ink-soft);
   text-transform: uppercase;
   letter-spacing: 0.12em;
-}
-
-.ui-panel section + section h3 {
-  margin-block-start: 1.5rem;
 }
 
 #wb-nav {
@@ -418,7 +409,7 @@ body {
 .wb-stage {
   display: flex;
   justify-content: center;
-  padding: 1.75rem;
+  padding: 1.25rem;
   color: #10151c;
   background: #fff;
   border: 1px solid var(--rule);
@@ -1547,16 +1538,6 @@ code {
 @media (width <= 900px) {
   .ui-shell {
     grid-template-columns: 1fr;
-  }
-
-  /* Stacked layout: the rail is not stealing width from anything, so the
-     collapse control has nothing to buy and only hides the settings. */
-  .ui-collapse {
-    display: none;
-  }
-
-  #ui-rail-body {
-    display: block !important;
   }
 
   .ui-rail {

@@ -58,21 +58,19 @@
     </header>
 
     <div class="ui-shell">
+      <!-- The rail is the pattern list and nothing else. The settings used to
+           sit under it, which cost the preview 312px at every window size and
+           put a real 1170px container out of reach on a 1440px laptop. -->
       <aside class="ui-rail" id="ui-rail">
-        <button type="button" class="ui-collapse" id="ui-collapse" aria-expanded="true" aria-controls="ui-rail-body">
-          <svg viewBox="0 0 24 24" aria-hidden="true"><polyline points="14 6 8 12 14 18" /></svg>
-          <span>Hide settings</span>
-        </button>
-        <div id="ui-rail-body">
-          <h2>Patterns</h2>
-          <nav id="wb-nav" aria-label="Slider patterns"></nav>
-          <div class="ui-panel"><div id="wb-settings"></div></div>
-        </div>
+        <h2>Patterns</h2>
+        <nav id="wb-nav" aria-label="Slider patterns"></nav>
       </aside>
 
       <main class="ui-main">
         <h2 class="ui-title" id="wb-title"></h2>
         <p class="ui-blurb" id="wb-blurb"></p>
+
+        <div class="ui-panel"><div id="wb-settings"></div></div>
 
         <h3 class="ui-sr">Live preview</h3>
         <div class="wb-stage"><div id="wb-stage"></div></div>
