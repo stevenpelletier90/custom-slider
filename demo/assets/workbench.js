@@ -230,7 +230,7 @@
       props: { '--cs-gap': '0.5em', '--cs-controls-space': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       hideDots: true,
       panes: ['Trucks', 'SUVs', 'Crossovers'],
-      css: `.cargo-tabs { display: flex; flex-wrap: wrap; gap: 0.25em; margin-block-end: 1em; border-block-end: 1px solid #e2e5ea; }
+      css: `.cargo-tabs { display: flex; flex-wrap: wrap; gap: 0.25em; justify-content: center; margin-block-end: 1em; border-block-end: 1px solid #e2e5ea; }
 .cargo-tabs [role="tab"] { padding: 0.6em 1.1em; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: 0.65; }
 .cargo-tabs [role="tab"][aria-selected="true"] { border-block-end-color: currentcolor; opacity: 1; }
 .cargo-pane[hidden] { display: none; }
