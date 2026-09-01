@@ -69,6 +69,27 @@ JS options override data attributes, which override defaults.
 | `labels`          | — (JS only)               | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/custom-slider.js`                                                                                                                                 |
 | —                 | `data-cs-init="manual"`   | auto            | Skip auto-init; construct via `new CustomSlider(el, opts)` from page script                                                                                                                                     |
 
+## One shared copy, no version in the filename
+
+The two files are meant to live at one URL every site links, and the filenames
+carry no version — so a fix reaches every storefront at once, and so would a
+mistake. What makes that safe is the contract, not the filename: class names
+(`cs`, `cs-track`, `cs-slide`, the generated control classes), the data
+attributes, the `--cs-*` properties, the `cs:*` event payloads, the public
+methods and the accessibility behaviours are frozen. **Adding is fine. Renaming
+or repurposing is not**, because the sites already linking the file cannot be
+edited to keep up.
+
+That rule was always written down. With a shared copy it stops being a
+preference and becomes the only thing standing between a rename and every
+storefront that links it.
+
+Files named `dl-carousel.js` / `dl-carousel.css` are **not** an older version of
+these. That was the pre-rename engine and it is a different contract — root
+class `dl-carousel`, `--dlc-*` properties, `window.DLCarousel`. A page linking
+those and pasting a snippet from the current builder gets an unstyled list, so
+they should be removed rather than left alongside.
+
 ## The optional card-looks file
 
 `dist/custom-slider-cards.css` (~2 KB gzip) is a **separate, optional** stylesheet

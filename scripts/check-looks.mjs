@@ -113,6 +113,22 @@ for (const [id, look] of Object.entries(LOOKS)) {
   }
 }
 
+// Every card property a look exposes must be explained on the reference page.
+// A designer testing this got as far as "what is strip-pad-x for?" - the answer
+// existed nowhere, because the reference documents the ENGINE's --cs-* knobs and
+// the card's own were only ever row labels in the builder. Renaming the label
+// was not enough; the table is, and this keeps it complete.
+const guideSrc = readFileSync('demo/assets/guide.js', 'utf8');
+for (const [id, look] of Object.entries(LOOKS)) {
+  for (const prop of Object.keys(look.settings ?? {})) {
+    if (prop.startsWith('--cs-')) continue; // engine property, documented from the shipped CSS
+    if (!guideSrc.includes(`'${prop}':`)) {
+      console.error(`  ${id}: ${prop} has no entry in CARD_NOTES (demo/assets/guide.js) — a card setting nobody can look up`);
+      bad++;
+    }
+  }
+}
+
 // The brand presets. The roster is the census's 32-brand table; a preset that
 // names a look which no longer exists would fail silently in the picker, and a
 // ladder that lands a card under its look's minCard would ship a preset that

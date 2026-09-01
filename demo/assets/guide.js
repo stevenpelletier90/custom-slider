@@ -137,9 +137,67 @@
     '--cs-fade-ms': 'Crossfade duration in fade mode. Ignored unless <code>data-cs-fade</code> is set.',
   };
 
+  // What each card property is FOR. A better label than `strip-pad-x` was not
+  // enough on its own - "Side gutter" still does not say why a gutter exists -
+  // and these were documented nowhere: the --cs-* table below is the engine's
+  // knobs, and the card's own were only ever row labels in the builder.
+  //
+  // check-looks asserts every property in every look has an entry here, so a
+  // new knob cannot ship undocumented.
+  const CARD_NOTES = {
+    '--strip-bg': 'Colour behind the whole row. <code>transparent</code> lets the page show through, which is what most brands want.',
+    '--strip-pad': 'Space above the cards, inside that colour.',
+    '--strip-pad-x': 'Space at the left and right ends. It reserves the channel the arrows sit in — without it a transparent arrow lands on top of the first vehicle instead of beside it.',
+    '--name-color': 'Colour of the model name.',
+    '--name-size': 'Size of the model name.',
+    '--name-weight': 'How bold the model name is. 600 is the usual.',
+    '--name-case': 'Leave the name as typed, or force capitals.',
+    '--name-tracking': 'Letter spacing on the name. A little positive space suits all-capitals; leave it <code>normal</code> otherwise.',
+    '--name-order': 'Whether the name sits under the photo or above it.',
+    '--img-filter': 'A filter over the photo — <code>grayscale(1)</code> is the one that matters, for a logo strip that comes back to colour on hover.',
+    '--img-aspect': 'Forces every photo to one shape, so a row of differently sized uploads still lines up. <code>auto</code> leaves each as it comes.',
+    '--img-hover-scale': 'How far the photo zooms when the pointer is over it. <code>1</code> is off. The frame never changes size, so nothing around it moves.',
+    '--plate-bg': 'A coloured panel drawn behind the vehicle cutout.',
+    '--plate-pad': 'How much of that panel shows around the vehicle. The cutouts already carry their own transparent margin, so this stays small unless the panel is a real colour.',
+    '--card-bg': "The card's own background, behind the photo and text.",
+    '--card-radius': 'Corner rounding on the card.',
+    '--card-fg': 'Text colour inside the card. Looks that bring a dark background set this so the text stays readable on it.',
+    '--price-color': 'Colour of the price line under the title.',
+    '--mark-size': 'Height of the wordmark image above the vehicle.',
+    '--pill-bg': "Background of the rounded label on the split card's copy side.",
+    '--pill-fg': 'Text colour of that label.',
+    '--cta-bg': 'Background of the button.',
+    '--cta-fg': 'Text colour of the button.',
+  };
+
+  // Built by walking LOOKS, so the table is the card styles that actually ship.
+  // The "used by" column is the point: 23 properties in one list tells a
+  // designer nothing about which apply to the card they picked - --plate-pad is
+  // the cutout tile only, --cta-bg is two looks.
+  function cardRows() {
+    const LOOKS = globalThis.CARGO?.LOOKS;
+    if (!LOOKS) return [];
+    const seen = new Map();
+    for (const look of Object.values(LOOKS)) {
+      for (const [prop, value] of Object.entries(look.settings ?? {})) {
+        // --cs-* set by a look is an ENGINE property; it is in the table above.
+        if (prop.startsWith('--cs-')) continue;
+        if (!seen.has(prop)) seen.set(prop, { value, looks: [] });
+        seen.get(prop).looks.push(look.label);
+      }
+    }
+    return [...seen].map(([prop, { value, looks }]) => [
+      prop,
+      `<code>${esc(value)}</code>`,
+      looks.length === Object.keys(LOOKS).length ? 'every card style' : looks.join(', '),
+      CARD_NOTES[prop] ?? '',
+    ]);
+  }
+
   async function render() {
     const el = document.getElementById('g-body');
     if (!el) return;
+    const cards = cardRows();
     let props = [];
     try {
       props = propsFrom(await fetch('../dist/custom-slider.css').then((r) => r.text()));
@@ -169,6 +227,13 @@
       <section id="g-props"><h3>CSS custom properties</h3>
         <p>Every setting the engine has. ${props.length ? `Read live from the <code>dist/custom-slider.css</code> this page is running, so the ${props.length} below are the ones that actually ship.` : 'Open this page over HTTP to list them from the shipped stylesheet.'} Override them on the root or any wrapper.</p>
         ${props.length ? table(['Property', 'Default', 'Notes'], propRows) : ''}
+      </section>
+
+      <section id="g-card-props"><h3>Card style properties</h3>
+        <p>The engine styles no cards at all — <code>cs-*</code> is the machinery, <code>cargo-*</code> is the card. These are the settings the card styles bring, the same ones the builder lists under
+        <strong>This card style</strong>. Each is a CSS custom property: set it on your slider to change it. A card style only reads the ones in its own row of the <strong>Used by</strong> column.</p>
+        ${cards.length ? table(['Property', 'Default', 'Used by', 'What it does'], cards) : '<p class="g-sub">Open this page over HTTP to list them.</p>'}
+        <p class="g-sub">Two card styles also set the engine's own arrow colours, because they bring a dark background and the default arrows disappear on it.</p>
       </section>
 
       <section id="g-a11y"><h3>Accessibility — please don't "fix" these</h3>
