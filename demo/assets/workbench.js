@@ -1604,7 +1604,9 @@
         if (f.type === 'checkbox') input.checked = !!m[k];
         else input.value = isText ? unesc(m[k] ?? '') : (m[k] ?? '');
         if (f.hint) input.placeholder = f.hint;
-        if (f.type === 'textarea') input.rows = 2;
+        // Two rows cut a quote off mid-sentence and made the drag handle look
+        // like the only way to read your own copy.
+        if (f.type === 'textarea') input.rows = 4;
         // `input` covers the checkbox too — it fires on state change, so a
         // second `change` listener here would only double the work.
         input.addEventListener('input', () => {
