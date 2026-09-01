@@ -133,7 +133,7 @@ body {
     padding: 0 0.5rem;
   }
 
-  .ui-brand span {
+  #ui-size {
     display: none;
   }
 
@@ -171,7 +171,10 @@ body {
   text-underline-offset: 3px;
 }
 
-.ui-brand span {
+/* The byte count only. This was `.ui-brand span`, which then caught the
+   wordmark the moment it was wrapped in one and rendered it at 11px mono
+   grey - the wordmark did not disappear, it was demoted to look like this. */
+#ui-size {
   font-family: var(--mono);
   font-size: 0.7rem;
   font-weight: 400;
