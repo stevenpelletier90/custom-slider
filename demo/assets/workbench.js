@@ -233,7 +233,16 @@
       css: `.cargo-tabs { display: flex; flex-wrap: wrap; gap: 0.25em; margin-block-end: 1em; border-block-end: 1px solid #e2e5ea; }
 .cargo-tabs [role="tab"] { padding: 0.6em 1.1em; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: 0.65; }
 .cargo-tabs [role="tab"][aria-selected="true"] { border-block-end-color: currentcolor; opacity: 1; }
-.cargo-pane[hidden] { display: none; }`,
+.cargo-pane[hidden] { display: none; }
+/* Three tabs need 272px at the default padding, and a 320px phone leaves 236 -
+   so Chevrolet's own three body styles wrapped onto two rows at the narrowest
+   size anyone browses at. The padding gives way, not the type: 99px of that
+   strip is side padding, and taking 0.6em off each side of each tab buys back
+   54px - more than the 35 needed - while the label stays 15px and the tab stays
+   43px tall, so nothing about readability or the tap target moves. */
+@media (max-width: 767.98px) {
+  .cargo-tabs [role="tab"] { padding-inline: 0.5em; }
+}`,
       script: `document.querySelectorAll('[data-tabs]').forEach((wrap, w) => {
   const tabs = [...wrap.querySelectorAll('[role="tab"]')];
   const panes = [...wrap.querySelectorAll('[role="tabpanel"]')];
