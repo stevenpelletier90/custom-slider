@@ -386,14 +386,29 @@ body {
   border-end-end-radius: 5px;
 }
 
+/* Icon over a word. A row of bare numbers (750 / 970 / 1170) asked the reader
+   to know which number was a phone; a phone icon does not. */
 .ui-widths button {
-  padding: 0.12rem 0.42rem;
-  font-family: var(--mono);
-  font-size: 0.7rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+  align-items: center;
+  padding: 0.3rem 0.55rem;
+  font-family: var(--sans);
+  font-size: 0.68rem;
   color: var(--ink-soft);
   cursor: pointer;
   background: var(--surface);
   border: 0;
+}
+
+.ui-widths svg {
+  inline-size: 1.05rem;
+  block-size: 1.05rem;
+  fill: none;
+  stroke: currentcolor;
+  stroke-width: 1.6;
+  stroke-linecap: round;
 }
 
 .ui-widths button:hover {
@@ -770,6 +785,22 @@ body {
 .ui-swap:has(input:disabled) {
   cursor: not-allowed;
   opacity: 0.55;
+}
+
+/* Step numbers. The page is a sequence — write the slides, copy the code, add
+   the files — and the numbers are what make that readable at a glance instead
+   of three unrelated panels stacked up. */
+.ui-step {
+  display: inline-grid;
+  place-items: center;
+  inline-size: 1.15rem;
+  block-size: 1.15rem;
+  margin-inline-end: 0.4rem;
+  font-family: var(--mono);
+  font-size: 0.68rem;
+  color: var(--on-signal);
+  background: var(--signal);
+  border-radius: 50%;
 }
 
 /* ---- code -------------------------------------------------------------- */

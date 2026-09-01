@@ -76,21 +76,54 @@
              actually did rather than what was asked for. -->
         <div class="ui-spec" id="wb-spec" role="status">
           <span class="ui-spec-item"
-            ><b>Width</b>
-            <span class="ui-widths" role="group" aria-label="Preview container width">
-              <button type="button" data-w="750">750</button>
-              <button type="button" data-w="970">970</button>
-              <button type="button" data-w="1170" aria-pressed="true">1170</button>
-              <button type="button" data-w="0">fill</button>
+            ><b>Preview at</b>
+            <span class="ui-widths" role="group" aria-label="Screen size to preview">
+              <button type="button" data-w="360">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="8" y="3" width="8" height="18" rx="2" />
+                  <line x1="11" y1="18.5" x2="13" y2="18.5" />
+                </svg>
+                <span>Phone</span>
+              </button>
+              <button type="button" data-w="750">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="5" y="3" width="14" height="18" rx="2" />
+                  <line x1="11" y1="18.5" x2="13" y2="18.5" />
+                </svg>
+                <span>Tablet</span>
+              </button>
+              <button type="button" data-w="970">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="3" y="5" width="18" height="12" rx="2" />
+                  <line x1="2" y1="20" x2="22" y2="20" />
+                </svg>
+                <span>Laptop</span>
+              </button>
+              <button type="button" data-w="1170" aria-pressed="true">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <rect x="2" y="4" width="20" height="13" rx="2" />
+                  <line x1="9" y1="20.5" x2="15" y2="20.5" />
+                  <line x1="12" y1="17" x2="12" y2="20.5" />
+                </svg>
+                <span>Desktop</span>
+              </button>
+              <button type="button" data-w="0">
+                <svg viewBox="0 0 24 24" aria-hidden="true">
+                  <line x1="3" y1="12" x2="21" y2="12" />
+                  <polyline points="7 8 3 12 7 16" />
+                  <polyline points="17 8 21 12 17 16" />
+                </svg>
+                <span>Fill</span>
+              </button>
             </span>
           </span>
-          <span class="ui-spec-item"><b>Card</b> <span id="spec-card">—</span></span>
-          <span class="ui-spec-item"><b>Across</b> <span id="spec-across">—</span></span>
+          <span class="ui-spec-item"><b>Card size</b> <span id="spec-card">—</span></span>
+          <span class="ui-spec-item"><b>Cards shown</b> <span id="spec-across">—</span></span>
           <span class="ui-spec-item"><b>Gap</b> <span id="spec-gap">—</span></span>
-          <span class="ui-spec-item"><b>Stops</b> <span id="spec-stops">—</span></span>
-          <span class="ui-spec-item"><b>Controls</b> <span id="spec-controls">—</span></span>
+          <span class="ui-spec-item"><b>Arrow clicks</b> <span id="spec-stops">—</span></span>
+          <span class="ui-spec-item"><b>Shows</b> <span id="spec-controls">—</span></span>
           <span class="ui-spec-item"
-            ><b>Fit</b> <span class="ui-gauge"><i id="spec-gauge"></i></span
+            ><b>Room to spare</b> <span class="ui-gauge"><i id="spec-gauge"></i></span
           ></span>
           <span class="ui-spec-note" id="wb-warn" hidden></span>
         </div>
@@ -100,7 +133,7 @@
              a template someone still has to retype the content into. -->
         <section class="ui-content" aria-label="Slide content">
           <div class="ui-code-bar">
-            <span>Your slides — headings, links and photos go in the code below</span>
+            <span><b class="ui-step">1</b> Write your slides — the headings, links and photos that go in the slider</span>
             <span class="ui-content-acts">
               <button type="button" class="ui-btn" id="wb-content-add">Add a slide</button>
               <button type="button" class="ui-btn" id="wb-content-reset">Use the example content</button>
@@ -111,7 +144,7 @@
 
         <section class="ui-code" aria-label="Code for these settings">
           <div class="ui-code-bar">
-            <span id="wb-code-note">Styles into <strong>Style Only</strong>, markup into a <strong>Custom HTML</strong> block</span>
+            <span id="wb-code-note"><b class="ui-step">2</b> Copy this into your page</span>
             <span class="ui-content-acts">
               <label class="ui-swap"
                 ><input type="checkbox" id="wb-lib" />
@@ -123,7 +156,7 @@
           <pre tabindex="0"><code id="wb-code"></code></pre>
         </section>
 
-        <h3 class="ui-h3">Put the engine on the site</h3>
+        <h3 class="ui-h3"><b class="ui-step">3</b> Add the files to the site — once, not per slider</h3>
         <p class="ui-blurb">
           Once per site, not once per slider. Link the files if you can upload them; paste the code if you can’t. Either way the slider above is running the very ones you would take.
         </p>
@@ -137,8 +170,8 @@
 &lt;script src="/path/custom-slider.js" defer&gt;&lt;/script&gt;</code></pre>
             <div class="ui-where">
               <b>The third one is optional</b>
-              <code>custom-slider-cards.css</code> holds the seven card looks. Link it and a slider becomes a markup paste — tick
-              <strong>Use the card-looks file</strong> above the code. Skip it and every snippet carries its own styles instead; the engine works either way.
+              <code>custom-slider-cards.css</code> holds the seven card looks. Link it and a slider becomes a markup paste — tick <strong>Use the card-looks file</strong> above the code. Skip it and
+              every snippet carries its own styles instead; the engine works either way.
             </div>
             <div class="ui-where">
               <b>Where these go</b>

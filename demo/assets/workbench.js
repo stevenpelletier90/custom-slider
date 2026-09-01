@@ -568,7 +568,7 @@
   // means "show me a page at the 768 tier". Everything downstream has to agree
   // on which tier that is: what the preview draws, and what the fit gauge
   // thinks a real page would give.
-  const FRAME_TIER = { 750: 768, 970: 992, 1170: 1200 };
+  const FRAME_TIER = { 360: 0, 750: 768, 970: 992, 1170: 1200 };
   let frameW = 1170; // the pressed width button, 0 for "fill"
   const frameTier = () => (frameW ? FRAME_TIER[frameW] : innerWidth >= 1200 ? 1200 : innerWidth >= 992 ? 992 : innerWidth >= 768 ? 768 : 0);
 
@@ -905,13 +905,15 @@
     state.codeText = `${styleBlock}${toCms(htmlFor('my-slider', lib))}${script}`;
     const note = $('wb-code-note');
     if (note)
-      note.innerHTML = !state.look
-        ? 'This pattern draws its own cards, so its styles stay in the snippet — <strong>Style Only</strong>, markup into <strong>Custom HTML</strong>'
-        : lib
-          ? styleBlock
-            ? 'Link <strong>custom-slider-cards.css</strong> once, then this markup plus the few lines you changed'
-            : 'Link <strong>custom-slider-cards.css</strong> once — then this is markup only, nothing else to paste'
-          : 'Styles into <strong>Style Only</strong>, markup into a <strong>Custom HTML</strong> block';
+      note.innerHTML =
+        '<b class="ui-step">2</b> ' +
+        (!state.look
+          ? 'Copy this into your page. This card style is one of a kind, so its styling comes along with it.'
+          : lib
+            ? styleBlock
+              ? 'Copy this into your page — the markup, plus the few lines you changed.'
+              : 'Copy this into your page. Markup only, because the card looks come from the file in step 3.'
+            : 'Copy this into your page — the styling and the markup together.');
     codeEl.innerHTML = globalThis.CARGO.hl.snippet(state.codeText);
   }
 
@@ -948,7 +950,7 @@
     if (w === 0) {
       spec.dataset.fit = 'idle';
       warn.hidden = true;
-      set('spec-card', 'not shown yet');
+      set('spec-card', 'not on screen yet');
       set('spec-across', '—');
       set('spec-gap', '—');
       set('spec-stops', '—');
@@ -967,7 +969,7 @@
     set('spec-across', `${cs.getPropertyValue('--cs-per-view').trim()} of ${stage.querySelectorAll('.cs-slide').length}${n > 1 ? ` · ${n} sliders` : ''}`);
     set('spec-gap', cs.getPropertyValue('--cs-gap').trim() || '0');
     set('spec-stops', String(stops));
-    set('spec-controls', fits ? 'hidden — all fits' : 'arrows' + (state.hideDots ? '' : ' + dots'));
+    set('spec-controls', fits ? 'nothing — they all fit' : 'arrows' + (state.hideDots ? '' : ' and dots'));
 
     // The workbench chrome often leaves the preview column narrower than the
     // .container a real page would give at this window. Judge the card against
@@ -1651,7 +1653,7 @@
     for (const b of widthBtns()) {
       const w = +b.dataset.w;
       b.disabled = w > avail + 1;
-      b.title = b.disabled ? `Needs a window about ${Math.round(w + (innerWidth - avail))}px wide` : `Preview in a ${w || 'full-width'} container`;
+      b.title = b.disabled ? `Make the window about ${Math.round(w + (innerWidth - avail))}px wide to use this` : w ? `See it at ${w}px wide` : 'Use the whole column';
       if (b.getAttribute('aria-pressed') === 'true') active = b;
     }
     if (active && active.disabled) {

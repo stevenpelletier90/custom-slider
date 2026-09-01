@@ -78,12 +78,14 @@ slider has to paste its own `<style>` block. Link it once and a slider becomes a
 markup paste:
 
 ```html
-<link rel="stylesheet" href="/path/custom-slider.css">
-<link rel="stylesheet" href="/path/custom-slider-cards.css">
+<link rel="stylesheet" href="/path/custom-slider.css" />
+<link rel="stylesheet" href="/path/custom-slider-cards.css" />
 <script src="/path/custom-slider.js" defer></script>
 
 <div class="cs cargo-tile cs-xs-2 cs-sm-3 cs-md-4 cs-lg-5" data-cs aria-label="Our models">
-  <ul class="cs-track"> … </ul>
+  <ul class="cs-track">
+    …
+  </ul>
 </div>
 ```
 
