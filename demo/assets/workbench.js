@@ -641,6 +641,7 @@ ${VIDEO_DIALOG_CSS}`,
     lookProps: null,
     data: null,
     hideDots: false,
+    dotSpace: null, // what the reserved dot row measured before the dots were hidden
     content: null,
     label: null,
     name: 'my-slider',
@@ -707,6 +708,7 @@ ${VIDEO_DIALOG_CSS}`,
     state.props = { ...p.props };
     state.data = { ...p.data };
     state.hideDots = !!p.hideDots;
+    state.dotSpace = null;
     state.count = p.models.length;
     // A pattern change is a shape change: a review row has a star rating and a
     // photo row has none, so edited slides can never carry across.
@@ -1320,6 +1322,10 @@ ${VIDEO_DIALOG_CSS}`,
       ['CSS', lines(css), '<strong>Style Only</strong> — raw CSS, no <code>&lt;style&gt;</code> tags'],
     ];
     if (shared()) parts.push(['Card style', `.cargo-${state.look}`, 'comes from <strong>custom-slider.css</strong> — nothing to paste for it']);
+    // The one line in the snippet nobody can read the purpose of: 0.1px is not
+    // a measurement, it is "no room, and do not let the minifier turn it into a
+    // bare 0". Said here rather than left to be puzzled over on a dealer page.
+    if (state.hideDots) parts.push(['Dot row', '0.1px', 'the dots are off, so the row reserved for them is collapsed — leave the value, a plain <code>0</code> breaks the arrows']);
     // Counted off the guarded script, which is the one that ships. "Either
     // side" is the point of the guard: the script no longer cares whether the
     // engine's line runs before or after it.
@@ -1880,16 +1886,29 @@ ${VIDEO_DIALOG_CSS}`,
     dots.checked = !state.hideDots;
     dots.addEventListener('change', () => {
       state.hideDots = !dots.checked;
-      // A dots-off pattern collapses the reserved strip to nothing (the model
-      // bar ships 0.1px) because nothing is drawn there. Turning the dots back
-      // on without restoring that strip drops them straight onto the last line
-      // of card text - measured at 4px of overlap on the model bar. Give the
-      // room back with the dots, and take it away again with them, so the
-      // toggle is symmetrical and the pattern's own value is never lost.
-      const shipped = PATTERNS[state.pattern].props?.['--cs-controls-space'];
-      if (!state.hideDots) {
-        if (state.props['--cs-controls-space'] === shipped) state.props['--cs-controls-space'] = '2.5em';
-      } else if (shipped != null) state.props['--cs-controls-space'] = shipped;
+      // The dot row is a RESERVATION, not the dots: the engine holds
+      // --cs-controls-space of padding under the track from the moment the page
+      // paints (src/custom-slider.css), so starting the slider shifts nothing.
+      // Hiding the dots without collapsing that reservation leaves its height
+      // standing as blank page - measured 30px on the hero, 45px on Tall
+      // photos, 37.5px on any pattern shipping no value of its own.
+      //
+      // So take the room away with the dots and hand back exactly what was
+      // there, never the engine's 2.5em: a tick round trip used to rewrite the
+      // pattern's own value. 0.1px and never 0, because the platform's
+      // minifier turns 0px into a unitless 0 and that invalidates the arrow's
+      // centring calc(). The `.cs-dots { display: none }` rule stays either
+      // way - the dots are absolutely positioned at the bottom of the root, so
+      // with the strip collapsed they would draw over the last line of text.
+      if (state.hideDots) {
+        state.dotSpace = state.props['--cs-controls-space'] ?? null;
+        state.props['--cs-controls-space'] = '0.1px';
+      } else {
+        // A pattern that ships dots-off has never had a strip, so the first
+        // tick has nothing to restore and takes the engine's own.
+        state.props['--cs-controls-space'] = state.dotSpace ?? '2.5em';
+        state.dotSpace = null;
+      }
       buildPanel(); // the space knob appears and disappears with the dots
       render();
     });
