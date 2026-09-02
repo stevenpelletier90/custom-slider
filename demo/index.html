@@ -153,7 +153,13 @@
 
         <section class="ui-code" aria-label="Code for these settings">
           <div class="ui-code-bar">
-            <span id="wb-code-note"><b class="ui-step">2</b> Copy each part into its own field — the box below is the three of them together</span>
+            <!-- `cargo-` shows up 34 times in this panel and was explained
+                 nowhere on this page - only in the Reference's eighth section,
+                 which is not where anyone reading the code is standing. -->
+            <span id="wb-code-note"
+              ><b class="ui-step">2</b> Copy each part into its own field — the box below is the three of them together.
+              <span class="ui-code-legend"><code>cs-</code> is the slider, <code>cargo-</code> is the card design; both come from <code>custom-slider.css</code>.</span></span
+            >
             <!-- One button per field, not one button for the lot. Style Only
                  takes raw CSS: a <style> tag pasted into it makes the parser
                  read the tag and the first rule as one invalid selector and
@@ -225,7 +231,11 @@
 
           <div>
             <h4>Or paste the code</h4>
-            <p>For a site where you can’t upload files. Fetched live from this page, so it can never be a stale copy.</p>
+            <!-- "Fetched live, so it can never be a stale copy" was half true.
+                 The fetch is live; the clipboard is not. What you paste is
+                 pinned to today's build, carries no version marker, and nothing
+                 comes back to tell the page it is out of date. -->
+            <p>For a site where you can’t upload files. What you copy is today’s build — a pasted copy stays on that build, so it has to be pasted again after each update.</p>
             <div class="ui-file">
               <code>custom-slider.css</code>
               <button type="button" class="ui-btn" data-file="css" data-act="copy">Copy</button>

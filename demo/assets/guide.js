@@ -79,6 +79,7 @@
     '<code>data-cs-gallery</code> with <code>data-cs-autoplay</code> is unsupported — autoplay is ignored and warns in the console.',
     '<code>data-cs-gallery</code> with <code>data-cs-fade</code> is unsupported — fade is ignored and warns in the console.',
     'Slides-per-view is CSS only, by design. There is no JavaScript breakpoint option and there will not be one.',
+    'Do not hide a slide with CSS to show different cards at different widths. A hidden slide is still in the list, so the announced total, the paging and the current position all count it — “Slides 1 to 3 of 6” with five on screen, and one arrow click landing on the slide nobody can see. Use <code>&lt;picture&gt;</code> for per-breakpoint artwork, or two sliders.',
   ];
 
   const MARKUP = `<div class="my-slider cs" data-cs aria-label="New vehicles">

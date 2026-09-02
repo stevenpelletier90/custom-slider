@@ -877,6 +877,16 @@ body {
   border-radius: 4px;
 }
 
+/* The one sentence that says what the two class prefixes in the code below
+   mean. On its own line so it reads as a legend rather than as more of the
+   step-2 instruction. */
+.ui-code-legend {
+  display: block;
+  margin-block-start: 0.2rem;
+  font-size: 0.95em;
+  opacity: 0.85;
+}
+
 /* The slider's name, directly above the parts list and the code. The only
    setting that is about the PAGE rather than about this slider, so it sits
    where the copying happens instead of in the settings panel. */

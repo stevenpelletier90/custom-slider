@@ -221,15 +221,26 @@ phone tier. That off-by-one was live in this repo until 2026-08-27.
 
 Override custom properties in `styleCode`. Never edit the engine:
 
-    .my-strip {
-      --cs-per-view: 2;
-      --cs-gap: 1rem;
+    .my-strip.cs {
+      --cs-gap: 1em;
       --cs-peek: 60px;
-      --cs-arrow-bg: #0b2a4a;
+      --cs-arrow-bg: rgba(11, 42, 74, 1);
       --cs-arrow-fg: #fff;
       --cs-dot-current: #0b2a4a;
     }
-    @media (min-width: 768px) { .my-strip { --cs-per-view: 5; } }
+
+**`em`, never `rem`.** `rem` is locked to `<html>`, and Bootstrap 3 — what the
+storefronts run — sets `html { font-size: 10px }`, so a `1rem` gap written here
+ships at 62.5% of what it looked like. The repo's own linters fail on `rem` for
+exactly this reason; the docs used to show it anyway.
+
+**`.my-strip.cs`, not `.my-strip`.** A bare class ties with the engine's own
+`.cs` and with the shared `.cargo-*` card styles, so source order decides — and
+where the platform emits the aggregated Style Only sheet relative to a head
+`<link>` is not documented. Adding `.cs` costs nothing and settles it.
+
+Slides-per-view is not in that block: use the `cs-xs-N` / `cs-sm-N` /
+`cs-md-N` / `cs-lg-N` classes on the root, which ship in the stylesheet.
 
 Full list in the README under "CSS custom properties".
 

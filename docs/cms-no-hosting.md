@@ -53,12 +53,14 @@ Ordinary block content, exactly as in the hosted setup:
 Per-slider theming (`--cs-per-view`, colours, peek) goes in the same Style Only
 tab as step 1, under your own class:
 
-    .my-strip { --cs-per-view: 2; }
-    @media (min-width: 768px) { .my-strip { --cs-per-view: 5; } }
+    <div class="my-strip cs cs-xs-2 cs-sm-5" data-cs aria-label="New vehicles">
 
-Model bars: start from your OEM's ladder — the fourteen are tabulated in the
-[census](research/2026-08-18-oem-demo-slider-census.md) and shown per brand in the
-[Model Bar Library](https://claude.ai/code/artifact/72367577-3336-4f58-abc1-5b0beb64ac08).
+Model bars: start from your OEM's ladder using the **Brand preset** control on
+the Build page. It carries 32 brands, 28 of them with a recorded ladder, read at
+768 / 992 / 1200 and clamped so a card never lands under the width its content
+needs; the four with no recorded ladder start from the card style's own. That
+control is the live list — it moves when the presets do, which a table in a
+document does not.
 
 ## What it costs the page
 
