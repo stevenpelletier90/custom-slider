@@ -746,6 +746,11 @@
     // Per-view is cs-xs-N / cs-sm-N classes when the styles are shared.
     const base = lib ? kept : { ...kept, '--cs-per-view': state.perView.base };
     const decls = Object.entries(base)
+      // A value that is empty is not a value: `--cs-gap: ;` is an invalid
+      // declaration and takes the whole rule's meaning with it. Nothing should
+      // reach here blank now that a cleared field restores its default, but
+      // this is the one place every property passes through.
+      .filter(([, v]) => String(v).trim() !== '')
       .map(([k, v]) => `  ${k}: ${v};`)
       .join('\n');
 
@@ -1264,12 +1269,28 @@
   }
 
   // A text field for a CSS value, with the arrow-key stepping wired on.
+  // Clearing a field means "go back to the default", not "ship nothing". An
+  // empty value used to be stored as-is and emitted as `--cs-gap: ;`, which is
+  // an invalid declaration: the arrows fell to the page's text colour and a
+  // cleared Gap invalidated the slide flex basis, so the cards collapsed to
+  // content width - in the preview AND in the copied CSS. Restore the value the
+  // field started with instead: a look knob goes back to that look's setting, a
+  // pattern knob to the pattern's own, and a knob the pattern never set is
+  // deleted so the engine's default applies.
+  const defaultFor = (key, store) => (store === state.lookProps ? LOOKS[state.look]?.settings?.[key] : PATTERNS[state.pattern].props?.[key]);
+  const setProp = (store, key, v) => {
+    if (String(v).trim()) return void (store[key] = v);
+    const d = defaultFor(key, store);
+    if (d == null) delete store[key];
+    else store[key] = d;
+  };
+
   function valueRow(label, key, store, after) {
     const input = document.createElement('input');
     input.type = 'text';
     input.value = store[key] ?? '';
     const push = (v) => {
-      store[key] = v;
+      setProp(store, key, v);
       render();
       after?.();
     };
@@ -1308,7 +1329,7 @@
     // swatch is hidden whenever the value is not a plain hex.
     text.setAttribute('aria-label', `${label} value`);
     const push = (v) => {
-      store[key] = v;
+      setProp(store, key, v);
       render();
     };
     // A colour input has no way to show "transparent" or an rgb() with alpha -
