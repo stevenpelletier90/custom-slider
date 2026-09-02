@@ -340,6 +340,32 @@ describe('a property the slider is already using has a control', () => {
     assert.equal(drawn, 'rgb(200, 16, 46)', `the dot is drawn ${drawn}`);
   });
 
+  // F056: --cs-arrow-size was reachable only by hand-editing the snippet, and
+  // six designs resize the arrow inside their own media queries - which the
+  // field cannot own. Rather than imply one size at every width, the panel
+  // reads those rules back and says what they set.
+  test('arrow size is editable and reaches the drawn arrow', async () => {
+    await pick(page, 'cards');
+    await setField(page, 'Arrow size', '60px');
+    await page.waitForTimeout(250);
+    const drawn = await page.evaluate(() => +document.querySelector('#wb-stage .cs-arrow').getBoundingClientRect().width.toFixed(0));
+    const { css } = await copyParts(page);
+    assert.match(css, /--cs-arrow-size:\s*60px/, 'the value never reached the copied CSS');
+    assert.equal(drawn, 60, `the arrow is drawn ${drawn}px`);
+  });
+
+  test('a design that resizes the arrow in a media query says so', async () => {
+    await pick(page, 'models'); // sets 56px at (min-width: 992px) in its own CSS
+    const notes = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .wb-note')].map((n) => n.textContent));
+    assert.ok(
+      notes.some((t) => /arrow to 56px at \(min-width: 992px\)/.test(t)),
+      `no note names the media-query size the design sets: ${JSON.stringify(notes)}`,
+    );
+    await pick(page, 'peek'); // sets it nowhere
+    const none = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .wb-note')].map((n) => n.textContent));
+    assert.ok(!none.some((t) => /sets the arrow to/.test(t)), 'a note claims a media-query size on a design that sets none');
+  });
+
   test('the dot rows go away with the dots', async () => {
     await pick(page, 'gallery'); // a thumbnail rail, no dots at all
     for (const label of ['Dot size', 'Dot colour', 'Dot colour, current']) {

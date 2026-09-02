@@ -1898,6 +1898,20 @@ ${VIDEO_DIALOG_CSS}`,
     // show it, let alone change it.
     colors.append(colorRow('Arrow colour, hover', '--cs-arrow-fg-hover', state.props));
     colors.append(colorRow('Arrow background, hover', '--cs-arrow-bg-hover', state.props));
+    colors.append(valueRow('Arrow size', '--cs-arrow-size', state.props));
+    // Six designs resize the arrow inside a media query in their own CSS - the
+    // tile and vehicle card at 36px on phones, the logo strip at 56px on wide
+    // screens - and this field cannot reach a rule it does not own. Rather
+    // than let the row imply one size at every width, read those rules back
+    // and say what they set. The alternative was to give the knob a second
+    // "on phones" field and take the value off the six designs, which is a
+    // bigger change than showing what is already true.
+    for (const [, cond, val] of `${p.css || ''}\n${LOOKS[state.look]?.css || ''}`.matchAll(/@media\s*\(([^)]+)\)[^{]*\{[^}]*--cs-arrow-size:\s*([^;}]+)/g)) {
+      const n = document.createElement('p');
+      n.className = 'wb-note';
+      n.textContent = `This design also sets the arrow to ${val.trim()} at (${cond.trim()}), in its own CSS. The field above is the size everywhere else.`;
+      colors.append(n);
+    }
     // "Show a sliver of the next car" lands on a model bar as often as on the
     // pattern named after it, so the row is offered wherever it can do
     // something rather than only where the pattern pre-set it. Not under fade
