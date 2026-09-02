@@ -1340,6 +1340,9 @@ ${VIDEO_DIALOG_CSS}`,
         .map(([what, n, where]) => `<li><b>${what}</b> <span>${typeof n === 'number' ? `${n} line${n === 1 ? '' : 's'}` : n}</span>${typeof n === 'number' ? 'goes into ' : ''}${where}</li>`)
         .join('') + warn;
     codeEl.innerHTML = globalThis.CARGO.hl.snippet(state.codeText);
+    // Last, so a render that throws cannot leave the state that threw in
+    // storage for the next visit to boot into.
+    saveSettings();
   }
 
   // Measured, not asserted: compare the card actually rendered against the
@@ -2068,6 +2071,118 @@ ${VIDEO_DIALOG_CSS}`,
     state.count = rows.length;
   }
 
+  /* ---- settings, remembered the same way the slides are ----------------- */
+
+  // Remembering the slides but not the settings was worse than remembering
+  // neither: a designer came back to their own content under someone else's
+  // card style, with the wrong class name, and nothing on the page saying why.
+  // Same shape as the content store, keyed by pattern for the same reason.
+  const SKEY = 'cs-settings';
+  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'standalone', 'name', 'count'];
+
+  const readSettings = () => {
+    try {
+      const v = JSON.parse(localStorage.getItem(SKEY) || 'null');
+      return v && typeof v === 'object' && v.byPattern && typeof v.byPattern === 'object' ? v : { byPattern: {} };
+    } catch {
+      /* a corrupt entry must not take the page down with it */
+      return { byPattern: {} };
+    }
+  };
+
+  const isMap = (v) => !!v && typeof v === 'object' && !Array.isArray(v);
+  // Custom-property and data-attribute names, and values that cannot break out
+  // of the attribute they land in: htmlFor() drops a data value straight into a
+  // double-quoted attribute without escaping it.
+  const PROP = /^--[a-z0-9-]+$/i;
+  const ATTR = /^data-cs-[a-z-]+$/i;
+  const okStored = (v) => typeof v === 'string' && v.length < 120 && !/["<>{};]/.test(v);
+  const cleanMap = (m, keyRe) => {
+    if (!isMap(m)) return null;
+    const out = {};
+    for (const [k, v] of Object.entries(m)) if (keyRe.test(k) && okStored(v)) out[k] = v;
+    return out;
+  };
+
+  // Written only when something actually changed, so a pattern nobody touched
+  // gets no entry at all - and a later change to that pattern's shipped
+  // defaults still reaches a browser that has been here before.
+  let baseline = null;
+  const snapshot = () => JSON.stringify(SAVED.map((k) => state[k]));
+  const saveSettings = () => {
+    const snap = snapshot();
+    if (baseline === null) {
+      baseline = snap;
+      return;
+    }
+    if (snap === baseline) return;
+    const all = readSettings();
+    all.byPattern[state.pattern] = Object.fromEntries(SAVED.map((k) => [k, state[k]]));
+    try {
+      localStorage.setItem(SKEY, JSON.stringify(all));
+    } catch {
+      /* private mode — the builder still works, it just will not survive a reload */
+    }
+  };
+
+  // The chosen preview width is not per pattern: it stands for the screen you
+  // are designing for, which does not change when you switch pattern.
+  const saveFrame = (w) => {
+    const all = readSettings();
+    all.frame = w;
+    try {
+      localStorage.setItem(SKEY, JSON.stringify(all));
+    } catch {
+      /* as above */
+    }
+  };
+
+  function restoreSettings() {
+    baseline = null;
+    const s = readSettings().byPattern[state.pattern];
+    if (!isMap(s)) return;
+    // The look first: applyLook() hands the previous look's --cs-* values back
+    // before taking the new one's, so the props restored below have to land on
+    // top of it, not under it. Only where the pattern HAS a look picker -
+    // forcing one onto a pattern that draws its own cards would put a cargo-
+    // class on markup that does not have it.
+    if (PATTERNS[state.pattern].look && LOOKS[s.look] && s.look !== state.look) {
+      applyLook(s.look);
+      state.perView = { ...LOOKS[s.look].perView };
+    }
+    if (isMap(s.perView)) {
+      for (const k of ['base', ...BPS]) {
+        const n = s.perView[k];
+        // Whole cards, 1 to 8, and only for a tier this pattern actually has -
+        // adding one would emit a column class the pattern never ships.
+        if (state.perView[k] != null && Number.isInteger(n) && n >= 1 && n <= 8) state.perView[k] = n;
+      }
+    }
+    const props = cleanMap(s.props, PROP);
+    if (props) state.props = { ...state.props, ...props };
+    // A look knob this look no longer has must not add a row to the panel or a
+    // line to the snippet, so only the keys it still ships come back.
+    const lookProps = cleanMap(s.lookProps, PROP);
+    if (lookProps) for (const k of Object.keys(state.lookProps)) if (k in lookProps) state.lookProps[k] = lookProps[k];
+    // Replaced, not merged: modelbar, tabs and service ship data-cs-step="slide"
+    // and Tall photos ships data-cs-rewind="false", and setting "Arrows move" to
+    // a full page DELETES the attribute. A merge would put the pattern's own
+    // value back and leave the select saying "a full page" over a slider
+    // stepping one card. A map that lost a key to the checks was not written by
+    // this panel, so it is refused whole rather than obeyed in half.
+    const data = cleanMap(s.data, ATTR);
+    if (data && isMap(s.data) && Object.keys(data).length === Object.keys(s.data).length) state.data = data;
+    for (const k of ['hideDots', 'gutter', 'standalone']) if (typeof s[k] === 'boolean') state[k] = s[k];
+    // Through toClass() rather than trusted: a name stored before the sanitiser
+    // existed could be an invalid selector.
+    if (okStored(s.name) && toClass(s.name)) state.name = toClass(s.name);
+    // The brand is remembered so the picker shows it, but the preset is NOT
+    // re-run: it would overwrite the ladder and card style restored above with
+    // the preset's own, undoing every edit made after picking it.
+    if (BRANDS[s.brand]) state.brand = s.brand;
+    if (Number.isInteger(s.count) && s.count >= 1 && s.count <= 16) state.count = s.count;
+  }
+
   // The roster as it stands, ignoring any edits — the example content, or the
   // brand's if one is picked.
   const exampleRoster = () => {
@@ -2205,7 +2320,10 @@ ${VIDEO_DIALOG_CSS}`,
   // .container and you can step down through the other two tiers.
   const widthBtns = () => [...document.querySelectorAll('.ui-widths button')];
 
-  const setFrame = (b) => {
+  // `keep` false for a width the WINDOW forced rather than the designer chose:
+  // shrinking the browser steps the preview down, and that correction must not
+  // overwrite the width they picked and expect back next time.
+  const setFrame = (b, keep = true) => {
     for (const x of widthBtns()) x.setAttribute('aria-pressed', String(x === b));
     const w = +b.dataset.w;
     stage.style.setProperty('--frame', w === 0 ? '100%' : `${w}px`);
@@ -2214,6 +2332,7 @@ ${VIDEO_DIALOG_CSS}`,
     // The preview's per-view is resolved for this frame now, so changing the
     // frame has to regenerate the CSS rather than only resize the box.
     if (moved) render();
+    if (keep) saveFrame(w);
     requestAnimationFrame(checkFit);
   };
 
@@ -2253,7 +2372,7 @@ ${VIDEO_DIALOG_CSS}`,
       const widest = widthBtns()
         .filter((b) => !b.disabled && +b.dataset.w <= avail + 1)
         .sort((a, b) => +b.dataset.w - +a.dataset.w)[0];
-      if (widest) setFrame(widest);
+      if (widest) setFrame(widest, false);
     }
   }
 
@@ -2270,6 +2389,9 @@ ${VIDEO_DIALOG_CSS}`,
     b.dataset.go = id;
     b.addEventListener('click', () => {
       loadPattern(id);
+      // Settings first, content second: restoreContent sets state.count from
+      // the stored rows, and edited rows ARE the slide count.
+      restoreSettings();
       restoreContent();
       buildPanel();
       buildContent();
@@ -2364,11 +2486,17 @@ ${VIDEO_DIALOG_CSS}`,
   const boot = () => {
     const id = location.hash.slice(1);
     loadPattern(PATTERNS[id] ? id : 'modelbar');
+    restoreSettings();
     restoreContent();
     for (const x of nav.querySelectorAll('button')) x.setAttribute('aria-current', String(x.dataset.go === state.pattern));
     buildPanel();
     buildContent();
     render();
+    // Matching a button by data-w IS the validation: a width that is not one of
+    // the four finds no button. `keep: false` because the value came FROM
+    // storage, and fitWidths below still steps it down if it no longer fits.
+    const seat = widthBtns().find((b) => +b.dataset.w === readSettings().frame);
+    if (seat) setFrame(seat, false);
     addEventListener('resize', () => {
       fitWidths();
       checkFit();
