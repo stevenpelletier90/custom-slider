@@ -1005,15 +1005,34 @@ ${VIDEO_DIALOG_CSS}`,
     // One carousel, over whichever slides it is given. Patterns that need more
     // than one (the tabs) or need it wrapped in something (the lightbox) build
     // from this rather than hand-writing a second copy of the markup.
-    const carousel = (list, label, pad = '') =>
+    // README, the Reference and cms-implementation.md all say the first visible
+    // image is eager and the rest are lazy; every producer hard-coded
+    // loading="lazy", including the first card and the hero's LCP image, so the
+    // snippet failed the project's own contract and a designer reading both
+    // could not tell which was right.
+    //
+    // "First visible" is the base tier's count - what a phone shows. A lazy
+    // image already inside the viewport loads at once anyway, so marking the
+    // desktop tiers eager as well would only cost a phone bandwidth it does not
+    // need. Applied at the one place slides are wrapped, so a new card style
+    // cannot quietly miss it. fetchpriority is the hero's alone: README says to
+    // add it only above the fold, and a full-width hero banner always is.
+    const eagerCount = state.perView.base ?? 1;
+    const eager = (html, i) => (i >= eagerCount ? html : html.replace('loading="lazy"', state.pattern === 'hero' && i === 0 ? 'loading="eager" fetchpriority="high"' : 'loading="eager"'));
+
+    // `onScreen` false for a carousel that starts hidden - the tab panes behind
+    // the first one. An eager image inside a hidden pane is fetched anyway,
+    // where a lazy one waits until the pane is shown, so eager there is
+    // strictly worse than what it replaced.
+    const carousel = (list, label, pad = '', onScreen = true) =>
       [
         `${pad}<div class="${cls}${libCls} cs" data-cs${attrs} aria-label="${label}">`,
         `${pad}  <${tag} class="cs-track">`,
         // Indent the card's own lines to match, so what you paste is not a
         // wall of markup starting at column zero inside a nested list item.
-        ...list.map((h) => {
+        ...list.map((h, i) => {
           const inner = h.includes('\n') ? ['', h.replace(/^/gm, `${pad}      `), `${pad}    `].join('\n') : h;
-          return `${pad}    <${item} class="cs-slide">${inner}</${item}>`;
+          return `${pad}    <${item} class="cs-slide">${onScreen ? eager(inner, i) : inner}</${item}>`;
         }),
         `${pad}  </${tag}>`,
         // Inside the carousel, not beside it, so the pattern CSS scopes to it
@@ -1036,7 +1055,7 @@ ${VIDEO_DIALOG_CSS}`,
       const panes = p.panes
         .map((name, i) => {
           const sub = draw(take(state.count, i * stride));
-          return `  <div class="cargo-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}"${i === 0 ? '' : ' hidden'}>\n${carousel(sub, name, '  ')}\n  </div>`;
+          return `  <div class="cargo-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}"${i === 0 ? '' : ' hidden'}>\n${carousel(sub, name, '  ', i === 0)}\n  </div>`;
         })
         .join('\n');
       return `<div class="${cls}-wrap" data-tabs>\n  <div class="cargo-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n${panes}\n</div>`;
@@ -1056,12 +1075,15 @@ ${VIDEO_DIALOG_CSS}`,
       return [
         `<div class="${cls}-wrap" data-lightbox>`,
         `  <button type="button" class="cargo-lb-open" data-lb-open>`,
-        `    <img src="${m.img}" width="68" height="44" alt="" loading="lazy" decoding="async">`,
+        `    <img src="${m.img}" width="68" height="44" alt="" loading="eager" decoding="async">`,
         `    <span>View all ${items.length} photos</span>`,
         `  </button>`,
         `  <dialog class="cargo-lb" aria-label="Vehicle photos">`,
         `    <div class="cargo-lb-head"><span>Vehicle photos</span><button type="button" class="cargo-lb-close" data-lb-close>Close</button></div>`,
-        carousel(items, 'Vehicle photos', '    '),
+        // The gallery starts inside a closed <dialog>, so nothing in it is
+        // visible yet - the opener thumbnail above is this pattern's first
+        // visible image and takes the eager load instead.
+        carousel(items, 'Vehicle photos', '    ', false),
         `  </dialog>`,
         `</div>`,
       ].join('\n');
@@ -1825,46 +1847,58 @@ ${VIDEO_DIALOG_CSS}`,
   const esc = (v) => String(v).replace(/[&<>"]/g, (c) => ESC[c]);
   const unesc = (v) => String(v).replace(/&(amp|lt|gt|quot|apos|#39);/g, (m, e) => UNESC[e] ?? m);
   const OWN_ROWS = 'These are your slides. The preview above and the code below are built from them — “Use the example content” puts the demo cars back.';
-  const EXAMPLE_ROWS = 'The example content, ready to edit. Change any field and it becomes yours; nothing here is saved to a server.';
+  const EXAMPLE_ROWS = 'The example content, ready to edit. Change any field and it becomes yours. Edits stay in this browser only — copy the code before you leave.';
 
   // Typing eight cards of copy and losing it to a stray refresh is the fastest
-  // way to make a tool feel disposable. Keyed by pattern: the fields differ per
-  // pattern, and restoring one pattern's rows into another would put a star
-  // rating on a photo.
+  // way to make a tool feel disposable. Keyed BY pattern - an object, one entry
+  // each - because the fields differ per pattern and restoring one pattern's
+  // rows into another would put a star rating on a photo. It used to be one
+  // entry holding one pattern's rows plus its name, and a restore only fired
+  // when the name matched: writing three service cards and then editing one
+  // heading on a model bar overwrote the service text, silently, with nothing
+  // on the page saying so.
   const CKEY = 'cs-content';
-  const saveContent = () => {
+  const readStore = () => {
     try {
-      localStorage.setItem(CKEY, JSON.stringify({ pattern: state.pattern, rows: state.content }));
+      const v = JSON.parse(localStorage.getItem(CKEY) || 'null');
+      // The single-pattern shape this replaced, so a designer mid-edit keeps
+      // the rows they had when the page updates under them.
+      if (v && Array.isArray(v.rows)) return v.pattern ? { [v.pattern]: v.rows } : {};
+      return v && typeof v === 'object' ? v : {};
+    } catch {
+      /* a corrupt entry must not take the page down with it */
+      return {};
+    }
+  };
+  const writeStore = (store) => {
+    try {
+      localStorage.setItem(CKEY, JSON.stringify(store));
     } catch {
       /* private mode — the editor still works, it just will not survive a reload */
     }
   };
+  const saveContent = () => writeStore({ ...readStore(), [state.pattern]: state.content });
+  // Only this pattern's rows: "Use the example content" is a per-pattern button
+  // and must not throw away work done on the other sixteen.
   const clearContent = () => {
-    try {
-      localStorage.removeItem(CKEY);
-    } catch {
-      /* as above */
-    }
+    const store = readStore();
+    delete store[state.pattern];
+    writeStore(store);
   };
   function restoreContent() {
-    try {
-      const v = JSON.parse(localStorage.getItem(CKEY) || 'null');
-      if (v?.pattern === state.pattern && Array.isArray(v.rows) && v.rows.length) {
-        // Bring a stored row back inside its field's range. An out-of-range
-        // number saved before the clamp existed would otherwise sit in the
-        // editor disagreeing with the card the markup draws.
-        state.content = v.rows.map((row) => {
-          const out = { ...row };
-          for (const [k, f] of Object.entries(FIELDS)) {
-            if (f.type === 'number' && f.max != null && out[k] != null) out[k] = clamp(out[k], f.min ?? 0, f.max);
-          }
-          return out;
-        });
-        state.count = v.rows.length;
+    const rows = readStore()[state.pattern];
+    if (!Array.isArray(rows) || !rows.length) return;
+    // Bring a stored row back inside its field's range. An out-of-range
+    // number saved before the clamp existed would otherwise sit in the
+    // editor disagreeing with the card the markup draws.
+    state.content = rows.map((row) => {
+      const out = { ...row };
+      for (const [k, f] of Object.entries(FIELDS)) {
+        if (f.type === 'number' && f.max != null && out[k] != null) out[k] = clamp(out[k], f.min ?? 0, f.max);
       }
-    } catch {
-      /* a corrupt entry must not take the page down with it */
-    }
+      return out;
+    });
+    state.count = rows.length;
   }
 
   // The roster as it stands, ignoring any edits — the example content, or the
