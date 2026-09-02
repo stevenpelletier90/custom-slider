@@ -275,7 +275,8 @@
       <section id="g-cms"><h3>Putting it on a DealerOn site</h3>
         ${list([
           'The engine CSS goes in <strong>Style Only, Head Section</strong>; the engine JS in <strong>Body Section, Bottom</strong>, after the markup.',
-          "Your slider's own CSS goes in <strong>Style Only</strong> too, and the markup in a <strong>Custom HTML</strong> block.",
+          "Your slider's own CSS goes in <strong>Style Only</strong>, the markup in a <strong>Custom HTML</strong> block, and a pattern's script in <strong>Body Section, Bottom</strong>. The Build page has a Copy button per field, because the three cannot go in as one paste.",
+          'Style Only takes <strong>raw CSS</strong> — no <code>&lt;style&gt;</code> tags and no comments. A tag pasted into it is read as part of the first selector, so that rule is dropped and the settings it carried go with it, silently.',
           'Both engine files are shared — add them once per site, not once per slider. Several sliders on one page is fine and expected.',
           'Images: use the DealerOn library or dealer-owned assets, reference uploads through <code>#MISCPATH#</code>, and keep platform <code>/static/</code> paths literal.',
           'The platform is Bootstrap 3. Its grid breaks at <strong>768 / 992 / 1200</strong> — there is no 576. Match those so the strip flips where the page flips.',

@@ -148,8 +148,20 @@
 
         <section class="ui-code" aria-label="Code for these settings">
           <div class="ui-code-bar">
-            <span id="wb-code-note"><b class="ui-step">2</b> Copy this into your page</span>
-            <button type="button" class="ui-btn" id="wb-copy">Copy</button>
+            <span id="wb-code-note"><b class="ui-step">2</b> Copy each part into its own field — the box below is the three of them together</span>
+            <!-- One button per field, not one button for the lot. Style Only
+                 takes raw CSS: a <style> tag pasted into it makes the parser
+                 read the tag and the first rule as one invalid selector and
+                 drop them, which silently loses the whole slider
+                 configuration - the rule carrying the gap, the arrow colours
+                 and the per-view base. The box keeps the tags because that is
+                 what the finished page contains; the buttons hand over each
+                 part in the form its field wants. -->
+            <span class="ui-content-acts">
+              <button type="button" class="ui-btn" id="wb-copy-css">Copy CSS</button>
+              <button type="button" class="ui-btn" id="wb-copy-html">Copy HTML</button>
+              <button type="button" class="ui-btn" id="wb-copy-js" hidden>Copy script</button>
+            </span>
           </div>
           <!-- What is in the box and where each part goes. Written from the
                snippet itself, so it can never describe a part that is not

@@ -1032,6 +1032,15 @@
     const css = cssFor(`.${state.name}`);
     const html = toCms(htmlFor(state.name));
     state.codeText = `<style>\n${css}\n</style>\n\n${html}${script}`;
+    // The three parts, each in the form the field it goes into wants. The box
+    // above shows them together with their tags, because that is what the
+    // finished page contains - but Style Only is a raw-CSS field, so the CSS
+    // button hands over the sheet with no <style> around it. Same strings the
+    // box is built from: one producer, three destinations.
+    state.cssText = css;
+    state.htmlText = html;
+    state.scriptText = p.script || '';
+    $('wb-copy-js').hidden = !p.script;
 
     // Say what is in the box and where each part goes, counted off the snippet
     // itself so it can never name a part that is not there.
@@ -1045,7 +1054,7 @@
     const lines = (t) => t.trim().split('\n').length;
     const parts = [
       ['HTML', lines(html), 'a <strong>Custom HTML</strong> block'],
-      ['CSS', lines(css), '<strong>Style Only &rarr; Head Section</strong>'],
+      ['CSS', lines(css), '<strong>Style Only</strong> — raw CSS, no <code>&lt;style&gt;</code> tags'],
       ['Named', `.${state.name}`, 'give a second slider on the same page a different name, or they overwrite each other'],
     ];
     if (shared()) parts.push(['Card style', `.cargo-${state.look}`, 'comes from <strong>custom-slider.css</strong> — nothing to paste for it']);
@@ -1890,7 +1899,19 @@
     }
   }
 
-  $('wb-copy').addEventListener('click', (e) => copyText(e.target, state.codeText));
+  // One button per CMS field. A single Copy handed over
+  // `<style>…</style>` + HTML + `<script>` as one blob for three different
+  // fields, and left whole in Style Only the tag and the first rule parse as
+  // one invalid selector and are dropped - taking the slider's --cs-gap,
+  // arrow colours and per-view base with them, with nothing on screen to say
+  // so. Each button copies the part its field can actually hold.
+  for (const [id, get] of [
+    ['wb-copy-css', () => state.cssText],
+    ['wb-copy-html', () => state.htmlText],
+    ['wb-copy-js', () => state.scriptText],
+  ]) {
+    $(id).addEventListener('click', (e) => copyText(e.target, get()));
+  }
 
   // Built here rather than read out of the DOM: the markup on disk may carry
   // CRLF, and a stray carriage return inside a pasted tag is a nasty thing to
