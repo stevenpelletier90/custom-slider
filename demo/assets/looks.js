@@ -47,7 +47,10 @@ const LOOKS = {
     absorbs: ['white', 'counts', 'tile', 'band-gray', 'band-flat', 'band-dark', 'cdjr-dark', 'category-tile', 'brand-logo', 'photo-overlay', 'name-top-chip'],
     settings: {
       '--strip-bg': 'transparent',
-      '--strip-pad': '0px',
+      // 0.1px, not 0px: the standalone snippet pastes this into Style Only,
+      // whose minifier strips the unit off a zero. See the note above PATTERNS
+      // in workbench.js.
+      '--strip-pad': '0.1px',
       // Reserves the gutter the arrows sit in. Without it transparent arrows
       // overlay the vehicles instead of standing beside them.
       '--strip-pad-x': 'calc(var(--cs-arrow-size) + 0.25em)',
@@ -101,7 +104,10 @@ const LOOKS = {
     isNew: true,
     settings: {
       '--strip-bg': 'transparent',
-      '--strip-pad': '0px',
+      // 0.1px, not 0px: the standalone snippet pastes this into Style Only,
+      // whose minifier strips the unit off a zero. See the note above PATTERNS
+      // in workbench.js.
+      '--strip-pad': '0.1px',
       // Reserves the gutter the arrows sit in. Without it a transparent
       // arrow lands on the card's own text instead of beside it.
       '--strip-pad-x': 'calc(var(--cs-arrow-size) + 0.4em)',

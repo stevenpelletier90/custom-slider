@@ -121,6 +121,14 @@
   // shared component and the look chooser applies; `slides` means it draws its
   // own markup because no card look describes it - a hero is a photo, a video
   // poster is a button.
+  //
+  // No zero length in a custom property, ever: write 0.1px. The platform's
+  // styleCode minifier strips the unit off any zero, and a unitless 0 makes
+  // every calc() that reads the variable invalid - the slide basis
+  // `calc((100% - (per-view - 1) * var(--cs-gap)) / per-view)` falls to auto
+  // and the cards collapse to their content width, in Chromium and WebKit
+  // alike. Same reason `--cs-controls-space` is 0.1px (bfe446c).
+  // scripts/lint-generated-css.mjs fails the build on a new one.
   const PATTERNS = {
     modelbar: {
       label: 'Model bar',
@@ -144,7 +152,7 @@
       label: 'Hero banner',
       blurb: 'Full width, one at a time, crossfading on a timer. Autoplay adds the pause button and never starts under reduced motion.',
       data: { 'data-cs-fade': '', 'data-cs-autoplay': '5000' },
-      props: { '--cs-gap': '0px', '--cs-controls-space': '2em', '--cs-dot-current': '#16324f' },
+      props: { '--cs-gap': '0.1px', '--cs-controls-space': '2em', '--cs-dot-current': '#16324f' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       models: PHOTOS.slice(0, 3),
@@ -158,7 +166,7 @@
       label: 'Photo gallery',
       blurb: 'Thumbnails generated from the slide images and wired as a real tab list with arrow keys. Thumbs are fresh elements, so site ids and srcset never leak into them.',
       data: { 'data-cs-gallery': '' },
-      props: { '--cs-gap': '0px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
@@ -410,7 +418,7 @@
       blurb:
         'A gallery whose slides carry a category. Filtering rebuilds the slider over the matching slides rather than hiding the rest — hiding leaves them in the thumb strip and in the announced "3 of 6".',
       data: { 'data-cs-gallery': '' },
-      props: { '--cs-gap': '0px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
@@ -454,7 +462,7 @@
       label: 'Gallery with photos and video',
       blurb: 'A gallery where some slides are video posters. The poster is a real button that opens a dialog — video never plays inline, and the thumb strip treats it like any other slide.',
       data: { 'data-cs-gallery': '' },
-      props: { '--cs-gap': '0px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
@@ -477,7 +485,7 @@
       blurb:
         'A thumbnail that opens the full gallery in a native dialog. Built with data-cs-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure.',
       data: { 'data-cs-gallery': '', 'data-cs-init': 'manual' },
-      props: { '--cs-gap': '0px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
@@ -510,7 +518,7 @@
       label: 'Vehicle cards with a mini gallery',
       blurb:
         'The SRP pattern: a grid of cards, each holding its own small slider of that vehicle’s photos. Many instances on one page is fine — each is independent, and none of them is the page’s main carousel.',
-      props: { '--cs-gap': '0px', '--cs-controls-space': '0.1px', '--cs-arrow-size': '32px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '0.1px', '--cs-controls-space': '0.1px', '--cs-arrow-size': '32px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 200,
       models: VEHICLES,
