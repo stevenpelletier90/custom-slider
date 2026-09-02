@@ -29,6 +29,21 @@
   // number saved before this existed cannot take the page down either.
   const clamp = (v, min, max) => Math.min(max, Math.max(min, Number(v) || 0));
 
+  // The slider's name becomes a CSS class, so it has to be a legal one. Runs of
+  // anything else become a single hyphen rather than being DELETED: deleting
+  // turned "2024 Specials" into `2024specials`, and a class cannot start with a
+  // digit, so the browser threw away all five rules of the copied CSS while the
+  // preview went on looking right - the preview is scoped to a different class.
+  // A leading digit takes a `slider-` prefix for the same reason.
+  const toClass = (v) => {
+    const s = String(v)
+      .toLowerCase()
+      .replace(/[^a-z0-9]+/g, '-')
+      .replace(/^-+|-+$/g, '');
+    if (!s) return '';
+    return /^\d/.test(s) ? `slider-${s}` : s;
+  };
+
   const CHEVY = ['silverado-1500', 'colorado', 'tahoe', 'suburban', 'traverse', 'trax', 'equinox', 'trailblazer'];
   const title = (s) => s.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
@@ -698,10 +713,7 @@ ${VIDEO_DIALOG_CSS}`,
     // first one's rules and both rendered as whichever was last in the
     // document - reported as "adding a second slider breaks the first", and
     // it was not a missed step, the tool handed out one name for everything.
-    state.name = (SHORT[id] ?? id)
-      .toLowerCase()
-      .replace(/[^a-z0-9]+/g, '-')
-      .replace(/^-|-$/g, '');
+    state.name = toClass(SHORT[id] ?? id);
     // Beside the content wherever a card has text an arrow could land on.
     state.gutter = p.gutter ?? !!p.look;
     state.lookProps = {};
@@ -1362,6 +1374,14 @@ ${VIDEO_DIALOG_CSS}`,
   };
   const knobLabel = (k) => KNOB_LABELS[k] ?? k.replace(/^--/, '').replace(/-/g, ' ');
 
+  // A line of explanation under a control, in the panel's own note style.
+  const hintRow = (text) => {
+    const p = document.createElement('p');
+    p.className = 'wb-note';
+    p.textContent = text;
+    return p;
+  };
+
   const control = (label, node) => {
     const row = document.createElement('label');
     row.className = 'wb-row';
@@ -1780,12 +1800,18 @@ ${VIDEO_DIALOG_CSS}`,
     nameBox.type = 'text';
     nameBox.value = state.name;
     nameBox.addEventListener('input', () => {
-      // A CSS class, so only what can legally be one.
-      const clean = nameBox.value.toLowerCase().replace(/[^a-z0-9-]/g, '');
-      state.name = clean || 'my-slider';
+      state.name = toClass(nameBox.value) || 'my-slider';
       render();
     });
+    // Written back when the field is left, not on every keystroke: cleaning as
+    // you type fights the caret the moment you press space. Until then the
+    // field shows what was typed while the code shows the real class, which is
+    // the state the old version left it in permanently.
+    nameBox.addEventListener('change', () => {
+      nameBox.value = state.name;
+    });
     beh.append(control('Name for this slider', nameBox));
+    beh.append(hintRow('This becomes the CSS class the settings hang off — letters, numbers and hyphens.'));
 
     // Never disabled. On a pattern that draws its own cards this changes
     // nothing, and the note below says so - a greyed-out control that will not
