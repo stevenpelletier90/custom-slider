@@ -6,7 +6,7 @@
 // first edit.
 import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { serve, launch, openBuilder, pick } from './helpers.mjs';
+import { serve, launch, openBuilder, pick, copyParts } from './helpers.mjs';
 
 let server, browser, page, errors;
 
@@ -82,12 +82,6 @@ describe('one owner of the slide count', () => {
   });
 });
 
-describe('nothing threw', () => {
-  test('no page errors', () => {
-    assert.deepEqual(errors, []);
-  });
-});
-
 describe('the demo describes what it is actually showing', () => {
   // F075: all six filter-gallery captions described a different photograph
   // than the file they named - a blue Camaro in a desert for a technician
@@ -121,6 +115,56 @@ describe('the demo describes what it is actually showing', () => {
     assert.deepEqual(empty, [], 'these chips filter to nothing');
   });
 
+  // F062: a photo slide was a bare <img> in a <span>, so a caption meant
+  // hand-writing <figure>/<figcaption> and its CSS per slide.
+  const captionBox = (page) => page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Caption")) input').first();
+
+  test('a caption reaches the copied markup, and nothing is emitted without one', async () => {
+    await pick(page, 'gallery');
+    const bare = await copyParts(page);
+    assert.doesNotMatch(bare.html, /<figure|figcaption/, 'an empty caption still ships a figure');
+    assert.match(bare.html, /<span class="cargo-photo">/, 'the uncaptioned slide stopped being the markup that shipped before');
+    // And the rule goes with it: five patterns would otherwise paste a
+    // figcaption rule matching nothing.
+    assert.doesNotMatch(bare.css, /figcaption/, 'an uncaptioned pattern still ships the caption rule');
+
+    await captionBox(page).fill('Courtesy vehicles while you wait');
+    await page.waitForTimeout(250);
+    const done = await copyParts(page);
+    assert.match(done.html, /<figure class="cargo-photo">[\s\S]*?<figcaption>Courtesy vehicles while you wait<\/figcaption>/, 'the caption never reached the markup');
+    assert.match(done.css, /\.cargo-photo figcaption \{/, 'the caption rule is missing from the copied CSS');
+  });
+
+  test('the caption carries its own size and leading, and the figure its own margin', async () => {
+    await pick(page, 'gallery');
+    await captionBox(page).fill('A caption');
+    await page.waitForTimeout(250);
+    const r = await page.evaluate(() => {
+      const f = document.querySelector('#wb-stage figure.cargo-photo');
+      const c = f?.querySelector('figcaption');
+      if (!c) return null;
+      const fs = getComputedStyle(f);
+      const cs = getComputedStyle(c);
+      return { figMargin: `${fs.marginTop} ${fs.marginLeft}`, display: cs.display, size: cs.fontSize, leading: cs.lineHeight };
+    });
+    assert.ok(r, 'no figure rendered');
+    assert.equal(r.figMargin, '0px 0px', `the UA figure margin survived: ${r.figMargin}`);
+    assert.equal(r.display, 'block', 'the caption is not a block');
+    assert.notEqual(r.leading, 'normal', 'the caption takes the host page leading');
+  });
+
+  // F031 must not come back: a box offered where the markup cannot draw it.
+  test('the Caption box is offered only where a caption is drawn', async () => {
+    for (const id of ['hero', 'gallery', 'peek', 'lightbox', 'gallery-filter']) {
+      await pick(page, id);
+      assert.equal(await captionBox(page).count(), 1, `${id}: no Caption box on a pattern whose slide is only a photo`);
+    }
+    for (const id of ['video', 'media-gallery', 'modelbar', 'cards']) {
+      await pick(page, id);
+      assert.equal(await captionBox(page).count(), 0, `${id}: offers a Caption box that goes nowhere`);
+    }
+  });
+
   // F026: brand notes read like a research log - "ladders", "forddemo1",
   // "the census" - none of which is defined anywhere a designer would look.
   test('the brand notes use no in-house jargon', async () => {
@@ -131,5 +175,11 @@ describe('the demo describes what it is actually showing', () => {
         .map(([k]) => k);
     });
     assert.deepEqual(jargon, [], 'these brand notes still use research shorthand');
+  });
+});
+
+describe('nothing threw', () => {
+  test('no page errors', () => {
+    assert.deepEqual(errors, []);
   });
 });

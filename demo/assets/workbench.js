@@ -84,6 +84,29 @@
 
   const pic = (m) => `<img src="${m.img}" width="${m.w ?? 1200}" height="${m.h ?? 750}" alt="${m.alt}" loading="lazy" decoding="async">`;
 
+  // A caption under a photo is the usual second request, and the slide was a
+  // bare <img> in a <span>, so it meant hand-writing <figure>/<figcaption> and
+  // its CSS per slide. Empty stays exactly the markup that shipped before -
+  // a <figure> only appears when there is something to put in it.
+  const photo = (m, attrs = '') => (m.caption ? `<figure class="cargo-photo"${attrs}>${pic(m)}<figcaption>${m.caption}</figcaption></figure>` : `<span class="cargo-photo"${attrs}>${pic(m)}</span>`);
+
+  // Offers the Caption box on a roster. The editor shows a field only where a
+  // row carries the key, so this is the whole opt-in - and it is applied per
+  // pattern rather than to PHOTOS itself, because the video pattern draws the
+  // same rows as .cargo-video and would then have offered a box that goes
+  // nowhere. Media gallery is out for the same reason: its video rows are
+  // <button>s, and a <figcaption> is not allowed inside one.
+  const captioned = (rows) => rows.map((m) => ({ ...m, caption: '' }));
+
+  // One rule for all five photo patterns. A <figure> carries a UA margin of
+  // 1em 40px, so the swap would silently inset every slide; and a <figcaption>
+  // is a block that otherwise takes the host page's font-size and leading -
+  // the same trap the card rules already guard against, one level up.
+  const PHOTO_CSS = '.cargo-photo { display: block; margin: 0; }';
+  // Appended by cssFor only when a slide actually carries a caption, so an
+  // uncaptioned pattern does not paste a rule matching nothing.
+  const PHOTO_CAPTION_CSS = '.cargo-photo figcaption { display: block; margin-block-start: 0.5em; font-size: 0.9em; line-height: 1.5; color: #5f6368; }';
+
   // Tall 3:5 model photography — the "model cards" look, and the reason
   // model-*.jpg is in demo/img.
   // Tall model cards need genuinely tall photography. The only real portrait
@@ -234,11 +257,11 @@
       props: { '--cs-gap': '0.1px', '--cs-controls-space': '2em', '--cs-dot-current': '#16324f' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
-      models: PHOTOS.slice(0, 3),
-      css: `.cargo-photo { display: block; }
+      models: captioned(PHOTOS.slice(0, 3)),
+      css: `${PHOTO_CSS}
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 21 / 9; object-fit: cover; border-radius: 8px; }
 @media (max-width: 767.98px) { .cargo-photo img { aspect-ratio: 4 / 3; } }`,
-      slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),
+      slides: (models) => models.map((m) => photo(m)),
     },
     gallery: {
       gutter: false,
@@ -250,10 +273,10 @@
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
-      models: PHOTOS,
-      css: `.cargo-photo { display: block; }
+      models: captioned(PHOTOS),
+      css: `${PHOTO_CSS}
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }`,
-      slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),
+      slides: (models) => models.map((m) => photo(m)),
     },
     grid: {
       label: 'Two-row grid',
@@ -275,16 +298,16 @@
       props: { '--cs-gap': '1em', '--cs-peek': '3em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 2, 1200: 2 },
       minCard: 240,
-      models: PHOTOS,
+      models: captioned(PHOTOS),
       // The phone override this used to carry - `%root% { --cs-peek: 1.5em }`
       // under 768 - set the value somewhere the Peek knob could not see it, so
       // turning Peek off left 1.5em on phones while the field read 0px. Same
       // shape as the controls-space bug on Tall photos. One owner instead: the
       // knob is the value at every width. Measured at a 320 window, that costs
       // the slide 233px -> 188px on this pattern and nothing anywhere else.
-      css: `.cargo-photo { display: block; }
+      css: `${PHOTO_CSS}
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }`,
-      slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),
+      slides: (models) => models.map((m) => photo(m)),
     },
     video: {
       gutter: false,
@@ -516,7 +539,7 @@ ${VIDEO_DIALOG_CSS}`,
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
-      models: TAGGED,
+      models: captioned(TAGGED),
       // Derived from the photos, so a chip can never offer a category no
       // photo carries - which is what filtering by nothing looks like.
       filters: ['', ...new Set(TAGGED.map((m) => m.tag))],
@@ -531,9 +554,9 @@ ${VIDEO_DIALOG_CSS}`,
 @media (max-width: 767.98px) {
   .cargo-filterbar button { padding-inline: 0.55em; }
 }
-.cargo-photo { display: block; }
+${PHOTO_CSS}
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }`,
-      slides: (models) => models.map((m) => `<span class="cargo-photo" data-tag="${m.tag}">${pic(m)}</span>`),
+      slides: (models) => models.map((m) => photo(m, ` data-tag="${m.tag}"`)),
       script: `document.querySelectorAll('[data-filter-gallery]').forEach((wrap) => {
   const root = wrap.querySelector('.cs');
   const all = [...root.querySelectorAll('.cs-slide')].map((s) => s.cloneNode(true));
@@ -588,7 +611,7 @@ ${VIDEO_DIALOG_CSS}`,
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
-      models: PHOTOS,
+      models: captioned(PHOTOS),
       css: `.cargo-lb-open { display: inline-flex; gap: 0.7em; align-items: center; padding: 0.6em 1em; font: inherit; font-weight: 600; line-height: 1.55; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-lb-open img { inline-size: 68px; block-size: 44px; object-fit: cover; border-radius: 5px; }
 %root% { --cs-dot-current: #fff; --cs-dot-fg: #9aa3ad; }
@@ -596,9 +619,9 @@ ${VIDEO_DIALOG_CSS}`,
 .cargo-lb::backdrop { background: rgba(0, 0, 0, 0.8); }
 .cargo-lb-head { display: flex; align-items: center; justify-content: space-between; padding: 0.6em 0.9em; font-size: 0.9em; line-height: 1.55; color: #fff; }
 .cargo-lb-close { padding: 0.35em 0.85em; font: inherit; line-height: 1.55; color: #fff; cursor: pointer; background: rgba(255, 255, 255, 0.15); border: 0; border-radius: 6px; }
-.cargo-photo { display: block; }
+${PHOTO_CSS}
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: contain; }`,
-      slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),
+      slides: (models) => models.map((m) => photo(m)),
       script: `document.querySelectorAll('[data-lightbox]').forEach((wrap) => {
   const dlg = wrap.querySelector('dialog');
   const root = dlg.querySelector('.cs');
@@ -985,7 +1008,11 @@ ${VIDEO_DIALOG_CSS}`,
     // The card style's rules come from the shared stylesheet; a pattern's own
     // CSS never does, because structural patterns (tabs, filter bar, lightbox)
     // are not card styles and have no entry in it.
-    const body = [state.look && !lib ? scope(LOOKS[state.look].css) : '', p.css ? scope(p.css) : ''].filter(Boolean).join('\n');
+    // The caption rule ships only once a slide has a caption. Every photo
+    // pattern would otherwise paste a figcaption rule matching nothing, the
+    // same dead line the tab and filter-bar rules are already filtered for.
+    const captionCss = p.slides && modelsFor(p).some((m) => m.caption) ? `\n${PHOTO_CAPTION_CSS}` : '';
+    const body = [state.look && !lib ? scope(LOOKS[state.look].css) : '', p.css ? scope(`${p.css}${captionCss}`) : ''].filter(Boolean).join('\n');
     // Arrows either sit in a gutter beside the content or float over it. Last
     // in the sheet so it beats the padding-inline a card look sets for itself -
     // which is exactly why it has to READ the look's value rather than restate
@@ -2141,6 +2168,10 @@ ${VIDEO_DIALOG_CSS}`,
     // bar sat marked invalid to a screen reader with no visible cause.
     img: { label: 'Image URL', type: 'text', hint: '#MISCPATH#your-photo.jpg' },
     alt: { label: 'Alt text', type: 'text', hint: 'What the photo shows — leave empty only if the card text already says it' },
+    // Only offered where the rows carry the key, which is the five patterns
+    // whose slide is nothing but a photo. Empty emits no <figcaption> and no
+    // <figure>, so a pattern nobody captions ships the markup it always did.
+    caption: { label: 'Caption', type: 'text', hint: 'Printed under the photo. Say something the alt text does not, or leave it empty' },
     w: { label: 'Source width', type: 'number', hint: 'Real pixel width of the file' },
     h: { label: 'Source height', type: 'number', hint: 'Real pixel height of the file' },
     name: { label: 'Heading', type: 'text' },
