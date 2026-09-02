@@ -77,13 +77,61 @@
     'The engine injects controls only. Every heading, link and image comes from your HTML, so the content is there for search engines and with JavaScript off.',
   ];
 
+  // This page was written for whoever might edit the engine, and handed to
+  // designers who do not. Every word below appears further down the page
+  // without ever being defined there.
+  const GLOSSARY = [
+    '<b>Slider</b> — the whole thing: the row of cards, the arrows and the dots. Called a carousel in most other libraries, and the two words mean the same here.',
+    '<b>The engine</b> — the two files every site links, <code>custom-slider.css</code> and <code>custom-slider.js</code>. They are shared: added once per site, not once per slider.',
+    '<b>Root</b> — the outer <code>&lt;div class="my-slider cs"&gt;</code>. Settings are written on it, and its own class is what your CSS hangs off.',
+    '<b>Track</b> — the <code>&lt;ul&gt;</code> or <code>&lt;div&gt;</code> inside the root that actually scrolls. One per slider.',
+    '<b>Slide</b> — one <code>&lt;li class="cs-slide"&gt;</code>: one card, one photo, one panel. One scroll stop.',
+    "<b><code>cs-</code> classes</b> — the engine's own: <code>cs</code>, <code>cs-track</code>, <code>cs-slide</code>, <code>cs-arrow</code>. Do not rename them; the engine looks for them by name.",
+    '<b><code>cargo-</code> classes</b> — the card styles that come with the builder: <code>cargo-tile</code>, <code>cargo-vcard</code> and the rest. These are how a card looks, not how it scrolls.',
+    '<b>Auto-init</b> — the <code>data-cs</code> attribute on the root. It is what tells the engine "this one is mine, start it" when the page loads. Without it nothing happens.',
+    '<b>Markup contract</b> — the handful of class names and attributes the engine promises never to rename, so a page built today still works after the engine is updated.',
+    '<b>Scroll-snap</b> — the browser feature that makes the row come to rest on a card instead of halfway between two. It is CSS, and it works before any JavaScript runs.',
+    '<b>Per view</b> — how many cards are across at once. Set in CSS, per breakpoint, which is why there is no JavaScript option for it.',
+    '<b>Page vs slide</b> — arrows move a whole page (all the cards on screen) by default. <code>data-cs-step="slide"</code> moves one card at a time.',
+    '<b>Rewind</b> — what happens at the last card: the slider scrolls back to the first. There are no cloned slides, so it is a scroll back, not an endless loop.',
+    "<b>Reduced motion</b> — a setting in the visitor's own operating system. When it is on, nothing rotates and moves happen instantly rather than sliding.",
+    "<b>768 / 992 / 1200</b> — the widths the platform's grid changes at. It is Bootstrap 3, which has no 576 breakpoint, so match these three and the strip flips where the page flips.",
+  ];
+
   const LIMITS = [
     'Left-to-right only in v1.',
+    "No “slider on a phone, plain grid on a desktop”. Wrapping the track onto two rows leaves the arrows and dots in place over something that no longer scrolls. What works instead: set the desktop count to the number of slides, and the engine hides its own arrows and dots once everything fits (it marks the root <code>data-cs-fits</code>). That route needs 8 slides or fewer, because the per-view ladder stops at 8. For a real two-row desktop grid, use the page's own grid classes and no slider at all.",
     'No infinite loop and no cloned slides: the ends rewind, or stop with <code>data-cs-rewind="false"</code>. Cloning would duplicate content for search engines and confuse screen readers.',
     '<code>data-cs-gallery</code> with <code>data-cs-autoplay</code> is unsupported — autoplay is ignored and warns in the console.',
     '<code>data-cs-gallery</code> with <code>data-cs-fade</code> is unsupported — fade is ignored and warns in the console.',
     'Slides-per-view is CSS only, by design. There is no JavaScript breakpoint option and there will not be one.',
     'Do not hide a slide with CSS to show different cards at different widths. A hidden slide is still in the list, so the announced total, the paging and the current position all count it — “Slides 1 to 3 of 6” with five on screen, and one arrow click landing on the slide nobody can see. Use <code>&lt;picture&gt;</code> for per-breakpoint artwork, or two sliders.',
+  ];
+
+  // Size and the four colours are knobs in the builder. Shape, position, hiding
+  // and the glyph are not, and are the restyles asked for most - so they are
+  // written out here instead. Each is scoped `.my-slider ...` so it beats the
+  // engine's own rule whichever order the sheets land in, and each is exercised
+  // by tests/recipes.test.mjs against a real pasted slider, so a recipe that
+  // stopped working fails the build rather than a designer's afternoon.
+  const ARROW_RECIPES = [
+    ['Square, not round', '.my-slider .cs-arrow { border-radius: 0; }'],
+    ['Hidden on phones (the strip still swipes)', '@media (max-width: 767.98px) {\n  .my-slider .cs-arrow { display: none; }\n}'],
+    [
+      'A full-height hit area down each side',
+      // Not `block-size: 100%`: the arrow is positioned against the root, and
+      // the root is taller than the cards by the strip reserved for the dots -
+      // so 100% puts the arrow over them. Measured 360.1px against a 325px row.
+      '.my-slider .cs-arrow {\n  top: 0;\n  block-size: calc(100% - var(--cs-controls-space));\n  border-radius: 0;\n  transform: none;\n}',
+    ],
+    [
+      'Outside the cards rather than over them',
+      '.my-slider .cs-arrow--prev { inset-inline-start: -52px; }\n.my-slider .cs-arrow--next { inset-inline-end: -52px; }\n\n/* Only if the row has 52px of room either side to give. */',
+    ],
+    [
+      'Your own glyph instead of the chevron',
+      '.my-slider .cs-arrow svg { display: none; }\n.my-slider .cs-arrow--prev::before { content: "‹"; }\n.my-slider .cs-arrow--next::before { content: "›"; }',
+    ],
   ];
 
   const MARKUP = `<div class="my-slider cs" data-cs aria-label="New vehicles">
@@ -216,6 +264,11 @@
     const propRows = props.map(([name, val]) => [name, val, NOTES[name] ?? '']);
 
     el.innerHTML = `
+      <section id="g-glossary"><h3>The words on this page</h3>
+        <p>The rest of this page uses these without stopping to explain them.</p>
+        ${list(GLOSSARY)}
+      </section>
+
       <section id="g-markup"><h3>The markup contract</h3>
         <p>This is the whole of it. Class names, data attributes and the <code>--cs-*</code> properties are frozen — sites cannot be edited when the engine changes, so things get added, never renamed.</p>
         <pre class="g-code"><code>${globalThis.CARGO.hl.html(MARKUP)}</code></pre>
@@ -282,15 +335,41 @@
       </section>
 
       <section id="g-cms"><h3>Putting it on a DealerOn site</h3>
+        <p><strong>Link the two engine files. That is the route.</strong> Paste the engine into the page only where a site will not let you upload files — a pasted copy is frozen at the build you took it from and has to be pasted again after every update, on every page. The Build page says the same thing, and the full instructions — the CMS fields, what the minifier does to your CSS, replacement codes and cache-busting — are in <a href="https://github.com/stevenpelletier90/custom-slider/blob/master/docs/cms-implementation.md">cms-implementation.md</a>.</p>
         ${list([
-          'The two engine files are linked with a <code>&lt;link&gt;</code> and a <code>&lt;script&gt;</code> in the <strong>Head Section</strong> tab — the one that takes HTML verbatim, not “Style Only, Head Section”, which takes raw CSS and would swallow a tag. They live at <code>/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/</code>, one copy per site.',
+          'The two engine files are linked with a <code>&lt;link&gt;</code> and a <code>&lt;script&gt;</code> in the <strong>Head Section</strong> tab — the one that takes HTML verbatim, not “Style Only, Head Section”, which takes raw CSS and would swallow a tag. They live at <code>/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/</code>, one copy per site. The <code>&lt;script&gt;</code> may sit in <strong>Body Section, Bottom</strong> instead if you prefer it there; the <code>&lt;link&gt;</code> may not.',
           "Your slider's own CSS goes in <strong>Style Only</strong>, the markup in a <strong>Custom HTML</strong> block, and a pattern's script in <strong>Body Section, Bottom</strong>. The Build page has a Copy button per field, because the three cannot go in as one paste.",
           "<strong>Every slider on a page needs its own name.</strong> The name is a class on the root — <code>my-slider</code> — and it is what the CSS hangs off. Paste two sliders sharing a name and the second block's rules win for both, silently: a pair of model bars measured the first taking the second's gap, its slides going 208.6px to 180.6px. The Build page keeps that field next to its copy buttons.",
           'Style Only takes <strong>raw CSS</strong> — no <code>&lt;style&gt;</code> tags and no comments. A tag pasted into it is read as part of the first selector, so that rule is dropped and the settings it carried go with it, silently.',
           'Both engine files are shared — add them once per site, not once per slider. Several sliders on one page is fine and expected.',
-          'Images: use the DealerOn library or dealer-owned assets, reference uploads through <code>#MISCPATH#</code>, and keep platform <code>/static/</code> paths literal.',
+          "Images, worked through. Every example photo the builder gives you is already a platform path and needs nothing uploading — a library photo copies out as <code>/static/industry-automotive/…</code> and a vehicle cutout as <code>/assets/stock/…</code>. Paste those exactly as they come; they resolve on any dealer domain. It is only when you replace one with <em>your own</em> upload that you write <code>#MISCPATH#</code>: upload <code>hero.jpg</code> to the site, then reference it as <code>#MISCPATH#hero.jpg</code>, and the platform expands that to the dealer's own uploads folder — <code>/uploads/&lt;dealer&gt;/hero.jpg</code> or wherever that site keeps them, which differs per dealer. Never type that folder yourself.",
           'The platform is Bootstrap 3. Its grid breaks at <strong>768 / 992 / 1200</strong> — there is no 576. Match those so the strip flips where the page flips.',
         ])}
+      </section>
+
+      <section id="g-arrows"><h3>Restyling the arrows</h3>
+        <p>Size and the four colours are settings in the builder. These are the rest, and they go in <strong>Style Only</strong> with your slider's own CSS. Swap <code>my-slider</code> for whatever you named yours.</p>
+        ${ARROW_RECIPES.map(([name, css]) => `<h4 class="g-recipe">${esc(name)}</h4><pre class="g-code"><code>${esc(css)}</code></pre>`).join('\n')}
+        <p class="g-sub">There is deliberately no setting for the arrow glyph. It is one inline SVG in the engine, shared by every slider on the site; a per-slider option would mean the engine carrying an icon set nobody asked for.</p>
+      </section>
+
+      <section id="g-images"><h3>What size to upload</h3>
+        <p>Each pattern crops to a fixed shape, so an upload that is the wrong shape is cropped, not letterboxed. Upload at the width below or a little over — never far over, since the file is served as-is.</p>
+        ${table(
+          ['Pattern', 'Shape', 'Upload'],
+          [
+            ['Hero banner', '21:9 on desktop, 4:3 under 768', '1600×686. It crops to 4:3 on a phone, so keep the subject centred.'],
+            ['Photo gallery, Peek, Filterable gallery', '16:10', '1200×750'],
+            ['Lightbox', 'uncropped — the whole photo is shown', '1600 wide; the dialog fits it to the space'],
+            ['Vehicle card', '4:3', '800×600'],
+            ['Cutout tile', 'as supplied', '640×480 transparent PNG, or a <code>#CHROMEPHOTOPATH#</code> code'],
+            ['Tall photo card', '3:5', '600×1000'],
+            ['Split photo card', '1:1 on the photo half', '800×800'],
+            ['Location card', 'as supplied', '800 wide'],
+            ['Logo strip', 'as supplied', 'transparent PNG or SVG, 300 wide is plenty'],
+          ],
+        )}
+        <p class="g-sub">The platform can resize a library image on the way out with <code>?width=N</code> on the path — 800 for a card, 1200 for anything full width. Always fill in the width and height boxes with the file's real pixel size: they are what stops the page jumping as photos load.</p>
       </section>
 
       <section id="g-limits"><h3>Limits in v1</h3>
@@ -301,5 +380,7 @@
   // NOTES and CARD_NOTES go out too: the builder shows them as tooltips on its
   // own knobs, so a designer does not have to leave the page to find out what a
   // setting does - and there is one set of words rather than two that drift.
-  globalThis.CARGO = Object.assign(globalThis.CARGO || {}, { guide: { render, OPTIONS, NOTES, CARD_NOTES } });
+  // ARROW_RECIPES is exported so tests/recipes.test.mjs can apply each one to a
+  // real pasted slider: a recipe this page publishes has to still work.
+  globalThis.CARGO = Object.assign(globalThis.CARGO || {}, { guide: { render, OPTIONS, NOTES, CARD_NOTES, ARROW_RECIPES } });
 })();

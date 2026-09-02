@@ -1284,6 +1284,14 @@ code {
   margin-block-start: 1.5rem;
 }
 
+/* The name over each arrow recipe. Sits tight to the block it labels, so a
+   list of them reads as pairs rather than as one wall of code. */
+.g-recipe {
+  margin-block: 1.5rem -0.5rem;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
 .ui-toc {
   display: flex;
   flex-wrap: wrap;

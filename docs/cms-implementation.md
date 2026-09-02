@@ -156,7 +156,8 @@ it. Do not put slider CSS in the block itself.
 
 ### The minifier's rules (live-tested on dealer 26900, 2026-08-20)
 
-The styleCode minifier has two behaviors every recipe must respect:
+The styleCode minifier has two **probed** behaviors every recipe must respect,
+and one shape that has **not** been probed — see the note after them.
 
 - **Modern function values inside custom-property declarations fail the whole
   sheet.** `--cs-peek: clamp(32px, 9vw, 60px)` and
@@ -179,6 +180,17 @@ var(--cs-per-view))` falls back to `auto` and every card collapses to its
   and WebKit behave identically — an earlier version of this bullet called
   Chrome "lenient" here, which was wrong, and six patterns shipped `0px` on the
   strength of it. `0.1px` survives minification (it serves as `.1px`).
+
+**Unprobed: `calc()` with a `var()` inside a `--*` declaration.** The two rules
+above were tested live; this shape was not, and the list above reads as though
+it were exhaustive. It is not. Nine such declarations reach Style Only today —
+six from `--strip-pad-x: calc(var(--cs-arrow-size) + 0.4em)` when the card
+styles are pasted inline, and three in `dist/paste/1-style-only.css`, which
+§"no hosting" tells you to paste whole. If the minifier treats `calc(var(…))`
+the way it treats `clamp()`, those sheets fail silently and the page serves the
+last one that minified. **Probe it on a test dealer before the first upload:**
+put `--probe: calc(var(--x) + 1px)` in styleCode on its own, publish, and check
+whether the sheet still serves. Record the result here either way.
 
 Also expect **site CSS to outrank recipe classes**: OEM styles commonly set
 link decoration at id specificity (`#content-main a`), which beats
@@ -252,10 +264,16 @@ The slider is ordinary block HTML, so the usual rules apply unchanged:
   (wide `#CONTACTUSW|#`, narrow `#CONTACTUSN|#`) — rather than hardcoding it.
 - **`%(…)` SEO codes NEVER resolve inside a Custom HTML block.** They work only
   in the platform's own SEO fields. Do not put them in slide copy.
-- **Uploaded images:** reference flat as `#MISCPATH#<file>`, never a hardcoded
-  `/static/dealer-<id>/…`. Verify the served URL after uploading — subfolder
-  behavior is per-dealer. Platform-shared assets
-  (`/static/industry-automotive/…`, `/static/brand-<make>/…`) stay literal.
+- **Images: every example the builder gives you already resolves.** Library
+  photos copy out as `/static/industry-automotive/…`, cutouts as
+  `/assets/stock/…` or `/static/brand-<make>/…`. All three are platform-shared,
+  serve the same bytes on any dealer domain, and are pasted **literally** — a
+  snippet taken from the workbench needs nothing uploaded. Verified: zero of the
+  17 patterns emit a `#MISCPATH#` today.
+- **`#MISCPATH#` is for images you upload yourself.** Upload `hero.jpg` to the
+  site, then reference it flat as `#MISCPATH#hero.jpg`; the platform expands it
+  to that dealer's own uploads folder. Never write the expanded path by hand —
+  subfolder behaviour is per-dealer, so verify the served URL after uploading.
 - **Vehicle cutouts for a model bar:** `#CHROMEPHOTOPATH|<StyleID>|<angle>|<size>#`
   — Style IDs from the Chrome Photo Builder. Angle 1 at 640 is what the demo uses.
 - **The demo's copy panel already does this for you.** What you paste out of the

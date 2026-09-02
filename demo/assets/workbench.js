@@ -1265,12 +1265,18 @@ ${PHOTO_CSS}
   // file was proved by SHA-1 against the image this demo displays, which is why
   // the swap cannot quietly point at a different car than the preview shows.
   //
-  // An image with no platform equivalent - the Unsplash photography behind the
-  // gallery, review and service patterns - becomes `#MISCPATH#<file>`, the house
-  // convention for the dealer's own gallery upload. It does not resolve until
-  // they upload one, which is the honest answer for a slot that is theirs to
-  // fill, and it reads as "put your image here" rather than as a link that
-  // looks like it might already work.
+  // An image with no platform equivalent becomes `#MISCPATH#<file>`, the house
+  // convention for the dealer's own upload: it does not resolve until they
+  // upload one, which is the honest answer for a slot that is theirs to fill,
+  // and it reads as "put your image here" rather than as a link that looks like
+  // it might already work.
+  //
+  // As of the cms-paths harvest this branch is DEAD for everything shipped:
+  // all 17 patterns map every image to a platform path, so zero snippets
+  // contain a #MISCPATH#. It is kept because it is the fallback for an image
+  // added later, and because a designer who types their own upload into the
+  // editor still needs the convention. This comment used to say the gallery,
+  // review and service photography took this route; those are all mapped now.
   //
   // Done as one pass over the finished markup on purpose: every producer -
   // look, pattern slides(), card grid, lightbox thumb - emits src="img/...",
@@ -2096,7 +2102,11 @@ ${PHOTO_CSS}
     // know the attribute and hand-edit the snippet.
     const ends = document.createElement('select');
     for (const [v, label] of [
-      ['', 'Wrap around'],
+      // F055: "Wrap around" reads as an endless loop to anyone coming from
+      // slick, which loops by cloning - 51 of the 55 OEM model bars surveyed
+      // do. This one scrolls back to the first card instead, visibly, and the
+      // question "why does it jump back?" was going to be the first one asked.
+      ['', 'Wrap around (scrolls back to the first)'],
       ['false', 'Stop at the ends'],
     ]) {
       const o = document.createElement('option');
@@ -2115,7 +2125,13 @@ ${PHOTO_CSS}
       else delete state.data['data-cs-rewind'];
       render();
     });
-    beh.append(control(autoplaying ? 'At the ends (autoplay always wraps)' : 'At the ends', ends));
+    beh.append(
+      control(
+        autoplaying ? 'At the ends (autoplay always wraps)' : 'At the ends',
+        ends,
+        'There are no cloned slides, so wrapping is a scroll back to the first card rather than an endless loop. Cloning would duplicate the content for search engines and make a screen reader count every card twice.',
+      ),
+    );
 
     // Not offered in gallery mode: those four patterns draw a thumbnail strip
     // and have no dots at all, so the switch added a rule matching nothing and
