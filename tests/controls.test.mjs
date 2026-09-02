@@ -6,7 +6,7 @@
 // never caught any of them.
 import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { serve, launch, openBuilder, pick, setField } from './helpers.mjs';
+import { serve, launch, openBuilder, pick, setField, copyParts } from './helpers.mjs';
 
 let server, browser, page, errors;
 
@@ -171,6 +171,116 @@ describe('a knob the page actually reads', () => {
     assert.ok(r.flagged, 'a non-length Side gutter was not flagged');
     assert.equal(r.emitted, null, 'the refused value reached the copied CSS');
     assert.ok(r.pad > 0, `the arrow channel collapsed to ${r.pad}px, so the arrow lands on the first card`);
+  });
+});
+
+describe('the rotation the hero was born with is a control, not a literal', () => {
+  // F054: data-cs-autoplay has been a first-class engine option all along and
+  // the panel never showed it. The hero shipped it hard-wired at 5000 and no
+  // other pattern could turn it on, so slowing a hero, holding one still, or
+  // rotating a testimonial strip all meant knowing the attribute and editing
+  // the copied markup by hand.
+  const ROW = 'Rotate every (ms, 0 = off)';
+  const rotate = (page) => page.locator(`#wb-settings label.wb-row:has(> span:text-is("${ROW}")) input`).first();
+  const set = async (page, v) => {
+    await rotate(page).fill(v);
+    await rotate(page).dispatchEvent('change');
+    await page.waitForTimeout(250);
+  };
+  const code = (page) => page.evaluate(() => document.getElementById('wb-code').textContent);
+
+  test('the field shows the hero the timer it is actually running', async () => {
+    await pick(page, 'hero');
+    assert.equal(await rotate(page).inputValue(), '5000', 'the field invented its own value beside the hero 5000');
+    assert.match(await code(page), /data-cs-autoplay="5000"/, 'the hero stopped shipping its timer');
+  });
+
+  test('zero takes the attribute away instead of writing a zero', async () => {
+    await pick(page, 'hero');
+    await set(page, '0');
+    assert.doesNotMatch(await code(page), /data-cs-autoplay/, 'off still ships the attribute');
+  });
+
+  test('a strip that never rotated can be told to', async () => {
+    await pick(page, 'reviews');
+    await set(page, '7000');
+    assert.match(await code(page), /data-cs-autoplay="7000"/, 'the value never reached the snippet');
+  });
+
+  // A number input refuses letters outright, so the reachable bad values are a
+  // negative (every engine guard is `> 0`, so it would silently do nothing) and
+  // an empty box - the F022 shape, where a cleared field emitted the property
+  // with no value at all.
+  test('a value the engine would misread is refused', async () => {
+    await pick(page, 'reviews');
+    for (const bad of ['-500', '']) {
+      await set(page, '3000');
+      assert.match(await code(page), /data-cs-autoplay="3000"/, 'the set-up value did not take');
+      await set(page, bad);
+      assert.doesNotMatch(await code(page), /data-cs-autoplay/, `"${bad}" reached the attribute`);
+    }
+  });
+
+  test('turning it on drops the rewind the engine would have overridden', async () => {
+    await pick(page, 'models');
+    assert.match(await code(page), /data-cs-rewind="false"/, 'Tall photos no longer ships rewind=false, so this guards nothing');
+    await set(page, '4000');
+    assert.doesNotMatch(await code(page), /data-cs-rewind/, 'the snippet would console-warn on every page that runs it');
+  });
+
+  test('it is not offered where the engine throws it away', async () => {
+    for (const id of ['gallery', 'gallery-filter', 'media-gallery', 'lightbox']) {
+      await pick(page, id);
+      assert.equal(await rotate(page).count(), 0, `${id}: gallery mode offers a timer the engine discards`);
+    }
+  });
+});
+
+describe('peek is offered wherever it can do something', () => {
+  // F058: the row appeared only where the pattern had already set --cs-peek,
+  // which was the one pattern named after it. "Show a sliver of the next car"
+  // lands on a model bar just as often.
+  test('a scrolling strip can show a sliver of the next card', async () => {
+    for (const id of ['modelbar', 'cards', 'grid', 'service']) {
+      await pick(page, id);
+      assert.equal(await hasKnob(page, 'Peek'), true, `${id}: no Peek row`);
+    }
+  });
+
+  test('off ships no declaration at all', async () => {
+    await pick(page, 'modelbar');
+    assert.equal(await knob(page, 'Peek'), '0px', 'Peek does not start off');
+    const { css } = await copyParts(page);
+    assert.doesNotMatch(css, /--cs-peek/, '0px is the engine default and should never be written');
+  });
+
+  test('a value reaches the copied CSS and narrows the card', async () => {
+    await pick(page, 'modelbar');
+    const wide = await page.evaluate(() => document.querySelector('#wb-stage .cs-slide').getBoundingClientRect().width);
+    await setField(page, 'Peek', '2em');
+    await page.waitForTimeout(250);
+    const narrow = await page.evaluate(() => document.querySelector('#wb-stage .cs-slide').getBoundingClientRect().width);
+    const { css } = await copyParts(page);
+    assert.match(css, /--cs-peek:\s*2em/, 'the value never reached the copied CSS');
+    assert.ok(narrow < wide, `the slide did not narrow: ${wide} -> ${narrow}`);
+  });
+
+  test('not offered where the track padding is overridden away', async () => {
+    for (const id of ['hero', 'gallery', 'lightbox']) {
+      await pick(page, id);
+      assert.equal(await hasKnob(page, 'Peek'), false, `${id}: offers a Peek the track rule ignores`);
+    }
+  });
+
+  // The pattern named after peek set its phone value in its CSS rather than its
+  // props, so turning Peek off left 1.5em under 768 while the field read 0px -
+  // the same shape as the controls-space bug on Tall photos.
+  test('turning Peek off leaves nothing behind on phones', async () => {
+    await pick(page, 'peek');
+    await setField(page, 'Peek', '0px');
+    await page.waitForTimeout(250);
+    const { css } = await copyParts(page);
+    assert.doesNotMatch(css, /--cs-peek/, 'a media query still sets peek where the knob cannot see it');
   });
 });
 

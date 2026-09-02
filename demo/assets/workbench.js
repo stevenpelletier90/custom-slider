@@ -276,9 +276,14 @@
       perView: { base: 1, 768: 1, 992: 2, 1200: 2 },
       minCard: 240,
       models: PHOTOS,
+      // The phone override this used to carry - `%root% { --cs-peek: 1.5em }`
+      // under 768 - set the value somewhere the Peek knob could not see it, so
+      // turning Peek off left 1.5em on phones while the field read 0px. Same
+      // shape as the controls-space bug on Tall photos. One owner instead: the
+      // knob is the value at every width. Measured at a 320 window, that costs
+      // the slide 233px -> 188px on this pattern and nothing anywhere else.
       css: `.cargo-photo { display: block; }
-.cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
-@media (max-width: 767.98px) { %root% { --cs-peek: 1.5em; } }`,
+.cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }`,
       slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),
     },
     video: {
@@ -1722,6 +1727,11 @@ ${VIDEO_DIALOG_CSS}`,
     // the only pattern that carries the attribute today, but read it off the
     // state rather than the pattern id so a second fading pattern is covered.
     const fading = state.data['data-cs-fade'] != null;
+    // A horizontal scroll strip, which is what the track's padding and snap
+    // physics need to exist for. Derived from the same two attributes rather
+    // than a hand-kept list of pattern ids, so a pattern added later is
+    // classified the day it ships.
+    const scrolling = !fading && state.data['data-cs-gallery'] == null;
 
     const grid = document.createElement('div');
     for (const key of ['base', ...BPS]) {
@@ -1880,7 +1890,21 @@ ${VIDEO_DIALOG_CSS}`,
     const colors = document.createElement('div');
     colors.append(colorRow('Arrow colour', '--cs-arrow-fg', state.props));
     colors.append(colorRow('Arrow background', '--cs-arrow-bg', state.props));
-    if (state.props['--cs-peek'] != null) colors.append(valueRow('Peek', '--cs-peek', state.props));
+    // "Show a sliver of the next car" lands on a model bar as often as on the
+    // pattern named after it, so the row is offered wherever it can do
+    // something rather than only where the pattern pre-set it. Not under fade
+    // or gallery: `.cs[data-cs-fade-on] .cs-track` and the gallery's own track
+    // rule both win over `.cs-track { padding: 0 var(--cs-peek) }`, so the
+    // field would move nothing and lie about it.
+    //
+    // Off is `0px`, not the dot row's `0.1px`. It is the engine's own default,
+    // so cssFor()'s delta filter drops it before it is written - it never
+    // reaches the platform minifier to be stripped to a unitless `0`, and off
+    // costs no declaration on any of the twelve patterns this now appears on.
+    if (scrolling) {
+      state.props['--cs-peek'] ??= '0px';
+      colors.append(valueRow('Peek', '--cs-peek', state.props));
+    }
     state.props['--cs-gap'] ??= '1em';
     colors.append(valueRow(fading ? 'Gap (a crossfade has no gap)' : 'Gap', '--cs-gap', state.props));
     // Everything inside a card is sized in em off this. `1em` inherits the host
@@ -1932,6 +1956,43 @@ ${VIDEO_DIALOG_CSS}`,
       render();
     });
     beh.append(control(fading ? 'Arrows move (a crossfade always moves 1)' : 'Arrows move', step));
+
+    // data-cs-autoplay has been a first-class engine option all along, and the
+    // panel never showed it: the hero carried it hard-wired at 5000, and no
+    // other pattern could turn it on. Slowing a hero, holding one still, or
+    // rotating a testimonial strip all meant knowing the attribute and editing
+    // the copied markup by hand.
+    //
+    // Read straight off state.data, so the hero's own 5000 IS this field's
+    // value rather than a literal sitting beside a control that invented its
+    // own. Not offered in gallery mode: the engine throws autoplay away there
+    // and says so in a console warning, and a control that writes an attribute
+    // the engine discards is the plainest kind of lying control.
+    if (state.data['data-cs-gallery'] == null) {
+      const auto = document.createElement('input');
+      auto.type = 'number';
+      auto.min = '0';
+      auto.step = '500';
+      auto.value = state.data['data-cs-autoplay'] ?? '0';
+      auto.addEventListener('change', () => {
+        // Whole milliseconds above zero, or no attribute at all. htmlFor drops
+        // a data value into a double-quoted attribute unescaped, and the
+        // engine's parseInt would take "5s" and rotate every 5 milliseconds.
+        const n = parseInt(auto.value, 10);
+        if (Number.isFinite(n) && n > 0) {
+          state.data['data-cs-autoplay'] = String(n);
+          // The engine forces rewind back on under autoplay - a strip that
+          // rotates to the last slide and stops dead reads as broken - and
+          // warns when it does. Tall photos ships data-cs-rewind="false", so
+          // without this every dealer page running it would log that warning.
+          delete state.data['data-cs-rewind'];
+        } else delete state.data['data-cs-autoplay'];
+        auto.value = state.data['data-cs-autoplay'] ?? '0';
+        buildPanel(); // "At the ends" reads the autoplay state as it is built
+        render();
+      });
+      beh.append(control('Rotate every (ms, 0 = off)', auto, 'Zero of the 55 OEM model bars surveyed rotate. Rotation belongs on a hero; a strip of cards is easier to read holding still.'));
+    }
 
     // data-cs-rewind has been in the engine and the reference all along; it was
     // just unreachable from here, so the only way to stop at the ends was to
