@@ -380,7 +380,7 @@
       slides: (models) =>
         models.map(
           (m) =>
-            `<a class="cargo-svc" href="${m.href}"><span class="cargo-media"><img src="${m.img}" width="1200" height="750" alt="" loading="lazy" decoding="async"></span><h3>${m.name}</h3><p>${m.blurb}</p><span class="cargo-svc-more" aria-hidden="true">Read more →</span></a>`,
+            `<a class="cargo-svc" href="${m.href}"><span class="cargo-media"><img src="${m.img}" width="1200" height="750" alt="" loading="lazy" decoding="async"></span><h3>${m.name}</h3><p>${m.blurb}</p><span class="cargo-svc-more" aria-hidden="true">Read more &#8594;</span></a>`,
         ),
     },
 

@@ -66,6 +66,32 @@ if (drift) {
 
 // One sheet per pattern and per card look, named so a failure says which.
 const sheets = [...Object.keys(PATTERNS).map((id) => [`pattern “${id}”`, renderPattern(id, 'demo').css]), ...Object.keys(LOOKS).map((id) => [`look “${id}”`, renderLook(id, 'demo').css])];
+// The markup too, for the encoding scan below.
+const markup = [...Object.keys(PATTERNS).map((id) => [`pattern “${id}”`, renderPattern(id, 'demo').html]), ...Object.keys(LOOKS).map((id) => [`look “${id}”`, renderLook(id, 'demo').html])];
+
+// CMS block storage is Windows-1252. A character outside that code page comes
+// back mangled on the storefront - the service cards shipped a literal → six
+// times, which is U+2192 and not in 1252. Entity-encode instead: `&#8594;` is
+// plain ASCII and survives the round trip, the same reason the review stars
+// ship as &starf;/&star; and the play triangle as &#9654;.
+//
+// Curly quotes, en/em dashes and the ellipsis ARE in 1252 and are fine, which
+// is why this checks the code page rather than banning non-ASCII.
+const CP1252_EXTRA = new Set([
+  0x20ac, 0x201a, 0x0192, 0x201e, 0x2026, 0x2020, 0x2021, 0x02c6, 0x2030, 0x0160, 0x2039, 0x0152, 0x017d, 0x2018, 0x2019, 0x201c, 0x201d, 0x2022, 0x2013, 0x2014, 0x02dc, 0x2122, 0x0161, 0x203a,
+  0x0153, 0x017e, 0x0178,
+]);
+const inCp1252 = (cp) => cp <= 0x7e || (cp >= 0xa0 && cp <= 0xff) || CP1252_EXTRA.has(cp);
+const encodingProblems = [];
+for (const [name, html] of markup) {
+  const seen = new Set();
+  for (const ch of html) {
+    const cp = ch.codePointAt(0);
+    if (inCp1252(cp) || seen.has(cp)) continue;
+    seen.add(cp);
+    encodingProblems.push(`  ${name} [not-windows-1252] "${ch}" (U+${cp.toString(16).toUpperCase().padStart(4, '0')}) - CMS block storage cannot hold it; write &#${cp};`);
+  }
+}
 
 // A zero length in a custom property is a platform bug stylelint cannot see.
 // The styleCode minifier strips the unit off any zero, and a unitless 0 makes
@@ -75,7 +101,8 @@ const sheets = [...Object.keys(PATTERNS).map((id) => [`pattern “${id}”`, ren
 // matched: --name-order: 0 is an integer for `order`, where 0 is correct.
 const ZERO_LENGTH = /(--[\w-]+)\s*:\s*(0(?:px|em|rem|ex|ch|%|vw|vh|vmin|vmax|cm|mm|in|pt|pc|q))\b/gi;
 
-let problems = 0;
+let problems = encodingProblems.length;
+for (const line of encodingProblems) console.error(line);
 
 // Reported once per sheet and declaration, however many routes find it: the
 // same 0px shows up in a pattern's props map and again in the sheet built from
