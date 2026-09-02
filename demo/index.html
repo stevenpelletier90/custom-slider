@@ -129,11 +129,11 @@
           <span class="ui-spec-item"><b>Card size</b> <span id="spec-card">—</span></span>
           <span class="ui-spec-item"><b>Cards shown</b> <span id="spec-across">—</span></span>
           <span class="ui-spec-item"><b>Gap</b> <span id="spec-gap">—</span></span>
-          <span class="ui-spec-item"><b>Arrow clicks</b> <span id="spec-stops">—</span></span>
+          <span class="ui-spec-item"><b>Stops</b> <span id="spec-stops">—</span></span>
           <span class="ui-spec-item"><b>Shows</b> <span id="spec-controls">—</span></span>
           <span class="ui-spec-item"
-            ><b>Room to spare</b> <span class="ui-gauge"><i id="spec-gauge"></i></span
-          ></span>
+            ><b>Room to spare</b> <span class="ui-gauge"><i id="spec-gauge"></i></span> <span id="spec-spare">—</span></span
+          >
           <span class="ui-spec-note" id="wb-warn" hidden></span>
         </div>
 
@@ -146,6 +146,10 @@
             <span class="ui-content-acts">
               <button type="button" class="ui-btn" id="wb-content-add">Add a slide</button>
               <button type="button" class="ui-btn" id="wb-content-reset">Use the example content</button>
+              <!-- Shown only when there is something to put back: three
+                   things discard edited slides, and one of them (a brand
+                   preset) used to do it with no warning at all. -->
+              <button type="button" class="ui-btn" id="wb-content-undo" hidden>Undo</button>
             </span>
           </div>
           <div id="wb-content"></div>

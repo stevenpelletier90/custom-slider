@@ -123,14 +123,19 @@
     ['#2e7d32', 'Gene &amp; Marta L.', 'a week ago', 5, "Five years of oil changes and never an upsell. That's why we come back."],
   ].map(([bg, name, when, stars, quote]) => ({ bg, name, when, stars, quote }));
 
+  // Real pixel sizes, read off the files. cms-paths.js maps all six to real
+  // platform paths, so whatever is declared here ships to a dealer page as-is -
+  // and width/height are what reserve the space before the photo arrives, which
+  // is what stops the page jumping. These used to be hard-coded 1200x750 on
+  // every one of them, and not one of the six is that size.
   const SERVICES = [
-    ['photo-5.jpg', 'Service Center', 'Factory-trained technicians, genuine parts, and online scheduling for everything from oil changes to major repairs.'],
-    ['photo-3.jpg', 'Test Drives', "Book a no-pressure drive online — we'll have the vehicle warmed up and out front when you arrive."],
-    ['vehicle-2.png', 'Financing', 'Flexible terms, first-time buyer programs, and pre-approval in minutes without a hit to your credit score.'],
-    ['vehicle-4.png', 'Trade-In Appraisal', 'Get a real number for your current vehicle in minutes — good for seven days or 500 miles.'],
-    ['photo-6.jpg', 'Parts &amp; Accessories', 'OEM parts counter, accessories, and installation — ordered to your VIN so it fits the first time.'],
-    ['photo-2.jpg', 'Body Shop &amp; Detailing', 'Collision repair, paintless dent removal, and full detailing with insurance-claim assistance.'],
-  ].map(([f, name, blurb]) => ({ img: `img/${f}`, name, blurb, alt: '', href: '#' }));
+    ['photo-5.jpg', 800, 600, 'Service Center', 'Factory-trained technicians, genuine parts, and online scheduling for everything from oil changes to major repairs.'],
+    ['photo-3.jpg', 800, 534, 'Test Drives', "Book a no-pressure drive online — we'll have the vehicle warmed up and out front when you arrive."],
+    ['vehicle-2.png', 640, 480, 'Financing', 'Flexible terms, first-time buyer programs, and pre-approval in minutes without a hit to your credit score.'],
+    ['vehicle-4.png', 640, 480, 'Trade-In Appraisal', 'Get a real number for your current vehicle in minutes — good for seven days or 500 miles.'],
+    ['photo-6.jpg', 1200, 717, 'Parts &amp; Accessories', 'OEM parts counter, accessories, and installation — ordered to your VIN so it fits the first time.'],
+    ['photo-2.jpg', 900, 600, 'Body Shop &amp; Detailing', 'Collision repair, paintless dent removal, and full detailing with insurance-claim assistance.'],
+  ].map(([f, w, h, name, blurb]) => ({ img: `img/${f}`, w, h, name, blurb, alt: '', href: '#' }));
 
   // Photos carrying a category, for the filterable gallery.
   const TAGGED = [
@@ -441,7 +446,7 @@ ${VIDEO_DIALOG_CSS}`,
       slides: (models) =>
         models.map(
           (m) =>
-            `<a class="cargo-svc" href="${m.href}"><span class="cargo-media"><img src="${m.img}" width="1200" height="750" alt="" loading="lazy" decoding="async"></span><h3>${m.name}</h3><p>${m.blurb}</p><span class="cargo-svc-more" aria-hidden="true">Read more &#8594;</span></a>`,
+            `<a class="cargo-svc" href="${m.href}"><span class="cargo-media">${pic(m)}</span><h3>${m.name}</h3><p>${m.blurb}</p><span class="cargo-svc-more" aria-hidden="true">Read more &#8594;</span></a>`,
         ),
     },
 
@@ -1390,6 +1395,7 @@ ${VIDEO_DIALOG_CSS}`,
       set('spec-gap', '—');
       set('spec-stops', '—');
       set('spec-controls', '—');
+      set('spec-spare', '—');
       $('spec-gauge').style.inlineSize = '0%';
       return;
     }
@@ -1401,7 +1407,15 @@ ${VIDEO_DIALOG_CSS}`,
     const n = stage.querySelectorAll('.cs').length;
 
     set('spec-card', `${w}px in ${Math.round(stage.getBoundingClientRect().width)}px`);
-    set('spec-across', `${cs.getPropertyValue('--cs-per-view').trim()} of ${stage.querySelectorAll('.cs-slide').length}${n > 1 ? ` · ${n} sliders` : ''}`);
+    // Counted in THIS slider, and never more than there are. The tabbed bar
+    // draws three carousels and the card grid six, so counting the stage said
+    // "5 of 24" over a pane holding eight; and asking for more cards across
+    // than the pattern has slides said "8 of 6", which is not a thing. The
+    // engine shows every slide in that case and hides the controls, so the
+    // honest reading is "6 of 6".
+    const slides = root.querySelectorAll('.cs-slide').length;
+    const across = Math.min(+cs.getPropertyValue('--cs-per-view').trim() || 1, slides);
+    set('spec-across', `${across} of ${slides}${n > 1 ? ` · ${n} sliders` : ''}`);
     set('spec-gap', cs.getPropertyValue('--cs-gap').trim() || '0');
     set('spec-stops', String(stops));
     set('spec-controls', fits ? 'nothing — they all fit' : 'arrows' + (state.hideDots ? '' : ' and dots'));
@@ -1420,6 +1434,10 @@ ${VIDEO_DIALOG_CSS}`,
     // Full bar at twice the minimum; amber inside the last 15% before it.
     const head = would / min;
     $('spec-gauge').style.inlineSize = `${Math.max(4, Math.min(100, (head / 2) * 100))}%`;
+    // A bar with no number on it is a mood, not a measurement. Say how much
+    // room each card has beyond the narrowest its content fits in.
+    const spare = Math.round(would - min);
+    set('spec-spare', spare >= 0 ? `${spare}px per card` : `${-spare}px short`);
     spec.dataset.fit = head < 1.15 ? 'tight' : 'ok';
 
     if (capped && w < min) {
@@ -1757,7 +1775,10 @@ ${VIDEO_DIALOG_CSS}`,
       sel.addEventListener('change', () => {
         state.brand = sel.value || null;
         // A preset brings its own vehicles, so it replaces the roster outright.
-        // Keeping edited rows here would show Ford copy under a Kia preset.
+        // Keeping edited rows here would show Ford copy under a Kia preset - so
+        // it is offered back instead, which is the one of the three discards
+        // that used to happen with no warning at all.
+        rememberDiscard('the preset');
         state.content = null;
         clearContent();
         const b = BRANDS[state.brand];
@@ -2059,6 +2080,16 @@ ${VIDEO_DIALOG_CSS}`,
   // list cannot disagree - which is what the deleted slide-count dial did.
   // They describe the LIST, not the strip above it: the two-row grid draws
   // eight rows as four slides and the tabbed bar draws them three times over.
+  // Appended only where the rows carry them, so the sentence is never about
+  // fields that are not on screen. They existed with no explanation at all, and
+  // "Source width" reads like something the slider sets rather than something
+  // it is told.
+  const SIZE_ROWS =
+    'Source width and height are the picture file’s real pixel size. The browser reserves the space from them before the photo arrives, which is what stops the page jumping as the slider loads — so change them whenever you change the image.';
+  // Where the preview's photos come from, and why the code says something else.
+  // The two really are different files and nothing said so.
+  const IMG_ROWS =
+    'The preview shows local copies; the code points at the platform’s own library, which resolves on any DealerOn site. Replace an address with your own upload and it is used as typed.';
   const OWN_ROWS = (n) => `Your ${n} slides, listed below. The preview above and the code below are built from them — “Use the example content” puts the demo cars back.`;
   const EXAMPLE_ROWS = (n, brand) =>
     `${n} example slides${brand ? ` from the ${brand} preset` : ''}, listed below and ready to edit. “Add a slide” and “Remove” change how many. Change any field and it becomes yours — edits stay in this browser only, so copy the code before you leave.`;
@@ -2268,7 +2299,13 @@ ${VIDEO_DIALOG_CSS}`,
     // Credited to the preset only when the preset actually supplied cars.
     // Fiat is the one of the 32 with no roster of its own.
     const preset = state.brand ? BRANDS[state.brand] : null;
-    note.textContent = state.content ? OWN_ROWS(rows.length) : EXAMPLE_ROWS(rows.length, preset?.models ? preset.label : null);
+    const setNote = () => {
+      note.textContent =
+        (state.content ? OWN_ROWS(state.content.length) : EXAMPLE_ROWS(rows.length, preset?.models ? preset.label : null)) +
+        (keys.includes('img') ? ` ${IMG_ROWS}` : '') +
+        (keys.includes('w') ? ` ${SIZE_ROWS}` : '');
+    };
+    setNote();
     contentBox.append(note);
 
     const list = document.createElement('div');
@@ -2295,6 +2332,7 @@ ${VIDEO_DIALOG_CSS}`,
       // A slider with no slides has nothing to preview and nothing to copy.
       del.disabled = rows.length < 2;
       del.addEventListener('click', () => {
+        rememberDiscard('remove');
         const r = adoptContent();
         r.splice(i, 1);
         state.count = r.length;
@@ -2333,7 +2371,7 @@ ${VIDEO_DIALOG_CSS}`,
           if (adopting) {
             // The note, never this editor — rebuilding it would replace the
             // field being typed into and drop the caret on every keystroke.
-            contentBox.querySelector('.wb-note').textContent = OWN_ROWS(r.length);
+            setNote();
           }
           // Deliberately NOT rebuilding this editor: it would replace the field
           // being typed into and drop the caret on every keystroke.
@@ -2345,6 +2383,35 @@ ${VIDEO_DIALOG_CSS}`,
     });
     contentBox.append(list);
   }
+
+  // One step of undo for the three things that throw slides away: Remove, "Use
+  // the example content", and picking a brand preset - which replaces the whole
+  // roster and used to do it with no warning at all. A confirm() on each would
+  // nag on every Remove and blocks the page besides; keeping the last discarded
+  // rows costs a variable, and the button only appears when there is something
+  // to put back.
+  const undoBtn = $('wb-content-undo');
+  let undid = null;
+  const rememberDiscard = (why) => {
+    undid = state.content ? { rows: state.content.map((r) => ({ ...r })), count: state.count, why } : null;
+    showUndo();
+  };
+  function showUndo() {
+    if (!undoBtn) return;
+    undoBtn.hidden = !undid;
+    if (undid) undoBtn.textContent = `Undo ${undid.why}`;
+  }
+  undoBtn?.addEventListener('click', () => {
+    if (!undid) return;
+    state.content = undid.rows;
+    state.count = undid.count;
+    undid = null;
+    saveContent();
+    showUndo();
+    buildPanel();
+    buildContent();
+    render();
+  });
 
   const contentAdd = $('wb-content-add');
   const contentReset = $('wb-content-reset');
@@ -2361,6 +2428,7 @@ ${VIDEO_DIALOG_CSS}`,
     render();
   });
   contentReset?.addEventListener('click', () => {
+    rememberDiscard('putting the example back');
     state.content = null;
     state.count = exampleRoster().length;
     clearContent();

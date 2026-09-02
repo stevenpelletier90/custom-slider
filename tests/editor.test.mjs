@@ -113,3 +113,80 @@ describe('nothing threw', () => {
     assert.deepEqual(errors, []);
   });
 });
+
+describe('the readout says what the slider is doing', () => {
+  // F036: "Arrow clicks" counted stops so it was off by one; "Cards shown"
+  // counted the whole stage, so the tabbed bar read "5 of 24" over a pane of
+  // eight, and asking for more across than there are slides read "8 of 6".
+  test('cards shown is never more than there are, and is counted in one slider', async () => {
+    for (const id of ['modelbar', 'tabs', 'card-gallery']) {
+      await pick(page, id);
+      const r = await page.evaluate(() => {
+        const first = document.querySelector('#wb-stage .cs');
+        return {
+          text: document.getElementById('spec-across').textContent,
+          slides: first.querySelectorAll('.cs-slide').length,
+        };
+      });
+      const [shown, of] = r.text
+        .split('·')[0]
+        .split(' of ')
+        .map((x) => parseInt(x, 10));
+      assert.equal(of, r.slides, `${id}: the readout counts ${of} slides, this slider has ${r.slides}`);
+      assert.ok(shown <= of, `${id}: "${r.text}" shows more cards than there are`);
+    }
+  });
+
+  test('asking for more across than there are slides is not reported as more', async () => {
+    await pick(page, 'cards');
+    const f = page.locator('#wb-settings label:has(> span:text-is("1200px and up")) input').first();
+    await f.fill('8');
+    await page.waitForTimeout(250);
+    const text = await page.evaluate(() => document.getElementById('spec-across').textContent);
+    const [shown, of] = text
+      .split('·')[0]
+      .split(' of ')
+      .map((x) => parseInt(x, 10));
+    assert.ok(shown <= of, `the readout says "${text}"`);
+  });
+
+  test('the room-to-spare bar carries a number', async () => {
+    await pick(page, 'modelbar');
+    const spare = await page.evaluate(() => document.getElementById('spec-spare').textContent);
+    assert.match(spare, /\d+px/, 'the gauge is still an unlabelled bar');
+  });
+
+  test('the stops row is not called arrow clicks', async () => {
+    const label = await page.evaluate(() => [...document.querySelectorAll('.ui-spec-item b')].map((b) => b.textContent));
+    assert.ok(label.includes('Stops'), 'the stops readout is not labelled Stops');
+    assert.ok(!label.includes('Arrow clicks'), '"Arrow clicks" is back, and it counts stops');
+  });
+});
+
+describe('a discarded slide can be put back', () => {
+  // F037: Remove, "Use the example content" and picking a brand preset all
+  // threw edited slides away instantly, and only the preset did it with no
+  // warning at all.
+  test('undo appears after a discard and restores the rows', async () => {
+    await pick(page, 'service');
+    const first = page.locator('#wb-content fieldset').first().locator('input[type="text"]').first();
+    await first.fill('MY OWN HEADING');
+    await page.waitForTimeout(200);
+    assert.ok(await page.evaluate(() => document.getElementById('wb-code').textContent.includes('MY OWN HEADING')));
+
+    await page.click('#wb-content-reset');
+    await page.waitForTimeout(250);
+    assert.ok(!(await page.evaluate(() => document.getElementById('wb-code').textContent.includes('MY OWN HEADING'))), 'the reset did not discard');
+    const undo = page.locator('#wb-content-undo');
+    assert.ok(await undo.isVisible(), 'nothing offered the slides back');
+
+    await undo.click();
+    await page.waitForTimeout(250);
+    assert.ok(await page.evaluate(() => document.getElementById('wb-code').textContent.includes('MY OWN HEADING')), 'undo did not put the slides back');
+  });
+
+  test('undo is not offered when there is nothing to put back', async () => {
+    await pick(page, 'peek');
+    assert.ok(!(await page.locator('#wb-content-undo').isVisible()), 'undo is offered before anything has been discarded');
+  });
+});
