@@ -1120,7 +1120,7 @@ ${VIDEO_DIALOG_CSS}`,
       const ids = p.panes.map((name) => name.toLowerCase().replace(/\W+/g, '-'));
       const tabs = p.panes.map((name, i) => `    <button type="button" role="tab" id="tab-${ids[i]}" aria-controls="pane-${ids[i]}" aria-selected="${i === 0}">${name}</button>`).join('\n');
       // Each pane draws the requested number of cards from the roster at its
-      // own offset, so "slides in this example" means slides PER PANE and no
+      // own offset, so the slide count means slides PER PANE and no
       // pane comes out half empty. Models repeating across panes is faithful:
       // the real Chevrolet bar does it too.
       const stride = Math.max(1, Math.ceil(source.length / p.panes.length));
@@ -1938,22 +1938,15 @@ ${VIDEO_DIALOG_CSS}`,
     });
     beh.append(control('Arrows beside, not over', gut));
 
-    const count = document.createElement('input');
-    count.type = 'number';
-    count.min = '1';
-    count.max = '16';
-    count.value = state.count;
-    count.addEventListener('input', () => {
-      const n = parseInt(count.value, 10);
-      if (n >= 1 && n <= 16) {
-        state.count = n;
-        render();
-      }
-    });
-    // Once the slides are the designer's own content, the roster length IS the
-    // slide count - adding a card means writing one, not turning a dial. Two
-    // controls for one number is how they drift apart.
-    // The name is NOT here. It lives beside the copy buttons, because it is the
+    // No slide-count dial. The roster length IS the slide count, and "Add a
+    // slide" / "Remove" are the only things that move it - the note above the
+    // rows says how many there are. A dial beside them was a second owner of
+    // one number, and the only writer of it that did not rebuild the row list:
+    // the editor went on offering rows the slider no longer had, and the next
+    // edit to one of them threw "Cannot set properties of undefined" and was
+    // silently lost. Every other writer of state.count already rebuilds.
+    //
+    // The name is NOT here either. It lives beside the copy buttons, because it is the
     // one setting whose consequence lands on the page rather than on this
     // slider - see the note in demo/index.html.
 
@@ -1975,7 +1968,6 @@ ${VIDEO_DIALOG_CSS}`,
       : 'This pattern draws its own cards, so its styling comes with the snippet either way — this setting changes nothing here.';
     beh.append(aloneNote);
 
-    if (!state.content) beh.append(control('Slides in this example', count));
     panel.append(section('Behaviour', beh));
   }
 
@@ -2016,8 +2008,13 @@ ${VIDEO_DIALOG_CSS}`,
   const UNESC = { amp: '&', lt: '<', gt: '>', quot: '"', '#39': "'", apos: "'" };
   const esc = (v) => String(v).replace(/[&<>"]/g, (c) => ESC[c]);
   const unesc = (v) => String(v).replace(/&(amp|lt|gt|quot|apos|#39);/g, (m, e) => UNESC[e] ?? m);
-  const OWN_ROWS = 'These are your slides. The preview above and the code below are built from them — “Use the example content” puts the demo cars back.';
-  const EXAMPLE_ROWS = 'The example content, ready to edit. Change any field and it becomes yours. Edits stay in this browser only — copy the code before you leave.';
+  // Both count the rows rendered directly underneath, so the number and the
+  // list cannot disagree - which is what the deleted slide-count dial did.
+  // They describe the LIST, not the strip above it: the two-row grid draws
+  // eight rows as four slides and the tabbed bar draws them three times over.
+  const OWN_ROWS = (n) => `Your ${n} slides, listed below. The preview above and the code below are built from them — “Use the example content” puts the demo cars back.`;
+  const EXAMPLE_ROWS = (n, brand) =>
+    `${n} example slides${brand ? ` from the ${brand} preset` : ''}, listed below and ready to edit. “Add a slide” and “Remove” change how many. Change any field and it becomes yours — edits stay in this browser only, so copy the code before you leave.`;
 
   // Typing eight cards of copy and losing it to a stray refresh is the fastest
   // way to make a tool feel disposable. Keyed BY pattern - an object, one entry
@@ -2099,7 +2096,10 @@ ${VIDEO_DIALOG_CSS}`,
 
     const note = document.createElement('p');
     note.className = 'wb-note';
-    note.textContent = state.content ? OWN_ROWS : EXAMPLE_ROWS;
+    // Credited to the preset only when the preset actually supplied cars.
+    // Fiat is the one of the 32 with no roster of its own.
+    const preset = state.brand ? BRANDS[state.brand] : null;
+    note.textContent = state.content ? OWN_ROWS(rows.length) : EXAMPLE_ROWS(rows.length, preset?.models ? preset.label : null);
     contentBox.append(note);
 
     const list = document.createElement('div');
@@ -2155,16 +2155,16 @@ ${VIDEO_DIALOG_CSS}`,
         // `input` covers the checkbox too — it fires on state change, so a
         // second `change` listener here would only double the work.
         input.addEventListener('input', () => {
-          // Catch the moment the example content becomes the designer's own:
-          // the panel's slide-count dial has to go, or it and the row list are
-          // two controls fighting over one number.
+          // Catch the moment the example content becomes the designer's own,
+          // so the note above the rows stops calling them the example.
           const adopting = !state.content;
           const r = adoptContent();
           r[i][k] = f.type === 'checkbox' ? input.checked : f.type === 'number' ? (f.max == null ? Number(input.value) : clamp(input.value, f.min ?? 0, f.max)) : esc(input.value);
           saveContent();
           if (adopting) {
-            buildPanel(); // the panel, never this editor — see below
-            contentBox.querySelector('.wb-note').textContent = OWN_ROWS;
+            // The note, never this editor — rebuilding it would replace the
+            // field being typed into and drop the caret on every keystroke.
+            contentBox.querySelector('.wb-note').textContent = OWN_ROWS(r.length);
           }
           // Deliberately NOT rebuilding this editor: it would replace the field
           // being typed into and drop the caret on every keystroke.
