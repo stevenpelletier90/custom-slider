@@ -30,6 +30,15 @@ const knob = (page, label) =>
 
 const hasKnob = async (page, label) => (await knob(page, label)) !== null;
 
+// A colour row puts the swatch first, and a swatch can only hold #rrggbb - it
+// reads #000000 for a transparent or an rgba(). The text field beside it is
+// the authoritative one.
+const colorKnob = (page, label) =>
+  page.evaluate((l) => {
+    const row = [...document.querySelectorAll('#wb-settings label.wb-row')].find((r) => r.querySelector('span')?.textContent.trim() === l);
+    return row?.querySelector('input[type=text]')?.value ?? null;
+  }, label);
+
 describe('a knob shows what the slider is actually using', () => {
   // F042: Tall photos set --cs-controls-space in its pattern CSS instead of its
   // props, so the knob read the engine's 2.5em while the strip resolved 3em -
@@ -281,6 +290,61 @@ describe('peek is offered wherever it can do something', () => {
     await page.waitForTimeout(250);
     const { css } = await copyParts(page);
     assert.doesNotMatch(css, /--cs-peek/, 'a media query still sets peek where the knob cannot see it');
+  });
+});
+
+describe('a property the slider is already using has a control', () => {
+  // F056 / F057: five engine properties the Reference documents and the panel
+  // never offered. Two of them were worse than merely absent - the portrait
+  // and logo looks ship --cs-arrow-bg-hover in their settings, and the hero
+  // sets --cs-dot-current in its props, so those values were going out with
+  // nothing able to show a designer what had been chosen for them.
+  const ROWS = ['Arrow colour, hover', 'Arrow background, hover', 'Dot size', 'Dot colour', 'Dot colour, current'];
+
+  // `cards`, not `modelbar`: a model bar ships its dots off, so it correctly
+  // has no dot rows at all.
+  test('the arrow and dot rows are there on a pattern that has both', async () => {
+    await pick(page, 'cards');
+    for (const label of ROWS) assert.equal(await hasKnob(page, label), true, `no "${label}" row`);
+  });
+
+  test('a look that ships a hover colour shows the one it ships', async () => {
+    await pick(page, 'cards');
+    // Ask the data which look carries it rather than naming one here - the
+    // point is that whichever look ships a value, the field shows that value.
+    const look = await page.evaluate(() => {
+      const L = globalThis.CARGO.LOOKS;
+      const id = Object.keys(L).find((k) => L[k].settings['--cs-arrow-bg-hover']);
+      return id ? { label: L[id].label, value: L[id].settings['--cs-arrow-bg-hover'] } : null;
+    });
+    assert.ok(look, 'no card style ships an arrow hover colour, so this guards nothing');
+    await page.evaluate((label) => [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes(label))?.click(), look.label);
+    await page.waitForTimeout(300);
+    assert.equal(await colorKnob(page, 'Arrow background, hover'), look.value, `${look.label} ships ${look.value} and the field does not show it`);
+  });
+
+  test('the hero shows the current-dot colour it was born with', async () => {
+    await pick(page, 'hero');
+    assert.equal(await colorKnob(page, 'Dot colour, current'), '#16324f', 'the hero sets this blind and the field does not show it');
+  });
+
+  test('a dot colour reaches the copied CSS and the drawn dot', async () => {
+    await pick(page, 'cards');
+    await setField(page, 'Dot colour', '#c8102e');
+    await page.waitForTimeout(250);
+    // Not the first dot: that one is current, and correctly draws in
+    // --cs-dot-current rather than the colour under test.
+    const drawn = await page.evaluate(() => getComputedStyle(document.querySelector('#wb-stage .cs-dot:not(.cs-dot--current)'), '::after').backgroundColor);
+    const { css } = await copyParts(page);
+    assert.match(css, /--cs-dot-fg:\s*#c8102e/, 'the value never reached the copied CSS');
+    assert.equal(drawn, 'rgb(200, 16, 46)', `the dot is drawn ${drawn}`);
+  });
+
+  test('the dot rows go away with the dots', async () => {
+    await pick(page, 'gallery'); // a thumbnail rail, no dots at all
+    for (const label of ['Dot size', 'Dot colour', 'Dot colour, current']) {
+      assert.equal(await hasKnob(page, label), false, `gallery mode offers "${label}" where there are no dots`);
+    }
   });
 });
 

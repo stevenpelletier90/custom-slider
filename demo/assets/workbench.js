@@ -1890,6 +1890,14 @@ ${VIDEO_DIALOG_CSS}`,
     const colors = document.createElement('div');
     colors.append(colorRow('Arrow colour', '--cs-arrow-fg', state.props));
     colors.append(colorRow('Arrow background', '--cs-arrow-bg', state.props));
+    // Both hover colours have been in the engine and in the Reference all
+    // along, with no way to reach them from here. Worse than merely absent:
+    // the portrait and logo looks already carry --cs-arrow-bg-hover in their
+    // settings, and applyLook moves it into state.props - so the value was
+    // being shipped by two card styles with no control anywhere that could
+    // show it, let alone change it.
+    colors.append(colorRow('Arrow colour, hover', '--cs-arrow-fg-hover', state.props));
+    colors.append(colorRow('Arrow background, hover', '--cs-arrow-bg-hover', state.props));
     // "Show a sliver of the next car" lands on a model bar as often as on the
     // pattern named after it, so the row is offered wherever it can do
     // something rather than only where the pattern pre-set it. Not under fade
@@ -1919,6 +1927,13 @@ ${VIDEO_DIALOG_CSS}`,
     if (!state.hideDots && state.data['data-cs-gallery'] == null) {
       state.props['--cs-controls-space'] ??= '2.5em'; // the engine's own default
       colors.append(valueRow('Room for the dots', '--cs-controls-space', state.props));
+      // Same story as the arrow hover colours: three engine properties the
+      // Reference documents and the panel never offered. The hero even sets
+      // --cs-dot-current blind, in its pattern props, with nothing able to
+      // show a designer what colour it picked or let them change it.
+      colors.append(valueRow('Dot size', '--cs-dot-size', state.props));
+      colors.append(colorRow('Dot colour', '--cs-dot-fg', state.props));
+      colors.append(colorRow('Dot colour, current', '--cs-dot-current', state.props));
     }
     panel.append(section('Arrows and spacing', colors));
 
