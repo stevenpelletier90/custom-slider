@@ -354,11 +354,15 @@ ${VIDEO_DIALOG_CSS}`,
       blurb:
         'Portrait photography instead of cutouts, and the dot row restyled into a solid bar with a marker that slides along it. The marker is page script watching the engine’s own state — the segments underneath are still real "go to page" buttons.',
       data: { 'data-cs-rewind': 'false', 'data-bar': '' },
-      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
+      // --cs-controls-space belongs HERE and not in the pattern's css, which is
+      // where it used to sit: the "Room for the dots" knob reads props, so it
+      // showed the engine's 2.5em while the strip resolved this 3em, and the
+      // copied CSS shipped both values in sequence with no edit at all.
+      props: { '--cs-gap': '1em', '--cs-controls-space': '3em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 4, 1200: 4 },
       minCard: 190,
       models: MODELS,
-      css: `%root% { --cs-dot-fg: #949494; --cs-dot-current: #949494; --cs-controls-space: 3em; }
+      css: `%root% { --cs-dot-fg: #949494; --cs-dot-current: #949494; }
 @media (min-width: 992px) { %root% { --cs-arrow-size: 56px; } }
 
 /* The dots become one solid bar. Every segment is still a real, labelled
@@ -1111,11 +1115,15 @@ ${VIDEO_DIALOG_CSS}`,
 
     // A thumbnail that opens the gallery in a dialog.
     if (state.pattern === 'lightbox') {
-      const m = p.models[0];
+      // The roster in effect, not the pattern's own: every other producer here
+      // uses modelsFor(), and this one reading p.models meant an edited slide 1
+      // changed the photo inside the dialog but not the thumbnail that opens
+      // it. Its alt text comes along too, rather than being hardcoded empty.
+      const m = source[0];
       return [
         `<div class="${cls}-wrap" data-lightbox>`,
         `  <button type="button" class="cargo-lb-open" data-lb-open>`,
-        `    <img src="${m.img}" width="68" height="44" alt="" loading="eager" decoding="async">`,
+        `    <img src="${m.img}" width="68" height="44" alt="${m.alt ?? ''}" loading="eager" decoding="async">`,
         `    <span>View all ${items.length} photos</span>`,
         `  </button>`,
         `  <dialog class="cargo-lb" aria-label="Vehicle photos">`,
@@ -1636,7 +1644,15 @@ ${VIDEO_DIALOG_CSS}`,
           render();
         }
       });
-      grid.append(control(key === 'base' ? 'phone' : `${key}px and up`, input));
+      // The field must not go on showing a number the ladder did not take.
+      // `2.5` truncated to 2 and the box kept saying 2.5, and there is no
+      // half-card option to offer instead: the engine pages by whole slides,
+      // so a 2.5 set by hand makes the last page unreachable. Peek is the
+      // control for showing part of the next card.
+      input.addEventListener('change', () => {
+        input.value = state.perView[key];
+      });
+      grid.append(control(key === 'base' ? 'phone' : `${key}px and up`, input, 'Whole cards only — use Peek to show a sliver of the next one.'));
     }
     panel.append(section('How many across', grid));
 
@@ -1676,6 +1692,19 @@ ${VIDEO_DIALOG_CSS}`,
         state.content = null;
         clearContent();
         const b = BRANDS[state.brand];
+        if (!b) {
+          // "Start from the default" has to undo what a preset changed - its
+          // card style, its ladder and its slide count - and nothing else.
+          // Without this the previous brand's look and ladder survived, so
+          // Vehicle cards came back as tall tiles. loadPattern() would undo it
+          // all, but it would also throw away the slider name the designer
+          // typed, which no preset ever touched.
+          state.look = p.look ?? null;
+          state.lookProps = {};
+          if (p.look) applyLook(p.look);
+          state.perView = { ...(p.perView ?? LOOKS[p.look].perView) };
+          state.count = p.models.length;
+        }
         if (b) {
           if (b.models) state.count = b.models.length;
           applyLook(b.look);
@@ -1707,6 +1736,12 @@ ${VIDEO_DIALOG_CSS}`,
         b.setAttribute('aria-pressed', String(id === state.look));
         b.innerHTML = `<span class="wb-look-icon">${look.icon}</span><span>${look.label}</span>`;
         b.addEventListener('click', () => {
+          // Selecting what is already selected does nothing. It used to reset
+          // the ladder to the look's own default, so clicking the highlighted
+          // style on the two-row grid took 1/2/3/3 to 2/3/4/5 and the arrows
+          // and dots disappeared - a hand-set ladder thrown away by a click
+          // that looked like a no-op.
+          if (id === state.look) return;
           state.brand = null;
           applyLook(id);
           // Each look brings the ladder that suits it: a split card at five
@@ -1810,6 +1845,10 @@ ${VIDEO_DIALOG_CSS}`,
     });
     beh.append(control(autoplaying ? 'At the ends (autoplay always wraps)' : 'At the ends', ends));
 
+    // Not offered in gallery mode: those four patterns draw a thumbnail strip
+    // and have no dots at all, so the switch added a rule matching nothing and
+    // a tick round trip left a dead controls-space line in the copied CSS.
+    const galleryMode = state.data['data-cs-gallery'] != null;
     const dots = document.createElement('input');
     dots.type = 'checkbox';
     dots.checked = !state.hideDots;
@@ -1828,7 +1867,7 @@ ${VIDEO_DIALOG_CSS}`,
       buildPanel(); // the space knob appears and disappears with the dots
       render();
     });
-    beh.append(control('Show dots', dots));
+    if (!galleryMode) beh.append(control('Show dots', dots));
 
     const gut = document.createElement('input');
     gut.type = 'checkbox';
