@@ -2144,7 +2144,11 @@ ${VIDEO_DIALOG_CSS}`,
   // Built here rather than read out of the DOM: the markup on disk may carry
   // CRLF, and a stray carriage return inside a pasted tag is a nasty thing to
   // have to debug on someone else's site.
-  const TAGS = ['<link rel="stylesheet" href="/path/custom-slider.css">', '<script src="/path/custom-slider.js" defer></script>'].join('\n');
+  // The real shared path, not a "/path/" placeholder for the designer to fill
+  // in - designers do not upload the engine, and a copied tag they have to edit
+  // is a tag that ships wrong. One folder, every site.
+  const ENGINE_PATH = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/';
+  const TAGS = [`<link rel="stylesheet" href="${ENGINE_PATH}custom-slider.css">`, `<script src="${ENGINE_PATH}custom-slider.js" defer></script>`].join('\n');
   $('wb-copy-tags').addEventListener('click', (e) => copyText(e.target, TAGS));
 
   // The engine files, fetched at click time from the very files this page is
