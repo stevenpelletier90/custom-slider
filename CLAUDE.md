@@ -63,6 +63,20 @@ It covers what a linter cannot: whether the copied code still lays itself out, a
 
 **Teardown.** All listeners are registered with `{ signal: this._ac.signal }` from one `AbortController`; `destroy()` aborts it, disconnects the observers, restores `this._snapshot` (root `innerHTML` captured at construction) and removes only the root attributes it added (`_addedRootAttrs`). Any new listener/observer/timer must join this scheme.
 
+## What the builder must never hand a designer (2026-09-02 readiness review)
+
+**One predicate decides whether a value may be emitted, not one patch per route.** Three separate findings turned out to be the same broken slider — `--cs-gap: 0px` surviving the platform minifier as a unitless `0` (F003), a cleared field emitting `--cs-gap: ;` (F022), and a typed `10` (F028). Each invalidates the slide's flex basis and the cards collapse to content width while the readout still claims otherwise. `okValue()` in `workbench.js` is the single gate; `cssFor()` drops anything it refuses, so an unusable value falls back instead of shipping. Which knobs are lengths is read off **the shape of their default**, never a hand-kept list, so a knob added to a look is covered the day it ships. A bare `0` is refused deliberately: valid CSS, but it is what the minifier makes of `0px` and what the engine's `calc()` cannot use.
+
+**Anything `cssFor()` or `htmlFor()` calls must be declared ABOVE `if (!stage) return`.** That early return is the path `patterns.html` and `scripts/lint-generated-css.mjs` take. A helper declared below it is still in the temporal dead zone for them, and the failure is a `ReferenceError` in the generator rather than anything visible in the builder. Caught once already, by the gate.
+
+**Snippet rules that land on the carousel are written `.name.cs`, not `.name`.** A bare class ties with the engine's `.cs` and the shared `.cargo-<look>`, so source order decides — and where the platform emits its aggregated Style Only sheet relative to a head `<link>` is undocumented. Measured with the sheets swapped: service cards went from 347.6px at three per view to 1070.8px at one.
+
+**The slider's name is the one setting about the PAGE, so it lives beside the copy buttons.** Two snippets sharing a name share their rules and the second paste wins for both — measured, the first strip took the second's 3em gap. Do **not** auto-number a repeat copy: the builder cannot see the page it is being pasted into, so it would hand out `.model-bar-2` for a page with no `.model-bar` on it. Uniqueness can only be surfaced, never enforced.
+
+**Classic `rgba()` and `em` in everything the copy panel emits**, enforced by `.stylelintrc*.json` (`color-function-notation: legacy`, `alpha-value-notation: number`, `color-function-alias-notation: with-alpha`) and by `unit-disallowed-list`. Those rules are stated because `stylelint-config-standard` defaults the first to `"modern"` and the format hook rewrites `rgba()` straight back — the fix is to point the rule at the platform's form, never to skip it.
+
+**A control must show what the slider is actually using.** Six knobs were caught lying at once (F039–F077): a value set in a pattern's CSS instead of its props, a switch offered where the thing it switches does not exist, a click on the already-selected option resetting a hand-set ladder, a reset that put back only half of what it took. None of these is visible in the generated CSS, which is why `tests/controls.test.mjs` exists.
+
 ## Hard constraints
 
 **The HTML is the stable API; the engine is an implementation detail.** Class names (`cs`, `-track`, `-slide`, generated control classes), data attributes, `--cs-*` properties, `cs:*` event payloads, the public methods, and the accessibility behaviors are a frozen contract — sites can't be edited when the engine changes (README "Swapping the engine later"). Adding is fine; renaming or repurposing is not.
