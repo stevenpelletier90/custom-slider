@@ -1331,10 +1331,29 @@ ${VIDEO_DIALOG_CSS}`,
     // engine's line runs before or after it.
     if (state.scriptText) parts.push(['JavaScript', lines(state.scriptText), '<strong>Body Section, Bottom</strong> — either side of the custom-slider.js line']);
     // The demo images resolve to real platform paths, which is what makes them
-    // usable - and exactly why this warning belongs here. They are Chevrolet
-    // stock art, so on any other brand's site they load perfectly and show the
-    // wrong cars: worse than a broken image, because nothing looks wrong.
-    const warn = /<img/.test(state.codeText) ? '<li class="ui-parts-warn"><b>Photos</b> <span>examples</span>the addresses point at Chevrolet stock art — put your own in step 1 above</li>' : '';
+    // usable - and exactly why this warning belongs here: they load perfectly
+    // on any dealer's site and show the wrong thing, which is worse than a
+    // broken image because nothing looks wrong.
+    //
+    // WHAT they show is read off the snippet's own addresses, never asserted.
+    // This line used to say "Chevrolet stock art" on all seventeen patterns:
+    // true of three of them at their default brand, and wrong for the other
+    // twelve image patterns - seven of which reference no vehicle at all, only
+    // the platform's library photography. CMS is the map toCms() emits from, so
+    // an address still in it is an example and an address outside it is the
+    // designer's own. That is also how the row stops nagging once step 1 has
+    // replaced the photos it can reach.
+    //
+    // The MAKE is deliberately not named: /assets/stock/ carries a model code,
+    // not a marque, so the address cannot supply one - and the only field that
+    // could is the editable Wordmark, so reading it would tell a designer who
+    // typed their own dealership name that the stock art is theirs.
+    const examples = new Set(Object.values(globalThis.CARGO.CMS || {}));
+    const shipped = [...state.htmlText.matchAll(/<img[^>]*\ssrc="([^"]*)"/g)].map((m) => m[1]);
+    const left = shipped.filter((src) => examples.has(src) || src.startsWith('#MISCPATH#'));
+    const warn = left.length
+      ? `<li class="ui-parts-warn"><b>Photos</b> <span>${left.length} of ${shipped.length}</span>still the example photography — it loads on any dealer's site and shows the wrong vehicles, so put your own in step 1 above</li>`
+      : '';
     $('wb-parts').innerHTML =
       parts
         .map(([what, n, where]) => `<li><b>${what}</b> <span>${typeof n === 'number' ? `${n} line${n === 1 ? '' : 's'}` : n}</span>${typeof n === 'number' ? 'goes into ' : ''}${where}</li>`)
@@ -1798,6 +1817,9 @@ ${VIDEO_DIALOG_CSS}`,
           // across is unreadable, a cutout at one across is a waste.
           state.perView = { ...LOOKS[id].perView };
           buildPanel();
+          // The editor too: which fields a card style reads is part of the
+          // style, so switching one has to add or remove the rows for them.
+          buildContent();
           render();
         });
         looks.append(b);
@@ -1981,7 +2003,11 @@ ${VIDEO_DIALOG_CSS}`,
   // actually carries, so a review card never asks for an image URL and a photo
   // never asks for a star rating.
   const FIELDS = {
-    img: { label: 'Image URL', type: 'url', hint: '#MISCPATH#your-photo.jpg' },
+    // type text, not url. A url field rejects every path the editor itself
+    // suggests - #MISCPATH#your-photo.jpg, /static/... and img/... are all
+    // "invalid" to it - and Chromium paints nothing, so 16 fields on the model
+    // bar sat marked invalid to a screen reader with no visible cause.
+    img: { label: 'Image URL', type: 'text', hint: '#MISCPATH#your-photo.jpg' },
     alt: { label: 'Alt text', type: 'text', hint: 'What the photo shows — leave empty only if the card text already says it' },
     w: { label: 'Source width', type: 'number', hint: 'Real pixel width of the file' },
     h: { label: 'Source height', type: 'number', hint: 'Real pixel height of the file' },
@@ -1994,8 +2020,26 @@ ${VIDEO_DIALOG_CSS}`,
     stars: { label: 'Stars out of 5', type: 'number', min: 0, max: 5 },
     bg: { label: 'Avatar colour', type: 'text' },
     tag: { label: 'Category', type: 'text', hint: 'Must match one of the filter buttons' },
-    href: { label: 'Link', type: 'url', hint: '/searchnew.aspx?Model=Tahoe' },
+    href: { label: 'Link', type: 'text', hint: '/searchnew.aspx?Model=Tahoe' },
     video: { label: 'Opens a video', type: 'checkbox' },
+  };
+
+  // Which of the editor's keys a card look's markup() actually reads. The look
+  // is handed a stand-in row that records every property touched and answers
+  // truthily, so BOTH arms of a `m.sub ? … : ''` count - the question is what
+  // the look CAN draw, not what this roster happens to fill in. Probed from the
+  // markup rather than declared beside it: a hand-kept list would drift, and
+  // the drift would show only as a field that quietly does nothing. A new
+  // editable key has to be READ by the look's markup(), not merely added to
+  // FIELDS, or this will hide it.
+  const readsOf = (markup) => {
+    const seen = new Set();
+    try {
+      markup(new Proxy({}, { get: (_t, k) => (typeof k === 'string' && seen.add(k), '1') }));
+    } catch {
+      return null; // a look that will not run on a stand-in row: offer every field the rows carry
+    }
+    return seen;
   };
 
   const contentBox = $('wb-content');
@@ -2206,8 +2250,18 @@ ${VIDEO_DIALOG_CSS}`,
     contentBox.replaceChildren();
     const src = exampleRoster();
     const rows = state.content ?? Array.from({ length: state.count }, (_, i) => src[i % src.length]);
-    // Only the fields this pattern's own content uses.
-    const keys = Object.keys(FIELDS).filter((k) => rows.some((m) => m[k] !== undefined));
+    // Only the fields this pattern's own content uses - and, where a card LOOK
+    // draws the slides, only the ones its markup() actually reads. Same
+    // precedence as draw() at the top of htmlFor(): a pattern's own slides()
+    // and the card grid both win over the look, so neither may be filtered by
+    // a markup() that is not drawing them. The cutout roster carries a wordmark
+    // and a paragraph for the looks that have a slot; the tile has neither, so
+    // those two boxes took typing, stored it, and shipped it nowhere - not to
+    // the preview and not to the snippet. An intersection, never a
+    // replacement: it can only ever REMOVE a field.
+    const pat = PATTERNS[state.pattern];
+    const drawn = !pat.slides && !pat.cardGrid && state.look ? readsOf(LOOKS[state.look].markup) : null;
+    const keys = Object.keys(FIELDS).filter((k) => rows.some((m) => m[k] !== undefined) && (!drawn || drawn.has(k)));
 
     const note = document.createElement('p');
     note.className = 'wb-note';
