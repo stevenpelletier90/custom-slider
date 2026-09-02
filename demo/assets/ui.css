@@ -854,6 +854,48 @@ body {
   border-radius: 50%;
 }
 
+/* The slider's name, directly above the parts list and the code. The only
+   setting that is about the PAGE rather than about this slider, so it sits
+   where the copying happens instead of in the settings panel. */
+.ui-name {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem 0.7rem;
+  align-items: baseline;
+  padding: 0.75rem 0.9rem;
+  font-size: 0.8rem;
+  color: var(--ink-soft);
+  background: var(--surface);
+  border-block-end: 1px solid var(--rule);
+}
+
+.ui-name label {
+  font-weight: 600;
+  color: var(--ink);
+}
+
+.ui-name input {
+  inline-size: 12rem;
+  padding: 0.25rem 0.5rem;
+  font-family: var(--mono);
+  font-size: 0.78rem;
+  color: var(--ink);
+  background: var(--bg);
+  border: 1px solid var(--rule);
+  border-radius: 5px;
+}
+
+/* The warning takes the rest of the row on a wide panel and its own line on a
+   narrow one, rather than squeezing the field. */
+.ui-name span {
+  flex: 1 1 16rem;
+  min-inline-size: 0;
+}
+
+.ui-name b {
+  color: var(--ink);
+}
+
 /* What is in the code box, and where each piece goes. Sits between the bar and
    the code so it is read before the copy button is pressed, not after. */
 .ui-parts {

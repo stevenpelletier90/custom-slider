@@ -163,6 +163,20 @@
               <button type="button" class="ui-btn" id="wb-copy-js" hidden>Copy script</button>
             </span>
           </div>
+          <!-- The name lives HERE, beside the buttons, not up in the settings
+               panel. It is the one setting whose consequence lands on the
+               page rather than on this slider: two snippets sharing a name
+               share their rules, and the second paste silently wins for both.
+               Measured on a model bar pair - the first strip took the second's
+               3em gap and its slide went 208.6px to 180.6px, with nothing on
+               either page saying so. Naming is the only remedy, because the
+               settings live in a page-global stylesheet and this tool cannot
+               see the page it is being pasted into. -->
+          <div class="ui-name">
+            <label for="wb-name">Name for this slider</label>
+            <input type="text" id="wb-name" data-name-field spellcheck="false" autocomplete="off" />
+            <span>Becomes the CSS class the settings hang off. <b>A second slider on the same page needs a different name here</b>, or the two overwrite each other.</span>
+          </div>
           <!-- What is in the box and where each part goes. Written from the
                snippet itself, so it can never describe a part that is not
                there. -->

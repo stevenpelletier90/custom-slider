@@ -1235,6 +1235,9 @@ ${VIDEO_DIALOG_CSS}`,
     state.cssText = cssFor(`.${state.name}`);
     state.htmlText = toCms(htmlFor(state.name));
     state.scriptText = p.script ? guarded(p.script) : '';
+    // Left alone while it is being typed into; see the wiring below.
+    const nameEl = $('wb-name');
+    if (nameEl && document.activeElement !== nameEl) nameEl.value = state.name;
     state.codeText = `<style>\n${state.cssText}\n</style>\n\n${state.htmlText}${state.scriptText ? `\n\n<script>\n${state.scriptText}\n</script>` : ''}`;
     const css = state.cssText;
     const html = state.htmlText;
@@ -1253,7 +1256,6 @@ ${VIDEO_DIALOG_CSS}`,
     const parts = [
       ['HTML', lines(html), 'a <strong>Custom HTML</strong> block'],
       ['CSS', lines(css), '<strong>Style Only</strong> — raw CSS, no <code>&lt;style&gt;</code> tags'],
-      ['Named', `.${state.name}`, 'give a second slider on the same page a different name, or they overwrite each other'],
     ];
     if (shared()) parts.push(['Card style', `.cargo-${state.look}`, 'comes from <strong>custom-slider.css</strong> — nothing to paste for it']);
     // Counted off the guarded script, which is the one that ships. "Either
@@ -1373,14 +1375,6 @@ ${VIDEO_DIALOG_CSS}`,
     '--mark-size': 'Wordmark size',
   };
   const knobLabel = (k) => KNOB_LABELS[k] ?? k.replace(/^--/, '').replace(/-/g, ' ');
-
-  // A line of explanation under a control, in the panel's own note style.
-  const hintRow = (text) => {
-    const p = document.createElement('p');
-    p.className = 'wb-note';
-    p.textContent = text;
-    return p;
-  };
 
   const control = (label, node) => {
     const row = document.createElement('label');
@@ -1796,22 +1790,9 @@ ${VIDEO_DIALOG_CSS}`,
     // Once the slides are the designer's own content, the roster length IS the
     // slide count - adding a card means writing one, not turning a dial. Two
     // controls for one number is how they drift apart.
-    const nameBox = document.createElement('input');
-    nameBox.type = 'text';
-    nameBox.value = state.name;
-    nameBox.addEventListener('input', () => {
-      state.name = toClass(nameBox.value) || 'my-slider';
-      render();
-    });
-    // Written back when the field is left, not on every keystroke: cleaning as
-    // you type fights the caret the moment you press space. Until then the
-    // field shows what was typed while the code shows the real class, which is
-    // the state the old version left it in permanently.
-    nameBox.addEventListener('change', () => {
-      nameBox.value = state.name;
-    });
-    beh.append(control('Name for this slider', nameBox));
-    beh.append(hintRow('This becomes the CSS class the settings hang off — letters, numbers and hyphens.'));
+    // The name is NOT here. It lives beside the copy buttons, because it is the
+    // one setting whose consequence lands on the page rather than on this
+    // slider - see the note in demo/index.html.
 
     // Never disabled. On a pattern that draws its own cards this changes
     // nothing, and the note below says so - a greyed-out control that will not
@@ -2166,6 +2147,19 @@ ${VIDEO_DIALOG_CSS}`,
   ]) {
     $(id).addEventListener('click', (e) => copyText(e.target, get()));
   }
+
+  // Wired once, because it is in the page's own markup rather than rebuilt with
+  // the settings panel. render() refreshes it on a pattern change, but never
+  // while it has focus - writing a cleaned value back mid-word fights the
+  // caret, which is why the cleaned value lands on `change` instead.
+  const nameField = $('wb-name');
+  nameField.addEventListener('input', () => {
+    state.name = toClass(nameField.value) || 'my-slider';
+    render();
+  });
+  nameField.addEventListener('change', () => {
+    nameField.value = state.name;
+  });
 
   // Built here rather than read out of the DOM: the markup on disk may carry
   // CRLF, and a stray carriage return inside a pasted tag is a nasty thing to

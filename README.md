@@ -55,6 +55,12 @@ JS options override data attributes, which override defaults.
 ## Markup contract
 
 - Root: `class="cs"` (+ `data-cs` for auto-init) with `aria-label` or `aria-labelledby`.
+- Name: one more class of your own on the root — `my-slider` — which is what
+  your settings hang off. **It must be unique on the page.** Two sliders sharing
+  a name share their rules, and the second block's CSS wins for both: measured
+  on a pair of model bars, the first strip took the second's 3em gap and its
+  slides went from 208.6px to 180.6px, with nothing on the page saying so. The
+  builder puts the field beside its copy buttons for this reason.
 - Track: one `.cs-track` child — `<ul>` for card carousels, `<div>` for `data-cs-gallery`.
 - Slides: `.cs-slide` children. All real content (headings, links, images) goes
   in the HTML — the engine never injects content, only controls.
