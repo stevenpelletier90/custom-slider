@@ -127,6 +127,41 @@
     ['photo-6.jpg', 'service', 'Classic BMW grilles lined up in a museum'],
   ].map(([f, tag, alt]) => ({ img: `img/${f}`, tag, alt }));
 
+  // The two video patterns promise "posters open a native dialog", and the
+  // preview did it - but the wiring lived in the demo page, so the copied code
+  // was a poster button with nothing behind it and the parts list showed no
+  // JavaScript at all. The dialog, its styling and its handler now ship in the
+  // snippet, and the preview runs the very same script, so the promise is the
+  // pasted block's rather than the demo's.
+  //
+  // The dialog body is deliberately empty apart from an HTML comment saying
+  // where the embed goes: a native <dialog> is what buys Esc-to-close and the
+  // focus trap, and the video itself is the designer's to drop in. Placeholder
+  // copy would ship to a dealer page as real text.
+  const VIDEO_DIALOG_CSS = `.cargo-vdlg { inline-size: min(94vw, 720px); padding: 1em 1.2em; color: inherit; background: #fff; border: 0; border-radius: 12px; }
+.cargo-vdlg::backdrop { background: rgba(0, 0, 0, 0.8); }
+.cargo-vdlg-title { margin: 0 0 0.6em; font-size: 1.1em; font-weight: 700; line-height: 1.3; }
+.cargo-vdlg-close { padding: 0.4em 1em; font: inherit; cursor: pointer; background: #eef1f4; border: 0; border-radius: 6px; }`;
+
+  const VIDEO_DIALOG_HTML = [
+    `<dialog class="cargo-vdlg" aria-label="Video">`,
+    `  <h3 class="cargo-vdlg-title"></h3>`,
+    `  <!-- Your video goes here: a YouTube or Vimeo <iframe>, or a <video> element. -->`,
+    `  <form method="dialog"><button type="submit" class="cargo-vdlg-close">Close</button></form>`,
+    `</dialog>`,
+  ];
+
+  const VIDEO_DIALOG_JS = `document.querySelectorAll('[data-video-dialog]').forEach((root) => {
+  const dlg = root.querySelector('.cargo-vdlg');
+  const title = dlg.querySelector('.cargo-vdlg-title');
+  root.querySelectorAll('[data-video]').forEach((poster) => {
+    poster.addEventListener('click', () => {
+      title.textContent = poster.dataset.video;
+      dlg.showModal();
+    });
+  });
+});`;
+
   // A pattern is content plus defaults. `look` means it draws its cards with a
   // shared component and the look chooser applies; `slides` means it draws its
   // own markup because no card look describes it - a hero is a photo, a video
@@ -215,10 +250,11 @@
       gutter: false,
       label: 'Video testimonials',
       blurb: 'Posters open a native dialog, which gives Esc-to-close and focus trapping for free. Video never plays inline — autoplay on video cards fights the content.',
-      data: {},
+      data: { 'data-video-dialog': '' },
       props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 2, 1200: 3 },
       minCard: 260,
+      videoDialog: true,
       models: PHOTOS.slice(0, 3).map((m, i) => ({ ...m, name: ['Dana W.', 'Marcus T.', 'Gene & Marta L.'][i] })),
       // `color: inherit` is load-bearing, not tidiness. A <button> takes the UA's
       // `buttontext` system colour unless told otherwise, and `font: inherit`
@@ -230,12 +266,14 @@
       css: `.cargo-video { position: relative; display: block; inline-size: 100%; padding: 0; overflow: hidden; font: inherit; color: inherit; text-align: start; cursor: pointer; background: none; border: 0; border-radius: 8px; }
 .cargo-video img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
 .cargo-play { position: absolute; inset-block-start: 42%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 56px; block-size: 56px; color: #16324f; background: rgba(255, 255, 255, 0.92); border-radius: 50%; transform: translate(-50%, -50%); }
-.cargo-name { display: block; margin: 0.6em 0 0; font-size: 1em; font-weight: 700; line-height: 1.3; }`,
+.cargo-name { display: block; margin: 0.6em 0 0; font-size: 1em; font-weight: 700; line-height: 1.3; }
+${VIDEO_DIALOG_CSS}`,
       slides: (models) =>
         models.map(
           (m) =>
             `<button type="button" class="cargo-video" data-video="${m.name}">${pic(m)}<span class="cargo-play" aria-hidden="true">&#9654;</span><span class="cargo-name">${m.name}</span></button>`,
         ),
+      script: VIDEO_DIALOG_JS,
     },
 
     tabs: {
@@ -329,15 +367,19 @@
       // Site-level enhancement, not an engine feature: it reads the engine's
       // own current-dot class and writes two custom properties. Nothing in the
       // engine knows the bar exists.
-      script: `document.querySelectorAll('[data-bar] .cs-dots').forEach((bar) => {
+      script: `document.querySelectorAll('[data-bar]').forEach((root) => {
   const sync = () => {
+    const bar = root.querySelector('.cs-dots');
+    if (!bar) return;
     const dots = [...bar.children];
     bar.style.setProperty('--bar-count', dots.length || 1);
     bar.style.setProperty('--bar-index', Math.max(0, dots.findIndex((d) => d.classList.contains('cs-dot--current'))));
   };
-  // The class flips on page change; the children are rebuilt when a
-  // breakpoint changes the page count, so watch for both.
-  new MutationObserver(sync).observe(bar, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+  // Watch the carousel, not the dot row: the dots are built by the engine and
+  // may not exist yet, whatever order the two scripts loaded in. The same
+  // observer catches the class flipping on a page change and the children
+  // being rebuilt when a breakpoint changes the page count.
+  new MutationObserver(sync).observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
   sync();
 });`,
     },
@@ -468,22 +510,25 @@
       gutter: false,
       label: 'Gallery with photos and video',
       blurb: 'A gallery where some slides are video posters. The poster is a real button that opens a dialog — video never plays inline, and the thumb strip treats it like any other slide.',
-      data: { 'data-cs-gallery': '' },
+      data: { 'data-cs-gallery': '', 'data-video-dialog': '' },
       props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
+      videoDialog: true,
       models: PHOTOS.map((m, i) => ({ ...m, video: i === 2 || i === 4 })),
       css: `.cargo-photo { display: block; }
 .cargo-photo img, .cargo-mv img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
 .cargo-mv { position: relative; display: block; inline-size: 100%; padding: 0; font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
-.cargo-mv-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.3em; color: #16324f; background: rgba(255, 255, 255, 0.92); border-radius: 50%; transform: translate(-50%, -50%); }`,
+.cargo-mv-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.3em; color: #16324f; background: rgba(255, 255, 255, 0.92); border-radius: 50%; transform: translate(-50%, -50%); }
+${VIDEO_DIALOG_CSS}`,
       slides: (models) =>
         models.map((m) =>
           m.video
             ? `<button type="button" class="cargo-mv" data-video="${m.alt}">${pic(m)}<span class="cargo-mv-play" aria-hidden="true">&#9654;</span></button>`
             : `<span class="cargo-photo">${pic(m)}</span>`,
         ),
+      script: VIDEO_DIALOG_JS,
     },
 
     lightbox: {
@@ -971,6 +1016,11 @@
           return `${pad}    <${item} class="cs-slide">${inner}</${item}>`;
         }),
         `${pad}  </${tag}>`,
+        // Inside the carousel, not beside it, so the pattern CSS scopes to it
+        // the way every other .cargo-* rule does. A closed <dialog> is
+        // display:none and an open one renders in the top layer, so it costs
+        // the strip no space either way.
+        ...(p.videoDialog ? VIDEO_DIALOG_HTML.map((l) => `${pad}  ${l}`) : []),
         `${pad}</div>`,
       ].join('\n');
 
@@ -1060,6 +1110,17 @@
   // so nothing can add a new image slot that this quietly misses.
   const toCms = (html) => html.replace(/src="img\/([^"]+)"/g, (_, rel) => `src="${globalThis.CARGO.CMS?.[rel] ?? `#MISCPATH#${rel.split('/').pop()}`}"`);
 
+  // Every pattern script goes out behind a readiness guard, so where it is
+  // pasted stops mattering. Body Section Bottom runs during parsing, while the
+  // engine's <script defer> has not executed yet - so a script that looked for
+  // markup the engine builds found nothing and never ran again. DOMContentLoaded
+  // ordering alone does not save it either: an inline script in the body
+  // registers its listener BEFORE a deferred script gets to register its own,
+  // so it would still go first. The guard fixes the "markup not parsed yet"
+  // half; the engine half is fixed in the scripts themselves, which observe
+  // the carousel rather than querying what the engine has yet to build.
+  const guarded = (src) => `(function go() {\n  if (document.readyState === 'loading') return document.addEventListener('DOMContentLoaded', go);\n${src.replace(/^/gm, '  ')}\n})();`;
+
   /* ---- render ----------------------------------------------------------- */
 
   const $ = (id) => document.getElementById(id);
@@ -1111,9 +1172,10 @@
     styleEl.textContent = cssFor('.wb-live', true);
     stage.innerHTML = htmlFor('wb-live');
     live = globalThis.CustomSlider.autoInit(stage);
-    wireVideo();
 
-    // A few patterns need page script - tabs, the gallery filter, the lightbox.
+    // A few patterns need page script - tabs, the gallery filter, the lightbox,
+    // and now the two video patterns, whose dialog used to be wired by the demo
+    // page instead of by the snippet.
     // The SAME string runs here and is printed in the code panel, so what you
     // copy is what you just watched work.
     const p = PATTERNS[state.pattern];
@@ -1131,18 +1193,17 @@
     // Same generator, different selector - that is the parity guarantee.
     // Kept as text as well as highlighted markup: the clipboard gets the text,
     // never the spans.
-    const script = p.script ? `\n\n<script>\n${p.script}\n</script>` : '';
-    const css = cssFor(`.${state.name}`);
-    const html = toCms(htmlFor(state.name));
-    state.codeText = `<style>\n${css}\n</style>\n\n${html}${script}`;
     // The three parts, each in the form the field it goes into wants. The box
-    // above shows them together with their tags, because that is what the
+    // below shows them together with their tags, because that is what the
     // finished page contains - but Style Only is a raw-CSS field, so the CSS
-    // button hands over the sheet with no <style> around it. Same strings the
-    // box is built from: one producer, three destinations.
-    state.cssText = css;
-    state.htmlText = html;
-    state.scriptText = p.script || '';
+    // part carries no <style> around it. The box is BUILT from these three, so
+    // the button and the box cannot hand over different text.
+    state.cssText = cssFor(`.${state.name}`);
+    state.htmlText = toCms(htmlFor(state.name));
+    state.scriptText = p.script ? guarded(p.script) : '';
+    state.codeText = `<style>\n${state.cssText}\n</style>\n\n${state.htmlText}${state.scriptText ? `\n\n<script>\n${state.scriptText}\n</script>` : ''}`;
+    const css = state.cssText;
+    const html = state.htmlText;
     $('wb-copy-js').hidden = !p.script;
 
     // Say what is in the box and where each part goes, counted off the snippet
@@ -1161,7 +1222,10 @@
       ['Named', `.${state.name}`, 'give a second slider on the same page a different name, or they overwrite each other'],
     ];
     if (shared()) parts.push(['Card style', `.cargo-${state.look}`, 'comes from <strong>custom-slider.css</strong> — nothing to paste for it']);
-    if (p.script) parts.push(['JavaScript', lines(p.script), '<strong>Body Section, Bottom</strong>']);
+    // Counted off the guarded script, which is the one that ships. "Either
+    // side" is the point of the guard: the script no longer cares whether the
+    // engine's line runs before or after it.
+    if (state.scriptText) parts.push(['JavaScript', lines(state.scriptText), '<strong>Body Section, Bottom</strong> — either side of the custom-slider.js line']);
     // The demo images resolve to real platform paths, which is what makes them
     // usable - and exactly why this warning belongs here. They are Chevrolet
     // stock art, so on any other brand's site they load perfectly and show the
@@ -1172,18 +1236,6 @@
         .map(([what, n, where]) => `<li><b>${what}</b> <span>${typeof n === 'number' ? `${n} line${n === 1 ? '' : 's'}` : n}</span>${typeof n === 'number' ? 'goes into ' : ''}${where}</li>`)
         .join('') + warn;
     codeEl.innerHTML = globalThis.CARGO.hl.snippet(state.codeText);
-  }
-
-  // Posters open a native dialog. Kept here rather than in the snippet because
-  // it is three lines and the snippet says so.
-  function wireVideo() {
-    const dlg = $('wb-dialog');
-    for (const b of stage.querySelectorAll('[data-video]')) {
-      b.addEventListener('click', () => {
-        $('wb-dialog-title').textContent = b.dataset.video;
-        dlg.showModal();
-      });
-    }
   }
 
   // Measured, not asserted: compare the card actually rendered against the

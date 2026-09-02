@@ -1096,21 +1096,6 @@ code {
   white-space: pre-wrap;
 }
 
-/* ---- dialog ------------------------------------------------------------ */
-
-#wb-dialog {
-  max-inline-size: 34rem;
-  padding: 1.5rem;
-  color: var(--ink);
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: 14px;
-}
-
-#wb-dialog::backdrop {
-  background: rgba(0, 0, 0, 0.55);
-}
-
 /* ---- reference page ---------------------------------------------------- */
 
 .ui-doc {

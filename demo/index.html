@@ -223,11 +223,10 @@
       </main>
     </div>
 
-    <dialog id="wb-dialog" aria-labelledby="wb-dialog-title">
-      <h3 id="wb-dialog-title" style="margin-top: 0"></h3>
-      <p>The video would play here. The demo stops at opening the dialog — Esc closes it and focus is trapped, both from the native <code>&lt;dialog&gt;</code> rather than any code of ours.</p>
-      <form method="dialog"><button type="submit" class="ui-btn">Close</button></form>
-    </dialog>
+    <!-- The video dialog used to live here, which is exactly why the copied
+         code did nothing: the poster button shipped, the wiring did not. The
+         two video patterns now carry their own <dialog> and handler in the
+         snippet, and the preview runs that same script. -->
 
     <script src="assets/theme.js" defer></script>
   </body>
