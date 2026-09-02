@@ -855,7 +855,19 @@ ${VIDEO_DIALOG_CSS}`,
   // bare `0` is rejected on purpose: it is a valid CSS length, but the
   // platform's minifier turns `0px` into it and the engine's calc() cannot use
   // it, which is the whole reason this repo writes 0.1px.
-  const wantsLength = (key) => LENGTH.test(String(knobDefault(key) ?? ''));
+  // A CSS math function is a length too. --strip-pad-x is the only knob that
+  // ships one today, and now that the gutter rule READS it, a value the
+  // property cannot use no longer sits harmlessly in a declaration nothing
+  // consulted: padding-inline goes invalid, the arrow channel collapses to 0
+  // and the 44px arrow lands on the first card - measured 44px of overlap on
+  // the model bar with "banana" typed into Side gutter. Matched by shape like
+  // every other length here, so a look shipping a clamp() or a min() tomorrow
+  // is covered the day it ships rather than being a second special case.
+  const MATH_FN = /^(?:calc|min|max|clamp)\(/i;
+  const wantsLength = (key) => {
+    const d = String(knobDefault(key) ?? '');
+    return LENGTH.test(d) || MATH_FN.test(d);
+  };
   const okValue = (key, v) => {
     const s = String(v).trim();
     if (!s || !wantsLength(key)) return true;
@@ -945,11 +957,25 @@ ${VIDEO_DIALOG_CSS}`,
     // are not card styles and have no entry in it.
     const body = [state.look && !lib ? scope(LOOKS[state.look].css) : '', p.css ? scope(p.css) : ''].filter(Boolean).join('\n');
     // Arrows either sit in a gutter beside the content or float over it. Last
-    // in the sheet so it beats the padding-inline a card look sets for itself.
-    // The fallback matters: --cs-arrow-size is defined on .cs, and the
-    // tab strip sits OUTSIDE the carousel, so without one the calc() references
-    // an undefined variable and the whole declaration is dropped.
-    const gw = state.gutter ? 'calc(var(--cs-arrow-size, 44px) + 0.4em)' : '0';
+    // in the sheet so it beats the padding-inline a card look sets for itself -
+    // which is exactly why it has to READ the look's value rather than restate
+    // a number of its own. Writing the width here made "Side gutter" a dead
+    // knob: the field took the edit and the declaration shipped, and this rule
+    // then overrode it on the same element. Measured on the model bar at
+    // 1500px: 50px drawn against the 47.75px the field named, and still 50px
+    // after typing 7em into it.
+    //
+    // Both fallbacks matter. --strip-pad-x exists only where a card look
+    // defines it (tile and vcard); --cs-arrow-size is defined on .cs, and the
+    // tab strip sits OUTSIDE the carousel, so without either the whole
+    // declaration is dropped. The strip below keeps the literal for that
+    // reason - it is a sibling of the carousel and never inherits the knob -
+    // and nothing misaligns, because the tabs are centred (bbeda7a): measured
+    // 0.0px off the carousel's centre at rest, at 7em, and at a refused value.
+    //
+    // Off stays a literal 0. `var(--strip-pad-x, 0)` would let a look's gutter
+    // survive the toggle, and the phone rule below reads this literal.
+    const gw = state.gutter ? 'var(--strip-pad-x, calc(var(--cs-arrow-size, 44px) + 0.4em))' : '0';
     // Tabs and filter buttons sit outside the carousel, so they have to be told
     // about the gutter or they hang off the left edge of their own cards.
     //

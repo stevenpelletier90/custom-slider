@@ -6,7 +6,7 @@
 // never caught any of them.
 import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { serve, launch, openBuilder, pick } from './helpers.mjs';
+import { serve, launch, openBuilder, pick, setField } from './helpers.mjs';
 
 let server, browser, page, errors;
 
@@ -134,6 +134,43 @@ describe('every producer reads the roster in effect', () => {
     const code = await page.evaluate(() => document.getElementById('wb-code').textContent);
     const trigger = /<button[^>]*cargo-lb-open[\s\S]*?<img[^>]*>/.exec(code)?.[0] ?? '';
     assert.match(trigger, /A CHANGED DESCRIPTION/, 'the trigger thumbnail did not take the edited alt text');
+  });
+});
+
+describe('a knob the page actually reads', () => {
+  // F038: the generated gutter rule wrote its own width on the same element the
+  // Side gutter knob sets, and wrote it last - so the field took the edit, the
+  // declaration shipped, and nothing moved. Measured on the model bar: 50px
+  // drawn against the 47.75px the field named, unchanged after typing 7em.
+  test('Side gutter changes the gutter the page draws', async () => {
+    await pick(page, 'modelbar');
+    const drawn = () => page.evaluate(() => +getComputedStyle(document.querySelector('#wb-stage .cs')).paddingLeft.replace('px', ''));
+    const before = await drawn();
+    await setField(page, 'Side gutter', '7em');
+    const after = await drawn();
+    assert.notEqual(after, before, 'the knob still does not move the gutter');
+    const code = await page.evaluate(() => document.getElementById('wb-code').textContent);
+    assert.match(code, /--strip-pad-x: 7em;/, 'the copied CSS lost the value');
+    assert.match(code, /padding-inline: var\(--strip-pad-x,/, 'the gutter rule does not read the knob');
+  });
+
+  // With the rule reading the knob, a value the property cannot use stops being
+  // harmless: padding-inline goes invalid and the 44px arrow lands on the card.
+  test('a Side gutter value the property cannot use is refused, not drawn', async () => {
+    await pick(page, 'modelbar');
+    await setField(page, 'Side gutter', 'banana');
+    const r = await page.evaluate(() => {
+      const root = document.querySelector('#wb-stage .cs');
+      const input = [...document.querySelectorAll('#wb-settings label > span')].find((x) => x.textContent.trim() === 'Side gutter')?.parentElement.querySelector('input');
+      return {
+        pad: +getComputedStyle(root).paddingLeft.replace('px', ''),
+        flagged: input?.getAttribute('aria-invalid') === 'true',
+        emitted: /--strip-pad-x:\s*([^;]*);/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null,
+      };
+    });
+    assert.ok(r.flagged, 'a non-length Side gutter was not flagged');
+    assert.equal(r.emitted, null, 'the refused value reached the copied CSS');
+    assert.ok(r.pad > 0, `the arrow channel collapsed to ${r.pad}px, so the arrow lands on the first card`);
   });
 });
 
