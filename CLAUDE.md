@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## What this is
 
-A dependency-free scroll-snap carousel (`cs`) built to replace third-party slider libraries on DealerOn CMS sites. Two shipped files, no runtime dependencies, about 6.0 KB gzip total against a 6656 B budget.
+A dependency-free scroll-snap carousel (`cs`) built to replace third-party slider libraries on DealerOn CMS sites. Two shipped files, no runtime dependencies. The engine is 6.2 KB gzip (JS 4.9 + CSS 1.4) against a 6656 B budget; the stylesheet also carries 2 KB of card styles, so a site downloads 7.8 KB. `npm run size` prints all of it and is the authority — every figure written down elsewhere goes stale.
 
 `README.md` is the public API reference (markup contract, options, CSS custom properties, JS API, accessibility behaviors, verification checklist) — read it before changing anything user-facing. The design rationale behind each decision is in `docs/superpowers/specs/2026-07-13-custom-slider-design.md`; the per-task build log and the triaged backlog of known non-blocking issues are in `.superpowers/sdd/progress.md` (git-ignored).
 

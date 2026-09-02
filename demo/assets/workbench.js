@@ -2062,7 +2062,17 @@ ${VIDEO_DIALOG_CSS}`,
     for (const b of widthBtns()) {
       const w = +b.dataset.w;
       b.disabled = w > reach + 1;
-      b.title = b.disabled ? `Make the window about ${Math.round(w + (innerWidth - reach))}px wide to use this` : w ? `${SCREEN[w]} screen — the slider gets ${w}px` : 'Use the whole column';
+      // Honest about what this button can and cannot show. It resizes the
+      // preview box and pins the per-view count for that tier, but a media
+      // query asks the WINDOW, so the phone-only rules in the card styles and
+      // the pattern CSS - smaller arrows, a tighter peek, a dropped gutter -
+      // do not apply until the window itself is that narrow. Narrow the
+      // browser to see those.
+      b.title = b.disabled
+        ? `Make the window about ${Math.round(w + (innerWidth - reach))}px wide to use this`
+        : w
+          ? `${SCREEN[w]} screen — the slider gets ${w}px. Cards per view match; phone-only rules only apply once the window itself is that narrow.`
+          : 'Use the whole column';
       if (b.getAttribute('aria-pressed') === 'true') active = b;
     }
     // A chosen width that no longer fits must not keep its label. Buttons stay

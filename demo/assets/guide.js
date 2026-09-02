@@ -274,7 +274,7 @@
 
       <section id="g-cms"><h3>Putting it on a DealerOn site</h3>
         ${list([
-          'The engine CSS goes in <strong>Style Only, Head Section</strong>; the engine JS in <strong>Body Section, Bottom</strong>, after the markup.',
+          'The two engine files are linked with a <code>&lt;link&gt;</code> and a <code>&lt;script&gt;</code> in the <strong>Head Section</strong> tab — the one that takes HTML verbatim, not “Style Only, Head Section”, which takes raw CSS and would swallow a tag. They live at <code>/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/</code>, one copy per site.',
           "Your slider's own CSS goes in <strong>Style Only</strong>, the markup in a <strong>Custom HTML</strong> block, and a pattern's script in <strong>Body Section, Bottom</strong>. The Build page has a Copy button per field, because the three cannot go in as one paste.",
           'Style Only takes <strong>raw CSS</strong> — no <code>&lt;style&gt;</code> tags and no comments. A tag pasted into it is read as part of the first selector, so that rule is dropped and the settings it carried go with it, silently.',
           'Both engine files are shared — add them once per site, not once per slider. Several sliders on one page is fine and expected.',

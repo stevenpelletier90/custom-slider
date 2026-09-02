@@ -1,9 +1,12 @@
 # Putting Custom Slider on a DealerOn site
 
-> **Status: not deployed.** As of 2026-08-18 the files are not on FTP and no
-> live site uses them. This documents the intended process so it is ready to go,
-> and so the questions get settled before anything ships — not a runbook for
-> work you can do today.
+> **Deployment status lives in ONE place:** the "Deployment status" section of
+> [../README.md](../README.md). Short version as of 2026-09-02: the two URLs
+> under `/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/` answer
+> 200 but serve the pre-rename dl-carousel build, so the current engine is not
+> deployed yet. The README has the upload steps, the 21-day cache TTL, and the
+> rename map. Do not restate a status here — three documents once gave three
+> different answers.
 
 > **No hosted files yet?** You do not have to wait — the whole engine can be
 > pasted into a page today. See [cms-no-hosting.md](cms-no-hosting.md). Your
@@ -13,42 +16,45 @@
 
 Two files, no dependencies, no build step on the site side:
 
-| File                | Gzip    | What it does                                 |
-| ------------------- | ------- | -------------------------------------------- |
-| `custom-slider.css` | ~1.2 KB | Layout, scroll-snap physics, control styling |
-| `custom-slider.js`  | ~4.8 KB | Wires controls, state, autoplay, fade, drag  |
+| File                | Gzip   | What it does                                                                                                              |
+| ------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `custom-slider.css` | 3.1 KB | Layout, scroll-snap physics, control styling — **plus** the card styles and column classes (1.4 KB engine + 2.0 KB cards) |
+| `custom-slider.js`  | 4.9 KB | Wires controls, state, autoplay, fade, drag                                                                               |
+
+A site downloads 7.8 KB for the pair, which is what the demo masthead prints.
+`npm run size` is the authority — these figures come from it and go stale;
+re-read them there rather than trusting this table.
 
 Both come from `dist/` in this repo — never from `src/`, which is the readable
 source and is not minified.
 
 ### Where they go
 
-The platform already hosts shared third-party slider code at
-`/assets/shared/CustomHTMLFiles/slick/slick.min.js`, so the natural home is
-alongside it. **This is the open question to settle before launch:**
+**Settled: the shared path**, `/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/`,
+alongside the platform's other shared slider code
+(`/assets/shared/CustomHTMLFiles/slick/slick.min.js`). One copy, every site gets
+fixes at once — which is the whole point of the frozen HTML contract: the engine
+can be replaced underneath every site without touching a single page.
 
-- **Shared path** (e.g. `/assets/shared/CustomHTMLFiles/cs/`) — one
-  copy, every site gets fixes at once. This is the whole point of a replacement
-  code, and the reason the HTML is a frozen contract: the engine can be replaced
-  underneath every site without touching a single page.
-- **Per-dealer Media Gallery** (`#MISCPATH#custom-slider.js`) — works today with no
-  platform involvement, but every site is then pinned to whatever version it got,
-  and a fix means re-uploading to each one.
+The folder exists and both filenames answer 200 today, serving the pre-rename
+build; the upload replaces them in place. See "Deployment status" in
+[../README.md](../README.md) for what is on it right now and the steps.
 
-Recommend the shared path. Per-dealer upload is the fallback if a shared location
-is not available, and it should be treated as temporary.
+Per-dealer Media Gallery (`#MISCPATH#custom-slider.js`) remains the fallback if a
+shared location is ever unavailable, but it pins each site to whatever version it
+got and a fix means re-uploading to every one — treat it as temporary.
 
 ### How a page loads them
 
-    <link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/cs/custom-slider.css">
-    <script src="/assets/shared/CustomHTMLFiles/cs/custom-slider.js" defer></script>
+    <link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.css">
+    <script src="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.js" defer></script>
 
 `defer` matters: the engine auto-initializes on `DOMContentLoaded`, and the CSS
 already reserves the control space, so nothing shifts when the JS lands (CLS 0).
 
 ### Load it only on pages that use it
 
-The two tags above are cheap (~6.0 KB gzip for both files, cached after the
+The two tags above are cheap (7.8 KB gzip for both files, cached after the
 first page), so on a page or template you **know** contains a slider, link them
 directly and be done. The question only gets interesting when the natural place
 to load the engine is a **sitewide include** — then most pages on the site have
@@ -62,7 +68,7 @@ two tags:
           if (!document.querySelector('.cs')) return;
           var css = document.createElement('link');
           css.rel = 'stylesheet';
-          css.href = '/assets/shared/CustomHTMLFiles/cs/custom-slider.css';
+          css.href = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.css';
           // PREPEND, never append: the engine stylesheet carries the default
           // --cs-* values at the same specificity as your recipe CSS, so it
           // must land BEFORE the page's Style Only CSS in the cascade.
@@ -71,7 +77,7 @@ two tags:
           // on the spelletier test site, 2026-08-20.
           document.head.insertBefore(css, document.head.firstChild);
           var js = document.createElement('script');
-          js.src = '/assets/shared/CustomHTMLFiles/cs/custom-slider.js';
+          js.src = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.js';
           document.head.appendChild(js);
         };
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
@@ -97,13 +103,13 @@ stays 0.
 
 So: **direct tags on pages and templates known to contain a slider** (CLS 0,
 no flash); **the conditional loader for the sitewide-include case**, where it
-turns "every page pays ~6 KB" into "only slider pages pay, slightly later".
+turns "every page pays 7.8 KB" into "only slider pages pay, slightly later".
 
 ### What about autoplay and fade?
 
 There is nothing further to conditionally load. Autoplay and fade are not
 separate resources or plugins — both ship inside the same two files
-(~4.8 KB JS + ~1.2 KB CSS gzip, just over 6 KB combined), and both are gated
+(4.9 KB JS + 3.1 KB CSS gzip, 7.8 KB combined), and both are gated
 at runtime:
 
 - Autoplay setup early-returns before creating any timer or observer when
@@ -136,8 +142,11 @@ Rules that are not negotiable:
   thumbs are all generated. A block containing its own arrows will end up with two sets.
 - Give the root an `aria-label` (or `aria-labelledby`). A missing one logs a
   console warning at init.
-- Images need `width` and `height` — that is what holds CLS at 0 — plus
-  `loading="lazy"` on everything below the first visible slide.
+- Images need `width` and `height` — that is what holds CLS at 0 — with
+  `loading="eager"` on what is visible at the narrowest tier (the hero's first
+  slide also takes `fetchpriority="high"`) and `loading="lazy"` on everything
+  below it. The builder emits this for you; an image inside a hidden tab pane or
+  a closed dialog stays lazy, because an eager one there is fetched anyway.
 
 ## 3. Where the CSS goes
 
@@ -159,10 +168,17 @@ The styleCode minifier has two behaviors every recipe must respect:
   the failure is specific to `--*:` declarations. Every recipe in the library
   therefore uses plain values and classic `rgba(r, g, b, a)` inside `--cs-*`
   declarations, with media queries instead of `clamp()`.
-- **Zero lengths lose their unit** (`0px` → `0`). Chrome resolves the engine's
-  `calc(100% - var(--cs-controls-space))` with a unitless `0` today, but that
-  is lenient behavior — treat `--cs-*: 0px` values as a cross-browser watch
-  item after pasting.
+- **Zero lengths lose their unit** (`0px` → `0`), and a unitless `0` invalidates
+  every `calc()` that reads the variable — in **every** browser, Chrome
+  included. **Never write a zero length in a `--*` declaration; write `0.1px`.**
+  The visible failure is not a stray arrow, it is the strip: `.cs-slide`'s
+  `flex: 0 0 calc((100% - (var(--cs-per-view) - 1) * var(--cs-gap)) /
+var(--cs-per-view))` falls back to `auto` and every card collapses to its
+  content width. Measured 2026-09-02 in the same 750px host, three per view:
+  `--cs-gap: 0.1px` gives a 249.9px slide, `--cs-gap: 0` gives 42.0px. Chromium
+  and WebKit behave identically — an earlier version of this bullet called
+  Chrome "lenient" here, which was wrong, and six patterns shipped `0px` on the
+  strength of it. `0.1px` survives minification (it serves as `.1px`).
 
 Also expect **site CSS to outrank recipe classes**: OEM styles commonly set
 link decoration at id specificity (`#content-main a`), which beats
@@ -242,7 +258,12 @@ The slider is ordinary block HTML, so the usual rules apply unchanged:
   `demo/assets/cms-paths.js` and is regenerated by
   `node scripts/harvest-cms-paths.mjs`; OEMs rotate model-year art, so re-run it
   when a cutout starts 404ing rather than hand-editing a path.
-- **Block storage is Latin-1** — HTML-entity-encode anything outside it.
+- **Block storage is Windows-1252**, not Latin-1 — the distinction matters in
+  the useful direction: curly quotes, en and em dashes, the ellipsis and the
+  bullet are all IN 1252 and can be written literally. An arrow (`→`, U+2192),
+  a star (`★`), emoji and non-Latin scripts are not; entity-encode those
+  (`&#8594;`). `npm run validate` scans the generated markup and fails on any
+  character outside the code page.
 - Replacement codes do **not** resolve in hosted WordPress blogs. Use literal
   text there.
 

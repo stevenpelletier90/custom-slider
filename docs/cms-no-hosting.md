@@ -1,8 +1,14 @@
 # Using Custom Slider before the files are hosted
 
 The [normal setup](cms-implementation.md) links two hosted files. Until those are
-on FTP, the whole engine can be **pasted into a page** — no hosting, no ticket,
-nothing to wait for.
+on FTP — see "Deployment status" in [../README.md](../README.md), which is the
+only place the state of the upload is recorded — the whole engine can be
+**pasted into a page**: no hosting, no ticket, nothing to wait for.
+
+This is also the route for a page that cannot link the stylesheet at all. The
+builder's **Paste the card styles too** checkbox is not: it inlines a card
+look's rules and nothing else, so without the stylesheet the block still has no
+layout or physics. These two files carry the engine as well.
 
 > **This is a stopgap, and the tradeoff is real.** Pasted code is per page, so a
 > fix means re-pasting every page that uses it. Hosted files exist precisely so
@@ -56,14 +62,15 @@ Model bars: start from your OEM's ladder — the fourteen are tabulated in the
 
 ## What it costs the page
 
-|                            | Gzip over the wire                                       |
-| -------------------------- | -------------------------------------------------------- |
-| CSS in `styleCode`         | ~1.2 KB, merged into the site's existing head stylesheet |
-| Engine in `bodyBottomCode` | ~4.8 KB                                                  |
+|                            | Gzip over the wire                                                         |
+| -------------------------- | -------------------------------------------------------------------------- |
+| CSS in `styleCode`         | 2.9 KB, merged into the site's existing head stylesheet — engine and cards |
+| Engine in `bodyBottomCode` | 4.8 KB                                                                     |
 
-Inline code is not separately cacheable the way a hosted file is, so a repeat
-visitor re-downloads it with the page. At ~6 KB total that is acceptable for a
-pilot; across an account it is one of the reasons to move to hosted files.
+`npm run size` prints both figures and is the authority; the numbers here go
+stale. Inline code is not separately cacheable the way a hosted file is, so a
+repeat visitor re-downloads it with the page. At under 8 KB that is acceptable
+for a pilot; across an account it is one of the reasons to move to hosted files.
 
 ## When you move to hosted files
 

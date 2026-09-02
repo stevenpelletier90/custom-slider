@@ -511,8 +511,14 @@ body {
   letter-spacing: 0.08em;
 }
 
+/* The label and its control sit side by side, and wrap onto two lines when
+   they cannot: "Preview at" plus the five screen-size buttons needs 310px, so
+   on a 320px phone the row hung 23px off the right edge and the last button
+   was unreachable. Wrapping keeps every button on screen and reads the same at
+   every other width, where it never wraps. */
 .ui-spec-item {
   display: flex;
+  flex-wrap: wrap;
   gap: 0.45rem;
   align-items: baseline;
 }
@@ -1070,9 +1076,18 @@ body {
   font-size: 0.78rem;
 }
 
+/* An inline <code> is usually a class name or a property, but some of them are
+   a full shared path — 62 characters with no space in it, which pushed the
+   install panel 139px past a 320px phone. `anywhere` rather than `break-word`
+   so the break can happen mid-token; a <pre> keeps its own scrolling and is
+   excluded. */
 code {
   font-family: var(--mono);
   font-size: 0.88em;
+}
+
+:not(pre) > code {
+  overflow-wrap: anywhere;
 }
 
 #wb-file-view {

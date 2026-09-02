@@ -185,10 +185,21 @@
               <b>Two files, that’s all</b>
               The stylesheet carries the card styling as well, so a slider you copy from here is mostly just its markup. Without these two files linked, a pasted slider is a plain list.
             </div>
+            <!-- Two tabs in the Custom HTML panel have overlapping names, and
+                 sending the <link> to the wrong one is silent: "Style Only,
+                 Head Section" is styleCode and takes RAW CSS, so a tag pasted
+                 there corrupts the sheet. The tab called just "Head Section" is
+                 headerCode, which emits HTML verbatim into <head>. Verified
+                 live on dealer 32700. -->
             <div class="ui-where">
               <b>Where these go</b>
-              The <code>&lt;link&gt;</code> in <strong>Style Only → Head Section</strong>, the <code>&lt;script&gt;</code> in <strong>Body Section, Bottom</strong>. Swap <code>/path/</code> for
-              wherever you uploaded them.
+              Both tags go in the <strong>Head Section</strong> tab — the one that takes HTML, <em>not</em> “Style Only, Head Section”, which takes raw CSS and would swallow a tag. The
+              <code>&lt;script&gt;</code> can go in <strong>Body Section, Bottom</strong> instead if you prefer it there.
+            </div>
+            <div class="ui-where">
+              <b>The path</b>
+              These live at <code>/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/</code> — one shared copy for every site. Until the current build is uploaded there, that address still
+              serves the old <code>dl-carousel</code> engine, and a slider linked to it renders as a plain list.
             </div>
             <p style="margin: 0.8rem 0 0"><button type="button" class="ui-btn" id="wb-copy-tags">Copy both tags</button></p>
           </div>
@@ -210,8 +221,13 @@
             </div>
             <div class="ui-where">
               <b>Where these go</b>
-              Copy gives you the wrapper too. The <code>&lt;style&gt;</code> in <strong>Style Only → Head Section</strong>; the <code>&lt;script&gt;</code> in <strong>Body Section, Bottom</strong> —
-              it has to load after the markup or it finds nothing to wire up.
+              Copy gives you the wrapper too, so both go in a field that takes HTML: the <code>&lt;style&gt;</code> in <strong>Head Section</strong>, the <code>&lt;script&gt;</code> in
+              <strong>Body Section, Bottom</strong>. Not “Style Only” — that field takes raw CSS with no tags and no comments, and this stylesheet has both.
+            </div>
+            <div class="ui-where">
+              <b>Or the comment-free pair</b>
+              <code>npm run paste</code> writes <code>dist/paste/1-style-only.css</code> (engine and card styles, comments stripped, for the Style Only field) and
+              <code>dist/paste/2-body-bottom.html</code>. That is the route for a page where you have no file access at all.
             </div>
           </div>
         </div>

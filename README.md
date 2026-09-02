@@ -1,8 +1,11 @@
 # Custom Slider
 
-Dependency-free scroll-snap slider/carousel. ~6.0 KB gzip total (JS+CSS), no build
-step required to use, themed entirely with CSS custom properties. Built to be
-maintained in-house: the whole engine is one commented file, `src/custom-slider.js`.
+Dependency-free scroll-snap slider/carousel. The engine is 6.2 KB gzip (JS 4.9 +
+CSS 1.4); the shipped stylesheet also carries 2 KB of card styles, so a site
+downloads 7.8 KB in total — the figure the demo masthead prints, from the same
+measurement. No build step required to use, themed entirely with CSS custom
+properties. Built to be maintained in-house: the whole engine is one commented
+file, `src/custom-slider.js`. `npm run size` is the authority on all of these.
 
 The browser owns the physics (touch, drag, momentum, snapping — CSS
 `scroll-snap`); the JS only wires controls, state, autoplay, and the gallery
@@ -21,21 +24,26 @@ you `custom-slider.css` and `custom-slider.js` themselves, to link or to paste.
     <link rel="stylesheet" href="custom-slider.css">
     <script src="custom-slider.js" defer></script>
 
-    <div class="cs my-slider" data-cs aria-label="Featured vehicles">
+    <div class="cs my-slider cs-sm-2 cs-md-3" data-cs aria-label="Featured vehicles">
       <ul class="cs-track">
         <li class="cs-slide">…</li>
         <li class="cs-slide">…</li>
       </ul>
     </div>
 
-    <style>
-      .my-slider { --cs-per-view: 1; }
-      @media (min-width: 640px)  { .my-slider { --cs-per-view: 2; } }
-      @media (min-width: 1024px) { .my-slider { --cs-per-view: 3; } }
-    </style>
+Every `[data-cs]` element initializes automatically. Slides-per-view is CSS, not
+a JS option: the `cs-xs-N` / `cs-sm-N` / `cs-md-N` / `cs-lg-N` classes ship in
+the stylesheet for N of 1–8, on Bootstrap 3's tiers — **768 / 992 / 1200**, the
+grid the storefronts actually run. There is no 576. One class per tier where the
+count changes; the engine's own default is one across, so `cs-xs-1` is never
+needed.
 
-Every `[data-cs]` element initializes automatically. Slides-per-view is CSS,
-not a JS option — set `--cs-per-view` per breakpoint.
+Setting `--cs-per-view` by hand in a media query does the same thing and is what
+the classes are made of, but on a DealerOn page your CSS goes in the **Style
+Only** field as raw CSS — no `<style>` tags — so there is no in-page `<style>`
+block to put it in. Write `.my-slider.cs { … }` rather than `.my-slider { … }`
+there: a bare class ties with the engine's own `.cs`, and then source order,
+which you do not control, decides which wins.
 
 ## Quick start (ES module)
 
@@ -88,7 +96,10 @@ Files named `dl-carousel.js` / `dl-carousel.css` are **not** an older version of
 these. That was the pre-rename engine and it is a different contract — root
 class `dl-carousel`, `--dlc-*` properties, `window.DLCarousel`. A page linking
 those and pasting a snippet from the current builder gets an unstyled list, so
-they should be removed rather than left alongside.
+they should be removed rather than left alongside. Note that the pre-rename
+build is currently served under the CURRENT filenames rather than its own — see
+"Deployment status" below for what is actually on the shared path today, and the
+rename map for moving a page across.
 
 ## Card styles come with the stylesheet
 
@@ -120,9 +131,18 @@ the preview cannot disagree. `npm run size` splits on that marker and weighs onl
 engine against the budget below — the budget's job is to show the engine undercuts
 Embla's core and Splide, and neither of those ships a card library.
 
-A page that can't link the stylesheet — a one-off block on a site where you have no
-file access — can still work: tick **Paste the card styles too** in the builder and the
-snippet carries its own styling, rendering identically.
+**Paste the card styles too** in the builder inlines a look's own rules into the
+snippet, for a page that links a `custom-slider.css` older than the card half. It
+carries the card styling **only** — never the engine's layout and physics — so on
+a page with no stylesheet at all the block renders as a full-width vertical list
+with static arrows, whatever the column classes say. Measured, not assumed: track
+`display: block`, `overflow-x: visible`, `scroll-snap-type: none`, slide
+`flex-basis: auto`.
+
+For a page that genuinely cannot link the files, use `npm run paste`. It writes
+`dist/paste/1-style-only.css` (engine **and** cards, comment-free for the Style
+Only field) and `dist/paste/2-body-bottom.html`. That is the route that works
+without the stylesheet; the checkbox is not.
 
 ## CSS custom properties
 
@@ -219,17 +239,82 @@ replacing it = replacing the contents of the two dist files, with zero site edit
 the markup contract, replacement codes, per-OEM theming, and the ladder for each
 brand's model bar.
 
-**The shared-path question is answered: the engine IS hosted**, at
-`/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/`. Verified
-2026-08-31: `dl-carousel.js` served from there is byte-identical to this repo's
-build, and at least one designer test page is already built against it using the
-old `dl-carousel` classes and `data-slider`.
+### Deployment status — the one place it is written down
 
-That matters more than a filename. **The contract is only free to rename while
-nothing consumes it, and something now does** — so before republishing under the
-`custom-slider.{css,js}` / `cs-*` names, find every page pointing at the old
-files and move it, or host both side by side. Re-uploading renamed files over
-the old paths silently strips the controls off every existing page.
+**As of 2026-09-02 the current engine is NOT yet on FTP.** The two files live at
+
+    /assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.css
+    /assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.js
+
+and both URLs answer 200 today — but with the **pre-rename dl-carousel build**
+under the current names. Measured 2026-09-02, cache-busted: the CSS is 4,885 B
+and begins `.dl-carousel{--dlc-per-view: 1;--dlc-gap: 1rem`, with zero
+occurrences of `.cs{` or `--cs-`; the JS is 15,444 B and exposes `DLCarousel`.
+`last-modified` on both is 2026-08-28. `dl-carousel.css` and `dl-carousel.js`
+are **404** at that path — the old build is there only under the new names.
+
+So a `cs`/`data-cs` snippet linked to those URLs renders as a plain list right
+now. Nothing on a live site links them yet, which is what makes the upload
+simple: it replaces those two files in place, under the same names. The other
+two documents defer to this section; do not restate a status in them.
+
+**Uploading (do not skip the cache step).** Both files are served with
+`cache-control: max-age=1814400` — 21 days — from behind Fastly. Overwriting a
+file does not shorten that: a browser that already fetched the old one keeps it
+for up to three weeks.
+
+1. Run `npm run build`, then `npm run size`, and confirm the gate is green.
+2. Upload `dist/custom-slider.css` and `dist/custom-slider.js` over the two
+   paths above. Same names, same folder.
+3. Verify with a cache-busted request, not a browser reload:
+   `curl -s ".../custom-slider.css?cb=$RANDOM" | head -c 40` should begin
+   `.cs{--cs-per-view` — if it still says `.dl-carousel`, the upload has not
+   landed.
+4. Anyone who opened a page linking the old file needs a hard refresh, or to
+   wait out the TTL. Say so when you hand a test page over.
+
+### Moving a page off dl-carousel
+
+The old contract is a different set of names throughout, so a page cannot be
+half-migrated. Rename map:
+
+| Old (dl-carousel)   | Current (cs)          |
+| ------------------- | --------------------- |
+| `dl-carousel`       | `cs`                  |
+| `dl-carousel-track` | `cs-track`            |
+| `dl-carousel-slide` | `cs-slide`            |
+| `--dlc-*`           | `--cs-*`              |
+| `data-slider`       | `data-cs`             |
+| `data-slider-*`     | `data-cs-*`           |
+| `window.DLCarousel` | `window.CustomSlider` |
+
+Finding the pages that link the shared folder is Steven's, and nothing is
+believed to be live on it yet — the known consumer is a designer test page built
+on the old classes. Migrate a page by rebuilding its slider in the builder and
+re-pasting all three parts, rather than by editing class names in place: the
+snippet's CSS, markup and script have to agree with each other.
+
+### Changing a slider that is already live
+
+The builder cannot read a snippet back in — there is no import, and settings
+reset on reload — so there are two supported routes, and which one depends on
+what changed:
+
+- **Content** (a heading, a link, a photo, adding or removing a card): edit the
+  **Custom HTML** block directly. Copy an existing `<li class="cs-slide">…</li>`
+  and change it. Nothing else has to move.
+- **Settings** (how many across, gap, arrow colours, card style, a different
+  pattern): rebuild it in the builder and re-paste all three parts — CSS, HTML
+  and script. Re-pasting only the CSS leaves markup that no longer matches it.
+
+Either way **the class name must not change**. `.my-slider` is what the Style
+Only rules hook onto; rename it and every setting silently stops applying. Give
+a second slider on the same page a different name instead.
+
+Replacement codes (`#NAME#`, `#CITY#`, `#STATE#`, `#CONTACTUS#`) resolve inside
+a Custom HTML block, so they are safe in slide text and headings. They do **not**
+resolve in the Style Only field, and `#MISCPATH#` in an `img src` only resolves
+once that dealer has the file in their gallery.
 
 ## Development
 
