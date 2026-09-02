@@ -42,7 +42,27 @@ sandbox.history = { replaceState: noop };
 for (const f of ['looks.js', 'brands.js', 'cms-paths.js', 'workbench.js']) {
   new Function('globalThis', 'document', 'window', readFileSync(`demo/assets/${f}`, 'utf8')).call(sandbox, sandbox, sandbox.document, sandbox);
 }
-const { PATTERNS, LOOKS, renderPattern, renderLook } = sandbox.CARGO;
+const { PATTERNS, LOOKS, renderPattern, renderLook, ENGINE_DEFAULTS } = sandbox.CARGO;
+
+// cssFor() drops any value equal to an engine default, so that map has to BE
+// the engine. Read the real `.cs { … }` block out of src/custom-slider.css and
+// compare: a hand-kept copy would drift, and the only symptom would be a line
+// that quietly stopped being dropped from every snippet.
+// Comments out first: the block's own notes mention `--x:` declarations.
+const engineBlock = (readFileSync('src/custom-slider.css', 'utf8').match(/\.cs\s*\{([\s\S]*?)\n\}/)?.[1] ?? '').replace(/\/\*[\s\S]*?\*\//g, '');
+const engineReal = Object.fromEntries([...engineBlock.matchAll(/(--[\w-]+):\s*([^;]+);/g)].map(([, k, v]) => [k, v.trim()]));
+let drift = 0;
+for (const [k, v] of Object.entries(engineReal)) {
+  if (!(k in ENGINE_DEFAULTS)) (console.error(`  ENGINE_DEFAULTS is missing ${k} (src/custom-slider.css says "${v}")`), drift++);
+  else if (ENGINE_DEFAULTS[k] !== v) (console.error(`  ENGINE_DEFAULTS[${k}] = "${ENGINE_DEFAULTS[k]}" but src/custom-slider.css says "${v}"`), drift++);
+}
+for (const k of Object.keys(ENGINE_DEFAULTS)) {
+  if (!(k in engineReal)) (console.error(`  ENGINE_DEFAULTS has ${k}, which .cs in src/custom-slider.css does not set`), drift++);
+}
+if (drift) {
+  console.error(`\nlint-generated-css: ENGINE_DEFAULTS in demo/assets/workbench.js has drifted from src/custom-slider.css (${drift}).`);
+  process.exit(1);
+}
 
 // One sheet per pattern and per card look, named so a failure says which.
 const sheets = [...Object.keys(PATTERNS).map((id) => [`pattern “${id}”`, renderPattern(id, 'demo').css]), ...Object.keys(LOOKS).map((id) => [`look “${id}”`, renderLook(id, 'demo').css])];

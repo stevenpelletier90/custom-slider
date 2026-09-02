@@ -195,7 +195,7 @@
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       pairUp: true,
       css: `.cargo-col { display: grid; grid-template-rows: repeat(2, auto); gap: var(--cs-gap); }
-@media (max-width: 767.98px) { %root% { padding-inline: calc(var(--cs-arrow-size) + 0.3em); } }`,
+`,
     },
     peek: {
       gutter: false,
@@ -350,8 +350,7 @@
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 230,
       models: MIXED,
-      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4em); }
-@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+      css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-mix { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-mix img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 .cargo-mix h3 { margin: 0.8em 0.9em 0.2em; font-size: 0.95em; line-height: 1.3; }
@@ -369,8 +368,7 @@
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 250,
       models: SERVICES,
-      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4em); }
-@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+      css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-svc { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-media { display: block; overflow: hidden; }
 .cargo-svc img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.35s ease; }
@@ -394,8 +392,7 @@
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 250,
       models: REVIEWS,
-      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4em); }
-@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+      css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-review { block-size: 100%; padding: 1.25em; margin: 0; line-height: 1.5; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-review figcaption { display: flex; gap: 0.7em; align-items: center; line-height: 1.35; }
 .cargo-avatar { display: grid; flex: none; place-items: center; inline-size: 40px; block-size: 40px; font-weight: 700; line-height: 1; color: #fff; background: var(--avatar-bg); border-radius: 50%; }
@@ -556,8 +553,7 @@
         ['Works without JS', 'The track is a native scroll-snap container — turn JavaScript off and it still swipes.'],
         ['Start here', 'Copy the markup, add your <code>--cs-per-view</code> breakpoints, then restyle.'],
       ].map(([name, blurb]) => ({ name, blurb })),
-      css: `%root% { padding-inline: calc(var(--cs-arrow-size) + 0.4em); }
-@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+      css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-stock { block-size: 100%; padding: 1.1em; background: #f0f2f5; border-radius: 8px; }
 .cargo-stock h3 { margin: 0 0 0.35em; font-size: 1em; line-height: 1.3; }
 .cargo-stock p { margin: 0; font-size: 0.9em; line-height: 1.5; color: #5f6368; }
@@ -731,20 +727,69 @@
   // the 17 patterns.
   const shared = () => !!state.look && !state.standalone;
 
+  // Every rule the snippet puts on the carousel itself is written `.name.cs`,
+  // not `.name`. Specificity, not source order, then decides against the two
+  // other rules that style that same element - the engine's `.cs` and the
+  // shared stylesheet's `.cargo-<look>` - which are both (0,1,0), exactly what
+  // a bare `.name` is. Where the platform emits its aggregated Style Only sheet
+  // relative to a head <link> is not documented and may well vary, and with the
+  // CSS landing first the model bar quietly reverted to gap 1em, 55%-black
+  // arrows and a 2.5em dot reservation, while service cards fell from three per
+  // view to one. (0,2,0) costs nothing, is invisible to the designer, and takes
+  // the question off the table. Descendant rules already outrank both.
+  const ROOT = '.cs';
+
   // Properties whose default is written by the shared stylesheet rather than by
   // the look's own settings, so restating them in a snippet is a line that
   // changes nothing. build-cards.mjs emits `font-size: var(--cargo-font, 1em)`
   // on every card class, which is the whole list.
   const SHARED_DEFAULTS = { '--cargo-font': '1em' };
 
+  // The engine's own `.cs` defaults. A snippet restating one of these is a line
+  // that changes nothing, and 48 such lines were being pasted across 15
+  // patterns - `--cs-gap: 1em`, `--cs-arrow-bg`, `--cs-arrow-fg` and a
+  // `--cs-per-view: 1` that is the engine's value anyway. The delta filter used
+  // to run only against a look's settings, so the 13 look-less patterns had
+  // nothing to be filtered against and everything came through.
+  //
+  // Kept in step with src/custom-slider.css by scripts/check-looks.mjs, which
+  // reads the .cs block and fails if any value here disagrees. A hand-kept copy
+  // would drift, and the drift would only show as a line that quietly stopped
+  // being dropped.
+  const ENGINE_DEFAULTS = {
+    '--cs-per-view': '1',
+    '--cs-gap': '1em',
+    '--cs-peek': '0px',
+    '--cs-arrow-size': '44px',
+    '--cs-arrow-fg': '#fff',
+    '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)',
+    '--cs-arrow-fg-hover': '#fff',
+    '--cs-arrow-bg-hover': 'rgba(0, 0, 0, 0.8)',
+    '--cs-dot-size': '12px',
+    '--cs-dot-fg': '#757575',
+    '--cs-dot-current': '#333',
+    '--cs-controls-space': '2.5em',
+    '--cs-thumb-w': '88px',
+    '--cs-thumb-h': '56px',
+    '--cs-thumb-hover-scale': '1.06',
+    '--cs-focus': '#1a5fb4',
+    '--cs-fade-ms': '500ms',
+    '--cs-transition': '250ms ease-in-out',
+  };
+
   function cssFor(sel, preview) {
     const p = PATTERNS[state.pattern];
     const lib = shared();
-    const defaults = lib ? { ...SHARED_DEFAULTS, ...LOOKS[state.look].settings } : {};
+    // Engine first, then the look: a look that deliberately restates an engine
+    // value (portrait and logo both set --cs-arrow-bg) must be the one that
+    // counts, or a designer returning a knob to the engine's value would find
+    // the line silently dropped and the look's value still winning.
+    const defaults = lib ? { ...ENGINE_DEFAULTS, ...SHARED_DEFAULTS, ...LOOKS[state.look].settings } : { ...ENGINE_DEFAULTS };
     const merged = { ...state.lookProps, ...state.props };
-    const kept = lib ? Object.fromEntries(Object.entries(merged).filter(([k, v]) => defaults[k] !== v)) : merged;
-    // Per-view is cs-xs-N / cs-sm-N classes when the styles are shared.
-    const base = lib ? kept : { ...kept, '--cs-per-view': state.perView.base };
+    const kept = Object.fromEntries(Object.entries(merged).filter(([k, v]) => defaults[k] !== v));
+    // Per-view is always cs-xs-N / cs-sm-N classes now - see the ladder in
+    // htmlFor() - so it never appears as a declaration here.
+    const base = kept;
     const decls = Object.entries(base)
       // A value that is empty is not a value: `--cs-gap: ;` is an invalid
       // declaration and takes the whole rule's meaning with it. Nothing should
@@ -761,21 +806,20 @@
     // at 10px on a real dealer site while the demo showed 16. Defaulting to 1em
     // makes the cards inherit the site's own body size, so they match the copy
     // around them; setting --cargo-font to a length pins them instead.
+    // build-cards.mjs puts this on `.cargo-<look>`, so a pattern using a shared
+    // look already has it; a pattern drawing its own cards has no card class to
+    // carry it and states it here. It is the one line that cannot ride on the
+    // column classes.
     const font = lib ? '' : `  font-size: var(--cargo-font, 1em);`;
-
-    const steps = lib
-      ? '' // the ladder is cs-xs-N / cs-sm-N classes from the shared stylesheet
-      : BPS.filter((bp) => state.perView[bp] != null)
-          .map((bp) => `@media (min-width: ${bp}px) {\n  ${sel} { --cs-per-view: ${state.perView[bp]}; }\n}`)
-          .join('\n');
 
     // The preview is a fixed-width box inside a window that is usually much
     // wider, and a media query asks the WINDOW - so whatever the box was set
     // to, the ladder's top tier won. With the frame at 750, editing "992 and
     // up" changed nothing you could see. Pin the ladder resolved at the tier
-    // the frame stands in for, after the media queries so it wins. Preview
-    // only: the copied CSS ships the real ladder, which is what a page needs.
-    const pin = preview ? `${sel} { --cs-per-view: ${perViewAt(frameTier())}; }` : '';
+    // the frame stands in for; `${sel}.cs` outranks the cs-sm-N class the
+    // markup carries, so it wins wherever it sits. Preview only: the copied
+    // CSS ships the real ladder, which is what a page needs.
+    const pin = preview ? `${sel}${ROOT} { --cs-per-view: ${perViewAt(frameTier())}; }` : '';
 
     const dots = state.hideDots ? `${sel} .cs-dots { display: none; }` : '';
     // No arrow-inset override any more: the engine's own default is 0, which
@@ -802,7 +846,7 @@
         .replace(/\/\*[\s\S]*?\*\//g, '')
         .replace(/^[ \t]*\n/gm, '')
         .replace(/(^|[{}\n,]\s*)(%root%|%wrap%|\.cargo[\w-]*)/g, (_, pre, tok) => {
-          if (tok === '%root%') return `${pre}${sel}`;
+          if (tok === '%root%') return `${pre}${sel}${ROOT}`;
           if (tok === '%wrap%') return `${pre}${sel}-wrap`;
           return `${pre}${root} ${tok}`;
         });
@@ -828,15 +872,33 @@
     // the alignment up, and it has no arrows beside it to line up with anyway.
     // .98 for the same reason build-cards.mjs uses it: max-width 767px against
     // min-width 768px leaves a dead zone at fractional viewport widths.
+    //
+    // With the gutter off there is usually nothing to say: the carousel has no
+    // padding of its own, so `padding-inline: 0` lands on an already-unpadded
+    // element. The exception is a card look, which sets its own padding-inline
+    // from --strip-pad-x - there the zero is what turns the gutter off, so it
+    // still has to be written.
+    const needsRootPad = state.gutter || !!state.look;
+    // Only the strips this pattern actually has. Naming both on every wrapper
+    // pattern pasted two rules matching nothing on the lightbox and the card
+    // grid, which have neither a tab strip nor a filter bar.
+    const strips = ['cargo-tabs', 'cargo-filterbar'].filter((c) => (p.css || '').includes(c));
+    const stripSel = strips.map((c) => `${sel}-wrap .${c}`).join(', ');
     const gutter = [
-      `${sel} { padding-inline: ${gw}; }`,
-      hasWrap()
-        ? `${sel}-wrap .cargo-tabs, ${sel}-wrap .cargo-filterbar { padding-inline: ${gw}; }\n@media (max-width: 767.98px) {\n  ${sel}-wrap .cargo-tabs, ${sel}-wrap .cargo-filterbar { padding-inline: 0; }\n}`
-        : '',
+      needsRootPad ? `${sel}${ROOT} { padding-inline: ${gw}; }` : '',
+      stripSel ? `${stripSel} { padding-inline: ${gw}; }` : '',
+      // Already zero above; a second rule setting it to zero on a phone says
+      // nothing the first did not.
+      stripSel && gw !== '0' ? `@media (max-width: 767.98px) {\n  ${stripSel} { padding-inline: 0; }\n}` : '',
     ]
       .filter(Boolean)
       .join('\n');
-    return [`${sel} {\n${decls}\n${font}\n}`, steps, pin, dots, body, gutter].filter(Boolean).join('\n\n');
+    // Both halves can be empty now that engine defaults are filtered out and
+    // the ladder rides on classes - stock opens with nothing but the font line,
+    // and a shared-look pattern at its defaults with nothing at all. Join only
+    // what is there, or the rule ships with blank lines in it.
+    const rootRule = [decls, font].filter(Boolean).join('\n');
+    return [rootRule ? `${sel}${ROOT} {\n${rootRule}\n}` : '', pin, dots, body, gutter].filter(Boolean).join('\n\n');
   }
 
   function htmlFor(cls) {
@@ -848,16 +910,27 @@
     // (the structural patterns build their wrapper as `${cls}-wrap`, so an
     // augmented cls glued "-wrap" onto the last column class). It is a suffix
     // applied at the carousel element and nowhere else.
-    let libCls = '';
-    if (shared()) {
-      const tiers = [['xs', 'base'], ...BPS.map((bp, i) => [['sm', 'md', 'lg'][i], bp])];
-      libCls =
-        ` cargo-${state.look}` +
-        tiers
-          .filter(([, k]) => state.perView[k] != null)
-          .map(([t, k]) => ` cs-${t}-${state.perView[k]}`)
-          .join('');
+    //
+    // The column ladder goes on EVERY pattern, not only the four with a card
+    // look. cs-xs-N / cs-sm-N / cs-md-N / cs-lg-N ship unscoped in
+    // custom-slider.css and say exactly what the hand-written ladder said - a
+    // root line plus three @media blocks, ten lines of CSS a snippet, and
+    // two-thirds of the rungs repeated the tier below because a min-width rule
+    // already carries upward. Only `cargo-<look>` still depends on the shared
+    // stylesheet being linked, so only that one stays behind the toggle.
+    const tiers = [['xs', 'base'], ...BPS.map((bp, i) => [['sm', 'md', 'lg'][i], bp])];
+    // A rung is worth a class only where the count changes: cs-sm-2 already
+    // applies at 992 and at 1200. The tier below the first one is the engine's
+    // own --cs-per-view: 1.
+    let prev = 1;
+    let ladder = '';
+    for (const [t, k] of tiers) {
+      const n = state.perView[k];
+      if (n == null || n === prev) continue;
+      ladder += ` cs-${t}-${n}`;
+      prev = n;
     }
+    const libCls = (shared() ? ` cargo-${state.look}` : '') + ladder;
     // Cycle the content up or down to the requested count. Repeats are how you
     // see what the slider does at 12 cards, and what it does when everything
     // already fits and it correctly stops drawing arrows and dots.
@@ -1001,6 +1074,9 @@
   // uses, so an example there cannot drift from the same example here.
   globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
     PATTERNS,
+    // Exported so scripts/lint-generated-css.mjs can read the engine's real
+    // .cs block and fail if this copy has drifted from it.
+    ENGINE_DEFAULTS,
     // The index on patterns.html labels its tiles from the same map the rail
     // uses, so the two pages cannot call the same pattern different things.
     SHORT,
