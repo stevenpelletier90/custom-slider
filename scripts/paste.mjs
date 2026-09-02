@@ -14,8 +14,16 @@ const css = readFileSync('dist/custom-slider.css', 'utf8').trim();
 const js = readFileSync('dist/custom-slider.js', 'utf8').trim();
 mkdirSync('dist/paste', { recursive: true });
 
-// 1. Style Only tab — RAW CSS, no <style> tags (the platform wraps it).
-writeFileSync('dist/paste/1-style-only.css', css + '\n');
+// 1. Style Only tab — RAW CSS, no <style> tags and no comments (the platform
+//    wraps it and minifies it server-side). esbuild keeps /*! comments, so the
+//    built sheet arrives carrying the /*! cards */ marker and the generated-file
+//    banner; both are stripped here. The marker still lives in
+//    dist/custom-slider.css, which is where size.mjs splits engine from cards.
+const bare = css
+  .replace(/\/\*[\s\S]*?\*\//g, '')
+  .replace(/\n{2,}/g, '\n')
+  .trim();
+writeFileSync('dist/paste/1-style-only.css', bare + '\n');
 
 // 2. Body Section Bottom — verbatim HTML, so the script tag goes here. Bottom of
 //    the body means the markup already exists, so no defer/DOMContentLoaded race.
@@ -28,6 +36,6 @@ writeFileSync(
 );
 
 const kb = (s) => (gzipSync(Buffer.from(s)).length / 1024).toFixed(1);
-console.log(`dist/paste/1-style-only.css     ${css.length} B raw  (${kb(css)} KB gzip)`);
+console.log(`dist/paste/1-style-only.css     ${bare.length} B raw  (${kb(bare)} KB gzip)`);
 console.log(`dist/paste/2-body-bottom.html   ${js.length} B raw  (${kb(js)} KB gzip)`);
 console.log('\nPaste 1 into "Style Only, Head Section", 2 into "Body Section, Bottom".');

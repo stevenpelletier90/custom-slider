@@ -788,12 +788,21 @@
     // few structural patterns add (tabs, filter bar, lightbox, card grid);
     // anything else is a descendant of whichever of those is the real root.
     const root = hasWrap() ? `${sel}-wrap` : sel;
+    // Comments come out before the scoping, not after: Style Only is a raw-CSS
+    // field that takes no comments, and four patterns carry multi-line notes
+    // explaining a breakpoint mid-sheet. Stripped here rather than at the copy
+    // button, so the preview is styled by the very same text - the parity rule
+    // this whole file is built on. The notes themselves stay where a maintainer
+    // reads them, in the JS beside the rule.
     const scope = (css) =>
-      css.replace(/(^|[{}\n,]\s*)(%root%|%wrap%|\.cargo[\w-]*)/g, (_, pre, tok) => {
-        if (tok === '%root%') return `${pre}${sel}`;
-        if (tok === '%wrap%') return `${pre}${sel}-wrap`;
-        return `${pre}${root} ${tok}`;
-      });
+      css
+        .replace(/\/\*[\s\S]*?\*\//g, '')
+        .replace(/^[ \t]*\n/gm, '')
+        .replace(/(^|[{}\n,]\s*)(%root%|%wrap%|\.cargo[\w-]*)/g, (_, pre, tok) => {
+          if (tok === '%root%') return `${pre}${sel}`;
+          if (tok === '%wrap%') return `${pre}${sel}-wrap`;
+          return `${pre}${root} ${tok}`;
+        });
 
     // The card style's rules come from the shared stylesheet; a pattern's own
     // CSS never does, because structural patterns (tabs, filter bar, lightbox)

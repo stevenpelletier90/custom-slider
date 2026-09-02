@@ -87,6 +87,12 @@ for (const [what, map] of [
 
 for (const [name, css] of sheets) {
   for (const [, prop, val] of css.matchAll(ZERO_LENGTH)) zeroLength(name, prop, val);
+  // Style Only takes no comments either. cssFor strips them, so a hit here
+  // means a new route into the sheet that bypasses the scoping pass.
+  for (const c of css.match(/\/\*[\s\S]*?\*\//g) || []) {
+    problems++;
+    console.error(`  ${name} [comment-in-generated-css] ${JSON.stringify(c.slice(0, 60))} - Style Only takes raw CSS with no comments`);
+  }
   const res = await stylelint.lint({ code: css, config: JSON.parse(readFileSync('.stylelintrc.generated.json', 'utf8')) });
   for (const r of res.results) {
     for (const w of r.warnings) {
