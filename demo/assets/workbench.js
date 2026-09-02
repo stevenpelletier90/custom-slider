@@ -58,6 +58,7 @@
     // Empty, so the Badge box is offered on the two card styles whose markup
     // draws it and on no others - the readsOf probe hides it everywhere else.
     badge: '',
+    cta: '',
   }));
 
   // Each card names the vehicle its render actually depicts, and the model year
@@ -70,7 +71,7 @@
     ['vehicle-4.png', '2026 Ford Explorer', '$43,200 · 8,900 mi', 'Ford Explorer, front three-quarter studio view'],
     ['vehicle-5.png', '2026 Hyundai Tucson', '$31,400 · 7,300 mi', 'Hyundai Tucson, front three-quarter studio view'],
     ['vehicle-6.png', '2026 Subaru Outback', '$35,700 · 5,100 mi', 'Subaru Outback, front three-quarter studio view'],
-  ].map(([f, name, sub, alt]) => ({ img: `img/${f}`, w: 640, h: 480, name, sub, alt, href: '/used-inventory/index.htm', badge: '' }));
+  ].map(([f, name, sub, alt]) => ({ img: `img/${f}`, w: 640, h: 480, name, sub, alt, href: '/used-inventory/index.htm', badge: '', cta: '' }));
 
   // From the platform's own industry-automotive collection, not from Unsplash:
   // every dealer can see it, so these copy out as paths that resolve instead of
@@ -91,7 +92,10 @@
   // bare <img> in a <span>, so it meant hand-writing <figure>/<figcaption> and
   // its CSS per slide. Empty stays exactly the markup that shipped before -
   // a <figure> only appears when there is something to put in it.
-  const photo = (m, attrs = '') => (m.caption ? `<figure class="cargo-photo"${attrs}>${pic(m)}<figcaption>${m.caption}</figcaption></figure>` : `<span class="cargo-photo"${attrs}>${pic(m)}</span>`);
+  const photo = (m, attrs = '') => {
+    const img = m.href ? `<a href="${m.href}">${pic(m)}</a>` : pic(m);
+    return m.caption ? `<figure class="cargo-photo"${attrs}>${img}<figcaption>${m.caption}</figcaption></figure>` : `<span class="cargo-photo"${attrs}>${img}</span>`;
+  };
 
   // Offers the Caption box on a roster. The editor shows a field only where a
   // row carries the key, so this is the whole opt-in - and it is applied per
@@ -109,6 +113,9 @@
   // Appended by cssFor only when a slide actually carries a caption, so an
   // uncaptioned pattern does not paste a rule matching nothing.
   const PHOTO_CAPTION_CSS = '.cargo-photo figcaption { display: block; margin-block-start: 0.5em; font-size: 0.9em; line-height: 1.5; color: #5f6368; }';
+  // A linked photo, same rule: an <a> is inline, so without this it takes the
+  // host page's leading and the slide ships taller than the preview showed.
+  const PHOTO_LINK_CSS = '.cargo-photo a { display: block; }';
 
   // Tall 3:5 model photography — the "model cards" look, and the reason
   // model-*.jpg is in demo/img.
@@ -260,7 +267,7 @@
       props: { '--cs-gap': '0.1px', '--cs-controls-space': '2em', '--cs-dot-current': '#16324f' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
-      models: captioned(PHOTOS.slice(0, 3)),
+      models: captioned(PHOTOS.slice(0, 3)).map((m) => ({ ...m, href: '' })),
       css: `${PHOTO_CSS}
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 21 / 9; object-fit: cover; border-radius: 8px; }
 @media (max-width: 767.98px) { .cargo-photo img { aspect-ratio: 4 / 3; } }`,
@@ -1014,8 +1021,9 @@ ${PHOTO_CSS}
     // The caption rule ships only once a slide has a caption. Every photo
     // pattern would otherwise paste a figcaption rule matching nothing, the
     // same dead line the tab and filter-bar rules are already filtered for.
-    const captionCss = p.slides && modelsFor(p).some((m) => m.caption) ? `\n${PHOTO_CAPTION_CSS}` : '';
-    const body = [state.look && !lib ? scope(LOOKS[state.look].css) : '', p.css ? scope(`${p.css}${captionCss}`) : ''].filter(Boolean).join('\n');
+    const photoRows = (p.css || '').includes('cargo-photo') ? modelsFor(p) : [];
+    const captionCss = [photoRows.some((m) => m.caption) ? PHOTO_CAPTION_CSS : '', photoRows.some((m) => m.href) ? PHOTO_LINK_CSS : ''].filter(Boolean).join('\n');
+    const body = [state.look && !lib ? scope(LOOKS[state.look].css) : '', p.css ? scope(captionCss ? `${p.css}\n${captionCss}` : p.css) : ''].filter(Boolean).join('\n');
     // Arrows either sit in a gutter beside the content or float over it. Last
     // in the sheet so it beats the padding-inline a card look sets for itself -
     // which is exactly why it has to READ the look's value rather than restate
@@ -2182,6 +2190,9 @@ ${PHOTO_CSS}
     badge: { label: 'Badge', type: 'text', hint: 'A short label over the photo — New, Certified, Special Offer. Empty draws nothing' },
     w: { label: 'Source width', type: 'number', hint: 'Real pixel width of the file' },
     h: { label: 'Source height', type: 'number', hint: 'Real pixel height of the file' },
+    // Empty prints the words the card style has always printed, so a roster
+    // nobody edits renders exactly as it did before.
+    cta: { label: 'Button text', type: 'text', hint: 'Empty prints the wording the card style already uses' },
     name: { label: 'Heading', type: 'text' },
     mark: { label: 'Wordmark', type: 'text' },
     sub: { label: 'Sub text', type: 'text' },

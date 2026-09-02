@@ -227,7 +227,7 @@ const LOOKS = {
         m.sub ? `    <small class="cargo-sub">${m.sub}</small>` : null,
         `    <span class="cargo-name">${m.name}</span>`,
         m.blurb ? `    <span class="cargo-blurb">${m.blurb}</span>` : null,
-        `    <span class="cargo-pill">Shop Now</span>`,
+        `    <span class="cargo-pill">${m.cta || 'Shop Now'}</span>`,
         `  </span>`,
         `</a>`,
       ]
@@ -267,7 +267,7 @@ const LOOKS = {
     markup: (m) => `<a class="cargo-card" href="${m.href}">
   <p class="cargo-name">${m.name}</p>
   <img src="${m.img}" width="${m.w ?? 320}" height="${m.h ?? 533}" alt="${m.alt}" loading="lazy" decoding="async">
-  <span class="cargo-cta">Browse inventory</span>
+  <span class="cargo-cta">${m.cta || 'Browse inventory'}</span>
 </a>`,
   },
 
@@ -336,7 +336,7 @@ const LOOKS = {
         `  <img src="${m.img}" width="${m.w ?? 240}" height="${m.h ?? 160}" alt="${m.alt}" loading="lazy" decoding="async">`,
         `  <span class="cargo-name">${m.name}</span>`,
         m.sub ? `  <p>${m.sub}</p>` : null,
-        `  <span class="cargo-cta">Visit</span>`,
+        `  <span class="cargo-cta">${m.cta || 'Visit'}</span>`,
         `</a>`,
       ]
         .filter((l) => l !== null)

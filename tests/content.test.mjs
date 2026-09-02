@@ -198,6 +198,47 @@ describe('the demo describes what it is actually showing', () => {
     assert.equal(await badgeBox(page).count(), 0, `${other} does not draw a badge but still offers the box`);
   });
 
+  // F019 (the half that needs no decision): the words on a card style's button
+  // were literals - "Shop Now", "Browse inventory", "Visit" - so changing them
+  // meant editing the pasted markup by hand on every card.
+  test('the button keeps its own wording until someone types other words', async () => {
+    await pick(page, 'cards');
+    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes('Location card'))?.click());
+    await page.waitForTimeout(300);
+    const box = page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Button text")) input').first();
+    assert.equal(await box.count(), 1, 'a card style with a button offers no Button text box');
+    assert.match((await copyParts(page)).html, /Visit/, 'the card style stopped printing its own wording');
+    await box.fill('See this store');
+    await page.waitForTimeout(250);
+    assert.match((await copyParts(page)).html, /See this store/, 'the typed wording never reached the markup');
+  });
+
+  test('a card style with no button does not offer the box', async () => {
+    await pick(page, 'grid'); // the cutout tile: photo and name, no button
+    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes('Cutout tile'))?.click());
+    await page.waitForTimeout(300);
+    const box = page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Button text")) input');
+    assert.equal(await box.count(), 0, 'a card style with no button offers a Button text box');
+  });
+
+  // F017 (the half that needs no decision): the hero could not be a linked
+  // slide, though the editor already had a Link field - the hero's rows just
+  // never carried the key.
+  test('a hero slide can be a link, and is not one until it is given a href', async () => {
+    await pick(page, 'hero');
+    const bare = await copyParts(page);
+    assert.doesNotMatch(bare.html, /<a href/, 'an empty Link still wraps the photo');
+    const box = page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Link")) input').first();
+    assert.equal(await box.count(), 1, 'the hero offers no Link box');
+    await box.fill('/new-inventory/index.htm');
+    await page.waitForTimeout(250);
+    const done = await copyParts(page);
+    assert.match(done.html, /<a href="\/new-inventory\/index\.htm"><img/, 'the link never reached the markup');
+    // An inline <a> would take the host page's leading, the same trap the
+    // caption and the tab strip are guarded against.
+    assert.match(done.css, /\.cargo-photo a \{ display: block; \}/, 'the linked photo ships no display rule');
+  });
+
   // F026: brand notes read like a research log - "ladders", "forddemo1",
   // "the census" - none of which is defined anywhere a designer would look.
   test('the brand notes use no in-house jargon', async () => {
