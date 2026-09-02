@@ -695,6 +695,7 @@ ${PHOTO_CSS}
 
   const state = {
     pattern: 'modelbar',
+    panes: null,
     brand: null,
     look: null,
     perView: null,
@@ -774,6 +775,7 @@ ${PHOTO_CSS}
     // A pattern change is a shape change: a review row has a star rating and a
     // photo row has none, so edited slides can never carry across.
     state.content = null;
+    state.panes = null;
     state.label = null; // only renderLook overrides it — see the note there
     // The class this slider's CSS hangs off. Every snippet used to be
     // `.my-slider`, so a second slider pasted on the same page redefined the
@@ -1183,14 +1185,15 @@ ${PHOTO_CSS}
 
     // Body-style tabs: one carousel per pane, each over its own subset.
     if (p.panes) {
-      const ids = p.panes.map((name) => name.toLowerCase().replace(/\W+/g, '-'));
-      const tabs = p.panes.map((name, i) => `    <button type="button" role="tab" id="tab-${ids[i]}" aria-controls="pane-${ids[i]}" aria-selected="${i === 0}">${name}</button>`).join('\n');
+      const names = state.panes ?? p.panes;
+      const ids = names.map((name) => name.toLowerCase().replace(/\W+/g, '-'));
+      const tabs = names.map((name, i) => `    <button type="button" role="tab" id="tab-${ids[i]}" aria-controls="pane-${ids[i]}" aria-selected="${i === 0}">${name}</button>`).join('\n');
       // Each pane draws the requested number of cards from the roster at its
       // own offset, so the slide count means slides PER PANE and no
       // pane comes out half empty. Models repeating across panes is faithful:
       // the real Chevrolet bar does it too.
-      const stride = Math.max(1, Math.ceil(source.length / p.panes.length));
-      const panes = p.panes
+      const stride = Math.max(1, Math.ceil(source.length / names.length));
+      const panes = names
         .map((name, i) => {
           const sub = draw(take(state.count, i * stride));
           return `  <div class="cargo-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}"${i === 0 ? '' : ' hidden'}>\n${carousel(sub, name, '  ', i === 0)}\n  </div>`;
@@ -1993,6 +1996,29 @@ ${PHOTO_CSS}
     }
     panel.append(section('Arrows and spacing', colors));
 
+    // F018 (the half that needs no decision): the tab words were hard-coded,
+    // so a Trucks/SUVs/Crossovers bar could not become New/Used/Certified
+    // without editing the pasted markup. The pane ids and the aria wiring are
+    // derived from the same names, so renaming a tab keeps them in step.
+    // Which models sit under which tab is the part still to be decided.
+    if (p.panes) {
+      const names = document.createElement('div');
+      (state.panes ?? p.panes).forEach((name, i) => {
+        const input = document.createElement('input');
+        input.type = 'text';
+        input.value = name;
+        input.placeholder = p.panes[i];
+        input.addEventListener('input', () => {
+          const next = [...(state.panes ?? p.panes)];
+          next[i] = input.value.trim() || p.panes[i];
+          state.panes = next.every((n, j) => n === p.panes[j]) ? null : next;
+          render();
+        });
+        names.append(control(`Tab ${i + 1}`, input));
+      });
+      panel.append(section('Tab names', names));
+    }
+
     if (Object.keys(state.lookProps).length) {
       const knobs = document.createElement('div');
       for (const k of Object.keys(state.lookProps)) {
@@ -2314,7 +2340,7 @@ ${PHOTO_CSS}
   // card style, with the wrong class name, and nothing on the page saying why.
   // Same shape as the content store, keyed by pattern for the same reason.
   const SKEY = 'cs-settings';
-  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'standalone', 'name', 'count'];
+  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'standalone', 'name', 'count', 'panes'];
 
   const readSettings = () => {
     try {

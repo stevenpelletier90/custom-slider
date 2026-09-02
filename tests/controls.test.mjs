@@ -412,6 +412,38 @@ describe('card chrome is a knob, not a literal', () => {
   });
 });
 
+describe('a tab can be renamed', () => {
+  // F018 (the half that needs no decision): Trucks/SUVs/Crossovers were
+  // hard-coded, so a New/Used/Certified bar meant editing the pasted markup.
+  test('renaming a tab moves its words, its id and its aria wiring together', async () => {
+    await pick(page, 'tabs');
+    const box = page.locator('#wb-settings label:has(> span:text-is("Tab 1")) input').first();
+    assert.equal(await box.count(), 1, 'the tabbed bar offers no way to rename a tab');
+    assert.equal(await box.inputValue(), 'Trucks', 'the box does not show the name the bar is using');
+
+    await box.fill('Certified');
+    await page.waitForTimeout(300);
+    const { html } = await copyParts(page);
+    assert.match(html, /role="tab"[^>]*>Certified</, 'the tab still reads Trucks');
+    assert.match(html, /id="tab-certified"[^>]*aria-controls="pane-certified"/, 'the id did not follow the name');
+    assert.match(html, /id="pane-certified"[^>]*role="tabpanel"[^>]*aria-labelledby="tab-certified"/, 'the pane and the tab no longer point at each other');
+    assert.doesNotMatch(html, /trucks/i, 'the old name survives somewhere in the markup');
+  });
+
+  test('clearing a tab name puts the original back', async () => {
+    await pick(page, 'tabs');
+    const box = page.locator('#wb-settings label:has(> span:text-is("Tab 2")) input').first();
+    await box.fill('');
+    await page.waitForTimeout(300);
+    assert.match((await copyParts(page)).html, /role="tab"[^>]*>SUVs</, 'an empty box left the tab nameless');
+  });
+
+  test('a pattern with no tabs is not offered the section', async () => {
+    await pick(page, 'modelbar');
+    assert.equal(await page.locator('#wb-settings label:has(> span:text-is("Tab 1")) input').count(), 0, 'a pattern with no tabs offers tab names');
+  });
+});
+
 describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);
