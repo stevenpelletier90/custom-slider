@@ -138,14 +138,28 @@
   ].map(([f, w, h, name, blurb]) => ({ img: `img/${f}`, w, h, name, blurb, alt: '', href: '#' }));
 
   // Photos carrying a category, for the filterable gallery.
-  const TAGGED = [
-    ['photo-1.jpg', 'exterior', 'Blue Chevrolet Camaro in the desert at dusk'],
-    ['photo-2.jpg', 'exterior', 'White Ford Mustang in a neon-lit parking garage'],
-    ['photo-4.jpg', 'exterior', 'Audi R8 tail lights on a city street at sunset'],
-    ['photo-3.jpg', 'interior', 'Hands on the steering wheel at dusk'],
-    ['photo-5.jpg', 'service', 'Technician topping up engine oil'],
-    ['photo-6.jpg', 'service', 'Classic BMW grilles lined up in a museum'],
-  ].map(([f, tag, alt]) => ({ img: `img/${f}`, tag, alt }));
+  // Built FROM the photo list, never written out again beside it. The two used
+  // to be separate hand-written arrays over the same six files, and every one
+  // of the six captions here described a different photograph than the file it
+  // named - a blue Camaro in a desert for a technician under a lift, a Mustang
+  // in a neon car park for a tyre check - with the categories wrong alongside
+  // them. So the Filterable gallery demonstrated filtering by nothing true, and
+  // a designer who kept the demo alt text shipped descriptions of photos their
+  // page does not contain. Reading the caption from PHOTOS makes that
+  // impossible rather than merely fixed.
+  //
+  // The category is the one thing that cannot be derived, so it is stated once
+  // per file, keyed by name so a mis-keyed entry is a missing photo rather than
+  // a silently shifted one. Checked against the files themselves.
+  const CATEGORY = {
+    'photo-1.jpg': 'service', // technician under a car on a lift
+    'photo-2.jpg': 'service', // technician checking a tyre in the bay
+    'photo-3.jpg': 'detailing', // polishing in the detailing bay
+    'photo-4.jpg': 'detailing', // hand washing a bonnet
+    'photo-5.jpg': 'driving', // driver at the wheel
+    'photo-6.jpg': 'detailing', // pressure washing a wheel arch
+  };
+  const TAGGED = PHOTOS.map((m) => ({ ...m, tag: CATEGORY[m.img.replace('img/', '')] }));
 
   // The two video patterns promise "posters open a native dialog", and the
   // preview did it - but the wiring lived in the demo page, so the copied code
@@ -229,7 +243,8 @@
     gallery: {
       gutter: false,
       label: 'Photo gallery',
-      blurb: 'Thumbnails generated from the slide images and wired as a real tab list with arrow keys. Thumbs are fresh elements, so site ids and srcset never leak into them.',
+      blurb:
+        'For walking a shopper through one vehicle’s photos — the pictures on a VDP, or a gallery on a custom page. The thumbnails underneath are generated from the slides and behave like real tabs, with arrow keys.',
       data: { 'data-cs-gallery': '' },
       props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
@@ -269,7 +284,8 @@
     video: {
       gutter: false,
       label: 'Video testimonials',
-      blurb: 'Posters open a native dialog, which gives Esc-to-close and focus trapping for free. Video never plays inline — autoplay on video cards fights the content.',
+      blurb:
+        'For customer video testimonials, or a walkaround of a vehicle. Each poster opens the video in a dialog rather than playing inline, so nothing starts moving while someone is reading the page.',
       data: { 'data-video-dialog': '' },
       props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 2, 1200: 3 },
@@ -453,7 +469,7 @@ ${VIDEO_DIALOG_CSS}`,
     reviews: {
       gutter: true,
       label: 'Customer reviews',
-      blurb: 'Quotes in a real figure/blockquote, with the star rating exposed as an image plus a text label rather than bare glyphs a screen reader would spell out one at a time.',
+      blurb: 'For customer reviews on a homepage or an About page. Star ratings are announced as “Rated 5 out of 5” rather than read out one star at a time.',
       props: { '--cs-gap': '1em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 250,
@@ -496,7 +512,9 @@ ${VIDEO_DIALOG_CSS}`,
       minCard: 240,
       track: 'div',
       models: TAGGED,
-      filters: ['', 'exterior', 'interior', 'service'],
+      // Derived from the photos, so a chip can never offer a category no
+      // photo carries - which is what filtering by nothing looks like.
+      filters: ['', ...new Set(TAGGED.map((m) => m.tag))],
       css: `.cargo-filterbar { display: flex; flex-wrap: wrap; gap: 0.4em; margin-block-end: 1em; }
 .cargo-filterbar button { padding: 0.4em 0.9em; font: inherit; font-size: 0.87em; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 999px; }
 .cargo-filterbar button[aria-pressed="true"] { color: #fff; background: #16324f; border-color: #16324f; }
@@ -1767,10 +1785,13 @@ ${VIDEO_DIALOG_CSS}`,
           note.textContent = 'Sets how many cards across and which card style, from what that brand actually ships. Colours stay yours — pull them from the site theme.';
           return;
         }
+        // Plain words: "ladder" and "the census" are how this was written down
+        // while it was being researched, and neither is defined anywhere a
+        // designer would look.
         const counts = ['base', 768, 992, 1200].map((k) => state.perView[k]).join(' / ');
         note.textContent = b.ladder
-          ? `${counts} across (phone / 768 / 992 / 1200). ${b.note ?? ''}`.trim()
-          : `The census recorded no breakpoint ladder for ${b.label}, so this starts from the card style's own defaults. ${b.note ?? ''}`.trim();
+          ? `${counts} cards across, on a phone / from 768px / from 992px / from 1200px. ${b.note ?? ''}`.trim()
+          : `The ${b.label} demo sites we surveyed showed no clear pattern of how many across, so this starts from the card style's own. ${b.note ?? ''}`.trim();
       };
       sel.addEventListener('change', () => {
         state.brand = sel.value || null;

@@ -87,3 +87,49 @@ describe('nothing threw', () => {
     assert.deepEqual(errors, []);
   });
 });
+
+describe('the demo describes what it is actually showing', () => {
+  // F075: all six filter-gallery captions described a different photograph
+  // than the file they named - a blue Camaro in a desert for a technician
+  // under a lift - with the categories wrong alongside them. The gallery
+  // therefore demonstrated filtering by nothing true, and a designer keeping
+  // the demo alt text shipped descriptions of photos their page does not have.
+  test('every filter-gallery caption is the caption of that file', async () => {
+    const mismatched = await page.evaluate(() => {
+      const { PATTERNS } = globalThis.CARGO;
+      const html = globalThis.CARGO.renderPattern('gallery-filter', 'x').html;
+      const shown = [...html.matchAll(/<img[^>]*src="([^"]*)"[^>]*alt="([^"]*)"/g)].map((m) => [m[1], m[2]]);
+      // The photo list is the one that was checked against the files.
+      const truth = new Map(PATTERNS.gallery.models.map((m) => [m.img.replace('img/', ''), m.alt]));
+      return shown.filter(([src, alt]) => {
+        const file = src.split('/').pop();
+        const want = [...truth.entries()].find(([f]) => f.split('.')[0] === file.split('.')[0]);
+        return want && want[1] !== alt;
+      });
+    });
+    assert.deepEqual(mismatched, [], 'these captions describe a different photo than the file they are on');
+  });
+
+  test('every filter chip matches at least one photo', async () => {
+    await pick(page, 'gallery-filter');
+    const empty = await page.evaluate(() => {
+      const html = globalThis.CARGO.renderPattern('gallery-filter', 'x').html;
+      const chips = [...html.matchAll(/data-filter="([^"]*)"/g)].map((m) => m[1]).filter(Boolean);
+      const tags = new Set([...html.matchAll(/data-tag="([^"]*)"/g)].map((m) => m[1]));
+      return chips.filter((c) => tags.size && !tags.has(c));
+    });
+    assert.deepEqual(empty, [], 'these chips filter to nothing');
+  });
+
+  // F026: brand notes read like a research log - "ladders", "forddemo1",
+  // "the census" - none of which is defined anywhere a designer would look.
+  test('the brand notes use no in-house jargon', async () => {
+    const jargon = await page.evaluate(() => {
+      const b = globalThis.CARGO.BRANDS ?? {};
+      return Object.entries(b)
+        .filter(([, v]) => /\bthe census\b|\bladder\b|forddemo/i.test(v.note ?? ''))
+        .map(([k]) => k);
+    });
+    assert.deepEqual(jargon, [], 'these brand notes still use research shorthand');
+  });
+});

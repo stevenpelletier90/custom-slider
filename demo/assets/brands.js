@@ -354,7 +354,7 @@
         [1800, 6],
       ],
       demos: 1,
-      note: 'The most styled bar in the estate — tall dark tiles with a browse button.',
+      note: 'The most styled bar we surveyed — tall dark tiles with a browse button.',
     },
     audi: {
       label: 'Audi',
@@ -367,7 +367,7 @@
         [1200, 6],
       ],
       demos: 1,
-      note: 'Five rungs, the most granular ladder anywhere — and the clearest case for snapping to the platform grid.',
+      note: 'Steps the count five times as the screen grows — more steps than any other brand, and the clearest case for snapping to the platform’s own four widths.',
     },
     bmw: { label: 'BMW', look: 'tile', ladder: null, demos: 3 },
     buick: {
@@ -390,7 +390,7 @@
         [1200, 5],
       ],
       demos: 3,
-      note: 'The GM ladder on a black band with spaced capitals — same layout as Chevrolet, different dress.',
+      note: 'The same counts as Chevrolet, on a black band with spaced capitals — same layout, different dress.',
     },
     chevrolet: {
       label: 'Chevrolet',
@@ -413,7 +413,7 @@
         [992, 6],
       ],
       demos: 1,
-      note: 'The CDJR ladder — six across on desktop, the widest in the estate.',
+      note: 'Six across on a desktop, the widest of any brand we surveyed — shared with Dodge, Jeep and Ram.',
     },
     dodge: {
       label: 'Dodge',
@@ -444,7 +444,7 @@
         [992, 5],
       ],
       demos: 3,
-      note: 'Ford runs three different ladders across its demos; this is forddemo1. The others match Acura and Chevrolet.',
+      note: 'Ford’s demo sites run three different counts; this is the most common of them. The other two match Acura and Chevrolet.',
     },
     gmc: {
       label: 'GMC',
@@ -466,7 +466,7 @@
         [1200, 4],
       ],
       demos: 3,
-      note: 'Ships an inventory count under each name. The newest platform generation runs a shorter climb and hides its arrows when every model already fits.',
+      note: 'Ships an inventory count under each name. The newest sites show fewer across and hide the arrows when every model already fits.',
     },
     honda: {
       label: 'Honda',
@@ -551,7 +551,7 @@
         [992, 4],
       ],
       demos: 3,
-      note: 'A flat light-gray band. Client builds sometimes cut the 4-up tier at 992 instead of 993 — one pixel, same ladder.',
+      note: 'A flat light-gray band. Some client builds switch to four across one pixel earlier than the demo sites do — same counts either way.',
     },
     mini: { label: 'MINI', look: 'tile', ladder: null, demos: 3 },
     mazda: {
@@ -563,7 +563,7 @@
         [992, 3],
       ],
       demos: 2,
-      note: 'Name above the car, inventory chip below — and the only bar in the estate that keeps its dots.',
+      note: 'Name above the car, inventory chip below — and the only bar we surveyed that keeps its dots.',
     },
     mitsubishi: {
       label: 'Mitsubishi',
@@ -628,7 +628,7 @@
         [1200, 4],
       ],
       demos: 2,
-      note: 'A tile of colour behind each car, one featured in navy — the Genesis ladder wearing a different look.',
+      note: 'A tile of colour behind each car, one featured in navy — the same counts as Genesis in a different card style.',
     },
     volvo: {
       label: 'Volvo',

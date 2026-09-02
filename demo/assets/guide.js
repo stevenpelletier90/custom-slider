@@ -235,7 +235,7 @@
             ['cargo-vcard', 'Vehicle card — photo, title, price, on a card background.'],
             ['cargo-wordmark', 'Wordmark above — the model wordmark over the vehicle.'],
             ['cargo-split', 'Split photo card — photo one side, copy the other.'],
-            ['cargo-portrait', 'Tall tile with a call to action.'],
+            ['cargo-portrait', 'Tall tile with CTA — a portrait photo with a button under it.'],
             ['cargo-logo', 'Logo panel — a grid of brand logos.'],
             ['cargo-location', 'Location card — address and hours.'],
             ['cs-xs-N', 'Cards across on a phone. N is 1 to 8.'],
