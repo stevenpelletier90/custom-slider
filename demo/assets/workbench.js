@@ -834,6 +834,32 @@ ${VIDEO_DIALOG_CSS}`,
     '--cs-transition': '250ms ease-in-out',
   };
 
+  const knobDefault = (key) => LOOKS[state.look]?.settings?.[key] ?? PATTERNS[state.pattern].props?.[key] ?? SHARED_DEFAULTS[key] ?? ENGINE_DEFAULTS[key];
+
+  // A number with a unit on it, or nothing.
+  const LENGTH = /^-?(?:\d*\.)?\d+(?:px|em|rem|%|vw|vh|vmin|vmax|ch|ex|cm|mm|in|pt|pc|q)$/i;
+
+  // Typing `10` into Gap shipped `--cs-gap: 10`, and a unitless number is not a
+  // length: the gap goes invalid AND the slide's flex basis with it, so the
+  // cards collapse to content width while the readout still claims 5 of 8. It
+  // is the same broken slider that a `0px` (F003) and a cleared field (F022)
+  // produced, reached a third way, so all three now pass through one predicate
+  // rather than being patched one route at a time.
+  //
+  // Which knobs are lengths is read off the SHAPE OF THEIR DEFAULT rather than
+  // a hand-kept list, so a knob added to a look is covered the day it ships. A
+  // bare `0` is rejected on purpose: it is a valid CSS length, but the
+  // platform's minifier turns `0px` into it and the engine's calc() cannot use
+  // it, which is the whole reason this repo writes 0.1px.
+  const wantsLength = (key) => LENGTH.test(String(knobDefault(key) ?? ''));
+  const okValue = (key, v) => {
+    const s = String(v).trim();
+    if (!s || !wantsLength(key)) return true;
+    // calc(), var(), min() and friends cannot be judged without resolving them,
+    // and the looks ship several. Left alone rather than guessed at.
+    if (/[a-z-]+\(/i.test(s)) return true;
+    return LENGTH.test(s);
+  };
   function cssFor(sel, preview) {
     const p = PATTERNS[state.pattern];
     const lib = shared();
@@ -851,8 +877,10 @@ ${VIDEO_DIALOG_CSS}`,
       // A value that is empty is not a value: `--cs-gap: ;` is an invalid
       // declaration and takes the whole rule's meaning with it. Nothing should
       // reach here blank now that a cleared field restores its default, but
-      // this is the one place every property passes through.
-      .filter(([, v]) => String(v).trim() !== '')
+      // this is the one place every property passes through - so the length
+      // check rides here too, and a knob left mid-typo falls back to its
+      // default instead of shipping a slider that cannot lay itself out.
+      .filter(([k, v]) => String(v).trim() !== '' && okValue(k, v))
       .map(([k, v]) => `  ${k}: ${v};`)
       .join('\n');
 
@@ -1376,12 +1404,23 @@ ${VIDEO_DIALOG_CSS}`,
   };
   const knobLabel = (k) => KNOB_LABELS[k] ?? k.replace(/^--/, '').replace(/-/g, ' ');
 
-  const control = (label, node) => {
+  // What a knob does, in the Reference's own words rather than a second set
+  // written here - the two would drift, and the Reference's are already gated
+  // by check-looks.mjs. Tags stripped, because a title attribute is plain text.
+  const knobNote = (key) => {
+    const g = globalThis.CARGO.guide;
+    const raw = g?.CARD_NOTES?.[key] ?? g?.NOTES?.[key] ?? '';
+    return raw.replace(/<[^>]*>/g, '');
+  };
+
+  const control = (label, node, note, extra) => {
     const row = document.createElement('label');
     row.className = 'wb-row';
+    if (note) row.title = note;
     const span = document.createElement('span');
     span.textContent = label;
     row.append(span, node);
+    if (extra) row.append(extra);
     return row;
   };
 
@@ -1454,6 +1493,13 @@ ${VIDEO_DIALOG_CSS}`,
   // pattern knob to the pattern's own, and a knob the pattern never set is
   // deleted so the engine's default applies.
   const defaultFor = (key, store) => (store === state.lookProps ? LOOKS[state.look]?.settings?.[key] : PATTERNS[state.pattern].props?.[key]);
+
+  // What a knob started as, wherever that came from. Also what its placeholder
+  // shows, so an empty field says what it will fall back to.
+  // SHARED_DEFAULTS is in the chain because --cargo-font has no engine default
+  // to fall back on - the engine never defines it, the card class does, as
+  // `font-size: var(--cargo-font, 1em)`. Without it that field had neither a
+  // placeholder nor a unit check, and it is a length like any other.
   const setProp = (store, key, v) => {
     if (String(v).trim()) return void (store[key] = v);
     const d = defaultFor(key, store);
@@ -1465,14 +1511,28 @@ ${VIDEO_DIALOG_CSS}`,
     const input = document.createElement('input');
     input.type = 'text';
     input.value = store[key] ?? '';
+    // What it falls back to, shown rather than described.
+    input.placeholder = String(knobDefault(key) ?? '');
+    const warn = document.createElement('span');
+    warn.className = 'wb-bad';
+    warn.hidden = true;
+    warn.textContent = wantsLength(key) ? 'Needs a unit — try 1em or 16px, and 0.1px rather than 0.' : '';
+    const mark = () => {
+      const bad = !okValue(key, input.value);
+      input.setAttribute('aria-invalid', String(bad));
+      input.classList.toggle('wb-input-bad', bad);
+      warn.hidden = !bad;
+    };
     const push = (v) => {
       setProp(store, key, v);
+      mark();
       render();
       after?.();
     };
     input.addEventListener('input', () => push(input.value));
     stepper(input, push);
-    return control(label, input);
+    mark();
+    return control(label, input, knobNote(key), warn);
   }
 
   const section = (heading, body) => {
@@ -1501,6 +1561,10 @@ ${VIDEO_DIALOG_CSS}`,
     const text = document.createElement('input');
     text.type = 'text';
     text.value = val;
+    // Same as the value rows: show what clearing it falls back to. No unit
+    // check here - a colour is a colour, and transparent, a hex and an rgba()
+    // are all legitimate in this field.
+    text.placeholder = String(knobDefault(key) ?? '');
     // The wrapping <label> binds to the swatch, not to this field - and the
     // swatch is hidden whenever the value is not a plain hex.
     text.setAttribute('aria-label', `${label} value`);
@@ -1550,7 +1614,7 @@ ${VIDEO_DIALOG_CSS}`,
     });
     sync();
     wrap.append(swatch, chip, text);
-    return control(label, wrap);
+    return control(label, wrap, knobNote(key));
   }
 
   function buildPanel() {

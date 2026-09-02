@@ -854,6 +854,29 @@ body {
   border-radius: 50%;
 }
 
+/* A settings field holding something its property cannot use — a gap of `10`,
+   which is a number and not a length. The declaration is dropped rather than
+   shipped, so the slider keeps working; this says why the typed value is not
+   in the code. */
+.wb-input-bad {
+  outline: 1px solid var(--signal);
+  border-color: var(--signal);
+}
+
+/* Spans the whole row: .wb-row is a two-column grid, so a third child would
+   otherwise sit under the label in column one. On --signal-bg rather than the
+   panel, because that is the pair whose contrast this file has already
+   measured, in both themes. */
+.wb-bad {
+  grid-column: 1 / -1;
+  padding: 0.3rem 0.5rem;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--signal-text);
+  background: var(--signal-bg);
+  border-radius: 4px;
+}
+
 /* The slider's name, directly above the parts list and the code. The only
    setting that is about the PAGE rather than about this slider, so it sits
    where the copying happens instead of in the settings panel. */

@@ -289,5 +289,8 @@
       </section>`;
   }
 
-  globalThis.CARGO = Object.assign(globalThis.CARGO || {}, { guide: { render, OPTIONS } });
+  // NOTES and CARD_NOTES go out too: the builder shows them as tooltips on its
+  // own knobs, so a designer does not have to leave the page to find out what a
+  // setting does - and there is one set of words rather than two that drift.
+  globalThis.CARGO = Object.assign(globalThis.CARGO || {}, { guide: { render, OPTIONS, NOTES, CARD_NOTES } });
 })();
