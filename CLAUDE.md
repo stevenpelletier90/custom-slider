@@ -13,7 +13,8 @@ A dependency-free scroll-snap carousel (`cs`) built to replace third-party slide
 ```bash
 npm run build          # src → dist via esbuild (bundle+minify JS, minify CSS), then appends the generated card styles to the CSS
 npm run size           # build + gzip budget gate — FAILS at ≥ 6656 B total
-npm run validate       # stylelint (files + generated) + eslint + prettier --check + check:looks  (the gate before committing)
+npm run validate       # stylelint (files + generated) + eslint + prettier --check + check:looks  (fast; run before committing)
+npm run test           # node --test + playwright: 13 browser checks of what the copy panel hands over  (~10s; run before committing too)
 npm run check:looks    # asserts the demo data holds: 17 old skins -> 7 components, 32 brand presets, no cramped preset
 npm run lint:css:generated # stylelints the CSS the copy panel ships (the card/pattern rules that live in JS template literals)
 npm run lint:css:fix   # stylelint --fix on src/**/*.css and demo/assets/*.css
@@ -38,7 +39,11 @@ npm run serve          # esbuild static server on http://127.0.0.1:8137 (for Lig
 
 **What `npm run validate` guards beyond the linters is the data.** `scripts/check-looks.mjs` asserts every one of the 17 old skins is claimed by exactly one component, that a component absorbing nothing is deliberately marked `isNew`, that all 32 brand presets name a real look and land on a card no narrower than that look needs - and that no look sets `padding`/`padding-block` on the carousel root. That last one is a fixed bug: the engine reserves the dot row as `padding-bottom` on the root, a look's CSS lands on that same element, and the shorthand silently wiped the reservation so the dots drew on top of the last row of card text.
 
-There is no test framework (deliberate, spec §1 non-goals). Verification is the browser checklist in README "Verification checklist" — run it, don't skip to a size check and call it verified.
+**`npm test` is a gate, and it is not optional.** The spec listed a test framework as a non-goal, and that held while the engine was the only thing shipping. It stopped holding once the BUILDER became the product: three separate findings (F003 `0px` after minification, F022 a cleared field, F028 a typed `10`) were the same broken slider reached three ways, and only the third was caught by a person looking. `tests/builder.test.mjs` is `node --test` plus the playwright that was already a devDependency — no new dependencies, ~10 seconds, one browser. Every test names the finding it guards, and all 13 fail against the code from before they were written, which is the only evidence that a test suite is worth having.
+
+It covers what a linter cannot: whether the copied code still lays itself out, and whether it lays itself out the way the preview did. It deliberately does NOT sweep all 17 patterns at every width — that took minutes, and a gate nobody runs is not a gate.
+
+`npm run validate` stays linters-only and fast; run both before committing. The full sweep is still the browser checklist in README "Verification checklist" — run that before shipping, don't skip to a size check and call it verified.
 
 `.claude/settings.json` registers a PostToolUse hook (`scripts/claude-format-hook.js`) that auto-fixes each file Claude edits with the same fixers. It never blocks; `npm run validate` is still the real gate.
 
