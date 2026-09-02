@@ -4,6 +4,20 @@
   "rules": {
     "selector-class-pattern": ["^[a-z][a-z0-9]*([_-]+[a-z0-9]+)*$", { "message": "Expected class selector to be kebab-case (BEM `--` modifiers allowed, e.g. .cs-arrow--prev)" }],
     "no-descending-specificity": null,
-    "selector-max-compound-selectors": 5
+    "selector-max-compound-selectors": 5,
+
+    "color-function-notation": [
+      "legacy",
+      {
+        "message": "Use rgba(0, 0, 0, 0.55), not rgb(0 0 0 / 55%). The platform's styleCode minifier is documented to fail on a modern function value inside a --x: declaration and then silently serve the last sheet that minified — and dist/paste/1-style-only.css goes straight into that field. stylelint-config-standard defaults this to \"modern\", which is why the rule is stated here."
+      }
+    ],
+    "alpha-value-notation": ["number", { "message": "Write the alpha as 0.55, not 55% — same styleCode minifier reason as color-function-notation above." }],
+    "color-function-alias-notation": [
+      "with-alpha",
+      {
+        "message": "Write rgba() when there is an alpha, not rgb() with four arguments — the playbook's rule is classic rgba(), and a four-argument rgb() is the same CSS Color 4 syntax the styleCode minifier is documented to reject."
+      }
+    ]
   }
 }

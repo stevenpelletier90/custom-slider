@@ -13,9 +13,17 @@
   --cs-peek: 0px; /* sliver of next slide visible at the edges */
   --cs-arrow-size: 44px; /* prev/next tap target */
   --cs-arrow-fg: #fff;
-  --cs-arrow-bg: rgb(0 0 0 / 55%);
+
+  /* Classic rgba(), not the slash form, in every custom property. dist/paste/
+     1-style-only.css is pasted into Style Only, whose server-side minifier is
+     documented (docs/cms-implementation.md §3, bisected live on dealer 26900)
+     to fail on a modern function value inside a --x: declaration and then
+     serve the last sheet that did minify - silently, so the page keeps its
+     previous styling and nothing reports an error. esbuild leaves a custom
+     property's value alone, so what is written here is what ships. */
+  --cs-arrow-bg: rgba(0, 0, 0, 0.55);
   --cs-arrow-fg-hover: #fff;
-  --cs-arrow-bg-hover: rgb(0 0 0 / 80%);
+  --cs-arrow-bg-hover: rgba(0, 0, 0, 0.8);
   --cs-dot-size: 12px;
   --cs-dot-fg: #757575; /* ≥3:1 on white (WCAG 1.4.11) */
   --cs-dot-current: #333;
@@ -146,12 +154,20 @@
   transform: translateY(-50%);
 }
 
+/* Flush, not inset. Every card look reserves the arrow's channel as
+   padding-inline on the carousel (arrow-size + 0.25em or 0.4em) and that
+   formula assumes the arrow starts at the edge; the old 0.5em default pushed
+   it 0.5em into the cards, so a markup-only paste - class="cs cargo-tile
+   cs-xs-2", no CSS, which README advertises - overlapped the first card by
+   4px on the tile and 1.6px on the vehicle card. Every builder snippet
+   overrode this to 0, which was the sign the default itself was wrong. The
+   pause button's own 0.5em below is unrelated and stays. */
 .cs-arrow--prev {
-  inset-inline-start: 0.5em;
+  inset-inline-start: 0;
 }
 
 .cs-arrow--next {
-  inset-inline-end: 0.5em;
+  inset-inline-end: 0;
 }
 
 /* rewind:false parks the end arrows on aria-disabled (still focusable) */

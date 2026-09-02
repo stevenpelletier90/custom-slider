@@ -244,8 +244,8 @@ const LOOKS = {
       '--img-aspect': '3 / 5',
       // Same reason as the logo panel: dark strip, so light arrows. 1.20:1 before.
       '--cs-arrow-fg': '#fff',
-      '--cs-arrow-bg': 'rgb(255 255 255 / 14%)',
-      '--cs-arrow-bg-hover': 'rgb(255 255 255 / 26%)',
+      '--cs-arrow-bg': 'rgba(255, 255, 255, 0.14)',
+      '--cs-arrow-bg-hover': 'rgba(255, 255, 255, 0.26)',
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1.5em; background: var(--strip-bg); }
 %root% .cs-track { padding-block-end: 1.5em; }
@@ -280,13 +280,13 @@ const LOOKS = {
       // own background owns the contrast of the controls sitting on it - the
       // navy panel with the engine's dark arrows measured 1.06:1.
       '--cs-arrow-fg': '#fff',
-      '--cs-arrow-bg': 'rgb(255 255 255 / 14%)',
-      '--cs-arrow-bg-hover': 'rgb(255 255 255 / 26%)',
+      '--cs-arrow-bg': 'rgba(255, 255, 255, 0.14)',
+      '--cs-arrow-bg-hover': 'rgba(255, 255, 255, 0.26)',
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1em; background: var(--strip-bg); }
 %root% .cs-track { padding-block-end: 1.5em; }
 @media (max-width: 460px) { %root% { --cs-per-view: 1; padding-block-start: 1em; padding-inline: 0.5em; } %root% .cs-track { padding-block-end: 1em; } }
-.cargo-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1em; color: var(--card-fg); background: var(--card-bg); border: 1px solid rgb(255 255 255 / 7%); border-radius: 10px; transition: background 0.2s; }
+.cargo-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1em; color: var(--card-fg); background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 10px; transition: background 0.2s; }
 .cargo-card img { inline-size: 75%; block-size: auto; object-fit: contain; }`,
     markup: (m) => `<a class="cargo-card" href="${m.href}" aria-label="${m.alt}">
   <img src="${m.img}" width="${m.w ?? 240}" height="${m.h ?? 160}" alt="" loading="lazy" decoding="async">

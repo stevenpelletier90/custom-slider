@@ -5,6 +5,18 @@
     "no-descending-specificity": null,
     "selector-max-compound-selectors": 5,
 
+    "color-function-notation": [
+      "legacy",
+      {
+        "message": "Use rgba(0, 0, 0, 0.55), not rgb(0 0 0 / 55%). The styleCode minifier is documented to fail on a modern function value inside a --x: declaration and then silently serve the last sheet that minified. This CSS is exactly what the copy panel puts in that field."
+      }
+    ],
+    "alpha-value-notation": ["number", { "message": "Write the alpha as 0.55, not 55% — same styleCode minifier reason as color-function-notation above." }],
+    "color-function-alias-notation": [
+      "with-alpha",
+      { "message": "Write rgba() when there is an alpha, not rgb() with four arguments — a four-argument rgb() is the same CSS Color 4 syntax the styleCode minifier is documented to reject." }
+    ],
+
     "unit-disallowed-list": [
       ["rem"],
       {

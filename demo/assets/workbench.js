@@ -202,7 +202,7 @@
       label: 'Peek at the next slide',
       blurb: 'A sliver of the neighbours stays visible so it always reads as "there is more this way". One property — --cs-peek. Zero turns it off.',
       data: {},
-      props: { '--cs-gap': '1em', '--cs-peek': '3em', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '1em', '--cs-peek': '3em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 2, 1200: 2 },
       minCard: 240,
       models: PHOTOS,
@@ -216,7 +216,7 @@
       label: 'Video testimonials',
       blurb: 'Posters open a native dialog, which gives Esc-to-close and focus trapping for free. Video never plays inline — autoplay on video cards fights the content.',
       data: {},
-      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 2, 1200: 3 },
       minCard: 260,
       models: PHOTOS.slice(0, 3).map((m, i) => ({ ...m, name: ['Dana W.', 'Marcus T.', 'Gene & Marta L.'][i] })),
@@ -229,7 +229,7 @@
       // surrounding text colour the way every non-button card already does.
       css: `.cargo-video { position: relative; display: block; inline-size: 100%; padding: 0; overflow: hidden; font: inherit; color: inherit; text-align: start; cursor: pointer; background: none; border: 0; border-radius: 8px; }
 .cargo-video img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
-.cargo-play { position: absolute; inset-block-start: 42%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 56px; block-size: 56px; color: #16324f; background: rgb(255 255 255 / 92%); border-radius: 50%; transform: translate(-50%, -50%); }
+.cargo-play { position: absolute; inset-block-start: 42%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 56px; block-size: 56px; color: #16324f; background: rgba(255, 255, 255, 0.92); border-radius: 50%; transform: translate(-50%, -50%); }
 .cargo-name { display: block; margin: 0.6em 0 0; font-size: 1em; font-weight: 700; line-height: 1.3; }`,
       slides: (models) =>
         models.map(
@@ -301,7 +301,7 @@
       blurb:
         'Portrait photography instead of cutouts, and the dot row restyled into a solid bar with a marker that slides along it. The marker is page script watching the engine’s own state — the segments underneath are still real "go to page" buttons.',
       data: { 'data-cs-rewind': 'false', 'data-bar': '' },
-      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 4, 1200: 4 },
       minCard: 190,
       models: MODELS,
@@ -323,7 +323,7 @@
 .cargo-model { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; border-radius: 10px; }
 .cargo-model img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; transition: transform 0.35s ease; }
 .cargo-model:hover img { transform: scale(1.05); }
-.cargo-model h3 { position: absolute; inset-block-end: 0; inset-inline: 0; padding: 2.5em 1em 1em; margin: 0; font-size: 1.15em; line-height: 1.3; background: linear-gradient(transparent, rgb(0 0 0 / 78%)); }`,
+.cargo-model h3 { position: absolute; inset-block-end: 0; inset-inline: 0; padding: 2.5em 1em 1em; margin: 0; font-size: 1.15em; line-height: 1.3; background: linear-gradient(transparent, rgba(0, 0, 0, 0.78)); }`,
       slides: (models) =>
         models.map((m) => `<a class="cargo-model" href="${m.href}"><img src="${m.img}" width="${m.w ?? 600}" height="${m.h ?? 1000}" alt="" loading="lazy" decoding="async"><h3>${m.name}</h3></a>`),
       // Site-level enhancement, not an engine feature: it reads the engine's
@@ -346,7 +346,7 @@
       gutter: true,
       label: 'Mixed image sizes',
       blurb: 'Six source files at six different aspect ratios, all cropped to one shape by the CSS. Dealers upload whatever they have — aspect-ratio plus object-fit is what keeps the row even.',
-      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 230,
       models: MIXED,
@@ -365,7 +365,7 @@
       label: 'Service cards',
       blurb: 'Photo, heading, a paragraph and a read-more affordance. One card per arrow click, because the copy is long enough that a full-page jump loses your place.',
       data: { 'data-cs-step': 'slide' },
-      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 250,
       models: SERVICES,
@@ -428,7 +428,7 @@
       blurb:
         'A gallery whose slides carry a category. Filtering rebuilds the slider over the matching slides rather than hiding the rest — hiding leaves them in the thumb strip and in the announced "3 of 6".',
       data: { 'data-cs-gallery': '' },
-      props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
@@ -472,7 +472,7 @@
       label: 'Gallery with photos and video',
       blurb: 'A gallery where some slides are video posters. The poster is a real button that opens a dialog — video never plays inline, and the thumb strip treats it like any other slide.',
       data: { 'data-cs-gallery': '' },
-      props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
@@ -480,7 +480,7 @@
       css: `.cargo-photo { display: block; }
 .cargo-photo img, .cargo-mv img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
 .cargo-mv { position: relative; display: block; inline-size: 100%; padding: 0; font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
-.cargo-mv-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.3em; color: #16324f; background: rgb(255 255 255 / 92%); border-radius: 50%; transform: translate(-50%, -50%); }`,
+.cargo-mv-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.3em; color: #16324f; background: rgba(255, 255, 255, 0.92); border-radius: 50%; transform: translate(-50%, -50%); }`,
       slides: (models) =>
         models.map((m) =>
           m.video
@@ -495,7 +495,7 @@
       blurb:
         'A thumbnail that opens the full gallery in a native dialog. Built with data-cs-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure.',
       data: { 'data-cs-gallery': '', 'data-cs-init': 'manual' },
-      props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
@@ -504,9 +504,9 @@
 .cargo-lb-open img { inline-size: 68px; block-size: 44px; object-fit: cover; border-radius: 5px; }
 %root% { --cs-dot-current: #fff; --cs-dot-fg: #9aa3ad; }
 .cargo-lb { inline-size: min(94vw, 1100px); padding: 0; background: #111; border: 0; border-radius: 12px; }
-.cargo-lb::backdrop { background: rgb(0 0 0 / 80%); }
+.cargo-lb::backdrop { background: rgba(0, 0, 0, 0.8); }
 .cargo-lb-head { display: flex; align-items: center; justify-content: space-between; padding: 0.6em 0.9em; font-size: 0.9em; color: #fff; }
-.cargo-lb-close { padding: 0.35em 0.85em; font: inherit; color: #fff; cursor: pointer; background: rgb(255 255 255 / 15%); border: 0; border-radius: 6px; }
+.cargo-lb-close { padding: 0.35em 0.85em; font: inherit; color: #fff; cursor: pointer; background: rgba(255, 255, 255, 0.15); border: 0; border-radius: 6px; }
 .cargo-photo { display: block; }
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: contain; }`,
       slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),
@@ -528,7 +528,7 @@
       label: 'Vehicle cards with a mini gallery',
       blurb:
         'The SRP pattern: a grid of cards, each holding its own small slider of that vehicle’s photos. Many instances on one page is fine — each is independent, and none of them is the page’s main carousel.',
-      props: { '--cs-gap': '0.1px', '--cs-controls-space': '0.1px', '--cs-arrow-size': '32px', '--cs-arrow-bg': 'rgb(0 0 0 / 55%)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '0.1px', '--cs-controls-space': '0.1px', '--cs-arrow-size': '32px', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 200,
       models: VEHICLES,
@@ -778,7 +778,10 @@
     const pin = preview ? `${sel} { --cs-per-view: ${perViewAt(frameTier())}; }` : '';
 
     const dots = state.hideDots ? `${sel} .cs-dots { display: none; }` : '';
-    const arrows = [`${sel} .cs-arrow--prev { inset-inline-start: 0; }`, `${sel} .cs-arrow--next { inset-inline-end: 0; }`].join('\n');
+    // No arrow-inset override any more: the engine's own default is 0, which
+    // is what all 17 patterns and all 7 looks were restating. Three lines a
+    // snippet, and the gutter formula every look uses (arrow-size + 0.25em)
+    // always assumed a flush arrow anyway.
 
     // Scope every selector, wherever it starts. Matching only at line start
     // silently left rules inside @media blocks unscoped, so they matched
@@ -833,7 +836,7 @@
     ]
       .filter(Boolean)
       .join('\n');
-    return [`${sel} {\n${decls}\n${font}\n}`, steps, pin, dots, arrows, body, gutter].filter(Boolean).join('\n\n');
+    return [`${sel} {\n${decls}\n${font}\n}`, steps, pin, dots, body, gutter].filter(Boolean).join('\n\n');
   }
 
   function htmlFor(cls) {
