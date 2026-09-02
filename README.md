@@ -209,6 +209,14 @@ Events (bubble from the root): `cs:change` `{index, page, slidesInView}`,
   so if the stacking applied without JS every slide would sit at opacity 0 and
   the whole carousel would vanish. With JS off the track stays an ordinary
   scrollable strip with all slides visible. `destroy()` removes the marker.
+  The **width** is the one exception: `--cs-per-view: 1` is pinned in the
+  stylesheet off the authored `data-cs-fade`, so a fading carousel is one across
+  from first paint and init shifts nothing. Without it, a hero authored three
+  across laid out as a three-across strip and jumped a whole image height when
+  the script ran — measured 195.1px to 529.4px on a 1170px page — and that is
+  also what a no-JS visitor was left looking at. It means the `cs-*-N` classes
+  and your own `--cs-per-view` are **ignored on a fading carousel**, which is
+  intended: a crossfade is 1-up. `data-cs-fade="false"` keeps its columns.
 - Every programmatic scroll resolves smooth-vs-instant from
   `prefers-reduced-motion` at call time. Never add CSS `scroll-behavior`.
 

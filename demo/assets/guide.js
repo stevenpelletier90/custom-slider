@@ -32,7 +32,11 @@
     ],
     ['data-cs-drag', 'true', 'Mouse drag-to-scroll on the track. Touch and pen swiping is native scrolling and is unaffected. <code>false</code> opts out.'],
     ['data-cs-gallery', 'false', 'The tabbed thumbnail gallery. Thumbs are generated from the slide images as a real tab list with arrow keys.'],
-    ['data-cs-fade', 'false', 'Slides fade into each other instead of sliding. One slide at a time only, so it suits a full-width hero. No drag, no peek. Ignored with <code>data-cs-gallery</code>.'],
+    [
+      'data-cs-fade',
+      'false',
+      'Slides fade into each other instead of sliding. One slide at a time only, so it suits a full-width hero — the stylesheet pins it to one across, so the column classes and your own <code>--cs-per-view</code> are ignored here, and the strip is 1-up before the script runs rather than jumping on init. No drag, no peek. Ignored with <code>data-cs-gallery</code>.',
+    ],
     ['data-cs-roledescription', 'carousel', 'The announced role description. Set it to an empty string to omit it, which some localisations want.'],
   ];
 

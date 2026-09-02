@@ -51,6 +51,28 @@
   --cs-controls-space: calc(var(--cs-thumb-h) + 1em);
 }
 
+/* Fade is a 1-up stack, but the stacking only switches on when JS sets
+   data-cs-fade-on at init. Until then the column classes are in charge, so a
+   hero authored three across lays out as a three-across strip and jumps a whole
+   image height the moment the script runs — measured 195.1px to 529.4px on a
+   1170px page, and that is also what a no-JS visitor is left looking at.
+
+   Width ONLY. The opacity stack stays keyed to data-cs-fade-on, because keyed
+   off the authored attribute instead, a visitor with no JavaScript would get
+   every slide at opacity 0.
+
+   The :not() is load-bearing: data-cs-fade="false" means NOT fading, and
+   without it _measure() would read this 1 straight back out of computed style,
+   so such a strip would silently lose its cs-xs-N and announce "Slide 1 of 3".
+
+   Not guarded against data-cs-gallery on purpose: fade + gallery is an
+   unsupported pairing the engine already warns about, and
+   :not([data-cs-gallery]) would also match data-cs-gallery="false" — dropping
+   the pin on a real fading hero to tidy a case the engine refuses anyway. */
+.cs[data-cs-fade]:not([data-cs-fade="false"]) {
+  --cs-per-view: 1;
+}
+
 .cs-track {
   position: relative; /* slide offsets measured against the track */
   display: flex;

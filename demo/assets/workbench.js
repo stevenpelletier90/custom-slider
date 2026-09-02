@@ -1660,6 +1660,10 @@ ${VIDEO_DIALOG_CSS}`,
   function buildPanel() {
     panel.replaceChildren();
     const p = PATTERNS[state.pattern];
+    // The crossfade ignores how many across, the gap and the step. The hero is
+    // the only pattern that carries the attribute today, but read it off the
+    // state rather than the pattern id so a second fading pattern is covered.
+    const fading = state.data['data-cs-fade'] != null;
 
     const grid = document.createElement('div');
     for (const key of ['base', ...BPS]) {
@@ -1685,6 +1689,17 @@ ${VIDEO_DIALOG_CSS}`,
         input.value = state.perView[key];
       });
       grid.append(control(key === 'base' ? 'phone' : `${key}px and up`, input, 'Whole cards only — use Peek to show a sliver of the next one.'));
+    }
+    // A crossfade ignores all three of these, and saying so is better than
+    // hiding them: this file already carries a note that a greyed-out control
+    // which will not explain itself was the mistake the previous version made,
+    // and "At the ends" is relabelled under autoplay rather than removed.
+    if (fading) {
+      const note = document.createElement('p');
+      note.className = 'wb-note';
+      note.textContent =
+        'A crossfade stacks the slides and shows one at a time. The engine pins this to 1 in CSS, so the page looks the same before the script runs as after — a count above 1 still ships as a cs-xs-N class in the markup and does nothing.';
+      grid.append(note);
     }
     panel.append(section('How many across', grid));
 
@@ -1800,7 +1815,7 @@ ${VIDEO_DIALOG_CSS}`,
     colors.append(colorRow('Arrow background', '--cs-arrow-bg', state.props));
     if (state.props['--cs-peek'] != null) colors.append(valueRow('Peek', '--cs-peek', state.props));
     state.props['--cs-gap'] ??= '1em';
-    colors.append(valueRow('Gap', '--cs-gap', state.props));
+    colors.append(valueRow(fading ? 'Gap (a crossfade has no gap)' : 'Gap', '--cs-gap', state.props));
     // Everything inside a card is sized in em off this. `1em` inherits the host
     // page's body size, so the cards match the copy around them on whatever
     // site they are pasted into; a length here pins them to that size instead.
@@ -1849,7 +1864,7 @@ ${VIDEO_DIALOG_CSS}`,
       else state.data['data-cs-step'] = step.value;
       render();
     });
-    beh.append(control('Arrows move', step));
+    beh.append(control(fading ? 'Arrows move (a crossfade always moves 1)' : 'Arrows move', step));
 
     // data-cs-rewind has been in the engine and the reference all along; it was
     // just unreachable from here, so the only way to stop at the ends was to
