@@ -175,7 +175,7 @@
   const VIDEO_DIALOG_CSS = `.cargo-vdlg { inline-size: min(94vw, 720px); padding: 1em 1.2em; color: inherit; background: #fff; border: 0; border-radius: 12px; }
 .cargo-vdlg::backdrop { background: rgba(0, 0, 0, 0.8); }
 .cargo-vdlg-title { margin: 0 0 0.6em; font-size: 1.1em; font-weight: 700; line-height: 1.3; }
-.cargo-vdlg-close { padding: 0.4em 1em; font: inherit; cursor: pointer; background: #eef1f4; border: 0; border-radius: 6px; }`;
+.cargo-vdlg-close { padding: 0.4em 1em; font: inherit; line-height: 1.55; cursor: pointer; background: #eef1f4; border: 0; border-radius: 6px; }`;
 
   const VIDEO_DIALOG_HTML = [
     `<dialog class="cargo-vdlg" aria-label="Video">`,
@@ -328,7 +328,7 @@ ${VIDEO_DIALOG_CSS}`,
       hideDots: true,
       panes: ['Trucks', 'SUVs', 'Crossovers'],
       css: `.cargo-tabs { display: flex; flex-wrap: wrap; gap: 0.25em; justify-content: center; margin-block-end: 1em; border-block-end: 1px solid #e2e5ea; }
-.cargo-tabs [role="tab"] { padding: 0.6em 1.1em; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: 0.65; }
+.cargo-tabs [role="tab"] { padding: 0.6em 1.1em; font: inherit; font-weight: 600; line-height: 1.55; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: 0.65; }
 .cargo-tabs [role="tab"][aria-selected="true"] { border-block-end-color: currentcolor; opacity: 1; }
 .cargo-pane[hidden] { display: none; }
 /* Three tabs need 272px at the default padding, and a 320px phone leaves 236 -
@@ -521,7 +521,7 @@ ${VIDEO_DIALOG_CSS}`,
       // photo carries - which is what filtering by nothing looks like.
       filters: ['', ...new Set(TAGGED.map((m) => m.tag))],
       css: `.cargo-filterbar { display: flex; flex-wrap: wrap; gap: 0.4em; margin-block-end: 1em; }
-.cargo-filterbar button { padding: 0.4em 0.9em; font: inherit; font-size: 0.87em; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 999px; }
+.cargo-filterbar button { padding: 0.4em 0.9em; font: inherit; font-size: 0.87em; line-height: 1.55; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 999px; }
 .cargo-filterbar button[aria-pressed="true"] { color: #fff; background: #16324f; border-color: #16324f; }
 /* Four chips need 262px and a 320px phone leaves 236 - a 26px shortfall, and
    only 2px at 344 - so they broke onto a second row for want of almost
@@ -589,13 +589,13 @@ ${VIDEO_DIALOG_CSS}`,
       minCard: 240,
       track: 'div',
       models: PHOTOS,
-      css: `.cargo-lb-open { display: inline-flex; gap: 0.7em; align-items: center; padding: 0.6em 1em; font: inherit; font-weight: 600; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
+      css: `.cargo-lb-open { display: inline-flex; gap: 0.7em; align-items: center; padding: 0.6em 1em; font: inherit; font-weight: 600; line-height: 1.55; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-lb-open img { inline-size: 68px; block-size: 44px; object-fit: cover; border-radius: 5px; }
 %root% { --cs-dot-current: #fff; --cs-dot-fg: #9aa3ad; }
 .cargo-lb { inline-size: min(94vw, 1100px); padding: 0; background: #111; border: 0; border-radius: 12px; }
 .cargo-lb::backdrop { background: rgba(0, 0, 0, 0.8); }
-.cargo-lb-head { display: flex; align-items: center; justify-content: space-between; padding: 0.6em 0.9em; font-size: 0.9em; color: #fff; }
-.cargo-lb-close { padding: 0.35em 0.85em; font: inherit; color: #fff; cursor: pointer; background: rgba(255, 255, 255, 0.15); border: 0; border-radius: 6px; }
+.cargo-lb-head { display: flex; align-items: center; justify-content: space-between; padding: 0.6em 0.9em; font-size: 0.9em; line-height: 1.55; color: #fff; }
+.cargo-lb-close { padding: 0.35em 0.85em; font: inherit; line-height: 1.55; color: #fff; cursor: pointer; background: rgba(255, 255, 255, 0.15); border: 0; border-radius: 6px; }
 .cargo-photo { display: block; }
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: contain; }`,
       slides: (models) => models.map((m) => `<span class="cargo-photo">${pic(m)}</span>`),

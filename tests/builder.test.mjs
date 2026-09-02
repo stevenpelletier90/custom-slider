@@ -193,6 +193,39 @@ describe('the pasted block on a hostile host page', () => {
     }
   });
 
+  // F078: the cards matched the preview to 0.00px at an equal body size, but
+  // the control-like elements did not. `.cargo-tabs [role="tab"]` and
+  // `.cargo-filterbar button` set `font: inherit` and no line-height, so the
+  // strip took the host page's leading and shipped taller than the preview
+  // showed - the tab strip 44.25 -> 52.5px on a 2.1-leading host, the chip row
+  // 32.66 -> 39.83. The same trap as the inline <span> the card rules already
+  // guard against, one level up.
+  test('a control-shaped element ignores the host page leading', async () => {
+    const cases = [
+      ['tabs', '.cargo-tabs [role="tab"]'],
+      ['gallery-filter', '.cargo-filterbar button'],
+      ['lightbox', '.cargo-lb-open'],
+    ];
+    for (const [id, sel] of cases) {
+      await pick(page, id);
+      await page.click('.ui-widths button[data-w="1170"]');
+      await page.waitForTimeout(80);
+      const p = await copyParts(page);
+      const at = async (leading) => {
+        await host.setContent(hostHtml({ ...engine, css: `body { line-height: ${leading} }\n${p.css}`, html: p.html, js: p.js }), { waitUntil: 'load' });
+        await host.waitForTimeout(200);
+        return host.evaluate((s) => {
+          const el = document.querySelector(s);
+          return el ? +el.getBoundingClientRect().height.toFixed(2) : null;
+        }, sel);
+      };
+      const tight = await at(1.2);
+      const loose = await at(2.6);
+      assert.ok(tight, `${id}: ${sel} did not render on the host page`);
+      assert.equal(loose, tight, `${id}: ${sel} is ${loose}px on a 2.6-leading host and ${tight}px on a 1.2-leading one`);
+    }
+  });
+
   // F016: the engine's arrow inset default was 0.5em and every snippet undid
   // it, so the markup-only paste README advertises overlapped the first card.
   test('a markup-only paste keeps the arrow out of the first card', async () => {
