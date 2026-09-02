@@ -165,6 +165,39 @@ describe('the demo describes what it is actually showing', () => {
     }
   });
 
+  // F061: no card style had a badge slot, so "New" or "Certified" over a photo
+  // was hand-written markup and hand-written CSS per card.
+  const badgeBox = (page) => page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Badge")) input').first();
+
+  test('a badge is drawn only where one is typed', async () => {
+    await pick(page, 'cards');
+    const bare = await copyParts(page);
+    assert.doesNotMatch(bare.html, /cargo-badge/, 'an empty badge still ships an element');
+
+    await badgeBox(page).fill('Certified');
+    await page.waitForTimeout(250);
+    const done = await copyParts(page);
+    assert.match(done.html, /<span class="cargo-badge">Certified<\/span>/, 'the badge never reached the markup');
+    // One card carries it, not all six.
+    assert.equal((done.html.match(/cargo-badge/g) || []).length, 1, 'the badge landed on more than the card it was typed into');
+  });
+
+  test('the Badge box is offered only on the card styles that draw it', async () => {
+    await pick(page, 'grid'); // tile draws it
+    assert.equal(await badgeBox(page).count(), 1, 'no Badge box on a card style whose markup draws one');
+    // Switch to a style that does not read it and the box must go with it.
+    const other = await page.evaluate(() => {
+      const L = globalThis.CARGO.LOOKS;
+      const id = Object.keys(L).find((k) => !/badge/.test(String(L[k].markup)));
+      const b = [...document.querySelectorAll('#wb-settings .wb-look')].find((x) => x.textContent.includes(L[id].label));
+      b?.click();
+      return !!b && L[id].label;
+    });
+    assert.ok(other, 'every card style draws a badge, so this guards nothing');
+    await page.waitForTimeout(300);
+    assert.equal(await badgeBox(page).count(), 0, `${other} does not draw a badge but still offers the box`);
+  });
+
   // F026: brand notes read like a research log - "ladders", "forddemo1",
   // "the census" - none of which is defined anywhere a designer would look.
   test('the brand notes use no in-house jargon', async () => {

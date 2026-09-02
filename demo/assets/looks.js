@@ -72,19 +72,22 @@ const LOOKS = {
       // the name drifts away from the car. Raise it when --plate-bg is a real
       // colour and you want the plate to read as a plate.
       '--plate-pad': '6% 6% 1%',
+      '--badge-bg': '#16324f',
+      '--badge-fg': '#fff',
     },
     css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
 @media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; padding-inline: 0; } }
 @media (max-width: 380px) { %root% { --cs-per-view: 1; } }
 .cargo-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
-.cargo-media { display: block; overflow: hidden; }
+.cargo-media { position: relative; display: block; overflow: hidden; }
+.cargo-badge { position: absolute; inset-block-start: 0.6em; inset-inline-start: 0.6em; padding: 0.25em 0.7em; font-size: 0.75em; font-weight: 700; line-height: 1.4; color: var(--badge-fg); background: var(--badge-bg); border-radius: 999px; }
 .cargo-card img { box-sizing: border-box; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); padding: var(--plate-pad); object-fit: contain; background: var(--plate-bg); filter: var(--img-filter); transition: filter 0.2s, transform 0.25s ease; }
 .cargo-card:hover img { filter: none; transform: scale(var(--img-hover-scale)); }
 @media (prefers-reduced-motion: reduce) { .cargo-card:hover img { transform: none; } }
 .cargo-name { order: var(--name-order); margin: 0.4em 0 0; font-size: var(--name-size); font-weight: var(--name-weight); line-height: 1.35; color: var(--name-color); text-transform: var(--name-case); letter-spacing: var(--name-tracking); }
 .cargo-sub { display: block; margin-block-start: 0.15em; font-size: 0.8em; line-height: 1.35; color: #5f6368; }`,
     markup: (m) => `<a class="cargo-card" href="${m.href}">
-  <span class="cargo-media"><img src="${m.img}" width="${m.w ?? 320}" height="${m.h ?? 240}" alt="${m.alt}" loading="lazy" decoding="async"></span>
+  <span class="cargo-media">${m.badge ? `<span class="cargo-badge">${m.badge}</span>` : ''}<img src="${m.img}" width="${m.w ?? 320}" height="${m.h ?? 240}" alt="${m.alt}" loading="lazy" decoding="async"></span>
   <p class="cargo-name">${m.name}</p>${m.sub ? `\n  <small class="cargo-sub">${m.sub}</small>` : ''}
 </a>`,
   },
@@ -116,13 +119,20 @@ const LOOKS = {
       '--name-color': '#1c1f23',
       '--name-size': '1em',
       '--price-color': '#16324f',
+      '--card-border': '1px solid #e2e5ea',
+      '--card-shadow': 'none',
+      // 1.04 because that is what this card has always done. 1 turns it off.
+      '--img-hover-scale': '1.04',
+      '--badge-bg': '#16324f',
+      '--badge-fg': '#fff',
     },
     css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
 @media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
-.cargo-card { position: relative; display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: var(--card-bg); border: 1px solid #e2e5ea; border-radius: var(--card-radius); }
-.cargo-media { display: block; overflow: hidden; }
+.cargo-card { position: relative; display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: var(--card-bg); border: var(--card-border); border-radius: var(--card-radius); box-shadow: var(--card-shadow); }
+.cargo-media { position: relative; display: block; overflow: hidden; }
+.cargo-badge { position: absolute; inset-block-start: 0.6em; inset-inline-start: 0.6em; padding: 0.25em 0.7em; font-size: 0.75em; font-weight: 700; line-height: 1.4; color: var(--badge-fg); background: var(--badge-bg); border-radius: 999px; }
 .cargo-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; transition: transform 0.3s ease; }
-.cargo-card:hover img { transform: scale(1.04); }
+.cargo-card:hover img { transform: scale(var(--img-hover-scale)); }
 @media (prefers-reduced-motion: reduce) { .cargo-card:hover img { transform: none; } }
 .cargo-body { display: block; padding: 0.85em 0.9em 1em; line-height: 1.4; }
 .cargo-name { display: block; margin: 0; font-size: var(--name-size); font-weight: 700; line-height: 1.35; color: var(--name-color); }
@@ -130,7 +140,7 @@ const LOOKS = {
     // One stretched link over the whole card: the anchor IS the card, so there
     // is no nested link and nothing announces twice.
     markup: (m) => `<a class="cargo-card" href="${m.href}">
-  <span class="cargo-media"><img src="${m.img}" width="${m.w ?? 1200}" height="${m.h ?? 900}" alt="${m.alt}" loading="lazy" decoding="async"></span>
+  <span class="cargo-media">${m.badge ? `<span class="cargo-badge">${m.badge}</span>` : ''}<img src="${m.img}" width="${m.w ?? 1200}" height="${m.h ?? 900}" alt="${m.alt}" loading="lazy" decoding="async"></span>
   <span class="cargo-body">
     <span class="cargo-name">${m.name}</span>${m.sub ? `\n    <small class="cargo-sub">${m.sub}</small>` : ''}
   </span>
@@ -195,8 +205,9 @@ const LOOKS = {
       '--card-fg': '#fff',
       '--pill-bg': '#fff',
       '--pill-fg': '#222',
+      '--card-shadow': 'none',
     },
-    css: `.cargo-card { display: flex; overflow: hidden; color: var(--card-fg); text-decoration: none; background: var(--card-bg); border-radius: 8px; }
+    css: `.cargo-card { display: flex; overflow: hidden; color: var(--card-fg); text-decoration: none; background: var(--card-bg); border-radius: 8px; box-shadow: var(--card-shadow); }
 .cargo-card img { flex: 0 0 50%; inline-size: 50%; aspect-ratio: 1; object-fit: cover; }
 .cargo-copy { display: flex; flex-direction: column; gap: 0.5em; align-items: flex-start; min-inline-size: 0; padding: 28px; }
 .cargo-sub { font-size: 0.85em; color: #d9d9d9; }
@@ -309,10 +320,11 @@ const LOOKS = {
       '--card-bg': '#fff',
       '--cta-bg': '#c8102e',
       '--cta-fg': '#fff',
+      '--card-shadow': 'none',
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1em; background: var(--strip-bg); }
 %root% .cs-track { padding-block-end: 1.5em; }
-.cargo-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.25em; text-align: center; text-decoration: none; background: var(--card-bg); border-radius: 10px; }
+.cargo-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.25em; text-align: center; text-decoration: none; background: var(--card-bg); border-radius: 10px; box-shadow: var(--card-shadow); }
 .cargo-card img { inline-size: 55%; block-size: auto; object-fit: contain; }
 .cargo-name { margin: 0.5em 0 0.4em; font-size: 1.1em; font-weight: 700; line-height: 1.3; color: #222; }
 .cargo-card p { margin: 0 0 0.9em; font-size: 0.9em; color: #5f6368; }

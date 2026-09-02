@@ -374,6 +374,44 @@ describe('a property the slider is already using has a control', () => {
   });
 });
 
+describe('card chrome is a knob, not a literal', () => {
+  // F061: the vehicle card's 1px #e2e5ea border and its 1.04 hover zoom were
+  // literals in the look's CSS, no look had a shadow, and there was no badge
+  // slot at all - so a border colour or a "New" flash meant hand CSS.
+  // The card style has to be chosen, not assumed: an earlier test in this file
+  // switches the style on `cards`, and picking the pattern again does not put
+  // the original back.
+  const wearVcard = async (page) => {
+    await pick(page, 'cards');
+    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes('Vehicle card'))?.click());
+    await page.waitForTimeout(300);
+  };
+
+  test('the border and the zoom show the values the card has always had', async () => {
+    await wearVcard(page);
+    assert.equal(await colorKnob(page, 'Card border'), '1px solid #e2e5ea', 'the border knob does not show the border the card draws');
+    assert.equal(await knob(page, 'Zoom on hover'), '1.04', 'the zoom knob does not show the zoom the card has always done');
+  });
+
+  test('a shadow reaches the card', async () => {
+    await wearVcard(page);
+    await setField(page, 'Card shadow', '0 2px 8px rgba(0, 0, 0, 0.15)');
+    await page.waitForTimeout(250);
+    const drawn = await page.evaluate(() => getComputedStyle(document.querySelector('#wb-stage .cargo-card')).boxShadow);
+    assert.notEqual(drawn, 'none', 'the shadow never reached the card');
+    const { css } = await copyParts(page);
+    assert.match(css, /--card-shadow:\s*0 2px 8px rgba\(0, 0, 0, 0\.15\)/, 'the shadow is missing from the copied CSS');
+  });
+
+  test('the defaults are still dropped from the snippet', async () => {
+    await pick(page, 'grid'); // the tile look, untouched
+    const { css } = await copyParts(page);
+    for (const k of ['--card-shadow', '--badge-bg', '--badge-fg']) {
+      assert.doesNotMatch(css, new RegExp(k), `${k} is pasted even though it equals the card style's own default`);
+    }
+  });
+});
+
 describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);

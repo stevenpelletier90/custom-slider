@@ -55,6 +55,9 @@
     mark: 'Chevrolet',
     sub: 'In stock now',
     blurb: 'Built for the way you actually drive.',
+    // Empty, so the Badge box is offered on the two card styles whose markup
+    // draws it and on no others - the readsOf probe hides it everywhere else.
+    badge: '',
   }));
 
   // Each card names the vehicle its render actually depicts, and the model year
@@ -67,7 +70,7 @@
     ['vehicle-4.png', '2026 Ford Explorer', '$43,200 · 8,900 mi', 'Ford Explorer, front three-quarter studio view'],
     ['vehicle-5.png', '2026 Hyundai Tucson', '$31,400 · 7,300 mi', 'Hyundai Tucson, front three-quarter studio view'],
     ['vehicle-6.png', '2026 Subaru Outback', '$35,700 · 5,100 mi', 'Subaru Outback, front three-quarter studio view'],
-  ].map(([f, name, sub, alt]) => ({ img: `img/${f}`, w: 640, h: 480, name, sub, alt, href: '/used-inventory/index.htm' }));
+  ].map(([f, name, sub, alt]) => ({ img: `img/${f}`, w: 640, h: 480, name, sub, alt, href: '/used-inventory/index.htm', badge: '' }));
 
   // From the platform's own industry-automotive collection, not from Unsplash:
   // every dealer can see it, so these copy out as paths that resolve instead of
@@ -1525,6 +1528,10 @@ ${PHOTO_CSS}
     '--card-bg': 'Card background',
     '--card-fg': 'Card text',
     '--card-radius': 'Corner radius',
+    '--card-border': 'Card border',
+    '--card-shadow': 'Card shadow',
+    '--badge-bg': 'Badge background',
+    '--badge-fg': 'Badge text',
     '--price-color': 'Price colour',
     '--cta-bg': 'Button background',
     '--cta-fg': 'Button text',
@@ -2172,6 +2179,7 @@ ${PHOTO_CSS}
     // whose slide is nothing but a photo. Empty emits no <figcaption> and no
     // <figure>, so a pattern nobody captions ships the markup it always did.
     caption: { label: 'Caption', type: 'text', hint: 'Printed under the photo. Say something the alt text does not, or leave it empty' },
+    badge: { label: 'Badge', type: 'text', hint: 'A short label over the photo — New, Certified, Special Offer. Empty draws nothing' },
     w: { label: 'Source width', type: 'number', hint: 'Real pixel width of the file' },
     h: { label: 'Source height', type: 'number', hint: 'Real pixel height of the file' },
     name: { label: 'Heading', type: 'text' },
