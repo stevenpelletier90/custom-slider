@@ -19,6 +19,16 @@
   // off-by-one, and none line up with the page the slider sits in.
   const BPS = [768, 992, 1200];
 
+  // A number typed into a slide field reaches the markup, and markup that
+  // throws takes the whole builder with it: `'&star;'.repeat(5 - 6)` raises
+  // "Invalid count value: -1" inside render(), so the preview and the code
+  // panel freeze on the previous card, every later edit throws at the same
+  // line - and the bad value is already in localStorage, so the next visit to
+  // the Build page boots into a blank screen with nothing to say why. Clamped
+  // where the value enters state AND again where the markup is built, so a
+  // number saved before this existed cannot take the page down either.
+  const clamp = (v, min, max) => Math.min(max, Math.max(min, Number(v) || 0));
+
   const CHEVY = ['silverado-1500', 'colorado', 'tahoe', 'suburban', 'traverse', 'trax', 'equinox', 'trailblazer'];
   const title = (s) => s.replace(/-/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
 
@@ -406,7 +416,7 @@
     <span class="cargo-avatar" aria-hidden="true" style="--avatar-bg: ${m.bg}">${m.name[0]}</span>
     <span class="cargo-byline"><strong>${m.name}</strong><small>${m.when}</small></span>
   </figcaption>
-  <span class="cargo-stars" role="img" aria-label="Rated ${m.stars} out of 5">${'&starf;'.repeat(m.stars)}${'&star;'.repeat(5 - m.stars)}</span>
+  <span class="cargo-stars" role="img" aria-label="Rated ${clamp(m.stars, 0, 5)} out of 5">${'&starf;'.repeat(clamp(m.stars, 0, 5))}${'&star;'.repeat(5 - clamp(m.stars, 0, 5))}</span>
   <blockquote><p>${m.quote}</p></blockquote>
 </figure>`,
         ),
@@ -1633,7 +1643,7 @@
     blurb: { label: 'Paragraph', type: 'textarea' },
     quote: { label: 'Quote', type: 'textarea' },
     when: { label: 'When', type: 'text' },
-    stars: { label: 'Stars out of 5', type: 'number' },
+    stars: { label: 'Stars out of 5', type: 'number', min: 0, max: 5 },
     bg: { label: 'Avatar colour', type: 'text' },
     tag: { label: 'Category', type: 'text', hint: 'Must match one of the filter buttons' },
     href: { label: 'Link', type: 'url', hint: '/searchnew.aspx?Model=Tahoe' },
@@ -1679,7 +1689,16 @@
     try {
       const v = JSON.parse(localStorage.getItem(CKEY) || 'null');
       if (v?.pattern === state.pattern && Array.isArray(v.rows) && v.rows.length) {
-        state.content = v.rows;
+        // Bring a stored row back inside its field's range. An out-of-range
+        // number saved before the clamp existed would otherwise sit in the
+        // editor disagreeing with the card the markup draws.
+        state.content = v.rows.map((row) => {
+          const out = { ...row };
+          for (const [k, f] of Object.entries(FIELDS)) {
+            if (f.type === 'number' && f.max != null && out[k] != null) out[k] = clamp(out[k], f.min ?? 0, f.max);
+          }
+          return out;
+        });
         state.count = v.rows.length;
       }
     } catch {
@@ -1761,6 +1780,10 @@
         if (f.type === 'checkbox') input.checked = !!m[k];
         else input.value = isText ? unesc(m[k] ?? '') : (m[k] ?? '');
         if (f.hint) input.placeholder = f.hint;
+        // A range on the field gives the spinner its stops; the clamp below is
+        // what actually holds, because typing past the max is still allowed.
+        if (f.min != null) input.min = f.min;
+        if (f.max != null) input.max = f.max;
         // Two rows cut a quote off mid-sentence and made the drag handle look
         // like the only way to read your own copy.
         if (f.type === 'textarea') input.rows = 4;
@@ -1772,7 +1795,7 @@
           // two controls fighting over one number.
           const adopting = !state.content;
           const r = adoptContent();
-          r[i][k] = f.type === 'checkbox' ? input.checked : f.type === 'number' ? Number(input.value) : esc(input.value);
+          r[i][k] = f.type === 'checkbox' ? input.checked : f.type === 'number' ? (f.max == null ? Number(input.value) : clamp(input.value, f.min ?? 0, f.max)) : esc(input.value);
           saveContent();
           if (adopting) {
             buildPanel(); // the panel, never this editor — see below
