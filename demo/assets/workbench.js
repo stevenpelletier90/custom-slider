@@ -18,6 +18,11 @@
   // estate's 461 / 539 / 599 / 990 / 1440 - several of those were an
   // off-by-one, and none line up with the page the slider sits in.
   const BPS = [768, 992, 1200];
+  // One vocabulary for the tiers. The panel used to say "phone / 768px and up"
+  // while the preview's width buttons said "Phone / Tablet / Laptop / Desktop",
+  // so the two halves of the same screen named the same tier differently and
+  // neither said these were screen widths. Both read from here now.
+  const TIER_LABEL = { base: 'Phone (under 768px)', 768: 'Tablet (768px and up)', 992: 'Laptop (992px and up)', 1200: 'Desktop (1200px and up)' };
 
   // A number typed into a slide field reaches the markup, and markup that
   // throws takes the whole builder with it: `'&star;'.repeat(5 - 6)` raises
@@ -631,7 +636,7 @@ ${VIDEO_DIALOG_CSS}`,
       gutter: false,
       label: 'Fullscreen gallery in a dialog',
       blurb:
-        'A thumbnail that opens the full gallery in a native dialog. Built with data-cs-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure.',
+        'A thumbnail that opens the full gallery in a native dialog. Built with data-cs-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure. Open the gallery to see your settings: the stage below shows only the closed trigger until you do, the readout has nothing to measure yet, and changing a setting rebuilds the dialog closed, so it is open, look, close, change.',
       data: { 'data-cs-gallery': '', 'data-cs-init': 'manual' },
       props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
@@ -1834,7 +1839,7 @@ ${PHOTO_CSS}
       input.addEventListener('change', () => {
         input.value = state.perView[key];
       });
-      grid.append(control(key === 'base' ? 'phone' : `${key}px and up`, input, 'Whole cards only — use Peek to show a sliver of the next one.'));
+      grid.append(control(TIER_LABEL[key], input, 'Whole cards only — use Peek to show a sliver of the next one.'));
     }
     // A crossfade ignores all three of these, and saying so is better than
     // hiding them: this file already carries a note that a greyed-out control
@@ -2207,7 +2212,7 @@ ${PHOTO_CSS}
       state.gutter = gut.checked;
       render();
     });
-    beh.append(control('Arrows beside, not over', gut));
+    beh.append(control('Keep arrows outside the cards', gut, 'Off lets the arrows sit on top of the first and last card. On reserves a channel beside them instead.'));
 
     // No slide-count dial. The roster length IS the slide count, and "Add a
     // slide" / "Remove" are the only things that move it - the note above the
@@ -2701,7 +2706,7 @@ ${PHOTO_CSS}
     const cs = getComputedStyle(box);
     const avail = box.clientWidth - parseFloat(cs.paddingInlineStart) - parseFloat(cs.paddingInlineEnd);
     const reach = avail;
-    const SCREEN = { 330: 'under 768px', 750: '768px and up', 970: '992px and up', 1170: '1200px and up' };
+    const SCREEN = { 330: TIER_LABEL.base, 750: TIER_LABEL[768], 970: TIER_LABEL[992], 1170: TIER_LABEL[1200] };
     let active = null;
     for (const b of widthBtns()) {
       const w = +b.dataset.w;
@@ -2716,7 +2721,7 @@ ${PHOTO_CSS}
         ? `Make the window about ${Math.round(w + (innerWidth - reach))}px wide to use this`
         : w
           ? `${SCREEN[w]} screen — the slider gets ${w}px. Cards per view match; phone-only rules only apply once the window itself is that narrow.`
-          : 'Use the whole column';
+          : 'Use all the width this page has';
       if (b.getAttribute('aria-pressed') === 'true') active = b;
     }
     // A chosen width that no longer fits must not keep its label. Buttons stay

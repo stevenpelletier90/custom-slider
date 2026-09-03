@@ -73,13 +73,13 @@ describe('a click that looks like a no-op is one', () => {
     await pick(page, 'grid');
     const before = await page.evaluate(() => JSON.stringify(globalThis.CARGO.PATTERNS.grid.perView));
     // Change the ladder by hand first, so there is something to lose.
-    const field = page.locator('#wb-settings label:has(> span:text-is("992px and up")) input').first();
+    const field = page.locator('#wb-settings label:has(> span:text-is("Laptop (992px and up)")) input').first();
     await field.fill('3');
     await page.waitForTimeout(120);
-    const set = await knob(page, '992px and up');
+    const set = await knob(page, 'Laptop (992px and up)');
     await page.click('#wb-settings .wb-look[aria-pressed="true"]');
     await page.waitForTimeout(150);
-    assert.equal(await knob(page, '992px and up'), set, 're-selecting the current look reset the ladder');
+    assert.equal(await knob(page, 'Laptop (992px and up)'), set, 're-selecting the current look reset the ladder');
     assert.ok(before, 'pattern defaults unreadable');
   });
 });
@@ -118,7 +118,7 @@ describe('a number field refuses what the engine cannot page', () => {
   // setting the property to 2.5 by hand makes the last page unreachable.
   test('a fractional count is not left showing in the field', async () => {
     await pick(page, 'modelbar');
-    const field = page.locator('#wb-settings label:has(> span:text-is("phone")) input').first();
+    const field = page.locator('#wb-settings label:has(> span:text-is("Phone (under 768px)")) input').first();
     await field.fill('2.5');
     await field.blur();
     await page.waitForTimeout(120);

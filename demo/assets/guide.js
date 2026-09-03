@@ -100,6 +100,7 @@
 
   const LIMITS = [
     'Left-to-right only in v1.',
+    'Horizontal only. There is no vertical mode: the engine measures and scrolls along one axis, and the thumbnail rail is laid out and auto-scrolled horizontally too.',
     "No “slider on a phone, plain grid on a desktop”. Wrapping the track onto two rows leaves the arrows and dots in place over something that no longer scrolls. What works instead: set the desktop count to the number of slides, and the engine hides its own arrows and dots once everything fits (it marks the root <code>data-cs-fits</code>). That route needs 8 slides or fewer, because the per-view ladder stops at 8. For a real two-row desktop grid, use the page's own grid classes and no slider at all.",
     'No infinite loop and no cloned slides: the ends rewind, or stop with <code>data-cs-rewind="false"</code>. Cloning would duplicate content for search engines and confuse screen readers.',
     '<code>data-cs-gallery</code> with <code>data-cs-autoplay</code> is unsupported — autoplay is ignored and warns in the console.',

@@ -54,7 +54,7 @@
   };
   Promise.all(['../dist/custom-slider.css', '../dist/custom-slider.js'].map(gz))
     .then(([css, js]) => {
-      size.textContent = `${((css + js) / 1024).toFixed(1)} KB gzip · no dependencies`;
+      size.textContent = `Two small files, ${((css + js) / 1024).toFixed(1)} KB in all — nothing else to install`;
     })
     .catch(() => {
       /* opened over file:// where fetch is blocked - leave the static text */

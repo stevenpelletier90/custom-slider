@@ -35,7 +35,7 @@ describe('the settings come back with the slides', () => {
     await nameField.fill('used-inventory');
     await nameField.blur();
     await setField(page, 'Gap', '1.75em');
-    const ladder = page.locator('#wb-settings label:has(> span:text-is("992px and up")) input').first();
+    const ladder = page.locator('#wb-settings label:has(> span:text-is("Laptop (992px and up)")) input').first();
     await ladder.fill('4');
     await page.waitForTimeout(120);
     await page.click('.ui-widths button[data-w="970"]');

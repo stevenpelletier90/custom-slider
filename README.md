@@ -152,7 +152,9 @@ without the stylesheet; the checkbox is not.
 
 ## CSS custom properties
 
-All eighteen: `--cs-per-view`, `--cs-gap`, `--cs-peek` (edge sliver of the next
+Every one of them is tabulated with its live default on the Reference page,
+which reads them out of the shipped stylesheet rather than counting by hand:
+`--cs-per-view`, `--cs-gap`, `--cs-peek` (edge sliver of the next
 slide), `--cs-arrow-size/fg/bg`, `--cs-arrow-fg-hover/bg-hover`,
 `--cs-dot-size/fg/current`, `--cs-controls-space`, `--cs-thumb-w/h`,
 `--cs-thumb-hover-scale` (gallery thumb zoom on hover; `1` turns it off),
