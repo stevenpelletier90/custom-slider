@@ -643,6 +643,69 @@ describe('the hero can put its dots on the photo', () => {
   });
 });
 
+describe('the last engine properties reach the panel', () => {
+  // F099 / F102 / F103: six properties the engine documents and the panel never
+  // offered, so matching a focus ring or resizing a gallery thumbnail meant
+  // reading the name off the Reference and hand-editing the snippet.
+  test('a gallery offers its thumbnail sizes', async () => {
+    await pick(page, 'gallery');
+    for (const label of ['Thumbnail width', 'Thumbnail height', 'Thumbnail zoom']) {
+      assert.equal(await hasKnob(page, label), true, `no "${label}" row on a gallery`);
+    }
+    await pick(page, 'modelbar');
+    assert.equal(await hasKnob(page, 'Thumbnail width'), false, 'a pattern with no thumbnail rail offers thumbnail sizes');
+  });
+
+  test('a crossfade offers its duration, and nothing else does', async () => {
+    await pick(page, 'hero');
+    assert.equal(await hasKnob(page, 'Crossfade time'), true, 'the hero cannot set its crossfade duration');
+    await pick(page, 'modelbar');
+    assert.equal(await hasKnob(page, 'Crossfade time'), false, 'a sliding strip offers a crossfade duration');
+  });
+
+  test('the focus ring and the control transition are reachable everywhere', async () => {
+    for (const id of ['modelbar', 'hero', 'gallery']) {
+      await pick(page, id);
+      assert.equal(await hasKnob(page, 'Control transition'), true, `${id}: no transition knob`);
+      assert.equal((await colorKnob(page, 'Focus ring')) !== null, true, `${id}: no focus-ring knob`);
+    }
+  });
+
+  test('a thumbnail size reaches the copied CSS and the drawn thumb', async () => {
+    await pick(page, 'gallery');
+    await setField(page, 'Thumbnail width', '120px');
+    await page.waitForTimeout(300);
+    const drawn = await page.evaluate(() => Math.round(document.querySelector('#wb-stage .cs-thumb')?.getBoundingClientRect().width ?? 0));
+    const { css } = await copyParts(page);
+    assert.match(css, /--cs-thumb-w:\s*120px/, 'the value never reached the copied CSS');
+    assert.equal(drawn, 120, `the thumbnail is drawn ${drawn}px`);
+  });
+
+  // F083: a count outside 1-8 was refused in silence. The field snapped back on
+  // blur so nothing was lost, but until then the panel showed one number and
+  // the slider ran another.
+  test('an out-of-range count says why it was not taken', async () => {
+    await pick(page, 'modelbar');
+    const f = page.locator('#wb-settings label:has(> span:text-is("Phone · under 768")) input').first();
+    await f.fill('9');
+    await page.waitForTimeout(200);
+    assert.equal(await f.getAttribute('aria-invalid'), 'true', 'an out-of-range count is not flagged');
+    await f.blur();
+    await page.waitForTimeout(200);
+    assert.equal(await f.getAttribute('aria-invalid'), 'false', 'the flag survives the field snapping back');
+  });
+
+  // F097: cards size themselves off the host page's body text, so the same
+  // slider is taller on a bigger-bodied site. The readout never said what size
+  // the preview itself is, so that scaling looked like a defect.
+  test('the readout says what text size the preview is running', async () => {
+    await pick(page, 'modelbar');
+    await page.waitForTimeout(200);
+    const card = await page.evaluate(() => document.getElementById('spec-card').textContent);
+    assert.match(card, /text \d+px/, `the readout does not state the preview's text size: "${card}"`);
+  });
+});
+
 describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);

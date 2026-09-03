@@ -1566,7 +1566,12 @@ ${PHOTO_CSS}
     const fits = root.hasAttribute('data-cs-fits');
     const n = stage.querySelectorAll('.cs').length;
 
-    set('spec-card', `${w}px in ${Math.round(stage.getBoundingClientRect().width)}px`);
+    // F097: cards are sized in em off the host page's body text, by design - so
+    // the same slider is 5 to 63px taller on a 19px-body site than it is here.
+    // That is scaling working, not leakage (measured: at an equal body size all
+    // 17 first slides match the preview to 0.00px), but the readout never said
+    // what size this preview is, so the difference looked like a defect.
+    set('spec-card', `${w}px in ${Math.round(stage.getBoundingClientRect().width)}px · text ${Math.round(parseFloat(getComputedStyle(root).fontSize))}px`);
     // Counted in THIS slider, and never more than there are. The tabbed bar
     // draws three carousels and the card grid six, so counting the stage said
     // "5 of 24" over a pane holding eight; and asking for more cards across
@@ -1884,9 +1889,21 @@ ${PHOTO_CSS}
       input.min = '1';
       input.max = '8';
       input.value = state.perView[key];
+      // F083: a number outside 1-8 was refused in silence. The field snapped
+      // back on blur, so nothing was lost, but between typing and blurring the
+      // panel showed one number and the slider ran another with no hint that
+      // the value had not been taken.
+      const warn = document.createElement('span');
+      warn.className = 'wb-bad';
+      warn.hidden = true;
+      warn.textContent = 'Whole cards, 1 to 8.';
       input.addEventListener('input', () => {
         const n = parseInt(input.value, 10);
-        if (n >= 1 && n <= 8) {
+        const ok = n >= 1 && n <= 8;
+        input.setAttribute('aria-invalid', String(!ok));
+        input.classList.toggle('wb-input-bad', !ok);
+        warn.hidden = ok;
+        if (ok) {
           state.perView[key] = n;
           render();
         }
@@ -1898,8 +1915,11 @@ ${PHOTO_CSS}
       // control for showing part of the next card.
       input.addEventListener('change', () => {
         input.value = state.perView[key];
+        input.setAttribute('aria-invalid', 'false');
+        input.classList.remove('wb-input-bad');
+        warn.hidden = true;
       });
-      grid.append(control(TIER_LABEL[key], input, 'Whole cards only — use Peek to show a sliver of the next one.'));
+      grid.append(control(TIER_LABEL[key], input, 'Whole cards only — use Peek to show a sliver of the next one.', warn));
     }
     // A crossfade ignores all three of these, and saying so is better than
     // hiding them: this file already carries a note that a greyed-out control
@@ -2095,6 +2115,21 @@ ${PHOTO_CSS}
       colors.append(colorRow('Dot colour', '--cs-dot-fg', state.props));
       colors.append(colorRow('Dot colour, current', '--cs-dot-current', state.props));
     }
+    // F099: a gallery draws a thumbnail rail instead of dots, and both its size
+    // knobs and the hover zoom were in the engine and in the Reference with no
+    // way to reach them from here. Thumbs ABOVE the photo stays hand CSS and a
+    // vertical rail is a deliberate no - the strip is laid out and auto-scrolled
+    // horizontally, so there is nothing to turn.
+    if (state.data['data-cs-gallery'] != null) {
+      colors.append(valueRow('Thumbnail width', '--cs-thumb-w', state.props));
+      colors.append(valueRow('Thumbnail height', '--cs-thumb-h', state.props));
+      colors.append(valueRow('Thumbnail zoom', '--cs-thumb-hover-scale', state.props));
+    }
+
+    // F102: the hero hard-codes the crossfade and its duration knob never
+    // appeared, though both have been in the engine all along.
+    if (fading) colors.append(valueRow('Crossfade time', '--cs-fade-ms', state.props));
+
     panel.append(section('Arrows and spacing', colors));
 
     // F018 (the half that needs no decision): the tab words were hard-coded,
@@ -2367,6 +2402,16 @@ ${PHOTO_CSS}
     beh.append(aloneNote);
 
     panel.append(section('Behaviour', beh));
+
+    // F103: the last two engine properties with no control anywhere. Matching a
+    // site's focus-ring colour or slowing the control transitions meant reading
+    // the name off the Reference and hand-editing the snippet. Both are rare
+    // enough to sit at the end rather than among the settings people reach for
+    // every time.
+    const adv = document.createElement('div');
+    adv.append(colorRow('Focus ring', '--cs-focus', state.props));
+    adv.append(valueRow('Control transition', '--cs-transition', state.props));
+    panel.append(section('Everything else', adv));
   }
 
   /* ---- slide content ----------------------------------------------------- */
