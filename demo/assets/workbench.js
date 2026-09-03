@@ -76,7 +76,7 @@
     ['vehicle-4.png', '2026 Ford Explorer', '$43,200 · 8,900 mi', 'Ford Explorer, front three-quarter studio view'],
     ['vehicle-5.png', '2026 Hyundai Tucson', '$31,400 · 7,300 mi', 'Hyundai Tucson, front three-quarter studio view'],
     ['vehicle-6.png', '2026 Subaru Outback', '$35,700 · 5,100 mi', 'Subaru Outback, front three-quarter studio view'],
-  ].map(([f, name, sub, alt]) => ({ img: `img/${f}`, w: 640, h: 480, name, sub, alt, href: '/used-inventory/index.htm', badge: '', cta: '' }));
+  ].map(([f, name, sub, alt]) => ({ img: `img/${f}`, w: 640, h: 480, name, sub, alt, href: '/searchused.aspx', badge: '', cta: '' }));
 
   // From the platform's own industry-automotive collection, not from Unsplash:
   // every dealer can see it, so these copy out as paths that resolve instead of
@@ -113,8 +113,21 @@
   // bare <img> in a <span>, so it meant hand-writing <figure>/<figcaption> and
   // its CSS per slide. Empty stays exactly the markup that shipped before -
   // a <figure> only appears when there is something to put in it.
+  // A hero that wants different art on a phone. 68 of the 76 OEM homepages
+  // surveyed run a hero whose anatomy is exactly this - a whole-slide link
+  // wrapping a <picture> with mobile and desktop sources - and it was the one
+  // shape the builder could not produce at all.
+  //
+  // <source> before <img>, and the <img> stays the desktop one: the browser
+  // takes the first <source> whose media matches and falls back to the <img>,
+  // so a browser that does not understand <picture> still gets a working
+  // photo. 767.98 rather than 767 for the same reason the rest of this file
+  // uses it - max-width: 767px against min-width: 768px leaves a dead zone at
+  // fractional viewport widths.
+  const picture = (m) => (m.phone ? `<picture>\n  <source media="(max-width: 767.98px)" srcset="${m.phone}">\n  ${pic(m)}\n</picture>` : pic(m));
+
   const photo = (m, attrs = '') => {
-    const img = m.href ? `<a href="${m.href}">${pic(m)}</a>` : pic(m);
+    const img = m.href ? `<a href="${m.href}">${picture(m)}</a>` : picture(m);
     return m.caption ? `<figure class="cargo-photo"${attrs}>${img}<figcaption>${m.caption}</figcaption></figure>` : `<span class="cargo-photo"${attrs}>${img}</span>`;
   };
 
@@ -182,14 +195,24 @@
   // and width/height are what reserve the space before the photo arrives, which
   // is what stops the page jumping. These used to be hard-coded 1200x750 on
   // every one of them, and not one of the six is that size.
+  // Real DealerOn platform pages, not placeholders. These six ship as example
+  // content to every site, so a wrong path is worse than no path: '#' reads as
+  // 'fill this in', a plausible-but-dead .aspx reads as working and 404s. Each
+  // one below was taken from the paths the case docs actually use - /finance
+  // 516 times, /trade 502, /service 247, /testdrive 117, /orderparts 80.
+  //
+  // Body Shop is the exception: there is NO platform page for collision or
+  // detailing (zero references to /bodyshop or /collision anywhere), so it
+  // points at Service, which is where a dealer's own body-shop page normally
+  // hangs. That one is worth re-pointing per site.
   const SERVICES = [
-    ['photo-5.jpg', 800, 600, 'Service Center', 'Factory-trained technicians, genuine parts, and online scheduling for everything from oil changes to major repairs.'],
-    ['photo-3.jpg', 800, 534, 'Test Drives', "Book a no-pressure drive online — we'll have the vehicle warmed up and out front when you arrive."],
-    ['vehicle-2.png', 640, 480, 'Financing', 'Flexible terms, first-time buyer programs, and pre-approval in minutes without a hit to your credit score.'],
-    ['vehicle-4.png', 640, 480, 'Trade-In Appraisal', 'Get a real number for your current vehicle in minutes — good for seven days or 500 miles.'],
-    ['photo-6.jpg', 1200, 717, 'Parts &amp; Accessories', 'OEM parts counter, accessories, and installation — ordered to your VIN so it fits the first time.'],
-    ['photo-2.jpg', 900, 600, 'Body Shop &amp; Detailing', 'Collision repair, paintless dent removal, and full detailing with insurance-claim assistance.'],
-  ].map(([f, w, h, name, blurb]) => ({ img: `img/${f}`, w, h, name, blurb, alt: '', href: '#' }));
+    ['photo-5.jpg', 800, 600, '/service.aspx', 'Service Center', 'Factory-trained technicians, genuine parts, and online scheduling for everything from oil changes to major repairs.'],
+    ['photo-3.jpg', 800, 534, '/testdrive.aspx', 'Test Drives', "Book a no-pressure drive online — we'll have the vehicle warmed up and out front when you arrive."],
+    ['vehicle-2.png', 640, 480, '/finance.aspx', 'Financing', 'Flexible terms, first-time buyer programs, and pre-approval in minutes without a hit to your credit score.'],
+    ['vehicle-4.png', 640, 480, '/trade.aspx', 'Trade-In Appraisal', 'Get a real number for your current vehicle in minutes — good for seven days or 500 miles.'],
+    ['photo-6.jpg', 1200, 717, '/orderparts.aspx', 'Parts &amp; Accessories', 'OEM parts counter, accessories, and installation — ordered to your VIN so it fits the first time.'],
+    ['photo-2.jpg', 900, 600, '/service.aspx', 'Body Shop &amp; Detailing', 'Collision repair, paintless dent removal, and full detailing with insurance-claim assistance.'],
+  ].map(([f, w, h, href, name, blurb]) => ({ img: `img/${f}`, w, h, name, blurb, alt: '', href }));
 
   // Photos carrying a category, for the filterable gallery.
   // Built FROM the photo list, never written out again beside it. The two used
@@ -288,7 +311,7 @@
       props: { '--cs-gap': '0.1px', '--cs-controls-space': '2em', '--cs-dot-current': '#16324f' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
-      models: captioned(PHOTOS.slice(0, 3)).map((m) => ({ ...m, href: '' })),
+      models: captioned(PHOTOS.slice(0, 3)).map((m) => ({ ...m, href: '', phone: '' })),
       css: `${PHOTO_CSS}
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 21 / 9; object-fit: cover; border-radius: 8px; }
 @media (max-width: 767.98px) { .cargo-photo img { aspect-ratio: 4 / 3; } }`,
@@ -1311,7 +1334,9 @@ ${PHOTO_CSS}
   // Done as one pass over the finished markup on purpose: every producer -
   // look, pattern slides(), card grid, lightbox thumb - emits src="img/...",
   // so nothing can add a new image slot that this quietly misses.
-  const toCms = (html) => html.replace(/src="img\/([^"]+)"/g, (_, rel) => `src="${globalThis.CARGO.CMS?.[rel] ?? `#MISCPATH#${rel.split('/').pop()}`}"`);
+  // Both attributes: a <picture> puts its phone art in srcset, and a rewrite
+  // that only knew about src= left that one pointing at the demo folder.
+  const toCms = (html) => html.replace(/(src|srcset)="img\/([^"]+)"/g, (_, attr, rel) => `${attr}="${globalThis.CARGO.CMS?.[rel] ?? `#MISCPATH#${rel.split('/').pop()}`}"`);
 
   // Every pattern script goes out behind a readiness guard, so where it is
   // pasted stops mattering. Body Section Bottom runs during parsing, while the
@@ -2263,6 +2288,9 @@ ${PHOTO_CSS}
     // Only offered where the rows carry the key, which is the five patterns
     // whose slide is nothing but a photo. Empty emits no <figcaption> and no
     // <figure>, so a pattern nobody captions ships the markup it always did.
+    // Empty emits a plain <img>, exactly what shipped before. Only the hero's
+    // rows carry the key, so the box appears there and nowhere else.
+    phone: { label: 'Phone image', type: 'text', hint: 'Different art under 768px — leave empty to use the one above at every width' },
     caption: { label: 'Caption', type: 'text', hint: 'Printed under the photo. Say something the alt text does not, or leave it empty' },
     badge: { label: 'Badge', type: 'text', hint: 'A short label over the photo — New, Certified, Special Offer. Empty draws nothing' },
     w: { label: 'Source width', type: 'number', hint: 'Real pixel width of the file' },
@@ -2279,7 +2307,10 @@ ${PHOTO_CSS}
     stars: { label: 'Stars out of 5', type: 'number', min: 0, max: 5 },
     bg: { label: 'Avatar colour', type: 'text' },
     tag: { label: 'Category', type: 'text', hint: 'Must match one of the filter buttons' },
-    href: { label: 'Link', type: 'text', hint: '/searchnew.aspx?Model=Tahoe' },
+    // Real platform paths, since a placeholder is the shape a designer copies:
+    // /searchnew.aspx and /searchused.aspx for inventory, /service.aspx,
+    // /finance.aspx, /trade.aspx, /testdrive.aspx, /orderparts.aspx for the rest.
+    href: { label: 'Link', type: 'text', hint: '/searchnew.aspx?Model=Tahoe — or /service.aspx, /finance.aspx, /trade.aspx' },
     video: { label: 'Opens a video', type: 'checkbox' },
   };
 

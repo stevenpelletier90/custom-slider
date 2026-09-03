@@ -239,6 +239,36 @@ describe('the demo describes what it is actually showing', () => {
     assert.match(done.css, /\.cargo-photo a \{ display: block; \}/, 'the linked photo ships no display rule');
   });
 
+  // F017: 68 of the 76 OEM homepages surveyed run a hero whose anatomy is a
+  // whole-slide link wrapping a <picture> with mobile and desktop art, and the
+  // builder could not produce that shape at all.
+  const phoneBox = (page) => page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Phone image")) input').first();
+
+  test('a hero can carry different art on a phone, and does not until it is given some', async () => {
+    await pick(page, 'hero');
+    const bare = await copyParts(page);
+    assert.doesNotMatch(bare.html, /<picture|<source/, 'an empty Phone image still ships a <picture>');
+    assert.equal(await phoneBox(page).count(), 1, 'the hero offers no Phone image box');
+
+    await phoneBox(page).fill('img/photo-4.jpg');
+    await page.waitForTimeout(250);
+    const done = await copyParts(page);
+    assert.match(done.html, /<picture>\s*<source media="\(max-width: 767\.98px\)" srcset="[^"]+">/, 'no <source> for the phone art');
+    // The <img> must survive as the fallback, or a browser without <picture>
+    // support gets an empty slide.
+    assert.match(done.html, /<source[\s\S]{0,200}?<img src="[^"]+"[^>]*alt=/, 'the desktop <img> fallback is gone');
+    // And the phone art must be rewritten to a platform path like every other
+    // image the copy panel hands over - srcset was not covered before.
+    assert.doesNotMatch(done.html, /srcset="img\//, 'the phone art still points at the demo folder');
+  });
+
+  test('the Phone image box is offered only on the hero', async () => {
+    for (const id of ['gallery', 'peek', 'cards', 'modelbar']) {
+      await pick(page, id);
+      assert.equal(await phoneBox(page).count(), 0, `${id}: offers a Phone image box that goes nowhere`);
+    }
+  });
+
   // F026: brand notes read like a research log - "ladders", "forddemo1",
   // "the census" - none of which is defined anywhere a designer would look.
   test('the brand notes use no in-house jargon', async () => {

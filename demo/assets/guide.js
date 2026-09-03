@@ -135,6 +135,24 @@
     ],
   ];
 
+  // Deliberately a recipe rather than a builder field. Legible text over a
+  // photograph depends on the photograph, and the builder cannot see the one a
+  // dealer will upload - a field would happily place white text on a white sky.
+  // The scrim is the whole point: it is what makes the text readable whatever
+  // the picture turns out to be.
+  const HERO_OVERLAY = `.my-slider .cargo-photo { position: relative; }
+.my-slider .cargo-photo figcaption {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  padding: 2em 1.2em 1.2em;
+  margin: 0;
+  font-size: 1.15em;
+  line-height: 1.35;
+  color: #fff;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0));
+}`;
+
   const MARKUP = `<div class="my-slider cs" data-cs aria-label="New vehicles">
   <ul class="cs-track">
     <li class="cs-slide">
@@ -354,6 +372,12 @@
         <p>Size and the four colours are settings in the builder. These are the rest, and they go in <strong>Style Only</strong> with your slider's own CSS. Swap <code>my-slider</code> for whatever you named yours.</p>
         ${ARROW_RECIPES.map(([name, css]) => `<h4 class="g-recipe">${esc(name)}</h4><pre class="g-code"><code>${esc(css)}</code></pre>`).join('\n')}
         <p class="g-sub">There is deliberately no setting for the arrow glyph. It is one inline SVG in the engine, shared by every slider on the site; a per-slider option would mean the engine carrying an icon set nobody asked for.</p>
+      </section>
+
+      <section id="g-hero"><h3>Text over a hero</h3>
+        <p>Fill in a slide's <strong>Caption</strong> and it prints under the photo. To put it over the photo instead, add this to your slider's own CSS. The dark gradient is not decoration &mdash; it is what keeps the words readable when the picture behind them turns out to be a bright sky.</p>
+        <pre class="g-code"><code>${esc(HERO_OVERLAY)}</code></pre>
+        <p class="g-sub">There is deliberately no builder setting for this. Whether white text is legible depends on the photograph, and the builder cannot see the one you are going to upload.</p>
       </section>
 
       <section id="g-images"><h3>What size to upload</h3>
