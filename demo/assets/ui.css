@@ -1676,9 +1676,21 @@ code {
 }
 
 /* Same light artboard the builder previews on, for the same reason. */
+
+/* The same base type the builder's preview frame sets, and for the same reason:
+   a card sizes everything in em off the carousel root, so the page's own font
+   decides how big every one of them comes out. Rendered in the demo's Archivo
+   15px this catalogue drew cards a typeface and a size away from what the
+   builder showed for the identical pattern - same generator, two answers.
+   Arial 14 is what a Bootstrap 3 storefront hands them. Keep in step with
+   FRAME_DOC in workbench.js; html{font-size} is deliberately NOT copied,
+   because the engine and card CSS carry no rem at all (enforced by
+   unit-disallowed-list), so it changes nothing here. */
 .gx-stage {
   padding: 1.25rem;
   overflow: hidden;
+  font-family: Arial, Helvetica, sans-serif;
+  font-size: 14px;
   color: #10151c;
   background: #fff;
   border: 1px solid var(--rule);
