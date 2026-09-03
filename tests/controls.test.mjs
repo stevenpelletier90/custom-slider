@@ -787,7 +787,7 @@ describe('picking a colour does not rebuild the slider', () => {
 // F006: a media query asks the WINDOW, and the preview is a fixed-width box
 // inside a much wider one - so phone-only rules sit inert however narrow the
 // stage is set. Measured against real narrow windows, ten of seventeen patterns
-// differed at the 330 frame. Two halves are guarded here: the preview now SAYS
+// differed at the phone frame. Two halves are guarded here: the preview now SAYS
 // what it is not showing, in visible text rather than a tooltip nobody on a
 // touchscreen can reach; and the card count it pins accounts for the card
 // style's own narrow rule, which it used to ignore.
@@ -803,7 +803,7 @@ describe('the preview says what a width cannot show', () => {
 
   test('it names the phone-only rules at Phone, and stays quiet at the widths that render truthfully', async () => {
     await pick(page, 'modelbar');
-    const phone = await noteAt(page, 330);
+    const phone = await noteAt(page, 390);
     assert.equal(phone.hidden, false, 'nothing said at Phone, where ten of seventeen patterns differ');
     assert.match(phone.text, /arrow size/, `the note does not name the arrow size (${phone.text})`);
     assert.match(phone.text, /side gutter/, `the note does not name the gutter (${phone.text})`);
@@ -820,7 +820,7 @@ describe('the preview says what a width cannot show', () => {
   // all rather than printing a blanket disclaimer.
   test('a pattern with no phone-only rules says nothing', async () => {
     await pick(page, 'lightbox');
-    const n = await noteAt(page, 330);
+    const n = await noteAt(page, 390);
     assert.equal(n.hidden, true, `a pattern with no narrow rules still showed: ${n.text}`);
   });
 
@@ -834,8 +834,8 @@ describe('the preview says what a width cannot show', () => {
 
   // The pin resolved the designer's ladder alone. A card style carries its own
   // narrow override - the cutout tile drops to one across below 380px - and
-  // that is a max-width rule, so it was as inert as everything else: the 330
-  // frame showed two tiles where a 330 device gets one, each 114px against a
+  // that is a max-width rule, so it was as inert as everything else: the phone
+  // frame showed the wrong count outright, each card narrower than a
   // 150px minimum, which pushed the fit gauge amber and advised "show fewer
   // across" about a row that does not exist.
   //
@@ -854,8 +854,12 @@ describe('the preview says what a width cannot show', () => {
     const cases = await fresh.evaluate(() =>
       Object.entries(globalThis.CARGO.LOOKS)
         .map(([id, l]) => {
-          const hit = [...String(l.css ?? '').matchAll(/@media[^{]*max-width:\s*(\d[\d.]*)px[^{]*\{([\s\S]*?)--cs-per-view:\s*(\d+)/g)].filter((m) => +m[1] >= 330);
-          return hit.length ? { id, want: hit[hit.length - 1][3] } : null;
+          // [^}] rather than [\s\S]: a span that can cross a closing brace walks
+          // out of its own @media block and credits the next block's declaration
+          // to this one, which is how the tile's 380px rule read as if it sat in
+          // the 767.98px block.
+          const hit = [...String(l.css ?? '').matchAll(/@media[^{]*max-width:\s*(\d[\d.]*)px[^{]*\{[^}]*?--cs-per-view:\s*(\d+)/g)].filter((m) => +m[1] >= 390);
+          return hit.length ? { id, want: hit[hit.length - 1][2] } : null;
         })
         .filter(Boolean),
     );
@@ -867,13 +871,13 @@ describe('the preview says what a width cannot show', () => {
       const pat = await fresh.evaluate((look) => Object.entries(globalThis.CARGO.PATTERNS).find(([, p]) => p.look === look)?.[0] ?? null, c.id);
       if (!pat) continue;
       await pick(fresh, pat);
-      await fresh.click('.ui-widths button[data-w="330"]');
+      await fresh.click('.ui-widths button[data-w="390"]');
       await fresh.waitForTimeout(240);
       const seen = await fresh.evaluate(() => ({
         perView: getComputedStyle(document.querySelector('#wb-stage .cs')).getPropertyValue('--cs-per-view').trim(),
         across: document.getElementById('spec-across').textContent,
       }));
-      assert.equal(seen.perView, c.want, `${pat}/${c.id}: the 330 preview pins ${seen.perView} across where its own card sheet says ${c.want}`);
+      assert.equal(seen.perView, c.want, `${pat}/${c.id}: the 390 preview pins ${seen.perView} across where its own card sheet says ${c.want}`);
       assert.match(seen.across, new RegExp(`\\b${c.want}\\b`), `${pat}/${c.id}: the readout disagrees with the strip (${seen.across})`);
     }
     await fresh.context().close();
@@ -883,7 +887,7 @@ describe('the preview says what a width cannot show', () => {
   // is and must ship the real ladder.
   test('the copied CSS still ships the real ladder, not the pin', async () => {
     await pick(page, 'modelbar');
-    await page.click('.ui-widths button[data-w="330"]');
+    await page.click('.ui-widths button[data-w="390"]');
     await page.waitForTimeout(180);
     const parts = await copyParts(page);
     // The model bar ships its ladder as the cs-xs/sm/md/lg column classes on

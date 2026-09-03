@@ -856,7 +856,7 @@ ${PHOTO_CSS}
   // are Bootstrap 3's: 768 is what a media query asks, 750 is the .container it
   // hands you at that size. The buttons preview the container, because that is
   // the box the slider gets; the ladder keys on the screen.
-  const FRAME_TIER = { 330: 0, 750: 768, 970: 992, 1170: 1200 };
+  const FRAME_TIER = { 390: 0, 750: 768, 970: 992, 1170: 1200 };
   let frameW = 1170; // the pressed width button, 0 for "fill"
   const frameTier = () => (frameW ? FRAME_TIER[frameW] : innerWidth >= 1200 ? 1200 : innerWidth >= 992 ? 992 : innerWidth >= 768 ? 768 : 0);
 
@@ -865,7 +865,7 @@ ${PHOTO_CSS}
   // A media query asks the WINDOW. The preview is a fixed-width box inside a
   // much wider one, so every phone-only rule - in the snippet AND in the shared
   // card sheet - sits inert however narrow the stage is set. Measured across all
-  // seventeen patterns against real narrow windows: ten differ at the 330 frame
+  // seventeen patterns against real narrow windows: ten differ at the phone frame
   // (two cards across where a phone gets one, 44px arrows against 36, a 48px
   // gutter a phone drops, a 21:9 hero that crops to 4:3), while 750/970/1170
   // match to under a pixel.
@@ -908,7 +908,9 @@ ${PHOTO_CSS}
   function tierNote() {
     const el = $('wb-tier-note');
     if (!el) return;
-    // The frame stands in for a screen this wide. The Phone button is 330, and
+    // The frame stands in for a screen this wide. The Phone button is 390 - the
+    // width an iPhone 15, a Pixel 7 and a 15 Plus all sit at or above, rather
+    // than the 330 it used to be, which only a 2016 SE ever had - and
     // on a phone the container IS about the screen, so it is a fair stand-in;
     // the other three map to the Bootstrap tier they preview. "Fill" is the real
     // window, where nothing is being faked at all.
@@ -1106,8 +1108,8 @@ ${PHOTO_CSS}
     // override - the cutout tile drops to one across below 380px, a logo panel
     // past 460, a split card by 480 - and those are max-width rules, so they
     // were as inert in the preview as everything else. The pin resolved the
-    // designer's ladder alone and showed TWO cutout tiles at the 330 frame
-    // where a 330 device gets one. That was not only a wrong picture: each
+    // designer's ladder alone and ignored them. At the frame widths where one
+    // applies that drew the wrong number of cards outright, and each came out
     // card came out 114px against a 150px minimum, so the fit gauge went amber
     // and told the designer to "show fewer across" about a row that does not
     // exist. Read the override off the look's own CSS rather than listing which
@@ -2994,7 +2996,7 @@ ${PHOTO_CSS}
     const cs = getComputedStyle(box);
     const avail = box.clientWidth - parseFloat(cs.paddingInlineStart) - parseFloat(cs.paddingInlineEnd);
     const reach = avail;
-    const SCREEN = { 330: TIER_LABEL.base, 750: TIER_LABEL[768], 970: TIER_LABEL[992], 1170: TIER_LABEL[1200] };
+    const SCREEN = { 390: TIER_LABEL.base, 750: TIER_LABEL[768], 970: TIER_LABEL[992], 1170: TIER_LABEL[1200] };
     let active = null;
     for (const b of widthBtns()) {
       const w = +b.dataset.w;
