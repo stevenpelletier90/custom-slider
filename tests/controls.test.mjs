@@ -444,6 +444,39 @@ describe('a tab can be renamed', () => {
   });
 });
 
+describe('a link to a card style opens that card style', () => {
+  // F074: all seven "Open in the builder" buttons under the card styles on the
+  // Patterns page pointed at #modelbar, so six of the seven opened whichever
+  // style happened to be remembered and read as a broken link.
+  test('the Patterns page names the style in every link', async () => {
+    const links = await page.evaluate(async (origin) => {
+      const html = await fetch(`${origin}/demo/assets/gallery.js`).then((r) => r.text());
+      return [...html.matchAll(/index\.html#([^"'`]*)/g)].map((m) => m[1]);
+    }, server.origin);
+    assert.ok(
+      links.some((h) => h.includes('/')),
+      `no link carries a card style: ${JSON.stringify(links)}`,
+    );
+  });
+
+  test('opening one lands on it, not on whatever was last used', async () => {
+    // Leave a different style remembered first, so the link has to beat it.
+    await pick(page, 'modelbar');
+    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes('Vehicle card'))?.click());
+    await page.waitForTimeout(300);
+
+    // A query string as well as the hash: navigating from index.html to
+    // index.html#... is a same-document move, so the script would never re-run
+    // and this would test nothing.
+    await page.goto(`${server.origin}/demo/index.html?f074#modelbar/logo`, { waitUntil: 'load' });
+    await page.waitForTimeout(600);
+    const shown = await page.evaluate(() => document.querySelector('#wb-settings .wb-look[aria-pressed="true"] span:last-child')?.textContent);
+    const cls = await page.evaluate(() => /cargo-(\w+)/.exec(document.getElementById('wb-code').textContent)?.[1]);
+    assert.equal(cls, 'logo', `the link opened ${cls}, not the style it named`);
+    assert.ok(shown, 'no card style is shown as selected');
+  });
+});
+
 describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);

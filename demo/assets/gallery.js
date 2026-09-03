@@ -65,7 +65,7 @@
             <h2>${look.label}</h2>
             <p>${look.note ?? ''}</p>
           </div>
-          <a class="ui-btn" href="index.html#modelbar">Open in the builder</a>
+          <a class="ui-btn" href="index.html#modelbar/${id}">Open in the builder</a>
         </div>
         <div class="gx-stage"></div>`;
       // A look that brings its own strip colour does not need a white card

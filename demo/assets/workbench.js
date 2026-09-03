@@ -2809,10 +2809,21 @@ ${PHOTO_CSS}
 
   // This script is inline-loaded before the deferred engine, so wait for it.
   const boot = () => {
-    const id = location.hash.slice(1);
+    // `#pattern` or `#pattern/card-style`. The Patterns page links one card
+    // style per card, and every one of those seven links used to say
+    // #modelbar - so six of the seven opened whichever style was last used and
+    // read as a broken link.
+    const [id, look] = location.hash.slice(1).split('/');
     loadPattern(PATTERNS[id] ? id : 'modelbar');
     restoreSettings();
     restoreContent();
+    // After restoreSettings, so a style named in the link beats the remembered
+    // one. Same two steps the style buttons take: each look brings the ladder
+    // that suits it.
+    if (look && LOOKS[look] && PATTERNS[state.pattern].look) {
+      applyLook(look);
+      state.perView = { ...LOOKS[look].perView };
+    }
     for (const x of nav.querySelectorAll('button')) x.setAttribute('aria-current', String(x.dataset.go === state.pattern));
     buildPanel();
     buildContent();
