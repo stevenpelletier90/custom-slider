@@ -852,100 +852,14 @@ ${PHOTO_CSS}
   // means "show me a page at the 768 tier". Everything downstream has to agree
   // on which tier that is: what the preview draws, and what the fit gauge
   // thinks a real page would give.
-  // Container width -> the screen width whose tier it belongs to. Both numbers
-  // are Bootstrap 3's: 768 is what a media query asks, 750 is the .container it
-  // hands you at that size. The buttons preview the container, because that is
-  // the box the slider gets; the ladder keys on the screen.
-  const FRAME_TIER = { 390: 0, 750: 768, 970: 992, 1170: 1200 };
   let frameW = 1170; // the pressed width button, 0 for "fill"
-  const frameTier = () => (frameW ? FRAME_TIER[frameW] : innerWidth >= 1200 ? 1200 : innerWidth >= 992 ? 992 : innerWidth >= 768 ? 768 : 0);
 
-  // ---- what a preview width cannot show ------------------------------------
-  //
-  // A media query asks the WINDOW. The preview is a fixed-width box inside a
-  // much wider one, so every phone-only rule - in the snippet AND in the shared
-  // card sheet - sits inert however narrow the stage is set. Measured across all
-  // seventeen patterns against real narrow windows: ten differ at the phone frame
-  // (two cards across where a phone gets one, 44px arrows against 36, a 48px
-  // gutter a phone drops, a 21:9 hero that crops to 4:3), while 750/970/1170
-  // match to under a pixel.
-  //
-  // Rather than a disclaimer, say WHAT is missing - read out of the CSS the
-  // builder just generated, so it reports the code being copied and cannot
-  // describe a rule that is not there.
-
-  // Declarations from every @media (max-width: N) block that WOULD apply on a
-  // screen this wide - so N at or above the screen, not N below it. Brace-matched
-  // rather than regexed to the next `}`: a card rule holds nested blocks and a
-  // lazy match stops inside the first one.
-  const narrowDecls = (css, atScreen) => {
-    const out = [];
-    const re = /@media[^{]*max-width:\s*(\d[\d.]*)px[^{]*\{/g;
-    for (let m; (m = re.exec(css));) {
-      if (+m[1] < atScreen) continue;
-      let depth = 1,
-        i = re.lastIndex;
-      for (; i < css.length && depth; i++) depth += css[i] === '{' ? 1 : css[i] === '}' ? -1 : 0;
-      for (const d of css.slice(re.lastIndex, i - 1).matchAll(/([-\w]+)\s*:\s*([^;{}]+?)\s*(?=[;}])/g)) out.push([d[1], d[2], +m[1]]);
-    }
-    return out;
-  };
-
-  // Plain words for the properties a phone block actually sets, the same way
-  // KNOB_LABELS names the knobs. Anything unmapped falls through to its own
-  // property name: less pretty, still true, and it never goes stale.
-  const NARROW_LABEL = {
-    '--cs-per-view': 'cards across',
-    '--cs-arrow-size': 'arrow size',
-    'padding-inline': 'side gutter',
-    'aspect-ratio': 'photo shape',
-    'flex-direction': 'card direction',
-    'font-size': 'text size',
-  };
-
-  // The note under the width buttons. Shown only where something is actually
-  // hidden, so it stays quiet at the three tiers that do render truthfully.
-  function tierNote() {
-    const el = $('wb-tier-note');
-    if (!el) return;
-    // The frame stands in for a screen this wide. The Phone button is 390 - the
-    // width an iPhone 15, a Pixel 7 and a 15 Plus all sit at or above, rather
-    // than the 330 it used to be, which only a 2016 SE ever had - and
-    // on a phone the container IS about the screen, so it is a fair stand-in;
-    // the other three map to the Bootstrap tier they preview. "Fill" is the real
-    // window, where nothing is being faked at all.
-    const screen = frameW ? FRAME_TIER[frameW] || frameW : innerWidth;
-    // --cs-per-view is the one narrow rule the preview DOES honour, because the
-    // pin resolves it (see cssFor). Listing it here would name something that is
-    // on screen, which is the same dishonesty in the other direction.
-    const found = [...narrowDecls(cssFor('.wb-live'), screen), ...narrowDecls(LOOKS[state.look]?.css ?? '', screen)].filter(([prop]) => prop !== '--cs-per-view');
-    el.hidden = !found.length;
-    if (!found.length) return;
-    const names = [...new Set(found.map(([prop]) => NARROW_LABEL[prop] ?? prop))];
-    const last = names.pop();
-    el.innerHTML = `<b>Not shown at this width:</b> ${names.length ? `${names.join(', ')} and ${last}` : last}. A media query asks the browser window, and the preview is a box inside it — narrow the window itself to see these.`;
-  }
-
-  // The ladder evaluated at one tier, the way the cascade would: every
-  // matching min-width rule applies and the last one wins.
-  const perViewAt = (tier) => {
-    let n = state.perView.base;
-    for (const bp of BPS) if (bp <= tier && state.perView[bp] != null) n = state.perView[bp];
-    return n;
-  };
-
-  // --cs-gap as a number. Values here are always em or px. An em resolves
-  // against the carousel root, which carries font-size: var(--cargo-font, 1em)
-  // - so measure that off the live element rather than assuming 16. Assuming a
-  // 16px root is the exact mistake that made every rem render at 62.5% on a
-  // Bootstrap 3 storefront; it should not be re-made here. patterns.html has no
-  // stage, and 16 is the right guess when there is nothing to measure.
   const gapPx = () => {
     const g = state.props['--cs-gap'] ?? '1em';
     const n = parseFloat(g) || 0;
     if (!g.trim().endsWith('em')) return n;
-    const root = stage?.querySelector('.cs');
-    return n * (root ? parseFloat(getComputedStyle(root).fontSize) : 16);
+    const root = sdoc()?.querySelector('.cs');
+    return n * (root ? parseFloat(swin().getComputedStyle(root).fontSize) : 16);
   };
 
   /* ---- the single source: settings -> CSS text -------------------------- */
@@ -1096,27 +1010,11 @@ ${PHOTO_CSS}
     // column classes.
     const font = lib ? '' : `  font-size: var(--cargo-font, 1em);`;
 
-    // The preview is a fixed-width box inside a window that is usually much
-    // wider, and a media query asks the WINDOW - so whatever the box was set
-    // to, the ladder's top tier won. With the frame at 750, editing "992 and
-    // up" changed nothing you could see. Pin the ladder resolved at the tier
-    // the frame stands in for; `${sel}.cs` outranks the cs-sm-N class the
-    // markup carries, so it wins wherever it sits. Preview only: the copied
-    // CSS ships the real ladder, which is what a page needs.
-    //
-    // The ladder is only half the answer. A card style carries its own narrow
-    // override - the cutout tile drops to one across below 380px, a logo panel
-    // past 460, a split card by 480 - and those are max-width rules, so they
-    // were as inert in the preview as everything else. The pin resolved the
-    // designer's ladder alone and ignored them. At the frame widths where one
-    // applies that drew the wrong number of cards outright, and each came out
-    // card came out 114px against a 150px minimum, so the fit gauge went amber
-    // and told the designer to "show fewer across" about a row that does not
-    // exist. Read the override off the look's own CSS rather than listing which
-    // looks have one, so a look that gains a narrow rule is covered by it.
-    const narrowPerView = preview ? narrowDecls(LOOKS[state.look]?.css ?? '', frameW || innerWidth).filter(([p]) => p === '--cs-per-view') : [];
-    const pinned = narrowPerView.length ? narrowPerView[narrowPerView.length - 1][1] : perViewAt(frameTier());
-    const pin = preview ? `${sel}${ROOT} { --cs-per-view: ${pinned}; }` : '';
+    // The preview used to pin --cs-per-view here, because a media query could
+    // not fire inside a box. The frame is a real window now, so the ladder and
+    // the card style's own narrow rules resolve themselves - and the preview
+    // runs exactly the CSS that is copied, with nothing appended at all.
+    const pin = '';
 
     // Dots on a photograph need more than a light colour. Screenshotted on the
     // service-bay hero, white at 55% all but disappeared into a busy image: the
@@ -1467,10 +1365,17 @@ ${PHOTO_CSS}
 
   const $ = (id) => document.getElementById(id);
   const stage = $('wb-stage');
-  const styleEl = $('wb-live-css');
   const codeEl = $('wb-code');
   const panel = $('wb-settings');
   let live = [];
+
+  // The preview's own document. The frame is a real window of the chosen width,
+  // which is the only way a max-width rule in the snippet can fire - a box
+  // inside this page asks THIS window and always got the desktop answer.
+  const sdoc = () => stage?.contentDocument;
+  const swin = () => stage?.contentWindow;
+  const styleEl = () => sdoc()?.getElementById('wb-live-css');
+  const sroot = () => sdoc()?.getElementById('wb-live-root');
 
   // The index page (patterns.html) loads this file for the generator alone: one
   // example of every pattern, built by the same cssFor/htmlFor pair the builder
@@ -1503,6 +1408,11 @@ ${PHOTO_CSS}
       state.label = `${look.label} cards`;
       return { css: cssFor(`.${cls}`), html: htmlFor(cls) };
     },
+    // The preview's document. It is inside a frame now, so `#wb-stage .cs` no
+    // longer finds anything from this page - the tests and anything else
+    // inspecting the live slider go through here.
+    sdoc: () => sdoc(),
+    swin: () => swin(),
   });
 
   // Nothing below this line has a DOM to attach to on that page.
@@ -1517,17 +1427,89 @@ ${PHOTO_CSS}
   // same generator with the same argument, so the copy panel still cannot
   // drift from the slider on screen - it just stops rebuilding what did not
   // change. Anything that alters the MARKUP must still call render().
+  // The frame's document, written once. It links the SAME two dist files a
+  // dealer page links - so the preview runs the shipped engine, not a copy -
+  // and carries the Bootstrap 3 html{font-size:10px} the storefronts set, which
+  // is why every length in the card CSS is em and never rem.
+  //
+  // srcdoc rather than a src: it inherits this page's origin, so the parent can
+  // reach contentDocument even when index.html is opened by double-click.
+  // Verified on file:// before this was built - a src="about:blank" document
+  // written into is not reliably same-origin there, and the demo has always had
+  // to work without a server.
+  const FRAME_DOC =
+    '<!doctype html><html><head><meta charset="utf-8">' +
+    '<link rel="stylesheet" href="../dist/custom-slider.css">' +
+    '<style>html{font-size:10px}body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#10151c;background:#fff}</style>' +
+    '<style id="wb-live-css"></style></head><body><div id="wb-live-root"></div>' +
+    '<script src="../dist/custom-slider.js"><' +
+    '/script></body></html>';
+
+  // Resolves when the frame has its engine. Everything that paints waits on it.
+  let frameReady = new Promise((done) => {
+    stage.addEventListener(
+      'load',
+      () => {
+        watchFrameHeight();
+        done();
+      },
+      { once: true },
+    );
+    stage.srcdoc = FRAME_DOC;
+  });
+
+  // An iframe does not grow with its content, so the preview would either clip
+  // or float in dead space. Measure what the frame's document actually needs
+  // and give the element exactly that.
+  function fitFrameHeight() {
+    const d = sdoc();
+    if (!d?.body) return;
+    // Measured off the CONTENT element, never the document. documentElement's
+    // scrollHeight is bounded below by the viewport - which is the height this
+    // function just set - so a frame could grow and never shrink: every pattern
+    // after a tall one inherited its height. The div is its content, both ways.
+    const root = d.getElementById('wb-live-root');
+    if (!root) return;
+    stage.style.blockSize = `${Math.ceil(Math.max(root.getBoundingClientRect().height, root.scrollHeight))}px`;
+  }
+
+  // A measurement taken once is a measurement taken too early: images decode
+  // after render, fonts settle, and a grid grows a second row. Watch the frame's
+  // own body and re-fit whenever it changes. Registered once, on the frame's
+  // document, so it survives every re-render into it.
+  let frameRO = null;
+  function watchFrameHeight() {
+    const d = sdoc();
+    if (!d?.body || frameRO) return;
+    frameRO = new (swin().ResizeObserver)(() => fitFrameHeight());
+    frameRO.observe(d.body);
+    // A late image is a load event, not necessarily a body resize.
+    d.addEventListener('load', fitFrameHeight, true);
+  }
+
   function restyle() {
-    styleEl.textContent = cssFor('.wb-live', true);
+    const el = styleEl();
+    if (!el) return;
+    el.textContent = cssFor('.wb-live');
+    fitFrameHeight();
     publish();
   }
 
   function render() {
+    const root = sroot();
+    // Before the frame has loaded there is nothing to paint into. Queue it and
+    // return: boot() calls render() synchronously, and srcdoc is asynchronous.
+    if (!root) {
+      frameReady.then(render);
+      return;
+    }
     live.forEach((s) => s.destroy());
     live = [];
-    styleEl.textContent = cssFor('.wb-live', true);
-    stage.innerHTML = htmlFor('wb-live');
-    live = globalThis.CustomSlider.autoInit(stage);
+    styleEl().textContent = cssFor('.wb-live');
+    root.innerHTML = htmlFor('wb-live');
+    // The frame's OWN engine instance: the class inside the frame, over the
+    // frame's document. The parent's copy would measure the wrong window.
+    live = swin().CustomSlider.autoInit(root);
 
     // A few patterns need page script - tabs, the gallery filter, the lightbox,
     // and now the two video patterns, whose dialog used to be wired by the demo
@@ -1537,11 +1519,15 @@ ${PHOTO_CSS}
     const p = PATTERNS[state.pattern];
     if (p.script) {
       try {
-        new Function(p.script).call(stage);
+        // Run it IN the frame, so its document.querySelectorAll sees the slider
+        // and nothing else - which is how the same script behaves once it is
+        // pasted into a dealer page. It used to run against this whole page.
+        swin().eval(p.script);
       } catch (e) {
         console.error(`${state.pattern}: page script failed`, e);
       }
     }
+    fitFrameHeight();
     checkFit();
     publish();
   }
@@ -1642,11 +1628,8 @@ ${PHOTO_CSS}
     const warn = $('wb-warn');
     const spec = $('wb-spec');
     const set = (id, v) => ($(id).textContent = v);
-    // Above the early returns: what a width cannot show is true of the width,
-    // not of whether the strip has measured itself yet.
-    tierNote();
-    const root = stage.querySelector('.cs');
-    const slide = stage.querySelector('.cs-slide');
+    const root = sdoc()?.querySelector('.cs');
+    const slide = sdoc()?.querySelector('.cs-slide');
     if (!root || !slide) return;
 
     const w = Math.round(slide.getBoundingClientRect().width);
@@ -1665,18 +1648,18 @@ ${PHOTO_CSS}
       return;
     }
 
-    const cs = getComputedStyle(root);
+    const cs = swin().getComputedStyle(root);
     const min = minCard();
     const stops = root._cs ? root._cs._stops().length : 1;
     const fits = root.hasAttribute('data-cs-fits');
-    const n = stage.querySelectorAll('.cs').length;
+    const n = sdoc().querySelectorAll('.cs').length;
 
     // F097: cards are sized in em off the host page's body text, by design - so
     // the same slider is 5 to 63px taller on a 19px-body site than it is here.
     // That is scaling working, not leakage (measured: at an equal body size all
     // 17 first slides match the preview to 0.00px), but the readout never said
     // what size this preview is, so the difference looked like a defect.
-    set('spec-card', `${w}px in ${Math.round(stage.getBoundingClientRect().width)}px · text ${Math.round(parseFloat(getComputedStyle(root).fontSize))}px`);
+    set('spec-card', `${w}px in ${Math.round(stage.getBoundingClientRect().width)}px · text ${Math.round(parseFloat(swin().getComputedStyle(root).fontSize))}px`);
     // Counted in THIS slider, and never more than there are. The tabbed bar
     // draws three carousels and the card grid six, so counting the stage said
     // "5 of 24" over a pane holding eight; and asking for more cards across

@@ -140,7 +140,7 @@ describe('the demo describes what it is actually showing', () => {
     await captionBox(page).fill('A caption');
     await page.waitForTimeout(250);
     const r = await page.evaluate(() => {
-      const f = document.querySelector('#wb-stage figure.cargo-photo');
+      const f = globalThis.CARGO.sdoc().querySelector('figure.cargo-photo');
       const c = f?.querySelector('figcaption');
       if (!c) return null;
       const fs = getComputedStyle(f);
@@ -285,7 +285,7 @@ describe('the demo describes what it is actually showing', () => {
   // before, or every existing snippet changes under them.
   const tabBox = (page, n = 0) => page.locator('#wb-content fieldset').nth(n).locator('label:has(> span:text-is("Tab")) input').first();
 
-  const paneCards = (page) => page.evaluate(() => [...document.querySelectorAll('#wb-stage .cargo-pane')].map((p) => [...p.querySelectorAll('.cargo-name')].map((n) => n.textContent.trim())));
+  const paneCards = (page) => page.evaluate(() => [...globalThis.CARGO.sdoc().querySelectorAll('.cargo-pane')].map((p) => [...p.querySelectorAll('.cargo-name')].map((n) => n.textContent.trim())));
 
   test('an untouched roster keeps the rotation it always emitted', async () => {
     await pick(page, 'tabs');

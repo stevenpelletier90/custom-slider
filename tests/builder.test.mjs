@@ -71,12 +71,12 @@ describe('values that must never reach the copied CSS', () => {
 
   test('a value the property cannot use is dropped, flagged, and never collapses the strip', async () => {
     await pick(page, 'modelbar');
-    const good = await page.evaluate(() => +document.querySelector('#wb-stage .cs-slide').getBoundingClientRect().width.toFixed(1));
+    const good = await page.evaluate(() => +globalThis.CARGO.sdoc().querySelector('.cs-slide').getBoundingClientRect().width.toFixed(1));
 
     for (const typed of REFUSED) {
       await setField(page, 'Gap', typed);
       const r = await page.evaluate(() => {
-        const slide = document.querySelector('#wb-stage .cs-slide');
+        const slide = globalThis.CARGO.sdoc().querySelector('.cs-slide');
         const input = [...document.querySelectorAll('#wb-settings label > span')].find((x) => x.textContent.trim() === 'Gap')?.parentElement.querySelector('input');
         return {
           width: +slide.getBoundingClientRect().width.toFixed(1),
@@ -101,7 +101,7 @@ describe('values that must never reach the copied CSS', () => {
     await setField(page, 'Gap', '');
     const r = await page.evaluate(() => ({
       code: document.getElementById('wb-code').textContent,
-      live: document.getElementById('wb-live-css').textContent,
+      live: globalThis.CARGO.sdoc().getElementById('wb-live-css').textContent,
     }));
     assert.doesNotMatch(r.code, /--[\w-]+:\s*;/, 'an empty declaration reached the copied CSS');
     assert.doesNotMatch(r.live, /--[\w-]+:\s*;/, 'an empty declaration reached the preview');
@@ -360,7 +360,7 @@ describe('the builder survives its own inputs', () => {
     const stars = page.locator('#wb-content input[type=number]').first();
     await stars.fill('6');
     await page.waitForTimeout(150);
-    const after = await page.evaluate(() => document.querySelector('#wb-stage .cargo-stars')?.getAttribute('aria-label'));
+    const after = await page.evaluate(() => globalThis.CARGO.sdoc().querySelector('.cargo-stars')?.getAttribute('aria-label'));
     assert.equal(after, 'Rated 5 out of 5', 'typing 6 did not clamp');
 
     await page.fill('#wb-content textarea', 'STILL EDITABLE');
@@ -377,7 +377,7 @@ describe('the builder survives its own inputs', () => {
     });
     await page.reload({ waitUntil: 'load' });
     await page.waitForTimeout(250);
-    const stageLen = await page.evaluate(() => document.getElementById('wb-stage').innerHTML.length);
+    const stageLen = await page.evaluate(() => globalThis.CARGO.sdoc().documentElement.innerHTML.length);
     assert.ok(stageLen > 100, 'a poisoned stored value blanked the Build page');
   });
 

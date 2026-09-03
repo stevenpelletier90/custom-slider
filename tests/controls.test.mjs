@@ -6,7 +6,7 @@
 // never caught any of them.
 import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { serve, launch, openBuilder, pick, setField, copyParts } from './helpers.mjs';
+import { serve, launch, openBuilder, pick, setField, copyParts, stageFrame, patternIds, hostHtml, engineFiles } from './helpers.mjs';
 
 let server, browser, page, errors;
 
@@ -47,7 +47,7 @@ describe('a knob shows what the slider is actually using', () => {
     await pick(page, 'models');
     const shown = await knob(page, 'Room for the dots');
     const [resolved, occurrences] = await page.evaluate(() => {
-      const root = document.querySelector('#wb-stage .cs');
+      const root = globalThis.CARGO.sdoc().querySelector('.cs');
       const code = document.getElementById('wb-code').textContent;
       return [getComputedStyle(root).getPropertyValue('--cs-controls-space').trim(), (code.match(/--cs-controls-space:/g) || []).length];
     });
@@ -153,7 +153,7 @@ describe('a knob the page actually reads', () => {
   // drawn against the 47.75px the field named, unchanged after typing 7em.
   test('Side gutter changes the gutter the page draws', async () => {
     await pick(page, 'modelbar');
-    const drawn = () => page.evaluate(() => +getComputedStyle(document.querySelector('#wb-stage .cs')).paddingLeft.replace('px', ''));
+    const drawn = () => page.evaluate(() => +getComputedStyle(globalThis.CARGO.sdoc().querySelector('.cs')).paddingLeft.replace('px', ''));
     const before = await drawn();
     await setField(page, 'Side gutter', '7em');
     const after = await drawn();
@@ -169,7 +169,7 @@ describe('a knob the page actually reads', () => {
     await pick(page, 'modelbar');
     await setField(page, 'Side gutter', 'banana');
     const r = await page.evaluate(() => {
-      const root = document.querySelector('#wb-stage .cs');
+      const root = globalThis.CARGO.sdoc().querySelector('.cs');
       const input = [...document.querySelectorAll('#wb-settings label > span')].find((x) => x.textContent.trim() === 'Side gutter')?.parentElement.querySelector('input');
       return {
         pad: +getComputedStyle(root).paddingLeft.replace('px', ''),
@@ -265,10 +265,10 @@ describe('peek is offered wherever it can do something', () => {
 
   test('a value reaches the copied CSS and narrows the card', async () => {
     await pick(page, 'modelbar');
-    const wide = await page.evaluate(() => document.querySelector('#wb-stage .cs-slide').getBoundingClientRect().width);
+    const wide = await page.evaluate(() => globalThis.CARGO.sdoc().querySelector('.cs-slide').getBoundingClientRect().width);
     await setField(page, 'Peek', '2em');
     await page.waitForTimeout(250);
-    const narrow = await page.evaluate(() => document.querySelector('#wb-stage .cs-slide').getBoundingClientRect().width);
+    const narrow = await page.evaluate(() => globalThis.CARGO.sdoc().querySelector('.cs-slide').getBoundingClientRect().width);
     const { css } = await copyParts(page);
     assert.match(css, /--cs-peek:\s*2em/, 'the value never reached the copied CSS');
     assert.ok(narrow < wide, `the slide did not narrow: ${wide} -> ${narrow}`);
@@ -334,7 +334,7 @@ describe('a property the slider is already using has a control', () => {
     await page.waitForTimeout(250);
     // Not the first dot: that one is current, and correctly draws in
     // --cs-dot-current rather than the colour under test.
-    const drawn = await page.evaluate(() => getComputedStyle(document.querySelector('#wb-stage .cs-dot:not(.cs-dot--current)'), '::after').backgroundColor);
+    const drawn = await page.evaluate(() => getComputedStyle(globalThis.CARGO.sdoc().querySelector('.cs-dot:not(.cs-dot--current)'), '::after').backgroundColor);
     const { css } = await copyParts(page);
     assert.match(css, /--cs-dot-fg:\s*#c8102e/, 'the value never reached the copied CSS');
     assert.equal(drawn, 'rgb(200, 16, 46)', `the dot is drawn ${drawn}`);
@@ -348,7 +348,7 @@ describe('a property the slider is already using has a control', () => {
     await pick(page, 'cards');
     await setField(page, 'Arrow size', '60px');
     await page.waitForTimeout(250);
-    const drawn = await page.evaluate(() => +document.querySelector('#wb-stage .cs-arrow').getBoundingClientRect().width.toFixed(0));
+    const drawn = await page.evaluate(() => +globalThis.CARGO.sdoc().querySelector('.cs-arrow').getBoundingClientRect().width.toFixed(0));
     const { css } = await copyParts(page);
     assert.match(css, /--cs-arrow-size:\s*60px/, 'the value never reached the copied CSS');
     assert.equal(drawn, 60, `the arrow is drawn ${drawn}px`);
@@ -397,7 +397,7 @@ describe('card chrome is a knob, not a literal', () => {
     await wearVcard(page);
     await setField(page, 'Card shadow', '0 2px 8px rgba(0, 0, 0, 0.15)');
     await page.waitForTimeout(250);
-    const drawn = await page.evaluate(() => getComputedStyle(document.querySelector('#wb-stage .cargo-card')).boxShadow);
+    const drawn = await page.evaluate(() => getComputedStyle(globalThis.CARGO.sdoc().querySelector('.cargo-card')).boxShadow);
     assert.notEqual(drawn, 'none', 'the shadow never reached the card');
     const { css } = await copyParts(page);
     assert.match(css, /--card-shadow:\s*0 2px 8px rgba\(0, 0, 0, 0\.15\)/, 'the shadow is missing from the copied CSS');
@@ -533,7 +533,7 @@ describe('the small things a designer trips over', () => {
     const box = page.locator('#wb-content fieldset').first().locator('input[type="text"]').first();
     await box.fill('"Bee" Wilson');
     await page.waitForTimeout(300);
-    const shown = await page.evaluate(() => document.querySelector('#wb-stage .cargo-avatar')?.textContent?.trim());
+    const shown = await page.evaluate(() => globalThis.CARGO.sdoc().querySelector('.cargo-avatar')?.textContent?.trim());
     assert.equal(shown, 'B', `the avatar reads "${shown}"`);
   });
 });
@@ -546,7 +546,7 @@ describe('the hero can put its dots on the photo', () => {
 
   const geometry = (page) =>
     page.evaluate(() => {
-      const root = document.querySelector('#wb-stage .cs');
+      const root = globalThis.CARGO.sdoc().querySelector('.cs');
       const img = root.querySelector('.cargo-photo img');
       const dots = root.querySelector('.cs-dots');
       const arrow = root.querySelector('.cs-arrow--prev');
@@ -594,12 +594,16 @@ describe('the hero can put its dots on the photo', () => {
       await overBox(page).check();
       await page.waitForTimeout(350);
     }
-    await page.locator('#wb-stage .cs-dots').scrollIntoViewIfNeeded();
+    await stageFrame(page).locator('.cs-dots').first().scrollIntoViewIfNeeded();
     await page.waitForTimeout(200);
+    // Hit-tested inside the frame's own document. The preview is an iframe now,
+    // so the parent's elementsFromPoint stops at the <iframe> element and would
+    // report a clean stack for a dot buried under the photo.
     const stack = await page.evaluate(() => {
-      const dot = document.querySelector('#wb-stage .cs-dot');
+      const d = globalThis.CARGO.sdoc();
+      const dot = d.querySelector('.cs-dot');
       const r = dot.getBoundingClientRect();
-      return document.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2).map((e) => `${e.tagName}.${String(e.className).split(' ').filter(Boolean)[0] ?? ''}`);
+      return d.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2).map((e) => `${e.tagName}.${String(e.className).split(' ').filter(Boolean)[0] ?? ''}`);
     });
     assert.ok(stack.length, 'the dot is not in the viewport, so this proves nothing');
     assert.match(stack[0], /cs-dot/, `the photo paints over the dots — stack was ${stack.slice(0, 4).join(' > ')}`);
@@ -675,7 +679,7 @@ describe('the last engine properties reach the panel', () => {
     await pick(page, 'gallery');
     await setField(page, 'Thumbnail width', '120px');
     await page.waitForTimeout(300);
-    const drawn = await page.evaluate(() => Math.round(document.querySelector('#wb-stage .cs-thumb')?.getBoundingClientRect().width ?? 0));
+    const drawn = await page.evaluate(() => Math.round(globalThis.CARGO.sdoc().querySelector('.cs-thumb')?.getBoundingClientRect().width ?? 0));
     const { css } = await copyParts(page);
     assert.match(css, /--cs-thumb-w:\s*120px/, 'the value never reached the copied CSS');
     assert.equal(drawn, 120, `the thumbnail is drawn ${drawn}px`);
@@ -733,14 +737,14 @@ describe('picking a colour does not rebuild the slider', () => {
           destroys++;
           return D.apply(this, a);
         };
-        const first = document.querySelector('#wb-stage .cs-slide');
+        const first = globalThis.CARGO.sdoc().querySelector('.cs-slide');
         for (const v of vals) {
           sw.value = v;
           sw.dispatchEvent(new Event('input', { bubbles: true }));
         }
         globalThis.CustomSlider.autoInit = AI;
         globalThis.CustomSlider.prototype.destroy = D;
-        return { inits, destroys, sameNode: first === document.querySelector('#wb-stage .cs-slide'), text: row.querySelector('input[type=text]').value };
+        return { inits, destroys, sameNode: first === globalThis.CARGO.sdoc().querySelector('.cs-slide'), text: row.querySelector('input[type=text]').value };
       },
       [label, values],
     );
@@ -761,7 +765,7 @@ describe('picking a colour does not rebuild the slider', () => {
     assert.equal(r.text.toLowerCase(), '#c8102e', 'the text field did not follow the swatch');
 
     // The point of not rebuilding is that the colour still arrives.
-    const applied = await page.evaluate(() => document.getElementById('wb-live-css').textContent.includes('#c8102e'));
+    const applied = await page.evaluate(() => globalThis.CARGO.sdoc().getElementById('wb-live-css').textContent.includes('#c8102e'));
     assert.equal(applied, true, 'the preview stylesheet never got the colour');
   });
 
@@ -784,54 +788,79 @@ describe('picking a colour does not rebuild the slider', () => {
   });
 });
 
-// F006: a media query asks the WINDOW, and the preview is a fixed-width box
-// inside a much wider one - so phone-only rules sit inert however narrow the
-// stage is set. Measured against real narrow windows, ten of seventeen patterns
-// differed at the phone frame. Two halves are guarded here: the preview now SAYS
-// what it is not showing, in visible text rather than a tooltip nobody on a
-// touchscreen can reach; and the card count it pins accounts for the card
-// style's own narrow rule, which it used to ignore.
-describe('the preview says what a width cannot show', () => {
-  const noteAt = async (page, w) => {
-    await page.click(`.ui-widths button[data-w="${w}"]`);
-    await page.waitForTimeout(180);
-    return page.evaluate(() => {
-      const n = document.getElementById('wb-tier-note');
-      return { hidden: n.hidden, text: n.textContent.trim(), bold: n.querySelector('b')?.textContent ?? null };
-    });
-  };
+// F006: a media query asks the WINDOW. The preview used to be a box inside this
+// page, so the snippet's phone rules could never fire in it however narrow the
+// box was set - measured, ten of seventeen patterns rendered differently on a
+// real narrow window. It is an iframe now, which IS a window of the previewed
+// width, so they resolve on their own.
+describe('the preview resolves the phone rules for real', () => {
+  // The claim of the whole refactor, checked the way the defect was found: the
+  // copied snippet in a genuinely narrow window, against what the builder shows
+  // at that button. Every property, every pattern.
+  test('every pattern matches a real phone window, property for property', async () => {
+    const PHONE = 390;
+    const ctx = await browser.newContext({ viewport: { width: PHONE, height: 900 } });
+    const real = await ctx.newPage();
+    const engine = await engineFiles(server.origin);
 
-  test('it names the phone-only rules at Phone, and stays quiet at the widths that render truthfully', async () => {
-    await pick(page, 'modelbar');
-    const phone = await noteAt(page, 390);
-    assert.equal(phone.hidden, false, 'nothing said at Phone, where ten of seventeen patterns differ');
-    assert.match(phone.text, /arrow size/, `the note does not name the arrow size (${phone.text})`);
-    assert.match(phone.text, /side gutter/, `the note does not name the gutter (${phone.text})`);
-    assert.match(phone.text, /narrow the window/i, 'the note does not say what to do about it');
+    const READ = (root) => {
+      const slide = root.querySelector('.cs-slide');
+      const cs = getComputedStyle(root);
+      const img = root.querySelector('img');
+      return {
+        perView: cs.getPropertyValue('--cs-per-view').trim(),
+        arrow: cs.getPropertyValue('--cs-arrow-size').trim(),
+        rootPad: Math.round(parseFloat(cs.paddingInlineStart)),
+        slideW: Math.round(slide.getBoundingClientRect().width),
+        ratio: img ? getComputedStyle(img).aspectRatio : null,
+        stops: root._cs?._stops?.().length ?? null,
+      };
+    };
 
-    for (const w of [750, 970, 1170]) {
-      const n = await noteAt(page, w);
-      assert.equal(n.hidden, true, `the note fires at ${w}, which renders truthfully`);
+    const ids = await patternIds(page);
+    for (const id of ids) {
+      await pick(page, id);
+      await page.click('.ui-widths button[data-w="390"]');
+      await page.waitForTimeout(300);
+      const shown = await stageFrame(page).locator('.cs').first().evaluate(READ);
+
+      const p = await copyParts(page);
+      await real.setContent(hostHtml({ ...engine, css: p.css, html: p.html, js: p.js, box: PHONE }), { waitUntil: 'load' });
+      await real.waitForTimeout(300);
+      const onPhone = await real.evaluate((fn) => new Function('root', `return (${fn})(root)`)(document.querySelector('#box .cs')), READ.toString());
+
+      assert.deepEqual(shown, onPhone, `${id}: the preview and a real ${PHONE}px phone disagree`);
+    }
+    await ctx.close();
+  });
+
+  // The frame's viewport is what a media query asks, and an iframe's default
+  // 2px inset border comes out of it - a 390px frame gave the slider 386px and
+  // put every measurement 4px short. Guarded because it is invisible: the
+  // layout still looks right, it is just the wrong width.
+  test('the frame viewport is exactly the width on the button', async () => {
+    for (const w of [390, 750, 970, 1170]) {
+      await page.click(`.ui-widths button[data-w="${w}"]`);
+      await page.waitForTimeout(220);
+      const inner = await page.evaluate(() => globalThis.CARGO.swin().innerWidth);
+      assert.equal(inner, w, `the ${w} button gives the slider a ${inner}px window`);
     }
   });
 
-  // It reads the generated CSS, so it can only name a rule that is really
-  // there - and it must stay quiet for a pattern that has no narrow rules at
-  // all rather than printing a blanket disclaimer.
-  test('a pattern with no phone-only rules says nothing', async () => {
-    await pick(page, 'lightbox');
-    const n = await noteAt(page, 390);
-    assert.equal(n.hidden, true, `a pattern with no narrow rules still showed: ${n.text}`);
+  // Whatever else changes, the preview must run the CSS that is copied - the
+  // per-view pin that used to be appended is gone, because the cascade resolves
+  // the ladder itself now.
+  test('nothing is appended to the preview CSS any more', async () => {
+    await pick(page, 'modelbar');
+    await page.click('.ui-widths button[data-w="390"]');
+    await page.waitForTimeout(200);
+    const [live, copied] = await Promise.all([page.evaluate(() => globalThis.CARGO.sdoc().getElementById('wb-live-css').textContent), copyParts(page).then((p) => p.css)]);
+    const name = /^\.([\w-]+)\.cs/m.exec(copied)?.[1] ?? 'my-slider';
+    assert.equal(live.split(name).join('wb-live'), copied.split(name).join('wb-live'), 'the preview stylesheet is not the copied stylesheet');
   });
+});
 
-  // The caveat used to live in the width buttons' title attribute. A tooltip
-  // needs a hover, so it was unreachable by touch and by keyboard - the exact
-  // audience for a phone preview.
-  test('the caveat is not hidden in a tooltip any more', async () => {
-    const titles = await page.evaluate(() => [...document.querySelectorAll('.ui-widths button')].map((b) => b.title));
-    for (const t of titles) assert.doesNotMatch(t, /phone-only|only apply once/i, `a button title still carries the caveat: ${t}`);
-  });
-
+describe('the ladder resolves without a pin', () => {
   // The pin resolved the designer's ladder alone. A card style carries its own
   // narrow override - the cutout tile drops to one across below 380px - and
   // that is a max-width rule, so it was as inert as everything else: the phone
@@ -844,7 +873,7 @@ describe('the preview says what a width cannot show', () => {
   // whatever it says there is what the preview must show. A hard-coded 1 passed
   // against the broken code whenever an earlier test had left the ladder at 1,
   // which is a test that proves nothing.
-  test('the pinned card count matches what a phone actually gets', async () => {
+  test('the card count matches what a phone actually gets', async () => {
     // Its own page. This file shares one across every describe, and earlier tests
     // edit the ladder - which had this assertion agreeing with the broken code by
     // coincidence, because the leftover ladder happened to be 1 already.
@@ -874,10 +903,10 @@ describe('the preview says what a width cannot show', () => {
       await fresh.click('.ui-widths button[data-w="390"]');
       await fresh.waitForTimeout(240);
       const seen = await fresh.evaluate(() => ({
-        perView: getComputedStyle(document.querySelector('#wb-stage .cs')).getPropertyValue('--cs-per-view').trim(),
+        perView: getComputedStyle(globalThis.CARGO.sdoc().querySelector('.cs')).getPropertyValue('--cs-per-view').trim(),
         across: document.getElementById('spec-across').textContent,
       }));
-      assert.equal(seen.perView, c.want, `${pat}/${c.id}: the 390 preview pins ${seen.perView} across where its own card sheet says ${c.want}`);
+      assert.equal(seen.perView, c.want, `${pat}/${c.id}: the 390 preview shows ${seen.perView} across where its own card sheet says ${c.want}`);
       assert.match(seen.across, new RegExp(`\\b${c.want}\\b`), `${pat}/${c.id}: the readout disagrees with the strip (${seen.across})`);
     }
     await fresh.context().close();
@@ -885,7 +914,7 @@ describe('the preview says what a width cannot show', () => {
 
   // Whatever the pin does, it is PREVIEW only: a dealer page is the width it
   // is and must ship the real ladder.
-  test('the copied CSS still ships the real ladder, not the pin', async () => {
+  test('the copied CSS ships the real ladder, with nothing appended', async () => {
     await pick(page, 'modelbar');
     await page.click('.ui-widths button[data-w="390"]');
     await page.waitForTimeout(180);
@@ -893,7 +922,7 @@ describe('the preview says what a width cannot show', () => {
     // The model bar ships its ladder as the cs-xs/sm/md/lg column classes on
     // the markup, not as emitted media queries - so what has to be proved is
     // that the PIN is absent and the ladder is still on the slides.
-    assert.doesNotMatch(parts.css, /--cs-per-view/, 'the preview pin leaked into the copied CSS');
+    assert.doesNotMatch(parts.css, /--cs-per-view/, 'a per-view declaration leaked into the copied CSS');
     assert.match(parts.html, /\bcs-(xs|sm|md|lg)-\d/, 'the copied markup lost its column classes');
   });
 });

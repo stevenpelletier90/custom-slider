@@ -441,9 +441,17 @@ body {
    Left to fill the column it renders ~23% narrower than the page the slider
    will actually live in, which made the fit gauge report "tight" for layouts
    that are fine in production. */
+
+/* border: 0 is load-bearing, not tidying. An iframe's default 2px inset border
+   comes out of its VIEWPORT, so a frame set to 390px gave the slider a 386px
+   window and every measurement landed 4px short of a real phone - which is the
+   one thing this preview exists to get right. display: block kills the inline
+   baseline gap under it. */
 #wb-stage {
+  display: block;
   inline-size: 100%;
   max-inline-size: var(--frame, 1170px);
+  border: 0;
 }
 
 /* No overflow:hidden here - it clipped the focus ring off the buttons inside,
@@ -583,17 +591,6 @@ body {
   padding-block-start: 0.35rem;
   font-family: var(--sans);
   font-size: 0.8rem;
-}
-
-/* The width-button caveat, not a problem with the settings: quieter than the
-   fit warning it sits beside so the two do not compete for the same alarm. */
-.ui-spec-note--aside {
-  color: var(--ink-soft);
-}
-
-.ui-spec-note--aside b {
-  font-weight: 600;
-  color: var(--ink);
 }
 
 /* ---- settings panel ---------------------------------------------------- */

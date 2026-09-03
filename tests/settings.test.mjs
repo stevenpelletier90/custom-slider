@@ -4,7 +4,7 @@
 // asymmetry was the bug: remembering half the state is worse than none.
 import { test, describe, before, after } from 'node:test';
 import assert from 'node:assert/strict';
-import { serve, launch, openBuilder, pick, setField } from './helpers.mjs';
+import { serve, launch, openBuilder, pick, setField, stageReady } from './helpers.mjs';
 
 let server, browser, ctx, page, errors;
 
@@ -47,7 +47,7 @@ describe('the settings come back with the slides', () => {
     assert.equal(before.frame, '970');
 
     await page.reload({ waitUntil: 'load' });
-    await page.waitForSelector('#wb-stage .cs-slide', { state: 'attached' });
+    await stageReady(page);
     const after = await shown(page);
     assert.deepEqual(after, before, 'the settings did not come back the way they were left');
   });
@@ -59,7 +59,7 @@ describe('the settings come back with the slides', () => {
     await setField(page, 'Gap', '0.75em');
 
     await page.reload({ waitUntil: 'load' });
-    await page.waitForSelector('#wb-stage .cs-slide', { state: 'attached' });
+    await stageReady(page);
     await pick(page, 'modelbar');
     assert.equal((await shown(page)).gap, '2.25em', 'the model bar took another pattern settings');
     await pick(page, 'service');
@@ -81,10 +81,10 @@ describe('the settings come back with the slides', () => {
       localStorage.setItem('cs-settings', JSON.stringify(all));
     });
     await page.reload({ waitUntil: 'load' });
-    await page.waitForSelector('#wb-stage .cs-slide', { state: 'attached' });
+    await stageReady(page);
 
     const r = await page.evaluate(() => ({
-      stage: document.getElementById('wb-stage').innerHTML.length,
+      stage: globalThis.CARGO.sdoc().documentElement.innerHTML.length,
       code: document.getElementById('wb-code').textContent,
       name: document.querySelector('[data-name-field]').value,
       rows: document.querySelectorAll('#wb-content fieldset').length,

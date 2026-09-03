@@ -44,10 +44,6 @@
     <script src="assets/guide.js" defer></script>
     <script src="assets/workbench.js" defer></script>
 
-    <!-- Written by the workbench from the current settings. The same generator
-         fills the code panel, with .wb-live swapped for .my-slider — which is
-         why the code cannot drift from what you are looking at. -->
-    <style id="wb-live-css"></style>
   </head>
   <body>
     <header class="ui-head">
@@ -78,7 +74,15 @@
         <div class="ui-panel"><div id="wb-settings"></div></div>
 
         <h3 class="ui-sr">Live preview</h3>
-        <div class="wb-stage"><div id="wb-stage"></div></div>
+        <!-- The preview is an IFRAME, not a div, and that is the point: a media
+             query asks the WINDOW, so a box inside this page could never fire the
+             snippet's phone rules however narrow it was set - measured, ten of the
+             seventeen patterns rendered differently on a real narrow window. The
+             frame IS a window of the chosen width, so cards across, arrow size,
+             side gutter and photo crop all resolve the way they will on the
+             device. Its document is written by the same cssFor()/htmlFor() pair
+             that fills the code panel, so the parity guarantee is unchanged. -->
+        <div class="wb-stage"><iframe id="wb-stage" title="Live preview of your slider"></iframe></div>
 
         <!-- The readout. Everything here is measured off the rendered slider,
              not computed from the settings, so it tells you what the browser
@@ -126,14 +130,6 @@
               </button>
             </span>
           </span>
-          <!-- What this width CANNOT show. A media query asks the window, and
-               the preview is a box inside a much wider one, so the phone-only
-               rules in the snippet and in the card sheet never fire here. That
-               caveat used to live in the buttons' title attribute, which is
-               exactly the wrong place: a tooltip is unreachable by touch and by
-               keyboard, i.e. the audience for a phone preview. It is filled in
-               from the generated CSS, so it names what is actually missing. -->
-          <span class="ui-spec-note ui-spec-note--aside" id="wb-tier-note" hidden></span>
           <span class="ui-spec-item"><b>Card size</b> <span id="spec-card">—</span></span>
           <span class="ui-spec-item"><b>Cards shown</b> <span id="spec-across">—</span></span>
           <span class="ui-spec-item"><b>Gap</b> <span id="spec-gap">—</span></span>

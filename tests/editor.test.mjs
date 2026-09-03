@@ -122,7 +122,7 @@ describe('the readout says what the slider is doing', () => {
     for (const id of ['modelbar', 'tabs', 'card-gallery']) {
       await pick(page, id);
       const r = await page.evaluate(() => {
-        const first = document.querySelector('#wb-stage .cs');
+        const first = globalThis.CARGO.sdoc().querySelector('.cs');
         return {
           text: document.getElementById('spec-across').textContent,
           slides: first.querySelectorAll('.cs-slide').length,

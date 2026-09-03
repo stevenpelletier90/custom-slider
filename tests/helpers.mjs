@@ -84,7 +84,7 @@ export async function openBuilder(browser, origin, width = 1200) {
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto(`${origin}/demo/index.html`, { waitUntil: 'load' });
-  await page.waitForSelector('#wb-stage .cs-slide', { state: 'attached' });
+  await stageReady(page);
   return { ctx, page, errors };
 }
 
@@ -93,8 +93,23 @@ export async function openBuilder(browser, origin, width = 1200) {
 // leaves the page showing whatever loaded first. That cost an hour once.
 export async function pick(page, id) {
   await page.click(`#wb-nav button[data-go="${id}"]`);
-  await page.waitForSelector('#wb-stage .cs-slide', { state: 'attached' });
+  await stageReady(page);
 }
+
+// The preview lives in an iframe, so that a media query asks a window of the
+// previewed width rather than the whole browser. Nothing in the builder page
+// can reach it with a plain selector any more, and these two are how the tests
+// do: a Playwright FrameLocator for interaction, and CARGO.sdoc() for reads
+// inside page.evaluate.
+export const stageFrame = (page) => page.frameLocator('#wb-stage');
+
+export async function stageReady(page) {
+  await page.waitForSelector('#wb-stage');
+  await stageFrame(page).locator('.cs-slide').first().waitFor({ state: 'attached', timeout: 15000 });
+}
+
+// Read something off the live slider from the parent page's context.
+export const inStage = (page, fn, arg) => page.evaluate(([body, a]) => new Function('d', 'a', body)(globalThis.CARGO.sdoc(), a), [`return (${fn.toString()})(d, a)`, arg ?? null]);
 
 export const patternIds = (page) => page.evaluate(() => Object.keys(globalThis.CARGO.PATTERNS));
 

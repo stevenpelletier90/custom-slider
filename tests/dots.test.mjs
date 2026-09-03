@@ -24,7 +24,7 @@ after(async () => {
 
 const strip = (page) =>
   page.evaluate(() => {
-    const root = document.querySelector('#wb-stage .cs');
+    const root = globalThis.CARGO.sdoc().querySelector('.cs');
     const track = root.querySelector('.cs-track').getBoundingClientRect();
     return {
       space: getComputedStyle(root).getPropertyValue('--cs-controls-space').trim(),
