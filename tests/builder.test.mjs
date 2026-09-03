@@ -184,7 +184,7 @@ describe('the pasted block on a hostile host page', () => {
   test('renders the same whichever order the sheets land in', async () => {
     for (const id of ['modelbar', 'service', 'cards', 'tabs']) {
       await pick(page, id);
-      await page.click('.ui-widths button[data-w="1170"]');
+      await page.click('.ui-widths button[data-w="1200"]');
       await page.waitForTimeout(80);
       const p = await copyParts(page);
       const after = await render({ css: p.css, html: p.html, js: p.js });
@@ -293,7 +293,7 @@ describe('the pasted block on a hostile host page', () => {
     ];
     for (const [id, sel] of cases) {
       await pick(page, id);
-      await page.click('.ui-widths button[data-w="1170"]');
+      await page.click('.ui-widths button[data-w="1200"]');
       await page.waitForTimeout(80);
       const p = await copyParts(page);
       const at = async (leading) => {

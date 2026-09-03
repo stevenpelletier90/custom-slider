@@ -83,12 +83,12 @@
   // as placeholders. Sizes are the library's real ones and they are not uniform,
   // which is why pic() reads them rather than asserting one shape for all six.
   const PHOTOS = [
-    ['photo-1.jpg', 900, 600, 'Technician inspecting a car raised on a lift'],
-    ['photo-2.jpg', 900, 600, 'Technician checking a tyre in the service bay'],
-    ['photo-3.jpg', 800, 534, 'Technician polishing a car in the detailing bay'],
-    ['photo-4.jpg', 800, 534, 'Hand washing the bonnet of a red car'],
-    ['photo-5.jpg', 800, 600, 'Driver smiling at the wheel'],
-    ['photo-6.jpg', 1200, 717, 'Pressure washing a wheel arch'],
+    ['photo-1.jpg', 1200, 800, 'Hand lifting the cap off a brake fluid reservoir under a bonnet'],
+    ['photo-2.jpg', 1200, 800, 'Alloy wheel leaning against a stack of new tyres'],
+    ['photo-3.jpg', 1200, 800, 'Painter in a protective suit spraying a car in a paint booth'],
+    ['photo-4.jpg', 1200, 798, 'Hand held to a dashboard vent to feel the air conditioning'],
+    ['photo-5.jpg', 1200, 717, 'Pressure washing a wheel arch'],
+    ['photo-6.jpg', 1960, 1308, 'Hand putting a key into a car door at sunset'],
   ].map(([f, w, h, alt]) => ({ img: `img/${f}`, w, h, alt }));
 
   const pic = (m) => `<img src="${m.img}" width="${m.w ?? 1200}" height="${m.h ?? 750}" alt="${m.alt}" loading="lazy" decoding="async">`;
@@ -229,12 +229,12 @@
   // per file, keyed by name so a mis-keyed entry is a missing photo rather than
   // a silently shifted one. Checked against the files themselves.
   const CATEGORY = {
-    'photo-1.jpg': 'service', // technician under a car on a lift
-    'photo-2.jpg': 'service', // technician checking a tyre in the bay
-    'photo-3.jpg': 'detailing', // polishing in the detailing bay
-    'photo-4.jpg': 'detailing', // hand washing a bonnet
-    'photo-5.jpg': 'driving', // driver at the wheel
-    'photo-6.jpg': 'detailing', // pressure washing a wheel arch
+    'photo-1.jpg': 'service', // brake fluid reservoir under a bonnet
+    'photo-2.jpg': 'service', // alloy wheel and a stack of new tyres
+    'photo-3.jpg': 'detailing', // paint booth - finish work, same family as detailing
+    'photo-4.jpg': 'service', // air conditioning at the dashboard vent
+    'photo-5.jpg': 'detailing', // pressure washing a wheel arch
+    'photo-6.jpg': 'driving', // key going into a car door
   };
   const TAGGED = PHOTOS.map((m) => ({ ...m, tag: CATEGORY[m.img.replace('img/', '')] }));
 
@@ -852,7 +852,7 @@ ${PHOTO_CSS}
   // means "show me a page at the 768 tier". Everything downstream has to agree
   // on which tier that is: what the preview draws, and what the fit gauge
   // thinks a real page would give.
-  let frameW = 1170; // the pressed width button, 0 for "fill"
+  let frameW = 1200; // the pressed width button, 0 for "fill"
 
   const gapPx = () => {
     const g = state.props['--cs-gap'] ?? '1em';
@@ -1440,7 +1440,18 @@ ${PHOTO_CSS}
   const FRAME_DOC =
     '<!doctype html><html><head><meta charset="utf-8">' +
     '<link rel="stylesheet" href="../dist/custom-slider.css">' +
-    '<style>html{font-size:10px}body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#10151c;background:#fff}</style>' +
+    '<style>html{font-size:10px}body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#10151c;background:#fff}' +
+    // Bootstrap 3's own container, because the frame is now the SCREEN rather
+    // than the box. That distinction is the whole reason this exists: a
+    // .container is 750px BECAUSE the screen is 768, so a 750px-wide frame
+    // asks 750 and no min-width:768 rule fires. Previewing the container width
+    // directly put every tier one rung low - the model bar drew three cards at
+    // the Laptop button where a 992 screen gives four. Frame = 768/992/1200,
+    // container = 750/970/1170, exactly as the storefront does it.
+    '#wb-live-root{margin:0 auto}' +
+    '@media(min-width:768px){#wb-live-root{inline-size:750px}}' +
+    '@media(min-width:992px){#wb-live-root{inline-size:970px}}' +
+    '@media(min-width:1200px){#wb-live-root{inline-size:1170px}}</style>' +
     '<style id="wb-live-css"></style></head><body><div id="wb-live-root"></div>' +
     '<script src="../dist/custom-slider.js"><' +
     '/script></body></html>';
@@ -1659,7 +1670,11 @@ ${PHOTO_CSS}
     // That is scaling working, not leakage (measured: at an equal body size all
     // 17 first slides match the preview to 0.00px), but the readout never said
     // what size this preview is, so the difference looked like a defect.
-    set('spec-card', `${w}px in ${Math.round(stage.getBoundingClientRect().width)}px · text ${Math.round(parseFloat(swin().getComputedStyle(root).fontSize))}px`);
+    // The container inside the frame, not the frame itself: the frame is the
+    // SCREEN width now, and a Bootstrap container is narrower than the screen
+    // it sits on. What the designer wants to read is the box the slider got.
+    const boxW = Math.round(sroot().getBoundingClientRect().width);
+    set('spec-card', `${w}px in ${boxW}px · text ${Math.round(parseFloat(swin().getComputedStyle(root).fontSize))}px`);
     // Counted in THIS slider, and never more than there are. The tabbed bar
     // draws three carousels and the card grid six, so counting the stage said
     // "5 of 24" over a pane holding eight; and asking for more cards across
@@ -1682,7 +1697,7 @@ ${PHOTO_CSS}
     // A chosen width IS the container being simulated, so judge the card
     // against that. Only "fill" has to guess from the window.
     const tier = frameW || (innerWidth >= 1200 ? 1170 : innerWidth >= 992 ? 970 : innerWidth >= 768 ? 750 : innerWidth - 30);
-    const frame = Math.round(stage.getBoundingClientRect().width);
+    const frame = Math.round(sroot().getBoundingClientRect().width);
     const capped = frame < tier - 2;
     const would = capped ? Math.round((w * tier) / frame) : w;
 
@@ -2979,20 +2994,19 @@ ${PHOTO_CSS}
     const cs = getComputedStyle(box);
     const avail = box.clientWidth - parseFloat(cs.paddingInlineStart) - parseFloat(cs.paddingInlineEnd);
     const reach = avail;
-    const SCREEN = { 390: TIER_LABEL.base, 750: TIER_LABEL[768], 970: TIER_LABEL[992], 1170: TIER_LABEL[1200] };
+    const SCREEN = { 390: TIER_LABEL.base, 768: TIER_LABEL[768], 992: TIER_LABEL[992], 1200: TIER_LABEL[1200] };
+    // Bootstrap 3's own container for each screen. The button width is the
+    // SCREEN, because that is what a media query asks; the slider gets the
+    // narrower container inside it, and saying both is the honest label.
+    const CONTAINER = { 390: 'the full width', 768: '750px', 992: '970px', 1200: '1170px' };
     let active = null;
     for (const b of widthBtns()) {
       const w = +b.dataset.w;
       b.disabled = w > reach + 1;
-      // The caveat that used to be appended here now prints as visible text
-      // under the buttons (#wb-tier-note), naming the properties it is actually
-      // hiding. A title attribute was the wrong home for it twice over: a
-      // tooltip needs a hover, so it is unreachable by touch and by keyboard,
-      // and a phone preview is read by exactly those people.
       b.title = b.disabled
         ? `Make the window about ${Math.round(w + (innerWidth - reach))}px wide to use this`
         : w
-          ? `${SCREEN[w]} screen — the slider gets ${w}px`
+          ? `${SCREEN[w]} screen — a ${w}px window, where the slider gets ${CONTAINER[w]}`
           : 'Use all the width this page has';
       if (b.getAttribute('aria-pressed') === 'true') active = b;
     }

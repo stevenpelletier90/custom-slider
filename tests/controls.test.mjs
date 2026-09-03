@@ -839,7 +839,7 @@ describe('the preview resolves the phone rules for real', () => {
   // put every measurement 4px short. Guarded because it is invisible: the
   // layout still looks right, it is just the wrong width.
   test('the frame viewport is exactly the width on the button', async () => {
-    for (const w of [390, 750, 970, 1170]) {
+    for (const w of [390, 768, 992, 1200]) {
       await page.click(`.ui-widths button[data-w="${w}"]`);
       await page.waitForTimeout(220);
       const inner = await page.evaluate(() => globalThis.CARGO.swin().innerWidth);

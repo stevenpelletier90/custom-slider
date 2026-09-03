@@ -17,7 +17,7 @@ before(async () => {
   recipes = await page.evaluate(() => globalThis.CARGO.guide.ARROW_RECIPES);
   // A card strip with arrows over the cards, which is what the recipes restyle.
   await pick(page, 'cards');
-  await page.click('.ui-widths button[data-w="1170"]');
+  await page.click('.ui-widths button[data-w="1200"]');
   await page.waitForTimeout(120);
   snippet = await copyParts(page);
   host = await browser.newPage();

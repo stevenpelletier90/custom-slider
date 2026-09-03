@@ -38,13 +38,13 @@ describe('the settings come back with the slides', () => {
     const ladder = page.locator('#wb-settings label:has(> span:text-is("Laptop · 992+")) input').first();
     await ladder.fill('4');
     await page.waitForTimeout(120);
-    await page.click('.ui-widths button[data-w="970"]');
+    await page.click('.ui-widths button[data-w="992"]');
     await page.waitForTimeout(150);
 
     const before = await shown(page);
     assert.equal(before.name, 'used-inventory');
     assert.equal(before.gap, '1.75em');
-    assert.equal(before.frame, '970');
+    assert.equal(before.frame, '992');
 
     await page.reload({ waitUntil: 'load' });
     await stageReady(page);
@@ -101,13 +101,13 @@ describe('the settings come back with the slides', () => {
 
   test('a width the window forced is not remembered as a choice', async () => {
     await pick(page, 'modelbar');
-    await page.click('.ui-widths button[data-w="1170"]');
+    await page.click('.ui-widths button[data-w="1200"]');
     await page.waitForTimeout(150);
-    // Shrink until 1170 no longer fits, so the builder steps the preview down.
+    // Shrink until the 1200 frame no longer fits, so the builder steps down.
     await page.setViewportSize({ width: 900, height: 900 });
     await page.waitForTimeout(300);
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('cs-settings') ?? '{}').frame);
-    assert.equal(stored, 1170, `the forced step-down overwrote the chosen width with ${stored}`);
+    assert.equal(stored, 1200, `the forced step-down overwrote the chosen width with ${stored}`);
     await page.setViewportSize({ width: 1500, height: 900 });
     await page.waitForTimeout(300);
   });

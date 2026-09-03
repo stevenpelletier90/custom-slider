@@ -106,13 +106,27 @@ const NAMED_HOST = 'chevroletdemo1';
 // slots want the dealer's real inventory pictures anyway, which is precisely
 // what #MISCPATH# is for.
 const LIBRARY = {
-  // Service and lifestyle photography.
-  'photo-1.jpg': '/static/industry-automotive/medium-images/service-technician.jpg',
-  'photo-2.jpg': '/static/industry-automotive/medium-images/tires_inspection.jpg',
-  'photo-3.jpg': '/static/industry-automotive/medium-images/car-detailing.jpg',
-  'photo-4.jpg': '/static/industry-automotive/medium-images/washing-car.jpg',
-  'photo-5.jpg': '/static/industry-automotive/medium-images/driving-medium.jpg',
-  'photo-6.jpg': '/static/industry-automotive/medium-images/jet-wash.jpg',
+  // Service and lifestyle photography, every one at least 1200px wide.
+  //
+  // The first set came from the 800-900px tier and was too small for the job:
+  // a full-width hero is 1170px on a desktop, so a 900px file was stretched to
+  // 0.77 of the pixels it needed - visibly soft, and half that again on a
+  // retina screen. There is no larger copy of those particular photos (the
+  // large-images/ sibling the path implies does not exist, and ?width= only
+  // ever shrinks), so the fix was to pick different ones. Enumerated through
+  // the library API rather than by guessing filenames, which is how the 1920px
+  // hero/ tier was missed the first time.
+  //
+  // Shapes matter as much as size here: these are 3:2 and 4:3, so they survive
+  // the 21:9 desktop hero crop AND the 4:3 phone crop. The hero/ folder is
+  // sharper still at 1920 wide but is a 3.2:1 letterbox, which keeps only its
+  // middle third on a phone.
+  'photo-1.jpg': '/static/industry-automotive/medium-images/service/car-fluid.jpg',
+  'photo-2.jpg': '/static/industry-automotive/medium-images/service/new-tires.jpg',
+  'photo-3.jpg': '/static/industry-automotive/medium-images/paint-job.jpg',
+  'photo-4.jpg': '/static/industry-automotive/medium-images/car_ac.jpg',
+  'photo-5.jpg': '/static/industry-automotive/medium-images/jet-wash.jpg',
+  'photo-6.jpg': '/static/industry-automotive/medium-images/unlocking.jpg',
 
   // Used-inventory cards. ChromeData ColorMatched renders at 640, which are
   // exactly 640x480 - the 4:3 the vehicle card crops to, so nothing is lost -

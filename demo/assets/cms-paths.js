@@ -12,8 +12,8 @@
 // the model is guaranteed, not the paint colour. They are still proved to
 // serve from an unrelated dealer domain like everything else here.
 
-// 126 of 126 cutouts byte-proved, 8 name-matched, 15 library photos.
-// Harvested 2026-08-28 by re-running the script above.
+// 125 of 126 cutouts byte-proved, 8 name-matched, 15 library photos.
+// Harvested 2026-09-03 by re-running the script above.
 
 globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
   CMS: {
@@ -135,7 +135,6 @@ globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
     'oem/nissan/armada.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026NIS10_01_320/cc_2026NIS102082629_01_320_QAC.png',
     'oem/nissan/frontier.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026NIT12_01_320/cc_2026NIT122079155_01_320_DAQ.png',
     'oem/nissan/kicks.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026NIS26_01_320/cc_2026NIS262007929_01_320_RAY.png',
-    'oem/nissan/murano.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026NIS02_01_320/cc_2026NIS022080445_01_320_K23.png',
     'oem/nissan/pathfinder.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026NIS07_01_320/cc_2026NIS072045743_01_320_YBK.png',
     'oem/nissan/rogue-phev.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026NIS31_01_320/cc_2026NIS312060955_01_320_QBJ.png',
     'oem/nissan/rogue.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026NIS11_01_320/cc_2026NIS112029569_01_320_KH3.png',
@@ -154,12 +153,12 @@ globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
     'oem/toyota/tundra.jpg': '/static/brand-toyota/Homepage/model-bar/2026/picture-based/2026-tundra.jpg',
     'oem/volkswagen/atlas.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026VWS05_01_320/cc_2026VWS051980793_01_320_0P0P.png',
     'oem/volvo/ex90.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2025VOS11_01_320/cc_2025VOS112042571_01_320_707.png',
-    'photo-1.jpg': '/static/industry-automotive/medium-images/service-technician.jpg',
-    'photo-2.jpg': '/static/industry-automotive/medium-images/tires_inspection.jpg',
-    'photo-3.jpg': '/static/industry-automotive/medium-images/car-detailing.jpg',
-    'photo-4.jpg': '/static/industry-automotive/medium-images/washing-car.jpg',
-    'photo-5.jpg': '/static/industry-automotive/medium-images/driving-medium.jpg',
-    'photo-6.jpg': '/static/industry-automotive/medium-images/jet-wash.jpg',
+    'photo-1.jpg': '/static/industry-automotive/medium-images/service/car-fluid.jpg',
+    'photo-2.jpg': '/static/industry-automotive/medium-images/service/new-tires.jpg',
+    'photo-3.jpg': '/static/industry-automotive/medium-images/paint-job.jpg',
+    'photo-4.jpg': '/static/industry-automotive/medium-images/car_ac.jpg',
+    'photo-5.jpg': '/static/industry-automotive/medium-images/jet-wash.jpg',
+    'photo-6.jpg': '/static/industry-automotive/medium-images/unlocking.jpg',
     'vehicle-1.png': '/assets/stock/ColorMatched_01/Transparent/640/cc_2025HOS03_01_640/cc_2025HOS032071910_01_640_BK.png',
     'vehicle-2.png': '/assets/stock/Expanded/Transparent/640/2026TOS11_640/2026TOS112033662_640_01.png',
     'vehicle-3.png': '/assets/stock/ColorMatched_01/Transparent/640/cc_2023NIS11_01_640/cc_2023NIS110069_01_640_RBY.png',
