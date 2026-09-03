@@ -820,6 +820,8 @@ ${PHOTO_CSS}
     state.props = { ...p.props };
     state.data = { ...p.data };
     state.hideDots = !!p.hideDots;
+    state.dotsOver = false;
+    state.dotsWere = null;
     state.dotSpace = null;
     state.count = p.models.length;
     // A pattern change is a shape change: a review row has a star rating and a
@@ -1037,7 +1039,12 @@ ${PHOTO_CSS}
     // CSS ships the real ladder, which is what a page needs.
     const pin = preview ? `${sel}${ROOT} { --cs-per-view: ${perViewAt(frameTier())}; }` : '';
 
-    const dots = state.hideDots ? `${sel} .cs-dots { display: none; }` : '';
+    // Dots on a photograph need more than a light colour. Screenshotted on the
+    // service-bay hero, white at 55% all but disappeared into a busy image: the
+    // dot is 12px across and the thing behind it is arbitrary, so there is no
+    // colour that reads on every photo. A hairline dark ring gives them an edge
+    // whatever they land on, which is what Bootstrap's own indicators lean on.
+    const dots = state.hideDots ? `${sel} .cs-dots { display: none; }` : state.dotsOver ? `${sel} .cs-dot::after { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45); }` : '';
     // No arrow-inset override any more: the engine's own default is 0, which
     // is what all 17 patterns and all 7 looks were restating. Three lines a
     // snippet, and the gutter formula every look uses (arrow-size + 0.25em)
@@ -2253,6 +2260,66 @@ ${PHOTO_CSS}
     });
     if (!galleryMode) beh.append(control('Show dots', dots));
 
+    // F057: the hero reserved a strip under the photo and drew its dots there.
+    // 57 of the 76 OEM heroes surveyed carry Bootstrap's carousel-indicators,
+    // which sit over the image by default - so this is the convention, though
+    // the census counted them present rather than measuring their position.
+    //
+    // Off by default. The census is a good argument for making this one click
+    // and a bad one for changing how every hero already built draws itself.
+    //
+    // Offered only where the slide IS the photograph. Over a card strip the
+    // dots would land on the last line of card text, which is the thing the
+    // reservation exists to prevent.
+    //
+    // Measured before building it: taking the strip away leaves the photo the
+    // same size (415.7px either way) and does not move the arrows (207.8px
+    // either way - .cs-arrow centres on 100% of a root that shrank by exactly
+    // the strip, so the formula corrects itself). The hero simply loses 30px.
+    const photoSlides = (p.css || '').includes('cargo-photo');
+    if (photoSlides && !galleryMode && !state.hideDots) {
+      const over = document.createElement('input');
+      over.type = 'checkbox';
+      over.checked = !!state.dotsOver;
+      over.addEventListener('change', () => {
+        state.dotsOver = over.checked;
+        if (state.dotsOver) {
+          // Remember all three, because all three change together and a tick
+          // round trip has to hand back exactly what was there.
+          state.dotsWere = {
+            space: state.props['--cs-controls-space'] ?? null,
+            fg: state.props['--cs-dot-fg'] ?? null,
+            current: state.props['--cs-dot-current'] ?? null,
+          };
+          // 0.1px, never 0: the platform minifier turns 0px into a unitless 0
+          // and that invalidates the arrow's centring calc().
+          state.props['--cs-controls-space'] = '0.1px';
+          // The engine's #757575 is tuned for 3:1 on WHITE, and a photograph
+          // is not white. Light dots are the only ones that read on an unknown
+          // image, and they are written into the knobs rather than applied
+          // behind them - a control has to show what the slider is using.
+          state.props['--cs-dot-fg'] = 'rgba(255, 255, 255, 0.55)';
+          state.props['--cs-dot-current'] = '#fff';
+        } else {
+          const was = state.dotsWere ?? {};
+          for (const [k, v] of [
+            ['--cs-controls-space', was.space],
+            ['--cs-dot-fg', was.fg],
+            ['--cs-dot-current', was.current],
+          ]) {
+            if (v == null) delete state.props[k];
+            else state.props[k] = v;
+          }
+          state.dotsWere = null;
+        }
+        buildPanel();
+        render();
+      });
+      beh.append(
+        control('Dots over the image', over, 'Takes away the strip under the photo and draws the dots on it. Turns them light, because the default grey is tuned for white and a photograph is not.'),
+      );
+    }
+
     const gut = document.createElement('input');
     gut.type = 'checkbox';
     gut.checked = state.gutter;
@@ -2449,7 +2516,7 @@ ${PHOTO_CSS}
   // card style, with the wrong class name, and nothing on the page saying why.
   // Same shape as the content store, keyed by pattern for the same reason.
   const SKEY = 'cs-settings';
-  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'standalone', 'name', 'count', 'panes'];
+  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'standalone', 'name', 'count', 'panes', 'dotsOver', 'dotsWere'];
 
   const readSettings = () => {
     try {
@@ -2543,7 +2610,7 @@ ${PHOTO_CSS}
     // this panel, so it is refused whole rather than obeyed in half.
     const data = cleanMap(s.data, ATTR);
     if (data && isMap(s.data) && Object.keys(data).length === Object.keys(s.data).length) state.data = data;
-    for (const k of ['hideDots', 'gutter', 'standalone']) if (typeof s[k] === 'boolean') state[k] = s[k];
+    for (const k of ['hideDots', 'gutter', 'standalone', 'dotsOver']) if (typeof s[k] === 'boolean') state[k] = s[k];
     // Through toClass() rather than trusted: a name stored before the sanitiser
     // existed could be an invalid selector.
     if (okStored(s.name) && toClass(s.name)) state.name = toClass(s.name);

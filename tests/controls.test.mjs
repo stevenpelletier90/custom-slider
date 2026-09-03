@@ -538,6 +538,87 @@ describe('the small things a designer trips over', () => {
   });
 });
 
+describe('the hero can put its dots on the photo', () => {
+  // F057: the hero reserved a strip under the photo and drew its dots there,
+  // where 57 of the 76 OEM heroes overlay them. Off by default, because the
+  // census argues for making it easy and not for changing what exists.
+  const overBox = (page) => page.locator('#wb-settings label.wb-row:has(> span:text-is("Dots over the image")) input').first();
+
+  const geometry = (page) =>
+    page.evaluate(() => {
+      const root = document.querySelector('#wb-stage .cs');
+      const img = root.querySelector('.cargo-photo img');
+      const dots = root.querySelector('.cs-dots');
+      const arrow = root.querySelector('.cs-arrow--prev');
+      const r = root.getBoundingClientRect();
+      const i = img.getBoundingClientRect();
+      return {
+        rootH: +r.height.toFixed(1),
+        imgH: +i.height.toFixed(1),
+        arrowMid: +(arrow.getBoundingClientRect().top + arrow.getBoundingClientRect().height / 2 - r.top).toFixed(1),
+        dotsOnPhoto: dots.getBoundingClientRect().top < i.bottom - 1,
+      };
+    });
+
+  test('it is off until it is asked for', async () => {
+    await pick(page, 'hero');
+    await page.waitForTimeout(250);
+    assert.equal(await overBox(page).count(), 1, 'the hero offers no way to overlay its dots');
+    assert.equal(await overBox(page).isChecked(), false, 'the hero now overlays its dots by default');
+    assert.equal((await geometry(page)).dotsOnPhoto, false, 'the dots start on the photo');
+  });
+
+  test('turning it on moves the dots without resizing the photo or shifting the arrows', async () => {
+    await pick(page, 'hero');
+    await page.waitForTimeout(250);
+    const before = await geometry(page);
+    await overBox(page).check();
+    await page.waitForTimeout(350);
+    const after = await geometry(page);
+    assert.equal(after.dotsOnPhoto, true, 'the dots did not move onto the photo');
+    assert.equal(after.imgH, before.imgH, `the photo resized: ${before.imgH} -> ${after.imgH}`);
+    assert.equal(after.arrowMid, before.arrowMid, `the arrows moved: ${before.arrowMid} -> ${after.arrowMid}`);
+    assert.ok(after.rootH < before.rootH, 'the reserved strip was not given back');
+  });
+
+  test('the dots turn light, and the knobs say so', async () => {
+    await pick(page, 'hero');
+    await page.waitForTimeout(250);
+    await overBox(page).check();
+    await page.waitForTimeout(350);
+    // A control must show what the slider is using, so the colour knobs have to
+    // carry the overlay values rather than them being applied behind the panel.
+    assert.match(await colorKnob(page, 'Dot colour'), /255/, 'the dot colour knob does not show the light value in force');
+    assert.equal(await colorKnob(page, 'Dot colour, current'), '#fff', 'the current-dot knob does not show the light value in force');
+  });
+
+  test('turning it off hands back exactly what was there', async () => {
+    await pick(page, 'hero');
+    await page.waitForTimeout(250);
+    // Settings are remembered per pattern, and the test above leaves this on -
+    // so start from a known off state or the baseline is the overlaid value.
+    if (await overBox(page).isChecked()) {
+      await overBox(page).uncheck();
+      await page.waitForTimeout(350);
+    }
+    const was = { space: await knob(page, 'Room for the dots'), current: await colorKnob(page, 'Dot colour, current') };
+    await overBox(page).check();
+    await page.waitForTimeout(350);
+    await overBox(page).uncheck();
+    await page.waitForTimeout(350);
+    assert.equal(await knob(page, 'Room for the dots'), was.space, 'the reserved strip came back a different size');
+    assert.equal(await colorKnob(page, 'Dot colour, current'), was.current, 'the current-dot colour did not come back');
+  });
+
+  test('it is not offered where the dots would land on card text', async () => {
+    for (const id of ['modelbar', 'cards', 'service']) {
+      await pick(page, id);
+      await page.waitForTimeout(200);
+      assert.equal(await overBox(page).count(), 0, `${id}: offers to overlay dots onto a card`);
+    }
+  });
+});
+
 describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);
