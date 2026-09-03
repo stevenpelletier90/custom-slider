@@ -123,3 +123,51 @@ describe('every arrow recipe the Reference publishes still works', () => {
     assert.match(next.glyph, /›/, `the next arrow got the wrong glyph (${next.glyph})`);
   });
 });
+
+// F098: a visible "3 / 12" counter is the hidden status region unhidden, which
+// is a recipe rather than a feature - but only if all five declarations that
+// .cs-sr-only sets are actually undone. Leave clip-path in and the text takes
+// up space while being clipped to nothing, which reads as the recipe failing.
+describe('the visible counter recipe the Reference publishes', () => {
+  const counter = () =>
+    host.evaluate(() => {
+      const s = document.querySelector('.cs-status');
+      if (!s) return null;
+      const r = s.getBoundingClientRect();
+      const cs = getComputedStyle(s);
+      return { w: +r.width.toFixed(1), h: +r.height.toFixed(1), text: s.textContent, clip: cs.clipPath, position: cs.position };
+    });
+
+  test('hidden by default, and readable once the recipe is applied', async () => {
+    await withRecipe('');
+    const before = await counter();
+    assert.ok(before.w <= 1 && before.h <= 1, `the status region is already visible (${before.w}x${before.h})`);
+
+    const css = await page.evaluate(() => globalThis.CARGO.guide.COUNTER_CSS);
+    await withRecipe(css);
+    const after = await counter();
+    assert.equal(after.clip, 'none', 'clip-path is still cutting the text away');
+    assert.ok(after.w > 20 && after.h > 8, `the counter is still not readable (${after.w}x${after.h})`);
+    assert.match(after.text, /\d/, `the counter has no number in it (${after.text})`);
+  });
+
+  // The wording half. The recipe is only useful with the attribute, so the two
+  // are checked together on the same pasted slider.
+  test('the attribute re-words it, and it keeps counting after a move', async () => {
+    const css = await page.evaluate(() => globalThis.CARGO.guide.COUNTER_CSS);
+    const named = snippet.css.match(/^\.([\w-]+)\.cs/m)?.[1] ?? 'my-slider';
+    const html = snippet.html.replace('<div', '<div data-cs-label-status-single="{n} / {total}" data-cs-label-status-multi="{from}\u2013{to} / {total}"');
+    await host.setContent(hostHtml({ ...engine, css: `${snippet.css}\n${css.replace(/my-slider/g, named)}`, html, js: snippet.js }), { waitUntil: 'load' });
+    await host.waitForTimeout(250);
+
+    const first = (await counter()).text;
+    assert.doesNotMatch(first, /Slide/i, `the wording attribute was ignored (${first})`);
+    assert.match(first, /^\s*1( ?[\u2013-] ?\d)? \/ \d+\s*$/, `unexpected counter text (${first})`);
+
+    await host.click('.cs-arrow--next');
+    await host.waitForTimeout(700);
+    const second = (await counter()).text;
+    assert.notEqual(second, first, 'the counter did not move with the slider');
+    assert.match(second, /\//, `the second reading lost the wording (${second})`);
+  });
+});

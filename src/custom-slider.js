@@ -116,7 +116,16 @@ export class CustomSlider {
     if (d.csGallery !== undefined) data.gallery = d.csGallery !== 'false';
     if (d.csFade !== undefined) data.fade = d.csFade !== 'false';
     if (d.csRoledescription !== undefined) data.roledescription = d.csRoledescription;
-    const opts = { ...DEFAULTS, ...data, ...js, labels: { ...DEFAULTS.labels, ...(js.labels || {}) } };
+    // Every announced string, settable from the HTML: data-cs-label-next,
+    // data-cs-label-status-multi and so on map to the same keys the labels
+    // option takes. A generic sweep rather than a line per label, so a label
+    // added to DEFAULTS is reachable the day it ships — and because the CMS
+    // hands a designer markup, not a constructor call, this is the ONLY route
+    // a Spanish-language page has to a Spanish carousel. It is also how the
+    // visible "3 / 12" counter gets its wording.
+    const dl = {};
+    for (const k in d) if (k.length > 7 && k.startsWith('csLabel')) dl[k[7].toLowerCase() + k.slice(8)] = d[k];
+    const opts = { ...DEFAULTS, ...data, ...js, labels: { ...DEFAULTS.labels, ...dl, ...(js.labels || {}) } };
     if (opts.gallery && opts.autoplay) {
       console.warn('[custom-slider] autoplay is ignored in gallery mode', this.root);
       opts.autoplay = 0;

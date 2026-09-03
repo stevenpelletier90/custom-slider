@@ -80,8 +80,67 @@ JS options override data attributes, which override defaults.
 | `fade`            | `data-cs-fade`            | `false`         | Stacked crossfade instead of a scrolling track — 1-up heroes; no drag/peek, ignored with `gallery`                                                                                                              |
 | `gallery`         | `data-cs-gallery`         | `false`         | Tabbed thumbnail gallery (thumbs generated from slide images)                                                                                                                                                   |
 | `roledescription` | `data-cs-roledescription` | `"carousel"`    | Empty string to omit                                                                                                                                                                                            |
-| `labels`          | — (JS only)               | English strings | All UI text, for localization — see `DEFAULTS.labels` in `src/custom-slider.js`                                                                                                                                 |
+| `labels`          | `data-cs-label-*`         | English strings | Every announced string, one attribute each — see [Announced text and other languages](#announced-text-and-other-languages)                                                                                      |
 | —                 | `data-cs-init="manual"`   | auto            | Skip auto-init; construct via `new CustomSlider(el, opts)` from page script                                                                                                                                     |
+
+## Announced text and other languages
+
+Every string the carousel announces is settable from the markup, because the
+CMS hands a designer markup and never a constructor call — a page built in the
+block editor has no other route to a Spanish carousel.
+
+| Attribute                     | Default                         | Where it is heard                  |
+| ----------------------------- | ------------------------------- | ---------------------------------- |
+| `data-cs-label-prev`          | `Previous slides`               | Previous arrow                     |
+| `data-cs-label-next`          | `Next slides`                   | Next arrow                         |
+| `data-cs-label-pause`         | `Stop automatic slide show`     | Pause button (autoplay only)       |
+| `data-cs-label-play`          | `Start automatic slide show`    | Same button once paused            |
+| `data-cs-label-dots`          | `Choose slide`                  | The dot group                      |
+| `data-cs-label-goto-slide`    | `Go to slide {n}`               | One dot, 1-up                      |
+| `data-cs-label-goto-page`     | `Go to slides {from}–{to}`      | One dot, multi-card                |
+| `data-cs-label-status-single` | `Slide {n} of {total}`          | The live status region, 1-up       |
+| `data-cs-label-status-multi`  | `Slides {from}–{to} of {total}` | The live status region, multi-card |
+| `data-cs-label-thumbs`        | `Choose photo`                  | The thumb strip (`gallery`)        |
+| `data-cs-label-photo`         | `Photo {n}`                     | One thumb (`gallery`)              |
+
+`{n}`, `{from}`, `{to}` and `{total}` are filled in; anything else is used
+verbatim. Set `data-cs-roledescription` too — a screen reader says the word
+"carousel" before any of these.
+
+```html
+<div
+  class="cs"
+  data-cs
+  lang="es"
+  aria-label="Modelos"
+  data-cs-roledescription="carrusel"
+  data-cs-label-prev="Anteriores"
+  data-cs-label-next="Siguientes"
+  data-cs-label-dots="Elegir diapositiva"
+  data-cs-label-goto-slide="Ir a la diapositiva {n}"
+  data-cs-label-status-single="Diapositiva {n} de {total}"
+></div>
+```
+
+The status region is also the shortest route to a **visible** "3 / 12" counter:
+it already tracks every move, so it only needs unhiding and wording.
+
+```css
+.my-slider .cs-status {
+  position: static;
+  inline-size: auto;
+  block-size: auto;
+  margin: 0;
+  clip-path: none;
+}
+```
+
+```html
+<div class="my-slider cs" data-cs data-cs-label-status-single="{n} / {total}" data-cs-label-status-multi="{from}–{to} / {total}"></div>
+```
+
+A JS `labels` option still wins over an attribute, so an existing manual-init
+page is unaffected.
 
 ## One shared copy, no version in the filename
 

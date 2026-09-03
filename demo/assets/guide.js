@@ -54,7 +54,7 @@
     ['element._cs', 'The live slider object, if your own script on the page needs to reach it.'],
     [
       '{ labels: {…} }',
-      'Constructor-only. Overrides every announced string (prev, next, pause, play, dots, gotoSlide, gotoPage, statusSingle, statusMulti, thumbs, photo) — the way to localise a slider. There is no data attribute for it.',
+      'Overrides every announced string from a constructor call, and wins over the attributes if both are set. From markup alone use <code>data-cs-label-*</code> instead — see <a href="#g-words">A visible counter, and other languages</a>.',
     ],
   ];
 
@@ -153,6 +153,40 @@
   color: #fff;
   background: linear-gradient(to top, rgba(0, 0, 0, 0.72), rgba(0, 0, 0, 0));
 }`;
+
+  // The hidden status region already tracks every move and re-words itself on
+  // every commit, so a visible counter is an unhide, not a feature. Undoing
+  // .cs-sr-only takes all five of its declarations: leave clip-path in and the
+  // text is still clipped to nothing while occupying space, which reads as the
+  // recipe not working.
+  const COUNTER_CSS = `.my-slider .cs-status {
+  position: static;
+  inline-size: auto;
+  block-size: auto;
+  margin: 0;
+  clip-path: none;
+}`;
+
+  const COUNTER_MARKUP = `<div class="my-slider cs" data-cs aria-label="New vehicles"
+  data-cs-label-status-single="{n} / {total}"
+  data-cs-label-status-multi="{from}–{to} / {total}">`;
+
+  // Every announced string, and the attribute that sets it. The CMS hands a
+  // designer markup and never a constructor call, so an attribute is the only
+  // route a block-editor page has to a Spanish carousel.
+  const LABELS = [
+    ['data-cs-label-prev', 'Previous slides', 'Previous arrow'],
+    ['data-cs-label-next', 'Next slides', 'Next arrow'],
+    ['data-cs-label-pause', 'Stop automatic slide show', 'Pause button, autoplay only'],
+    ['data-cs-label-play', 'Start automatic slide show', 'The same button once paused'],
+    ['data-cs-label-dots', 'Choose slide', 'The dot group'],
+    ['data-cs-label-goto-slide', 'Go to slide {n}', 'One dot, one card per view'],
+    ['data-cs-label-goto-page', 'Go to slides {from}&ndash;{to}', 'One dot, several cards per view'],
+    ['data-cs-label-status-single', 'Slide {n} of {total}', 'The status line, one card per view'],
+    ['data-cs-label-status-multi', 'Slides {from}&ndash;{to} of {total}', 'The status line, several cards'],
+    ['data-cs-label-thumbs', 'Choose photo', 'The thumbnail strip'],
+    ['data-cs-label-photo', 'Photo {n}', 'One thumbnail'],
+  ];
 
   const MARKUP = `<div class="my-slider cs" data-cs aria-label="New vehicles">
   <ul class="cs-track">
@@ -381,6 +415,17 @@
         <p class="g-sub">There is deliberately no builder setting for this. Whether white text is legible depends on the photograph, and the builder cannot see the one you are going to upload.</p>
       </section>
 
+      <section id="g-words"><h3>A visible counter, and other languages</h3>
+        <p>The slider keeps a line of text that says which slide you are on. It is hidden, read only by screen readers, and it re-words itself on every move &mdash; so a <strong>visible &ldquo;3 / 12&rdquo; counter</strong> is not a feature to add, it is that line unhidden. Put this in <strong>Style Only</strong>:</p>
+        <pre class="g-code"><code>${esc(COUNTER_CSS)}</code></pre>
+        <p class="g-sub">All five declarations are needed. Leave <code>clip-path</code> out and the text still takes up space while being clipped to nothing, which looks like the recipe failing. Style it from there like any other text &mdash; <code>text-align</code>, <code>font-size</code>, a colour.</p>
+        <p>The wording is an attribute on the carousel, so the same unhide gives you <code>3 / 12</code> rather than <code>Slide 3 of 12</code>:</p>
+        <pre class="g-code"><code>${esc(COUNTER_MARKUP)}</code></pre>
+        <p><strong>Every announced string works the same way</strong>, which is how a Spanish-language page gets a Spanish carousel &mdash; there is no script to write. <code>{n}</code>, <code>{from}</code>, <code>{to}</code> and <code>{total}</code> are filled in; everything else is used as typed.</p>
+        ${table(['Attribute', 'Default', 'Where it is heard'], LABELS)}
+        <p class="g-sub">Set <code>data-cs-roledescription</code> as well &mdash; a screen reader says the word &ldquo;carousel&rdquo; before any of these, and it is the one string that is not a label. <code>data-cs-roledescription="carrusel"</code>, and an empty value drops it entirely.</p>
+      </section>
+
       <section id="g-images"><h3>What size to upload</h3>
         <p>Each pattern crops to a fixed shape, so an upload that is the wrong shape is cropped, not letterboxed. Upload at the width below or a little over — never far over, since the file is served as-is.</p>
         ${table(
@@ -410,5 +455,5 @@
   // setting does - and there is one set of words rather than two that drift.
   // ARROW_RECIPES is exported so tests/recipes.test.mjs can apply each one to a
   // real pasted slider: a recipe this page publishes has to still work.
-  globalThis.CARGO = Object.assign(globalThis.CARGO || {}, { guide: { render, OPTIONS, NOTES, CARD_NOTES, ARROW_RECIPES } });
+  globalThis.CARGO = Object.assign(globalThis.CARGO || {}, { guide: { render, OPTIONS, NOTES, CARD_NOTES, ARROW_RECIPES, COUNTER_CSS, LABELS } });
 })();
