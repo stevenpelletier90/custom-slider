@@ -1429,6 +1429,20 @@ ${PHOTO_CSS}
   // Nothing below this line has a DOM to attach to on that page.
   if (!stage) return;
 
+  // A colour changes the stylesheet and nothing else - not the markup, not the
+  // geometry, not which script the pattern needs. Sending one through render()
+  // tore the stage down and re-initialised every slider in it: measured one
+  // destroy and one init per input event at 9-11 ms of JS each, against a
+  // native <input type="color"> that fires on every pointer move inside the OS
+  // picker. That is the whole reason dragging a colour crawled. This is the
+  // same generator with the same argument, so the copy panel still cannot
+  // drift from the slider on screen - it just stops rebuilding what did not
+  // change. Anything that alters the MARKUP must still call render().
+  function restyle() {
+    styleEl.textContent = cssFor('.wb-live', true);
+    publish();
+  }
+
   function render() {
     live.forEach((s) => s.destroy());
     live = [];
@@ -1450,7 +1464,16 @@ ${PHOTO_CSS}
       }
     }
     checkFit();
+    publish();
+  }
 
+  // Everything downstream of the preview: the three copy parts, the box, the
+  // "what goes where" list. Split out of render() so a restyle can refresh the
+  // panel without rebuilding the stage - the panel still has to update, since
+  // clearing a colour drops a whole declaration and the line counts move with
+  // it.
+  function publish() {
+    const p = PATTERNS[state.pattern];
     $('wb-title').textContent = p.label;
     $('wb-blurb').textContent = p.blurb;
     // Same generator, different selector - that is the parity guarantee.
@@ -1819,9 +1842,12 @@ ${PHOTO_CSS}
     // The wrapping <label> binds to the swatch, not to this field - and the
     // swatch is hidden whenever the value is not a plain hex.
     text.setAttribute('aria-label', `${label} value`);
+    // restyle(), not render(): see the note on it. The OS colour picker fires
+    // an input event on every pointer move, and a rebuild per move is what made
+    // dragging one crawl.
     const push = (v) => {
       setProp(store, key, v);
-      render();
+      restyle();
     };
     // A colour input has no way to show "transparent" or an rgb() with alpha -
     // it just renders black, which reads as a real colour choice that was never

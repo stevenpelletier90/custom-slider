@@ -706,6 +706,84 @@ describe('the last engine properties reach the panel', () => {
   });
 });
 
+// A colour changes the stylesheet and nothing else, so it must not go through
+// the path that rebuilds the stage. Every input event used to destroy and
+// re-initialise every slider in the preview - measured one destroy and one init
+// each, 9-11 ms of JS per event - and a native <input type="color"> fires one
+// on every pointer move inside the OS picker, which is what made dragging a
+// colour crawl. Guarded here because it is invisible in the generated CSS: the
+// output is byte-identical either way, only the cost and the scroll position
+// differ.
+describe('picking a colour does not rebuild the slider', () => {
+  const drag = (page, label, values) =>
+    page.evaluate(
+      ([l, vals]) => {
+        const row = [...document.querySelectorAll('#wb-settings label.wb-row')].find((r) => r.querySelector('span')?.textContent.trim() === l);
+        const sw = row?.querySelector('input[type=color]');
+        if (!sw) return { none: true };
+        let inits = 0,
+          destroys = 0;
+        const AI = globalThis.CustomSlider.autoInit;
+        const D = globalThis.CustomSlider.prototype.destroy;
+        globalThis.CustomSlider.autoInit = function (...a) {
+          inits++;
+          return AI.apply(this, a);
+        };
+        globalThis.CustomSlider.prototype.destroy = function (...a) {
+          destroys++;
+          return D.apply(this, a);
+        };
+        const first = document.querySelector('#wb-stage .cs-slide');
+        for (const v of vals) {
+          sw.value = v;
+          sw.dispatchEvent(new Event('input', { bubbles: true }));
+        }
+        globalThis.CustomSlider.autoInit = AI;
+        globalThis.CustomSlider.prototype.destroy = D;
+        return { inits, destroys, sameNode: first === document.querySelector('#wb-stage .cs-slide'), text: row.querySelector('input[type=text]').value };
+      },
+      [label, values],
+    );
+
+  test('a whole drag costs no teardown, and the preview keeps the colour', async () => {
+    await pick(page, 'cards');
+    await page.waitForTimeout(150);
+    const label = await page.evaluate(() => {
+      const row = [...document.querySelectorAll('#wb-settings label.wb-row')].find((r) => r.querySelector('input[type=color]'));
+      return row?.querySelector('span')?.textContent.trim() ?? null;
+    });
+    assert.ok(label, 'no colour row to drag');
+
+    const r = await drag(page, label, ['#112233', '#445566', '#778899', '#aabbcc', '#c8102e']);
+    assert.equal(r.destroys, 0, 'the stage was torn down mid-drag');
+    assert.equal(r.inits, 0, 'the sliders were re-initialised mid-drag');
+    assert.equal(r.sameNode, true, 'the first slide was replaced, so the stage was rebuilt');
+    assert.equal(r.text.toLowerCase(), '#c8102e', 'the text field did not follow the swatch');
+
+    // The point of not rebuilding is that the colour still arrives.
+    const applied = await page.evaluate(() => document.getElementById('wb-live-css').textContent.includes('#c8102e'));
+    assert.equal(applied, true, 'the preview stylesheet never got the colour');
+  });
+
+  // The panel is downstream of the same generator, and a colour can change the
+  // line counts it prints - clearing one drops a whole declaration. Skipping
+  // the rebuild must not skip the panel.
+  test('the copy panel still tracks the colour', async () => {
+    await pick(page, 'cards');
+    await page.waitForTimeout(150);
+    const label = await page.evaluate(() => {
+      const row = [...document.querySelectorAll('#wb-settings label.wb-row')].find((r) => r.querySelector('input[type=color]'));
+      return row?.querySelector('span')?.textContent.trim() ?? null;
+    });
+    await drag(page, label, ['#0a5c2b']);
+    await page.waitForTimeout(120);
+    const parts = await copyParts(page);
+    assert.match(parts.css, /#0a5c2b/i, 'the copied CSS does not carry the colour that is on screen');
+    const box = await page.evaluate(() => document.getElementById('wb-code').textContent);
+    assert.match(box, /#0a5c2b/i, 'the code box did not refresh');
+  });
+});
+
 describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);
