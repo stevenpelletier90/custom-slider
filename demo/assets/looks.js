@@ -74,6 +74,10 @@ const LOOKS = {
       '--plate-pad': '6% 6% 1%',
       '--badge-bg': '#16324f',
       '--badge-fg': '#fff',
+      // Transparent by default: on a cutout strip the button should read as a
+      // link under the name, not a second coloured block competing with the car.
+      '--cta-bg': 'transparent',
+      '--cta-fg': '#16324f',
     },
     css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
 @media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; padding-inline: 0; } }
@@ -85,10 +89,11 @@ const LOOKS = {
 .cargo-card:hover img { filter: none; transform: scale(var(--img-hover-scale)); }
 @media (prefers-reduced-motion: reduce) { .cargo-card:hover img { transform: none; } }
 .cargo-name { order: var(--name-order); margin: 0.4em 0 0; font-size: var(--name-size); font-weight: var(--name-weight); line-height: 1.35; color: var(--name-color); text-transform: var(--name-case); letter-spacing: var(--name-tracking); }
-.cargo-sub { display: block; margin-block-start: 0.15em; font-size: 0.8em; line-height: 1.35; color: #5f6368; }`,
+.cargo-sub { display: block; margin-block-start: 0.15em; font-size: 0.8em; line-height: 1.35; color: #5f6368; }
+.cargo-cta { display: inline-block; align-self: center; padding: 0.4em 1em; margin-block-start: 0.5em; font-size: 0.8em; font-weight: 600; line-height: 1.4; color: var(--cta-fg); background: var(--cta-bg); border-radius: 999px; }`,
     markup: (m) => `<a class="cargo-card" href="${m.href}">
   <span class="cargo-media">${m.badge ? `<span class="cargo-badge">${m.badge}</span>` : ''}<img src="${m.img}" width="${m.w ?? 320}" height="${m.h ?? 240}" alt="${m.alt}" loading="lazy" decoding="async"></span>
-  <p class="cargo-name">${m.name}</p>${m.sub ? `\n  <small class="cargo-sub">${m.sub}</small>` : ''}
+  <p class="cargo-name">${m.name}</p>${m.sub ? `\n  <small class="cargo-sub">${m.sub}</small>` : ''}${m.cta ? `\n  <span class="cargo-cta">${m.cta}</span>` : ''}
 </a>`,
   },
 
@@ -125,6 +130,10 @@ const LOOKS = {
       '--img-hover-scale': '1.04',
       '--badge-bg': '#16324f',
       '--badge-fg': '#fff',
+      // A filled button: the vehicle card already draws a card, so the CTA
+      // sits on it as a real button rather than as a bare link.
+      '--cta-bg': '#16324f',
+      '--cta-fg': '#fff',
     },
     css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
 @media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
@@ -136,13 +145,14 @@ const LOOKS = {
 @media (prefers-reduced-motion: reduce) { .cargo-card:hover img { transform: none; } }
 .cargo-body { display: block; padding: 0.85em 0.9em 1em; line-height: 1.4; }
 .cargo-name { display: block; margin: 0; font-size: var(--name-size); font-weight: 700; line-height: 1.35; color: var(--name-color); }
-.cargo-sub { display: block; margin-block-start: 0.2em; font-size: 0.85em; line-height: 1.4; color: var(--price-color); }`,
+.cargo-sub { display: block; margin-block-start: 0.2em; font-size: 0.85em; line-height: 1.4; color: var(--price-color); }
+.cargo-cta { display: inline-block; padding: 0.45em 1.1em; margin-block-start: 0.7em; font-size: 0.8em; font-weight: 600; line-height: 1.4; color: var(--cta-fg); background: var(--cta-bg); border-radius: 999px; }`,
     // One stretched link over the whole card: the anchor IS the card, so there
     // is no nested link and nothing announces twice.
     markup: (m) => `<a class="cargo-card" href="${m.href}">
   <span class="cargo-media">${m.badge ? `<span class="cargo-badge">${m.badge}</span>` : ''}<img src="${m.img}" width="${m.w ?? 1200}" height="${m.h ?? 900}" alt="${m.alt}" loading="lazy" decoding="async"></span>
   <span class="cargo-body">
-    <span class="cargo-name">${m.name}</span>${m.sub ? `\n    <small class="cargo-sub">${m.sub}</small>` : ''}
+    <span class="cargo-name">${m.name}</span>${m.sub ? `\n    <small class="cargo-sub">${m.sub}</small>` : ''}${m.cta ? `\n    <span class="cargo-cta">${m.cta}</span>` : ''}
   </span>
 </a>`,
   },

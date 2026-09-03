@@ -213,12 +213,22 @@ describe('the demo describes what it is actually showing', () => {
     assert.match((await copyParts(page)).html, /See this store/, 'the typed wording never reached the markup');
   });
 
+  // Asks the data which style has no button rather than naming one: the cutout
+  // tile used to be the example here and now draws one, so a hard-coded name
+  // would have made this test quietly assert the opposite of its own point.
   test('a card style with no button does not offer the box', async () => {
-    await pick(page, 'grid'); // the cutout tile: photo and name, no button
-    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes('Cutout tile'))?.click());
+    await pick(page, 'grid');
+    const noButton = await page.evaluate(() => {
+      const L = globalThis.CARGO.LOOKS;
+      const id = Object.keys(L).find((k) => !/m\.cta/.test(String(L[k].markup)));
+      if (!id) return null;
+      [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes(L[id].label))?.click();
+      return L[id].label;
+    });
+    assert.ok(noButton, 'every card style draws a button, so this guards nothing');
     await page.waitForTimeout(300);
     const box = page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Button text")) input');
-    assert.equal(await box.count(), 0, 'a card style with no button offers a Button text box');
+    assert.equal(await box.count(), 0, `${noButton} has no button but offers a Button text box`);
   });
 
   // F017 (the half that needs no decision): the hero could not be a linked
@@ -315,6 +325,38 @@ describe('the demo describes what it is actually showing', () => {
       panes.every((p) => p.length > 0),
       `a pane emptied: ${JSON.stringify(panes.map((p) => p.length))}`,
     );
+  });
+
+  // F019: the two most-used card styles had no button node at all, so a CTA on
+  // a cutout tile or a vehicle card was hand-written markup. It is drawn only
+  // when there are words for it, so nothing already built moves.
+  const ctaBox = (page) => page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Button text")) input').first();
+
+  test('the tile and the vehicle card draw a button only once it is filled in', async () => {
+    for (const [id, style] of [
+      ['modelbar', 'Cutout tile'],
+      ['cards', 'Vehicle card'],
+    ]) {
+      await pick(page, id);
+      // The style has to be chosen, not assumed: earlier tests in this file
+      // switch it, and the choice is remembered per pattern.
+      await page.evaluate((s) => [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes(s))?.click(), style);
+      await page.waitForTimeout(300);
+      // And the box cleared, for the same reason - a previous test may have
+      // typed into it.
+      await ctaBox(page).fill('');
+      await page.waitForTimeout(250);
+      assert.doesNotMatch((await copyParts(page)).html, /cargo-cta/, `${id}: an empty Button text still ships an element`);
+      assert.equal(await ctaBox(page).count(), 1, `${id}: offers no Button text box`);
+
+      await ctaBox(page).fill('View details');
+      await page.waitForTimeout(250);
+      const done = await copyParts(page);
+      assert.match(done.html, /<span class="cargo-cta">View details<\/span>/, `${id}: the typed wording never reached the markup`);
+      assert.equal((done.html.match(/cargo-cta/g) || []).length, 1, `${id}: the button landed on more than the card it was typed into`);
+      await ctaBox(page).fill('');
+      await page.waitForTimeout(200);
+    }
   });
 
   // F026: brand notes read like a research log - "ladders", "forddemo1",
