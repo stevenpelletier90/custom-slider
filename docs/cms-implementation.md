@@ -181,16 +181,44 @@ var(--cs-per-view))` falls back to `auto` and every card collapses to its
   Chrome "lenient" here, which was wrong, and six patterns shipped `0px` on the
   strength of it. `0.1px` survives minification (it serves as `.1px`).
 
-**Unprobed: `calc()` with a `var()` inside a `--*` declaration.** The two rules
-above were tested live; this shape was not, and the list above reads as though
-it were exhaustive. It is not. Nine such declarations reach Style Only today —
-six from `--strip-pad-x: calc(var(--cs-arrow-size) + 0.4em)` when the card
-styles are pasted inline, and three in `dist/paste/1-style-only.css`, which
-§"no hosting" tells you to paste whole. If the minifier treats `calc(var(…))`
-the way it treats `clamp()`, those sheets fail silently and the page serves the
-last one that minified. **Probe it on a test dealer before the first upload:**
-put `--probe: calc(var(--x) + 1px)` in styleCode on its own, publish, and check
-whether the sheet still serves. Record the result here either way.
+**`calc()` with a `var()` inside a `--*` declaration is SAFE — probed live
+2026-09-03, dealer 26900, page 2965393.** This shape was missing from the
+bisect above, and the list read as though it were exhaustive. It was not, so it
+was tested the same way: two rules appended to a page's Style Only, published,
+cache reset, then the served page read with a fresh cache-buster.
+
+```css
+.f045-control {
+  --f045-a: 44px;
+  padding-inline: var(--f045-a);
+}
+.f045-probe {
+  --f045-b: calc(var(--f045-a, 44px) + 0.4em);
+  padding-inline: var(--f045-b);
+}
+```
+
+Both served, and the probe came back **verbatim** —
+`--f045-b:calc(var(--f045-a, 44px) + 0.4em)`. The sheet had definitely
+minified: `--dlc-controls-space: 0.1px` was served as `.1px` in the same
+response, which is the zero-unit strip signature from the bisect. Three
+consecutive cache-busted fetches agreed, no flips. The control rule is what
+makes this readable — the documented failure kills the _whole_ sheet, so a
+known-good rule beside the probe distinguishes "the shape is fatal" from "the
+sheet has not published yet".
+
+Note the minifier leaves `calc()` contents alone: it shortened `0.1px` to
+`.1px` elsewhere in the same sheet but left `0.4em` inside the calc untouched,
+and kept the spaces around the `+` that `calc()` requires. That conservatism is
+presumably why the shape survives when `clamp()` does not.
+
+So the two rules above are the whole of it, and the builder's
+`--strip-pad-x: calc(var(--cs-arrow-size) + 0.4em)` is safe on every route.
+For the record, the exposure was smaller than first counted: measured per
+route, the linked-engine route emits **zero** such declarations (the delta
+filter drops the value because it equals the look's own default), "Paste the
+card styles too" emits **two** (tile and vcard), and
+`dist/paste/1-style-only.css` carries **three**.
 
 Also expect **site CSS to outrank recipe classes**: OEM styles commonly set
 link decoration at id specificity (`#content-main a`), which beats
