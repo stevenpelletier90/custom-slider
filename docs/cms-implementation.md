@@ -324,6 +324,35 @@ The slider is ordinary block HTML, so the usual rules apply unchanged:
 - Replacement codes do **not** resolve in hosted WordPress blogs. Use literal
   text there.
 
+### A preset as a replacement code
+
+The two files are shared; **the sliders built on them are not, and are not
+meant to be.** A snippet out of the builder is one page's HTML and one page's
+CSS, and it stays that way unless somebody decides otherwise.
+
+Two things sit above that, and they are separate:
+
+- **Presets on the FTP server.** DealerOn wants a set of finished sliders kept
+  there as the defaults — what goes onto a demo site, and what a designer starts
+  a build from rather than opening the builder cold. That is a library of
+  known-good snippets, not a platform feature: each one is still pasted into a
+  page, and a site that has one has a copy, not a link.
+- **A preset promoted to a platform-level replacement code.** This _can_
+  happen — a preset becomes a code the platform expands, so a page carries the
+  code rather than the markup. **Which presets get promoted is a decision the
+  senior designers make, not this repo and not the builder.** Nothing here
+  promotes anything, and no snippet the builder emits is a replacement code.
+
+The difference that matters when one _is_ promoted: a pasted snippet is frozen
+at the moment it was pasted and changing it means editing every page that has
+it, while a replacement code is edited once. That is the same argument as the
+shared engine path, one level up — and the same risk, since a mistake also
+reaches every page at once. Which is why the call is a person's.
+
+Do **not** auto-number or otherwise adjust a preset's slider name on the way
+into a page. The builder cannot see the page it is being pasted into, so
+uniqueness can only be surfaced, never enforced — see §3.
+
 ## 7. What not to do
 
 - **Do not fork the engine per site.** If a site needs something the engine
