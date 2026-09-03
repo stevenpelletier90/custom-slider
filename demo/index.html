@@ -43,7 +43,6 @@
          is what calls its render(). -->
     <script src="assets/guide.js" defer></script>
     <script src="assets/workbench.js" defer></script>
-
   </head>
   <body>
     <header class="ui-head">
@@ -71,7 +70,22 @@
         <h2 class="ui-title" id="wb-title"></h2>
         <p class="ui-blurb" id="wb-blurb"></p>
 
-        <div class="ui-panel"><div id="wb-settings"></div></div>
+        <!-- Settings are a scratchpad until you say otherwise. They used to
+             write themselves to localStorage on every render, so a value typed
+             to see what it looked like was still there a week later, on a
+             pattern the designer had forgotten touching - and the shipped
+             default it hid never came back. Keep is deliberate now, and Reset
+             puts this pattern back to what it ships as. -->
+        <div class="ui-panel">
+          <div class="ui-panel-bar">
+            <span id="wb-dirty" class="ui-dirty" hidden>Unsaved changes</span>
+            <span class="ui-panel-acts">
+              <button type="button" class="ui-btn" id="wb-keep">Keep these settings</button>
+              <button type="button" class="ui-btn" id="wb-reset">Reset to the default</button>
+            </span>
+          </div>
+          <div id="wb-settings"></div>
+        </div>
 
         <h3 class="ui-sr">Live preview</h3>
         <!-- The preview is an IFRAME, not a div, and that is the point: a media

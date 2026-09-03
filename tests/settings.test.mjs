@@ -28,7 +28,12 @@ const shown = (page) =>
     frame: document.querySelector('.ui-widths button[aria-pressed="true"]')?.dataset.w ?? null,
   }));
 
-describe('the settings come back with the slides', () => {
+// Settings are a scratchpad until Keep is pressed. They used to write
+// themselves on every render, so a value typed to see what it looked like was
+// still there next week - on a pattern the designer had forgotten touching,
+// holding out the shipped default it replaced. What survives a reload is what
+// someone decided should.
+describe('the settings come back with the slides once they are kept', () => {
   test('card style, ladder, gap, name and preview width all survive a reload', async () => {
     await pick(page, 'cards');
     const nameField = page.locator('[data-name-field]');
@@ -46,6 +51,8 @@ describe('the settings come back with the slides', () => {
     assert.equal(before.gap, '1.75em');
     assert.equal(before.frame, '992');
 
+    await page.click('#wb-keep');
+    await page.waitForTimeout(200);
     await page.reload({ waitUntil: 'load' });
     await stageReady(page);
     const after = await shown(page);
@@ -55,8 +62,12 @@ describe('the settings come back with the slides', () => {
   test('each pattern keeps its own settings', async () => {
     await pick(page, 'modelbar');
     await setField(page, 'Gap', '2.25em');
+    await page.click('#wb-keep');
+    await page.waitForTimeout(150);
     await pick(page, 'service');
     await setField(page, 'Gap', '0.75em');
+    await page.click('#wb-keep');
+    await page.waitForTimeout(150);
 
     await page.reload({ waitUntil: 'load' });
     await stageReady(page);
@@ -118,3 +129,94 @@ describe('nothing threw', () => {
     assert.deepEqual(errors, []);
   });
 });
+
+// Settings and slides are a scratchpad until Keep is pressed. They used to
+// write themselves to localStorage on every render, which made every experiment
+// permanent: a value typed to see what it looked like was still there next
+// week, on a pattern the designer had forgotten touching, quietly holding out
+// the shipped default it replaced.
+//
+// The split that makes this work is a SESSION store separate from the kept one.
+// Persistence is opt-in; keeping your work while the page is open is not, or
+// clicking the next pattern would throw away the slides you just wrote - a
+// worse bug than the one being fixed (F007 again, by another route).
+describe('nothing is remembered across a reload unless it is kept', () => {
+  const gap = (p) => p.locator('#wb-settings label:has(> span:text-is("Gap")) input[type=text]').first();
+  const flags = (p) =>
+    p.evaluate(() => ({
+      dirty: !document.getElementById('wb-dirty').hidden,
+      keep: !document.getElementById('wb-keep').disabled,
+      reset: !document.getElementById('wb-reset').disabled,
+      stored: !!JSON.parse(localStorage.getItem('cs-settings') || '{}')?.byPattern?.cards,
+    }));
+
+  const fresh = async () => {
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+    await stageReady(page);
+    await pick(page, 'cards');
+    await page.waitForTimeout(200);
+  };
+
+  test('an edit is offered for keeping, and thrown away by a reload if it is not', async () => {
+    await fresh();
+    assert.deepEqual(await flags(page), { dirty: false, keep: false, reset: false, stored: false }, 'a freshly loaded pattern is not dirty');
+
+    await gap(page).fill('2.5em');
+    await page.waitForTimeout(300);
+    const edited = await flags(page);
+    assert.equal(edited.dirty, true, 'an edit did not mark the panel');
+    assert.equal(edited.keep, true, 'Keep is not offered for an edit');
+    assert.equal(edited.stored, false, 'the edit reached storage without being kept');
+
+    await page.reload({ waitUntil: 'load' });
+    await stageReady(page);
+    await pick(page, 'cards');
+    await page.waitForTimeout(200);
+    assert.equal(await gap(page).inputValue(), '1em', 'an unkept edit survived a reload');
+  });
+
+  test('Keep makes it survive, and Reset puts the pattern back to what it ships as', async () => {
+    await fresh();
+    await gap(page).fill('2.5em');
+    await page.waitForTimeout(300);
+    await page.click('#wb-keep');
+    await page.waitForTimeout(300);
+    const kept = await flags(page);
+    assert.equal(kept.stored, true, 'Keep did not store anything');
+    assert.equal(kept.dirty, false, 'the panel still reads as unsaved after Keep');
+
+    await page.reload({ waitUntil: 'load' });
+    await stageReady(page);
+    await pick(page, 'cards');
+    await page.waitForTimeout(200);
+    assert.equal(await gap(page).inputValue(), '2.5em', 'a kept edit did not come back');
+
+    await page.click('#wb-reset');
+    await page.waitForTimeout(400);
+    assert.equal(await gap(page).inputValue(), '1em', 'Reset did not restore the shipped value');
+    assert.equal((await flags(page)).stored, false, 'Reset left the kept entry behind');
+
+    await page.reload({ waitUntil: 'load' });
+    await stageReady(page);
+    await pick(page, 'cards');
+    await page.waitForTimeout(200);
+    assert.equal(await gap(page).inputValue(), '1em', 'the reset did not outlive a reload');
+  });
+
+  // The half that persistence-by-default was accidentally providing. An edit
+  // has to follow you from pattern to pattern within the session even though
+  // nothing has been written to disk.
+  test('an unkept edit still survives switching pattern and back', async () => {
+    await fresh();
+    await gap(page).fill('3.25em');
+    await page.waitForTimeout(300);
+    await pick(page, 'modelbar');
+    await page.waitForTimeout(200);
+    await pick(page, 'cards');
+    await page.waitForTimeout(200);
+    assert.equal(await gap(page).inputValue(), '3.25em', 'switching pattern threw away an unkept edit');
+    assert.equal((await flags(page)).stored, false, 'the session edit leaked into storage');
+  });
+});
+

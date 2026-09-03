@@ -1644,9 +1644,14 @@ ${PHOTO_CSS}
         .map(([what, n, where]) => `<li><b>${what}</b> <span>${typeof n === 'number' ? `${n} line${n === 1 ? '' : 's'}` : n}</span>${typeof n === 'number' ? 'goes into ' : ''}${where}</li>`)
         .join('') + warn;
     codeEl.innerHTML = globalThis.CARGO.hl.snippet(state.codeText);
-    // Last, so a render that throws cannot leave the state that threw in
-    // storage for the next visit to boot into.
+    // NOT saved here. Settings used to write themselves to localStorage on
+    // every render, which made every experiment permanent: a value typed to see
+    // what it looked like was still there next week, on a pattern the designer
+    // had forgotten touching, quietly holding out the shipped default it
+    // replaced. Keeping is a decision now - "Keep these settings" - and this
+    // only marks the panel as having something worth keeping.
     saveSettings();
+    markDirty();
   }
 
   // Measured, not asserted: compare the card actually rendered against the
@@ -2645,7 +2650,14 @@ ${PHOTO_CSS}
   // heading on a model bar overwrote the service text, silently, with nothing
   // on the page saying so.
   const CKEY = 'cs-content';
-  const readStore = () => {
+  // Two stores, not one. THIS session's edits live in memory and follow you
+  // from pattern to pattern; localStorage only holds what Keep has been pressed
+  // on. Splitting them is what lets "not saved unless you save it" coexist with
+  // F007 - switching pattern must not throw away the slides you just wrote, and
+  // an edit that vanishes when you click the next pattern is a worse bug than
+  // the one that persisted too eagerly.
+  let session = null;
+  const readSaved = () => {
     try {
       const v = JSON.parse(localStorage.getItem(CKEY) || 'null');
       // The single-pattern shape this replaced, so a designer mid-edit keeps
@@ -2657,9 +2669,18 @@ ${PHOTO_CSS}
       return {};
     }
   };
+  // Seeded once from what was kept, then it is the session's own.
+  const readStore = () => (session ??= readSaved());
   const writeStore = (store) => {
+    session = store;
+  };
+  // Keep: this session's rows become the kept ones.
+  const flushContent = ({ drop = false } = {}) => {
+    const kept = readSaved();
+    if (drop) delete kept[state.pattern];
+    else if (readStore()[state.pattern]) kept[state.pattern] = readStore()[state.pattern];
     try {
-      localStorage.setItem(CKEY, JSON.stringify(store));
+      localStorage.setItem(CKEY, JSON.stringify(kept));
     } catch {
       /* private mode — the editor still works, it just will not survive a reload */
     }
@@ -2697,13 +2718,28 @@ ${PHOTO_CSS}
   const SKEY = 'cs-settings';
   const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'standalone', 'name', 'count', 'panes', 'dotsOver', 'dotsWere'];
 
-  const readSettings = () => {
+  // Same split as the slides: what is on screen is the session's, what is in
+  // localStorage is what Keep was pressed on.
+  let sessionSettings = null;
+  const readSaved2 = () => {
     try {
       const v = JSON.parse(localStorage.getItem(SKEY) || 'null');
       return v && typeof v === 'object' && v.byPattern && typeof v.byPattern === 'object' ? v : { byPattern: {} };
     } catch {
       /* a corrupt entry must not take the page down with it */
       return { byPattern: {} };
+    }
+  };
+  const readSettings = () => (sessionSettings ??= readSaved2());
+  const flushSettings = ({ drop = false } = {}) => {
+    const kept = readSaved2();
+    if (drop) delete kept.byPattern[state.pattern];
+    else if (readSettings().byPattern[state.pattern]) kept.byPattern[state.pattern] = readSettings().byPattern[state.pattern];
+    if (readSettings().frame != null) kept.frame = readSettings().frame;
+    try {
+      localStorage.setItem(SKEY, JSON.stringify(kept));
+    } catch {
+      /* private mode — the builder still works, it just will not survive a reload */
     }
   };
 
@@ -2725,34 +2761,87 @@ ${PHOTO_CSS}
   // gets no entry at all - and a later change to that pattern's shipped
   // defaults still reaches a browser that has been here before.
   let baseline = null;
-  const snapshot = () => JSON.stringify(SAVED.map((k) => state[k]));
-  const saveSettings = () => {
+  // The SLIDES are in here too, not just the settings. Keep writes both, so
+  // "is there anything to keep" has to ask about both - with the settings alone
+  // it was possible to rewrite every heading on a pattern and find the button
+  // still greyed out.
+  const snapshot = () => JSON.stringify([SAVED.map((k) => state[k]), state.content]);
+  // force: the Keep button. Without it this records the baseline on the first
+  // call after a pattern loads and writes nothing ever again - which is what
+  // makes the panel a scratchpad rather than a diary.
+  const saveSettings = ({ force = false } = {}) => {
     const snap = snapshot();
-    if (baseline === null) {
-      baseline = snap;
-      return;
-    }
-    if (snap === baseline) return;
-    const all = readSettings();
-    all.byPattern[state.pattern] = Object.fromEntries(SAVED.map((k) => [k, state[k]]));
-    try {
-      localStorage.setItem(SKEY, JSON.stringify(all));
-    } catch {
-      /* private mode — the builder still works, it just will not survive a reload */
-    }
+    if (baseline === null) baseline = snap;
+    // Memory always; disk only when Keep asked. The entry is written even
+    // unchanged, because "what this pattern looked like when I left it" is what
+    // restoreSettings reads on the way back.
+    readSettings().byPattern[state.pattern] = Object.fromEntries(SAVED.map((k) => [k, state[k]]));
+    if (force) flushSettings();
   };
 
   // The chosen preview width is not per pattern: it stands for the screen you
   // are designing for, which does not change when you switch pattern.
   const saveFrame = (w) => {
-    const all = readSettings();
-    all.frame = w;
-    try {
-      localStorage.setItem(SKEY, JSON.stringify(all));
-    } catch {
-      /* as above */
-    }
+    readSettings().frame = w;
+    flushSettings();
   };
+
+  // Is what is on screen different from what is stored (or, with nothing
+  // stored, from what the pattern ships as)? That is the only question the
+  // Keep/Reset pair needs answered, and snapshot() already answers it.
+  let markDirty = () => {};
+  function wireKeepReset() {
+    const keep = $('wb-keep');
+    const reset = $('wb-reset');
+    const flag = $('wb-dirty');
+    if (!keep || !reset || !flag) return;
+
+    markDirty = () => {
+      // The baseline is whatever the pattern rendered as before anyone touched
+      // it, so this claims it on the first call after a load. restoreSettings()
+      // clears it on every pattern switch, and render() calls this straight
+      // after - so the mark is always against THIS pattern's starting point,
+      // whether that came from its shipped defaults or from a kept entry.
+      if (baseline === null) baseline = snapshot();
+      const dirty = snapshot() !== baseline;
+      flag.hidden = !dirty;
+      keep.disabled = !dirty;
+      // Reset is about the KEPT entry as much as the screen: a pattern with
+      // something on disk can always be put back, dirty or not. Asked of the
+      // kept stores, never the session ones - those hold an entry for every
+      // pattern that has been rendered, so they would light this permanently.
+      reset.disabled = !dirty && !readSaved2().byPattern[state.pattern] && !readSaved()[state.pattern];
+    };
+
+    keep.addEventListener('click', () => {
+      saveSettings({ force: true });
+      flushContent();
+      baseline = snapshot();
+      markDirty();
+      flash(keep, 'Kept');
+    });
+
+    reset.addEventListener('click', () => {
+      // Both stores, because both are per pattern and a half reset is the
+      // confusing one: settings back to shipped, slides still edited.
+      delete readSettings().byPattern[state.pattern];
+      flushSettings({ drop: true });
+      clearContent();
+      flushContent({ drop: true });
+      // Reload the pattern from its shipped definition rather than unpicking
+      // the state by hand: loadPattern is the one place that knows what a
+      // pattern is before anybody touched it.
+      loadPattern(state.pattern);
+      buildPanel();
+      buildContent();
+      render();
+      baseline = snapshot();
+      markDirty();
+      flash(reset, 'Reset');
+    });
+
+    markDirty();
+  }
 
   function restoreSettings() {
     baseline = null;
@@ -2884,6 +2973,7 @@ ${PHOTO_CSS}
         r.splice(i, 1);
         state.count = r.length;
         saveContent();
+        markDirty();
         buildPanel();
         buildContent();
         render();
@@ -2915,6 +3005,7 @@ ${PHOTO_CSS}
           const r = adoptContent();
           r[i][k] = f.type === 'checkbox' ? input.checked : f.type === 'number' ? (f.max == null ? Number(input.value) : clamp(input.value, f.min ?? 0, f.max)) : esc(input.value);
           saveContent();
+          markDirty();
           if (adopting) {
             // The note, never this editor — rebuilding it would replace the
             // field being typed into and drop the caret on every keystroke.
@@ -2954,6 +3045,7 @@ ${PHOTO_CSS}
     state.count = undid.count;
     undid = null;
     saveContent();
+    markDirty();
     showUndo();
     buildPanel();
     buildContent();
@@ -2970,6 +3062,7 @@ ${PHOTO_CSS}
     r.push({ ...r[r.length - 1] });
     state.count = r.length;
     saveContent();
+    markDirty();
     buildPanel();
     buildContent();
     render();
@@ -3185,6 +3278,9 @@ ${PHOTO_CSS}
     buildPanel();
     buildContent();
     render();
+    // After the first render, so the baseline it compares against is the state
+    // the pattern actually booted into rather than an empty one.
+    wireKeepReset();
     // Matching a button by data-w IS the validation: a width that is not one of
     // the four finds no button. `keep: false` because the value came FROM
     // storage, and fitWidths below still steps it down if it no longer fits.

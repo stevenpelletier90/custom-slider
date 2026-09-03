@@ -370,6 +370,10 @@ describe('the builder survives its own inputs', () => {
     assert.ok(live, 'the builder stopped accepting edits after an out-of-range value');
 
     // A value stored by an older build must not take the page down either.
+    // Kept first: edits live in memory until someone says to keep them, so
+    // without this there is no stored entry to poison.
+    await page.click('#wb-keep');
+    await page.waitForTimeout(200);
     await page.evaluate(() => {
       const v = JSON.parse(localStorage.getItem('cs-content'));
       const first = Object.values(v)[0];

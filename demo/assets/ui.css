@@ -257,6 +257,36 @@ body {
   border-inline-end: 1px solid var(--rule);
 }
 
+/* Keep and Reset sit above the settings, not among them: they act on the
+   whole panel, and a button that means "all of this" reads wrong in a column
+   of things that each mean one knob. */
+.ui-panel-bar {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+  justify-content: flex-end;
+  padding-block-end: 0.6rem;
+  margin-block-end: 0.6rem;
+  border-block-end: 1px solid var(--rule);
+}
+
+.ui-panel-acts {
+  display: flex;
+  gap: 0.4rem;
+}
+
+/* Says the panel holds something the next reload will not. Amber is the one
+   accent and it marks the out-of-tolerance thing; unsaved work is exactly
+   that. */
+.ui-dirty {
+  margin-inline-end: auto;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--signal-text);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
 /* The settings sit across the top of the work column, so the preview below can
    have the full width. Sections flow into as many columns as fit rather than
    stacking, which is what made them a 312px sidebar in the first place. */
