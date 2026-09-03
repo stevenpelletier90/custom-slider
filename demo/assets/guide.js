@@ -442,7 +442,8 @@
             ['Logo strip', 'as supplied', 'transparent PNG or SVG, 300 wide is plenty'],
           ],
         )}
-        <p class="g-sub">The platform can resize a library image on the way out with <code>?width=N</code> on the path — 800 for a card, 1200 for anything full width. Always fill in the width and height boxes with the file's real pixel size: they are what stops the page jumping as photos load.</p>
+        <p class="g-sub"><strong><code>?width=N</code> only ever makes an image smaller.</strong> Ask a 900&nbsp;px file for 1600 and you get the 900 back, unchanged &mdash; measured on a live site. So it trims a card photo that is bigger than it needs to be (<code>?width=800</code>), and it is never the fix for a photo that is too small: replace the file. Adding <code>&amp;height=</code> as well re-crops rather than fitting, so a 300&times;500 asked for 400&times;300 comes back 300&times;225 &mdash; a different shape from the one your <code>width</code> and <code>height</code> attributes claim. Fill those two in with the file&rsquo;s real pixel size, after any <code>?width=</code>: they are what stops the page jumping as photos load.</p>
+        <p class="g-sub"><strong>The example photography is 900&times;600, and a full-width hero is up to 1170&nbsp;px wide on a desktop.</strong> The examples are there to show you the shape, not to ship: swap in your own upload at the size in the table above before the page goes live, or the photo is stretched.</p>
       </section>
 
       <section id="g-limits"><h3>Limits in v1</h3>
