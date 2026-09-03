@@ -581,6 +581,30 @@ describe('the hero can put its dots on the photo', () => {
     assert.ok(after.rootH < before.rootH, 'the reserved strip was not given back');
   });
 
+  // The one that matters, and the one that was missing: positioned over the
+  // photo is not the same as PAINTED over it. The dot row takes no z-index of
+  // its own, so the track painted straight over it - measured, the stack at a
+  // dot's centre was IMG, .cargo-photo, .cs-slide, .cs-track, then the dot.
+  // Geometry and computed style both said the dots were fine; they were
+  // invisible on the page.
+  test('a dot is the topmost thing at its own centre', async () => {
+    await pick(page, 'hero');
+    await page.waitForTimeout(250);
+    if (!(await overBox(page).isChecked())) {
+      await overBox(page).check();
+      await page.waitForTimeout(350);
+    }
+    await page.locator('#wb-stage .cs-dots').scrollIntoViewIfNeeded();
+    await page.waitForTimeout(200);
+    const stack = await page.evaluate(() => {
+      const dot = document.querySelector('#wb-stage .cs-dot');
+      const r = dot.getBoundingClientRect();
+      return document.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2).map((e) => `${e.tagName}.${String(e.className).split(' ').filter(Boolean)[0] ?? ''}`);
+    });
+    assert.ok(stack.length, 'the dot is not in the viewport, so this proves nothing');
+    assert.match(stack[0], /cs-dot/, `the photo paints over the dots — stack was ${stack.slice(0, 4).join(' > ')}`);
+  });
+
   test('the dots turn light, and the knobs say so', async () => {
     await pick(page, 'hero');
     await page.waitForTimeout(250);

@@ -1044,7 +1044,14 @@ ${PHOTO_CSS}
     // dot is 12px across and the thing behind it is arbitrary, so there is no
     // colour that reads on every photo. A hairline dark ring gives them an edge
     // whatever they land on, which is what Bootstrap's own indicators lean on.
-    const dots = state.hideDots ? `${sel} .cs-dots { display: none; }` : state.dotsOver ? `${sel} .cs-dot::after { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45); }` : '';
+    // The z-index is not optional and it comes first. The dot row is absolutely
+    // positioned but takes no z-index of its own, because it normally sits in
+    // the reserved strip OUTSIDE the track and never overlaps anything. Move it
+    // onto the photo and the track paints straight over it: measured with
+    // elementsFromPoint, the stack at a dot's centre read IMG, .cargo-photo,
+    // .cs-slide, .cs-track, and only then the dot. The engine's own .cs-arrow
+    // carries z-index: 1 for exactly this reason.
+    const dots = state.hideDots ? `${sel} .cs-dots { display: none; }` : state.dotsOver ? `${sel} .cs-dots { z-index: 1; }\n${sel} .cs-dot::after { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45); }` : '';
     // No arrow-inset override any more: the engine's own default is 0, which
     // is what all 17 patterns and all 7 looks were restating. Three lines a
     // snippet, and the gutter formula every look uses (arrow-size + 0.25em)
