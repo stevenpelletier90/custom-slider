@@ -374,3 +374,9 @@ Rebuild and re-commit `dist/` whenever `src/` changes.
   unsupported (autoplay is ignored, console warning).
 - iOS flicks advance ~one slide per gesture (WebKit limitation) — arrows/dots
   are the primary traversal there.
+- **The slider emits the carousel and nothing around it**, deliberately. A
+  section heading, a "View all" link, a full-bleed band behind the row: page
+  furniture, built in the block with the site's own classes, with the slider
+  placed inside. Wrapping them into the snippet would freeze another class name
+  into the markup contract to do what the block markup already does — and
+  `--strip-bg` paints the strip, not the page width, for the same reason.

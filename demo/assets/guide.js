@@ -100,6 +100,7 @@
 
   const LIMITS = [
     'Left-to-right only in v1.',
+    'The slider is the carousel and nothing around it. A section heading, a “View all” link, a full-bleed colour band behind the row — those are page furniture, not slider settings. Build them in the block with the site’s own classes and put the slider inside. Wrapping them into the snippet would freeze another class name into the markup contract to do something your block markup already does, and <code>--strip-bg</code> paints the strip rather than the full width of the page for the same reason.',
     'Horizontal only. There is no vertical mode: the engine measures and scrolls along one axis, and the thumbnail rail is laid out and auto-scrolled horizontally too.',
     "No “slider on a phone, plain grid on a desktop”. Wrapping the track onto two rows leaves the arrows and dots in place over something that no longer scrolls. What works instead: set the desktop count to the number of slides, and the engine hides its own arrows and dots once everything fits (it marks the root <code>data-cs-fits</code>). That route needs 8 slides or fewer, because the per-view ladder stops at 8. For a real two-row desktop grid, use the page's own grid classes and no slider at all.",
     'No infinite loop and no cloned slides: the ends rewind, or stop with <code>data-cs-rewind="false"</code>. Cloning would duplicate content for search engines and confuse screen readers.',
