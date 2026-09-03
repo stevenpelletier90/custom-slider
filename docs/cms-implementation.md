@@ -302,6 +302,14 @@ The slider is ordinary block HTML, so the usual rules apply unchanged:
   site, then reference it flat as `#MISCPATH#hero.jpg`; the platform expands it
   to that dealer's own uploads folder. Never write the expanded path by hand —
   subfolder behaviour is per-dealer, so verify the served URL after uploading.
+- **`?width=N` is the platform resizing on the way out, not a URL convention.**
+  It only works where the CMS serves the file, so it does nothing in the demo or
+  on any other host — measured on one 900×600 photo: from a dealer domain
+  `?width=400` returns 400×267 and 24 KB against 88, and the identical file from
+  a static host comes back untouched. It only ever shrinks (a 900 px file asked
+  for 1600 returns the 900 byte for byte), and adding `&height=` re-crops rather
+  than fits (300×500 asked for 400×300 returns 300×225). Write the `width` and
+  `height` attributes for the size the page actually receives.
 - **Vehicle cutouts for a model bar:** `#CHROMEPHOTOPATH|<StyleID>|<angle>|<size>#`
   — Style IDs from the Chrome Photo Builder. Angle 1 at 640 is what the demo uses.
 - **The demo's copy panel already does this for you.** What you paste out of the
