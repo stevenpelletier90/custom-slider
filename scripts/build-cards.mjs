@@ -61,6 +61,20 @@ const scope = (css, sel) =>
     return `${pre}${sel} ${tok}`;
   });
 
+// Drop the look's own class to zero specificity wherever it is a PARENT, so a
+// designer's own rule beats the card style whichever order the two sheets land
+// in. Measured before this existed: `.cargo-tile .cargo-name` and a designer's
+// `.my-slider .cargo-name` are both (0,2,0), so the tie broke on source order -
+// with the shared sheet first the designer's colour won, with their CSS first
+// it was silently ignored. Where the platform emits Style Only relative to a
+// head <link> is undocumented, so that was a coin toss.
+//
+// Never where the class is the WHOLE selector. That rule carries the look's
+// custom properties, and at (0,0,0) the engine's own `.cs` block outranks it:
+// measured, the tall tile's --cs-arrow-bg reverted from rgba(255,255,255,0.14)
+// to the engine's rgba(0,0,0,0.55) and put a dark arrow on its dark strip.
+const weaken = (css, sel) => css.replace(new RegExp(`(^|[{}\\n,]\\s*)${sel.replace('.', '\\.')}(?=\\s+[^{\\s])`, 'g'), (_, pre) => `${pre}:where(${sel})`);
+
 const out = [
   '/*! Custom Slider — card styles. Generated from demo/assets/looks.js by',
   '   scripts/build-cards.mjs and appended to the engine stylesheet — do not',
@@ -89,7 +103,7 @@ for (const [id, look] of Object.entries(LOOKS)) {
     // the card is sized in em from it, so it has to be here too or a pasted
     // card inherits <html> and Bootstrap 3's 10px root shrinks it to 62.5%.
     `${sel} {\n${decls}\n  font-size: var(--cargo-font, 1em);\n}`,
-    scope(look.css, sel),
+    weaken(scope(look.css, sel), sel),
   );
 }
 

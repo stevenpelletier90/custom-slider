@@ -303,6 +303,8 @@
         )}
         <p class="g-sub">To change something about a card style, set the property from the table below on your own slider — you do not need to copy the whole style. The builder writes only what you
         changed, which is why the code it gives you is a few lines rather than forty.</p>
+        <p class="g-sub">If you go further and write a rule of your own against one of these classes — <code>.my-slider .cargo-name { color: #c8102e }</code> — it wins. The shared stylesheet holds
+        its card rules at deliberately low weight, so your rule beats it wherever the platform happens to put the two sheets. You do not need <code>!important</code>, and you should not use it.</p>
       </section>
 
       <section id="g-options"><h3>Options</h3>

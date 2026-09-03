@@ -193,6 +193,42 @@ describe('the pasted block on a hostile host page', () => {
     }
   });
 
+  // F053: a designer restyling a card writes against their own slider name, and
+  // `.my-slider .cargo-name` ties with the shared sheet's `.cargo-tile
+  // .cargo-name` at (0,2,0) - so source order decided, and where the platform
+  // emits Style Only relative to a head <link> is undocumented. Measured before
+  // the fix: shared sheet first gave the designer's colour, their CSS first
+  // silently gave the card style's. The shared sheet now weakens the look class
+  // to :where(), so the designer wins either way.
+  test('a hand-written card restyle wins whichever order the sheets land in', async () => {
+    const MINE = '.my-slider .cargo-name { color: rgb(200, 16, 46); }';
+    const HTML =
+      '<div class="my-slider cs cargo-tile cs-xs-2" data-cs aria-label="t"><ul class="cs-track">' +
+      '<li class="cs-slide"><a class="cargo-card" href="#"><p class="cargo-name">Tahoe</p></a></li>' +
+      '<li class="cs-slide"><a class="cargo-card" href="#"><p class="cargo-name">Traverse</p></a></li></ul></div>';
+    const at = async (cssFirst) => {
+      await host.setContent(hostHtml({ ...engine, css: MINE, html: HTML, cssFirst }), { waitUntil: 'load' });
+      await host.waitForTimeout(150);
+      return host.evaluate(() => getComputedStyle(document.querySelector('.cargo-name')).color);
+    };
+    const sheetFirst = await at(false);
+    const mineFirst = await at(true);
+    assert.equal(sheetFirst, 'rgb(200, 16, 46)', 'the card style beat the designer even with the shared sheet first');
+    assert.equal(mineFirst, sheetFirst, `paste order decides: ${mineFirst} vs ${sheetFirst}`);
+  });
+
+  // The other half of that change: the look's own class must keep its full
+  // specificity where it IS the selector, because that rule carries the look's
+  // custom properties and the engine's `.cs` block sets some of the same ones.
+  test('a card style still wins the engine defaults it overrides', async () => {
+    const HTML =
+      '<div class="cs cargo-portrait cs-xs-2" data-cs aria-label="t"><ul class="cs-track"><li class="cs-slide"><a class="cargo-card" href="#"><p class="cargo-name">Giulia</p></a></li></ul></div>';
+    await host.setContent(hostHtml({ ...engine, html: HTML }), { waitUntil: 'load' });
+    await host.waitForTimeout(150);
+    const bg = await host.evaluate(() => getComputedStyle(document.querySelector('.cs')).getPropertyValue('--cs-arrow-bg').trim());
+    assert.match(bg, /255/, `the tall tile lost its light arrow to the engine default (${bg}) — a dark arrow on its dark strip`);
+  });
+
   // F078: the cards matched the preview to 0.00px at an equal body size, but
   // the control-like elements did not. `.cargo-tabs [role="tab"]` and
   // `.cargo-filterbar button` set `font: inherit` and no line-height, so the
