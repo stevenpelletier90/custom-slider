@@ -126,6 +126,14 @@
               </button>
             </span>
           </span>
+          <!-- What this width CANNOT show. A media query asks the window, and
+               the preview is a box inside a much wider one, so the phone-only
+               rules in the snippet and in the card sheet never fire here. That
+               caveat used to live in the buttons' title attribute, which is
+               exactly the wrong place: a tooltip is unreachable by touch and by
+               keyboard, i.e. the audience for a phone preview. It is filled in
+               from the generated CSS, so it names what is actually missing. -->
+          <span class="ui-spec-note ui-spec-note--aside" id="wb-tier-note" hidden></span>
           <span class="ui-spec-item"><b>Card size</b> <span id="spec-card">—</span></span>
           <span class="ui-spec-item"><b>Cards shown</b> <span id="spec-across">—</span></span>
           <span class="ui-spec-item"><b>Gap</b> <span id="spec-gap">—</span></span>

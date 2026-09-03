@@ -784,6 +784,116 @@ describe('picking a colour does not rebuild the slider', () => {
   });
 });
 
+// F006: a media query asks the WINDOW, and the preview is a fixed-width box
+// inside a much wider one - so phone-only rules sit inert however narrow the
+// stage is set. Measured against real narrow windows, ten of seventeen patterns
+// differed at the 330 frame. Two halves are guarded here: the preview now SAYS
+// what it is not showing, in visible text rather than a tooltip nobody on a
+// touchscreen can reach; and the card count it pins accounts for the card
+// style's own narrow rule, which it used to ignore.
+describe('the preview says what a width cannot show', () => {
+  const noteAt = async (page, w) => {
+    await page.click(`.ui-widths button[data-w="${w}"]`);
+    await page.waitForTimeout(180);
+    return page.evaluate(() => {
+      const n = document.getElementById('wb-tier-note');
+      return { hidden: n.hidden, text: n.textContent.trim(), bold: n.querySelector('b')?.textContent ?? null };
+    });
+  };
+
+  test('it names the phone-only rules at Phone, and stays quiet at the widths that render truthfully', async () => {
+    await pick(page, 'modelbar');
+    const phone = await noteAt(page, 330);
+    assert.equal(phone.hidden, false, 'nothing said at Phone, where ten of seventeen patterns differ');
+    assert.match(phone.text, /arrow size/, `the note does not name the arrow size (${phone.text})`);
+    assert.match(phone.text, /side gutter/, `the note does not name the gutter (${phone.text})`);
+    assert.match(phone.text, /narrow the window/i, 'the note does not say what to do about it');
+
+    for (const w of [750, 970, 1170]) {
+      const n = await noteAt(page, w);
+      assert.equal(n.hidden, true, `the note fires at ${w}, which renders truthfully`);
+    }
+  });
+
+  // It reads the generated CSS, so it can only name a rule that is really
+  // there - and it must stay quiet for a pattern that has no narrow rules at
+  // all rather than printing a blanket disclaimer.
+  test('a pattern with no phone-only rules says nothing', async () => {
+    await pick(page, 'lightbox');
+    const n = await noteAt(page, 330);
+    assert.equal(n.hidden, true, `a pattern with no narrow rules still showed: ${n.text}`);
+  });
+
+  // The caveat used to live in the width buttons' title attribute. A tooltip
+  // needs a hover, so it was unreachable by touch and by keyboard - the exact
+  // audience for a phone preview.
+  test('the caveat is not hidden in a tooltip any more', async () => {
+    const titles = await page.evaluate(() => [...document.querySelectorAll('.ui-widths button')].map((b) => b.title));
+    for (const t of titles) assert.doesNotMatch(t, /phone-only|only apply once/i, `a button title still carries the caveat: ${t}`);
+  });
+
+  // The pin resolved the designer's ladder alone. A card style carries its own
+  // narrow override - the cutout tile drops to one across below 380px - and
+  // that is a max-width rule, so it was as inert as everything else: the 330
+  // frame showed two tiles where a 330 device gets one, each 114px against a
+  // 150px minimum, which pushed the fit gauge amber and advised "show fewer
+  // across" about a row that does not exist.
+  //
+  // Asserted as an INVARIANT rather than against the number 1: the look's own
+  // stylesheet is the authority on what it does below its narrow breakpoint, so
+  // whatever it says there is what the preview must show. A hard-coded 1 passed
+  // against the broken code whenever an earlier test had left the ladder at 1,
+  // which is a test that proves nothing.
+  test('the pinned card count matches what a phone actually gets', async () => {
+    // Its own page. This file shares one across every describe, and earlier tests
+    // edit the ladder - which had this assertion agreeing with the broken code by
+    // coincidence, because the leftover ladder happened to be 1 already.
+    const { page: fresh } = await openBuilder(browser, server.origin, 1500);
+    // Every look that HAS a narrow per-view rule, so the guard widens on its own
+    // when another one gains it.
+    const cases = await fresh.evaluate(() =>
+      Object.entries(globalThis.CARGO.LOOKS)
+        .map(([id, l]) => {
+          const hit = [...String(l.css ?? '').matchAll(/@media[^{]*max-width:\s*(\d[\d.]*)px[^{]*\{([\s\S]*?)--cs-per-view:\s*(\d+)/g)].filter((m) => +m[1] >= 330);
+          return hit.length ? { id, want: hit[hit.length - 1][3] } : null;
+        })
+        .filter(Boolean),
+    );
+    assert.ok(cases.length, 'no card style declares a narrow per-view rule any more');
+
+    for (const c of cases) {
+      // Reach the look through a pattern that wears it, then force the look so
+      // no earlier test decides the answer.
+      const pat = await fresh.evaluate((look) => Object.entries(globalThis.CARGO.PATTERNS).find(([, p]) => p.look === look)?.[0] ?? null, c.id);
+      if (!pat) continue;
+      await pick(fresh, pat);
+      await fresh.click('.ui-widths button[data-w="330"]');
+      await fresh.waitForTimeout(240);
+      const seen = await fresh.evaluate(() => ({
+        perView: getComputedStyle(document.querySelector('#wb-stage .cs')).getPropertyValue('--cs-per-view').trim(),
+        across: document.getElementById('spec-across').textContent,
+      }));
+      assert.equal(seen.perView, c.want, `${pat}/${c.id}: the 330 preview pins ${seen.perView} across where its own card sheet says ${c.want}`);
+      assert.match(seen.across, new RegExp(`\\b${c.want}\\b`), `${pat}/${c.id}: the readout disagrees with the strip (${seen.across})`);
+    }
+    await fresh.context().close();
+  });
+
+  // Whatever the pin does, it is PREVIEW only: a dealer page is the width it
+  // is and must ship the real ladder.
+  test('the copied CSS still ships the real ladder, not the pin', async () => {
+    await pick(page, 'modelbar');
+    await page.click('.ui-widths button[data-w="330"]');
+    await page.waitForTimeout(180);
+    const parts = await copyParts(page);
+    // The model bar ships its ladder as the cs-xs/sm/md/lg column classes on
+    // the markup, not as emitted media queries - so what has to be proved is
+    // that the PIN is absent and the ladder is still on the slides.
+    assert.doesNotMatch(parts.css, /--cs-per-view/, 'the preview pin leaked into the copied CSS');
+    assert.match(parts.html, /\bcs-(xs|sm|md|lg)-\d/, 'the copied markup lost its column classes');
+  });
+});
+
 describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);

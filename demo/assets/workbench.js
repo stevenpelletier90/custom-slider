@@ -860,6 +860,70 @@ ${PHOTO_CSS}
   let frameW = 1170; // the pressed width button, 0 for "fill"
   const frameTier = () => (frameW ? FRAME_TIER[frameW] : innerWidth >= 1200 ? 1200 : innerWidth >= 992 ? 992 : innerWidth >= 768 ? 768 : 0);
 
+  // ---- what a preview width cannot show ------------------------------------
+  //
+  // A media query asks the WINDOW. The preview is a fixed-width box inside a
+  // much wider one, so every phone-only rule - in the snippet AND in the shared
+  // card sheet - sits inert however narrow the stage is set. Measured across all
+  // seventeen patterns against real narrow windows: ten differ at the 330 frame
+  // (two cards across where a phone gets one, 44px arrows against 36, a 48px
+  // gutter a phone drops, a 21:9 hero that crops to 4:3), while 750/970/1170
+  // match to under a pixel.
+  //
+  // Rather than a disclaimer, say WHAT is missing - read out of the CSS the
+  // builder just generated, so it reports the code being copied and cannot
+  // describe a rule that is not there.
+
+  // Declarations from every @media (max-width: N) block that WOULD apply on a
+  // screen this wide - so N at or above the screen, not N below it. Brace-matched
+  // rather than regexed to the next `}`: a card rule holds nested blocks and a
+  // lazy match stops inside the first one.
+  const narrowDecls = (css, atScreen) => {
+    const out = [];
+    const re = /@media[^{]*max-width:\s*(\d[\d.]*)px[^{]*\{/g;
+    for (let m; (m = re.exec(css));) {
+      if (+m[1] < atScreen) continue;
+      let depth = 1,
+        i = re.lastIndex;
+      for (; i < css.length && depth; i++) depth += css[i] === '{' ? 1 : css[i] === '}' ? -1 : 0;
+      for (const d of css.slice(re.lastIndex, i - 1).matchAll(/([-\w]+)\s*:\s*([^;{}]+?)\s*(?=[;}])/g)) out.push([d[1], d[2], +m[1]]);
+    }
+    return out;
+  };
+
+  // Plain words for the properties a phone block actually sets, the same way
+  // KNOB_LABELS names the knobs. Anything unmapped falls through to its own
+  // property name: less pretty, still true, and it never goes stale.
+  const NARROW_LABEL = {
+    '--cs-per-view': 'cards across',
+    '--cs-arrow-size': 'arrow size',
+    'padding-inline': 'side gutter',
+    'aspect-ratio': 'photo shape',
+    'flex-direction': 'card direction',
+    'font-size': 'text size',
+  };
+
+  // The note under the width buttons. Shown only where something is actually
+  // hidden, so it stays quiet at the three tiers that do render truthfully.
+  function tierNote() {
+    const el = $('wb-tier-note');
+    if (!el) return;
+    // The frame stands in for a screen this wide. The Phone button is 330, and
+    // on a phone the container IS about the screen, so it is a fair stand-in;
+    // the other three map to the Bootstrap tier they preview. "Fill" is the real
+    // window, where nothing is being faked at all.
+    const screen = frameW ? FRAME_TIER[frameW] || frameW : innerWidth;
+    // --cs-per-view is the one narrow rule the preview DOES honour, because the
+    // pin resolves it (see cssFor). Listing it here would name something that is
+    // on screen, which is the same dishonesty in the other direction.
+    const found = [...narrowDecls(cssFor('.wb-live'), screen), ...narrowDecls(LOOKS[state.look]?.css ?? '', screen)].filter(([prop]) => prop !== '--cs-per-view');
+    el.hidden = !found.length;
+    if (!found.length) return;
+    const names = [...new Set(found.map(([prop]) => NARROW_LABEL[prop] ?? prop))];
+    const last = names.pop();
+    el.innerHTML = `<b>Not shown at this width:</b> ${names.length ? `${names.join(', ')} and ${last}` : last}. A media query asks the browser window, and the preview is a box inside it — narrow the window itself to see these.`;
+  }
+
   // The ladder evaluated at one tier, the way the cascade would: every
   // matching min-width rule applies and the last one wins.
   const perViewAt = (tier) => {
@@ -1037,7 +1101,20 @@ ${PHOTO_CSS}
     // the frame stands in for; `${sel}.cs` outranks the cs-sm-N class the
     // markup carries, so it wins wherever it sits. Preview only: the copied
     // CSS ships the real ladder, which is what a page needs.
-    const pin = preview ? `${sel}${ROOT} { --cs-per-view: ${perViewAt(frameTier())}; }` : '';
+    //
+    // The ladder is only half the answer. A card style carries its own narrow
+    // override - the cutout tile drops to one across below 380px, a logo panel
+    // past 460, a split card by 480 - and those are max-width rules, so they
+    // were as inert in the preview as everything else. The pin resolved the
+    // designer's ladder alone and showed TWO cutout tiles at the 330 frame
+    // where a 330 device gets one. That was not only a wrong picture: each
+    // card came out 114px against a 150px minimum, so the fit gauge went amber
+    // and told the designer to "show fewer across" about a row that does not
+    // exist. Read the override off the look's own CSS rather than listing which
+    // looks have one, so a look that gains a narrow rule is covered by it.
+    const narrowPerView = preview ? narrowDecls(LOOKS[state.look]?.css ?? '', frameW || innerWidth).filter(([p]) => p === '--cs-per-view') : [];
+    const pinned = narrowPerView.length ? narrowPerView[narrowPerView.length - 1][1] : perViewAt(frameTier());
+    const pin = preview ? `${sel}${ROOT} { --cs-per-view: ${pinned}; }` : '';
 
     // Dots on a photograph need more than a light colour. Screenshotted on the
     // service-bay hero, white at 55% all but disappeared into a busy image: the
@@ -1563,6 +1640,9 @@ ${PHOTO_CSS}
     const warn = $('wb-warn');
     const spec = $('wb-spec');
     const set = (id, v) => ($(id).textContent = v);
+    // Above the early returns: what a width cannot show is true of the width,
+    // not of whether the strip has measured itself yet.
+    tierNote();
     const root = stage.querySelector('.cs');
     const slide = stage.querySelector('.cs-slide');
     if (!root || !slide) return;
@@ -2919,16 +2999,15 @@ ${PHOTO_CSS}
     for (const b of widthBtns()) {
       const w = +b.dataset.w;
       b.disabled = w > reach + 1;
-      // Honest about what this button can and cannot show. It resizes the
-      // preview box and pins the per-view count for that tier, but a media
-      // query asks the WINDOW, so the phone-only rules in the card styles and
-      // the pattern CSS - smaller arrows, a tighter peek, a dropped gutter -
-      // do not apply until the window itself is that narrow. Narrow the
-      // browser to see those.
+      // The caveat that used to be appended here now prints as visible text
+      // under the buttons (#wb-tier-note), naming the properties it is actually
+      // hiding. A title attribute was the wrong home for it twice over: a
+      // tooltip needs a hover, so it is unreachable by touch and by keyboard,
+      // and a phone preview is read by exactly those people.
       b.title = b.disabled
         ? `Make the window about ${Math.round(w + (innerWidth - reach))}px wide to use this`
         : w
-          ? `${SCREEN[w]} screen — the slider gets ${w}px. Cards per view match; phone-only rules only apply once the window itself is that narrow.`
+          ? `${SCREEN[w]} screen — the slider gets ${w}px`
           : 'Use all the width this page has';
       if (b.getAttribute('aria-pressed') === 'true') active = b;
     }

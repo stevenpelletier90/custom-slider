@@ -585,6 +585,17 @@ body {
   font-size: 0.8rem;
 }
 
+/* The width-button caveat, not a problem with the settings: quieter than the
+   fit warning it sits beside so the two do not compete for the same alarm. */
+.ui-spec-note--aside {
+  color: var(--ink-soft);
+}
+
+.ui-spec-note--aside b {
+  font-weight: 600;
+  color: var(--ink);
+}
+
 /* ---- settings panel ---------------------------------------------------- */
 
 /* Two columns, not a flex row pushing the ends apart. space-between let every
