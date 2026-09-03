@@ -477,6 +477,67 @@ describe('a link to a card style opens that card style', () => {
   });
 });
 
+describe('the small things a designer trips over', () => {
+  // F089: the builder read location.hash once at boot, so typing a different
+  // #pattern and pressing Enter left the previous one on screen - and Back and
+  // Forward were dead for the same reason.
+  test('editing the address switches the pattern', async () => {
+    await pick(page, 'modelbar');
+    await page.evaluate(() => {
+      location.hash = '#service';
+    });
+    await page.waitForTimeout(500);
+    const showing = await page.evaluate(() => document.querySelector('#wb-nav button[aria-current="true"]')?.dataset.go);
+    assert.equal(showing, 'service', 'the address says one pattern and the stage shows another');
+  });
+
+  test('a hash naming nothing is left alone', async () => {
+    await pick(page, 'modelbar');
+    await page.evaluate(() => {
+      location.hash = '#not-a-pattern';
+    });
+    await page.waitForTimeout(400);
+    const showing = await page.evaluate(() => document.querySelector('#wb-nav button[aria-current="true"]')?.dataset.go);
+    assert.equal(showing, 'modelbar', 'an unknown hash changed the pattern');
+  });
+
+  // F086: comparing seven card styles meant clicking all seven and watching the
+  // preview, because the description only appeared once you had chosen one.
+  test('every card style button says what it is before you click it', async () => {
+    await pick(page, 'modelbar');
+    const titles = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .wb-look')].map((b) => b.getAttribute('title')));
+    assert.ok(titles.length >= 7, `only ${titles.length} card styles`);
+    assert.deepEqual(
+      titles.filter((t) => !t || t.length < 10),
+      [],
+      'a card style button carries no usable tooltip',
+    );
+  });
+
+  // F093: "3 sliders" is true of the card grid and misleading on the tabbed
+  // bar, where the three carousels are one bar's three panes.
+  test('the tabbed bar counts panes, the card grid counts sliders', async () => {
+    await pick(page, 'tabs');
+    await page.waitForTimeout(200);
+    assert.match(await page.evaluate(() => document.getElementById('spec-across').textContent), /panes/, 'the tabbed bar still calls its panes sliders');
+    await pick(page, 'card-gallery');
+    await page.waitForTimeout(200);
+    const cg = await page.evaluate(() => document.getElementById('spec-across').textContent);
+    if (/·/.test(cg)) assert.match(cg, /sliders/, 'the card grid calls its sliders panes');
+  });
+
+  // F091: rosters store names HTML-escaped, so a name beginning with a quote
+  // put the "&" of the entity in the avatar circle instead of a letter.
+  test('the avatar shows a letter, not the start of an entity', async () => {
+    await pick(page, 'reviews');
+    const box = page.locator('#wb-content fieldset').first().locator('input[type="text"]').first();
+    await box.fill('"Bee" Wilson');
+    await page.waitForTimeout(300);
+    const shown = await page.evaluate(() => document.querySelector('#wb-stage .cargo-avatar')?.textContent?.trim());
+    assert.equal(shown, 'B', `the avatar reads "${shown}"`);
+  });
+});
+
 describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);

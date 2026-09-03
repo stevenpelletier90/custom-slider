@@ -1196,6 +1196,10 @@ code {
 
 .ui-doc section {
   padding-block-start: 2.25rem;
+
+  /* Same reason as .gx-card: the masthead is sticky, so a TOC jump would
+     otherwise land with the section heading hidden underneath it. */
+  scroll-margin-block-start: 4.5rem;
 }
 
 .ui-doc h3 {

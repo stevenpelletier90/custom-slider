@@ -88,6 +88,22 @@
 
   const pic = (m) => `<img src="${m.img}" width="${m.w ?? 1200}" height="${m.h ?? 750}" alt="${m.alt}" loading="lazy" decoding="async">`;
 
+  // The avatar letter, taken from the name a reader sees rather than from the
+  // stored string. Rosters hold names HTML-escaped, so a name a designer types
+  // beginning with a quote is stored `&quot;...` and `name[0]` is the "&" of the
+  // entity - an ampersand in the circle instead of a letter. Decode first, take
+  // the initial, then escape that one character on the way out.
+  const ENTITY = { '&amp;': '&', '&quot;': '"', '&#39;': "'", '&lt;': '<', '&gt;': '>' };
+  const initial = (name) => {
+    const plain = String(name ?? '').replace(/&(?:amp|quot|#39|lt|gt);/g, (e) => ENTITY[e]);
+    // The first LETTER, not the first character: a name a designer types as
+    // `"Bee" Wilson` would otherwise put a quotation mark in the circle, which
+    // is no more a letter than the `&` this started as. Falls back to the first
+    // character for a name with no letters in it at all.
+    const c = (/\p{L}|\p{N}/u.exec(plain) ?? [])[0] ?? plain.trim()[0] ?? '';
+    return c.toUpperCase().replace(/[&<>"]/g, (x) => `&${{ '&': 'amp', '<': 'lt', '>': 'gt', '"': 'quot' }[x]};`);
+  };
+
   // A caption under a photo is the usual second request, and the slide was a
   // bare <img> in a <span>, so it meant hand-writing <figure>/<figcaption> and
   // its CSS per slide. Empty stays exactly the markup that shipped before -
@@ -329,7 +345,7 @@
       perView: { base: 1, 768: 2, 992: 2, 1200: 3 },
       minCard: 260,
       videoDialog: true,
-      models: PHOTOS.slice(0, 3).map((m, i) => ({ ...m, name: ['Dana W.', 'Marcus T.', 'Gene & Marta L.'][i] })),
+      models: PHOTOS.slice(0, 3).map((m, i) => ({ ...m, name: ['Dana W.', 'Marcus T.', 'Gene &amp; Marta L.'][i] })),
       // `color: inherit` is load-bearing, not tidiness. A <button> takes the UA's
       // `buttontext` system colour unless told otherwise, and `font: inherit`
       // does not carry colour with it. `buttontext` follows color-scheme, so in
@@ -530,7 +546,7 @@ ${VIDEO_DIALOG_CSS}`,
         models.map(
           (m) => `<figure class="cargo-review">
   <figcaption>
-    <span class="cargo-avatar" aria-hidden="true" style="--avatar-bg: ${m.bg}">${m.name[0]}</span>
+    <span class="cargo-avatar" aria-hidden="true" style="--avatar-bg: ${m.bg}">${initial(m.name)}</span>
     <span class="cargo-byline"><strong>${m.name}</strong><small>${m.when}</small></span>
   </figcaption>
   <span class="cargo-stars" role="img" aria-label="Rated ${clamp(m.stars, 0, 5)} out of 5">${'&starf;'.repeat(clamp(m.stars, 0, 5))}${'&star;'.repeat(5 - clamp(m.stars, 0, 5))}</span>
@@ -1494,7 +1510,9 @@ ${PHOTO_CSS}
     // honest reading is "6 of 6".
     const slides = root.querySelectorAll('.cs-slide').length;
     const across = Math.min(+cs.getPropertyValue('--cs-per-view').trim() || 1, slides);
-    set('spec-across', `${across} of ${slides}${n > 1 ? ` · ${n} sliders` : ''}`);
+    // "3 sliders" is true of the card grid and misleading on the tabbed bar,
+    // where the three carousels are one bar's three panes.
+    set('spec-across', `${across} of ${slides}${n > 1 ? ` · ${n} ${PATTERNS[state.pattern].panes ? 'panes' : 'sliders'}` : ''}`);
     set('spec-gap', cs.getPropertyValue('--cs-gap').trim() || '0');
     set('spec-stops', String(stops));
     set('spec-controls', fits ? 'nothing — they all fit' : 'arrows' + (state.hideDots ? '' : ' and dots'));
@@ -1916,6 +1934,9 @@ ${PHOTO_CSS}
         b.className = 'wb-look';
         b.setAttribute('aria-pressed', String(id === state.look));
         b.innerHTML = `<span class="wb-look-icon">${look.icon}</span><span>${look.label}</span>`;
+        // Comparing seven styles meant clicking all seven and watching the
+        // preview change; the description only appeared after choosing one.
+        b.title = look.note ?? look.label;
         b.addEventListener('click', () => {
           // Selecting what is already selected does nothing. It used to reset
           // the ladder to the look's own default, so clicking the highlighted
@@ -2721,20 +2742,35 @@ ${PHOTO_CSS}
     b.innerHTML = `<span class="wb-glyph wb-glyph--${id}"></span><span>${SHORT[id] ?? p.label}</span>`;
     b.title = p.label;
     b.dataset.go = id;
-    b.addEventListener('click', () => {
-      loadPattern(id);
-      // Settings first, content second: restoreContent sets state.count from
-      // the stored rows, and edited rows ARE the slide count.
-      restoreSettings();
-      restoreContent();
-      buildPanel();
-      buildContent();
-      render();
-      for (const x of nav.querySelectorAll('button')) x.setAttribute('aria-current', String(x.dataset.go === id));
-      history.replaceState(null, '', '#' + id);
-    });
+    b.addEventListener('click', () => goToPattern(id));
     nav.append(b);
   }
+
+  // One path for "show this pattern", so the rail, the address bar and any
+  // future caller cannot drift apart. Named rather than inlined because the
+  // hashchange listener below has to run exactly this and not a copy of it.
+  function goToPattern(id, writeHash = true) {
+    loadPattern(id);
+    // Settings first, content second: restoreContent sets state.count from
+    // the stored rows, and edited rows ARE the slide count.
+    restoreSettings();
+    restoreContent();
+    buildPanel();
+    buildContent();
+    render();
+    for (const x of nav.querySelectorAll('button')) x.setAttribute('aria-current', String(x.dataset.go === id));
+    if (writeHash) history.replaceState(null, '', '#' + id);
+  }
+
+  // F089: the builder read location.hash once at boot, so typing a different
+  // #pattern and pressing Enter left the previous one on screen - the address
+  // said one thing and the stage showed another. Back and Forward were dead for
+  // the same reason. `writeHash: false` because the hash is already what the
+  // browser navigated to; writing it again would stack history entries.
+  addEventListener('hashchange', () => {
+    const [id] = location.hash.slice(1).split('/');
+    if (PATTERNS[id] && id !== state.pattern) goToPattern(id, false);
+  });
 
   /* ---- copy / download --------------------------------------------------- */
 
