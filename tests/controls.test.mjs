@@ -927,6 +927,41 @@ describe('the ladder resolves without a pin', () => {
   });
 });
 
+// A classic scrollbar inside the frame takes 15px out of the VIEWPORT, and the
+// viewport is the number a media query reads. The 390 Phone button resolved 375
+// - under the card sheet's own 380px breakpoint - so a scrollbar was quietly
+// deciding which rules fired, and the readout said "375px in 375px". It latched
+// too: content measured at 375 is taller than at 390, which keeps the scrollbar
+// justified.
+//
+// Headless Chromium draws OVERLAY scrollbars that take no width, so it cannot
+// see this at all. The guard is therefore not "is there a scrollbar" but "does
+// the frame's own root refuse to scroll", which is true in every engine.
+describe('the frame viewport is never eaten by a scrollbar', () => {
+  test('the frame refuses to scroll, so its width is the width on the button', async () => {
+    await pick(page, 'cards');
+    for (const w of [390, 768, 992, 1200]) {
+      await page.click(`.ui-widths button[data-w="${w}"]`);
+      await page.waitForTimeout(280);
+      const r = await page.evaluate(() => {
+        const d = globalThis.CARGO.sdoc();
+        return {
+          inner: globalThis.CARGO.swin().innerWidth,
+          client: d.documentElement.clientWidth,
+          overflowY: d.defaultView.getComputedStyle(d.documentElement).overflowY,
+          clipped: d.documentElement.scrollHeight - d.documentElement.clientHeight,
+        };
+      });
+      assert.equal(r.overflowY, 'hidden', `at ${w} the frame root can still grow a scrollbar`);
+      assert.equal(r.client, r.inner, `at ${w} something took ${r.inner - r.client}px out of the viewport`);
+      assert.equal(r.client, w, `the ${w} button gives the slider a ${r.client}px window`);
+      // Refusing to scroll is only safe if the height is right; a short frame
+      // would clip with no way to reach the rest.
+      assert.ok(r.clipped <= 1, `at ${w} the frame clips ${r.clipped}px of its own content`);
+    }
+  });
+});
+
 describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);

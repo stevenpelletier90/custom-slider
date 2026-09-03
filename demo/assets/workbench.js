@@ -1440,7 +1440,16 @@ ${PHOTO_CSS}
   const FRAME_DOC =
     '<!doctype html><html><head><meta charset="utf-8">' +
     '<link rel="stylesheet" href="../dist/custom-slider.css">' +
-    '<style>html{font-size:10px}body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#10151c;background:#fff}' +
+    // overflow:hidden on the frame's own root is a CORRECTNESS rule, not
+    // tidying. A classic scrollbar - which real Chrome on Windows draws, and
+    // headless Chromium does not, so this is invisible to the test suite - takes
+    // 15px out of the VIEWPORT. That is the number a media query reads: the 390
+    // Phone button was resolving 375, which is under the card sheet's own 380px
+    // breakpoint, so the scrollbar was quietly deciding which rules fired. It
+    // latched, too: content measured at 375 is taller than at 390, which keeps
+    // the scrollbar justified. The parent sizes this frame to its content, so
+    // there is nothing here to scroll and nothing to lose by refusing.
+    '<style>html{overflow:hidden}html{font-size:10px}body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#10151c;background:#fff}' +
     // Bootstrap 3's own container, because the frame is now the SCREEN rather
     // than the box. That distinction is the whole reason this exists: a
     // .container is 750px BECAUSE the screen is 768, so a 750px-wide frame
@@ -1482,6 +1491,11 @@ ${PHOTO_CSS}
     const root = d.getElementById('wb-live-root');
     if (!root) return;
     stage.style.blockSize = `${Math.ceil(Math.max(root.getBoundingClientRect().height, root.scrollHeight))}px`;
+    // The frame refuses to scroll, so a height that came out short would clip
+    // rather than scroll. Measure once more against what the document ended up
+    // needing and grow if it disagrees - one correction, not a loop.
+    const need = Math.ceil(Math.max(d.documentElement.scrollHeight, root.scrollHeight));
+    if (need > parseFloat(stage.style.blockSize)) stage.style.blockSize = `${need}px`;
   }
 
   // A measurement taken once is a measurement taken too early: images decode
