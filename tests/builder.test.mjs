@@ -193,9 +193,10 @@ describe('the pasted block on a hostile host page', () => {
     }
   });
 
-  // F049: on a phone the arrow gutter costs about a quarter of the screen. The
-  // snippet now drops it under 768 - but only if the arrow still lands beside
-  // the text rather than on it, which is the rule the whole gutter exists for.
+  // F049: an arrow may overlay media, never text - the rule the gutter exists
+  // to keep. The gutter itself is now the designer's choice at every width
+  // ("Arrows outside the cards"), so this checks the OTHER state: with the
+  // channel given up, no arrow may land on a character at a phone width.
   // Measured with a Range over the painted text, not the block box: a centred
   // name in a 241px card paints far narrower than its box, so a box-level check
   // reports a collision that no reader would ever see.

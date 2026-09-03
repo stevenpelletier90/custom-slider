@@ -1113,18 +1113,25 @@ ${PHOTO_CSS}
     const gutter = [
       needsRootPad ? `${sel}${ROOT} { padding-inline: ${gw}; }` : '',
       stripSel ? `${stripSel} { padding-inline: ${gw}; }` : '',
-      // The gutter reserves the channel the arrows sit in. On a phone that
-      // channel costs about a quarter of the screen - measured at 320, a model
-      // bar card goes 241px -> 320px without it - and the arrow then lands on
-      // the card rather than beside it. Checked at glyph level, with a Range
-      // over the text rather than the block box, across all seven card styles
-      // at their own phone counts: no arrow covers a single character either
-      // way, because every one of them is one card across at that width and
-      // the text sits well inside the card.
+      // The STRIP only, never the carousel. A tab row or a filter bar has no
+      // arrows beside it to line up with, and at a phone width the channel it
+      // was matching cost more than the alignment bought: ~42px a side, which
+      // left Chevrolet's three body-style tabs 246px where they need 259, so
+      // they stacked one per row and the pattern looked broken.
+      //
+      // The carousel keeps whatever "Arrows outside the cards" says, at every
+      // width. It briefly did not - the rule was widened to the root as well,
+      // to buy a phone back the ~80px the channel costs - and that made the
+      // switch a dead control below 768: it read "outside", and a phone put the
+      // arrow on the card anyway. Nothing in the panel said so, and nothing
+      // could see it either, because the preview was a box in this page and the
+      // phone rule never fired in it. A control that lies is worse than a
+      // narrow card, so the switch wins now and the width is the designer's to
+      // spend. Steven's call, 2026-09-03.
       //
       // Already zero above when the gutter is off; a second rule setting it to
       // zero says nothing the first did not.
-      gw !== '0' ? `@media (max-width: 767.98px) {\n  ${[needsRootPad ? `${sel}${ROOT}` : '', stripSel].filter(Boolean).join(', ')} { padding-inline: 0; }\n}` : '',
+      stripSel && gw !== '0' ? `@media (max-width: 767.98px) {\n  ${stripSel} { padding-inline: 0; }\n}` : '',
     ]
       .filter(Boolean)
       .join('\n');

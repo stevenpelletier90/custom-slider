@@ -962,6 +962,70 @@ describe('the frame viewport is never eaten by a scrollbar', () => {
   });
 });
 
+// "Arrows outside the cards" has to mean the same thing at every width.
+//
+// It briefly did not. The phone rule that drops the tab strip's gutter was
+// widened to the carousel as well, to buy a phone back the ~80px the arrow
+// channel costs - which made the switch a dead control below 768: it read
+// "outside", and a phone put the arrow on the card anyway. Nothing in the panel
+// said so, and nothing could see it, because the preview was a box inside this
+// page and the phone rule never fired in it. Both halves of that are fixed now,
+// and this is the half a test can hold.
+describe('the arrow placement switch is not overruled by a breakpoint', () => {
+  const gut = (p) => p.locator('#wb-settings label:has-text("Arrows outside the cards") input[type=checkbox]').first();
+
+  const placement = (p) =>
+    p.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      const w = globalThis.CARGO.swin();
+      const root = d.querySelector('.cs');
+      const slide = d.querySelector('.cs-slide');
+      const prev = d.querySelector('.cs-arrow--prev');
+      if (!root || !slide || !prev) return null;
+      const sr = slide.getBoundingClientRect();
+      const ar = prev.getBoundingClientRect();
+      return { pad: Math.round(parseFloat(w.getComputedStyle(root).paddingInlineStart)), onCard: Math.round(ar.right) > Math.round(sr.left) + 1 };
+    });
+
+  test('outside means outside on a phone too, and over means over everywhere', async () => {
+    for (const id of ['modelbar', 'cards']) {
+      await pick(page, id);
+      await page.waitForTimeout(250);
+      for (const outside of [true, false]) {
+        const box = gut(page);
+        if ((await box.isChecked()) !== outside) {
+          await box.setChecked(outside);
+          await page.waitForTimeout(350);
+        }
+        for (const w of [390, 768, 1200]) {
+          await page.click(`.ui-widths button[data-w="${w}"]`);
+          await page.waitForTimeout(240);
+          const seen = await placement(page);
+          assert.ok(seen, `${id} at ${w}: nothing to measure`);
+          assert.equal(seen.onCard, !outside, `${id} at ${w}: the switch says outside=${outside} and the arrow is ${seen.onCard ? 'on the card' : 'beside it'}`);
+          if (outside) assert.ok(seen.pad > 0, `${id} at ${w}: outside is on but no channel is reserved`);
+          else assert.equal(seen.pad, 0, `${id} at ${w}: over is on but a channel is still reserved`);
+        }
+      }
+    }
+  });
+
+  // The strip DOES still give its gutter up on a phone, and should: a tab row
+  // has no arrows beside it to line up with, and the alignment cost Chevrolet's
+  // three body-style tabs 246px where they need 259, so they stacked.
+  test('a tab strip still drops its gutter on a phone', async () => {
+    await pick(page, 'tabs');
+    const box = gut(page);
+    if (!(await box.isChecked())) {
+      await box.setChecked(true);
+      await page.waitForTimeout(350);
+    }
+    const parts = await copyParts(page);
+    assert.match(parts.css, /@media \(max-width: 767\.98px\)[\s\S]*?cargo-tabs[^}]*padding-inline: 0/, 'the tab strip no longer drops its gutter on a phone');
+    assert.doesNotMatch(parts.css, /@media \(max-width: 767\.98px\) \{\s*\.[\w-]+\.cs \{ padding-inline: 0/, 'the phone rule is overruling the carousel again');
+  });
+});
+
 describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);
