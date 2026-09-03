@@ -22,7 +22,7 @@
   // while the preview's width buttons said "Phone / Tablet / Laptop / Desktop",
   // so the two halves of the same screen named the same tier differently and
   // neither said these were screen widths. Both read from here now.
-  const TIER_LABEL = { base: 'Phone (under 768px)', 768: 'Tablet (768px and up)', 992: 'Laptop (992px and up)', 1200: 'Desktop (1200px and up)' };
+  const TIER_LABEL = { base: 'Phone · under 768', 768: 'Tablet · 768+', 992: 'Laptop · 992+', 1200: 'Desktop · 1200+' };
 
   // A number typed into a slide field reaches the markup, and markup that
   // throws takes the whole builder with it: `'&star;'.repeat(5 - 6)` raises
@@ -212,7 +212,7 @@
     ['vehicle-4.png', 640, 480, '/trade.aspx', 'Trade-In Appraisal', 'Get a real number for your current vehicle in minutes — good for seven days or 500 miles.'],
     ['photo-6.jpg', 1200, 717, '/orderparts.aspx', 'Parts &amp; Accessories', 'OEM parts counter, accessories, and installation — ordered to your VIN so it fits the first time.'],
     ['photo-2.jpg', 900, 600, '/service.aspx', 'Body Shop &amp; Detailing', 'Collision repair, paintless dent removal, and full detailing with insurance-claim assistance.'],
-  ].map(([f, w, h, href, name, blurb]) => ({ img: `img/${f}`, w, h, name, blurb, alt: '', href }));
+  ].map(([f, w, h, href, name, blurb]) => ({ img: `img/${f}`, w, h, name, blurb, alt: '', href, cta: '' }));
 
   // Photos carrying a category, for the filterable gallery.
   // Built FROM the photo list, never written out again beside it. The two used
@@ -547,7 +547,10 @@ ${VIDEO_DIALOG_CSS}`,
       slides: (models) =>
         models.map(
           (m) =>
-            `<a class="cargo-svc" href="${m.href}"><span class="cargo-media">${pic(m)}</span><h3>${m.name}</h3><p>${m.blurb}</p><span class="cargo-svc-more" aria-hidden="true">Read more &#8594;</span></a>`,
+            // aria-hidden because the whole card is already the link: without
+            // it a screen reader reads the heading, the blurb and then "Read
+            // more" as a second, separate destination.
+            `<a class="cargo-svc" href="${m.href}"><span class="cargo-media">${pic(m)}</span><h3>${m.name}</h3><p>${m.blurb}</p><span class="cargo-svc-more" aria-hidden="true">${m.cta || 'Read more &#8594;'}</span></a>`,
         ),
     },
 
@@ -2025,8 +2028,8 @@ ${PHOTO_CSS}
     // settings, and applyLook moves it into state.props - so the value was
     // being shipped by two card styles with no control anywhere that could
     // show it, let alone change it.
-    colors.append(colorRow('Arrow colour, hover', '--cs-arrow-fg-hover', state.props));
-    colors.append(colorRow('Arrow background, hover', '--cs-arrow-bg-hover', state.props));
+    colors.append(colorRow('Arrow colour · hover', '--cs-arrow-fg-hover', state.props));
+    colors.append(colorRow('Arrow background · hover', '--cs-arrow-bg-hover', state.props));
     colors.append(valueRow('Arrow size', '--cs-arrow-size', state.props));
     // Six designs resize the arrow inside a media query in their own CSS - the
     // tile and vehicle card at 36px on phones, the logo strip at 56px on wide
@@ -2172,7 +2175,9 @@ ${PHOTO_CSS}
         buildPanel(); // "At the ends" reads the autoplay state as it is built
         render();
       });
-      beh.append(control('Rotate every (ms, 0 = off)', auto, 'Zero of the 55 OEM model bars surveyed rotate. Rotation belongs on a hero; a strip of cards is easier to read holding still.'));
+      beh.append(
+        control('Rotate every (ms)', auto, 'Zero turns it off. Zero of the 55 OEM model bars surveyed rotate either — rotation belongs on a hero; a strip of cards is easier to read holding still.'),
+      );
     }
 
     // data-cs-rewind has been in the engine and the reference all along; it was
@@ -2255,7 +2260,7 @@ ${PHOTO_CSS}
       state.gutter = gut.checked;
       render();
     });
-    beh.append(control('Keep arrows outside the cards', gut, 'Off lets the arrows sit on top of the first and last card. On reserves a channel beside them instead.'));
+    beh.append(control('Arrows outside the cards', gut, 'Off lets the arrows sit on top of the first and last card. On reserves a channel beside them instead.'));
 
     // No slide-count dial. The roster length IS the slide count, and "Add a
     // slide" / "Remove" are the only things that move it - the note above the

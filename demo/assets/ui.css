@@ -319,6 +319,9 @@ body {
 
 .ui-rail h2,
 .ui-panel h3 {
+  /* The heading is the only thing separating one group from the next in a
+     column layout, so it needs air above it that the first heading does not. */
+  padding-block-start: 0.55rem;
   margin: 0 0 0.6rem;
   font-family: var(--mono);
   font-size: 0.66rem;
@@ -326,6 +329,20 @@ body {
   color: var(--ink-soft);
   text-transform: uppercase;
   letter-spacing: 0.12em;
+  border-block-start: 1px solid var(--rule);
+
+  /* A section allowed to flow across columns could leave its heading alone at
+     the foot of one with every field in the next - "Arrows and spacing" sat at
+     the bottom of column 2 while its first control started column 3, which
+     reads as a heading for the section above it. */
+  break-after: avoid;
+}
+
+/* ...except where a section starts a column: there the rule would draw a
+   stray line across the top of the panel. */
+.ui-panel section:first-child h3 {
+  padding-block-start: 0;
+  border-block-start: 0;
 }
 
 #wb-nav {
@@ -580,7 +597,11 @@ body {
   grid-template-columns: 1fr 9.5rem;
   gap: 0.6rem;
   align-items: center;
-  margin-block-end: 0.35rem;
+
+  /* Was 0.35rem, which read as one undifferentiated stack of 14 knobs. The
+     rows are label/value pairs, so they need enough space to read as pairs
+     and not enough to read as separate things. */
+  margin-block-end: 0.5rem;
   font-size: 0.85rem;
 }
 

@@ -139,7 +139,7 @@ describe('the readout says what the slider is doing', () => {
 
   test('asking for more across than there are slides is not reported as more', async () => {
     await pick(page, 'cards');
-    const f = page.locator('#wb-settings label:has(> span:text-is("Desktop (1200px and up)")) input').first();
+    const f = page.locator('#wb-settings label:has(> span:text-is("Desktop · 1200+")) input').first();
     await f.fill('8');
     await page.waitForTimeout(250);
     const text = await page.evaluate(() => document.getElementById('spec-across').textContent);

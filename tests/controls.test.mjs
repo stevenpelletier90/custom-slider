@@ -73,13 +73,13 @@ describe('a click that looks like a no-op is one', () => {
     await pick(page, 'grid');
     const before = await page.evaluate(() => JSON.stringify(globalThis.CARGO.PATTERNS.grid.perView));
     // Change the ladder by hand first, so there is something to lose.
-    const field = page.locator('#wb-settings label:has(> span:text-is("Laptop (992px and up)")) input').first();
+    const field = page.locator('#wb-settings label:has(> span:text-is("Laptop · 992+")) input').first();
     await field.fill('3');
     await page.waitForTimeout(120);
-    const set = await knob(page, 'Laptop (992px and up)');
+    const set = await knob(page, 'Laptop · 992+');
     await page.click('#wb-settings .wb-look[aria-pressed="true"]');
     await page.waitForTimeout(150);
-    assert.equal(await knob(page, 'Laptop (992px and up)'), set, 're-selecting the current look reset the ladder');
+    assert.equal(await knob(page, 'Laptop · 992+'), set, 're-selecting the current look reset the ladder');
     assert.ok(before, 'pattern defaults unreadable');
   });
 });
@@ -118,7 +118,7 @@ describe('a number field refuses what the engine cannot page', () => {
   // setting the property to 2.5 by hand makes the last page unreachable.
   test('a fractional count is not left showing in the field', async () => {
     await pick(page, 'modelbar');
-    const field = page.locator('#wb-settings label:has(> span:text-is("Phone (under 768px)")) input').first();
+    const field = page.locator('#wb-settings label:has(> span:text-is("Phone · under 768")) input').first();
     await field.fill('2.5');
     await field.blur();
     await page.waitForTimeout(120);
@@ -189,7 +189,7 @@ describe('the rotation the hero was born with is a control, not a literal', () =
   // other pattern could turn it on, so slowing a hero, holding one still, or
   // rotating a testimonial strip all meant knowing the attribute and editing
   // the copied markup by hand.
-  const ROW = 'Rotate every (ms, 0 = off)';
+  const ROW = 'Rotate every (ms)';
   const rotate = (page) => page.locator(`#wb-settings label.wb-row:has(> span:text-is("${ROW}")) input`).first();
   const set = async (page, v) => {
     await rotate(page).fill(v);
@@ -299,7 +299,7 @@ describe('a property the slider is already using has a control', () => {
   // and logo looks ship --cs-arrow-bg-hover in their settings, and the hero
   // sets --cs-dot-current in its props, so those values were going out with
   // nothing able to show a designer what had been chosen for them.
-  const ROWS = ['Arrow colour, hover', 'Arrow background, hover', 'Dot size', 'Dot colour', 'Dot colour, current'];
+  const ROWS = ['Arrow colour · hover', 'Arrow background · hover', 'Dot size', 'Dot colour', 'Dot colour, current'];
 
   // `cards`, not `modelbar`: a model bar ships its dots off, so it correctly
   // has no dot rows at all.
@@ -320,7 +320,7 @@ describe('a property the slider is already using has a control', () => {
     assert.ok(look, 'no card style ships an arrow hover colour, so this guards nothing');
     await page.evaluate((label) => [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes(label))?.click(), look.label);
     await page.waitForTimeout(300);
-    assert.equal(await colorKnob(page, 'Arrow background, hover'), look.value, `${look.label} ships ${look.value} and the field does not show it`);
+    assert.equal(await colorKnob(page, 'Arrow background · hover'), look.value, `${look.label} ships ${look.value} and the field does not show it`);
   });
 
   test('the hero shows the current-dot colour it was born with', async () => {

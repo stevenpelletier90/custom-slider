@@ -26,7 +26,7 @@ after(async () => {
 describe('a fading hero is one across before the script runs', () => {
   test('authoring it three across shifts nothing on init', async () => {
     await pick(page, 'hero');
-    for (const label of ['Phone (under 768px)', 'Tablet (768px and up)', 'Laptop (992px and up)', 'Desktop (1200px and up)']) {
+    for (const label of ['Phone · under 768', 'Tablet · 768+', 'Laptop · 992+', 'Desktop · 1200+']) {
       const f = page.locator(`#wb-settings label:has(> span:text-is("${label}")) input`).first();
       if (await f.count()) {
         await f.fill('3');
