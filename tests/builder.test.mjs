@@ -193,6 +193,55 @@ describe('the pasted block on a hostile host page', () => {
     }
   });
 
+  // F049: on a phone the arrow gutter costs about a quarter of the screen. The
+  // snippet now drops it under 768 - but only if the arrow still lands beside
+  // the text rather than on it, which is the rule the whole gutter exists for.
+  // Measured with a Range over the painted text, not the block box: a centred
+  // name in a 241px card paints far narrower than its box, so a box-level check
+  // reports a collision that no reader would ever see.
+  test('dropping the phone gutter puts no arrow over a single character', async () => {
+    const looks = await page.evaluate(() => Object.keys(globalThis.CARGO.LOOKS));
+    await page.setViewportSize({ width: 320, height: 900 });
+    for (const look of ['modelbar', 'cards', 'service']) {
+      await pick(page, look === 'modelbar' ? 'modelbar' : look);
+      await page.waitForTimeout(120);
+      const p = await copyParts(page);
+      await host.setViewportSize({ width: 320, height: 900 });
+      await host.setContent(hostHtml({ ...engine, css: p.css, html: p.html, js: p.js, box: 320 }), { waitUntil: 'load' });
+      await host.waitForTimeout(250);
+      const covered = await host.evaluate(() => {
+        const track = document.querySelector('.cs-track').getBoundingClientRect();
+        const walk = document.createTreeWalker(document.querySelector('.cs-track'), NodeFilter.SHOW_TEXT);
+        const texts = [];
+        for (let n = walk.nextNode(); n; n = walk.nextNode()) if (n.textContent.trim()) texts.push(n);
+        const hits = [];
+        for (const a of document.querySelectorAll('.cs-arrow')) {
+          if (a.hidden) continue;
+          const ar = a.getBoundingClientRect();
+          for (const t of texts) {
+            const range = document.createRange();
+            range.selectNodeContents(t);
+            for (const r of range.getClientRects()) {
+              const vl = Math.max(r.left, track.left);
+              const vr = Math.min(r.right, track.right);
+              if (vr - vl <= 1) continue; // clipped out of view by the track
+              if (ar.left < vr && ar.right > vl && ar.top < r.bottom && ar.bottom > r.top)
+                hits.push(`${Math.round(Math.min(ar.right, vr) - Math.max(ar.left, vl))}px of "${t.textContent.trim().slice(0, 24)}"`);
+            }
+          }
+        }
+        return [...new Set(hits)];
+      });
+      assert.deepEqual(covered, [], `${look}: an arrow covers text on a 320px phone`);
+    }
+    assert.ok(looks.length >= 7, 'card styles unreadable');
+    // Both viewports back, or the next test measures a phone. The markup-only
+    // check below asserts the arrow clears the card entirely, which is a
+    // desktop rule - on a phone the tile deliberately gives that channel up.
+    await page.setViewportSize({ width: 1500, height: 1000 });
+    await host.setViewportSize({ width: 1280, height: 900 });
+  });
+
   // F053: a designer restyling a card writes against their own slider name, and
   // `.my-slider .cargo-name` ties with the shared sheet's `.cargo-tile
   // .cargo-name` at (0,2,0) - so source order decided, and where the platform

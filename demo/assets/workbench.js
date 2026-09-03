@@ -1072,9 +1072,18 @@ ${PHOTO_CSS}
     const gutter = [
       needsRootPad ? `${sel}${ROOT} { padding-inline: ${gw}; }` : '',
       stripSel ? `${stripSel} { padding-inline: ${gw}; }` : '',
-      // Already zero above; a second rule setting it to zero on a phone says
-      // nothing the first did not.
-      stripSel && gw !== '0' ? `@media (max-width: 767.98px) {\n  ${stripSel} { padding-inline: 0; }\n}` : '',
+      // The gutter reserves the channel the arrows sit in. On a phone that
+      // channel costs about a quarter of the screen - measured at 320, a model
+      // bar card goes 241px -> 320px without it - and the arrow then lands on
+      // the card rather than beside it. Checked at glyph level, with a Range
+      // over the text rather than the block box, across all seven card styles
+      // at their own phone counts: no arrow covers a single character either
+      // way, because every one of them is one card across at that width and
+      // the text sits well inside the card.
+      //
+      // Already zero above when the gutter is off; a second rule setting it to
+      // zero says nothing the first did not.
+      gw !== '0' ? `@media (max-width: 767.98px) {\n  ${[needsRootPad ? `${sel}${ROOT}` : '', stripSel].filter(Boolean).join(', ')} { padding-inline: 0; }\n}` : '',
     ]
       .filter(Boolean)
       .join('\n');
