@@ -269,6 +269,54 @@ describe('the demo describes what it is actually showing', () => {
     }
   });
 
+  // F018: tab names were editable but membership was not - every pane showed
+  // the same roster at its own offset, and tabs are 30 of the 55 model bars in
+  // the census. Nobody typing a Tab must still get the rotation that shipped
+  // before, or every existing snippet changes under them.
+  const tabBox = (page, n = 0) => page.locator('#wb-content fieldset').nth(n).locator('label:has(> span:text-is("Tab")) input').first();
+
+  const paneCards = (page) => page.evaluate(() => [...document.querySelectorAll('#wb-stage .cargo-pane')].map((p) => [...p.querySelectorAll('.cargo-name')].map((n) => n.textContent.trim())));
+
+  test('an untouched roster keeps the rotation it always emitted', async () => {
+    await pick(page, 'tabs');
+    await page.waitForTimeout(300);
+    const panes = await paneCards(page);
+    assert.equal(panes.length, 3, 'not three panes');
+    assert.notDeepEqual(panes[0], panes[1], 'the panes became identical');
+    assert.ok(
+      panes.every((p) => p.length > 0),
+      'a pane came out empty',
+    );
+    assert.equal(await tabBox(page).count(), 1, 'the tabbed bar offers no Tab box');
+  });
+
+  test('typing a tab name moves that slide into that tab alone', async () => {
+    await pick(page, 'tabs');
+    await page.waitForTimeout(300);
+    // The Heading, named explicitly: the first text input in a fieldset is the
+    // Image URL, so nth(0) reads a filename rather than the card's name.
+    const first = await page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Heading")) input').first().inputValue();
+    await tabBox(page).fill('SUVs');
+    await page.waitForTimeout(350);
+    const panes = await paneCards(page);
+    const inTrucks = panes[0].includes(first);
+    const inSuvs = panes[1].includes(first);
+    assert.equal(inSuvs, true, `"${first}" is not in the SUVs pane`);
+    assert.equal(inTrucks, false, `"${first}" is still in the Trucks pane as well`);
+  });
+
+  test('a slide with no tab is shared, so no pane empties', async () => {
+    await pick(page, 'tabs');
+    await page.waitForTimeout(300);
+    await tabBox(page).fill('SUVs');
+    await page.waitForTimeout(350);
+    const panes = await paneCards(page);
+    assert.ok(
+      panes.every((p) => p.length > 0),
+      `a pane emptied: ${JSON.stringify(panes.map((p) => p.length))}`,
+    );
+  });
+
   // F026: brand notes read like a research log - "ladders", "forddemo1",
   // "the census" - none of which is defined anywhere a designer would look.
   test('the brand notes use no in-house jargon', async () => {

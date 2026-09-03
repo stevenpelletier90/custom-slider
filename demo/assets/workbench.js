@@ -399,7 +399,10 @@ ${VIDEO_DIALOG_CSS}`,
       blurb:
         'The same strip under body-style tabs. Each pane holds its own slider, and a pane revealed later measures itself correctly — so none of slick’s hidden-pane refresh hacks are needed. This is how Chevrolet has shipped its bar since Nov 2025.',
       look: 'tile',
-      models: cutouts,
+      // Only this pattern opts into the Tab box: cutouts is shared with the model
+      // bar and the two-row grid, and adding the key to the roster itself would
+      // offer a field those two draw nothing from.
+      models: cutouts.map((m) => ({ ...m, tab: '' })),
       data: { 'data-cs-step': 'slide' },
       props: { '--cs-gap': '0.5em', '--cs-controls-space': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       hideDots: true,
@@ -1241,14 +1244,29 @@ ${PHOTO_CSS}
       const names = state.panes ?? p.panes;
       const ids = names.map((name) => name.toLowerCase().replace(/\W+/g, '-'));
       const tabs = names.map((name, i) => `    <button type="button" role="tab" id="tab-${ids[i]}" aria-controls="pane-${ids[i]}" aria-selected="${i === 0}">${name}</button>`).join('\n');
-      // Each pane draws the requested number of cards from the roster at its
-      // own offset, so the slide count means slides PER PANE and no
-      // pane comes out half empty. Models repeating across panes is faithful:
-      // the real Chevrolet bar does it too.
+      // Two ways to fill the panes, and which one is in force is decided by the
+      // rows themselves rather than by a switch.
+      //
+      // Nobody has typed a Tab: every pane draws the requested number of cards
+      // from the roster at its own offset, so the slide count means slides PER
+      // PANE and no pane comes out half empty. Models repeating across panes is
+      // faithful - the real Chevrolet bar does it too - and it is what this
+      // pattern has always emitted, so an untouched roster is unchanged.
+      //
+      // Someone HAS typed a Tab: membership decides. A row goes to the tab it
+      // names, matched on the name a reader sees rather than an id, so renaming
+      // a tab in the panel carries its rows with it. A row left blank is shared
+      // - it appears in every pane - which is what makes it possible to tag
+      // three of eight rows and have the rest still show up.
+      const tagged = source.some((m) => String(m.tab ?? '').trim());
       const stride = Math.max(1, Math.ceil(source.length / names.length));
+      const norm = (x) =>
+        String(x ?? '')
+          .trim()
+          .toLowerCase();
       const panes = names
         .map((name, i) => {
-          const sub = draw(take(state.count, i * stride));
+          const sub = tagged ? draw(source.filter((m) => !norm(m.tab) || norm(m.tab) === norm(name))) : draw(take(state.count, i * stride));
           return `  <div class="cargo-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}"${i === 0 ? '' : ' hidden'}>\n${carousel(sub, name, '  ', i === 0)}\n  </div>`;
         })
         .join('\n');
@@ -2288,6 +2306,10 @@ ${PHOTO_CSS}
     // Only offered where the rows carry the key, which is the five patterns
     // whose slide is nothing but a photo. Empty emits no <figcaption> and no
     // <figure>, so a pattern nobody captions ships the markup it always did.
+    // Which tab this slide belongs to, matched on the tab's visible name.
+    // Blank means every tab, and a roster where none is filled in keeps the
+    // rotation this pattern has always emitted.
+    tab: { label: 'Tab', type: 'text', hint: 'Which tab shows this slide — leave empty and it shows in all of them' },
     // Empty emits a plain <img>, exactly what shipped before. Only the hero's
     // rows carry the key, so the box appears there and nowhere else.
     phone: { label: 'Phone image', type: 'text', hint: 'Different art under 768px — leave empty to use the one above at every width' },
@@ -2561,7 +2583,12 @@ ${PHOTO_CSS}
     // replacement: it can only ever REMOVE a field.
     const pat = PATTERNS[state.pattern];
     const drawn = !pat.slides && !pat.cardGrid && state.look ? readsOf(LOOKS[state.look].markup) : null;
-    const keys = Object.keys(FIELDS).filter((k) => rows.some((m) => m[k] !== undefined) && (!drawn || drawn.has(k)));
+    // A key the PATTERN consumes rather than the card. The readsOf probe asks
+    // the card style what it draws, which is right for content - but Tab decides
+    // which pane a row lands in, and no card style reads it, so the probe would
+    // hide the one field the tabbed bar exists to offer.
+    const PATTERN_KEYS = new Set(pat.panes ? ['tab'] : []);
+    const keys = Object.keys(FIELDS).filter((k) => rows.some((m) => m[k] !== undefined) && (!drawn || drawn.has(k) || PATTERN_KEYS.has(k)));
 
     const note = document.createElement('p');
     note.className = 'wb-note';
