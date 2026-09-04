@@ -2323,10 +2323,16 @@ ${PHOTO_CSS}
             render();
           });
         },
+        // step is what the value is ROUNDED to, not what an arrow key moves by
+        // (see the note on pane.int): at 500 a typed 200 committed as 0 and
+        // turned autoplay off. 100 is the finest granularity a rotation
+        // interval is ever written in. No max, because the engine has none -
+        // a ten-second hero and a two-minute one are both legitimate, and a
+        // cap would quietly rewrite a bigger number instead of refusing it.
+        // The floor stays, so a negative arrives as the 0 that means off.
         {
           min: 0,
-          max: 60000,
-          step: 500,
+          step: 100,
           note: 'Zero turns it off. Zero of the 55 OEM model bars surveyed rotate either — rotation belongs on a hero; a strip of cards is easier to read holding still.',
         },
       );

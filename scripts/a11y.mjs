@@ -213,9 +213,16 @@ for (const id of patterns) {
 // Every card look, drawn on the model bar the way the look picker draws it.
 await page.locator('#wb-nav button[data-go="modelbar"]').click();
 await page.waitForTimeout(500);
-const looks = await page.locator('.wb-look').count();
+// .tp-lookv is the picker blade in the pane (demo/assets/tp-plugins.js). A
+// selector that matches nothing here would leave this loop auditing zero looks
+// and the run would still finish green, which is worse than not looking at all.
+const looks = await page.locator('.tp-lookv button').count();
+if (looks < 7) {
+  console.error(`a11y: the card-style picker matched ${looks} buttons, not the seven looks — the selector is stale.`);
+  process.exitCode = 1;
+}
 for (let i = 0; i < looks; i++) {
-  await page.locator('.wb-look').nth(i).click();
+  await page.locator('.tp-lookv button').nth(i).click();
   await page.waitForTimeout(500);
   await audit(`look ${i}`);
 }

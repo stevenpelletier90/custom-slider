@@ -752,6 +752,16 @@ body {
   flex-wrap: wrap;
 }
 
+/* The pane dims a disabled row's LABEL to 0.5, which measured 2.18:1 on white
+   (axe, builder #hero). The one disabled row there is "At the ends (autoplay
+   always wraps)" — and the words in that label are the whole reason the
+   control is off. A greyed-out control that will not explain itself is the
+   mistake the previous panel made; the <select> is still disabled and reads
+   that way, so only the sentence comes back. */
+#wb-settings .tp-lblv.tp-v-disabled .tp-lblv_l {
+  opacity: 1;
+}
+
 .tp-flagv {
   flex-basis: 100%;
   padding: 0.3rem 0.5rem;

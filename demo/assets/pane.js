@@ -48,6 +48,12 @@
   const bind = (parent, label, obj, opts, on) => {
     const b = parent.addBinding(obj, 'v', { label, ...opts });
     b.on('change', (ev) => on(ev.value));
+    // Tweakpane draws the label as a <div class="tp-lblv_l">, not a <label
+    // for>, so nothing connects it to the field: the panel's own rows used to
+    // wrap both in one <label> and every input had a name from it. Without
+    // this, ~40 controls in the settings panel are announced as "edit text,
+    // blank". One place, because every row goes through here.
+    b.element.querySelector('input, select')?.setAttribute('aria-label', label);
     return b;
   };
 
@@ -59,6 +65,12 @@
     return b;
   };
 
+  // `step` here is a rounding CONSTRAINT, not a spinner increment: Tweakpane
+  // commits `origin + Math.round((v - origin) / step) * step`, so a step of 500
+  // turns a typed 200 into 0. Pass the granularity the value may actually have,
+  // never the amount an arrow key should move by. `max` is optional and clamps
+  // when given - leave it out where the property has no upper bound, or a typed
+  // value above it is silently changed rather than refused.
   const int = (parent, label, value, on, opts) => {
     const b = bind(parent, label, { v: value }, { min: opts.min, max: opts.max, step: opts.step ?? 1, format: (n) => String(Math.round(n)) }, (n) => on(Math.round(n)));
     if (opts.note) b.element.title = opts.note;
@@ -88,23 +100,31 @@
 
   // A message under a row, or none. Replaces the old .wb-bad span: the value
   // is refused by okValue() and the field says why instead of going quiet.
+  let flags = 0;
   const flag = (binding, message) => {
+    const input = binding.element.querySelector('input');
     let el = binding.element.querySelector('.tp-flagv');
     // Clearing takes the flag off the input too. The old mark() wrote
     // String(bad) on every keystroke, so a field fixed after a bad value
     // stopped announcing itself as invalid; leaving aria-invalid standing
     // would tell a screen reader the opposite of what the slider is using.
     if (!message) {
-      binding.element.querySelector('input')?.setAttribute('aria-invalid', 'false');
+      input?.setAttribute('aria-invalid', 'false');
+      input?.removeAttribute('aria-describedby');
       return void el?.remove();
     }
     if (!el) {
       el = document.createElement('p');
       el.className = 'tp-flagv';
+      el.id = `tp-flag-${++flags}`;
       binding.element.append(el);
     }
     el.textContent = message;
-    binding.element.querySelector('input')?.setAttribute('aria-invalid', 'true');
+    input?.setAttribute('aria-invalid', 'true');
+    // The message is next to the field on screen; aria-describedby is what
+    // puts it next to the field for a screen reader, which otherwise gets
+    // "invalid" with no reason attached.
+    input?.setAttribute('aria-describedby', el.id);
   };
 
   // A paragraph. The `note` blade comes from tp-plugins.js; before that file
