@@ -111,13 +111,7 @@
              side gutter and photo crop all resolve the way they will on the
              device. Its document is written by the same cssFor()/htmlFor() pair
              that fills the code panel, so the parity guarantee is unchanged. -->
-            <!-- tabindex is not decoration: the stage scrolls sideways when the
-                 frame is wider than the column, and a scrollable box that
-                 nothing can focus cannot be scrolled from the keyboard at all
-                 (axe: scrollable-region-focusable). The iframe inside is
-                 focusable but is a document of its own, so it does not stand in
-                 for one. -->
-            <div class="wb-stage" tabindex="0"><iframe id="wb-stage" title="Live preview of your slider"></iframe></div>
+            <div class="wb-stage"><iframe id="wb-stage" title="Live preview of your slider"></iframe></div>
 
             <!-- The readout. Everything here is measured off the rendered slider,
              not computed from the settings, so it tells you what the browser
@@ -165,6 +159,12 @@
                   </button>
                 </span>
               </span>
+              <!-- Only there when the preview is scaled. A frame wider than
+                   the column is shown smaller rather than cut off, and the
+                   numbers beside this one are the REAL px of a real window of
+                   the width on the button - so without this line a 45% preview
+                   reads as a small slider. -->
+              <span class="ui-spec-item" id="spec-scale-item" hidden><b>Shown at</b> <span id="spec-scale">100%</span></span>
               <span class="ui-spec-item"><b>Card size</b> <span id="spec-card">—</span></span>
               <span class="ui-spec-item"><b>Cards shown</b> <span id="spec-across">—</span></span>
               <span class="ui-spec-item"><b>Gap</b> <span id="spec-gap">—</span></span>

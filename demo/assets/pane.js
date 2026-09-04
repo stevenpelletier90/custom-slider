@@ -48,7 +48,11 @@
   const KEY = 'cs-folders';
   const remembered = () => {
     try {
-      return JSON.parse(localStorage.getItem(KEY) ?? '{}');
+      // Parsed, then checked: a stored "null" or "3" is valid JSON and neither
+      // is a map. null in particular would throw on the very next property
+      // read and take the whole panel build down with it.
+      const v = JSON.parse(localStorage.getItem(KEY) ?? '{}');
+      return v && typeof v === 'object' ? v : {};
     } catch {
       return {};
     }

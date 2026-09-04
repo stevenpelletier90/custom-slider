@@ -1615,6 +1615,51 @@ ${PHOTO_CSS}
     // needing and grow if it disagrees - one correction, not a loop.
     const need = Math.ceil(Math.max(d.documentElement.scrollHeight, root.scrollHeight));
     if (need > parseFloat(stage.style.blockSize)) stage.style.blockSize = `${need}px`;
+    // The height it just set is one of the two numbers the scale is built from,
+    // so the scale is recomputed here rather than beside it - the two cannot
+    // disagree if only one of them can move first.
+    fitFrameScale();
+  }
+
+  // The frame is a real window of the width on the button, and the preview
+  // column is narrower than one on any normal screen - about 790px at 1440 with
+  // the settings beside it. It is SCALED to fit, never shrunk and never cut
+  // off: the iframe keeps its true inline-size, so its media queries fire at
+  // the width they would on the device and every number in the readout is a
+  // real px on a real window. transform changes the picture and nothing else.
+  //
+  // The negative margins are not decoration. A transform moves no layout box,
+  // so without them the iframe still occupies its full unscaled width and
+  // height in the flex row: the readout would sit a frame-height below the
+  // picture, and the centring would be computed from a box twice the size of
+  // the thing you can see. Pulling the margin box back to the visible size is
+  // what keeps the layout honest.
+  function fitFrameScale() {
+    const box = stage.parentElement;
+    if (!box) return;
+    // Measure at scale 1: the numbers below are the frame's natural size, and
+    // reading them through a transform already applied would compound it.
+    stage.style.transform = '';
+    stage.style.marginInlineEnd = '';
+    stage.style.marginBlockEnd = '';
+    const cs = getComputedStyle(box);
+    const avail = box.clientWidth - parseFloat(cs.paddingInlineStart) - parseFloat(cs.paddingInlineEnd);
+    // offsetWidth/offsetHeight, never getBoundingClientRect: the rect is the
+    // TRANSFORMED box and offsetWidth is the layout one.
+    const w = stage.offsetWidth;
+    const h = stage.offsetHeight;
+    const k = w > 0 && avail > 0 && w > avail ? avail / w : 1;
+    if (k < 1) {
+      stage.style.transform = `scale(${k})`;
+      stage.style.marginInlineEnd = `${-(w - w * k)}px`;
+      stage.style.marginBlockEnd = `${-(h - h * k)}px`;
+    }
+    // A preview shown at 45% with a readout saying 1170px reads as a small
+    // slider unless the panel says which of the two it is looking at.
+    const pct = $('spec-scale');
+    const item = $('spec-scale-item');
+    if (pct) pct.textContent = `${Math.round(k * 100)}%`;
+    if (item) item.hidden = k === 1;
   }
 
   // A measurement taken once is a measurement taken too early: images decode
@@ -3082,42 +3127,33 @@ ${PHOTO_CSS}
     // frame has to regenerate the CSS rather than only resize the box.
     if (moved) render();
     if (keep) saveFrame(w);
-    requestAnimationFrame(checkFit);
+    // fitFrameHeight, not fitFrameScale: a different frame width is a different
+    // content height as well, and it ends by scaling. One call, so the height
+    // and the scale can never be a frame apart.
+    requestAnimationFrame(() => {
+      fitFrameHeight();
+      checkFit();
+    });
   };
 
-  // A width the WINDOW cannot give is a lie: there is nothing on a 900px laptop
-  // to judge a 1200px screen against. Offer the widths the window has, and step
-  // down when it shrinks past the chosen one.
-  //
-  // The COLUMN used to be the measure, because the frame shrank to fit it and a
-  // Desktop button previewing 999px says Desktop while showing something else.
-  // The frame keeps the width on the button now and .wb-stage scrolls when the
-  // column is narrower (assets/ui.css), so the column no longer decides what
-  // can be previewed - which is what lets the settings sit beside it at all.
+  // Every width is offered at every window size, and none is ever refused or
+  // stepped down. Two rules used to live here and both are gone with the same
+  // change: a width was refused when the COLUMN could not give it (the frame
+  // shrank to fit, so a Desktop button previewed 999px and still said Desktop),
+  // and then when the WINDOW could not (nothing on a 900px laptop to judge a
+  // 1200px screen against). fitFrameScale() answers both - the frame is always
+  // a real window of the width on the button, shown smaller when there is not
+  // room for it at full size, with the readout saying which. All that is left
+  // to do here is name the widths.
   function fitWidths() {
-    const avail = innerWidth;
     const SCREEN = { 390: TIER_LABEL.base, 768: TIER_LABEL[768], 992: TIER_LABEL[992], 1200: TIER_LABEL[1200] };
     // Bootstrap 3's own container for each screen. The button width is the
     // SCREEN, because that is what a media query asks; the slider gets the
     // narrower container inside it, and saying both is the honest label.
     const CONTAINER = { 390: 'the full width', 768: '750px', 992: '970px', 1200: '1170px' };
-    let active = null;
     for (const b of widthBtns()) {
       const w = +b.dataset.w;
-      b.disabled = w > avail + 1;
-      b.title = b.disabled ? `Make the window about ${w}px wide to use this` : w ? `${SCREEN[w]} screen — a ${w}px window, where the slider gets ${CONTAINER[w]}` : 'Use all the width this page has';
-      if (b.getAttribute('aria-pressed') === 'true') active = b;
-    }
-    // A chosen width the window no longer has must not keep its label: drag the
-    // browser narrower than Desktop and the button went on saying Desktop over
-    // a window that cannot show one. Step down to the widest that still fits -
-    // with keep false, so the correction does not overwrite the width the
-    // designer picked and expects back next time.
-    if (active && +active.dataset.w > avail + 1) {
-      const widest = widthBtns()
-        .filter((b) => !b.disabled && +b.dataset.w <= avail + 1)
-        .sort((a, b) => +b.dataset.w - +a.dataset.w)[0];
-      if (widest) setFrame(widest, false);
+      b.title = w ? `${SCREEN[w]} screen — a ${w}px window, where the slider gets ${CONTAINER[w]}` : 'Use all the width this page has';
     }
   }
 
@@ -3268,11 +3304,14 @@ ${PHOTO_CSS}
     wireKeepReset();
     // Matching a button by data-w IS the validation: a width that is not one of
     // the four finds no button. `keep: false` because the value came FROM
-    // storage, and fitWidths below still steps it down if it no longer fits.
+    // storage - re-saving it would be a write nobody asked for.
     const seat = widthBtns().find((b) => +b.dataset.w === readSettings().frame);
     if (seat) setFrame(seat, false);
     addEventListener('resize', () => {
       fitWidths();
+      // The column width is what the scale is measured against, so a window
+      // resize moves it even though the frame's own width has not changed.
+      fitFrameHeight();
       checkFit();
     });
     fitWidths();

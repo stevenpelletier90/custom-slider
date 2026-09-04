@@ -104,10 +104,7 @@ body {
   color: inherit;
 }
 
-/* [tabindex] is in here for the preview stage: it takes focus so the sideways
-   scroll can be reached from the keyboard, and a focusable thing with no ring
-   is worse than one that was never focusable. */
-:where(button, input, select, a, [tabindex]):focus-visible {
+:where(button, input, select, a):focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
@@ -342,8 +339,9 @@ body {
 
    The preview column is narrower than a 1170px .container on any normal
    window, which used to mean a shrunken frame. It does not any more - the
-   frame keeps the width on the button and .wb-stage scrolls (see #wb-stage),
-   so the two-column layout costs no preview fidelity. */
+   frame keeps the width on the button and fitFrameScale() in workbench.js
+   scales the picture to the column, so the two-column layout costs no preview
+   fidelity and never cuts a card off. */
 .ui-work {
   display: grid;
   grid-template-columns: minmax(0, 1fr);
@@ -366,11 +364,22 @@ body {
   }
 
   /* align-items: start is what makes this work: a stretched grid item is as
-     tall as the row and has nothing to slide within. */
+     tall as the row and has nothing to slide within.
+
+     The masthead is sticky at 0, so a preview pinned any higher slides
+     underneath it - measured, the top 40px of the stage was painted over at
+     1rem. Its 3.5rem row plus its own 1px rule is 57px, which is why this is a
+     calc rather than the flat 3.5rem .ui-rail uses: the rail loses that pixel
+     under a border and nobody notices, here it is the top edge of a white
+     artboard. The height cap and the scroll are the other half of the same
+     borrowed rule: a preview taller than the window would pin its top and put
+     the readout under it permanently out of reach. */
   .ui-preview {
     position: sticky;
-    inset-block-start: 1rem;
+    inset-block-start: calc(3.5rem + 1px);
     order: 1;
+    max-block-size: calc(100vh - 3.5rem - 1px);
+    overflow-y: auto;
   }
 }
 
@@ -492,15 +501,8 @@ body {
    nothing demo-only ever lands in the snippet you paste. */
 .wb-stage {
   display: flex;
-
-  /* `safe` centre, not centre: with the settings beside it the column can be
-     narrower than the frame, and a centred flex item that overflows puts its
-     left edge out of reach - no scrollbar goes that way. `safe` falls back to
-     flex-start the moment it would overflow, so the scroll below reaches all
-     of it. */
-  justify-content: safe center;
+  justify-content: center;
   padding: 1.25rem;
-  overflow-x: auto;
   color: #10151c;
   background: #fff;
   border: 1px solid var(--rule);
@@ -525,8 +527,10 @@ body {
      column narrower than the frame silently shrank it and the Desktop button
      previewed a 999px screen while still calling itself Desktop. With the
      settings beside it that would have been every window under ~1800px. It
-     keeps its width and .wb-stage scrolls instead - flex: none so the flex
-     container cannot shrink it either.
+     keeps its width - flex: none so the flex container cannot shrink it
+     either - and fitFrameScale() in workbench.js scales the PICTURE down to
+     the column when it does not fit. transform-origin lives here because the
+     transform is set from script and the origin never varies.
      1200, not 1170: the frame is the SCREEN the slider is being previewed on,
      and Bootstrap hands out its 1170px container at 1200 and up. The fallback
      has to agree with the button that starts out pressed, or a first visit
@@ -535,6 +539,7 @@ body {
   flex: none;
   inline-size: var(--frame, 1200px);
   border: 0;
+  transform-origin: top left;
 }
 
 /* No overflow:hidden here - it clipped the focus ring off the buttons inside,
@@ -590,11 +595,6 @@ body {
   background: var(--signal);
 }
 
-.ui-widths button:disabled {
-  cursor: not-allowed;
-  opacity: 0.35;
-}
-
 /* ---- the signature: a spec readout under the stage ---------------------- */
 
 .ui-spec {
@@ -629,6 +629,14 @@ body {
   flex-wrap: wrap;
   gap: 0.45rem;
   align-items: baseline;
+}
+
+/* The class sets a display, so the UA's [hidden] rule loses to it and an item
+   hidden from script would go on showing. "Shown at" is the only item that
+   comes and goes today; the rule is written for the attribute rather than for
+   that one id so the next one is covered too. */
+.ui-spec-item[hidden] {
+  display: none;
 }
 
 /* Card width against the width this look's content needs. The bar is the
