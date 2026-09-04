@@ -4,7 +4,7 @@
 // asymmetry was the bug: remembering half the state is worse than none.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, setField, rowByLabel, stageReady } from './helpers.mjs';
+import { openBuilder, pick, setField, setLength, rowByLabel, stageReady } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -36,7 +36,7 @@ test.describe('the settings come back with the slides once they are kept', () =>
     const nameField = page.locator('[data-name-field]');
     await nameField.fill('used-inventory');
     await nameField.blur();
-    await setField(page, 'Gap', '1.75em');
+    await setLength(page, 'Gap', '1.75', 'em');
     await setField(page, 'Laptop · 992+', '4');
     await page.click('.ui-widths button[data-w="992"]');
     await page.waitForTimeout(150);
@@ -56,11 +56,11 @@ test.describe('the settings come back with the slides once they are kept', () =>
 
   test('each pattern keeps its own settings', async () => {
     await pick(page, 'modelbar');
-    await setField(page, 'Gap', '2.25em');
+    await setLength(page, 'Gap', '2.25', 'em');
     await page.click('#wb-keep');
     await page.waitForTimeout(150);
     await pick(page, 'service');
-    await setField(page, 'Gap', '0.75em');
+    await setLength(page, 'Gap', '0.75', 'em');
     await page.click('#wb-keep');
     await page.waitForTimeout(150);
 
@@ -136,7 +136,14 @@ test.describe('nothing threw', () => {
 // clicking the next pattern would throw away the slides you just wrote - a
 // worse bug than the one being fixed (F007 again, by another route).
 test.describe('nothing is remembered across a reload unless it is kept', () => {
-  const gap = (p) => rowByLabel(p, 'Gap').locator('input').first();
+  // Gap is a length row: a number box and a unit list. What the field SHOWS is
+  // the pair, which is the value the store holds and the one these assertions
+  // were written about.
+  const gap = async (p) => {
+    const row = rowByLabel(p, 'Gap');
+    const n = await row.locator('input').first().inputValue();
+    return n === '' ? '' : n + (await row.locator('select').first().inputValue());
+  };
   const flags = (p) =>
     p.evaluate(() => ({
       dirty: !document.getElementById('wb-dirty').hidden,
@@ -157,7 +164,7 @@ test.describe('nothing is remembered across a reload unless it is kept', () => {
     await fresh();
     assert.deepEqual(await flags(page), { dirty: false, keep: false, reset: false, stored: false }, 'a freshly loaded pattern is not dirty');
 
-    await setField(page, 'Gap', '2.5em');
+    await setLength(page, 'Gap', '2.5', 'em');
     await page.waitForTimeout(200);
     const edited = await flags(page);
     assert.equal(edited.dirty, true, 'an edit did not mark the panel');
@@ -168,12 +175,12 @@ test.describe('nothing is remembered across a reload unless it is kept', () => {
     await stageReady(page);
     await pick(page, 'cards');
     await page.waitForTimeout(200);
-    assert.equal(await gap(page).inputValue(), '1em', 'an unkept edit survived a reload');
+    assert.equal(await gap(page), '1em', 'an unkept edit survived a reload');
   });
 
   test('Keep makes it survive, and Reset puts the pattern back to what it ships as', async () => {
     await fresh();
-    await setField(page, 'Gap', '2.5em');
+    await setLength(page, 'Gap', '2.5', 'em');
     await page.waitForTimeout(200);
     await page.click('#wb-keep');
     await page.waitForTimeout(300);
@@ -185,18 +192,18 @@ test.describe('nothing is remembered across a reload unless it is kept', () => {
     await stageReady(page);
     await pick(page, 'cards');
     await page.waitForTimeout(200);
-    assert.equal(await gap(page).inputValue(), '2.5em', 'a kept edit did not come back');
+    assert.equal(await gap(page), '2.5em', 'a kept edit did not come back');
 
     await page.click('#wb-reset');
     await page.waitForTimeout(400);
-    assert.equal(await gap(page).inputValue(), '1em', 'Reset did not restore the shipped value');
+    assert.equal(await gap(page), '1em', 'Reset did not restore the shipped value');
     assert.equal((await flags(page)).stored, false, 'Reset left the kept entry behind');
 
     await page.reload({ waitUntil: 'load' });
     await stageReady(page);
     await pick(page, 'cards');
     await page.waitForTimeout(200);
-    assert.equal(await gap(page).inputValue(), '1em', 'the reset did not outlive a reload');
+    assert.equal(await gap(page), '1em', 'the reset did not outlive a reload');
   });
 
   // The half that persistence-by-default was accidentally providing. An edit
@@ -204,13 +211,13 @@ test.describe('nothing is remembered across a reload unless it is kept', () => {
   // nothing has been written to disk.
   test('an unkept edit still survives switching pattern and back', async () => {
     await fresh();
-    await setField(page, 'Gap', '3.25em');
+    await setLength(page, 'Gap', '3.25', 'em');
     await page.waitForTimeout(200);
     await pick(page, 'modelbar');
     await page.waitForTimeout(200);
     await pick(page, 'cards');
     await page.waitForTimeout(200);
-    assert.equal(await gap(page).inputValue(), '3.25em', 'switching pattern threw away an unkept edit');
+    assert.equal(await gap(page), '3.25em', 'switching pattern threw away an unkept edit');
     assert.equal((await flags(page)).stored, false, 'the session edit leaked into storage');
   });
 });

@@ -833,6 +833,58 @@ body {
   opacity: 1;
 }
 
+/* A length is one number and one unit, so the row is a number box and a short
+   unit list rather than one free-text field a designer has to spell a unit
+   into. The unit column is fixed and narrow — the widest option is "px" — and
+   the number takes the rest, which keeps the two halves in the same place down
+   the whole panel. The pane's own inputs are styled from the --bld- and --in-
+   shorthand variables that tweakpane.js declares for itself; these use the
+   documented --tp- ones the panel already maps to the demo's tokens above, so
+   the pair follows the light/dark switch with everything else. The pane sets
+   `outline: none` on its own fields; these two do not, because the browser's
+   focus ring is the only thing saying which half of the row has the caret. */
+.tp-lenv {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 3.4rem;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.tp-lenv_n,
+.tp-lenv_u {
+  box-sizing: border-box;
+  min-inline-size: 0;
+  block-size: var(--tp-container-unit-size, 20px);
+  padding-inline: var(--tp-blade-horizontal-padding, 0.5rem);
+  font: inherit;
+  color: var(--tp-input-foreground-color);
+  background: var(--tp-input-background-color);
+  border: 0;
+  border-radius: var(--tp-base-border-radius, 6px);
+}
+
+/* Right, like the pane's own number fields directly above it in the panel -
+   and it puts the number against its unit, so the pair reads as the one value
+   it is rather than as a field and a menu. */
+.tp-lenv_n {
+  text-align: right;
+}
+
+.tp-lenv_u {
+  padding-inline-end: 0;
+  cursor: pointer;
+}
+
+.tp-lenv_n:hover,
+.tp-lenv_u:hover {
+  background: var(--tp-input-background-color-hover);
+}
+
+.tp-lenv_n:focus,
+.tp-lenv_u:focus {
+  background: var(--tp-input-background-color-focus);
+}
+
 .tp-flagv {
   flex-basis: 100%;
   padding: 0.3rem 0.5rem;

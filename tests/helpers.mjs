@@ -76,6 +76,19 @@ export const openFolder = async (page, title) => {
 // (Enter or blur), not on every keystroke, so the fill is followed by Enter.
 export const rowByLabel = (page, label) => page.locator(`#wb-settings .tp-lblv:has(.tp-lblv_l:text-is("${label}"))`).first();
 
+// A length row: a number box and a px/em/%/vw list. The unit goes FIRST -
+// changing it converts what is in the box, so setting it after the number
+// would convert the number you just asked for.
+export const setLength = async (page, label, n, unit) => {
+  const row = rowByLabel(page, label);
+  await row.locator('select').first().selectOption(unit);
+  const input = row.locator('input').first();
+  await input.fill(n);
+  await input.press('Enter');
+  await page.waitForTimeout(120);
+  return input;
+};
+
 export const setField = async (page, label, value) => {
   const input = rowByLabel(page, label).locator('input').first();
   await input.fill(value);

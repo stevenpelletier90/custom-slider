@@ -1046,14 +1046,25 @@ ${PHOTO_CSS}
     if (/[a-z-]+\(/i.test(s)) return true;
     return LENGTH.test(s);
   };
+  // What a declaration is measured against before it is written: a value equal
+  // to one of these is a line that changes nothing, and 48 such lines were once
+  // being pasted across 15 patterns. Engine first, then the look: a look that
+  // deliberately restates an engine value (portrait and logo both set
+  // --cs-arrow-bg) must be the one that counts, or a designer returning a knob
+  // to the engine's value would find the line silently dropped and the look's
+  // value still winning. NOT the pattern's own props - those are the starting
+  // point a designer edits, not a value that costs nothing to state.
+  //
+  // Its own function because the length control asks the same question: a
+  // typed zero may only keep its unit where the answer is that the zero will be
+  // dropped, and a second copy of this expression would drift from the one
+  // cssFor() actually filters with.
+  const cssDefaults = () => (shared() ? { ...ENGINE_DEFAULTS, ...SHARED_DEFAULTS, ...LOOKS[state.look].settings } : { ...ENGINE_DEFAULTS });
+
   function cssFor(sel, preview) {
     const p = PATTERNS[state.pattern];
     const lib = shared();
-    // Engine first, then the look: a look that deliberately restates an engine
-    // value (portrait and logo both set --cs-arrow-bg) must be the one that
-    // counts, or a designer returning a knob to the engine's value would find
-    // the line silently dropped and the look's value still winning.
-    const defaults = lib ? { ...ENGINE_DEFAULTS, ...SHARED_DEFAULTS, ...LOOKS[state.look].settings } : { ...ENGINE_DEFAULTS };
+    const defaults = cssDefaults();
     const merged = { ...state.lookProps, ...state.props };
     const kept = Object.fromEntries(Object.entries(merged).filter(([k, v]) => defaults[k] !== v));
     // Per-view is always cs-xs-N / cs-sm-N classes now - see the ladder in
@@ -1470,6 +1481,18 @@ ${PHOTO_CSS}
   const swin = () => stage?.contentWindow;
   const styleEl = () => sdoc()?.getElementById('wb-live-css');
   const sroot = () => sdoc()?.getElementById('wb-live-root');
+
+  // The card's resolved font size, which is what the length control converts
+  // px<->em off. The carousel itself, not #wb-live-root: that div is only the
+  // box the snippet is painted into, and the em every card length is measured
+  // in comes from `font-size: var(--cargo-font, 1em)` on the carousel root.
+  // Null before the frame has painted, and the control then keeps the number
+  // and changes only the unit. The frame is visually SCALED to fit its column,
+  // but a transform moves no layout box, so this is a true CSS px either way.
+  const cardFontPx = () => {
+    const root = sdoc()?.querySelector('.cs');
+    return root ? parseFloat((swin() ?? window).getComputedStyle(root).fontSize) || null : null;
+  };
 
   // The index page (patterns.html) loads this file for the generator alone: one
   // example of every pattern, built by the same cssFor/htmlFor pair the builder
@@ -2012,6 +2035,25 @@ ${PHOTO_CSS}
   // needs no such thing, but going through here costs it nothing.
   const rebuild = (fn) => queueMicrotask(fn);
 
+  // One number and one unit, which is the shape the number box and the unit
+  // list can hold between them. A multi-value shorthand (6% 6% 1%), a calc(),
+  // a keyword, a rem: none of those fit in two fields without the row showing
+  // something the slider is not using, so they keep the free-text field.
+  const SINGLE_LENGTH = /^-?\d*\.?\d+(px|em|%|vw)$/;
+  const single = (v) => SINGLE_LENGTH.test(String(v ?? '').trim());
+  // What a typed 0 stores. 0.1px almost everywhere: a zero length in a --*
+  // declaration is a paste hazard, because the platform's minifier strips the
+  // unit off it and the engine's calc() cannot use a bare 0 - F003, reached
+  // again. The exception is a knob whose off value is the one cssFor() DROPS:
+  // Peek is off at the engine's own 0px, so turning it off costs no
+  // declaration and there is nothing for the minifier to reach. Measured
+  // against the delta baseline rather than knobDefault(), because a pattern
+  // pre-setting Peek to 3em does not change what "off" is worth.
+  const zeroFor = (key) => {
+    const d = String(cssDefaults()[key] ?? '').trim();
+    return single(d) && parseFloat(d) === 0 ? d : '0.1px';
+  };
+
   // A settings row for a CSS value. The pane draws it (assets/pane.js decides
   // how); what is decided here is what a typed value MEANS, which is the part
   // every finding was about.
@@ -2025,23 +2067,30 @@ ${PHOTO_CSS}
   const valueKnob = (parent, label, key, store, after) => {
     // okValue() only ever refuses a length - anything else it cannot check.
     const why = (v) => (okValue(key, v) ? '' : 'Needs a unit — try 1em or 16px, and 0.1px rather than 0.');
+    const cur = store[key] ?? '';
+    const on = (v) => {
+      setProp(store, key, v);
+      pane.flag(b, why(v));
+      render();
+      after?.();
+    };
+    // The placeholder is what clearing it falls back to, shown rather than
+    // described. Clearing means "go back to the default", not "ship nothing".
+    const opts = { placeholder: String(knobDefault(key) ?? ''), note: knobNote(key) };
+    // Which control a knob gets is read off the shape of its DEFAULT, the way
+    // okValue() decides what to check, so a knob added to a look is covered the
+    // day it ships rather than the day someone remembers a list. The value in
+    // hand has to fit too: a stored calc() on a knob that usually holds a plain
+    // length would leave the number box blank beside a value that is still
+    // shipping, and a control that will not show what the slider is using is
+    // the shape of every controls finding in this file.
     let b;
-    b = pane.text(
-      parent,
-      label,
-      store[key] ?? '',
-      (v) => {
-        setProp(store, key, v);
-        pane.flag(b, why(v));
-        render();
-        after?.();
-      },
-      // The placeholder is what clearing it falls back to, shown rather than
-      // described. Clearing means "go back to the default", not "ship nothing".
-      { placeholder: String(knobDefault(key) ?? ''), note: knobNote(key) },
-    );
+    b =
+      single(knobDefault(key) ?? cur) && (cur === '' || single(cur))
+        ? pane.length(parent, label, cur, on, { ...opts, fontPx: cardFontPx, zero: zeroFor(key) })
+        : pane.text(parent, label, cur, on, opts);
     // A value stored before this existed can already be a bad one.
-    pane.flag(b, why(store[key] ?? ''));
+    pane.flag(b, why(cur));
     return b;
   };
 

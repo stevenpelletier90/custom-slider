@@ -12,7 +12,7 @@
 // shipping. This is the fast one, for every commit.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, patternIds, copyParts, setField, hostHtml, engineFiles, readSlider } from './helpers.mjs';
+import { openBuilder, pick, patternIds, copyParts, setField, setLength, hostHtml, engineFiles, readSlider } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -62,33 +62,63 @@ test.describe('values that must never reach the copied CSS', () => {
   // a unitless 0 (F003), a cleared field emitting `--cs-gap: ;` (F022), and a
   // typed `10` (F028). Each invalidates the slide's flex basis, so the cards
   // collapse to their content width while the readout still claims otherwise.
-  const REFUSED = ['10', '0', 'wide'];
+  //
+  // Gap is a length row now - a number box and a unit list - so two of these
+  // can no longer be typed at all: the unit comes from the list, and a zero is
+  // stored as 0.1px. The third is a word, which is not a number, so the box is
+  // redrawn from the value rather than storing it. The guarantee is unchanged
+  // and still proved where it matters, in the COPIED CSS: whatever is typed at
+  // this field, what ships is a length the property can use or nothing, the
+  // flex basis never goes invalid and the strip never collapses. The MESSAGE a
+  // refused value gets is still tested on the free-text rows that can still
+  // hold one - see "a Side gutter value the property cannot use is refused" in
+  // controls.test.mjs.
+  // Typed into the number box, and what must ship instead of it.
+  const REFUSED = [
+    ['10', '10em'], // F028: the unit comes from the list, never from the keyboard
+    ['0', '0.1px'], // F003: never a bare 0, and never an 0px for the minifier to make one of
+  ];
 
-  test('a value the property cannot use is dropped, flagged, and never collapses the strip', async () => {
+  const gapState = (page) =>
+    page.evaluate(() => {
+      const slide = globalThis.CARGO.sdoc().querySelector('.cs-slide');
+      const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === 'Gap');
+      const n = row?.querySelector('.tp-lenv input')?.value ?? '';
+      return {
+        width: +slide.getBoundingClientRect().width.toFixed(1),
+        basis: getComputedStyle(slide).flexBasis,
+        emitted: /--cs-gap:\s*([^;]*);/.exec(document.getElementById('wb-code').textContent)?.[1]?.trim() ?? null,
+        shown: n === '' ? '' : n + row.querySelector('.tp-lenv select').value,
+      };
+    });
+
+  test('a value the property cannot use is never what ships, and never collapses the strip', async () => {
     await pick(page, 'modelbar');
-    const good = await page.evaluate(() => +globalThis.CARGO.sdoc().querySelector('.cs-slide').getBoundingClientRect().width.toFixed(1));
 
-    for (const typed of REFUSED) {
+    for (const [typed, want] of REFUSED) {
       await setField(page, 'Gap', typed);
-      const r = await page.evaluate(() => {
-        const slide = globalThis.CARGO.sdoc().querySelector('.cs-slide');
-        const input = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === 'Gap')?.querySelector('input');
-        return {
-          width: +slide.getBoundingClientRect().width.toFixed(1),
-          basis: getComputedStyle(slide).flexBasis,
-          emitted: /--cs-gap:\s*([^;]*);/.exec(document.getElementById('wb-code').textContent)?.[1]?.trim() ?? null,
-          flagged: input?.getAttribute('aria-invalid') === 'true',
-        };
-      });
-      assert.equal(r.emitted, null, `"${typed}" reached the copied CSS`);
-      assert.ok(r.flagged, `"${typed}" was not flagged in the field`);
+      const r = await gapState(page);
+      assert.equal(r.emitted, want, `"${typed}" shipped ${r.emitted}`);
+      // The other half of the same promise: the row may not be left showing a
+      // value the slider is not running.
+      assert.equal(r.shown, want, `"${typed}" left the field showing ${r.shown} while ${r.emitted} shipped`);
+      // The collapse all three findings shared: an invalid gap invalidates the
+      // slide's flex basis and the cards fall back to their content width -
+      // 208px to 81px - while the readout still claims 5 of 8. A legal gap may
+      // narrow the cards as much as it likes; 10em really is a 10em gap now,
+      // which is what taking the unit off the keyboard bought.
       assert.notEqual(r.basis, 'auto', `"${typed}" collapsed the slide basis`);
-      // Not 'unchanged': a refused value counts as NO value, so the knob
-      // falls back to the engine default and the gap legitimately shifts a
-      // little. What must never happen is the collapse - 208px to 81px when
-      // the flex basis went invalid.
-      assert.ok(r.width > good * 0.9, `"${typed}" collapsed the strip: ${good} -> ${r.width}`);
     }
+  });
+
+  // The third route in: a word is not a number, so there is nothing to store.
+  // The row goes back to showing what the slider is using rather than keeping
+  // the typo on screen, and nothing about the slider moves.
+  test('a word typed at a length changes nothing at all', async () => {
+    await pick(page, 'modelbar');
+    const before = await gapState(page);
+    await setField(page, 'Gap', 'wide');
+    assert.deepEqual(await gapState(page), before, 'a word typed at the gap changed the slider or the field');
   });
 
   test('clearing a field goes back to the default rather than shipping nothing', async () => {
@@ -152,12 +182,12 @@ test.describe('the slider name', () => {
     const field = page.locator('[data-name-field]');
     await field.fill('new-vehicles');
     await field.blur();
-    await setField(page, 'Gap', '0.5em');
+    await setLength(page, 'Gap', '0.5', 'em');
     const a = await copyParts(page);
 
     await field.fill('pre-owned');
     await field.blur();
-    await setField(page, 'Gap', '3em');
+    await setLength(page, 'Gap', '3', 'em');
     const b = await copyParts(page);
 
     await host.setContent(hostHtml({ ...engine, css: `${a.css}\n${b.css}`, html: `<div id="one">${a.html}</div><div id="two">${b.html}</div>` }), { waitUntil: 'load' });

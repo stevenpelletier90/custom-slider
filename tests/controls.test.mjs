@@ -6,7 +6,7 @@
 // never caught any of them.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { ORIGIN, openBuilder, pick, setField, rowByLabel, openFolder, switchRow, copyParts, stageFrame, patternIds, hostHtml, engineFiles } from './helpers.mjs';
+import { ORIGIN, openBuilder, pick, setField, setLength, rowByLabel, openFolder, switchRow, copyParts, stageFrame, patternIds, hostHtml, engineFiles } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -17,11 +17,19 @@ test.beforeAll(async ({ browser: b }) => {
   ({ page, errors } = await openBuilder(browser, 1500));
 });
 
-// The value a knob displays, by its row label.
+// The value a knob displays, by its row label. A length row is two controls -
+// a number box and a unit list - and what it displays is the pair, which is
+// also the value the store holds and the copied CSS ships. Empty stays empty:
+// a cleared length field means "the default", and that is not "0px".
 const knob = (page, label) =>
   page.evaluate((l) => {
     const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === l);
     if (!row) return null;
+    const len = row.querySelector('.tp-lenv');
+    if (len) {
+      const n = len.querySelector('input').value;
+      return n === '' ? '' : n + len.querySelector('select').value;
+    }
     const el = row.querySelector('input, select');
     return el ? (el.type === 'checkbox' ? String(el.checked) : el.value) : null;
   }, label);
@@ -262,7 +270,7 @@ test.describe('peek is offered wherever it can do something', () => {
   test('a value reaches the copied CSS and narrows the card', async () => {
     await pick(page, 'modelbar');
     const wide = await page.evaluate(() => globalThis.CARGO.sdoc().querySelector('.cs-slide').getBoundingClientRect().width);
-    await setField(page, 'Peek', '2em');
+    await setLength(page, 'Peek', '2', 'em');
     await page.waitForTimeout(250);
     const narrow = await page.evaluate(() => globalThis.CARGO.sdoc().querySelector('.cs-slide').getBoundingClientRect().width);
     const { css } = await copyParts(page);
@@ -282,7 +290,7 @@ test.describe('peek is offered wherever it can do something', () => {
   // the same shape as the controls-space bug on Tall photos.
   test('turning Peek off leaves nothing behind on phones', async () => {
     await pick(page, 'peek');
-    await setField(page, 'Peek', '0px');
+    await setLength(page, 'Peek', '0', 'px');
     await page.waitForTimeout(250);
     const { css } = await copyParts(page);
     assert.doesNotMatch(css, /--cs-peek/, 'a media query still sets peek where the knob cannot see it');
@@ -342,7 +350,7 @@ test.describe('a property the slider is already using has a control', () => {
   // reads those rules back and says what they set.
   test('arrow size is editable and reaches the drawn arrow', async () => {
     await pick(page, 'cards');
-    await setField(page, 'Arrow size', '60px');
+    await setLength(page, 'Arrow size', '60', 'px');
     await page.waitForTimeout(250);
     const drawn = await page.evaluate(() => +globalThis.CARGO.sdoc().querySelector('.cs-arrow').getBoundingClientRect().width.toFixed(0));
     const { css } = await copyParts(page);
@@ -677,7 +685,7 @@ test.describe('the last engine properties reach the panel', () => {
 
   test('a thumbnail size reaches the copied CSS and the drawn thumb', async () => {
     await pick(page, 'gallery');
-    await setField(page, 'Thumbnail width', '120px');
+    await setLength(page, 'Thumbnail width', '120', 'px');
     await page.waitForTimeout(300);
     const drawn = await page.evaluate(() => Math.round(globalThis.CARGO.sdoc().querySelector('.cs-thumb')?.getBoundingClientRect().width ?? 0));
     const { css } = await copyParts(page);

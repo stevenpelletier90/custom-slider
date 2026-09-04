@@ -92,6 +92,22 @@
     return b;
   };
 
+  // A single length: a number box and a px/em/%/vw list, drawn by the `length`
+  // input plugin in tp-plugins.js. The value on the wire is still the string
+  // the store holds ('0.5em'), so nothing downstream of the panel knows the
+  // difference. `fontPx` is what px<->em converts off - a function, because the
+  // preview frame may not have painted yet when the row is built.
+  //
+  // bind() names the first input, which is the number box; the unit list is a
+  // second control in the same row and needs a name of its own, or it is
+  // announced as an unlabelled combo box sitting next to a field called "Gap".
+  const length = (parent, label, value, on, opts = {}) => {
+    const b = bind(parent, label, { v: value ?? '' }, { view: 'length', fontPx: opts.fontPx, placeholder: opts.placeholder == null ? undefined : String(opts.placeholder), zero: opts.zero }, on);
+    b.element.querySelector('select')?.setAttribute('aria-label', `${label} unit`);
+    if (opts.note) b.element.title = opts.note;
+    return b;
+  };
+
   // `step` here is a rounding CONSTRAINT, not a spinner increment: Tweakpane
   // commits `origin + Math.round((v - origin) / step) * step`, so a step of 500
   // turns a typed 200 into 0. Pass the granularity the value may actually have,
@@ -167,6 +183,7 @@
     dispose,
     folder,
     text,
+    length,
     int,
     list,
     bool,
