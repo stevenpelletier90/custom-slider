@@ -3,7 +3,7 @@
 // the wrong brand on fourteen of seventeen patterns.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, patternIds } from './helpers.mjs';
+import { openBuilder, pick, patternIds, setField, rowByLabel } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -41,7 +41,7 @@ test.describe('every field the editor offers reaches the code', () => {
     await pick(page, 'grid');
     const before = await page.locator('#wb-content fieldset').first().locator('input[type="text"], textarea').count();
     const other = await page.evaluate(() => {
-      const b = [...document.querySelectorAll('#wb-settings .wb-look')].find((x) => x.getAttribute('aria-pressed') !== 'true');
+      const b = [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((x) => x.getAttribute('aria-pressed') !== 'true');
       b?.click();
       return !!b;
     });
@@ -134,8 +134,7 @@ test.describe('the readout says what the slider is doing', () => {
 
   test('asking for more across than there are slides is not reported as more', async () => {
     await pick(page, 'cards');
-    const f = page.locator('#wb-settings label:has(> span:text-is("Desktop · 1200+")) input').first();
-    await f.fill('8');
+    await setField(page, 'Desktop · 1200+', '8');
     await page.waitForTimeout(250);
     const text = await page.evaluate(() => document.getElementById('spec-across').textContent);
     const [shown, of] = text

@@ -86,6 +86,27 @@
     return b;
   };
 
+  // A message under a row, or none. Replaces the old .wb-bad span: the value
+  // is refused by okValue() and the field says why instead of going quiet.
+  const flag = (binding, message) => {
+    let el = binding.element.querySelector('.tp-flagv');
+    // Clearing takes the flag off the input too. The old mark() wrote
+    // String(bad) on every keystroke, so a field fixed after a bad value
+    // stopped announcing itself as invalid; leaving aria-invalid standing
+    // would tell a screen reader the opposite of what the slider is using.
+    if (!message) {
+      binding.element.querySelector('input')?.setAttribute('aria-invalid', 'false');
+      return void el?.remove();
+    }
+    if (!el) {
+      el = document.createElement('p');
+      el.className = 'tp-flagv';
+      binding.element.append(el);
+    }
+    el.textContent = message;
+    binding.element.querySelector('input')?.setAttribute('aria-invalid', 'true');
+  };
+
   // A paragraph. The `note` blade comes from tp-plugins.js; before that file
   // exists a separator keeps the adapter loadable.
   const note = (parent, textContent) => (CARGO.tpPlugins?.some((p) => p.id === 'note') ? parent.addBlade({ view: 'note', text: textContent }) : parent.addBlade({ view: 'separator' }));
@@ -102,6 +123,7 @@
     int,
     list,
     bool,
+    flag,
     note,
     looks,
     get pane() {

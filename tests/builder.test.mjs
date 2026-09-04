@@ -72,7 +72,7 @@ test.describe('values that must never reach the copied CSS', () => {
       await setField(page, 'Gap', typed);
       const r = await page.evaluate(() => {
         const slide = globalThis.CARGO.sdoc().querySelector('.cs-slide');
-        const input = [...document.querySelectorAll('#wb-settings label > span')].find((x) => x.textContent.trim() === 'Gap')?.parentElement.querySelector('input');
+        const input = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === 'Gap')?.querySelector('input');
         return {
           width: +slide.getBoundingClientRect().width.toFixed(1),
           basis: getComputedStyle(slide).flexBasis,
@@ -105,10 +105,16 @@ test.describe('values that must never reach the copied CSS', () => {
 
   test('every settings field says what it falls back to', async () => {
     await pick(page, 'modelbar');
+    // Every value row, which on the pane means every text field that is not a
+    // bound NUMBER - Tweakpane draws those with a text input too, and marks
+    // them .tp-txtv-num. A count has a range instead of a fallback.
     const missing = await page.evaluate(() =>
-      [...document.querySelectorAll('#wb-settings label.wb-row')]
-        .filter((r) => r.querySelector('input[type="text"]') && !r.querySelector('input[type="text"]').placeholder)
-        .map((r) => r.querySelector('span')?.textContent.trim()),
+      [...document.querySelectorAll('#wb-settings .tp-lblv')]
+        .filter((r) => {
+          const i = r.querySelector('input[type="text"]');
+          return i && !i.closest('.tp-txtv-num') && !i.placeholder;
+        })
+        .map((r) => r.querySelector('.tp-lblv_l')?.textContent.trim()),
     );
     assert.deepEqual(missing, [], 'fields with no placeholder');
   });

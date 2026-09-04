@@ -6,7 +6,7 @@
 // first edit.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, copyParts } from './helpers.mjs';
+import { openBuilder, pick, copyParts, rowByLabel } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -22,7 +22,7 @@ const note = (page) => page.evaluate(() => document.querySelector('#wb-content .
 test.describe('one owner of the slide count', () => {
   test('there is no second control for it', async () => {
     await pick(page, 'modelbar');
-    const dial = await page.evaluate(() => [...document.querySelectorAll('#wb-settings label > span')].some((s) => /slides in this example/i.test(s.textContent)));
+    const dial = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-lblv_l')].some((s) => /slides in this example/i.test(s.textContent)));
     assert.equal(dial, false, 'the slide-count dial is back');
   });
 
@@ -53,7 +53,7 @@ test.describe('one owner of the slide count', () => {
 
   test('a preset says it brought the slides, and Fiat is not credited with cars it has none of', async () => {
     await pick(page, 'cards');
-    const select = page.locator('#wb-settings select[aria-label="Brand preset"]');
+    const select = rowByLabel(page, 'Brand').locator('select');
     const withCars = await select.evaluate((s) => {
       const b = globalThis.CARGO.BRANDS ?? {};
       return [...s.options].map((o) => o.value).find((v) => v && b[v]?.models);
@@ -184,7 +184,7 @@ test.describe('the demo describes what it is actually showing', () => {
     const other = await page.evaluate(() => {
       const L = globalThis.CARGO.LOOKS;
       const id = Object.keys(L).find((k) => !/badge/.test(String(L[k].markup)));
-      const b = [...document.querySelectorAll('#wb-settings .wb-look')].find((x) => x.textContent.includes(L[id].label));
+      const b = [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((x) => x.textContent.includes(L[id].label));
       b?.click();
       return !!b && L[id].label;
     });
@@ -198,7 +198,7 @@ test.describe('the demo describes what it is actually showing', () => {
   // meant editing the pasted markup by hand on every card.
   test('the button keeps its own wording until someone types other words', async () => {
     await pick(page, 'cards');
-    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes('Location card'))?.click());
+    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((b) => b.textContent.includes('Location card'))?.click());
     await page.waitForTimeout(300);
     const box = page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Button text")) input').first();
     assert.equal(await box.count(), 1, 'a card style with a button offers no Button text box');
@@ -217,7 +217,7 @@ test.describe('the demo describes what it is actually showing', () => {
       const L = globalThis.CARGO.LOOKS;
       const id = Object.keys(L).find((k) => !/m\.cta/.test(String(L[k].markup)));
       if (!id) return null;
-      [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes(L[id].label))?.click();
+      [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((b) => b.textContent.includes(L[id].label))?.click();
       return L[id].label;
     });
     assert.ok(noButton, 'every card style draws a button, so this guards nothing');
@@ -335,7 +335,7 @@ test.describe('the demo describes what it is actually showing', () => {
       await pick(page, id);
       // The style has to be chosen, not assumed: earlier tests in this file
       // switch it, and the choice is remembered per pattern.
-      await page.evaluate((s) => [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes(s))?.click(), style);
+      await page.evaluate((s) => [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((b) => b.textContent.includes(s))?.click(), style);
       await page.waitForTimeout(300);
       // And the box cleared, for the same reason - a previous test may have
       // typed into it.

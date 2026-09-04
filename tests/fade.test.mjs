@@ -5,7 +5,7 @@
 // image height on init, which is also what a no-JS visitor was left with.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, copyParts, hostHtml, engineFiles } from './helpers.mjs';
+import { openBuilder, pick, copyParts, rowByLabel, hostHtml, engineFiles } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -22,9 +22,10 @@ test.describe('a fading hero is one across before the script runs', () => {
   test('authoring it three across shifts nothing on init', async () => {
     await pick(page, 'hero');
     for (const label of ['Phone · under 768', 'Tablet · 768+', 'Laptop · 992+', 'Desktop · 1200+']) {
-      const f = page.locator(`#wb-settings label:has(> span:text-is("${label}")) input`).first();
+      const f = rowByLabel(page, label).locator('input').first();
       if (await f.count()) {
         await f.fill('3');
+        await f.press('Enter');
         await page.waitForTimeout(60);
       }
     }
@@ -74,13 +75,13 @@ test.describe('a fading hero is one across before the script runs', () => {
 test.describe('the panel says which controls the crossfade ignores', () => {
   const rowLabel = (page, text) =>
     page.evaluate((t) => {
-      const row = [...document.querySelectorAll('#wb-settings label.wb-row')].find((r) => r.querySelector('span')?.textContent.trim().startsWith(t));
-      return row ? row.querySelector('span').textContent.trim() : null;
+      const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim().startsWith(t));
+      return row ? row.querySelector('.tp-lblv_l').textContent.trim() : null;
     }, text);
 
   test('the hero is annotated and the model bar is not', async () => {
     await pick(page, 'hero');
-    const note = await page.evaluate(() => [...document.querySelectorAll('#wb-settings p.wb-note')].map((n) => n.textContent).join(' '));
+    const note = await page.evaluate(() => [...document.querySelectorAll('#wb-settings p.tp-notev')].map((n) => n.textContent).join(' '));
     assert.match(note, /crossfade/i, 'nothing in the panel says the crossfade ignores the count');
     assert.equal(await rowLabel(page, 'Gap'), 'Gap (a crossfade has no gap)');
     assert.equal(await rowLabel(page, 'Arrows move'), 'Arrows move (a crossfade always moves 1)');

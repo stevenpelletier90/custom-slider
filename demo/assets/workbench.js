@@ -12,7 +12,11 @@
 // starts wanting one, stop and re-open the design.
 
 (() => {
-  const { LOOKS, BRANDS, perViewFor } = globalThis.CARGO;
+  // `pane` is the Tweakpane adapter (assets/pane.js), which the Build page
+  // loads immediately before this file. patterns.html and
+  // scripts/lint-generated-css.mjs load neither, and neither builds a settings
+  // panel: both leave through `if (!stage) return` long before buildPanel().
+  const { LOOKS, BRANDS, perViewFor, pane } = globalThis.CARGO;
 
   // The platform's Bootstrap 3 grid, measured in its CSS bundle. Not the
   // estate's 461 / 539 / 599 / 990 / 1440 - several of those were an
@@ -1902,42 +1906,17 @@ ${PHOTO_CSS}
     return raw.replace(/<[^>]*>/g, '');
   };
 
-  const control = (label, node, note, extra) => {
+  // A label/field pair in the SLIDE EDITOR. The settings panel is a pane now
+  // (assets/pane.js draws its rows); this is what is left of the old row
+  // builder, and the editor is its only caller.
+  const control = (label, node) => {
     const row = document.createElement('label');
     row.className = 'wb-row';
-    if (note) row.title = note;
     const span = document.createElement('span');
     span.textContent = label;
     row.append(span, node);
-    if (extra) row.append(extra);
     return row;
   };
-
-  // Up/down arrows step the number under the caret, the way browser Inspect
-  // does: plain = 1, Shift = 10, Alt = 0.1. The unit rides along untouched, and
-  // in a multi-value string only the number the caret is in moves - `6% 6% 1%`
-  // steps one of the three, not all of them. Rounded to the decimals actually
-  // in play, or 0.1 steps drift into 0.30000000000000004.
-  const NUM = /-?\d*\.?\d+/g;
-  function stepper(input, commit) {
-    input.addEventListener('keydown', (e) => {
-      if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
-      const v = input.value;
-      const hits = [...v.matchAll(NUM)];
-      if (!hits.length) return;
-      const caret = input.selectionStart ?? v.length;
-      // The number the caret sits in or just after; failing that, the first.
-      const hit = hits.find((m) => caret >= m.index && caret <= m.index + m[0].length) ?? hits.find((m) => m.index > caret) ?? hits[0];
-      const by = (e.shiftKey ? 10 : e.altKey ? 0.1 : 1) * (e.key === 'ArrowUp' ? 1 : -1);
-      const dp = Math.max((hit[0].split('.')[1] || '').length, e.altKey ? 1 : 0);
-      const next = (parseFloat(hit[0]) + by).toFixed(dp);
-      e.preventDefault();
-      input.value = v.slice(0, hit.index) + next + v.slice(hit.index + hit[0].length);
-      // Keep the caret on the number just changed so the key repeats on it.
-      input.setSelectionRange(hit.index, hit.index + next.length);
-      commit(input.value);
-    });
-  }
 
   // Look properties whose values are a closed set. A free-text box for one of
   // these is a guessing game - you have to already know that `capitalize` is
@@ -1956,23 +1935,6 @@ ${PHOTO_CSS}
     ],
   };
 
-  function enumSelect(key, store) {
-    const sel = document.createElement('select');
-    for (const [value, label] of ENUMS[key]) {
-      const o = document.createElement('option');
-      o.value = value;
-      o.textContent = label;
-      o.selected = String(store[key]).trim() === value;
-      sel.append(o);
-    }
-    sel.addEventListener('change', () => {
-      store[key] = sel.value;
-      render();
-    });
-    return sel;
-  }
-
-  // A text field for a CSS value, with the arrow-key stepping wired on.
   // Clearing a field means "go back to the default", not "ship nothing". An
   // empty value used to be stored as-is and emitted as `--cs-gap: ;`, which is
   // an invalid declaration: the arrows fell to the page's text colour and a
@@ -1996,121 +1958,71 @@ ${PHOTO_CSS}
     else store[key] = d;
   };
 
-  function valueRow(label, key, store, after) {
-    const input = document.createElement('input');
-    input.type = 'text';
-    input.value = store[key] ?? '';
-    // What it falls back to, shown rather than described.
-    input.placeholder = String(knobDefault(key) ?? '');
-    const warn = document.createElement('span');
-    warn.className = 'wb-bad';
-    warn.hidden = true;
-    warn.textContent = wantsLength(key) ? 'Needs a unit — try 1em or 16px, and 0.1px rather than 0.' : '';
-    const mark = () => {
-      const bad = !okValue(key, input.value);
-      input.setAttribute('aria-invalid', String(bad));
-      input.classList.toggle('wb-input-bad', bad);
-      warn.hidden = !bad;
-    };
-    const push = (v) => {
-      setProp(store, key, v);
-      mark();
-      render();
-      after?.();
-    };
-    input.addEventListener('input', () => push(input.value));
-    stepper(input, push);
-    mark();
-    return control(label, input, knobNote(key), warn);
-  }
+  // A control that changes WHICH controls exist has to rebuild the pane, and it
+  // cannot do that from inside its own change event: Tweakpane's rack looks the
+  // sending blade up again after the listener returns, and a blade whose pane
+  // was disposed mid-event is no longer there - which it reports as an
+  // uncaught "already disposed" on the page. One microtask later the event is
+  // over and the rebuild is safe. The look picker is a blade of our own and
+  // needs no such thing, but going through here costs it nothing.
+  const rebuild = (fn) => queueMicrotask(fn);
 
-  const section = (heading, body) => {
-    const s = document.createElement('section');
-    const h = document.createElement('h3');
-    h.textContent = heading;
-    s.append(h, body);
-    // A section is kept whole in the settings columns so a heading never parts
-    // from its controls - except a long one, which would then set the height of
-    // the whole panel on its own. "This card style" runs to 14 rows and pushed
-    // the preview off a 1440x900 laptop; letting it flow lets the columns
-    // balance, and every row inside it carries its own label anyway.
-    if (body.children.length > 8) s.dataset.flow = '';
-    return s;
+  // A settings row for a CSS value. The pane draws it (assets/pane.js decides
+  // how); what is decided here is what a typed value MEANS, which is the part
+  // every finding was about.
+  //
+  // The value is stored either way and okValue() stays the single gate:
+  // cssFor() drops what it refuses, so an unusable value falls back to the
+  // default instead of shipping - in the preview and in the copied CSS alike.
+  // Dropping it here instead would leave the field showing one value while the
+  // slider ran another, which is the shape of every controls finding. What the
+  // row adds is the reason: a refused value used to go quiet.
+  const valueKnob = (parent, label, key, store, after) => {
+    // okValue() only ever refuses a length - anything else it cannot check.
+    const why = (v) => (okValue(key, v) ? '' : 'Needs a unit — try 1em or 16px, and 0.1px rather than 0.');
+    let b;
+    b = pane.text(
+      parent,
+      label,
+      store[key] ?? '',
+      (v) => {
+        setProp(store, key, v);
+        pane.flag(b, why(v));
+        render();
+        after?.();
+      },
+      // The placeholder is what clearing it falls back to, shown rather than
+      // described. Clearing means "go back to the default", not "ship nothing".
+      { placeholder: String(knobDefault(key) ?? ''), note: knobNote(key) },
+    );
+    // A value stored before this existed can already be a bad one.
+    pane.flag(b, why(store[key] ?? ''));
+    return b;
   };
 
-  function colorRow(label, key, store) {
-    const wrap = document.createElement('span');
-    wrap.className = 'wb-color';
-    const val = store[key] ?? '';
-    const swatch = document.createElement('input');
-    swatch.type = 'color';
-    // A colour input only understands #rrggbb; transparent and rgb() are
-    // legitimate values here, so the text field stays authoritative.
-    swatch.value = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.test((val || '').trim()) ? val : '#000000';
-    const text = document.createElement('input');
-    text.type = 'text';
-    text.value = val;
-    // Same as the value rows: show what clearing it falls back to. No unit
-    // check here - a colour is a colour, and transparent, a hex and an rgba()
-    // are all legitimate in this field.
-    text.placeholder = String(knobDefault(key) ?? '');
-    // The wrapping <label> binds to the swatch, not to this field - and the
-    // swatch is hidden whenever the value is not a plain hex.
-    text.setAttribute('aria-label', `${label} value`);
-    // restyle(), not render(): see the note on it. The OS colour picker fires
-    // an input event on every pointer move, and a rebuild per move is what made
-    // dragging one crawl.
-    const push = (v) => {
-      setProp(store, key, v);
-      restyle();
-    };
-    // A colour input has no way to show "transparent" or an rgb() with alpha -
-    // it just renders black, which reads as a real colour choice that was never
-    // made. Show the swatch only when it can tell the truth.
-    const chip = document.createElement('button');
-    chip.type = 'button';
-    chip.className = 'wb-chip';
-    chip.addEventListener('click', () => {
-      // Give it a real colour to edit, then hand over to the picker.
-      text.value = '#262626';
-      push(text.value);
-      sync();
-      swatch.click();
-    });
-
-    // #222 is as valid as #222222 and the picker only speaks the long form.
-    const asHex = (v) => {
-      const m = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec((v || '').trim());
-      if (!m) return null;
-      return m[1].length === 3 ? `#${[...m[1]].map((c) => c + c).join('')}` : `#${m[1]}`;
-    };
-
-    const sync = () => {
-      const hex = asHex(text.value);
-      swatch.hidden = !hex;
-      chip.hidden = !!hex;
-      if (hex) swatch.value = hex;
-      else {
-        chip.style.setProperty('--chip', text.value || 'transparent');
-        chip.title = `${text.value || 'unset'} — click to pick a solid colour instead`;
-        chip.setAttribute('aria-label', chip.title);
-      }
-    };
-    swatch.addEventListener('input', () => {
-      text.value = swatch.value;
-      push(swatch.value);
-    });
-    text.addEventListener('input', () => {
-      sync();
-      push(text.value);
-    });
-    sync();
-    wrap.append(swatch, chip, text);
-    return control(label, wrap, knobNote(key));
-  }
+  // No unit check: a colour is a colour, and transparent, a hex and an rgba()
+  // are all legitimate in this field. restyle(), not render(): see the note on
+  // it - a colour changes the stylesheet and nothing else, and sending one
+  // through render() tore the stage down and re-initialised every slider in it.
+  const colourKnob = (parent, label, key, store) =>
+    pane.text(
+      parent,
+      label,
+      store[key] ?? '',
+      (v) => {
+        setProp(store, key, v);
+        restyle();
+      },
+      { placeholder: String(knobDefault(key) ?? ''), note: knobNote(key) },
+    );
 
   function buildPanel() {
-    panel.replaceChildren();
+    // A structural change - a pattern, a look, a preset, a switch that adds or
+    // removes rows - throws the whole pane away and builds a new one. Nothing
+    // lives in it (every control binds to its own { v } and calls back), so
+    // there is nothing to migrate. null means the vendor bundle is missing,
+    // and create() has already said so in the panel's place.
+    if (!pane.create(panel)) return;
     const p = PATTERNS[state.pattern];
     // The crossfade ignores how many across, the gap and the step. The hero is
     // the only pattern that carries the attribute today, but read it off the
@@ -2122,93 +2034,55 @@ ${PHOTO_CSS}
     // classified the day it ships.
     const scrolling = !fading && state.data['data-cs-gallery'] == null;
 
-    const grid = document.createElement('div');
+    const grid = pane.folder('How many across');
     for (const key of ['base', ...BPS]) {
       if (state.perView[key] == null) continue;
-      const input = document.createElement('input');
-      input.type = 'number';
-      input.min = '1';
-      input.max = '8';
-      input.value = state.perView[key];
-      // F083: a number outside 1-8 was refused in silence. The field snapped
-      // back on blur, so nothing was lost, but between typing and blurring the
-      // panel showed one number and the slider ran another with no hint that
-      // the value had not been taken.
-      const warn = document.createElement('span');
-      warn.className = 'wb-bad';
-      warn.hidden = true;
-      warn.textContent = 'Whole cards, 1 to 8.';
-      input.addEventListener('input', () => {
-        const n = parseInt(input.value, 10);
-        const ok = n >= 1 && n <= 8;
-        input.setAttribute('aria-invalid', String(!ok));
-        input.classList.toggle('wb-input-bad', !ok);
-        warn.hidden = ok;
-        if (ok) {
+      // F083 and F060, both closed by the binding's own 1-8 range and whole-
+      // number step. A count outside the range used to be refused in silence
+      // and a `2.5` truncated to 2 while the box went on saying 2.5, so the
+      // panel showed one number and the slider ran another. The pane commits a
+      // constrained value and redraws the field with it, so what the field
+      // says is always what the ladder took. There is no half-card option to
+      // offer instead: the engine pages by whole slides, so a 2.5 set by hand
+      // makes the last page unreachable. Peek is the control for showing part
+      // of the next card.
+      pane.int(
+        grid,
+        TIER_LABEL[key],
+        state.perView[key],
+        (n) => {
           state.perView[key] = n;
           render();
-        }
-      });
-      // The field must not go on showing a number the ladder did not take.
-      // `2.5` truncated to 2 and the box kept saying 2.5, and there is no
-      // half-card option to offer instead: the engine pages by whole slides,
-      // so a 2.5 set by hand makes the last page unreachable. Peek is the
-      // control for showing part of the next card.
-      input.addEventListener('change', () => {
-        input.value = state.perView[key];
-        input.setAttribute('aria-invalid', 'false');
-        input.classList.remove('wb-input-bad');
-        warn.hidden = true;
-      });
-      grid.append(control(TIER_LABEL[key], input, 'Whole cards only — use Peek to show a sliver of the next one.', warn));
+        },
+        { min: 1, max: 8, step: 1, note: 'Whole cards only — use Peek to show a sliver of the next one.' },
+      );
     }
     // A crossfade ignores all three of these, and saying so is better than
     // hiding them: this file already carries a note that a greyed-out control
     // which will not explain itself was the mistake the previous version made,
     // and "At the ends" is relabelled under autoplay rather than removed.
     if (fading) {
-      const note = document.createElement('p');
-      note.className = 'wb-note';
-      note.textContent =
-        'A crossfade stacks the slides and shows one at a time. The engine pins this to 1 in CSS, so the page looks the same before the script runs as after — a count above 1 still ships as a cs-xs-N class in the markup and does nothing.';
-      grid.append(note);
+      pane.note(
+        grid,
+        'A crossfade stacks the slides and shows one at a time. The engine pins this to 1 in CSS, so the page looks the same before the script runs as after — a count above 1 still ships as a cs-xs-N class in the markup and does nothing.',
+      );
     }
-    panel.append(section('How many across', grid));
 
     if (p.look) {
-      const wrap = document.createElement('div');
-      const sel = document.createElement('select');
-      sel.setAttribute('aria-label', 'Brand preset');
-      sel.className = 'wb-wide';
-      const none = document.createElement('option');
-      none.value = '';
-      none.textContent = 'Start from the default';
-      sel.append(none);
-      for (const [id, b] of Object.entries(BRANDS)) {
-        const o = document.createElement('option');
-        o.value = id;
-        o.textContent = b.label;
-        o.selected = id === state.brand;
-        sel.append(o);
-      }
-      const note = document.createElement('p');
-      note.className = 'wb-note';
+      const preset = pane.folder('Brand preset');
       const describe = () => {
         const b = BRANDS[state.brand];
-        if (!b) {
-          note.textContent = 'Sets how many cards across and which card style, from what that brand actually ships. Colours stay yours — pull them from the site theme.';
-          return;
-        }
+        if (!b) return 'Sets how many cards across and which card style, from what that brand actually ships. Colours stay yours — pull them from the site theme.';
         // Plain words: "ladder" and "the census" are how this was written down
         // while it was being researched, and neither is defined anywhere a
         // designer would look.
         const counts = ['base', 768, 992, 1200].map((k) => state.perView[k]).join(' / ');
-        note.textContent = b.ladder
+        return b.ladder
           ? `${counts} cards across, on a phone / from 768px / from 992px / from 1200px. ${b.note ?? ''}`.trim()
           : `The ${b.label} demo sites we surveyed showed no clear pattern of how many across, so this starts from the card style's own. ${b.note ?? ''}`.trim();
       };
-      sel.addEventListener('change', () => {
-        state.brand = sel.value || null;
+      pane.list(preset, 'Brand', state.brand ?? '', [['', 'Start from the default'], ...Object.entries(BRANDS).map(([id, b]) => [id, b.label])], (v) => {
+        state.brand = v || null;
         // A preset brings its own vehicles, so it replaces the roster outright.
         // Keeping edited rows here would show Ford copy under a Kia preset - so
         // it is offered back instead, which is the one of the three discards
@@ -2240,72 +2114,61 @@ ${PHOTO_CSS}
           // different sum. Assuming 8 let seven presets through at 146px.
           state.perView = b.ladder ? perViewFor(b.ladder, LOOKS[b.look].minCard, gapPx(), b.look) : { ...LOOKS[b.look].perView };
         }
-        buildPanel();
-        buildContent();
-        render();
+        rebuild(() => {
+          buildPanel();
+          buildContent();
+          render();
+        });
       });
-      wrap.append(sel, note);
-      describe();
-      panel.append(section('Brand preset', wrap));
+      pane.note(preset, describe());
     }
 
     // Chosen visually: a dropdown reading "split photo card" helps nobody who
-    // does not already know they want it.
+    // does not already know they want it. The picker is a blade of its own
+    // (assets/tp-plugins.js); it draws the thumbnails, carries each style's
+    // description as a tooltip - comparing seven styles meant clicking all
+    // seven and watching the preview, because the description only appeared
+    // after choosing one - and calls back with the id.
     if (p.look) {
-      const looks = document.createElement('div');
-      looks.className = 'wb-looks';
-      for (const [id, look] of Object.entries(LOOKS)) {
-        const b = document.createElement('button');
-        b.type = 'button';
-        b.className = 'wb-look';
-        b.setAttribute('aria-pressed', String(id === state.look));
-        b.innerHTML = `<span class="wb-look-icon">${look.icon}</span><span>${look.label}</span>`;
-        // Comparing seven styles meant clicking all seven and watching the
-        // preview change; the description only appeared after choosing one.
-        b.title = look.note ?? look.label;
-        b.addEventListener('click', () => {
-          // Selecting what is already selected does nothing. It used to reset
-          // the ladder to the look's own default, so clicking the highlighted
-          // style on the two-row grid took 1/2/3/3 to 2/3/4/5 and the arrows
-          // and dots disappeared - a hand-set ladder thrown away by a click
-          // that looked like a no-op.
-          if (id === state.look) return;
-          state.brand = null;
-          applyLook(id);
-          // Each look brings the ladder that suits it: a split card at five
-          // across is unreadable, a cutout at one across is a waste.
-          state.perView = { ...LOOKS[id].perView };
+      const style = pane.folder('Card style');
+      pane.looks(style, LOOKS, state.look, (id) => {
+        // Selecting what is already selected does nothing. It used to reset
+        // the ladder to the look's own default, so clicking the highlighted
+        // style on the two-row grid took 1/2/3/3 to 2/3/4/5 and the arrows
+        // and dots disappeared - a hand-set ladder thrown away by a click
+        // that looked like a no-op.
+        if (id === state.look) return;
+        state.brand = null;
+        applyLook(id);
+        // Each look brings the ladder that suits it: a split card at five
+        // across is unreadable, a cutout at one across is a waste.
+        state.perView = { ...LOOKS[id].perView };
+        rebuild(() => {
           buildPanel();
           // The editor too: which fields a card style reads is part of the
           // style, so switching one has to add or remove the rows for them.
           buildContent();
           render();
         });
-        looks.append(b);
-      }
+      });
       // What the selected style is FOR. A thumbnail cannot say "this one is a
       // logo strip, so it will look wrong under a model bar" - and that is
       // exactly the question the navy panel raises the first time you pick it.
-      const lookNote = document.createElement('p');
-      lookNote.className = 'wb-note';
-      lookNote.textContent = LOOKS[state.look].note ?? '';
-      const wrap2 = document.createElement('div');
-      wrap2.append(looks, lookNote);
-      panel.append(section('Card style', wrap2));
+      pane.note(style, LOOKS[state.look].note ?? '');
     }
 
-    const colors = document.createElement('div');
-    colors.append(colorRow('Arrow colour', '--cs-arrow-fg', state.props));
-    colors.append(colorRow('Arrow background', '--cs-arrow-bg', state.props));
+    const colors = pane.folder('Arrows and spacing');
+    colourKnob(colors, 'Arrow colour', '--cs-arrow-fg', state.props);
+    colourKnob(colors, 'Arrow background', '--cs-arrow-bg', state.props);
     // Both hover colours have been in the engine and in the Reference all
     // along, with no way to reach them from here. Worse than merely absent:
     // the portrait and logo looks already carry --cs-arrow-bg-hover in their
     // settings, and applyLook moves it into state.props - so the value was
     // being shipped by two card styles with no control anywhere that could
     // show it, let alone change it.
-    colors.append(colorRow('Arrow colour · hover', '--cs-arrow-fg-hover', state.props));
-    colors.append(colorRow('Arrow background · hover', '--cs-arrow-bg-hover', state.props));
-    colors.append(valueRow('Arrow size', '--cs-arrow-size', state.props));
+    colourKnob(colors, 'Arrow colour · hover', '--cs-arrow-fg-hover', state.props);
+    colourKnob(colors, 'Arrow background · hover', '--cs-arrow-bg-hover', state.props);
+    valueKnob(colors, 'Arrow size', '--cs-arrow-size', state.props);
     // Six designs resize the arrow inside a media query in their own CSS - the
     // tile and vehicle card at 36px on phones, the logo strip at 56px on wide
     // screens - and this field cannot reach a rule it does not own. Rather
@@ -2314,10 +2177,7 @@ ${PHOTO_CSS}
     // "on phones" field and take the value off the six designs, which is a
     // bigger change than showing what is already true.
     for (const [, cond, val] of `${p.css || ''}\n${LOOKS[state.look]?.css || ''}`.matchAll(/@media\s*\(([^)]+)\)[^{]*\{[^}]*--cs-arrow-size:\s*([^;}]+)/g)) {
-      const n = document.createElement('p');
-      n.className = 'wb-note';
-      n.textContent = `This design also sets the arrow to ${val.trim()} at (${cond.trim()}), in its own CSS. The field above is the size everywhere else.`;
-      colors.append(n);
+      pane.note(colors, `This design also sets the arrow to ${val.trim()} at (${cond.trim()}), in its own CSS. The field above is the size everywhere else.`);
     }
     // "Show a sliver of the next car" lands on a model bar as often as on the
     // pattern named after it, so the row is offered wherever it can do
@@ -2332,29 +2192,29 @@ ${PHOTO_CSS}
     // costs no declaration on any of the twelve patterns this now appears on.
     if (scrolling) {
       state.props['--cs-peek'] ??= '0px';
-      colors.append(valueRow('Peek', '--cs-peek', state.props));
+      valueKnob(colors, 'Peek', '--cs-peek', state.props);
     }
     state.props['--cs-gap'] ??= '1em';
-    colors.append(valueRow(fading ? 'Gap (a crossfade has no gap)' : 'Gap', '--cs-gap', state.props));
+    valueKnob(colors, fading ? 'Gap (a crossfade has no gap)' : 'Gap', '--cs-gap', state.props);
     // Everything inside a card is sized in em off this. `1em` inherits the host
     // page's body size, so the cards match the copy around them on whatever
     // site they are pasted into; a length here pins them to that size instead.
     state.props['--cargo-font'] ??= '1em';
-    colors.append(valueRow('Card text size', '--cargo-font', state.props));
+    valueKnob(colors, 'Card text size', '--cargo-font', state.props);
     // Only worth showing when there are dots to make room for - this is the
     // reserved strip they are drawn into, and shrinking it puts them on the
     // card text. A gallery fills that same strip with the thumb rail instead,
     // so it sizes itself off --cs-thumb-h and this knob would only confuse.
     if (!state.hideDots && state.data['data-cs-gallery'] == null) {
       state.props['--cs-controls-space'] ??= '2.5em'; // the engine's own default
-      colors.append(valueRow('Room for the dots', '--cs-controls-space', state.props));
+      valueKnob(colors, 'Room for the dots', '--cs-controls-space', state.props);
       // Same story as the arrow hover colours: three engine properties the
       // Reference documents and the panel never offered. The hero even sets
       // --cs-dot-current blind, in its pattern props, with nothing able to
       // show a designer what colour it picked or let them change it.
-      colors.append(valueRow('Dot size', '--cs-dot-size', state.props));
-      colors.append(colorRow('Dot colour', '--cs-dot-fg', state.props));
-      colors.append(colorRow('Dot colour, current', '--cs-dot-current', state.props));
+      valueKnob(colors, 'Dot size', '--cs-dot-size', state.props);
+      colourKnob(colors, 'Dot colour', '--cs-dot-fg', state.props);
+      colourKnob(colors, 'Dot colour, current', '--cs-dot-current', state.props);
     }
     // F099: a gallery draws a thumbnail rail instead of dots, and both its size
     // knobs and the hover zoom were in the engine and in the Reference with no
@@ -2362,16 +2222,14 @@ ${PHOTO_CSS}
     // vertical rail is a deliberate no - the strip is laid out and auto-scrolled
     // horizontally, so there is nothing to turn.
     if (state.data['data-cs-gallery'] != null) {
-      colors.append(valueRow('Thumbnail width', '--cs-thumb-w', state.props));
-      colors.append(valueRow('Thumbnail height', '--cs-thumb-h', state.props));
-      colors.append(valueRow('Thumbnail zoom', '--cs-thumb-hover-scale', state.props));
+      valueKnob(colors, 'Thumbnail width', '--cs-thumb-w', state.props);
+      valueKnob(colors, 'Thumbnail height', '--cs-thumb-h', state.props);
+      valueKnob(colors, 'Thumbnail zoom', '--cs-thumb-hover-scale', state.props);
     }
 
     // F102: the hero hard-codes the crossfade and its duration knob never
     // appeared, though both have been in the engine all along.
-    if (fading) colors.append(valueRow('Crossfade time', '--cs-fade-ms', state.props));
-
-    panel.append(section('Arrows and spacing', colors));
+    if (fading) valueKnob(colors, 'Crossfade time', '--cs-fade-ms', state.props);
 
     // F018 (the half that needs no decision): the tab words were hard-coded,
     // so a Trucks/SUVs/Crossovers bar could not become New/Used/Certified
@@ -2379,57 +2237,57 @@ ${PHOTO_CSS}
     // derived from the same names, so renaming a tab keeps them in step.
     // Which models sit under which tab is the part still to be decided.
     if (p.panes) {
-      const names = document.createElement('div');
+      const names = pane.folder('Tab names');
       (state.panes ?? p.panes).forEach((name, i) => {
-        const input = document.createElement('input');
-        input.type = 'text';
-        input.value = name;
-        input.placeholder = p.panes[i];
-        input.addEventListener('input', () => {
-          const next = [...(state.panes ?? p.panes)];
-          next[i] = input.value.trim() || p.panes[i];
-          state.panes = next.every((n, j) => n === p.panes[j]) ? null : next;
-          render();
-        });
-        names.append(control(`Tab ${i + 1}`, input));
+        pane.text(
+          names,
+          `Tab ${i + 1}`,
+          name,
+          (v) => {
+            const next = [...(state.panes ?? p.panes)];
+            next[i] = v.trim() || p.panes[i];
+            state.panes = next.every((n, j) => n === p.panes[j]) ? null : next;
+            render();
+          },
+          { placeholder: p.panes[i] },
+        );
       });
-      panel.append(section('Tab names', names));
     }
 
     if (Object.keys(state.lookProps).length) {
-      const knobs = document.createElement('div');
+      const knobs = pane.folder('This card style');
       for (const k of Object.keys(state.lookProps)) {
         const v = state.lookProps[k];
-        if (/^#|rgb|transparent/.test(v)) knobs.append(colorRow(knobLabel(k), k, state.lookProps));
-        else if (ENUMS[k]) knobs.append(control(knobLabel(k), enumSelect(k, state.lookProps)));
-        else knobs.append(valueRow(knobLabel(k), k, state.lookProps));
+        if (/^#|rgb|transparent/.test(v)) colourKnob(knobs, knobLabel(k), k, state.lookProps);
+        else if (ENUMS[k])
+          pane.list(knobs, knobLabel(k), String(v).trim(), ENUMS[k], (picked) => {
+            state.lookProps[k] = picked;
+            render();
+          });
+        else valueKnob(knobs, knobLabel(k), k, state.lookProps);
       }
-      panel.append(section('This card style', knobs));
     }
 
-    const beh = document.createElement('div');
-    const step = document.createElement('select');
+    const beh = pane.folder('Behaviour');
     // data-cs-step takes a number as of 2026-08-27: how many cards one arrow
     // click moves. 'page' is a whole screenful; 'slide' is the old name for 1.
-    for (const [v, label] of [
-      ['page', 'a full page'],
-      ['slide', '1 card'],
-      ['2', '2 cards'],
-      ['3', '3 cards'],
-      ['4', '4 cards'],
-    ]) {
-      const o = document.createElement('option');
-      o.value = v;
-      o.textContent = label;
-      o.selected = (state.data['data-cs-step'] ?? 'page') === v;
-      step.append(o);
-    }
-    step.addEventListener('change', () => {
-      if (step.value === 'page') delete state.data['data-cs-step'];
-      else state.data['data-cs-step'] = step.value;
-      render();
-    });
-    beh.append(control(fading ? 'Arrows move (a crossfade always moves 1)' : 'Arrows move', step));
+    pane.list(
+      beh,
+      fading ? 'Arrows move (a crossfade always moves 1)' : 'Arrows move',
+      state.data['data-cs-step'] ?? 'page',
+      [
+        ['page', 'a full page'],
+        ['slide', '1 card'],
+        ['2', '2 cards'],
+        ['3', '3 cards'],
+        ['4', '4 cards'],
+      ],
+      (v) => {
+        if (v === 'page') delete state.data['data-cs-step'];
+        else state.data['data-cs-step'] = v;
+        render();
+      },
+    );
 
     // data-cs-autoplay has been a first-class engine option all along, and the
     // panel never showed it: the hero carried it hard-wired at 5000, and no
@@ -2443,105 +2301,104 @@ ${PHOTO_CSS}
     // and says so in a console warning, and a control that writes an attribute
     // the engine discards is the plainest kind of lying control.
     if (state.data['data-cs-gallery'] == null) {
-      const auto = document.createElement('input');
-      auto.type = 'number';
-      auto.min = '0';
-      auto.step = '500';
-      auto.value = state.data['data-cs-autoplay'] ?? '0';
-      auto.addEventListener('change', () => {
-        // Whole milliseconds above zero, or no attribute at all. htmlFor drops
-        // a data value into a double-quoted attribute unescaped, and the
-        // engine's parseInt would take "5s" and rotate every 5 milliseconds.
-        const n = parseInt(auto.value, 10);
-        if (Number.isFinite(n) && n > 0) {
-          state.data['data-cs-autoplay'] = String(n);
-          // The engine forces rewind back on under autoplay - a strip that
-          // rotates to the last slide and stops dead reads as broken - and
-          // warns when it does. Tall photos ships data-cs-rewind="false", so
-          // without this every dealer page running it would log that warning.
-          delete state.data['data-cs-rewind'];
-        } else delete state.data['data-cs-autoplay'];
-        auto.value = state.data['data-cs-autoplay'] ?? '0';
-        buildPanel(); // "At the ends" reads the autoplay state as it is built
-        render();
-      });
-      beh.append(
-        control('Rotate every (ms)', auto, 'Zero turns it off. Zero of the 55 OEM model bars surveyed rotate either — rotation belongs on a hero; a strip of cards is easier to read holding still.'),
+      pane.int(
+        beh,
+        'Rotate every (ms)',
+        +(state.data['data-cs-autoplay'] ?? 0),
+        (n) => {
+          // Whole milliseconds above zero, or no attribute at all. htmlFor
+          // drops a data value into a double-quoted attribute unescaped, and
+          // the engine's parseInt would take "5s" and rotate every 5
+          // milliseconds.
+          if (Number.isFinite(n) && n > 0) {
+            state.data['data-cs-autoplay'] = String(n);
+            // The engine forces rewind back on under autoplay - a strip that
+            // rotates to the last slide and stops dead reads as broken - and
+            // warns when it does. Tall photos ships data-cs-rewind="false", so
+            // without this every dealer page running it would log that warning.
+            delete state.data['data-cs-rewind'];
+          } else delete state.data['data-cs-autoplay'];
+          rebuild(() => {
+            buildPanel(); // "At the ends" reads the autoplay state as it is built
+            render();
+          });
+        },
+        {
+          min: 0,
+          max: 60000,
+          step: 500,
+          note: 'Zero turns it off. Zero of the 55 OEM model bars surveyed rotate either — rotation belongs on a hero; a strip of cards is easier to read holding still.',
+        },
       );
     }
 
     // data-cs-rewind has been in the engine and the reference all along; it was
     // just unreachable from here, so the only way to stop at the ends was to
     // know the attribute and hand-edit the snippet.
-    const ends = document.createElement('select');
-    for (const [v, label] of [
-      // F055: "Wrap around" reads as an endless loop to anyone coming from
-      // slick, which loops by cloning - 51 of the 55 OEM model bars surveyed
-      // do. This one scrolls back to the first card instead, visibly, and the
-      // question "why does it jump back?" was going to be the first one asked.
-      ['', 'Wrap around (scrolls back to the first)'],
-      ['false', 'Stop at the ends'],
-    ]) {
-      const o = document.createElement('option');
-      o.value = v;
-      o.textContent = label;
-      o.selected = (state.data['data-cs-rewind'] ?? '') === v;
-      ends.append(o);
-    }
+    //
     // The engine ignores rewind:false under autoplay (a rotating strip that
     // stops dead at the last slide is a broken-looking page) and says so in a
     // console warning. Say it here instead of letting the control lie.
     const autoplaying = state.data['data-cs-autoplay'] != null;
-    ends.disabled = autoplaying;
-    ends.addEventListener('change', () => {
-      if (ends.value) state.data['data-cs-rewind'] = ends.value;
-      else delete state.data['data-cs-rewind'];
-      render();
-    });
-    beh.append(
-      control(
-        autoplaying ? 'At the ends (autoplay always wraps)' : 'At the ends',
-        ends,
-        'There are no cloned slides, so wrapping is a scroll back to the first card rather than an endless loop. Cloning would duplicate the content for search engines and make a screen reader count every card twice.',
-      ),
+    pane.list(
+      beh,
+      autoplaying ? 'At the ends (autoplay always wraps)' : 'At the ends',
+      state.data['data-cs-rewind'] ?? '',
+      [
+        // F055: "Wrap around" reads as an endless loop to anyone coming from
+        // slick, which loops by cloning - 51 of the 55 OEM model bars surveyed
+        // do. This one scrolls back to the first card instead, visibly, and the
+        // question "why does it jump back?" was going to be the first one asked.
+        ['', 'Wrap around (scrolls back to the first)'],
+        ['false', 'Stop at the ends'],
+      ],
+      (v) => {
+        if (v) state.data['data-cs-rewind'] = v;
+        else delete state.data['data-cs-rewind'];
+        render();
+      },
+      {
+        disabled: autoplaying,
+        note: 'There are no cloned slides, so wrapping is a scroll back to the first card rather than an endless loop. Cloning would duplicate the content for search engines and make a screen reader count every card twice.',
+      },
     );
 
     // Not offered in gallery mode: those four patterns draw a thumbnail strip
     // and have no dots at all, so the switch added a rule matching nothing and
     // a tick round trip left a dead controls-space line in the copied CSS.
     const galleryMode = state.data['data-cs-gallery'] != null;
-    const dots = document.createElement('input');
-    dots.type = 'checkbox';
-    dots.checked = !state.hideDots;
-    dots.addEventListener('change', () => {
-      state.hideDots = !dots.checked;
-      // The dot row is a RESERVATION, not the dots: the engine holds
-      // --cs-controls-space of padding under the track from the moment the page
-      // paints (src/custom-slider.css), so starting the slider shifts nothing.
-      // Hiding the dots without collapsing that reservation leaves its height
-      // standing as blank page - measured 30px on the hero, 45px on Tall
-      // photos, 37.5px on any pattern shipping no value of its own.
-      //
-      // So take the room away with the dots and hand back exactly what was
-      // there, never the engine's 2.5em: a tick round trip used to rewrite the
-      // pattern's own value. 0.1px and never 0, because the platform's
-      // minifier turns 0px into a unitless 0 and that invalidates the arrow's
-      // centring calc(). The `.cs-dots { display: none }` rule stays either
-      // way - the dots are absolutely positioned at the bottom of the root, so
-      // with the strip collapsed they would draw over the last line of text.
-      if (state.hideDots) {
-        state.dotSpace = state.props['--cs-controls-space'] ?? null;
-        state.props['--cs-controls-space'] = '0.1px';
-      } else {
-        // A pattern that ships dots-off has never had a strip, so the first
-        // tick has nothing to restore and takes the engine's own.
-        state.props['--cs-controls-space'] = state.dotSpace ?? '2.5em';
-        state.dotSpace = null;
-      }
-      buildPanel(); // the space knob appears and disappears with the dots
-      render();
-    });
-    if (!galleryMode) beh.append(control('Show dots', dots));
+    if (!galleryMode) {
+      pane.bool(beh, 'Show dots', !state.hideDots, (on) => {
+        state.hideDots = !on;
+        // The dot row is a RESERVATION, not the dots: the engine holds
+        // --cs-controls-space of padding under the track from the moment the page
+        // paints (src/custom-slider.css), so starting the slider shifts nothing.
+        // Hiding the dots without collapsing that reservation leaves its height
+        // standing as blank page - measured 30px on the hero, 45px on Tall
+        // photos, 37.5px on any pattern shipping no value of its own.
+        //
+        // So take the room away with the dots and hand back exactly what was
+        // there, never the engine's 2.5em: a tick round trip used to rewrite the
+        // pattern's own value. 0.1px and never 0, because the platform's
+        // minifier turns 0px into a unitless 0 and that invalidates the arrow's
+        // centring calc(). The `.cs-dots { display: none }` rule stays either
+        // way - the dots are absolutely positioned at the bottom of the root, so
+        // with the strip collapsed they would draw over the last line of text.
+        if (state.hideDots) {
+          state.dotSpace = state.props['--cs-controls-space'] ?? null;
+          state.props['--cs-controls-space'] = '0.1px';
+        } else {
+          // A pattern that ships dots-off has never had a strip, so the first
+          // tick has nothing to restore and takes the engine's own.
+          state.props['--cs-controls-space'] = state.dotSpace ?? '2.5em';
+          state.dotSpace = null;
+        }
+        rebuild(() => {
+          buildPanel(); // the space knob appears and disappears with the dots
+          render();
+        });
+      });
+    }
 
     // F057: the hero reserved a strip under the photo and drew its dots there.
     // 57 of the 76 OEM heroes surveyed carry Bootstrap's carousel-indicators,
@@ -2561,56 +2418,60 @@ ${PHOTO_CSS}
     // the strip, so the formula corrects itself). The hero simply loses 30px.
     const photoSlides = (p.css || '').includes('cargo-photo');
     if (photoSlides && !galleryMode && !state.hideDots) {
-      const over = document.createElement('input');
-      over.type = 'checkbox';
-      over.checked = !!state.dotsOver;
-      over.addEventListener('change', () => {
-        state.dotsOver = over.checked;
-        if (state.dotsOver) {
-          // Remember all three, because all three change together and a tick
-          // round trip has to hand back exactly what was there.
-          state.dotsWere = {
-            space: state.props['--cs-controls-space'] ?? null,
-            fg: state.props['--cs-dot-fg'] ?? null,
-            current: state.props['--cs-dot-current'] ?? null,
-          };
-          // 0.1px, never 0: the platform minifier turns 0px into a unitless 0
-          // and that invalidates the arrow's centring calc().
-          state.props['--cs-controls-space'] = '0.1px';
-          // The engine's #757575 is tuned for 3:1 on WHITE, and a photograph
-          // is not white. Light dots are the only ones that read on an unknown
-          // image, and they are written into the knobs rather than applied
-          // behind them - a control has to show what the slider is using.
-          state.props['--cs-dot-fg'] = 'rgba(255, 255, 255, 0.55)';
-          state.props['--cs-dot-current'] = '#fff';
-        } else {
-          const was = state.dotsWere ?? {};
-          for (const [k, v] of [
-            ['--cs-controls-space', was.space],
-            ['--cs-dot-fg', was.fg],
-            ['--cs-dot-current', was.current],
-          ]) {
-            if (v == null) delete state.props[k];
-            else state.props[k] = v;
+      pane.bool(
+        beh,
+        'Dots over the image',
+        !!state.dotsOver,
+        (on) => {
+          state.dotsOver = on;
+          if (state.dotsOver) {
+            // Remember all three, because all three change together and a tick
+            // round trip has to hand back exactly what was there.
+            state.dotsWere = {
+              space: state.props['--cs-controls-space'] ?? null,
+              fg: state.props['--cs-dot-fg'] ?? null,
+              current: state.props['--cs-dot-current'] ?? null,
+            };
+            // 0.1px, never 0: the platform minifier turns 0px into a unitless 0
+            // and that invalidates the arrow's centring calc().
+            state.props['--cs-controls-space'] = '0.1px';
+            // The engine's #757575 is tuned for 3:1 on WHITE, and a photograph
+            // is not white. Light dots are the only ones that read on an unknown
+            // image, and they are written into the knobs rather than applied
+            // behind them - a control has to show what the slider is using.
+            state.props['--cs-dot-fg'] = 'rgba(255, 255, 255, 0.55)';
+            state.props['--cs-dot-current'] = '#fff';
+          } else {
+            const was = state.dotsWere ?? {};
+            for (const [k, v] of [
+              ['--cs-controls-space', was.space],
+              ['--cs-dot-fg', was.fg],
+              ['--cs-dot-current', was.current],
+            ]) {
+              if (v == null) delete state.props[k];
+              else state.props[k] = v;
+            }
+            state.dotsWere = null;
           }
-          state.dotsWere = null;
-        }
-        buildPanel();
-        render();
-      });
-      beh.append(
-        control('Dots over the image', over, 'Takes away the strip under the photo and draws the dots on it. Turns them light, because the default grey is tuned for white and a photograph is not.'),
+          rebuild(() => {
+            buildPanel();
+            render();
+          });
+        },
+        { note: 'Takes away the strip under the photo and draws the dots on it. Turns them light, because the default grey is tuned for white and a photograph is not.' },
       );
     }
 
-    const gut = document.createElement('input');
-    gut.type = 'checkbox';
-    gut.checked = state.gutter;
-    gut.addEventListener('change', () => {
-      state.gutter = gut.checked;
-      render();
-    });
-    beh.append(control('Arrows outside the cards', gut, 'Off lets the arrows sit on top of the first and last card. On reserves a channel beside them instead.'));
+    pane.bool(
+      beh,
+      'Arrows outside the cards',
+      state.gutter,
+      (on) => {
+        state.gutter = on;
+        render();
+      },
+      { note: 'Off lets the arrows sit on top of the first and last card. On reserves a channel beside them instead.' },
+    );
 
     // No slide-count dial. The roster length IS the slide count, and "Add a
     // slide" / "Remove" are the only things that move it - the note above the
@@ -2627,32 +2488,25 @@ ${PHOTO_CSS}
     // Never disabled. On a pattern that draws its own cards this changes
     // nothing, and the note below says so - a greyed-out control that will not
     // explain itself is what the previous version of this got wrong.
-    const alone = document.createElement('input');
-    alone.type = 'checkbox';
-    alone.checked = state.standalone;
-    alone.addEventListener('change', () => {
-      state.standalone = alone.checked;
+    pane.bool(beh, 'Paste the card styles too', state.standalone, (on) => {
+      state.standalone = on;
       render();
     });
-    beh.append(control('Paste the card styles too', alone));
-    const aloneNote = document.createElement('p');
-    aloneNote.className = 'wb-note';
-    aloneNote.textContent = state.look
-      ? 'Leave this off: the card styling comes from custom-slider.min.css, which is what keeps the snippet short. Tick it only for a page that cannot link that file — the slider looks the same either way.'
-      : 'This pattern draws its own cards, so its styling comes with the snippet either way — this setting changes nothing here.';
-    beh.append(aloneNote);
-
-    panel.append(section('Behaviour', beh));
+    pane.note(
+      beh,
+      state.look
+        ? 'Leave this off: the card styling comes from custom-slider.min.css, which is what keeps the snippet short. Tick it only for a page that cannot link that file — the slider looks the same either way.'
+        : 'This pattern draws its own cards, so its styling comes with the snippet either way — this setting changes nothing here.',
+    );
 
     // F103: the last two engine properties with no control anywhere. Matching a
     // site's focus-ring colour or slowing the control transitions meant reading
     // the name off the Reference and hand-editing the snippet. Both are rare
     // enough to sit at the end rather than among the settings people reach for
     // every time.
-    const adv = document.createElement('div');
-    adv.append(colorRow('Focus ring', '--cs-focus', state.props));
-    adv.append(valueRow('Control transition', '--cs-transition', state.props));
-    panel.append(section('Everything else', adv));
+    const adv = pane.folder('Everything else');
+    colourKnob(adv, 'Focus ring', '--cs-focus', state.props);
+    valueKnob(adv, 'Control transition', '--cs-transition', state.props);
   }
 
   /* ---- slide content ----------------------------------------------------- */

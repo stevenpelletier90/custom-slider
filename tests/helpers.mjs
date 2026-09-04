@@ -59,11 +59,40 @@ export async function copyParts(page) {
   return { css, html, js, jsHidden };
 }
 
+// A row by its label, in the pane. Tweakpane commits a text input on change
+// (Enter or blur), not on every keystroke, so the fill is followed by Enter.
+export const rowByLabel = (page, label) => page.locator(`#wb-settings .tp-lblv:has(.tp-lblv_l:text-is("${label}"))`).first();
+
 export const setField = async (page, label, value) => {
-  const input = page.locator(`#wb-settings label:has(> span:text-is("${label}")) input[type=text]`).first();
+  const input = rowByLabel(page, label).locator('input').first();
   await input.fill(value);
+  await input.press('Enter');
   await page.waitForTimeout(120);
   return input;
+};
+
+// A switch row. Tweakpane draws its own tick: the real <input type=checkbox>
+// sits at opacity 0 behind the mark (.tp-ckbv_w), so Playwright refuses to
+// click the input as invisible - clicking the mark is what a person does
+// anyway. The input is still what the state is read off. The methods are named
+// for the Locator ones they stand in for, so a call site reads the same.
+export const switchRow = (page, label) => {
+  const row = rowByLabel(page, label);
+  const input = row.locator('input[type=checkbox]').first();
+  const hit = async () => {
+    await row.locator('.tp-ckbv_w').first().click();
+    // The panel is rebuilt out of the change event, so the new row exists a
+    // microtask later; anything read straight after has to wait for it.
+    await page.waitForTimeout(150);
+  };
+  return {
+    count: () => input.count(),
+    isChecked: () => input.isChecked(),
+    click: hit,
+    setChecked: async (on) => void ((await input.isChecked()) !== on && (await hit())),
+    check: async () => void (!(await input.isChecked()) && (await hit())),
+    uncheck: async () => void ((await input.isChecked()) && (await hit())),
+  };
 };
 
 // A hostile host: Bootstrap 3 pins html to 10px on the storefronts, and the

@@ -7,7 +7,7 @@
 // one shipping none, one shipping the collapse already.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick } from './helpers.mjs';
+import { openBuilder, pick, switchRow } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -39,7 +39,7 @@ test.describe('the dot row is taken away and given back unchanged', () => {
       await pick(page, id);
       // A lazy locator: buildPanel() replaces the row on every toggle, so an
       // element handle cached here would be detached by the second click.
-      const box = page.locator('#wb-settings label:has(> span:text-is("Show dots")) input[type=checkbox]').first();
+      const box = switchRow(page, 'Show dots');
       const started = await box.isChecked();
       const before = await strip(page);
       assert.equal(before.space, space, `${id} no longer opens at ${space} — pick a pattern that does`);

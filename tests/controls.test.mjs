@@ -6,7 +6,7 @@
 // never caught any of them.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { ORIGIN, openBuilder, pick, setField, copyParts, stageFrame, patternIds, hostHtml, engineFiles } from './helpers.mjs';
+import { ORIGIN, openBuilder, pick, setField, rowByLabel, switchRow, copyParts, stageFrame, patternIds, hostHtml, engineFiles } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -20,20 +20,17 @@ test.beforeAll(async ({ browser: b }) => {
 // The value a knob displays, by its row label.
 const knob = (page, label) =>
   page.evaluate((l) => {
-    const row = [...document.querySelectorAll('#wb-settings label.wb-row')].find((r) => r.querySelector('span')?.textContent.trim() === l);
-    return row ? (row.querySelector('input')?.value ?? null) : null;
+    const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === l);
+    if (!row) return null;
+    const el = row.querySelector('input, select');
+    return el ? (el.type === 'checkbox' ? String(el.checked) : el.value) : null;
   }, label);
 
 const hasKnob = async (page, label) => (await knob(page, label)) !== null;
 
-// A colour row puts the swatch first, and a swatch can only hold #rrggbb - it
-// reads #000000 for a transparent or an rgba(). The text field beside it is
-// the authoritative one.
-const colorKnob = (page, label) =>
-  page.evaluate((l) => {
-    const row = [...document.querySelectorAll('#wb-settings label.wb-row')].find((r) => r.querySelector('span')?.textContent.trim() === l);
-    return row?.querySelector('input[type=text]')?.value ?? null;
-  }, label);
+// Until the colour plugin lands a colour row is a text row, so it reads the
+// same way.
+const colorKnob = knob;
 
 test.describe('a knob shows what the slider is actually using', () => {
   // F042: Tall photos set --cs-controls-space in its pattern CSS instead of its
@@ -69,11 +66,9 @@ test.describe('a click that looks like a no-op is one', () => {
     await pick(page, 'grid');
     const before = await page.evaluate(() => JSON.stringify(globalThis.CARGO.PATTERNS.grid.perView));
     // Change the ladder by hand first, so there is something to lose.
-    const field = page.locator('#wb-settings label:has(> span:text-is("Laptop · 992+")) input').first();
-    await field.fill('3');
-    await page.waitForTimeout(120);
+    await setField(page, 'Laptop · 992+', '3');
     const set = await knob(page, 'Laptop · 992+');
-    await page.click('#wb-settings .wb-look[aria-pressed="true"]');
+    await page.click('#wb-settings .tp-lookv button[aria-pressed="true"]');
     await page.waitForTimeout(150);
     assert.equal(await knob(page, 'Laptop · 992+'), set, 're-selecting the current look reset the ladder');
     assert.ok(before, 'pattern defaults unreadable');
@@ -92,15 +87,16 @@ test.describe('a control puts back everything it took', () => {
     await nameField.fill(name);
     await nameField.blur();
 
-    const select = page.locator('#wb-settings select[aria-label="Brand preset"]');
+    const select = rowByLabel(page, 'Brand').locator('select');
     const brand = await select.evaluate((s) => [...s.options].map((o) => o.value).find((v) => v));
     await select.selectOption(brand);
     await page.waitForTimeout(200);
-    await select.selectOption('');
+    // The panel is rebuilt by the change, so the row has to be found again.
+    await rowByLabel(page, 'Brand').locator('select').selectOption('');
     await page.waitForTimeout(200);
 
     const after = await page.evaluate(() => ({
-      look: document.querySelector('#wb-settings .wb-look[aria-pressed="true"] span:last-child')?.textContent,
+      look: document.querySelector('#wb-settings .tp-lookv button[aria-pressed="true"] span:last-child')?.textContent,
       cls: document.getElementById('wb-code').textContent.match(/^\.([\w-]+)\.cs \{/m)?.[1],
       lookClass: /cargo-(\w+)/.exec(document.getElementById('wb-code').textContent)?.[1],
     }));
@@ -114,10 +110,7 @@ test.describe('a number field refuses what the engine cannot page', () => {
   // setting the property to 2.5 by hand makes the last page unreachable.
   test('a fractional count is not left showing in the field', async () => {
     await pick(page, 'modelbar');
-    const field = page.locator('#wb-settings label:has(> span:text-is("Phone · under 768")) input').first();
-    await field.fill('2.5');
-    await field.blur();
-    await page.waitForTimeout(120);
+    const field = await setField(page, 'Phone · under 768', '2.5');
     const shown = await field.inputValue();
     assert.ok(/^\d+$/.test(shown), `the field still shows "${shown}"`);
     const cls = await page.evaluate(() => /class="[^"]*cs-xs-(\d+)/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null);
@@ -166,7 +159,7 @@ test.describe('a knob the page actually reads', () => {
     await setField(page, 'Side gutter', 'banana');
     const r = await page.evaluate(() => {
       const root = globalThis.CARGO.sdoc().querySelector('.cs');
-      const input = [...document.querySelectorAll('#wb-settings label > span')].find((x) => x.textContent.trim() === 'Side gutter')?.parentElement.querySelector('input');
+      const input = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === 'Side gutter')?.querySelector('input');
       return {
         pad: +getComputedStyle(root).paddingLeft.replace('px', ''),
         flagged: input?.getAttribute('aria-invalid') === 'true',
@@ -186,7 +179,7 @@ test.describe('the rotation the hero was born with is a control, not a literal',
   // rotating a testimonial strip all meant knowing the attribute and editing
   // the copied markup by hand.
   const ROW = 'Rotate every (ms)';
-  const rotate = (page) => page.locator(`#wb-settings label.wb-row:has(> span:text-is("${ROW}")) input`).first();
+  const rotate = (page) => rowByLabel(page, ROW).locator('input').first();
   const set = async (page, v) => {
     await rotate(page).fill(v);
     await rotate(page).dispatchEvent('change');
@@ -212,18 +205,25 @@ test.describe('the rotation the hero was born with is a control, not a literal',
     assert.match(await code(page), /data-cs-autoplay="7000"/, 'the value never reached the snippet');
   });
 
-  // A number input refuses letters outright, so the reachable bad values are a
-  // negative (every engine guard is `> 0`, so it would silently do nothing) and
-  // an empty box - the F022 shape, where a cleared field emitted the property
-  // with no value at all.
+  // The reachable bad values are a negative (every engine guard is `> 0`, so it
+  // would silently do nothing) and an empty box - the F022 shape, where a
+  // cleared field emitted the property with no value at all. The row is a
+  // bound number now, so a negative arrives clamped to the 0 that means off,
+  // and an empty box is refused at the commit and the field is redrawn with
+  // the timer still in force. Either way the attribute is never written
+  // empty, and the field never shows something the snippet does not.
   test('a value the engine would misread is refused', async () => {
     await pick(page, 'reviews');
-    for (const bad of ['-500', '']) {
-      await set(page, '3000');
-      assert.match(await code(page), /data-cs-autoplay="3000"/, 'the set-up value did not take');
-      await set(page, bad);
-      assert.doesNotMatch(await code(page), /data-cs-autoplay/, `"${bad}" reached the attribute`);
-    }
+    await set(page, '3000');
+    assert.match(await code(page), /data-cs-autoplay="3000"/, 'the set-up value did not take');
+    await set(page, '-500');
+    assert.doesNotMatch(await code(page), /data-cs-autoplay/, '"-500" reached the attribute');
+
+    await set(page, '3000');
+    await set(page, '');
+    assert.doesNotMatch(await code(page), /data-cs-autoplay=""/, 'an empty box reached the attribute');
+    assert.equal(await rotate(page).inputValue(), '3000', 'the field no longer shows the timer the snippet ships');
+    assert.match(await code(page), /data-cs-autoplay="3000"/, 'the snippet lost the timer the field still shows');
   });
 
   test('turning it on drops the rewind the engine would have overridden', async () => {
@@ -314,7 +314,7 @@ test.describe('a property the slider is already using has a control', () => {
       return id ? { label: L[id].label, value: L[id].settings['--cs-arrow-bg-hover'] } : null;
     });
     assert.ok(look, 'no card style ships an arrow hover colour, so this guards nothing');
-    await page.evaluate((label) => [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes(label))?.click(), look.label);
+    await page.evaluate((label) => [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((b) => b.textContent.includes(label))?.click(), look.label);
     await page.waitForTimeout(300);
     assert.equal(await colorKnob(page, 'Arrow background · hover'), look.value, `${look.label} ships ${look.value} and the field does not show it`);
   });
@@ -352,13 +352,13 @@ test.describe('a property the slider is already using has a control', () => {
 
   test('a design that resizes the arrow in a media query says so', async () => {
     await pick(page, 'models'); // sets 56px at (min-width: 992px) in its own CSS
-    const notes = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .wb-note')].map((n) => n.textContent));
+    const notes = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-notev')].map((n) => n.textContent));
     assert.ok(
       notes.some((t) => /arrow to 56px at \(min-width: 992px\)/.test(t)),
       `no note names the media-query size the design sets: ${JSON.stringify(notes)}`,
     );
     await pick(page, 'peek'); // sets it nowhere
-    const none = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .wb-note')].map((n) => n.textContent));
+    const none = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-notev')].map((n) => n.textContent));
     assert.ok(!none.some((t) => /sets the arrow to/.test(t)), 'a note claims a media-query size on a design that sets none');
   });
 
@@ -379,7 +379,7 @@ test.describe('card chrome is a knob, not a literal', () => {
   // the original back.
   const wearVcard = async (page) => {
     await pick(page, 'cards');
-    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes('Vehicle card'))?.click());
+    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((b) => b.textContent.includes('Vehicle card'))?.click());
     await page.waitForTimeout(300);
   };
 
@@ -413,7 +413,7 @@ test.describe('a tab can be renamed', () => {
   // hard-coded, so a New/Used/Certified bar meant editing the pasted markup.
   test('renaming a tab moves its words, its id and its aria wiring together', async () => {
     await pick(page, 'tabs');
-    const box = page.locator('#wb-settings label:has(> span:text-is("Tab 1")) input').first();
+    const box = rowByLabel(page, 'Tab 1').locator('input').first();
     assert.equal(await box.count(), 1, 'the tabbed bar offers no way to rename a tab');
     assert.equal(await box.inputValue(), 'Trucks', 'the box does not show the name the bar is using');
 
@@ -428,7 +428,7 @@ test.describe('a tab can be renamed', () => {
 
   test('clearing a tab name puts the original back', async () => {
     await pick(page, 'tabs');
-    const box = page.locator('#wb-settings label:has(> span:text-is("Tab 2")) input').first();
+    const box = rowByLabel(page, 'Tab 2').locator('input').first();
     await box.fill('');
     await page.waitForTimeout(300);
     assert.match((await copyParts(page)).html, /role="tab"[^>]*>SUVs</, 'an empty box left the tab nameless');
@@ -436,7 +436,7 @@ test.describe('a tab can be renamed', () => {
 
   test('a pattern with no tabs is not offered the section', async () => {
     await pick(page, 'modelbar');
-    assert.equal(await page.locator('#wb-settings label:has(> span:text-is("Tab 1")) input').count(), 0, 'a pattern with no tabs offers tab names');
+    assert.equal(await rowByLabel(page, 'Tab 1').locator('input').count(), 0, 'a pattern with no tabs offers tab names');
   });
 });
 
@@ -458,7 +458,7 @@ test.describe('a link to a card style opens that card style', () => {
   test('opening one lands on it, not on whatever was last used', async () => {
     // Leave a different style remembered first, so the link has to beat it.
     await pick(page, 'modelbar');
-    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .wb-look')].find((b) => b.textContent.includes('Vehicle card'))?.click());
+    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((b) => b.textContent.includes('Vehicle card'))?.click());
     await page.waitForTimeout(300);
 
     // A query string as well as the hash: navigating from index.html to
@@ -466,7 +466,7 @@ test.describe('a link to a card style opens that card style', () => {
     // and this would test nothing.
     await page.goto(`${ORIGIN}/demo/index.html?f074#modelbar/logo`, { waitUntil: 'load' });
     await page.waitForTimeout(600);
-    const shown = await page.evaluate(() => document.querySelector('#wb-settings .wb-look[aria-pressed="true"] span:last-child')?.textContent);
+    const shown = await page.evaluate(() => document.querySelector('#wb-settings .tp-lookv button[aria-pressed="true"] span:last-child')?.textContent);
     const cls = await page.evaluate(() => /cargo-(\w+)/.exec(document.getElementById('wb-code').textContent)?.[1]);
     assert.equal(cls, 'logo', `the link opened ${cls}, not the style it named`);
     assert.ok(shown, 'no card style is shown as selected');
@@ -501,7 +501,7 @@ test.describe('the small things a designer trips over', () => {
   // preview, because the description only appeared once you had chosen one.
   test('every card style button says what it is before you click it', async () => {
     await pick(page, 'modelbar');
-    const titles = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .wb-look')].map((b) => b.getAttribute('title')));
+    const titles = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-lookv button')].map((b) => b.getAttribute('title')));
     assert.ok(titles.length >= 7, `only ${titles.length} card styles`);
     assert.deepEqual(
       titles.filter((t) => !t || t.length < 10),
@@ -538,7 +538,7 @@ test.describe('the hero can put its dots on the photo', () => {
   // F057: the hero reserved a strip under the photo and drew its dots there,
   // where 57 of the 76 OEM heroes overlay them. Off by default, because the
   // census argues for making it easy and not for changing what exists.
-  const overBox = (page) => page.locator('#wb-settings label.wb-row:has(> span:text-is("Dots over the image")) input').first();
+  const overBox = (page) => switchRow(page, 'Dots over the image');
 
   const geometry = (page) =>
     page.evaluate(() => {
@@ -681,18 +681,18 @@ test.describe('the last engine properties reach the panel', () => {
     assert.equal(drawn, 120, `the thumbnail is drawn ${drawn}px`);
   });
 
-  // F083: a count outside 1-8 was refused in silence. The field snapped back on
-  // blur so nothing was lost, but until then the panel showed one number and
-  // the slider ran another.
-  test('an out-of-range count says why it was not taken', async () => {
+  // F083: a count outside 1-8 was refused in silence, so between typing and
+  // blurring the panel showed one number and the slider ran another. The row
+  // is a bound number with the range on the binding now: the commit clamps and
+  // the field is redrawn with what the ladder took, so the two can never
+  // disagree in the first place.
+  test('an out-of-range count is never left showing', async () => {
     await pick(page, 'modelbar');
-    const f = page.locator('#wb-settings label:has(> span:text-is("Phone · under 768")) input').first();
-    await f.fill('9');
-    await page.waitForTimeout(200);
-    assert.equal(await f.getAttribute('aria-invalid'), 'true', 'an out-of-range count is not flagged');
-    await f.blur();
-    await page.waitForTimeout(200);
-    assert.equal(await f.getAttribute('aria-invalid'), 'false', 'the flag survives the field snapping back');
+    const f = await setField(page, 'Phone · under 768', '9');
+    const shown = await f.inputValue();
+    assert.ok(+shown >= 1 && +shown <= 8, `the field still shows "${shown}"`);
+    const cls = await page.evaluate(() => /class="[^"]*cs-xs-(\d+)/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null);
+    if (cls !== null) assert.equal(cls, shown, 'the emitted column class disagrees with the field');
   });
 
   // F097: cards size themselves off the host page's body text, so the same
@@ -709,18 +709,24 @@ test.describe('the last engine properties reach the panel', () => {
 // A colour changes the stylesheet and nothing else, so it must not go through
 // the path that rebuilds the stage. Every input event used to destroy and
 // re-initialise every slider in the preview - measured one destroy and one init
-// each, 9-11 ms of JS per event - and a native <input type="color"> fires one
-// on every pointer move inside the OS picker, which is what made dragging a
-// colour crawl. Guarded here because it is invisible in the generated CSS: the
-// output is byte-identical either way, only the cost and the scroll position
-// differ.
+// each, 9-11 ms of JS per event - and a colour picker fires one on every
+// pointer move, which is what made dragging a colour crawl. Guarded here
+// because it is invisible in the generated CSS: the output is byte-identical
+// either way, only the cost and the scroll position differ.
+//
+// The row is a plain text field on the pane until the colour plugin lands, so
+// the drag is played back as a run of commits on that field. What is under
+// test is the same thing: a run of colour changes must reach the preview
+// without tearing the stage down once.
 test.describe('picking a colour does not rebuild the slider', () => {
+  const ROW = 'Arrow background';
+
   const drag = (page, label, values) =>
     page.evaluate(
       ([l, vals]) => {
-        const row = [...document.querySelectorAll('#wb-settings label.wb-row')].find((r) => r.querySelector('span')?.textContent.trim() === l);
-        const sw = row?.querySelector('input[type=color]');
-        if (!sw) return { none: true };
+        const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === l);
+        const field = row?.querySelector('input');
+        if (!field) return { none: true };
         let inits = 0,
           destroys = 0;
         const AI = globalThis.CustomSlider.autoInit;
@@ -735,12 +741,12 @@ test.describe('picking a colour does not rebuild the slider', () => {
         };
         const first = globalThis.CARGO.sdoc().querySelector('.cs-slide');
         for (const v of vals) {
-          sw.value = v;
-          sw.dispatchEvent(new Event('input', { bubbles: true }));
+          field.value = v;
+          field.dispatchEvent(new Event('change', { bubbles: true }));
         }
         globalThis.CustomSlider.autoInit = AI;
         globalThis.CustomSlider.prototype.destroy = D;
-        return { inits, destroys, sameNode: first === globalThis.CARGO.sdoc().querySelector('.cs-slide'), text: row.querySelector('input[type=text]').value };
+        return { inits, destroys, sameNode: first === globalThis.CARGO.sdoc().querySelector('.cs-slide'), text: field.value };
       },
       [label, values],
     );
@@ -748,17 +754,13 @@ test.describe('picking a colour does not rebuild the slider', () => {
   test('a whole drag costs no teardown, and the preview keeps the colour', async () => {
     await pick(page, 'cards');
     await page.waitForTimeout(150);
-    const label = await page.evaluate(() => {
-      const row = [...document.querySelectorAll('#wb-settings label.wb-row')].find((r) => r.querySelector('input[type=color]'));
-      return row?.querySelector('span')?.textContent.trim() ?? null;
-    });
-    assert.ok(label, 'no colour row to drag');
+    assert.ok(await hasKnob(page, ROW), 'no colour row to drag');
 
-    const r = await drag(page, label, ['#112233', '#445566', '#778899', '#aabbcc', '#c8102e']);
+    const r = await drag(page, ROW, ['#112233', '#445566', '#778899', '#aabbcc', '#c8102e']);
     assert.equal(r.destroys, 0, 'the stage was torn down mid-drag');
     assert.equal(r.inits, 0, 'the sliders were re-initialised mid-drag');
     assert.equal(r.sameNode, true, 'the first slide was replaced, so the stage was rebuilt');
-    assert.equal(r.text.toLowerCase(), '#c8102e', 'the text field did not follow the swatch');
+    assert.equal(r.text.toLowerCase(), '#c8102e', 'the field did not keep the last colour');
 
     // The point of not rebuilding is that the colour still arrives.
     const applied = await page.evaluate(() => globalThis.CARGO.sdoc().getElementById('wb-live-css').textContent.includes('#c8102e'));
@@ -771,11 +773,7 @@ test.describe('picking a colour does not rebuild the slider', () => {
   test('the copy panel still tracks the colour', async () => {
     await pick(page, 'cards');
     await page.waitForTimeout(150);
-    const label = await page.evaluate(() => {
-      const row = [...document.querySelectorAll('#wb-settings label.wb-row')].find((r) => r.querySelector('input[type=color]'));
-      return row?.querySelector('span')?.textContent.trim() ?? null;
-    });
-    await drag(page, label, ['#0a5c2b']);
+    await drag(page, ROW, ['#0a5c2b']);
     await page.waitForTimeout(120);
     const parts = await copyParts(page);
     assert.match(parts.css, /#0a5c2b/i, 'the copied CSS does not carry the colour that is on screen');
@@ -968,7 +966,7 @@ test.describe('the frame viewport is never eaten by a scrollbar', () => {
 // page and the phone rule never fired in it. Both halves of that are fixed now,
 // and this is the half a test can hold.
 test.describe('the arrow placement switch is not overruled by a breakpoint', () => {
-  const gut = (p) => p.locator('#wb-settings label:has-text("Arrows outside the cards") input[type=checkbox]').first();
+  const gut = (p) => switchRow(p, 'Arrows outside the cards');
 
   const placement = (p) =>
     p.evaluate(() => {
@@ -1045,10 +1043,10 @@ test.describe('the pause button sits on the thing it pauses', () => {
   test('with the arrows outside the cards or over them, at every width', async () => {
     await pick(page, 'hero');
     await page.waitForTimeout(300);
-    const auto = page.locator('#wb-settings label:has(> span:text-is("Rotate every (ms)")) input').first();
+    const auto = rowByLabel(page, 'Rotate every (ms)').locator('input').first();
     await auto.fill('4000');
     await page.waitForTimeout(400);
-    const gut = page.locator('#wb-settings label:has-text("Arrows outside the cards") input[type=checkbox]').first();
+    const gut = switchRow(page, 'Arrows outside the cards');
 
     for (const outside of [true, false]) {
       if ((await gut.isChecked()) !== outside) {
@@ -1069,7 +1067,7 @@ test.describe('the pause button sits on the thing it pauses', () => {
   test('no autoplay, no rule', async () => {
     await pick(page, 'hero');
     await page.waitForTimeout(300);
-    const auto = page.locator('#wb-settings label:has(> span:text-is("Rotate every (ms)")) input').first();
+    const auto = rowByLabel(page, 'Rotate every (ms)').locator('input').first();
     await auto.fill('0');
     await page.waitForTimeout(400);
     const parts = await copyParts(page);

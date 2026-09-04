@@ -299,14 +299,6 @@ body {
   border-radius: 12px;
 }
 
-/* Columns, not a grid. A grid aligns rows, so the 14-knob "This card style"
-   section set the height of everything beside it and the panel came out 952px
-   tall - the preview started at y=1157 and was off-screen on a 1440x900 laptop,
-   which is worse than the sidebar it replaced. Columns balance by height
-   instead, so the panel is as tall as the content divided by the columns rather
-   than as tall as its worst section. No height cap: capping a column layout
-   pushes the overflow SIDEWAYS, and two whole sections ended up off the right
-   edge behind a horizontal scrollbar. */
 #wb-settings {
   /* Tweakpane is themed through its own custom properties, mapped to the
      demo's tokens here so the pane follows the light/dark switch with no
@@ -338,29 +330,6 @@ body {
   --tp-monitor-foreground-color: var(--ink-soft);
   --tp-blade-value-width: 11rem;
   --tp-blade-horizontal-padding: 0.5rem;
-
-  columns: 16rem auto;
-  column-gap: 1.75rem;
-}
-
-#wb-settings > section {
-  margin-block-end: 0.9rem;
-
-  /* Keep a heading with its controls. */
-  break-inside: avoid;
-}
-
-/* Except a section long enough to set the panel's height on its own — marked in
-   workbench.js, where the row count is known. Keeping "This card style" whole
-   made the panel 623px and pushed the preview off a 1440x900 laptop. */
-#wb-settings > section[data-flow] {
-  break-inside: auto;
-}
-
-/* Vertical rhythm came from a single stacked column; in a grid each section
-   already starts level with its neighbours. */
-.ui-panel section + section h3 {
-  margin-block-start: 0;
 }
 
 .ui-main {
@@ -379,10 +348,7 @@ body {
 
 /* ---- the pattern index ------------------------------------------------- */
 
-.ui-rail h2,
-.ui-panel h3 {
-  /* The heading is the only thing separating one group from the next in a
-     column layout, so it needs air above it that the first heading does not. */
+.ui-rail h2 {
   padding-block-start: 0.55rem;
   margin: 0 0 0.6rem;
   font-family: var(--mono);
@@ -392,19 +358,6 @@ body {
   text-transform: uppercase;
   letter-spacing: 0.12em;
   border-block-start: 1px solid var(--rule);
-
-  /* A section allowed to flow across columns could leave its heading alone at
-     the foot of one with every field in the next - "Arrows and spacing" sat at
-     the bottom of column 2 while its first control started column 3, which
-     reads as a heading for the section above it. */
-  break-after: avoid;
-}
-
-/* ...except where a section starts a column: there the rule would draw a
-   stray line across the top of the panel. */
-.ui-panel section:first-child h3 {
-  padding-block-start: 0;
-  border-block-start: 0;
 }
 
 #wb-nav {
@@ -662,11 +615,12 @@ body {
 
 /* ---- settings panel ---------------------------------------------------- */
 
-/* Two columns, not a flex row pushing the ends apart. space-between let every
-   control find its own left edge — a colour row started further right than a
-   text row because its swatch ate the difference, and a long label shoved its
-   field out of line. One grid column means one edge for everything in the
-   panel, whatever the control is. */
+/* The slide editor's label/field pair. The settings panel is a Tweakpane now
+   and draws its own rows; this is what those rows are laid out against inside
+   a slide card, where the field wants the whole width (the .wb-slide block
+   below restates it). Two columns, not a flex row pushing the ends apart:
+   space-between let every control find its own left edge, and a long label
+   shoved its field out of line. */
 .wb-row {
   display: grid;
   grid-template-columns: 1fr 9.5rem;
@@ -703,25 +657,6 @@ body {
   border-radius: 6px;
 }
 
-/* The swatch is fixed and the field takes the rest, so a colour row lines up
-   with a plain text row on BOTH edges instead of just the right one. */
-.wb-color {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 0.35rem;
-  align-items: center;
-}
-
-.wb-row input[type="color"] {
-  inline-size: 1.9rem;
-  block-size: 1.75rem;
-  padding: 0;
-  cursor: pointer;
-  background: none;
-  border: 1px solid var(--rule);
-  border-radius: 6px;
-}
-
 /* justify-self, because a 1rem checkbox in a 9.5rem control column would
    otherwise stretch across it and sit nowhere near the other controls' edge. */
 .wb-row input[type="checkbox"] {
@@ -730,22 +665,6 @@ body {
   block-size: 1rem;
   margin: 0;
   accent-color: var(--signal);
-}
-
-/* The brand picker is the one control that spans the rail rather than sitting in
-   the 9.5rem column, so it needs the field styling stated rather than inherited
-   from .wb-row. It was sized by an inline style and matched by a [style]
-   attribute selector, which meant it rendered as a raw browser select next to
-   fields that had a border, a radius and a size. */
-.wb-wide {
-  inline-size: 100%;
-  padding: 0.4rem 0.5rem;
-  font-family: var(--sans);
-  font-size: 0.85rem;
-  color: var(--ink);
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: 6px;
 }
 
 .wb-note {
@@ -762,9 +681,14 @@ body {
   color: var(--ink-soft);
 }
 
+/* Auto-fill, not two fixed columns: the panel used to be a 16rem-wide column
+   and two tiles filled it. It is the full width of the work area now, and two
+   columns stretched each thumbnail to about 590px - a 2.9rem diagram floating
+   in a half-metre box. Fitting as many ~9rem tiles as the width allows keeps
+   them the size they were drawn for. */
 .tp-lookv {
   display: grid;
-  grid-template-columns: repeat(2, 1fr);
+  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
   gap: 0.4rem;
 }
 
@@ -817,21 +741,26 @@ body {
   color: var(--ink);
 }
 
-/* Stands in for the colour input when the value is not a plain hex, so the row
-   never loses its swatch and `transparent` reads as transparent rather than as
-   a missing control. */
-.wb-chip {
-  position: relative;
-  inline-size: 1.9rem;
-  block-size: 1.75rem;
-  padding: 0;
-  overflow: hidden;
-  cursor: pointer;
-  background:
-    linear-gradient(var(--chip, transparent), var(--chip, transparent)),
-    repeating-conic-gradient(var(--rule) 0% 25%, var(--surface) 0% 50%) 0 0 / 8px 8px;
-  border: 1px solid var(--rule);
-  border-radius: 6px;
+/* A settings field holding something its property cannot use — a gap of `10`,
+   which is a number and not a length. The declaration is dropped rather than
+   shipped, so the slider keeps working; this says why the typed value is not
+   in the code. Spans the whole row, which is a flex line: the pane's own two
+   children are the label and the field, so this has to wrap under both. On
+   --signal-bg rather than the panel, because that is the pair whose contrast
+   this file has already measured, in both themes. */
+#wb-settings .tp-lblv {
+  flex-wrap: wrap;
+}
+
+.tp-flagv {
+  flex-basis: 100%;
+  padding: 0.3rem 0.5rem;
+  margin: 0.25rem 0 0.35rem;
+  font-size: 0.72rem;
+  line-height: 1.4;
+  color: var(--signal-text);
+  background: var(--signal-bg);
+  border-radius: 4px;
 }
 
 /* ---- slide content ------------------------------------------------------ */
@@ -955,29 +884,6 @@ body {
   color: var(--on-signal);
   background: var(--signal);
   border-radius: 50%;
-}
-
-/* A settings field holding something its property cannot use — a gap of `10`,
-   which is a number and not a length. The declaration is dropped rather than
-   shipped, so the slider keeps working; this says why the typed value is not
-   in the code. */
-.wb-input-bad {
-  outline: 1px solid var(--signal);
-  border-color: var(--signal);
-}
-
-/* Spans the whole row: .wb-row is a two-column grid, so a third child would
-   otherwise sit under the label in column one. On --signal-bg rather than the
-   panel, because that is the pair whose contrast this file has already
-   measured, in both themes. */
-.wb-bad {
-  grid-column: 1 / -1;
-  padding: 0.3rem 0.5rem;
-  font-size: 0.72rem;
-  line-height: 1.4;
-  color: var(--signal-text);
-  background: var(--signal-bg);
-  border-radius: 4px;
 }
 
 /* The one sentence that says what the two class prefixes in the code below
@@ -1843,13 +1749,6 @@ code {
     flex-flow: row wrap;
   }
 
-  #wb-settings {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
-    gap: 0 2rem;
-    align-items: start;
-  }
-
   .ui-main {
     padding: 1.25rem 1rem 3rem;
   }
@@ -1872,11 +1771,10 @@ code {
 }
 
 /* ---- pane ----------------------------------------------------------------
-   The --tp-* theme variables live on the #wb-settings rule above, alongside
-   the column layout - one rule, since stylelint's no-duplicate-selectors
-   won't allow a second #wb-settings block. This is just the pane root's own
-   sizing: full width of its column, the .tp-dfwv class confirmed against
-   node_modules/tweakpane/dist/tweakpane.js. */
+   The --tp-* theme variables live on the #wb-settings rule above - one rule,
+   since stylelint's no-duplicate-selectors won't allow a second #wb-settings
+   block. This is just the pane root's own sizing: full width of the panel, the
+   .tp-dfwv class confirmed against node_modules/tweakpane/dist/tweakpane.js. */
 #wb-settings .tp-dfwv {
   inline-size: 100%;
   min-inline-size: 0;

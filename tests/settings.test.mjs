@@ -4,7 +4,7 @@
 // asymmetry was the bug: remembering half the state is worse than none.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, setField, stageReady } from './helpers.mjs';
+import { openBuilder, pick, setField, rowByLabel, stageReady } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -17,9 +17,11 @@ test.beforeAll(async ({ browser }) => {
 const shown = (page) =>
   page.evaluate(() => ({
     name: document.querySelector('[data-name-field]').value,
-    look: document.querySelector('#wb-settings .wb-look[aria-pressed="true"] span:last-child')?.textContent ?? null,
+    look: document.querySelector('#wb-settings .tp-lookv button[aria-pressed="true"] span:last-child')?.textContent ?? null,
     gap: /--cs-gap:\s*([^;]*);/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null,
-    perView: [...document.querySelectorAll('#wb-settings label.wb-row')].filter((r) => /phone|and up/.test(r.querySelector('span')?.textContent ?? '')).map((r) => r.querySelector('input').value),
+    perView: [...document.querySelectorAll('#wb-settings .tp-lblv')]
+      .filter((r) => /Phone|Tablet|Laptop|Desktop/.test(r.querySelector('.tp-lblv_l')?.textContent ?? ''))
+      .map((r) => r.querySelector('input').value),
     frame: document.querySelector('.ui-widths button[aria-pressed="true"]')?.dataset.w ?? null,
   }));
 
@@ -35,9 +37,7 @@ test.describe('the settings come back with the slides once they are kept', () =>
     await nameField.fill('used-inventory');
     await nameField.blur();
     await setField(page, 'Gap', '1.75em');
-    const ladder = page.locator('#wb-settings label:has(> span:text-is("Laptop · 992+")) input').first();
-    await ladder.fill('4');
-    await page.waitForTimeout(120);
+    await setField(page, 'Laptop · 992+', '4');
     await page.click('.ui-widths button[data-w="992"]');
     await page.waitForTimeout(150);
 
@@ -136,7 +136,7 @@ test.describe('nothing threw', () => {
 // clicking the next pattern would throw away the slides you just wrote - a
 // worse bug than the one being fixed (F007 again, by another route).
 test.describe('nothing is remembered across a reload unless it is kept', () => {
-  const gap = (p) => p.locator('#wb-settings label:has(> span:text-is("Gap")) input[type=text]').first();
+  const gap = (p) => rowByLabel(p, 'Gap').locator('input').first();
   const flags = (p) =>
     p.evaluate(() => ({
       dirty: !document.getElementById('wb-dirty').hidden,
@@ -157,8 +157,8 @@ test.describe('nothing is remembered across a reload unless it is kept', () => {
     await fresh();
     assert.deepEqual(await flags(page), { dirty: false, keep: false, reset: false, stored: false }, 'a freshly loaded pattern is not dirty');
 
-    await gap(page).fill('2.5em');
-    await page.waitForTimeout(300);
+    await setField(page, 'Gap', '2.5em');
+    await page.waitForTimeout(200);
     const edited = await flags(page);
     assert.equal(edited.dirty, true, 'an edit did not mark the panel');
     assert.equal(edited.keep, true, 'Keep is not offered for an edit');
@@ -173,8 +173,8 @@ test.describe('nothing is remembered across a reload unless it is kept', () => {
 
   test('Keep makes it survive, and Reset puts the pattern back to what it ships as', async () => {
     await fresh();
-    await gap(page).fill('2.5em');
-    await page.waitForTimeout(300);
+    await setField(page, 'Gap', '2.5em');
+    await page.waitForTimeout(200);
     await page.click('#wb-keep');
     await page.waitForTimeout(300);
     const kept = await flags(page);
@@ -204,8 +204,8 @@ test.describe('nothing is remembered across a reload unless it is kept', () => {
   // nothing has been written to disk.
   test('an unkept edit still survives switching pattern and back', async () => {
     await fresh();
-    await gap(page).fill('3.25em');
-    await page.waitForTimeout(300);
+    await setField(page, 'Gap', '3.25em');
+    await page.waitForTimeout(200);
     await pick(page, 'modelbar');
     await page.waitForTimeout(200);
     await pick(page, 'cards');
