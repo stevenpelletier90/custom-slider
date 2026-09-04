@@ -59,3 +59,39 @@ test('the pane is themed to the demo, not to the library default', async () => {
   const bg = await page.evaluate(() => getComputedStyle(document.querySelector('#wb-settings')).getPropertyValue('--tp-base-background-color').trim());
   assert.notEqual(bg, '', 'no --tp-* variables on the settings container');
 });
+
+test('a note is a paragraph in the folder', async () => {
+  const text = await page.evaluate(() => {
+    const { pane } = globalThis.CARGO;
+    const box = document.createElement('div');
+    document.body.append(box);
+    pane.create(box);
+    pane.note(pane.folder('Probe'), 'Hello there');
+    const t = box.querySelector('p.tp-notev')?.textContent;
+    pane.dispose();
+    box.remove();
+    return t;
+  });
+  assert.equal(text, 'Hello there');
+});
+
+test('the card-style picker shows every look and reports a click', async () => {
+  const got = await page.evaluate(async () => {
+    const { pane, LOOKS } = globalThis.CARGO;
+    const box = document.createElement('div');
+    document.body.append(box);
+    pane.create(box);
+    let picked = null;
+    pane.looks(pane.folder('Probe'), LOOKS, 'tile', (id) => (picked = id));
+    const btns = [...box.querySelectorAll('.tp-lookv button')];
+    const pressed = btns.filter((b) => b.getAttribute('aria-pressed') === 'true').map((b) => b.dataset.look);
+    btns.find((b) => b.dataset.look === 'vcard').click();
+    await new Promise((r) => setTimeout(r, 20));
+    pane.dispose();
+    box.remove();
+    return { count: btns.length, pressed, picked };
+  });
+  assert.equal(got.count, 7);
+  assert.deepEqual(got.pressed, ['tile']);
+  assert.equal(got.picked, 'vcard');
+});

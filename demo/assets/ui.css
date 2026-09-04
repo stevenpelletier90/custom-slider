@@ -755,13 +755,20 @@ body {
   color: var(--ink-soft);
 }
 
-.wb-looks {
+.tp-notev {
+  margin: 0.35rem 0 0.5rem;
+  font-size: 0.8rem;
+  line-height: 1.45;
+  color: var(--ink-soft);
+}
+
+.tp-lookv {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.4rem;
 }
 
-.wb-look {
+.tp-lookv button {
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
@@ -776,11 +783,11 @@ body {
   border-radius: 8px;
 }
 
-.wb-look:hover {
+.tp-lookv button:hover {
   color: var(--ink);
 }
 
-.wb-look[aria-pressed="true"] {
+.tp-lookv button[aria-pressed="true"] {
   color: var(--ink);
   border-color: var(--signal);
   box-shadow: inset 0 0 0 1px var(--signal);
@@ -788,7 +795,7 @@ body {
 
 /* A diagram of the card's LAYOUT, not a swatch of its background colour. The
    shape is what you are choosing between; the colours are settings underneath. */
-.wb-look-icon {
+.tp-lookv_icon {
   --wb-icon-bg: var(--surface);
 
   display: grid;
@@ -799,14 +806,14 @@ body {
   border-radius: 5px;
 }
 
-.wb-look-icon svg {
+.tp-lookv_icon svg {
   inline-size: 2.9rem;
   block-size: auto;
   color: var(--ink-soft);
 }
 
-.wb-look:hover .wb-look-icon svg,
-.wb-look[aria-pressed="true"] .wb-look-icon svg {
+.tp-lookv button:hover .tp-lookv_icon svg,
+.tp-lookv button[aria-pressed="true"] .tp-lookv_icon svg {
   color: var(--ink);
 }
 

@@ -24,7 +24,14 @@
       return null;
     }
     pane = new (tp().Pane)({ container });
-    for (const plugin of CARGO.tpPlugins ?? []) pane.registerPlugin(plugin);
+    // Pane#registerPlugin() takes a plugin BUNDLE ({ id, plugin } or { id,
+    // plugins: [...] }), not a raw BladePlugin/InputBindingPlugin - it reads
+    // `t.plugin`/`t.plugins` and otherwise silently registers nothing, which
+    // then surfaces later as "No matching view" when a blade tries to use it.
+    // CARGO.tpPlugins stays a flat array of the plugins tp-plugins.js builds
+    // with createPlugin(); this is the one place that wraps it for the API
+    // Tweakpane actually exposes.
+    if (CARGO.tpPlugins?.length) pane.registerPlugin({ id: 'cargo', plugins: CARGO.tpPlugins });
     return pane;
   };
 
@@ -83,6 +90,10 @@
   // exists a separator keeps the adapter loadable.
   const note = (parent, textContent) => (CARGO.tpPlugins?.some((p) => p.id === 'note') ? parent.addBlade({ view: 'note', text: textContent }) : parent.addBlade({ view: 'separator' }));
 
+  // The seven card-style thumbnails. The `lookpicker` blade comes from
+  // tp-plugins.js; it owns its own click handling and calls back on pick.
+  const looks = (parent, LOOKS, current, onPick) => parent.addBlade({ view: 'lookpicker', looks: LOOKS, current, onPick });
+
   CARGO.pane = {
     create,
     dispose,
@@ -92,6 +103,7 @@
     list,
     bool,
     note,
+    looks,
     get pane() {
       return pane;
     },
