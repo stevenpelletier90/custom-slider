@@ -10,15 +10,15 @@ import { gzipSync } from 'node:zlib';
 
 // Reads the built stylesheet whole, cards included, so a pasted page gets the
 // card styles too and its snippets can be the short shared-class kind.
-const css = readFileSync('dist/custom-slider.css', 'utf8').trim();
-const js = readFileSync('dist/custom-slider.js', 'utf8').trim();
+const css = readFileSync('dist/custom-slider.min.css', 'utf8').trim();
+const js = readFileSync('dist/custom-slider.min.js', 'utf8').trim();
 mkdirSync('dist/paste', { recursive: true });
 
 // 1. Style Only tab — RAW CSS, no <style> tags and no comments (the platform
 //    wraps it and minifies it server-side). esbuild keeps /*! comments, so the
 //    built sheet arrives carrying the /*! cards */ marker and the generated-file
 //    banner; both are stripped here. The marker still lives in
-//    dist/custom-slider.css, which is where size.mjs splits engine from cards.
+//    dist/custom-slider.min.css, which is where size.mjs splits engine from cards.
 const bare = css
   .replace(/\/\*[\s\S]*?\*\//g, '')
   .replace(/\n{2,}/g, '\n')

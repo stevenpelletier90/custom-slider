@@ -16,17 +16,19 @@
 
 Two files, no dependencies, no build step on the site side:
 
-| File                | Gzip   | What it does                                                                                                              |
-| ------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `custom-slider.css` | 3.1 KB | Layout, scroll-snap physics, control styling — **plus** the card styles and column classes (1.4 KB engine + 2.0 KB cards) |
-| `custom-slider.js`  | 4.9 KB | Wires controls, state, autoplay, fade, drag                                                                               |
+| File                    | Gzip   | What it does                                                                                                              |
+| ----------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------- |
+| `custom-slider.min.css` | 3.1 KB | Layout, scroll-snap physics, control styling — **plus** the card styles and column classes (1.4 KB engine + 2.0 KB cards) |
+| `custom-slider.min.js`  | 4.9 KB | Wires controls, state, autoplay, fade, drag                                                                               |
 
 A site downloads 7.8 KB for the pair, which is what the demo masthead prints.
 `npm run size` is the authority — these figures come from it and go stale;
 re-read them there rather than trusting this table.
 
-Both come from `dist/` in this repo — never from `src/`, which is the readable
-source and is not minified.
+Both come from `dist/` in this repo — never from `src/`, which is ES modules
+and does not run as a classic script. `dist/` also holds `custom-slider.css`
+and `custom-slider.js`, the same build unminified, for reading; pages link the
+`.min` pair.
 
 ### Where they go
 
@@ -40,14 +42,14 @@ The folder exists and both filenames answer 200 today, serving the pre-rename
 build; the upload replaces them in place. See "Deployment status" in
 [../README.md](../README.md) for what is on it right now and the steps.
 
-Per-dealer Media Gallery (`#MISCPATH#custom-slider.js`) remains the fallback if a
+Per-dealer Media Gallery (`#MISCPATH#custom-slider.min.js`) remains the fallback if a
 shared location is ever unavailable, but it pins each site to whatever version it
 got and a fix means re-uploading to every one — treat it as temporary.
 
 ### How a page loads them
 
-    <link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.css">
-    <script src="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.js" defer></script>
+    <link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.css">
+    <script src="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.js" defer></script>
 
 `defer` matters: the engine auto-initializes on `DOMContentLoaded`, and the CSS
 already reserves the control space, so nothing shifts when the JS lands (CLS 0).
@@ -68,7 +70,7 @@ two tags:
           if (!document.querySelector('.cs')) return;
           var css = document.createElement('link');
           css.rel = 'stylesheet';
-          css.href = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.css';
+          css.href = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.css';
           // PREPEND, never append: the engine stylesheet carries the default
           // --cs-* values at the same specificity as your recipe CSS, so it
           // must land BEFORE the page's Style Only CSS in the cascade.
@@ -77,7 +79,7 @@ two tags:
           // on the spelletier test site, 2026-08-20.
           document.head.insertBefore(css, document.head.firstChild);
           var js = document.createElement('script');
-          js.src = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.js';
+          js.src = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.js';
           document.head.appendChild(js);
         };
         if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);

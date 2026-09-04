@@ -17,12 +17,12 @@ The demo page (`demo/index.html`) is a workbench: pick a pattern, set it up
 (how many across at each breakpoint, card style, brand preset, arrow colours,
 how many cards an arrow moves), and copy code generated from those same
 settings — so the snippet is always exactly the slider on screen. It also hands
-you `custom-slider.css` and `custom-slider.js` themselves, to link or to paste.
+you `custom-slider.min.css` and `custom-slider.min.js` themselves, to link or to paste.
 
 ## Quick start (CMS / classic script)
 
-    <link rel="stylesheet" href="custom-slider.css">
-    <script src="custom-slider.js" defer></script>
+    <link rel="stylesheet" href="custom-slider.min.css">
+    <script src="custom-slider.min.js" defer></script>
 
     <div class="cs my-slider cs-sm-2 cs-md-3" data-cs aria-label="Featured vehicles">
       <ul class="cs-track">
@@ -168,15 +168,15 @@ rename map for moving a page across.
 
 ## Card styles come with the stylesheet
 
-`dist/custom-slider.css` is the engine **plus** a small library of card styling:
+`dist/custom-slider.min.css` is the engine **plus** a small library of card styling:
 the seven card looks and a set of column classes, about 2 KB gzip of the file. The
 engine itself styles no cards on purpose — `cs-*` is mechanism, `cargo-*` is content
 — but every site that links it gets the card half too, so a slider is mostly just
 its markup:
 
 ```html
-<link rel="stylesheet" href="/path/custom-slider.css" />
-<script src="/path/custom-slider.js" defer></script>
+<link rel="stylesheet" href="/path/custom-slider.min.css" />
+<script src="/path/custom-slider.min.js" defer></script>
 
 <div class="cs cargo-tile cs-xs-2 cs-sm-3 cs-md-4 cs-lg-5" data-cs aria-label="Our models">
   <ul class="cs-track">
@@ -197,7 +197,7 @@ engine against the budget below — the budget's job is to show the engine under
 Embla's core and Splide, and neither of those ships a card library.
 
 **Paste the card styles too** in the builder inlines a look's own rules into the
-snippet, for a page that links a `custom-slider.css` older than the card half. It
+snippet, for a page that links a `custom-slider.min.css` older than the card half. It
 carries the card styling **only** — never the engine's layout and physics — so on
 a page with no stylesheet at all the block renders as a full-width vertical list
 with static arrows, whatever the column classes say. Measured, not assumed: track
@@ -316,33 +316,39 @@ brand's model bar.
 
 ### Deployment status — the one place it is written down
 
-**As of 2026-09-02 the current engine is NOT yet on FTP.** The two files live at
+**As of 2026-09-04 the current engine is NOT yet on FTP.** The folder is
 
-    /assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.css
-    /assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.js
+    /assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/
 
-and both URLs answer 200 today — but with the **pre-rename dl-carousel build**
-under the current names. Measured 2026-09-02, cache-busted: the CSS is 4,885 B
-and begins `.dl-carousel{--dlc-per-view: 1;--dlc-gap: 1rem`, with zero
-occurrences of `.cs{` or `--cs-`; the JS is 15,444 B and exposes `DLCarousel`.
-`last-modified` on both is 2026-08-28. `dl-carousel.css` and `dl-carousel.js`
-are **404** at that path — the old build is there only under the new names.
+and `custom-slider.css` / `custom-slider.js` there answer 200 today — but with
+the **pre-rename dl-carousel build**. Measured 2026-09-02, cache-busted: the CSS
+is 4,885 B and begins `.dl-carousel{--dlc-per-view: 1;--dlc-gap: 1rem`, with
+zero occurrences of `.cs{` or `--cs-`; the JS is 15,444 B and exposes
+`DLCarousel`. `last-modified` on both is 2026-08-28. `dl-carousel.css` and
+`dl-carousel.js` are **404** at that path — the old build is there only under
+those two names, and the `.min` pair does not exist there yet.
 
-So a `cs`/`data-cs` snippet linked to those URLs renders as a plain list right
-now. Nothing on a live site links them yet, which is what makes the upload
-simple: it replaces those two files in place, under the same names. The other
-two documents defer to this section; do not restate a status in them.
+Nothing on a live site links any of them, which is what makes the upload
+simple. `npm run build` writes four files to `dist/`: `custom-slider.css` and
+`custom-slider.js` are the **readable** engine, for anyone opening the file to
+see what it does; `custom-slider.min.css` and `custom-slider.min.js` are the
+same code minified, and **the `.min` pair is what every page links** — the
+demo, the copy panel's tags and the snippet at the top of this file all name
+it. The readable pair goes up beside it so the folder holds both; no page
+should link it. The other two documents defer to this section; do not restate
+a status in them.
 
-**Uploading (do not skip the cache step).** Both files are served with
+**Uploading (do not skip the cache step).** The files are served with
 `cache-control: max-age=1814400` — 21 days — from behind Fastly. Overwriting a
 file does not shorten that: a browser that already fetched the old one keeps it
 for up to three weeks.
 
 1. Run `npm run build`, then `npm run size`, and confirm the gate is green.
-2. Upload `dist/custom-slider.css` and `dist/custom-slider.js` over the two
-   paths above. Same names, same folder.
+2. Upload all four files from `dist/` into the folder above. The readable
+   pair overwrites the old dl-carousel files under the same names; the `.min`
+   pair is new.
 3. Verify with a cache-busted request, not a browser reload:
-   `curl -s ".../custom-slider.css?cb=$RANDOM" | head -c 40` should begin
+   `curl -s ".../custom-slider.min.css?cb=$RANDOM" | head -c 40` should begin
    `.cs{--cs-per-view` — if it still says `.dl-carousel`, the upload has not
    landed.
 4. Anyone who opened a page linking the old file needs a hard refresh, or to

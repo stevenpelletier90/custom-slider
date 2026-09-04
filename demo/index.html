@@ -16,7 +16,7 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
 
-    <link rel="stylesheet" href="../dist/custom-slider.css" />
+    <link rel="stylesheet" href="../dist/custom-slider.min.css" />
     <link rel="stylesheet" href="assets/ui.css" />
 
     <!-- Set before first paint so a dark-mode reload never flashes white. -->
@@ -29,7 +29,7 @@
       }
     </script>
 
-    <script src="../dist/custom-slider.js" defer></script>
+    <script src="../dist/custom-slider.min.js" defer></script>
     <script src="assets/looks.js" defer></script>
     <script src="assets/brands.js" defer></script>
     <!-- Demo image -> platform path, so the code panel emits sources that
@@ -180,7 +180,7 @@
                  which is not where anyone reading the code is standing. -->
             <span id="wb-code-note"
               ><b class="ui-step">2</b> Copy each part into its own field — the box below is the three of them together.
-              <span class="ui-code-legend"><code>cs-</code> is the slider, <code>cargo-</code> is the card design; both come from <code>custom-slider.css</code>.</span></span
+              <span class="ui-code-legend"><code>cs-</code> is the slider, <code>cargo-</code> is the card design; both come from <code>custom-slider.min.css</code>.</span></span
             >
             <!-- One button per field, not one button for the lot. Style Only
                  takes raw CSS: a <style> tag pasted into it makes the parser
@@ -234,8 +234,8 @@
               tabindex="0"
               role="region"
               aria-label="The two tags to paste"
-            ><code>&lt;link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.css"&gt;
-&lt;script src="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.js" defer&gt;&lt;/script&gt;</code></pre>
+            ><code>&lt;link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.css"&gt;
+&lt;script src="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.js" defer&gt;&lt;/script&gt;</code></pre>
             <div class="ui-where">
               <b>Two files, that’s all</b>
               The stylesheet carries the card styling as well, so a slider you copy from here is mostly just its markup. Without these two files linked, a pasted slider is a plain list.
@@ -267,13 +267,13 @@
                  comes back to tell the page it is out of date. -->
             <p>For a site where you can’t upload files. What you copy is today’s build — a pasted copy stays on that build, so it has to be pasted again after each update.</p>
             <div class="ui-file">
-              <code>custom-slider.css</code>
+              <code>custom-slider.min.css</code>
               <button type="button" class="ui-btn" data-file="css" data-act="copy">Copy</button>
               <button type="button" class="ui-btn" data-file="css" data-act="view">View</button>
               <button type="button" class="ui-btn" data-file="css" data-act="download">Download</button>
             </div>
             <div class="ui-file">
-              <code>custom-slider.js</code>
+              <code>custom-slider.min.js</code>
               <button type="button" class="ui-btn" data-file="js" data-act="copy">Copy</button>
               <button type="button" class="ui-btn" data-file="js" data-act="view">View</button>
               <button type="button" class="ui-btn" data-file="js" data-act="download">Download</button>

@@ -941,7 +941,7 @@ ${PHOTO_CSS}
     return !!(p.panes || p.filters || p.cardGrid || state.pattern === 'lightbox');
   };
 
-  // The card styles ship inside dist/custom-slider.css, which every site links,
+  // The card styles ship inside dist/custom-slider.min.css, which every site links,
   // so a snippet does not repeat them - it carries only what THIS slider changed
   // from its card style's defaults. The delta is computed, never trusted: a
   // value equal to the default is dropped, so the block cannot go stale against
@@ -1238,7 +1238,7 @@ ${PHOTO_CSS}
     //
     // The column ladder goes on EVERY pattern, not only the four with a card
     // look. cs-xs-N / cs-sm-N / cs-md-N / cs-lg-N ship unscoped in
-    // custom-slider.css and say exactly what the hand-written ladder said - a
+    // custom-slider.min.css and say exactly what the hand-written ladder said - a
     // root line plus three @media blocks, ten lines of CSS a snippet, and
     // two-thirds of the rungs repeated the tier below because a min-width rule
     // already carries upward. Only `cargo-<look>` still depends on the shared
@@ -1543,7 +1543,7 @@ ${PHOTO_CSS}
     // preview that stands in for a dealer page should stand in for its
     // structure too, so what the audit reports is the snippet.
     '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Slider preview</title>' +
-    '<link rel="stylesheet" href="../dist/custom-slider.css">' +
+    '<link rel="stylesheet" href="../dist/custom-slider.min.css">' +
     // overflow:hidden on the frame's own root is a CORRECTNESS rule, not
     // tidying. A classic scrollbar - which real Chrome on Windows draws, and
     // headless Chromium does not, so this is invisible to the test suite - takes
@@ -1577,7 +1577,7 @@ ${PHOTO_CSS}
     // content here; inventing one above them to satisfy a rule is scaffolding
     // pretending to be a page, and it made the audit noisier, not truer.
     '<body><main aria-label="Slider preview"><div id="wb-live-root"></div></main>' +
-    '<script src="../dist/custom-slider.js"><' +
+    '<script src="../dist/custom-slider.min.js"><' +
     '/script></body></html>';
 
   // Resolves when the frame has its engine. Everything that paints waits on it.
@@ -1706,7 +1706,7 @@ ${PHOTO_CSS}
     // An earlier "use the card-looks file" checkbox failed because it was a
     // question: greyed out on 13 of the 17 patterns, and where it did work it
     // still left 13-21 lines of CSS behind. The card styles now ship inside
-    // custom-slider.css, so using them is the default and no longer a decision
+    // custom-slider.min.css, so using them is the default and no longer a decision
     // anyone has to make - the toggle survives only as an escape hatch for a
     // page that cannot link the file, and it is never greyed out.
     const lines = (t) => t.trim().split('\n').length;
@@ -1714,7 +1714,7 @@ ${PHOTO_CSS}
       ['HTML', lines(html), 'a <strong>Custom HTML</strong> block'],
       ['CSS', lines(css), '<strong>Style Only</strong> — raw CSS, no <code>&lt;style&gt;</code> tags'],
     ];
-    if (shared()) parts.push(['Card style', `.cargo-${state.look}`, 'comes from <strong>custom-slider.css</strong> — nothing to paste for it']);
+    if (shared()) parts.push(['Card style', `.cargo-${state.look}`, 'comes from <strong>custom-slider.min.css</strong> — nothing to paste for it']);
     // The one line in the snippet nobody can read the purpose of: 0.1px is not
     // a measurement, it is "no room, and do not let the minifier turn it into a
     // bare 0". Said here rather than left to be puzzled over on a dealer page.
@@ -1722,7 +1722,7 @@ ${PHOTO_CSS}
     // Counted off the guarded script, which is the one that ships. "Either
     // side" is the point of the guard: the script no longer cares whether the
     // engine's line runs before or after it.
-    if (state.scriptText) parts.push(['JavaScript', lines(state.scriptText), '<strong>Body Section, Bottom</strong> — either side of the custom-slider.js line']);
+    if (state.scriptText) parts.push(['JavaScript', lines(state.scriptText), '<strong>Body Section, Bottom</strong> — either side of the custom-slider.min.js line']);
     // The demo images resolve to real platform paths, which is what makes them
     // usable - and exactly why this warning belongs here: they load perfectly
     // on any dealer's site and show the wrong thing, which is worse than a
@@ -2638,7 +2638,7 @@ ${PHOTO_CSS}
     const aloneNote = document.createElement('p');
     aloneNote.className = 'wb-note';
     aloneNote.textContent = state.look
-      ? 'Leave this off: the card styling comes from custom-slider.css, which is what keeps the snippet short. Tick it only for a page that cannot link that file — the slider looks the same either way.'
+      ? 'Leave this off: the card styling comes from custom-slider.min.css, which is what keeps the snippet short. Tick it only for a page that cannot link that file — the slider looks the same either way.'
       : 'This pattern draws its own cards, so its styling comes with the snippet either way — this setting changes nothing here.';
     beh.append(aloneNote);
 
@@ -3337,12 +3337,12 @@ ${PHOTO_CSS}
   // in - designers do not upload the engine, and a copied tag they have to edit
   // is a tag that ships wrong. One folder, every site.
   const ENGINE_PATH = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/';
-  const TAGS = [`<link rel="stylesheet" href="${ENGINE_PATH}custom-slider.css">`, `<script src="${ENGINE_PATH}custom-slider.js" defer></script>`].join('\n');
+  const TAGS = [`<link rel="stylesheet" href="${ENGINE_PATH}custom-slider.min.css">`, `<script src="${ENGINE_PATH}custom-slider.min.js" defer></script>`].join('\n');
   $('wb-copy-tags').addEventListener('click', (e) => copyText(e.target, TAGS));
 
   // The engine files, fetched at click time from the very files this page is
   // running - so what lands on the clipboard can never be a stale copy.
-  const ENGINE = { css: '../dist/custom-slider.css', js: '../dist/custom-slider.js' };
+  const ENGINE = { css: '../dist/custom-slider.min.css', js: '../dist/custom-slider.min.js' };
   const grab = (k) => fetch(ENGINE[k]).then((r) => r.text());
 
   for (const btn of document.querySelectorAll('[data-file]')) {

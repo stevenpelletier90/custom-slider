@@ -1,4 +1,5 @@
-// Builds the card-styles half of dist/custom-slider.css, and appends it.
+// Builds the card-styles half of dist/custom-slider.css and its .min twin,
+// and appends it to both.
 //
 // The engine styles no cards on purpose (cs-* is mechanism, cargo-* is content),
 // so without this every slider had to paste its own card CSS — 810 B gzip per
@@ -117,8 +118,9 @@ if (stray) {
   process.exit(1);
 }
 
-// Minified like the engine, and for the same reason: it is a build artefact a
-// dealer site links, not something anyone reads.
+// Two copies, like the engine: the readable one is for anyone opening the
+// file to see what a look does, the minified one is what a dealer site links.
+const pretty = (await transform(css, { loader: 'css' })).code;
 const min = (await transform(css, { loader: 'css', minify: true })).code;
 
 // APPENDED to the engine stylesheet rather than shipped beside it. Two files
@@ -133,14 +135,18 @@ const min = (await transform(css, { loader: 'css', minify: true })).code;
 // against its budget, so merging the cards in does not quietly turn a number
 // that means "smaller than Embla's core" into one that means something else.
 mkdirSync('dist', { recursive: true });
-const ENGINE_CSS = 'dist/custom-slider.css';
-// Strip any cards half a previous build appended, so this is idempotent.
-const engine = readFileSync(ENGINE_CSS, 'utf8').replace(/\s*\/\*! cards \*\/[\s\S]*$/, '');
-writeFileSync(
-  ENGINE_CSS,
-  `${engine.trimEnd()}
+for (const [file, cards] of [
+  ['dist/custom-slider.css', pretty],
+  ['dist/custom-slider.min.css', min],
+]) {
+  // Strip any cards half a previous build appended, so this is idempotent.
+  const engine = readFileSync(file, 'utf8').replace(/\s*\/\*! cards \*\/[\s\S]*$/, '');
+  writeFileSync(
+    file,
+    `${engine.trimEnd()}
 /*! cards */
-${min}
+${cards}
 `,
-);
-console.log(`dist/custom-slider.css: engine + ${Object.keys(LOOKS).length} card styles, ${TIERS.length * MAX_COLS} column classes (${min.length} B of cards)`);
+  );
+}
+console.log(`dist/custom-slider.min.css: engine + ${Object.keys(LOOKS).length} card styles, ${TIERS.length * MAX_COLS} column classes (${min.length} B of cards)`);

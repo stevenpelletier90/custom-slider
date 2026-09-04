@@ -82,7 +82,7 @@
   // without ever being defined there.
   const GLOSSARY = [
     '<b>Slider</b> — the whole thing: the row of cards, the arrows and the dots. Called a carousel in most other libraries, and the two words mean the same here.',
-    '<b>The engine</b> — the two files every site links, <code>custom-slider.css</code> and <code>custom-slider.js</code>. They are shared: added once per site, not once per slider.',
+    '<b>The engine</b> — the two files every site links, <code>custom-slider.min.css</code> and <code>custom-slider.min.js</code>. They are shared: added once per site, not once per slider.',
     '<b>Root</b> — the outer <code>&lt;div class="my-slider cs"&gt;</code>. Settings are written on it, and its own class is what your CSS hangs off.',
     '<b>Track</b> — the <code>&lt;ul&gt;</code> or <code>&lt;div&gt;</code> inside the root that actually scrolls. One per slider.',
     '<b>Slide</b> — one <code>&lt;li class="cs-slide"&gt;</code>: one card, one photo, one panel. One scroll stop.',
@@ -313,7 +313,7 @@
     const cards = cardRows();
     let props = [];
     try {
-      props = propsFrom(await fetch('../dist/custom-slider.css').then((r) => r.text()));
+      props = propsFrom(await fetch('../dist/custom-slider.min.css').then((r) => r.text()));
     } catch {
       /* opened over file:// with fetch blocked — the rest of the guide still renders */
     }
@@ -369,7 +369,7 @@
       </section>
 
       <section id="g-props"><h3>CSS custom properties</h3>
-        <p>Every setting the engine has. ${props.length ? `Read live from the <code>dist/custom-slider.css</code> this page is running, so the ${props.length} below are the ones that actually ship.` : 'Open this page over HTTP to list them from the shipped stylesheet.'} Override them on the root or any wrapper.</p>
+        <p>Every setting the engine has. ${props.length ? `Read live from the <code>dist/custom-slider.min.css</code> this page is running, so the ${props.length} below are the ones that actually ship.` : 'Open this page over HTTP to list them from the shipped stylesheet.'} Override them on the root or any wrapper.</p>
         ${props.length ? table(['Property', 'Default', 'Notes'], propRows) : ''}
       </section>
 

@@ -31,15 +31,15 @@ const BUDGET = 6656;
 // those are carousel engines with no card library in them. Counting the cards
 // against it would keep the number and quietly change the question it answers.
 // scripts/build-cards.mjs writes the marker this splits on.
-const cssAll = readFileSync('dist/custom-slider.css', 'utf8');
+const cssAll = readFileSync('dist/custom-slider.min.css', 'utf8');
 const cut = cssAll.indexOf('/*! cards */');
 const engineCss = cut === -1 ? cssAll : cssAll.slice(0, cut);
 const cardsCss = cut === -1 ? '' : cssAll.slice(cut);
 
 let total = 0;
 for (const [name, buf] of [
-  ['dist/custom-slider.js', readFileSync('dist/custom-slider.js')],
-  ['dist/custom-slider.css (engine)', Buffer.from(engineCss)],
+  ['dist/custom-slider.min.js', readFileSync('dist/custom-slider.min.js')],
+  ['dist/custom-slider.min.css (engine)', Buffer.from(engineCss)],
 ]) {
   const gz = gzipSync(buf, { level: 9 }).length;
   total += gz;
@@ -52,7 +52,7 @@ if (cardsCss) {
   const cards = gzipSync(Buffer.from(cardsCss), { level: 9 }).length;
   const whole = gzipSync(Buffer.from(cssAll), { level: 9 }).length;
   console.log(`  card styles in the same file: ${cards} B gzip`);
-  console.log(`  what a site actually downloads: ${whole} B CSS + ${gzipSync(readFileSync('dist/custom-slider.js'), { level: 9 }).length} B JS`);
+  console.log(`  what a site actually downloads: ${whole} B CSS + ${gzipSync(readFileSync('dist/custom-slider.min.js'), { level: 9 }).length} B JS`);
 }
 
 if (total >= BUDGET) {

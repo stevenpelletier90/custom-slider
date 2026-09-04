@@ -153,7 +153,7 @@ export function hostHtml({ engineCss, engineJs, css = '', html = '', js = '', bo
 }
 
 export async function engineFiles(origin) {
-  const [engineCss, engineJs] = await Promise.all([fetch(`${origin}/dist/custom-slider.css`).then((r) => r.text()), fetch(`${origin}/dist/custom-slider.js`).then((r) => r.text())]);
+  const [engineCss, engineJs] = await Promise.all([fetch(`${origin}/dist/custom-slider.min.css`).then((r) => r.text()), fetch(`${origin}/dist/custom-slider.min.js`).then((r) => r.text())]);
   return { engineCss, engineJs };
 }
 

@@ -52,7 +52,7 @@
     const stream = new Blob([buf]).stream().pipeThrough(new CompressionStream('gzip'));
     return (await new Response(stream).blob()).size;
   };
-  Promise.all(['../dist/custom-slider.css', '../dist/custom-slider.js'].map(gz))
+  Promise.all(['../dist/custom-slider.min.css', '../dist/custom-slider.min.js'].map(gz))
     .then(([css, js]) => {
       size.textContent = `Two small files, ${((css + js) / 1024).toFixed(1)} KB in all — nothing else to install`;
     })
