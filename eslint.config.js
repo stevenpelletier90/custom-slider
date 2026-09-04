@@ -9,7 +9,7 @@ const sharedRules = {
 
 export default [
   {
-    ignores: ['dist/**', 'node_modules/**', 'demo/img/**', '.claude/**'],
+    ignores: ['dist/**', 'node_modules/**', 'demo/img/**', '.claude/**', 'demo/assets/vendor/tweakpane.js'],
   },
   {
     // Demo-page chrome: a plain deferred script, no modules and no bundler.
@@ -17,6 +17,19 @@ export default [
     languageOptions: {
       ecmaVersion: 'latest',
       sourceType: 'script',
+      globals: {
+        ...globals.browser,
+      },
+    },
+    rules: sharedRules,
+  },
+  {
+    // Vendor entry points: real ES modules, bundled to a classic script by
+    // scripts/build-vendor.mjs (see demo/assets/vendor/tweakpane.entry.js).
+    files: ['demo/assets/vendor/*.entry.js'],
+    languageOptions: {
+      ecmaVersion: 'latest',
+      sourceType: 'module',
       globals: {
         ...globals.browser,
       },

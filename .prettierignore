@@ -8,6 +8,7 @@ dist/
 package-lock.json
 demo/img/
 .claude/
+demo/assets/vendor/tweakpane.js
 
 # Agent-managed scratch (git-ignored; rewritten by tooling, so checking it
 # would fail the gate on files that aren't even in the repo)

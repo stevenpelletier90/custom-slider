@@ -4,25 +4,27 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build": "esbuild src/auto.js --bundle --format=iife --target=es2020 --outfile=dist/custom-slider.js && esbuild src/auto.js --bundle --format=iife --minify --target=es2020 --outfile=dist/custom-slider.min.js && esbuild src/custom-slider.css --outfile=dist/custom-slider.css && esbuild src/custom-slider.css --minify --outfile=dist/custom-slider.min.css && node scripts/build-cards.mjs && node scripts/paste.mjs",
+    "build": "esbuild src/auto.js --bundle --format=iife --target=es2020 --outfile=dist/custom-slider.js && esbuild src/auto.js --bundle --format=iife --minify --target=es2020 --outfile=dist/custom-slider.min.js && esbuild src/custom-slider.css --outfile=dist/custom-slider.css && esbuild src/custom-slider.css --minify --outfile=dist/custom-slider.min.css && node scripts/build-cards.mjs && node scripts/paste.mjs && node scripts/build-vendor.mjs",
     "size": "npm run build && node scripts/size.mjs",
     "serve": "esbuild --servedir=. --serve=127.0.0.1:8137",
     "lint:css": "npx stylelint \"src/**/*.css\" \"demo/assets/*.css\"",
     "lint:css:fix": "npx stylelint \"src/**/*.css\" \"demo/assets/*.css\" --fix",
-    "lint:js": "npx eslint \"src/**/*.js\" \"demo/assets/*.js\" \"scripts/**/*.{js,mjs}\" \"tests/**/*.mjs\" --max-warnings=0",
-    "lint:js:fix": "npx eslint \"src/**/*.js\" \"demo/assets/*.js\" \"scripts/**/*.mjs\" \"scripts/**/*.js\" \"tests/**/*.mjs\" --fix",
+    "lint:js": "npx eslint \"src/**/*.js\" \"demo/assets/**/*.js\" \"scripts/**/*.{js,mjs}\" \"tests/**/*.mjs\" --max-warnings=0",
+    "lint:js:fix": "npx eslint \"src/**/*.js\" \"demo/assets/**/*.js\" \"scripts/**/*.mjs\" \"scripts/**/*.js\" \"tests/**/*.mjs\" --fix",
     "format": "npx prettier --write .",
     "format:check": "npx prettier --check .",
     "check:looks": "node scripts/check-looks.mjs",
+    "check:vendor": "node scripts/build-vendor.mjs --check",
     "lint:css:generated": "node scripts/lint-generated-css.mjs",
     "test": "playwright test",
     "test:ui": "playwright test --ui",
     "a11y": "node scripts/a11y.mjs",
-    "validate": "npm run lint:css && npm run lint:css:generated && npm run lint:js && npm run format:check && npm run check:looks"
+    "validate": "npm run lint:css && npm run lint:css:generated && npm run lint:js && npm run format:check && npm run check:looks && npm run check:vendor"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@playwright/test": "^1.62.1",
+    "@tweakpane/core": "^2.0.5",
     "axe-core": "^4.13.0",
     "esbuild": "^0.28.2",
     "eslint": "^10.9.1",
@@ -32,7 +34,8 @@
     "prettier": "^3.9.6",
     "stylelint": "^17.14.1",
     "stylelint-config-recess-order": "^7.8.0",
-    "stylelint-config-standard": "^40.0.0"
+    "stylelint-config-standard": "^40.0.0",
+    "tweakpane": "^4.0.5"
   },
   "allowScripts": {
     "esbuild": false
