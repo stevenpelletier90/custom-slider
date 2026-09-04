@@ -367,13 +367,7 @@
       props: { '--cs-gap': '1em', '--cs-controls-space': '2em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       pairUp: true,
-      // A slide here stacks TWO cards, so the first image sits in the top
-      // quarter and the tile look's own 0.39 would leave the arrow below it -
-      // measured 104px below the picture. In the pattern CSS rather than its
-      // props because a look that sets an engine property overwrites the
-      // pattern's value for it, and the pattern CSS is emitted after the look's.
-      css: `%root% { --cs-arrow-at: 0.21; }
-.cargo-col { display: grid; grid-template-rows: repeat(2, auto); gap: var(--cs-gap); }
+      css: `.cargo-col { display: grid; grid-template-rows: repeat(2, auto); gap: var(--cs-gap); }
 `,
     },
     peek: {
@@ -549,7 +543,7 @@ ${VIDEO_DIALOG_CSS}`,
       gutter: true,
       label: 'Mixed image sizes',
       blurb: 'Six source files at six different aspect ratios, all cropped to one shape by the CSS. Dealers upload whatever they have — aspect-ratio plus object-fit is what keeps the row even.',
-      props: { '--cs-arrow-at': '0.4', '--cs-gap': '1em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 230,
       models: MIXED,
@@ -567,7 +561,7 @@ ${VIDEO_DIALOG_CSS}`,
       label: 'Service cards',
       blurb: 'Photo, heading, a paragraph and a read-more affordance. One card per arrow click, because the copy is long enough that a full-page jump loses your place.',
       data: { 'data-cs-step': 'slide' },
-      props: { '--cs-arrow-at': '0.29', '--cs-gap': '1em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 250,
       models: SERVICES,

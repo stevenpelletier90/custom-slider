@@ -46,10 +46,6 @@ const LOOKS = {
     // The workhorse: 14 of 24 brands ship this. Vehicle cutout, name under it.
     absorbs: ['white', 'counts', 'tile', 'band-gray', 'band-flat', 'band-dark', 'cdjr-dark', 'category-tile', 'brand-logo', 'photo-overlay', 'name-top-chip'],
     settings: {
-      // Solved by measuring the arrow against the image, not chosen: this card
-      // puts its picture in the top part, so the middle of the CARD sits below
-      // the middle of the PICTURE.
-      '--cs-arrow-at': '0.39',
       '--strip-bg': 'transparent',
       // 0.1px, not 0px: the standalone snippet pastes this into Style Only,
       // whose minifier strips the unit off a zero. See the note above PATTERNS
@@ -115,10 +111,6 @@ const LOOKS = {
     absorbs: [],
     isNew: true,
     settings: {
-      // Solved by measuring the arrow against the image, not chosen: this card
-      // puts its picture in the top part, so the middle of the CARD sits below
-      // the middle of the PICTURE.
-      '--cs-arrow-at': '0.4',
       '--strip-bg': 'transparent',
       // 0.1px, not 0px: the standalone snippet pastes this into Style Only,
       // whose minifier strips the unit off a zero. See the note above PATTERNS
@@ -179,10 +171,6 @@ const LOOKS = {
     // slot for, which is why this is its own component and not a tile setting.
     absorbs: ['wordmark-dark', 'spotlight'],
     settings: {
-      // Solved by measuring the arrow against the image, not chosen: this card
-      // puts its picture in the top part, so the middle of the CARD sits below
-      // the middle of the PICTURE.
-      '--cs-arrow-at': '0.56',
       '--strip-bg': 'transparent',
       '--strip-pad': '1.75em',
       '--name-color': 'inherit',
@@ -278,8 +266,6 @@ const LOOKS = {
     // tile has no slot for.
     absorbs: ['tall-tile'],
     settings: {
-      // Same measurement as the others; the name sits above the photo here.
-      '--cs-arrow-at': '0.52',
       '--strip-bg': '#14161b',
       '--card-fg': '#fff',
       '--cta-bg': '#fff',
@@ -358,10 +344,6 @@ const LOOKS = {
     // Name, address line and a Visit button. Not a vehicle card at all.
     absorbs: ['location-card'],
     settings: {
-      // Solved by measuring the arrow against the image, not chosen: this card
-      // puts its picture in the top part, so the middle of the CARD sits below
-      // the middle of the PICTURE.
-      '--cs-arrow-at': '0.32',
       // No band. #f4f6f8 behind white cards was a difference of four values on a
       // white page - it read as a faint smudge rather than a panel, and the
       // card's own shadow already separates it from whatever it sits on.

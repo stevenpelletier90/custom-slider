@@ -163,15 +163,19 @@
 .cs-arrow {
   position: absolute;
 
-  /* Half way down the cards by default, and a card style may say otherwise.
-     A card that is a photograph with text under it puts its picture in the top
-     half, so the middle of the CARD is below the middle of the PICTURE - by
-     62px on the location card and 167px on the two-row grid, where the arrow
-     stopped overlapping the image at all. The engine cannot find the image
-     itself: cs-* is mechanism and cargo-* is content, and it does not look
-     inside a slide. So the fraction is the card style's to set, against the
-     same height this already measures, which keeps the dot row and any strip
-     padding accounted for. */
+  /* Centred on the CARD, and a slider may say otherwise.
+     Half way down is the common convention and the steadier rule: it does not
+     move when a card's text wraps an extra line, and it holds whatever a slide
+     turns out to contain. The alternative - level with the picture - was tried
+     and taken out again: on a photo-over-text card the card's middle sits
+     62-167px below the picture's, which looks low, but no standards body
+     prescribes either and the design systems that document it disagree. What
+     they DO agree on is that an arrow must stay legible over what is behind it,
+     which is an argument against sitting it on the photograph.
+     So it is a knob rather than a decision baked in here. --cs-arrow-at is a
+     fraction of the same height this already measures, so the dot row and any
+     strip padding stay accounted for: 0.5 is the middle, lower numbers move it
+     up toward a card's picture. */
   top: calc((100% - var(--cs-controls-space)) * var(--cs-arrow-at, 0.5));
   z-index: 1;
   display: grid;

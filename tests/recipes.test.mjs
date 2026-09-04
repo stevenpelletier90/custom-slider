@@ -172,72 +172,73 @@ describe('the visible counter recipe the Reference publishes', () => {
   });
 });
 
-// An arrow moves the pictures, so it belongs level with them. The engine
-// centres on the card, which on a photo-over-text card is below the middle of
-// the photo - measured, 62px on the location card and 167px on the two-row
-// grid, where it stopped overlapping the image at all.
+// Where the arrows sit is the slider's decision, not the engine's.
 //
-// The engine cannot find the image itself (cs-* is mechanism, cargo-* is
-// content), so --cs-arrow-at is the card style's to set and this checks the
-// RESULT rather than the numbers: every visible arrow level with the picture
-// beside it, whatever it was set to.
-describe('the arrows sit level with the pictures they move', () => {
-  test('every pattern and every card style on the catalogue', async () => {
-    const cat = await browser.newPage();
-    await cat.goto(`${server.origin}/demo/patterns.html`, { waitUntil: 'load' });
-    await cat.waitForTimeout(1600);
-
-    const rows = await cat.evaluate(() => {
-      const out = [];
-      for (const sec of document.querySelectorAll('.gx-card')) {
-        const arrow = sec.querySelector('.cs-arrow--prev');
-        const img = sec.querySelector('.cs-slide img');
-        if (!arrow || !img) continue;
-        const a = arrow.getBoundingClientRect();
-        const i = img.getBoundingClientRect();
-        // A slider whose slides all fit hides its arrows: a zero-height rect is
-        // nothing to measure, not a failure.
-        if (!a.height || !i.height) continue;
-        out.push({ id: sec.id, off: Math.round(a.top + a.height / 2 - (i.top + i.height / 2)), imgH: Math.round(i.height) });
-      }
-      return out;
-    });
-    await cat.close();
-
-    assert.ok(rows.length >= 15, `only ${rows.length} sliders had both an arrow and an image to measure`);
-    // 12px of slack: the fraction is a fraction, and a card whose text wraps an
-    // extra line moves its picture by a few pixels either way.
-    const off = rows.filter((r) => Math.abs(r.off) > 12);
-    assert.deepEqual(
-      off.map((r) => `${r.id} ${r.off > 0 ? '+' : ''}${r.off}px`),
-      [],
-      'these arrows are not level with their picture',
-    );
-  });
-
-  // The default has to stay what it was, or every hand-written slider that
-  // never heard of this property moves.
-  test('a slider that sets nothing is still centred on the card', async () => {
-    const host = await browser.newPage();
-    const engine = await engineFiles(server.origin);
-    await host.setContent(
-      hostHtml({
-        ...engine,
-        html: `<div class="cs" data-cs aria-label="T" style="--cs-per-view:1"><ul class="cs-track">${[1, 2, 3].map(() => '<li class="cs-slide"><div style="height:200px"></div></li>').join('')}</ul></div>`,
-      }),
-      { waitUntil: 'load' },
-    );
-    await host.waitForTimeout(200);
-    const r = await host.evaluate(() => {
-      const root = document.querySelector('#box .cs');
+// They are centred on the CARD by default, which is the common convention and
+// the steadier rule - it does not move when a card's text wraps a line. Level
+// with the picture was built and then taken out again: on a photo-over-text
+// card the card's middle is 62-167px below the picture's, which does look low,
+// but no standards body prescribes either, the design systems that document it
+// disagree, and the one thing they agree on is that an arrow has to stay
+// legible over whatever is behind it - which argues against sitting it on the
+// photograph at all.
+//
+// So what is guarded is the DEFAULT and the knob that changes it: a slider that
+// sets nothing must not move, and the knob is what makes this a design decision
+// per slider rather than a choice baked into the engine.
+describe('where the arrows sit', () => {
+  const centreOffset = (page, sel) =>
+    page.evaluate((s) => {
+      const root = document.querySelector(s);
       const slide = root.querySelector('.cs-slide');
       const arrow = root.querySelector('.cs-arrow--prev');
       const a = arrow.getBoundingClientRect();
-      const s = slide.getBoundingClientRect();
-      return Math.round(a.top + a.height / 2 - (s.top + s.height / 2));
+      const b = slide.getBoundingClientRect();
+      if (!a.height) return null;
+      return Math.round(a.top + a.height / 2 - (b.top + b.height / 2));
+    }, sel);
+
+  const slider = (style = '') =>
+    `<div class="cs" data-cs aria-label="T" style="--cs-per-view:1${style}"><ul class="cs-track">` +
+    [1, 2, 3].map(() => '<li class="cs-slide"><div style="height:300px"></div></li>').join('') +
+    '</ul></div>';
+
+  test('a slider that sets nothing is centred on the card', async () => {
+    const engine = await engineFiles(server.origin);
+    await host.setContent(hostHtml({ ...engine, html: slider() }), { waitUntil: 'load' });
+    await host.waitForTimeout(200);
+    const off = await centreOffset(host, '#box .cs');
+    assert.ok(off !== null, 'no arrow to measure');
+    assert.ok(Math.abs(off) <= 1, `the default moved: ${off}px off the card's centre`);
+  });
+
+  // The whole point of the knob: a slider whose cards are a picture over text
+  // can lift the arrows to the picture without the engine knowing what a
+  // picture is.
+  test('--cs-arrow-at moves them, and 0.5 is exactly the old behaviour', async () => {
+    const engine = await engineFiles(server.origin);
+    const at = async (v) => {
+      await host.setContent(hostHtml({ ...engine, html: slider(v == null ? '' : `;--cs-arrow-at:${v}`) }), { waitUntil: 'load' });
+      await host.waitForTimeout(200);
+      return centreOffset(host, '#box .cs');
+    };
+    const none = await at(null);
+    const half = await at('0.5');
+    const quarter = await at('0.25');
+    assert.equal(half, none, 'setting 0.5 by hand is not the same as setting nothing');
+    assert.ok(quarter < none - 40, `0.25 did not lift the arrow: ${quarter} against ${none}`);
+  });
+
+  // The catalogue must not have picked the fraction up by accident: the looks
+  // set it during the experiment and every one of those values came back out.
+  test('no card style ships a fraction of its own', async () => {
+    const set = await page.evaluate(() => {
+      const { LOOKS, PATTERNS } = globalThis.CARGO;
+      const hits = [];
+      for (const [id, l] of Object.entries(LOOKS)) if (l.settings?.['--cs-arrow-at'] || /--cs-arrow-at/.test(l.css ?? '')) hits.push(`look ${id}`);
+      for (const [id, p] of Object.entries(PATTERNS)) if (p.props?.['--cs-arrow-at'] || /--cs-arrow-at/.test(p.css ?? '')) hits.push(`pattern ${id}`);
+      return hits;
     });
-    await host.close();
-    assert.ok(Math.abs(r) <= 1, `the default moved: ${r}px off the card's centre`);
+    assert.deepEqual(set, [], 'a card style still sets the arrow fraction');
   });
 });
-
