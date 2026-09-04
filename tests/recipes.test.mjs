@@ -171,3 +171,73 @@ describe('the visible counter recipe the Reference publishes', () => {
     assert.match(second, /\//, `the second reading lost the wording (${second})`);
   });
 });
+
+// An arrow moves the pictures, so it belongs level with them. The engine
+// centres on the card, which on a photo-over-text card is below the middle of
+// the photo - measured, 62px on the location card and 167px on the two-row
+// grid, where it stopped overlapping the image at all.
+//
+// The engine cannot find the image itself (cs-* is mechanism, cargo-* is
+// content), so --cs-arrow-at is the card style's to set and this checks the
+// RESULT rather than the numbers: every visible arrow level with the picture
+// beside it, whatever it was set to.
+describe('the arrows sit level with the pictures they move', () => {
+  test('every pattern and every card style on the catalogue', async () => {
+    const cat = await browser.newPage();
+    await cat.goto(`${server.origin}/demo/patterns.html`, { waitUntil: 'load' });
+    await cat.waitForTimeout(1600);
+
+    const rows = await cat.evaluate(() => {
+      const out = [];
+      for (const sec of document.querySelectorAll('.gx-card')) {
+        const arrow = sec.querySelector('.cs-arrow--prev');
+        const img = sec.querySelector('.cs-slide img');
+        if (!arrow || !img) continue;
+        const a = arrow.getBoundingClientRect();
+        const i = img.getBoundingClientRect();
+        // A slider whose slides all fit hides its arrows: a zero-height rect is
+        // nothing to measure, not a failure.
+        if (!a.height || !i.height) continue;
+        out.push({ id: sec.id, off: Math.round(a.top + a.height / 2 - (i.top + i.height / 2)), imgH: Math.round(i.height) });
+      }
+      return out;
+    });
+    await cat.close();
+
+    assert.ok(rows.length >= 15, `only ${rows.length} sliders had both an arrow and an image to measure`);
+    // 12px of slack: the fraction is a fraction, and a card whose text wraps an
+    // extra line moves its picture by a few pixels either way.
+    const off = rows.filter((r) => Math.abs(r.off) > 12);
+    assert.deepEqual(
+      off.map((r) => `${r.id} ${r.off > 0 ? '+' : ''}${r.off}px`),
+      [],
+      'these arrows are not level with their picture',
+    );
+  });
+
+  // The default has to stay what it was, or every hand-written slider that
+  // never heard of this property moves.
+  test('a slider that sets nothing is still centred on the card', async () => {
+    const host = await browser.newPage();
+    const engine = await engineFiles(server.origin);
+    await host.setContent(
+      hostHtml({
+        ...engine,
+        html: `<div class="cs" data-cs aria-label="T" style="--cs-per-view:1"><ul class="cs-track">${[1, 2, 3].map(() => '<li class="cs-slide"><div style="height:200px"></div></li>').join('')}</ul></div>`,
+      }),
+      { waitUntil: 'load' },
+    );
+    await host.waitForTimeout(200);
+    const r = await host.evaluate(() => {
+      const root = document.querySelector('#box .cs');
+      const slide = root.querySelector('.cs-slide');
+      const arrow = root.querySelector('.cs-arrow--prev');
+      const a = arrow.getBoundingClientRect();
+      const s = slide.getBoundingClientRect();
+      return Math.round(a.top + a.height / 2 - (s.top + s.height / 2));
+    });
+    await host.close();
+    assert.ok(Math.abs(r) <= 1, `the default moved: ${r}px off the card's centre`);
+  });
+});
+

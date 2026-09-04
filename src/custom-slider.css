@@ -162,7 +162,17 @@
 
 .cs-arrow {
   position: absolute;
-  top: calc((100% - var(--cs-controls-space)) / 2);
+
+  /* Half way down the cards by default, and a card style may say otherwise.
+     A card that is a photograph with text under it puts its picture in the top
+     half, so the middle of the CARD is below the middle of the PICTURE - by
+     62px on the location card and 167px on the two-row grid, where the arrow
+     stopped overlapping the image at all. The engine cannot find the image
+     itself: cs-* is mechanism and cargo-* is content, and it does not look
+     inside a slide. So the fraction is the card style's to set, against the
+     same height this already measures, which keeps the dot row and any strip
+     padding accounted for. */
+  top: calc((100% - var(--cs-controls-space)) * var(--cs-arrow-at, 0.5));
   z-index: 1;
   display: grid;
   place-items: center;
