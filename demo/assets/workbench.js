@@ -1482,16 +1482,25 @@ ${PHOTO_CSS}
   const styleEl = () => sdoc()?.getElementById('wb-live-css');
   const sroot = () => sdoc()?.getElementById('wb-live-root');
 
-  // The card's resolved font size, which is what the length control converts
-  // px<->em off. The carousel itself, not #wb-live-root: that div is only the
-  // box the snippet is painted into, and the em every card length is measured
-  // in comes from `font-size: var(--cargo-font, 1em)` on the carousel root.
-  // Null before the frame has painted, and the control then keeps the number
-  // and changes only the unit. The frame is visually SCALED to fit its column,
-  // but a transform moves no layout box, so this is a true CSS px either way.
-  const cardFontPx = () => {
+  // The font size an em in a card length is measured against, which is what the
+  // length control converts px<->em off. The carousel itself, not
+  // #wb-live-root: that div is only the box the snippet is painted into, and
+  // every card length resolves its em against `font-size: var(--cargo-font,
+  // 1em)` on the carousel root. Null before the frame has painted, and the
+  // control then keeps the number and changes only the unit. The frame is
+  // visually SCALED to fit its column, but a transform moves no layout box, so
+  // this is a true CSS px either way.
+  //
+  // `outer` is for the one knob that IS that font-size. An em in a font-size
+  // resolves against the PARENT's font size, never the element's own, so
+  // converting --cargo-font against the carousel is self-referential: 32px on a
+  // 16px page computes 32px on .cs, and 32/32 hands back 1em - which is half
+  // the size asked for, and is also SHARED_DEFAULTS['--cargo-font'], so the
+  // delta filter then drops the declaration and the knob silently does nothing.
+  const cardFontPx = (outer) => {
     const root = sdoc()?.querySelector('.cs');
-    return root ? parseFloat((swin() ?? window).getComputedStyle(root).fontSize) || null : null;
+    const el = outer ? root?.parentElement : root;
+    return el ? parseFloat((swin() ?? window).getComputedStyle(el).fontSize) || null : null;
   };
 
   // The index page (patterns.html) loads this file for the generator alone: one
@@ -2071,7 +2080,29 @@ ${PHOTO_CSS}
     const on = (v) => {
       setProp(store, key, v);
       pane.flag(b, why(v));
-      render();
+      // restyle(), not render(). Every knob this row builds is a custom
+      // property, and a custom property reaches the page through cssFor() and
+      // nowhere else: htmlFor() reads neither state.props nor state.lookProps,
+      // so the markup, the pattern script and the slide count are all the same
+      // afterwards and there is nothing for render() to rebuild. What it does
+      // instead is destroy and re-initialise every slider in the frame for a
+      // stylesheet edit - the same 9-11 ms of JS per event that made dragging a
+      // colour crawl, and what an arrow key HELD DOWN on a length would do at
+      // the key-repeat rate.
+      //
+      // checkFit() rides along, which restyle() does not do for a colour: a
+      // length moves the geometry the readout reports - the card width, the
+      // gap, the room left over, the cramped warning - and a readout that does
+      // not follow its own knob is the shape of every controls finding here.
+      //
+      // The one thing left behind is the engine's `stride`, re-measured by a
+      // ResizeObserver on the TRACK, whose box does not change when the gap
+      // does. It is used for one thing, the mouse-drag flick threshold, and it
+      // is right again at the next resize or pattern render. Not worth a
+      // teardown per keystroke, and not worth a new public method on an engine
+      // this task does not change.
+      restyle();
+      checkFit();
       after?.();
     };
     // The placeholder is what clearing it falls back to, shown rather than
@@ -2087,7 +2118,10 @@ ${PHOTO_CSS}
     let b;
     b =
       single(knobDefault(key) ?? cur) && (cur === '' || single(cur))
-        ? pane.length(parent, label, cur, on, { ...opts, fontPx: cardFontPx, zero: zeroFor(key) })
+        ? // --cargo-font IS the carousel's font-size, so its em is measured
+          // against the element OUTSIDE the carousel; every other length is
+          // measured against the carousel itself. See cardFontPx().
+          pane.length(parent, label, cur, on, { ...opts, fontPx: () => cardFontPx(key === '--cargo-font'), zero: zeroFor(key) })
         : pane.text(parent, label, cur, on, opts);
     // A value stored before this existed can already be a bad one.
     pane.flag(b, why(cur));

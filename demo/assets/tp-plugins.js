@@ -144,6 +144,12 @@
       this.num.placeholder = this.fallback ? this.fallback[0] : (config.placeholder ?? '');
       this.unit = doc.createElement('select');
       this.unit.classList.add(lenCls('u'));
+      // Which switches convert and which do not, said on the control rather
+      // than left to be discovered by a strip that changed size. px and em have
+      // a fixed relationship - the card's own text size - and % and vw are
+      // relative to boxes this list cannot resolve, so switching to one of
+      // those keeps the number and means something different by it.
+      this.unit.title = 'px and em convert into each other, off the card text size. % and vw have no fixed reference: the number stays as typed and only the unit changes.';
       for (const u of UNITS) {
         const o = doc.createElement('option');
         o.value = o.textContent = u;
@@ -184,12 +190,17 @@
         this.was = this.view.unit.value;
       });
 
-      // Up/down step the number: plain 1, Shift 10, Alt 0.1.
+      // Up/down step the number: plain 1, Shift 10, Alt 0.1. Stepping stops at
+      // zero, because it is held down and nobody holds an arrow key meaning to
+      // arrive at a negative gap - which okValue() would pass and cssFor()
+      // would ship. A negative TYPED into the box is still allowed, as it was
+      // before: a negative margin-shaped value is somebody's deliberate answer
+      // to a layout, and this control does not get to overrule it.
       this.view.num.addEventListener('keydown', (e) => {
         if (e.key !== 'ArrowUp' && e.key !== 'ArrowDown') return;
         e.preventDefault();
         const by = (e.shiftKey ? 10 : e.altKey ? 0.1 : 1) * (e.key === 'ArrowUp' ? 1 : -1);
-        this.view.num.value = tidy(parseFloat(this.view.num.value || '0') + by);
+        this.view.num.value = tidy(Math.max(0, parseFloat(this.view.num.value || '0') + by));
         this.commit();
       });
       this.view.num.addEventListener('change', () => this.commit());
