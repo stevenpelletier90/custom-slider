@@ -202,6 +202,10 @@ const LOOKS = {
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="4.5" y="6.5" width="35" height="17" rx="3" stroke="currentColor" opacity=".5"/><path d="M7 9.5a2 2 0 0 1 2-2h11v15H9a2 2 0 0 1-2-2v-11Z" fill="currentColor" opacity=".85"/><rect x="23" y="10" width="13" height="2.4" rx="1.2" fill="currentColor" opacity=".55"/><rect x="23" y="14" width="9" height="1.8" rx=".9" fill="currentColor" opacity=".3"/><rect x="23" y="18" width="10" height="3.4" rx="1.7" fill="currentColor" opacity=".55"/></svg>`,
     label: 'Split photo card',
     note: 'Photo down one half, copy and a button down the other. Needs a wide card: 260px is the floor.',
+    // A square photo half wants a photograph, not a transparent cutout on a
+    // coloured panel - and this card has a sub, a blurb and a button, which the
+    // service roster fills and a bare vehicle name does not.
+    demoModels: 'services',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
     minCard: 260,
@@ -250,6 +254,10 @@ const LOOKS = {
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="13.5" y="2.5" width="17" height="25" rx="3" fill="currentColor" opacity=".85"/><rect x="16" y="17" width="12" height="2.2" rx="1.1" fill="var(--wb-icon-bg, #fff)" opacity=".9"/><rect x="16" y="21" width="12" height="4" rx="2" fill="var(--wb-icon-bg, #fff)" opacity=".55"/></svg>`,
     label: 'Tall tile with CTA',
     note: 'Tall photography with the name and a button over the bottom of the image.',
+    // 3:5 is the whole point of this card, and the catalogue was drawing it on
+    // the model bar's landscape cutouts - a car in the middle of a tall frame
+    // with dead space above and below it. These are 300x500 to start with.
+    demoModels: 'models',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
     minCard: 165,

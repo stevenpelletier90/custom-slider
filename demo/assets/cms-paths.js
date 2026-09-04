@@ -13,7 +13,7 @@
 // serve from an unrelated dealer domain like everything else here.
 
 // 125 of 126 cutouts byte-proved, 8 name-matched, 15 library photos.
-// Harvested 2026-09-03 by re-running the script above.
+// Harvested 2026-09-04 by re-running the script above.
 
 globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
   CMS: {

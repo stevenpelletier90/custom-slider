@@ -305,6 +305,16 @@ await pool(Object.entries(NAMED), 4, async ([file, model]) => {
   const html = await res.text();
   const hit = html.match(new RegExp(`"name":"[^"]*${model.replace(/[.*+?^$(){}|[\]\\]/g, '\\$&')}[^"]*","identifier":"[^"]*","image":"[^"]*?(/assets/stock/[^"]+)"`, 'i'));
   if (!hit) return;
+  // 320 stays, and the reason is worth writing down because 640 looks like a
+  // free upgrade. The two-row grid draws these at ~349px, so a 320 source is
+  // stretched there - 0.82 of the pixels it wants at a phone width, 0.92 at
+  // 1200. Moving the set to 640 fixes that and costs the MODEL BAR, which draws
+  // the same files at ~209px: measured, 320 -> 640 took the eight from 113 KB
+  // to 302 KB and left the model bar serving 3-4x the pixels it can use. The
+  // model bar is the most requested pattern on the platform and the grid is
+  // not, so the softness stays with the grid rather than the weight landing on
+  // every model bar. These are also the paths a PASTED slider points at, so the
+  // choice is a dealer's page weight, not just the demo's.
   const path = variants(hit[1]).find((v) => v.includes('/320/')) ?? hit[1];
   const probe = await grab(`https://${PROBE}.dealeron.com${path}`);
   if (!probe) return;

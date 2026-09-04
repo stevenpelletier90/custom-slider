@@ -55,6 +55,11 @@
   const cutouts = CHEVY.map((slug) => ({
     href: `/searchnew.aspx?Model=${encodeURIComponent(title(slug))}`,
     img: `img/chrome-${slug}.webp`,
+    // Stated rather than left to each look's fallback: these are what reserve
+    // the space before the photo arrives, so a pair that drifts from the file is
+    // a page that jumps.
+    w: 320,
+    h: 240,
     alt: `2026 Chevrolet ${title(slug)}`,
     name: title(slug),
     mark: 'Chevrolet',
@@ -205,13 +210,18 @@
   // detailing (zero references to /bodyshop or /collision anywhere), so it
   // points at Service, which is where a dealer's own body-shop page normally
   // hangs. That one is worth re-pointing per site.
+  // The photograph has to be OF the thing the card names. These pairs were
+  // written against the previous photo set and the files changed subject
+  // underneath them when the set was replaced with bigger ones: "Test Drives"
+  // ended up captioning a spray booth and "Parts & Accessories" a car key. The
+  // sizes are each file's real pixels, so they move with the file too.
   const SERVICES = [
-    ['photo-5.jpg', 800, 600, '/service.aspx', 'Service Center', 'Factory-trained technicians, genuine parts, and online scheduling for everything from oil changes to major repairs.'],
-    ['photo-3.jpg', 800, 534, '/testdrive.aspx', 'Test Drives', "Book a no-pressure drive online — we'll have the vehicle warmed up and out front when you arrive."],
+    ['photo-1.jpg', 1200, 800, '/service.aspx', 'Service Center', 'Factory-trained technicians, genuine parts, and online scheduling for everything from oil changes to major repairs.'],
+    ['photo-6.jpg', 1960, 1308, '/testdrive.aspx', 'Test Drives', "Book a no-pressure drive online — we'll have the vehicle warmed up and out front when you arrive."],
     ['vehicle-2.png', 640, 480, '/finance.aspx', 'Financing', 'Flexible terms, first-time buyer programs, and pre-approval in minutes without a hit to your credit score.'],
     ['vehicle-4.png', 640, 480, '/trade.aspx', 'Trade-In Appraisal', 'Get a real number for your current vehicle in minutes — good for seven days or 500 miles.'],
-    ['photo-6.jpg', 1200, 717, '/orderparts.aspx', 'Parts &amp; Accessories', 'OEM parts counter, accessories, and installation — ordered to your VIN so it fits the first time.'],
-    ['photo-2.jpg', 900, 600, '/service.aspx', 'Body Shop &amp; Detailing', 'Collision repair, paintless dent removal, and full detailing with insurance-claim assistance.'],
+    ['photo-2.jpg', 1200, 800, '/orderparts.aspx', 'Parts &amp; Accessories', 'OEM parts counter, accessories, and installation — ordered to your VIN so it fits the first time.'],
+    ['photo-3.jpg', 1200, 800, '/service.aspx', 'Body Shop &amp; Detailing', 'Collision repair, paintless dent removal, and full detailing with insurance-claim assistance.'],
   ].map(([f, w, h, href, name, blurb]) => ({ img: `img/${f}`, w, h, name, blurb, alt: '', href, cta: '' }));
 
   // Photos carrying a category, for the filterable gallery.
@@ -844,6 +854,10 @@ ${PHOTO_CSS}
   // A brand preset brings its own vehicles where the estate gave us the
   // cutouts. Seventeen of the 32 have none, and those keep the pattern's own
   // content rather than being shown someone else's cars under their name.
+  // The rosters a LOOK may ask the catalogue to draw it with, by name. Only
+  // the ones whose shape differs from the model bar's cutouts need an entry.
+  const ROSTERS = { models: MODELS, services: SERVICES, vehicles: VEHICLES, photos: PHOTOS };
+
   const modelsFor = (p) => (state.content ? state.content : state.brand && BRANDS[state.brand]?.models ? BRANDS[state.brand].models : p.models);
 
   const minCard = () => PATTERNS[state.pattern].minCard ?? (state.look ? LOOKS[state.look].minCard : 200);
@@ -1411,6 +1425,14 @@ ${PHOTO_CSS}
       applyLook(id);
       state.perView = { ...look.perView };
       state.gutter = true;
+      // Every look used to be drawn on the model bar's roster, which is
+      // landscape 320px vehicle cutouts - so a card built for a 3:5 portrait
+      // showed a car floating in dead space, and the split card put a cutout
+      // where a photograph goes. The look says which roster suits its shape and
+      // the catalogue honours it. The ROSTER, not the pattern: borrowing the
+      // pattern would drag in its CSS, its data attributes and a page script
+      // that renderLook does not return, leaving dead markup behind.
+      if (look.demoModels) state.content = ROSTERS[look.demoModels] ?? null;
       // Named for the look it is showing, not the pattern it borrows to show it.
       state.label = `${look.label} cards`;
       return { css: cssFor(`.${cls}`), html: htmlFor(cls) };
