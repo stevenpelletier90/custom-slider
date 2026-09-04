@@ -76,6 +76,7 @@
     --signal: #e8a317;
     --signal-bg: #2a2113;
     --on-signal: #1a1204;
+    --signal-text: #e8a317; /* was missing here: system-dark users got the LIGHT amber on the dark code panel, 2.73:1 */
     --focus: #7cb0ff;
     --glyph-bg: #1b222c;
     --glyph-edge: #333d4b;

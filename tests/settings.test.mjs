@@ -219,4 +219,3 @@ describe('nothing is remembered across a reload unless it is kept', () => {
     assert.equal((await flags(page)).stored, false, 'the session edit leaked into storage');
   });
 });
-

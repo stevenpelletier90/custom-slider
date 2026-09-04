@@ -254,6 +254,8 @@
   const CARD_NOTES = {
     '--strip-bg': 'Colour behind the whole row. <code>transparent</code> lets the page show through, which is what most brands want.',
     '--strip-pad': 'Space above the cards, inside that colour.',
+    '--strip-pad-end':
+      'Space below the cards, inside that colour and above the dot row. Works with the dots off too; the room the dots themselves take is the engine’s <code>--cs-controls-space</code>.',
     '--strip-pad-x': 'Space at the left and right ends. It reserves the channel the arrows sit in — without it a transparent arrow lands on top of the first vehicle instead of beside it.',
     '--name-color': 'Colour of the model name.',
     '--name-size': 'Size of the model name.',

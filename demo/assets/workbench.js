@@ -262,7 +262,7 @@
   const VIDEO_DIALOG_CSS = `.cargo-vdlg { inline-size: min(94vw, 720px); padding: 1em 1.2em; color: inherit; background: #fff; border: 0; border-radius: 12px; }
 .cargo-vdlg::backdrop { background: rgba(0, 0, 0, 0.8); }
 .cargo-vdlg-title { margin: 0 0 0.6em; font-size: 1.1em; font-weight: 700; line-height: 1.3; }
-.cargo-vdlg-media { display: grid; place-items: center; inline-size: 100%; margin-block-end: 0.8em; font-size: 0.9em; color: #fff; text-align: center; background: #16324f; border-radius: 8px; aspect-ratio: 16 / 9; }
+.cargo-vdlg-media { display: grid; place-items: center; inline-size: 100%; aspect-ratio: 16 / 9; margin-block-end: 0.8em; font-size: 0.9em; color: #fff; text-align: center; background: #16324f; border-radius: 8px; }
 .cargo-vdlg-close { padding: 0.4em 1em; font: inherit; line-height: 1.55; cursor: pointer; background: #eef1f4; border: 0; border-radius: 6px; }`;
 
   // The dialog held a title, a Close button, and an HTML COMMENT where the
@@ -276,12 +276,16 @@
   // with - the same reasoning the example photography carries, one step firmer,
   // because a photograph is a stand-in and a video is not.
   //
-  // aria-labelledby rather than aria-label="Video": the heading is written per
-  // poster, so a fixed label made every dialog announce the same word and threw
-  // away the one thing the reader needed to hear.
+  // No fixed aria-label="Video": the heading is written per poster, so a fixed
+  // label made every dialog announce the same word and threw away the one thing
+  // the reader needed to hear. And no id-based aria-labelledby either: the
+  // dialog ships in two patterns, and a page carrying both had two elements
+  // with the same id, so both dialogs were named by the FIRST heading (axe
+  // duplicate-id-aria, critical, on patterns.html). The script sets aria-label
+  // from the poster at open time - per-poster, nothing to collide.
   const VIDEO_DIALOG_HTML = [
-    `<dialog class="cargo-vdlg" aria-labelledby="cargo-vdlg-h">`,
-    `  <h3 class="cargo-vdlg-title" id="cargo-vdlg-h"></h3>`,
+    `<dialog class="cargo-vdlg">`,
+    `  <h3 class="cargo-vdlg-title"></h3>`,
     `  <!-- Replace this div with your video: a YouTube or Vimeo <iframe>, or a <video> element. -->`,
     `  <div class="cargo-vdlg-media">Your video goes here</div>`,
     `  <form method="dialog"><button type="submit" class="cargo-vdlg-close">Close</button></form>`,
@@ -294,6 +298,7 @@
   root.querySelectorAll('[data-video]').forEach((poster) => {
     poster.addEventListener('click', () => {
       title.textContent = poster.dataset.video;
+      dlg.setAttribute('aria-label', poster.dataset.video);
       dlg.showModal();
     });
   });
@@ -408,6 +413,7 @@
       // whatever band it is dropped into, so the card has to take the
       // surrounding text colour the way every non-button card already does.
       css: `.cargo-video { position: relative; display: block; inline-size: 100%; padding: 0; overflow: hidden; font: inherit; color: inherit; text-align: start; cursor: pointer; background: none; border: 0; border-radius: 8px; }
+.cargo-video:focus-visible { outline: 3px solid var(--cs-focus); outline-offset: 2px; }
 .cargo-video img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
 .cargo-play { position: absolute; inset-block-start: 42%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 56px; block-size: 56px; color: #16324f; background: rgba(255, 255, 255, 0.92); border-radius: 50%; transform: translate(-50%, -50%); }
 .cargo-name { display: block; margin: 0.6em 0 0; font-size: 1em; font-weight: 700; line-height: 1.3; }
@@ -680,6 +686,7 @@ ${PHOTO_CSS}
       css: `.cargo-photo { display: block; }
 .cargo-photo img, .cargo-mv img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
 .cargo-mv { position: relative; display: block; inline-size: 100%; padding: 0; font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
+.cargo-mv:focus-visible { outline: 3px solid var(--cs-focus); outline-offset: 2px; }
 .cargo-mv-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.3em; color: #16324f; background: rgba(255, 255, 255, 0.92); border-radius: 50%; transform: translate(-50%, -50%); }
 ${VIDEO_DIALOG_CSS}`,
       slides: (models) =>
@@ -1857,6 +1864,7 @@ ${PHOTO_CSS}
   const KNOB_LABELS = {
     '--strip-bg': 'Strip background',
     '--strip-pad': 'Space above',
+    '--strip-pad-end': 'Space below',
     '--strip-pad-x': 'Side gutter',
     '--name-color': 'Name colour',
     '--name-size': 'Name size',

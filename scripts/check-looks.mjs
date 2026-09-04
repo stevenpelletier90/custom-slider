@@ -245,7 +245,9 @@ for (const [rel, path] of Object.entries(CMS)) {
     console.error(`  cms-paths: "${rel}" is mapped but not in demo/img — re-run the harvest`);
     bad++;
   }
-  if (!/^\/(?:assets\/stock|static\/(?!dealer-)[a-z0-9_-]+)\//.test(path)) {
+  // /assets/logos/transparent/ joined the shared set in bf9b5ed: verified
+  // root-relative and byte-identical from onboarding, a storefront and the CDN.
+  if (!/^\/(?:assets\/(?:stock|logos)|static\/(?!dealer-)[a-z0-9_-]+)\//.test(path)) {
     console.error(`  cms-paths: "${rel}" -> "${path}" is not a shared platform collection`);
     bad++;
   }

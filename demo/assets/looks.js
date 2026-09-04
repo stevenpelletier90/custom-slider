@@ -51,6 +51,10 @@ const LOOKS = {
       // whose minifier strips the unit off a zero. See the note above PATTERNS
       // in workbench.js.
       '--strip-pad': '0.1px',
+      // Space under the cards goes on the TRACK, never as padding on the root:
+      // the root's bottom padding is the engine's reserved dot row, and a look
+      // touching it wiped the reservation once (check-looks forbids it).
+      '--strip-pad-end': '0.1px',
       // Reserves the gutter the arrows sit in. Without it transparent arrows
       // overlay the vehicles instead of standing beside them.
       '--strip-pad-x': 'calc(var(--cs-arrow-size) + 0.25em)',
@@ -80,6 +84,7 @@ const LOOKS = {
       '--cta-fg': '#16324f',
     },
     css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
+%root% .cs-track { padding-block-end: var(--strip-pad-end); }
 @media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; padding-inline: 0; } }
 @media (max-width: 380px) { %root% { --cs-per-view: 1; } }
 .cargo-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
@@ -116,6 +121,10 @@ const LOOKS = {
       // whose minifier strips the unit off a zero. See the note above PATTERNS
       // in workbench.js.
       '--strip-pad': '0.1px',
+      // Space under the cards goes on the TRACK, never as padding on the root:
+      // the root's bottom padding is the engine's reserved dot row, and a look
+      // touching it wiped the reservation once (check-looks forbids it).
+      '--strip-pad-end': '0.1px',
       // Reserves the gutter the arrows sit in. Without it a transparent
       // arrow lands on the card's own text instead of beside it.
       '--strip-pad-x': 'calc(var(--cs-arrow-size) + 0.4em)',
@@ -136,6 +145,7 @@ const LOOKS = {
       '--cta-fg': '#fff',
     },
     css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
+%root% .cs-track { padding-block-end: var(--strip-pad-end); }
 @media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-card { position: relative; display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: var(--card-bg); border: var(--card-border); border-radius: var(--card-radius); box-shadow: var(--card-shadow); }
 .cargo-media { position: relative; display: block; overflow: hidden; }
@@ -173,12 +183,14 @@ const LOOKS = {
     settings: {
       '--strip-bg': 'transparent',
       '--strip-pad': '1.75em',
+      '--strip-pad-end': '0.1px',
       '--name-color': 'inherit',
       '--mark-size': '1.4em',
       '--name-size': '1em',
       '--name-case': 'uppercase',
     },
     css: `%root% { padding-block-start: var(--strip-pad); background: var(--strip-bg); }
+%root% .cs-track { padding-block-end: var(--strip-pad-end); }
 .cargo-card { display: block; color: var(--name-color); text-align: center; text-decoration: none; }
 .cargo-mark { display: block; margin-block-end: 0.6em; font-size: var(--mark-size); font-style: italic; font-weight: 700; line-height: 1.2; letter-spacing: 0.06em; }
 .cargo-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.25s ease; }
