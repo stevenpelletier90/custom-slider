@@ -366,14 +366,19 @@ body {
 
    The height cap and the scroll are the other half of the same borrowed rule:
    a preview taller than the window would pin its top and put the readout under
-   it permanently out of reach. 60vh is the working number rather than the
-   whole window - the settings under it have to be usable while the preview is
-   held on screen, and a preview that takes the lot leaves a sliver of panel to
-   work in. It was 55vh for one round, and the cap is what a tall pattern is
-   scaled to: the photo gallery at Desktop came out at 43% of a 1440 window
-   purely because of those five points. The clamp is the floor under the same
-   idea - 24rem of preview is the least worth pinning, whatever the vh works
-   out to - and calc(100vh - 3.5rem - 1px) is the ceiling the masthead leaves.
+   it permanently out of reach. The cap is what a tall pattern is scaled INTO,
+   so it is the single number deciding how big the picture can be: at 55vh the
+   photo gallery came out at 43% of a 1440x900 window, at 60vh 49%.
+
+   Three terms, largest wins, because no single one is right at every window
+   height. `calc(100vh - 3.5rem - 1px - 16rem)` is the real rule - the preview
+   takes whatever is left after the masthead and a 16rem strip of settings,
+   which is about five rows plus a folder heading, enough to work in while the
+   picture is held on screen. It beats a flat fraction on anything tall: a
+   1440px-high monitor gives the preview 1127px where 60vh gave 864. 60vh is
+   kept as a floor so the 640-780px band, where reserving 16rem would take MORE
+   than the fraction did, does not lose height it already had. 24rem is the
+   floor under both - less preview than that is not worth pinning.
    fitFrameScale() in workbench.js reads this cap back off the computed style
    and scales the frame into what is left of it, so the cap shortens the
    picture instead of hiding the bottom of it.
@@ -389,7 +394,7 @@ body {
   position: sticky;
   inset-block-start: calc(3.5rem + 1px);
   z-index: 2;
-  max-block-size: clamp(24rem, 60vh, calc(100vh - 3.5rem - 1px));
+  max-block-size: max(24rem, 60vh, calc(100vh - 3.5rem - 1px - 16rem));
   overflow-y: auto;
   background: var(--paper);
 }

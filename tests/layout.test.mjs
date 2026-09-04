@@ -195,16 +195,24 @@ test('a frame that fits is not scaled at all', async ({ browser }) => {
 });
 
 // A pinned preview that takes the whole window leaves a sliver of settings to
-// work in, so it is capped at 60vh - and the cap has to SHORTEN the picture,
-// not hide the bottom of it. Tall photos is the pattern that proves it: 461px
-// of frame at 1200, against a 540px box on a 900px window.
-test('the height cap keeps the pinned preview inside 60vh on a tall pattern', async ({ browser }) => {
+// work in, so it is capped - and the cap has to SHORTEN the picture, not hide
+// the bottom of it. Tall photos is the pattern that proves it: 461px of frame
+// at 1200, against a 587px box on a 900px window.
+//
+// The cap is `max(24rem, 60vh, 100vh - 3.5rem - 1px - 16rem)`, so this asserts
+// the rule rather than one of the three numbers: whichever term wins at this
+// viewport, the preview may not exceed it. The 16rem term is the real one on
+// anything tall - the preview takes what is left after the masthead and a
+// strip of settings - and the other two are floors under short windows.
+const capPx = (winH) => Math.max(24 * 16, winH * 0.6, winH - 3.5 * 16 - 1 - 16 * 16);
+
+test('the height cap keeps the pinned preview inside the reserved settings strip', async ({ browser }) => {
   const { page, errors } = await openBuilder(browser, 1440);
   await pick(page, 'models');
   await page.click('.ui-widths button[data-w="1200"]');
   await page.waitForTimeout(600);
   const box = await stageBox(page);
-  assert.ok(box.preview.height <= box.winH * 0.6 + 1, `the pinned preview is ${Math.round(box.preview.height)}px of a ${box.winH}px window, past the 60vh cap`);
+  assert.ok(box.preview.height <= capPx(box.winH) + 1, `the pinned preview is ${Math.round(box.preview.height)}px of a ${box.winH}px window, past the ${Math.round(capPx(box.winH))}px cap`);
   assert.ok(box.frame.bottom <= box.preview.bottom + 1, `the frame runs ${Math.round(box.frame.bottom - box.preview.bottom)}px past the bottom of the preview`);
   // The cap has to reach the SCALE, not just clip the box: with the width
   // alone deciding, this frame is drawn at 99% of its 461px inside a 540px box
