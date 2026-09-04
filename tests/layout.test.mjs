@@ -102,6 +102,42 @@ test('the preview is above the settings at every width', async ({ browser }) => 
   }
 });
 
+// A full-width panel is a full-width LABEL: Tweakpane gives the value
+// --tp-blade-value-width and lets the label take the rest, so at 1440 the row
+// "Phone · under 768" ran from x=217 to a slider starting at x=1227. The
+// folders flow into columns instead, and a folder is never split across a
+// column boundary - a heading stranded at the foot of one column with its
+// controls starting the next is what the demo's previous columns layout did.
+test('the settings flow into columns, and no folder is split across one', async ({ browser }) => {
+  for (const w of [1440, 1280, 1024]) {
+    const { page, errors } = await openBuilder(browser, w);
+    const pane = await page.evaluate(() => {
+      const folders = [...document.querySelectorAll('#wb-settings .tp-rotv_c > .tp-fldv')];
+      return {
+        folders: folders.length,
+        // A block fragmented across a column boundary reports more than one
+        // client rect. That IS the split, asked of the browser directly.
+        split: folders.filter((f) => f.getClientRects().length > 1).map((f) => f.querySelector('.tp-fldv_t')?.textContent.trim()),
+        columns: new Set(folders.map((f) => Math.round(f.getBoundingClientRect().left))).size,
+        // How far a value sits from the start of its own label. 195px at 1440
+        // and 1024, 319px at 1280; it was 1010px with one full-width column.
+        widest: Math.max(
+          ...[...document.querySelectorAll('#wb-settings .tp-lblv')].map((r) => {
+            const l = r.querySelector('.tp-lblv_l')?.getBoundingClientRect();
+            const v = r.querySelector('.tp-lblv_v')?.getBoundingClientRect();
+            return l && v ? v.left - l.left : 0;
+          }),
+        ),
+      };
+    });
+    assert.equal(pane.folders, 6, `at ${w}: the pane no longer has its six folders where this test looks`);
+    assert.deepEqual(pane.split, [], `at ${w}: a folder is split across a column boundary`);
+    assert.ok(pane.columns >= 2, `at ${w}: the settings are in ${pane.columns} column, so the rows have the whole width to stretch across`);
+    assert.ok(pane.widest < 450, `at ${w}: a row's value sits ${Math.round(pane.widest)}px from its label, which is a stretched row`);
+    assert.deepEqual(errors, [], `at ${w}: a page error occurred`);
+  }
+});
+
 // The whole point of the earlier round, and still true: a frame wider than the
 // stage is SHOWN smaller, never cut off, and the numbers under it stay the
 // real ones. What changed is where it bites - at 1440 the stage is the whole
@@ -159,21 +195,21 @@ test('a frame that fits is not scaled at all', async ({ browser }) => {
 });
 
 // A pinned preview that takes the whole window leaves a sliver of settings to
-// work in, so it is capped at 55vh - and the cap has to SHORTEN the picture,
-// not hide the bottom of it. Tall photos is the pattern that proves it: 802px
-// of frame at 1200, against a 495px box on a 900px window.
-test('the height cap keeps the pinned preview inside 55vh on a tall pattern', async ({ browser }) => {
+// work in, so it is capped at 60vh - and the cap has to SHORTEN the picture,
+// not hide the bottom of it. Tall photos is the pattern that proves it: 461px
+// of frame at 1200, against a 540px box on a 900px window.
+test('the height cap keeps the pinned preview inside 60vh on a tall pattern', async ({ browser }) => {
   const { page, errors } = await openBuilder(browser, 1440);
   await pick(page, 'models');
   await page.click('.ui-widths button[data-w="1200"]');
   await page.waitForTimeout(600);
   const box = await stageBox(page);
-  assert.ok(box.preview.height <= box.winH * 0.55 + 1, `the pinned preview is ${Math.round(box.preview.height)}px of a ${box.winH}px window, past the 55vh cap`);
+  assert.ok(box.preview.height <= box.winH * 0.6 + 1, `the pinned preview is ${Math.round(box.preview.height)}px of a ${box.winH}px window, past the 60vh cap`);
   assert.ok(box.frame.bottom <= box.preview.bottom + 1, `the frame runs ${Math.round(box.frame.bottom - box.preview.bottom)}px past the bottom of the preview`);
   // The cap has to reach the SCALE, not just clip the box: with the width
-  // alone deciding, this frame is drawn 99% of 802px tall inside a 495px box
-  // and the readout under it goes below the fold of a preview that exists so
-  // nothing has to be scrolled to.
+  // alone deciding, this frame is drawn at 99% of its 461px inside a 540px box
+  // that also has to hold the readout, and the readout goes below the fold of
+  // a preview that exists so nothing has to be scrolled to.
   assert.equal(box.previewScrolls, false, 'the pinned preview has to be scrolled to see all of the frame');
   assert.ok(box.specBottom <= box.preview.bottom + 1, `the readout is ${Math.round(box.specBottom - box.preview.bottom)}px below the bottom of the preview it belongs to`);
   assert.ok(box.specVisible, 'the readout is off screen under a preview that is meant to fit');

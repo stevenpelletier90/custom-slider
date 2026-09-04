@@ -1682,7 +1682,7 @@ ${PHOTO_CSS}
 
   // The height the stage may occupy, read back off the CSS cap on .ui-preview
   // rather than guessed. The preview is pinned under the masthead and capped
-  // at 55vh, so a frame taller than the cap would need the preview scrolled to
+  // at 60vh, so a frame taller than the cap would need the preview scrolled to
   // see the bottom of it - which is exactly what a pinned preview exists to
   // avoid. The readout's own height comes off the cap because it lives inside
   // it and has to stay readable; it is MEASURED, never a constant, because it
@@ -1703,7 +1703,7 @@ ${PHOTO_CSS}
     const spec = prev.querySelector('.ui-spec');
     const scs = spec && getComputedStyle(spec);
     const readout = spec ? spec.offsetHeight + parseFloat(scs.marginBlockStart) + parseFloat(scs.marginBlockEnd) : 0;
-    // Floor and a pixel of slack, because 55vh of an odd window height is a
+    // Floor and a pixel of slack, because 60vh of an odd window height is a
     // fraction: rounding the content one pixel past the cap would flip a
     // scrollbar in, which narrows the stage, which rescales the frame, which
     // takes the scrollbar back out - a loop, driven by the frame's own
@@ -1719,7 +1719,7 @@ ${PHOTO_CSS}
   // device and every number in the readout is a real px on a real window.
   // transform changes the picture and nothing else.
   //
-  // Both axes, not just the width. The pinned preview is capped at 55vh so the
+  // Both axes, not just the width. The pinned preview is capped at 60vh so the
   // settings under it stay usable, and a frame scaled to the width alone ran
   // straight past that cap: a tall pattern put its bottom row behind the fold
   // of a box that exists precisely so nothing has to be scrolled to.

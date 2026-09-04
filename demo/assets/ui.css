@@ -366,12 +366,17 @@ body {
 
    The height cap and the scroll are the other half of the same borrowed rule:
    a preview taller than the window would pin its top and put the readout under
-   it permanently out of reach. 55vh is the working number rather than the
+   it permanently out of reach. 60vh is the working number rather than the
    whole window - the settings under it have to be usable while the preview is
    held on screen, and a preview that takes the lot leaves a sliver of panel to
-   work in. fitFrameScale() in workbench.js reads this cap back off the
-   computed style and scales the frame into what is left of it, so the cap
-   shortens the picture instead of hiding the bottom of it.
+   work in. It was 55vh for one round, and the cap is what a tall pattern is
+   scaled to: the photo gallery at Desktop came out at 43% of a 1440 window
+   purely because of those five points. The clamp is the floor under the same
+   idea - 24rem of preview is the least worth pinning, whatever the vh works
+   out to - and calc(100vh - 3.5rem - 1px) is the ceiling the masthead leaves.
+   fitFrameScale() in workbench.js reads this cap back off the computed style
+   and scales the frame into what is left of it, so the cap shortens the
+   picture instead of hiding the bottom of it.
 
    z-index and a background are both load-bearing now that the settings pass
    UNDER the preview instead of sitting beside it. Without the stacking context
@@ -384,13 +389,13 @@ body {
   position: sticky;
   inset-block-start: calc(3.5rem + 1px);
   z-index: 2;
-  max-block-size: min(55vh, calc(100vh - 3.5rem - 1px));
+  max-block-size: clamp(24rem, 60vh, calc(100vh - 3.5rem - 1px));
   overflow-y: auto;
   background: var(--paper);
 }
 
-/* On a short window a pinned preview is not worth what it costs: 55vh of 600px
-   is 330px, and the settings would be read through a letterbox. Give the
+/* On a short window a pinned preview is not worth what it costs: 60vh of 600px
+   is 360px, and the settings would be read through a letterbox. Give the
    height back and let the whole page scroll normally - and drop the cap with
    it, which is what tells fitFrameScale() there is no height to fit into. */
 @media (height < 640px) {
@@ -2055,4 +2060,36 @@ code {
 #wb-settings .tp-dfwv {
   inline-size: 100%;
   min-inline-size: 0;
+}
+
+/* The panel is the full width of the page now, and a pane row spends every
+   pixel it is given on its LABEL: Tweakpane hands the value
+   --tp-blade-value-width (11rem, set above) and lets the label take the rest.
+   Measured at 1440 with the settings under the preview: "Phone · under 768"
+   ran 217 to 1227 with its slider starting at 1227 - a metre of dotted nothing
+   between a label and the thing it names, on every row of every folder. The
+   old 26rem column hid it rather than fixed it.
+
+   So the FOLDERS flow into columns instead of each row stretching. 23rem is
+   picked off the arithmetic rather than by eye: it is the widest column that
+   still gives a 1024 window two of them (784px of panel, two 380px columns),
+   and it gives 1440 three at about the 24rem the two-column panel used to be -
+   which is the width these rows were drawn for.
+
+   .tp-rotv_c is the pane root's container and the folders' actual parent -
+   read off the live DOM, not assumed: pane.js passes its own container, so
+   .tp-dfwv (the wrapper Tweakpane makes when it is not given one) is not in
+   this tree at all. */
+#wb-settings .tp-rotv_c {
+  columns: 23rem;
+  column-gap: 1.5rem;
+}
+
+/* Never split a folder across a column boundary. This is the failure mode the
+   demo's previous columns layout had - a folder heading stranded at the foot
+   of one column with its controls starting the next - and it is the whole
+   reason the rule above is safe to have. */
+#wb-settings .tp-fldv {
+  -webkit-column-break-inside: avoid;
+  break-inside: avoid;
 }
