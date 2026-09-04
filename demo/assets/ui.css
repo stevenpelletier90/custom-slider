@@ -308,6 +308,37 @@ body {
    pushes the overflow SIDEWAYS, and two whole sections ended up off the right
    edge behind a horizontal scrollbar. */
 #wb-settings {
+  /* Tweakpane is themed through its own custom properties, mapped to the
+     demo's tokens here so the pane follows the light/dark switch with no
+     script and never shows the library's dark dev-tool default. The full
+     list is in node_modules/tweakpane/dist/tweakpane.js - this build ships
+     no separate .css, the styles are injected from JS. */
+  --tp-base-background-color: var(--surface);
+  --tp-base-shadow-color: transparent;
+  --tp-base-font-family: var(--sans);
+  --tp-base-border-radius: 6px;
+  --tp-container-background-color: var(--sunken);
+  --tp-container-background-color-hover: var(--glyph-bg);
+  --tp-container-background-color-focus: var(--glyph-bg);
+  --tp-container-background-color-active: var(--glyph-bg);
+  --tp-container-foreground-color: var(--ink);
+  --tp-groove-foreground-color: var(--rule);
+  --tp-input-background-color: var(--paper);
+  --tp-input-background-color-hover: var(--paper);
+  --tp-input-background-color-focus: var(--surface);
+  --tp-input-background-color-active: var(--surface);
+  --tp-input-foreground-color: var(--ink);
+  --tp-label-foreground-color: var(--ink-soft);
+  --tp-button-background-color: var(--glyph-bg);
+  --tp-button-background-color-hover: var(--glyph-soft);
+  --tp-button-background-color-focus: var(--glyph-soft);
+  --tp-button-background-color-active: var(--glyph-mid);
+  --tp-button-foreground-color: var(--ink);
+  --tp-monitor-background-color: var(--paper);
+  --tp-monitor-foreground-color: var(--ink-soft);
+  --tp-blade-value-width: 11rem;
+  --tp-blade-horizontal-padding: 0.5rem;
+
   columns: 16rem auto;
   column-gap: 1.75rem;
 }
@@ -1831,4 +1862,15 @@ code {
   .ui-gauge i {
     transition: none;
   }
+}
+
+/* ---- pane ----------------------------------------------------------------
+   The --tp-* theme variables live on the #wb-settings rule above, alongside
+   the column layout - one rule, since stylelint's no-duplicate-selectors
+   won't allow a second #wb-settings block. This is just the pane root's own
+   sizing: full width of its column, the .tp-dfwv class confirmed against
+   node_modules/tweakpane/dist/tweakpane.js. */
+#wb-settings .tp-dfwv {
+  inline-size: 100%;
+  min-inline-size: 0;
 }
