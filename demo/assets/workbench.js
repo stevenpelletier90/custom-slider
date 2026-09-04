@@ -1753,12 +1753,36 @@ ${PHOTO_CSS}
     publish();
   }
 
+  // A value a colour row can offer as a swatch. Deliberately narrow: a card
+  // border is `1px solid #e2e5ea` and a swatch of it would be a swatch of
+  // nothing, so only a value that IS a colour from its first character counts.
+  const isColour = (v) => {
+    const s = String(v ?? '').trim();
+    return /^#/.test(s) || /^rgba?\(/i.test(s) || /^transparent$/i.test(s);
+  };
+
   // Everything downstream of the preview: the three copy parts, the box, the
   // "what goes where" list. Split out of render() so a restyle can refresh the
   // panel without rebuilding the stage - the panel still has to update, since
   // clearing a colour drops a whole declaration and the line counts move with
   // it.
   function publish() {
+    // Every colour already on this slider, offered on every colour row: taking
+    // the arrow colour from the band colour is one click rather than a hex
+    // copied out of the code panel. `transparent` is always in the list because
+    // no card states it and it is the one value a native colour input cannot
+    // express.
+    //
+    // The brand presets contribute nothing on purpose - BRANDS carries no
+    // colours at all (see the note at the top of brands.js: a DealerOn site's
+    // colours come from its own theme, not from a hardcoded OEM hex), so there
+    // is no preset colour to offer and spreading over it would only look like
+    // there was.
+    //
+    // Here rather than in buildPanel(), because this is the one place every
+    // path that can change a colour passes through: restyle() calls it for a
+    // knob, render() for a look, a preset or a pattern.
+    pane.swatches([...Object.values({ ...state.lookProps, ...state.props }).filter(isColour), 'transparent']);
     const p = PATTERNS[state.pattern];
     $('wb-title').textContent = p.label;
     $('wb-blurb').textContent = p.blurb;
@@ -2133,7 +2157,7 @@ ${PHOTO_CSS}
   // it - a colour changes the stylesheet and nothing else, and sending one
   // through render() tore the stage down and re-initialised every slider in it.
   const colourKnob = (parent, label, key, store) =>
-    pane.text(
+    pane.colour(
       parent,
       label,
       store[key] ?? '',

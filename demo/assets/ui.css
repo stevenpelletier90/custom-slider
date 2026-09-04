@@ -885,6 +885,143 @@ body {
   background: var(--tp-input-background-color-focus);
 }
 
+/* A colour is a text field that stays authoritative, a swatch beside it that
+   can show ANY value the field holds, and a × that puts the default back. The
+   swatch opens a popover with the spectrum, an opacity slider and the colours
+   already on this slider.
+
+   The checkerboard under every swatch is the whole reason the row exists: a
+   native colour input has no alpha and no `transparent`, so a half-opaque
+   arrow background and a fully transparent one drew the same solid square. Two
+   backgrounds - the colour over a conic checkerboard - and the difference is
+   visible at a glance.
+
+   `--sw` is set on the element by the plugin, so an unreadable value (a
+   currentcolor, a var()) falls back to `transparent` and shows the
+   checkerboard rather than a colour it is not. */
+.tp-colv {
+  position: relative;
+  display: grid;
+  grid-template-columns: 1.4rem minmax(0, 1fr) 1.2rem;
+  gap: 0.25rem;
+  align-items: center;
+}
+
+.tp-colv_sw,
+.tp-colv_list button {
+  inline-size: 1.4rem;
+  block-size: 1.4rem;
+  padding: 0;
+  cursor: pointer;
+  background:
+    linear-gradient(var(--sw, transparent), var(--sw, transparent)),
+    repeating-conic-gradient(#ccc 0 25%, #fff 0 50%) 0 0 / 8px 8px;
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+
+/* Monospace, like the code panel: a hex is read character by character, and
+   the panel's own proportional font makes an 8 and a B the same shape. */
+.tp-colv_txt {
+  min-inline-size: 0;
+  block-size: var(--tp-container-unit-size, 20px);
+  padding-inline: var(--tp-blade-horizontal-padding, 0.5rem);
+  font: inherit;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  color: var(--tp-input-foreground-color);
+  background: var(--tp-input-background-color);
+  border: 0;
+  border-radius: var(--tp-base-border-radius, 6px);
+}
+
+.tp-colv_txt:hover {
+  background: var(--tp-input-background-color-hover);
+}
+
+.tp-colv_txt:focus {
+  background: var(--tp-input-background-color-focus);
+}
+
+.tp-colv_clear {
+  padding: 0;
+  font: inherit;
+  font-size: 0.9rem;
+  line-height: 1;
+  color: var(--ink-soft);
+  cursor: pointer;
+  background: none;
+  border: 0;
+}
+
+.tp-colv_clear:hover {
+  color: var(--ink);
+}
+
+/* Absolute, over the rows below it. The pane's containers clip while a folder
+   is folding and go back to `overflow: visible` once it is open (measured in
+   node_modules/tweakpane/dist/tweakpane.js: .tp-fldv.tp-fldv-expanded >
+   .tp-fldv_c), and .ui-panel sets no overflow of its own, so nothing on the
+   way up cuts this off.
+
+   inset-block-start is stated rather than left to the static position: this is
+   an absolutely positioned child of a GRID container, so with no offset it is
+   placed against the grid's own box and not after the two columns it follows -
+   measured, the popover opened level with the row above its own. */
+.tp-colv_pop {
+  position: absolute;
+  inset-block-start: 100%;
+  inset-inline-start: 0;
+  z-index: 3;
+  display: grid;
+  gap: 0.35rem;
+  inline-size: 100%;
+  min-inline-size: 11rem;
+  padding: 0.6rem;
+  margin-block-start: 0.25rem;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 8px;
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.18);
+}
+
+/* `display: grid` above outranks the UA sheet's `[hidden] { display: none }`,
+   so a closed popover has to be shut explicitly. Without this it was still
+   laid out - invisible only because it had nothing painted over the row below
+   - and it swallowed the clicks meant for the next colour down. */
+.tp-colv_pop[hidden] {
+  display: none;
+}
+
+.tp-colv_sp {
+  inline-size: 100%;
+  block-size: 2rem;
+  padding: 2px;
+  cursor: pointer;
+  background: var(--paper);
+  border: 1px solid var(--rule);
+  border-radius: 4px;
+}
+
+.tp-colv_a {
+  inline-size: 100%;
+  margin: 0;
+  accent-color: var(--signal);
+}
+
+.tp-colv_cap {
+  margin: 0;
+  font-size: 0.68rem;
+  line-height: 1.2;
+  color: var(--ink-soft);
+}
+
+.tp-colv_list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
 .tp-flagv {
   flex-basis: 100%;
   padding: 0.3rem 0.5rem;

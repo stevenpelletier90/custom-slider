@@ -276,9 +276,270 @@
     },
   });
 
+  /* ---- colour: a text field, a swatch, and a picker with alpha ---------- */
+
+  // ClassName('col') is `tp-colv`, which is also the prefix Tweakpane's OWN
+  // colour view uses: the bundle ships `.tp-colv{position:relative}` (which is
+  // what this row wants anyway) and `.tp-colv_t{flex:1;margin-left:4px}`. The
+  // prefix stays - the row IS a colour row, and that is what the styles and the
+  // tests name - but the text field is `_txt`, so a rule written for a control
+  // this build never draws cannot land 4px of margin on it.
+  const colCls = ClassName('col');
+
+  // Parse anything the field can hold into {r,g,b,a}, or null when it is not a
+  // colour this control can show. The BROWSER does the parsing: a value it will
+  // set on an element is a colour and one it refuses is not, which is shorter
+  // and more honest than a regex over eight notations - and it is the same
+  // parser the preview is about to use.
+  //
+  // The keyword list comes first because `currentcolor` and `inherit` ARE valid
+  // colour values: computing them would resolve them against this panel and
+  // hand back a swatch of the wrong colour, when what they mean is "whatever
+  // the dealer's page says". They stay as typed, with no swatch colour.
+  //
+  // The probe is display:none so it can never add a line box to the page;
+  // `color` is a computed value, resolved with or without a layout box, so a
+  // named colour still comes back as rgb(). It joins the document only for the
+  // read and is removed on every path out of the function.
+  const probe = document.createElement('span');
+  probe.style.display = 'none';
+  const parse = (v) => {
+    const s = String(v ?? '').trim();
+    if (!s || /^(currentcolor|inherit|initial|unset|revert)$/i.test(s) || s.includes('var(')) return null;
+    if (/^transparent$/i.test(s)) return { r: 0, g: 0, b: 0, a: 0 };
+    probe.style.color = '';
+    probe.style.color = s;
+    if (!probe.style.color) return null;
+    document.body.append(probe);
+    const m = /rgba?\(([^)]+)\)/.exec(getComputedStyle(probe).color);
+    probe.remove();
+    if (!m) return null;
+    // The default is the NUMBER 1: the map runs before the destructuring, so an
+    // rgb() with no alpha falls through to it unconverted, and a string here
+    // would fail the finite check below on every opaque colour.
+    const [r, g, b, a = 1] = m[1]
+      .split(/[,\s/]+/)
+      .filter(Boolean)
+      .map(Number);
+    return Number.isFinite(r) && Number.isFinite(g) && Number.isFinite(b) && Number.isFinite(a) ? { r, g, b, a } : null;
+  };
+
+  // Always the platform's notation: a hex when it is opaque, legacy rgba() when
+  // it is not, `transparent` at zero. Never modern `rgb(r g b / a)` - stylelint
+  // holds the copy panel to the legacy form (color-function-notation: legacy),
+  // the format hook rewrites it back, and it is the notation the platform's own
+  // minifier keeps. Alpha is rounded BEFORE the zero test, so an alpha that
+  // rounds away leaves `transparent` rather than an rgba() ending in 0.
+  const format = ({ r, g, b, a }) => {
+    const A = Math.min(1, Math.max(0, +Number(a).toFixed(2)));
+    if (A <= 0) return 'transparent';
+    const hex = (n) =>
+      Math.round(Math.min(255, Math.max(0, n)))
+        .toString(16)
+        .padStart(2, '0');
+    if (A >= 1) return `#${hex(r)}${hex(g)}${hex(b)}`;
+    return `rgba(${Math.round(r)}, ${Math.round(g)}, ${Math.round(b)}, ${A})`;
+  };
+
+  class ColourView {
+    constructor(doc, config) {
+      this.doc = doc;
+      this.element = doc.createElement('div');
+      this.element.classList.add(colCls());
+      config.viewProps.bindClassModifiers(this.element);
+      // What an empty field falls back to, parsed once: the row shows the
+      // colour the slider is ACTUALLY using rather than an empty box, the same
+      // way a length row greys the default number into its placeholder.
+      this.fallback = parse(config.placeholder);
+      this.sw = doc.createElement('button');
+      this.sw.type = 'button';
+      this.sw.classList.add(colCls('sw'));
+      this.sw.title = 'Pick a colour';
+      this.sw.setAttribute('aria-expanded', 'false');
+      this.text = doc.createElement('input');
+      this.text.type = 'text';
+      this.text.spellcheck = false;
+      this.text.autocomplete = 'off';
+      this.text.classList.add(colCls('txt'));
+      this.text.placeholder = config.placeholder ?? '';
+      this.clear = doc.createElement('button');
+      this.clear.type = 'button';
+      this.clear.classList.add(colCls('clear'));
+      this.clear.textContent = '×';
+      this.clear.title = 'Back to the default';
+      this.pop = doc.createElement('div');
+      this.pop.classList.add(colCls('pop'));
+      this.pop.hidden = true;
+      // The native input does the spectrum and nothing else. Making it the
+      // WHOLE control is what the old row got wrong: it cannot hold an alpha,
+      // it cannot hold `transparent`, and it cannot show a value it did not
+      // produce - so it answered every one of those with black.
+      this.native = doc.createElement('input');
+      this.native.type = 'color';
+      this.native.classList.add(colCls('sp'));
+      this.alpha = doc.createElement('input');
+      this.alpha.type = 'range';
+      this.alpha.min = '0';
+      this.alpha.max = '1';
+      this.alpha.step = '0.01';
+      // Full, not the range's own midpoint: a row whose value this control
+      // cannot read would otherwise open its picker at 50% opacity and turn the
+      // first click on the spectrum into a half-transparent colour.
+      this.alpha.value = '1';
+      this.alpha.classList.add(colCls('a'));
+      // Three sections, each said in a word: an unlabelled colour well reads as
+      // a black bar when the value is `transparent`, which is exactly the
+      // moment somebody needs to know what it is.
+      this.caps = ['Colour', 'Opacity', 'Colours on this slider'].map((t) => {
+        const p = doc.createElement('p');
+        p.className = colCls('cap');
+        p.textContent = t;
+        return p;
+      });
+      this.list = doc.createElement('div');
+      this.list.classList.add(colCls('list'));
+      this.pop.append(this.caps[0], this.native, this.caps[1], this.alpha, this.caps[2], this.list);
+      this.element.append(this.sw, this.text, this.clear, this.pop);
+      config.viewProps.bindDisabled(this.text);
+      config.viewProps.bindDisabled(this.sw);
+      config.viewProps.bindDisabled(this.clear);
+    }
+
+    // What the slider is using, never what was typed at it. An empty field
+    // falls back to the default; a value this control cannot read - a
+    // currentcolor, a var() - keeps its text and loses the swatch colour rather
+    // than being redrawn as a colour it is not.
+    show(v) {
+      const s = String(v ?? '');
+      this.text.value = s;
+      const c = parse(s) ?? (s.trim() ? null : this.fallback);
+      this.sw.style.setProperty('--sw', c ? format(c) : 'transparent');
+      if (!c) return;
+      this.native.value = format({ ...c, a: 1 });
+      this.alpha.value = String(c.a);
+    }
+
+    swatches(list) {
+      this.list.replaceChildren();
+      for (const v of list) {
+        const b = this.doc.createElement('button');
+        b.type = 'button';
+        b.dataset.colour = v;
+        b.title = v;
+        b.setAttribute('aria-label', v);
+        b.style.setProperty('--sw', v);
+        this.list.append(b);
+      }
+      this.caps[2].hidden = !list.length;
+    }
+  }
+
+  class ColourController {
+    constructor(doc, config) {
+      this.value = config.value;
+      this.viewProps = config.viewProps;
+      const v = (this.view = new ColourView(doc, { viewProps: this.viewProps, placeholder: config.placeholder }));
+      v.show(this.value.rawValue);
+      this.value.emitter.on('change', () => v.show(this.value.rawValue));
+
+      // The text field is authoritative: whatever it holds is what the store
+      // gets, normalised when it is a colour and verbatim when it is not.
+      // okValue() in workbench.js is still the single gate on what SHIPS, so a
+      // value this control cannot read is stored and dropped there rather than
+      // being refused here, which would leave the field showing one value while
+      // the slider ran another.
+      v.text.addEventListener('change', () => this.commit(parse(v.text.value), v.text.value.trim()));
+      v.clear.addEventListener('click', () => this.commit(null, ''));
+      v.sw.addEventListener('click', () => (v.pop.hidden ? this.open(config.swatches) : this.close()));
+      // The spectrum and the opacity are one value, so either moving commits
+      // both. rawValue is what the change goes through, which is what keeps a
+      // whole drag on the fast path: workbench.js restyles the frame's
+      // stylesheet and never rebuilds the stage.
+      const fromPicker = () => {
+        const c = parse(v.native.value);
+        if (c) this.commit({ ...c, a: parseFloat(v.alpha.value) });
+      };
+      v.native.addEventListener('input', fromPicker);
+      v.alpha.addEventListener('input', fromPicker);
+      v.list.addEventListener('click', (e) => {
+        const b = e.target.closest('button[data-colour]');
+        if (!b) return;
+        this.commit(parse(b.dataset.colour), b.dataset.colour);
+        this.close(true);
+      });
+      v.element.addEventListener('keydown', (e) => e.key === 'Escape' && !v.pop.hidden && (e.stopPropagation(), this.close(true)));
+
+      this.ac = new AbortController();
+      doc.addEventListener(
+        'pointerdown',
+        (e) => {
+          // The pane is thrown away and rebuilt on every structural change, so
+          // a row that is no longer on the page takes its listener off itself -
+          // handleDispose covers the ordinary path, this covers every other.
+          if (!v.element.isConnected) return this.ac.abort();
+          if (!v.element.contains(e.target)) this.close();
+        },
+        { signal: this.ac.signal },
+      );
+      this.viewProps.handleDispose(() => this.ac.abort());
+    }
+
+    // A value equal to the one already stored emits no change, so a typed
+    // `RGB(0 0 0/.5)` or a second click on the same swatch would sit in the box
+    // unanswered. Redraw either way.
+    commit(colour, raw = '') {
+      this.value.rawValue = colour ? format(colour) : raw;
+      this.view.show(this.value.rawValue);
+    }
+
+    open(swatches) {
+      // Read at the moment it opens, so a colour set on another row a second
+      // ago is already offered here - no row has to be told, and nothing has to
+      // be rebuilt to carry it.
+      this.view.swatches(swatches?.() ?? []);
+      this.view.pop.hidden = false;
+      this.view.sw.setAttribute('aria-expanded', 'true');
+    }
+
+    close(focus) {
+      this.view.pop.hidden = true;
+      this.view.sw.setAttribute('aria-expanded', 'false');
+      // Only when the popover was dismissed from inside it: focus follows the
+      // keyboard back to the control that opened it, and never jumps for a
+      // click that landed somewhere else on the page.
+      if (focus) this.view.sw.focus();
+    }
+  }
+
+  const ColourPlugin = createPlugin({
+    id: 'colour',
+    type: 'input',
+    accept(value, params) {
+      if (typeof value !== 'string') return null;
+      const r = parseRecord(params, (p) => ({
+        view: p.required.constant('colour'),
+        swatches: p.optional.raw,
+        placeholder: p.optional.string,
+      }));
+      return r ? { initialValue: value, params: r } : null;
+    },
+    binding: {
+      reader: () => (v) => String(v ?? ''),
+      writer: () => (target, v) => target.write(v),
+    },
+    controller(args) {
+      return new ColourController(args.document, {
+        value: args.value,
+        viewProps: args.viewProps,
+        swatches: args.params.swatches,
+        placeholder: args.params.placeholder,
+      });
+    },
+  });
+
   // Order matters: the pool unshifts each plugin as it is registered, so the
   // LAST one here is the first asked to accept a binding. Tweakpane's own
   // string input accepts any string and would otherwise draw every length row
   // as a plain text field.
-  CARGO.tpPlugins = [NotePlugin, LookPickerPlugin, LengthPlugin];
+  CARGO.tpPlugins = [NotePlugin, LookPickerPlugin, LengthPlugin, ColourPlugin];
 })();

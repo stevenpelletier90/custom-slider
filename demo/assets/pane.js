@@ -108,6 +108,33 @@
     return b;
   };
 
+  // The swatch list every colour row offers, set from workbench.js whenever
+  // this slider's own colours change. ONE list, read at the moment a popover
+  // opens, so a colour set on one row is offered on the others without every
+  // row having to be told about it and without a pane rebuild to carry it.
+  let swatchList = [];
+  const swatches = (list) => (swatchList = [...new Set(list.filter(Boolean))]);
+
+  // A colour: a text field that stays authoritative, a swatch that can show
+  // ANY value the field holds - transparent and an rgba() included - and a
+  // popover with a spectrum, an opacity slider and the colours already in use.
+  // Drawn by the `colour` input plugin in tp-plugins.js.
+  //
+  // bind() names the first input, which is the text field. The four other
+  // controls the row draws are its own, and each needs a name of its own or
+  // the panel gains two unlabelled buttons, an unlabelled colour well and an
+  // unlabelled slider for every colour on the page.
+  const colour = (parent, label, value, on, opts = {}) => {
+    const b = bind(parent, label, { v: value ?? '' }, { view: 'colour', swatches: () => swatchList, placeholder: opts.placeholder == null ? undefined : String(opts.placeholder) }, on);
+    const name = (sel, text) => b.element.querySelector(sel)?.setAttribute('aria-label', text);
+    name('.tp-colv_sw', `${label}: pick a colour`);
+    name('.tp-colv_clear', `${label}: back to the default`);
+    name('input[type="color"]', `${label} spectrum`);
+    name('input[type="range"]', `${label} opacity`);
+    if (opts.note) b.element.title = opts.note;
+    return b;
+  };
+
   // `step` here is a rounding CONSTRAINT, not a spinner increment: Tweakpane
   // commits `origin + Math.round((v - origin) / step) * step`, so a step of 500
   // turns a typed 200 into 0. Pass the granularity the value may actually have,
@@ -183,6 +210,8 @@
     dispose,
     folder,
     text,
+    colour,
+    swatches,
     length,
     int,
     list,

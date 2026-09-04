@@ -36,9 +36,17 @@ const knob = (page, label) =>
 
 const hasKnob = async (page, label) => (await knob(page, label)) !== null;
 
-// Until the colour plugin lands a colour row is a text row, so it reads the
-// same way.
-const colorKnob = knob;
+// A colour row is four controls and a popover: a swatch button that opens the
+// picker, the text field, a × that puts the default back, and - inside the
+// popover - a spectrum and an opacity slider. The text field is the
+// authoritative one and the only input[type=text] in the row, so it is what a
+// knob reading names. Also used on rows that are still plain text fields (a
+// border shorthand is not a colour), which read the same way.
+const colorKnob = (page, label) =>
+  page.evaluate((l) => {
+    const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === l);
+    return row ? (row.querySelector('input[type="text"]')?.value ?? null) : null;
+  }, label);
 
 test.describe('a knob shows what the slider is actually using', () => {
   // F042: Tall photos set --cs-controls-space in its pattern CSS instead of its
@@ -726,10 +734,9 @@ test.describe('the last engine properties reach the panel', () => {
 // because it is invisible in the generated CSS: the output is byte-identical
 // either way, only the cost and the scroll position differ.
 //
-// The row is a plain text field on the pane until the colour plugin lands, so
-// the drag is played back as a run of commits on that field. What is under
-// test is the same thing: a run of colour changes must reach the preview
-// without tearing the stage down once.
+// Played back through the control a hand actually drags: the popover open, the
+// opacity taken to full and the spectrum moved with `input` events, one per
+// pointer move. Nothing types into the text field.
 test.describe('picking a colour does not rebuild the slider', () => {
   const ROW = 'Arrow background';
 
@@ -737,8 +744,12 @@ test.describe('picking a colour does not rebuild the slider', () => {
     page.evaluate(
       ([l, vals]) => {
         const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === l);
-        const field = row?.querySelector('input');
-        if (!field) return { none: true };
+        const sw = row?.querySelector('.tp-colv_sw');
+        const spectrum = row?.querySelector('input[type="color"]');
+        const alpha = row?.querySelector('input[type="range"]');
+        const field = row?.querySelector('input[type="text"]');
+        if (!sw || !spectrum || !alpha || !field) return { none: true };
+        if (sw.getAttribute('aria-expanded') !== 'true') sw.click();
         let inits = 0,
           destroys = 0;
         const AI = globalThis.CustomSlider.autoInit;
@@ -752,10 +763,14 @@ test.describe('picking a colour does not rebuild the slider', () => {
           return D.apply(this, a);
         };
         const first = globalThis.CARGO.sdoc().querySelector('.cs-slide');
-        for (const v of vals) {
-          field.value = v;
-          field.dispatchEvent(new Event('change', { bubbles: true }));
-        }
+        const move = (el, v) => {
+          el.value = v;
+          el.dispatchEvent(new Event('input', { bubbles: true }));
+        };
+        // Opacity to full first, so the run ends on a hex rather than on an
+        // rgba() of whatever the row started at.
+        move(alpha, '1');
+        for (const v of vals) move(spectrum, v);
         globalThis.CustomSlider.autoInit = AI;
         globalThis.CustomSlider.prototype.destroy = D;
         return { inits, destroys, sameNode: first === globalThis.CARGO.sdoc().querySelector('.cs-slide'), text: field.value };
