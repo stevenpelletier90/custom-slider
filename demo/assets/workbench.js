@@ -262,12 +262,28 @@
   const VIDEO_DIALOG_CSS = `.cargo-vdlg { inline-size: min(94vw, 720px); padding: 1em 1.2em; color: inherit; background: #fff; border: 0; border-radius: 12px; }
 .cargo-vdlg::backdrop { background: rgba(0, 0, 0, 0.8); }
 .cargo-vdlg-title { margin: 0 0 0.6em; font-size: 1.1em; font-weight: 700; line-height: 1.3; }
+.cargo-vdlg-media { display: grid; place-items: center; inline-size: 100%; margin-block-end: 0.8em; font-size: 0.9em; color: #fff; text-align: center; background: #16324f; border-radius: 8px; aspect-ratio: 16 / 9; }
 .cargo-vdlg-close { padding: 0.4em 1em; font: inherit; line-height: 1.55; cursor: pointer; background: #eef1f4; border: 0; border-radius: 6px; }`;
 
+  // The dialog held a title, a Close button, and an HTML COMMENT where the
+  // video goes - so opening it showed an empty white box, and the one thing
+  // this pattern exists to demonstrate was the one thing it did not.
+  //
+  // A div, not an <iframe> pointed at a real video. This markup gets PASTED
+  // onto a dealer page: an embed here would put somebody else's video on a
+  // storefront and load a player on every page carrying the block. The
+  // placeholder is inert, needs no third party, and says what to replace it
+  // with - the same reasoning the example photography carries, one step firmer,
+  // because a photograph is a stand-in and a video is not.
+  //
+  // aria-labelledby rather than aria-label="Video": the heading is written per
+  // poster, so a fixed label made every dialog announce the same word and threw
+  // away the one thing the reader needed to hear.
   const VIDEO_DIALOG_HTML = [
-    `<dialog class="cargo-vdlg" aria-label="Video">`,
-    `  <h3 class="cargo-vdlg-title"></h3>`,
-    `  <!-- Your video goes here: a YouTube or Vimeo <iframe>, or a <video> element. -->`,
+    `<dialog class="cargo-vdlg" aria-labelledby="cargo-vdlg-h">`,
+    `  <h3 class="cargo-vdlg-title" id="cargo-vdlg-h"></h3>`,
+    `  <!-- Replace this div with your video: a YouTube or Vimeo <iframe>, or a <video> element. -->`,
+    `  <div class="cargo-vdlg-media">Your video goes here</div>`,
     `  <form method="dialog"><button type="submit" class="cargo-vdlg-close">Close</button></form>`,
     `</dialog>`,
   ];
@@ -399,7 +415,11 @@ ${VIDEO_DIALOG_CSS}`,
       slides: (models) =>
         models.map(
           (m) =>
-            `<button type="button" class="cargo-video" data-video="${m.name}">${pic(m)}<span class="cargo-play" aria-hidden="true">&#9654;</span><span class="cargo-name">${m.name}</span></button>`,
+            // Same fix as the media gallery: without a label the button is
+            // announced as the photo's alt plus a person's name, which says
+            // nothing about pressing it. The label keeps the visible name
+            // inside it, so it still satisfies label-in-name.
+            `<button type="button" class="cargo-video" data-video="${m.name}" aria-label="Play video: ${m.name}" aria-haspopup="dialog">${pic(m)}<span class="cargo-play" aria-hidden="true">&#9654;</span><span class="cargo-name">${m.name}</span></button>`,
         ),
       script: VIDEO_DIALOG_JS,
     },
@@ -665,7 +685,12 @@ ${VIDEO_DIALOG_CSS}`,
       slides: (models) =>
         models.map((m) =>
           m.video
-            ? `<button type="button" class="cargo-mv" data-video="${m.alt}">${pic(m)}<span class="cargo-mv-play" aria-hidden="true">&#9654;</span></button>`
+            ? // The button's name used to come from the photo's alt alone, so a
+              // screen reader announced a description of a picture and nothing
+              // about what pressing it does - and the play triangle beside it is
+              // aria-hidden, so there was no second chance. The alt stays on the
+              // image where it belongs; the BUTTON says what it is for.
+              `<button type="button" class="cargo-mv" data-video="${m.alt}" aria-label="Play video: ${m.alt}" aria-haspopup="dialog">${pic(m)}<span class="cargo-mv-play" aria-hidden="true">&#9654;</span></button>`
             : `<span class="cargo-photo">${pic(m)}</span>`,
         ),
       script: VIDEO_DIALOG_JS,
@@ -1467,7 +1492,13 @@ ${PHOTO_CSS}
   // written into is not reliably same-origin there, and the demo has always had
   // to work without a server.
   const FRAME_DOC =
-    '<!doctype html><html><head><meta charset="utf-8">' +
+    // lang, a title, a <main> and an h1: the furniture any real page has. Not
+    // decoration - the accessibility audit treats this frame as a document, and
+    // a bare one produced a dozen findings about the SCAFFOLDING (no landmark,
+    // no title, no lang) that said nothing about the slider inside it. A
+    // preview that stands in for a dealer page should stand in for its
+    // structure too, so what the audit reports is the snippet.
+    '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Slider preview</title>' +
     '<link rel="stylesheet" href="../dist/custom-slider.css">' +
     // overflow:hidden on the frame's own root is a CORRECTNESS rule, not
     // tidying. A classic scrollbar - which real Chrome on Windows draws, and
@@ -1478,7 +1509,7 @@ ${PHOTO_CSS}
     // latched, too: content measured at 375 is taller than at 390, which keeps
     // the scrollbar justified. The parent sizes this frame to its content, so
     // there is nothing here to scroll and nothing to lose by refusing.
-    '<style>html{overflow:hidden}html{font-size:10px}body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#10151c;background:#fff}' +
+    '<style>html{overflow:hidden}html{font-size:10px}body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#10151c;background:#fff}.wb-sr{position:absolute;inline-size:1px;block-size:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%)}' +
     // Bootstrap 3's own container, because the frame is now the SCREEN rather
     // than the box. That distinction is the whole reason this exists: a
     // .container is 750px BECAUSE the screen is 768, so a 750px-wide frame
@@ -1490,7 +1521,18 @@ ${PHOTO_CSS}
     '@media(min-width:768px){#wb-live-root{inline-size:750px}}' +
     '@media(min-width:992px){#wb-live-root{inline-size:970px}}' +
     '@media(min-width:1200px){#wb-live-root{inline-size:1170px}}</style>' +
-    '<style id="wb-live-css"></style></head><body><div id="wb-live-root"></div>' +
+    // wb-live-css stays EMPTY: restyle() replaces its textContent on every
+    // edit, so anything parked in it is wiped the first time a knob moves. The
+    // scaffolding rule for the heading lives in the block above with the rest
+    // of the frame's own styling.
+    '<style id="wb-live-css"></style></head>' +
+    // No h1, deliberately, after trying one. A hidden "Slider preview" heading
+    // silenced page-has-heading-one and then produced NINE heading-order
+    // findings instead, because a snippet's own h2 or h3 is the next heading
+    // after it and nothing bridges the gap. The snippet's headings are the
+    // content here; inventing one above them to satisfy a rule is scaffolding
+    // pretending to be a page, and it made the audit noisier, not truer.
+    '<body><main aria-label="Slider preview"><div id="wb-live-root"></div></main>' +
     '<script src="../dist/custom-slider.js"><' +
     '/script></body></html>';
 

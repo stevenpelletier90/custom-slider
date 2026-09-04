@@ -113,9 +113,32 @@ function controlContrast() {
   return out;
 }
 
+// Every frame, not just the top document. The builder's preview became an
+// iframe so that a media query asks a window of the previewed width - which
+// also moved the slider out of reach of an audit that only ever looked at
+// `document`. axe reported a clean run over pages that no longer contained the
+// thing being audited, and the control-contrast check below had nothing to
+// measure. A silent pass is the worst outcome an audit has.
+const everyFrame = async (fn) => {
+  const out = [];
+  for (const f of page.frames()) {
+    try {
+      await f.evaluate(AXE);
+      out.push(await fn(f));
+    } catch {
+      /* a frame that navigated mid-audit is not a finding */
+    }
+  }
+  return out;
+};
+
 async function audit(where) {
   states++;
-  await page.evaluate(AXE);
+  // axe walks same-origin iframes ITSELF - but only where it has been injected,
+  // and page.evaluate reaches the main frame alone. So inject everywhere and
+  // run ONCE from the top: running it per frame as well double-counts every
+  // finding and compares landmarks across documents that are not the same page.
+  await everyFrame(() => null);
   const res = await page.evaluate((opts) => globalThis.axe.run(document, opts), RUN);
   for (const v of res.violations) {
     for (const n of v.nodes) {
@@ -139,7 +162,10 @@ async function audit(where) {
   // WCAG 1.4.11 wants 3:1 for a control against its background. These are the
   // engine's own controls, which are the frozen part of the contract - a strip
   // whose arrows cannot be seen is broken for everyone using that look.
-  for (const c of await page.evaluate(controlContrast)) {
+  // Same reason as the axe run above: the controls live in the preview frame on
+  // the builder page and in this document everywhere else, so ask every frame.
+  const contrast = (await everyFrame((f) => f.evaluate(controlContrast))).flat().filter(Boolean);
+  for (const c of contrast) {
     const key = `control|${c.what}|${c.fg}|${c.behind}`;
     if (seen.has(key)) continue;
     seen.add(key);
@@ -205,9 +231,12 @@ await page.waitForTimeout(400);
 // it opens, so a load-time audit never sees either of these.
 await page.locator('#wb-nav button[data-go="media-gallery"]').click();
 await page.waitForTimeout(700);
-await page.locator('#wb-stage .cs-thumb').nth(2).click();
+// The preview is an iframe now, so these live in its document rather than
+// this one - and axe is run with the frame included below for the same reason.
+const stage = page.frameLocator('#wb-stage');
+await stage.locator('.cs-thumb').nth(2).click();
 await page.waitForTimeout(800);
-await page.locator('#wb-stage .cs-slide:not([inert]) [data-video]').first().click();
+await stage.locator('.cs-slide:not([inert]) [data-video]').first().click();
 await page.waitForTimeout(600);
 await audit('video dialog open');
 await page.keyboard.press('Escape');
@@ -215,7 +244,7 @@ await page.waitForTimeout(400);
 
 await page.locator('#wb-nav button[data-go="lightbox"]').click();
 await page.waitForTimeout(700);
-await page.locator('#wb-stage [data-lb-open]').click();
+await stage.locator('[data-lb-open]').click();
 await page.waitForTimeout(800);
 await audit('lightbox dialog open');
 

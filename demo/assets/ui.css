@@ -1273,7 +1273,14 @@ code {
   font-stretch: 112%;
 }
 
-.ui-doc p {
+/* Doc prose, but never inside a live example. A card's name is a <p>, and this
+   rule reached it: the tall tile's names came out --ink-soft on its own dark
+   strip at 2.83:1, because `.ui-doc p` is (0,1,1) and the card sheet's
+   `:where(.cargo-portrait) .cargo-name` is (0,1,0) - :where() contributes
+   nothing, which is exactly what makes a designer's own rule win on a dealer
+   page and what makes the demo's chrome win here. The examples are not this
+   page's prose and must take none of its styling. */
+.ui-doc p:not(.gx-stage p) {
   max-inline-size: 72ch;
   color: var(--ink-soft);
 }
