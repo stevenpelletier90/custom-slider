@@ -7,9 +7,9 @@ import { openBuilder } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
-let page;
+let page, errors;
 test.beforeAll(async ({ browser }) => {
-  ({ page } = await openBuilder(browser));
+  ({ page, errors } = await openBuilder(browser));
 });
 
 test('text, int, list and bool call back with the typed value', async () => {
@@ -94,4 +94,10 @@ test('the card-style picker shows every look and reports a click', async () => {
   assert.equal(got.count, 7);
   assert.deepEqual(got.pressed, ['tile']);
   assert.equal(got.picked, 'vcard');
+});
+
+test.describe('nothing threw', () => {
+  test('no page errors', () => {
+    assert.deepEqual(errors, []);
+  });
 });

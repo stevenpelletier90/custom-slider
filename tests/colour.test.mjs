@@ -7,9 +7,9 @@ import { openBuilder, pick, rowByLabel, copyParts } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
-let page;
+let page, errors;
 test.beforeAll(async ({ browser }) => {
-  ({ page } = await openBuilder(browser, 1440));
+  ({ page, errors } = await openBuilder(browser, 1440));
   await pick(page, 'modelbar');
 });
 
@@ -90,6 +90,12 @@ test('Clear puts the default back and drops the declaration', async () => {
   await page.waitForTimeout(120);
   const { css } = await copyParts(page);
   assert.doesNotMatch(css, /--cs-arrow-bg:\s*#123456/);
+  // The model bar sets its own Arrow background to transparent, which is not
+  // the engine's default (rgba(0, 0, 0, 0.55)) - so Clear restores that
+  // pattern default and the delta filter in cssFor() keeps the declaration
+  // rather than dropping it. "Dropped" only holds where the default in play
+  // IS the engine's; here the surviving declaration has to equal the pattern's.
+  assert.match(css, /--cs-arrow-bg:\s*transparent;/, "Clear did not restore the model bar's own default");
 });
 
 test('currentcolor stays a text field', async () => {
@@ -106,4 +112,10 @@ test('currentcolor stays a text field', async () => {
       .evaluate((el) => el.style.getPropertyValue('--sw')),
     'transparent',
   );
+});
+
+test.describe('nothing threw', () => {
+  test('no page errors', () => {
+    assert.deepEqual(errors, []);
+  });
 });

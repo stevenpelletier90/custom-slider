@@ -37,26 +37,28 @@ const stageBox = (page) =>
   });
 
 test('folders come in decision order on the model bar', async ({ browser }) => {
-  const { page } = await openBuilder(browser, 1440);
+  const { page, errors } = await openBuilder(browser, 1440);
   await pick(page, 'modelbar');
   assert.deepEqual(await titles(page), ['Brand and card style', 'How many across', 'This card style', 'Arrows and dots', 'Behaviour', 'Advanced']);
   assert.equal(await expanded(page, 'Advanced'), false, 'Advanced starts closed');
   assert.equal(await expanded(page, 'Brand and card style'), true);
+  assert.deepEqual(errors, []);
 });
 
 // Pinned UNDER the masthead, not behind it: the masthead is sticky at 0 and
 // 3.5rem tall, and a preview pinned at 1rem had its top 40px painted over.
 test('the preview pins below the masthead when the settings scroll', async ({ browser }) => {
-  const { page } = await openBuilder(browser, 1440);
+  const { page, errors } = await openBuilder(browser, 1440);
   await page.evaluate(() => window.scrollTo(0, 600));
   await page.waitForTimeout(400);
   const box = await stageBox(page);
   assert.ok(box.wrap.top >= box.headBottom, `the stage (${box.wrap.top}) is under the masthead (${box.headBottom})`);
   assert.ok(box.wrap.top <= box.headBottom + 32, `the stage sits ${Math.round(box.wrap.top - box.headBottom)}px below the masthead, which is not pinned`);
+  assert.deepEqual(errors, []);
 });
 
 test('the preview is in flow, above the settings, at 1024', async ({ browser }) => {
-  const { page } = await openBuilder(browser, 1024);
+  const { page, errors } = await openBuilder(browser, 1024);
   const pos = await page.evaluate(() => getComputedStyle(document.querySelector('.ui-preview')).position);
   assert.equal(pos, 'static');
   const order = await page.evaluate(() => {
@@ -65,6 +67,7 @@ test('the preview is in flow, above the settings, at 1024', async ({ browser }) 
     return preview.getBoundingClientRect().top < panel.getBoundingClientRect().top;
   });
   assert.equal(order, true, 'the preview is below the settings at 1024');
+  assert.deepEqual(errors, []);
 });
 
 // The whole point of the round: a 1200px frame in a ~790px column is SHOWN
@@ -74,7 +77,7 @@ test('a frame wider than its column is scaled to fit, not clipped', async ({ bro
     [1440, '1200'],
     [1024, '992'],
   ]) {
-    const { page } = await openBuilder(browser, w);
+    const { page, errors } = await openBuilder(browser, w);
     await page.click(`.ui-widths button[data-w="${want}"]`);
     await page.waitForTimeout(400);
     const box = await stageBox(page);
@@ -85,22 +88,25 @@ test('a frame wider than its column is scaled to fit, not clipped', async ({ bro
     assert.ok(box.frame.bottom <= box.wrap.bottom + 1, `at ${w}: the frame runs past the bottom of the stage`);
     assert.equal(box.frameClient, +want, `at ${w}: the frame stopped being a real ${want}px window`);
     assert.ok(box.shownAt !== null && box.shownAt !== '100%', `at ${w}: the readout does not say the preview is scaled (${box.shownAt})`);
+    assert.deepEqual(errors, [], `at ${w}: a page error occurred`);
   }
 });
 
 test('the desktop frame is still a 1170px container at 1440', async ({ browser }) => {
-  const { page } = await openBuilder(browser, 1440);
+  const { page, errors } = await openBuilder(browser, 1440);
   await page.click('.ui-widths button[data-w="1200"]');
   await page.waitForTimeout(400);
   const box = await stageBox(page);
   assert.equal(box.rootWidth, 1170, 'the slider inside the frame is no longer in a 1170px container');
+  assert.deepEqual(errors, []);
 });
 
 test('a frame that fits is not scaled at all', async ({ browser }) => {
-  const { page } = await openBuilder(browser, 1440);
+  const { page, errors } = await openBuilder(browser, 1440);
   await page.click('.ui-widths button[data-w="390"]');
   await page.waitForTimeout(400);
   const box = await stageBox(page);
   assert.equal(box.transform, 'none', 'a 390px frame in a 790px column is being transformed');
   assert.equal(box.shownAt, null, 'the readout claims a scale on a preview shown at full size');
+  assert.deepEqual(errors, []);
 });

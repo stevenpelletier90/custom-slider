@@ -509,11 +509,6 @@ body {
   border-radius: 12px 12px 0 0;
 }
 
-/* The preview is capped to a real Bootstrap 3 .container width by default.
-   Left to fill the column it renders ~23% narrower than the page the slider
-   will actually live in, which made the fit gauge report "tight" for layouts
-   that are fine in production. */
-
 /* border: 0 is load-bearing, not tidying. An iframe's default 2px inset border
    comes out of its VIEWPORT, so a frame set to 390px gave the slider a 386px
    window and every measurement landed 4px short of a real phone - which is the

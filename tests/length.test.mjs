@@ -13,9 +13,9 @@ import { openBuilder, pick, rowByLabel, copyParts } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
-let page;
+let page, errors;
 test.beforeAll(async ({ browser }) => {
-  ({ page } = await openBuilder(browser, 1440));
+  ({ page, errors } = await openBuilder(browser, 1440));
   await pick(page, 'modelbar');
 });
 
@@ -155,4 +155,10 @@ test('a multi-value knob stays a text field', async () => {
   for (const label of ['Plate padding', 'Side gutter']) {
     assert.equal(await rowByLabel(page, label).locator('select').count(), 0, `${label} became a length row`);
   }
+});
+
+test.describe('nothing threw', () => {
+  test('no page errors', () => {
+    assert.deepEqual(errors, []);
+  });
 });

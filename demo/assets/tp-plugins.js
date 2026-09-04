@@ -9,7 +9,12 @@
 // Classic script on purpose: the demo opens over file://.
 (() => {
   const CARGO = (globalThis.CARGO ??= {});
-  const { createPlugin, parseRecord, ClassName, BladeController, BladeApi } = CARGO.tp;
+  // Same guard as pane.js: a stale checkout over file:// can be missing the
+  // vendor bundle, and pane.create() already shows "The settings panel could
+  // not load..." for that case - this file must not throw before it runs.
+  const tp = CARGO.tp;
+  if (!tp) return;
+  const { createPlugin, parseRecord, ClassName, BladeController, BladeApi } = tp;
 
   /* ---- note: a paragraph inside a folder ------------------------------- */
 

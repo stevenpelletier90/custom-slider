@@ -105,15 +105,29 @@ test.describe('the settings come back with the slides once they are kept', () =>
     assert.doesNotMatch(r.code, /cs-xs-2\.5|cs-sm-99/, 'an out-of-range stored ladder value was restored');
   });
 
-  test('a width the window forced is not remembered as a choice', async () => {
+  test('a resize scales the picture rather than reseating the chosen width', async () => {
     await pick(page, 'modelbar');
+    // The width buttons save immediately (setFrame -> saveFrame -> flushSettings)
+    // rather than waiting on the Keep/Reset pair, because the frame stands for
+    // the screen being designed for, not a per-pattern edit.
     await page.click('.ui-widths button[data-w="1200"]');
     await page.waitForTimeout(150);
-    // Shrink until the 1200 frame no longer fits, so the builder steps down.
+    // Shrink well past where a 1200px frame fits in the column. There is no
+    // step-down any more: a frame wider than the stage is SCALED
+    // (transform: scale(k) on #wb-stage, with the readout saying "Shown at
+    // nn%"), so the width button stays pressed at 1200 and the kept choice is
+    // never overwritten by a size the window merely forced.
     await page.setViewportSize({ width: 900, height: 900 });
     await page.waitForTimeout(300);
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('cs-settings') ?? '{}').frame);
-    assert.equal(stored, 1200, `the forced step-down overwrote the chosen width with ${stored}`);
+    assert.equal(stored, 1200, `a resize overwrote the chosen width with ${stored}`);
+    assert.equal((await shown(page)).frame, '1200', 'a resize reseated the width button');
+    const scale = await page.evaluate(() => ({
+      hidden: document.getElementById('spec-scale-item').hidden,
+      pct: document.getElementById('spec-scale').textContent,
+    }));
+    assert.equal(scale.hidden, false, 'the scale readout is not shown for a 1200px frame narrower than the stage');
+    assert.ok(parseFloat(scale.pct) < 100, `the readout says ${scale.pct}, not scaled under 100%`);
     await page.setViewportSize({ width: 1500, height: 900 });
     await page.waitForTimeout(300);
   });
