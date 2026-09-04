@@ -409,11 +409,12 @@ Rebuild and re-commit `dist/` whenever `src/` changes.
 
 ## Verification checklist (run before shipping changes)
 
-1. `npm run size` and `npm run validate` pass, and `npm test` is green — 13
-   browser checks of what the copy panel hands over, about ten seconds. They
-   cover what a linter cannot: that the pasted code still lays itself out, and
-   lays itself out the way the preview did. They are not a substitute for the
-   rest of this list, which is the sweep across every pattern and width.
+1. `npm run size` and `npm run validate` pass, and `npm test` is green — 180
+   browser checks under `@playwright/test` of what the copy panel hands over,
+   about 50 seconds. They cover what a linter cannot: that the pasted code
+   still lays itself out, and lays itself out the way the preview did. They
+   are not a substitute for the rest of this list, which is the sweep across
+   every pattern and width.
 2. Demo page: Lighthouse accessibility = 100, performance ≈ 100, CLS = 0.
 3. Keyboard-only: tab order is pause → prev → next → dots → cards; gallery
    tabs respond to Arrow/Home/End; focus is never trapped or lost.

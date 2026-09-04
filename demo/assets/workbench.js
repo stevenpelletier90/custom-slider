@@ -2914,7 +2914,9 @@ ${PHOTO_CSS}
     // Memory always; disk only when Keep asked. The entry is written even
     // unchanged, because "what this pattern looked like when I left it" is what
     // restoreSettings reads on the way back.
-    readSettings().byPattern[state.pattern] = Object.fromEntries(SAVED.map((k) => [k, state[k]]));
+    // pane: nothing reads this back yet - it is the hook a shareable link will
+    // use. exportState() is why it costs one line here rather than a rebuild.
+    readSettings().byPattern[state.pattern] = { ...Object.fromEntries(SAVED.map((k) => [k, state[k]])), pane: pane.pane?.exportState() ?? null };
     if (force) flushSettings();
   };
 
