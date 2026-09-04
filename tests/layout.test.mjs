@@ -1,6 +1,13 @@
 // The panel reads in the order decisions get made, nothing splits, the preview
 // stays on screen while the settings scroll - and it is never cut off: a frame
-// wider than its column is scaled down, never clipped and never capped.
+// wider or taller than the box it is shown in is scaled down, never clipped
+// and never capped.
+//
+// One column now, at every width: the preview on top and the settings under
+// it. The two-column layout it replaced gave the preview about 790px of a 1440
+// window, so the Desktop frame was shown at 63% - a picture of the slider
+// rather than the slider. Full width makes that same frame life size, and
+// these tests are what says so.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
 import { openBuilder, pick } from './helpers.mjs';
@@ -19,13 +26,23 @@ const stageBox = (page) =>
     const wrap = document.querySelector('.wb-stage');
     const frame = document.getElementById('wb-stage');
     const head = document.querySelector('.ui-head');
+    const preview = document.querySelector('.ui-preview');
     const w = wrap.getBoundingClientRect();
     const f = frame.getBoundingClientRect();
+    const p = preview.getBoundingClientRect();
     return {
       wrap: { top: w.top, bottom: w.bottom, left: w.left, right: w.right },
       frame: { top: f.top, bottom: f.bottom, left: f.left, right: f.right },
+      preview: { top: p.top, bottom: p.bottom, height: p.height },
+      // A pinned preview that has to be scrolled to see the bottom of the
+      // frame is the failure the cap exists to prevent, so ask it directly.
+      previewScrolls: preview.scrollHeight > preview.clientHeight + 1,
+      specBottom: document.querySelector('.ui-spec').getBoundingClientRect().bottom,
+      panelTop: document.querySelector('.ui-panel').getBoundingClientRect().top,
+      position: getComputedStyle(preview).position,
       headBottom: head.getBoundingClientRect().bottom,
       transform: getComputedStyle(frame).transform,
+      winH: innerHeight,
       // The layout width the media queries inside the frame actually see, and
       // the container the slider gets inside it. Neither may move when the
       // picture is scaled.
@@ -35,6 +52,8 @@ const stageBox = (page) =>
       shownAt: document.getElementById('spec-scale-item').hidden ? null : document.getElementById('spec-scale').textContent,
     };
   });
+
+const pct = (s) => parseFloat(/(\d+)%/.exec(s ?? '')?.[1] ?? 'NaN');
 
 test('folders come in decision order on the model bar', async ({ browser }) => {
   const { page, errors } = await openBuilder(browser, 1440);
@@ -47,35 +66,50 @@ test('folders come in decision order on the model bar', async ({ browser }) => {
 
 // Pinned UNDER the masthead, not behind it: the masthead is sticky at 0 and
 // 3.5rem tall, and a preview pinned at 1rem had its top 40px painted over.
+// Both widths, because the pinning is no longer something only a 1200px window
+// gets - the settings pass under the preview at every size now.
 test('the preview pins below the masthead when the settings scroll', async ({ browser }) => {
-  const { page, errors } = await openBuilder(browser, 1440);
-  await page.evaluate(() => window.scrollTo(0, 600));
-  await page.waitForTimeout(400);
-  const box = await stageBox(page);
-  assert.ok(box.wrap.top >= box.headBottom, `the stage (${box.wrap.top}) is under the masthead (${box.headBottom})`);
-  assert.ok(box.wrap.top <= box.headBottom + 32, `the stage sits ${Math.round(box.wrap.top - box.headBottom)}px below the masthead, which is not pinned`);
-  assert.deepEqual(errors, []);
+  for (const w of [1440, 1024]) {
+    const { page, errors } = await openBuilder(browser, w);
+    await page.evaluate(() => window.scrollTo(0, 600));
+    await page.waitForTimeout(400);
+    const box = await stageBox(page);
+    assert.equal(box.position, 'sticky', `at ${w}: the preview is not pinned`);
+    assert.ok(box.wrap.top >= box.headBottom, `at ${w}: the stage (${box.wrap.top}) is under the masthead (${box.headBottom})`);
+    assert.ok(box.wrap.top <= box.headBottom + 32, `at ${w}: the stage sits ${Math.round(box.wrap.top - box.headBottom)}px below the masthead, which is not pinned`);
+    assert.deepEqual(errors, [], `at ${w}: a page error occurred`);
+  }
 });
 
-test('the preview is in flow, above the settings, at 1024', async ({ browser }) => {
-  const { page, errors } = await openBuilder(browser, 1024);
-  const pos = await page.evaluate(() => getComputedStyle(document.querySelector('.ui-preview')).position);
-  assert.equal(pos, 'static');
-  const order = await page.evaluate(() => {
-    const preview = document.querySelector('.ui-preview');
-    const panel = document.querySelector('.ui-panel');
-    return preview.getBoundingClientRect().top < panel.getBoundingClientRect().top;
-  });
-  assert.equal(order, true, 'the preview is below the settings at 1024');
-  assert.deepEqual(errors, []);
+// It used to be the settings first and the preview beside them from 1200px up,
+// and above them below that - two layouts and an `order` swap to reconcile the
+// second with the DOM. One column, preview first, at every width now.
+test('the preview is above the settings at every width', async ({ browser }) => {
+  for (const w of [1440, 1024]) {
+    const { page, errors } = await openBuilder(browser, w);
+    const box = await stageBox(page);
+    assert.ok(box.preview.top < box.panelTop, `at ${w}: the preview (${Math.round(box.preview.top)}) is not above the settings (${Math.round(box.panelTop)})`);
+    const source = await page.evaluate(() => {
+      const kids = [...document.querySelector('.ui-work').children];
+      return kids.findIndex((k) => k.classList.contains('ui-preview')) < kids.findIndex((k) => k.classList.contains('ui-panel'));
+    });
+    assert.equal(source, true, `at ${w}: the visual order is reading order by CSS, not in the markup`);
+    // The pair that acts on the whole panel stays at the top of it, right
+    // under the preview it changes.
+    const keepFirst = await page.evaluate(() => document.querySelector('.ui-panel').firstElementChild.classList.contains('ui-panel-bar'));
+    assert.equal(keepFirst, true, `at ${w}: Keep/Reset is no longer the first thing in the panel`);
+    assert.deepEqual(errors, [], `at ${w}: a page error occurred`);
+  }
 });
 
-// The whole point of the round: a 1200px frame in a ~790px column is SHOWN
-// smaller, never cut off, and the numbers under it stay the real ones.
-test('a frame wider than its column is scaled to fit, not clipped', async ({ browser }) => {
-  for (const [w, want] of [
-    [1440, '1200'],
-    [1024, '992'],
+// The whole point of the earlier round, and still true: a frame wider than the
+// stage is SHOWN smaller, never cut off, and the numbers under it stay the
+// real ones. What changed is where it bites - at 1440 the stage is the whole
+// width now, so it is the laptop window that has to scale.
+test('a frame wider than its stage is scaled to fit, not clipped', async ({ browser }) => {
+  for (const [w, want, atMost] of [
+    [1024, '1200', 80],
+    [1024, '992', 90],
   ]) {
     const { page, errors } = await openBuilder(browser, w);
     await page.click(`.ui-widths button[data-w="${want}"]`);
@@ -87,9 +121,22 @@ test('a frame wider than its column is scaled to fit, not clipped', async ({ bro
     );
     assert.ok(box.frame.bottom <= box.wrap.bottom + 1, `at ${w}: the frame runs past the bottom of the stage`);
     assert.equal(box.frameClient, +want, `at ${w}: the frame stopped being a real ${want}px window`);
-    assert.ok(box.shownAt !== null && box.shownAt !== '100%', `at ${w}: the readout does not say the preview is scaled (${box.shownAt})`);
+    assert.ok(pct(box.shownAt) <= atMost, `at ${w}: the readout says ${box.shownAt}, not scaled down to fit`);
     assert.deepEqual(errors, [], `at ${w}: a page error occurred`);
   }
+});
+
+// What the round was for. The two-column layout showed this frame at 63%; the
+// stage is the full width of the work area now, so it is life size and the
+// only thing scaled away is the 10px the page's own gutters cost.
+test('the desktop frame is life size on a 1440 window', async ({ browser }) => {
+  const { page, errors } = await openBuilder(browser, 1440);
+  await page.click('.ui-widths button[data-w="1200"]');
+  await page.waitForTimeout(400);
+  const box = await stageBox(page);
+  assert.ok(pct(box.shownAt) >= 95, `the desktop frame is shown at ${box.shownAt} on a 1440 window, which is not life size`);
+  assert.equal(box.frameClient, 1200, 'the frame stopped being a real 1200px window');
+  assert.deepEqual(errors, []);
 });
 
 test('the desktop frame is still a 1170px container at 1440', async ({ browser }) => {
@@ -106,7 +153,31 @@ test('a frame that fits is not scaled at all', async ({ browser }) => {
   await page.click('.ui-widths button[data-w="390"]');
   await page.waitForTimeout(400);
   const box = await stageBox(page);
-  assert.equal(box.transform, 'none', 'a 390px frame in a 790px column is being transformed');
+  assert.equal(box.transform, 'none', 'a 390px frame in a 1190px stage is being transformed');
   assert.equal(box.shownAt, null, 'the readout claims a scale on a preview shown at full size');
+  assert.deepEqual(errors, []);
+});
+
+// A pinned preview that takes the whole window leaves a sliver of settings to
+// work in, so it is capped at 55vh - and the cap has to SHORTEN the picture,
+// not hide the bottom of it. Tall photos is the pattern that proves it: 802px
+// of frame at 1200, against a 495px box on a 900px window.
+test('the height cap keeps the pinned preview inside 55vh on a tall pattern', async ({ browser }) => {
+  const { page, errors } = await openBuilder(browser, 1440);
+  await pick(page, 'models');
+  await page.click('.ui-widths button[data-w="1200"]');
+  await page.waitForTimeout(600);
+  const box = await stageBox(page);
+  assert.ok(box.preview.height <= box.winH * 0.55 + 1, `the pinned preview is ${Math.round(box.preview.height)}px of a ${box.winH}px window, past the 55vh cap`);
+  assert.ok(box.frame.bottom <= box.preview.bottom + 1, `the frame runs ${Math.round(box.frame.bottom - box.preview.bottom)}px past the bottom of the preview`);
+  // The cap has to reach the SCALE, not just clip the box: with the width
+  // alone deciding, this frame is drawn 99% of 802px tall inside a 495px box
+  // and the readout under it goes below the fold of a preview that exists so
+  // nothing has to be scrolled to.
+  assert.equal(box.previewScrolls, false, 'the pinned preview has to be scrolled to see all of the frame');
+  assert.ok(box.specBottom <= box.preview.bottom + 1, `the readout is ${Math.round(box.specBottom - box.preview.bottom)}px below the bottom of the preview it belongs to`);
+  assert.ok(box.specVisible, 'the readout is off screen under a preview that is meant to fit');
+  assert.ok(pct(box.shownAt) < 100, `the readout says ${box.shownAt} on a frame the cap had to shrink`);
+  assert.equal(box.frameClient, 1200, 'the frame stopped being a real 1200px window');
   assert.deepEqual(errors, []);
 });

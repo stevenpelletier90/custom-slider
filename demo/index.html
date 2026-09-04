@@ -77,30 +77,16 @@
         <h2 class="ui-title" id="wb-title"></h2>
         <p class="ui-blurb" id="wb-blurb"></p>
 
-        <!-- Settings on one side, the preview on the other. From 1200px up the
-             preview is pinned (assets/ui.css), so a change to a setting is seen
-             without scrolling back up to it; below that the preview goes above
-             the settings and stays in flow, which is what a laptop has room
-             for. One wrapper, because the two are a pair: the pinning only
-             works if they share a grid row. -->
+        <!-- The preview on top and the settings under it, one column at every
+             width. The preview is pinned (assets/ui.css) and the settings
+             scroll beneath it, so a change to a knob is seen without scrolling
+             back up to the stage. It reads in source order now - no `order`
+             swap - because the DOM order and the reading order finally agree.
+             One wrapper, because the two are a pair: a sticky element is
+             constrained to its containing block, so the preview only has
+             something to slide within while the settings sit inside this same
+             element. -->
         <div class="ui-work">
-          <!-- Settings are a scratchpad until you say otherwise. They used to
-             write themselves to localStorage on every render, so a value typed
-             to see what it looked like was still there a week later, on a
-             pattern the designer had forgotten touching - and the shipped
-             default it hid never came back. Keep is deliberate now, and Reset
-             puts this pattern back to what it ships as. -->
-          <div class="ui-panel">
-            <div class="ui-panel-bar">
-              <span id="wb-dirty" class="ui-dirty" hidden>Unsaved changes</span>
-              <span class="ui-panel-acts">
-                <button type="button" class="ui-btn" id="wb-keep">Keep these settings</button>
-                <button type="button" class="ui-btn" id="wb-reset">Reset to the default</button>
-              </span>
-            </div>
-            <div id="wb-settings"></div>
-          </div>
-
           <div class="ui-preview">
             <h3 class="ui-sr">Live preview</h3>
             <!-- The preview is an IFRAME, not a div, and that is the point: a media
@@ -159,12 +145,15 @@
                   </button>
                 </span>
               </span>
-              <!-- Only there when the preview is scaled. A frame wider than
-                   the column is shown smaller rather than cut off, and the
-                   numbers beside this one are the REAL px of a real window of
-                   the width on the button - so without this line a 45% preview
-                   reads as a small slider. -->
-              <span class="ui-spec-item" id="spec-scale-item" hidden><b>Shown at</b> <span id="spec-scale">100%</span></span>
+              <!-- Only there when the preview is scaled, or when the window is
+                   too narrow to be worth showing the chosen screen on. A frame
+                   wider than the stage is shown smaller rather than cut off,
+                   and the numbers beside this one are the REAL px of a real
+                   window of the width on the button - so without this line a
+                   45% preview reads as a small slider. Both halves are written
+                   by fitFrameScale(): the label says whether you are looking at
+                   the screen you picked, the value says at what size. -->
+              <span class="ui-spec-item" id="spec-scale-item" hidden><b id="spec-scale-label">Shown at</b> <span id="spec-scale">100%</span></span>
               <span class="ui-spec-item"><b>Card size</b> <span id="spec-card">—</span></span>
               <span class="ui-spec-item"><b>Cards shown</b> <span id="spec-across">—</span></span>
               <span class="ui-spec-item"><b>Gap</b> <span id="spec-gap">—</span></span>
@@ -175,6 +164,24 @@
               >
               <span class="ui-spec-note" id="wb-warn" hidden></span>
             </div>
+          </div>
+
+          <!-- Settings are a scratchpad until you say otherwise. They used to
+             write themselves to localStorage on every render, so a value typed
+             to see what it looked like was still there a week later, on a
+             pattern the designer had forgotten touching - and the shipped
+             default it hid never came back. Keep is deliberate now, and Reset
+             puts this pattern back to what it ships as. Keep and Reset stay at
+             the TOP of the panel, right under the preview they act on. -->
+          <div class="ui-panel">
+            <div class="ui-panel-bar">
+              <span id="wb-dirty" class="ui-dirty" hidden>Unsaved changes</span>
+              <span class="ui-panel-acts">
+                <button type="button" class="ui-btn" id="wb-keep">Keep these settings</button>
+                <button type="button" class="ui-btn" id="wb-reset">Reset to the default</button>
+              </span>
+            </div>
+            <div id="wb-settings"></div>
           </div>
         </div>
 

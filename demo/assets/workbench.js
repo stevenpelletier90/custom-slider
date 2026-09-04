@@ -27,6 +27,14 @@
   // so the two halves of the same screen named the same tier differently and
   // neither said these were screen widths. Both read from here now.
   const TIER_LABEL = { base: 'Phone · under 768', 768: 'Tablet · 768+', 992: 'Laptop · 992+', 1200: 'Desktop · 1200+' };
+  // The width buttons are the same four tiers by their SCREEN width, which is
+  // what a media query asks. Derived from TIER_LABEL rather than typed out
+  // again, so a renamed tier cannot end up called two things on one page.
+  const SCREEN = { 390: TIER_LABEL.base, 768: TIER_LABEL[768], 992: TIER_LABEL[992], 1200: TIER_LABEL[1200] };
+  // Just the name - "Desktop", not "Desktop · 1200+". A sentence about which
+  // screen you are looking at reads worse with the breakpoint in the middle of
+  // it, and the breakpoint is already on the button's tooltip.
+  const tierName = (w) => (SCREEN[w] ?? '').split(' · ')[0];
 
   // A number typed into a slide field reaches the markup, and markup that
   // throws takes the whole builder with it: `'&star;'.repeat(5 - 6)` raises
@@ -926,6 +934,14 @@ ${PHOTO_CSS}
   // on which tier that is: what the preview draws, and what the fit gauge
   // thinks a real page would give.
   let frameW = 1200; // the pressed width button, 0 for "fill"
+  // The width the DESIGNER picked, which is not always the one on screen: a
+  // window too narrow to show it at half size steps the preview down a tier
+  // (showFrame() below), and the choice has to survive that untouched so
+  // widening the window puts it straight back. Two variables because they
+  // answer two different questions - "what is being previewed" and "what was
+  // asked for" - and one variable answering both is how a resize used to
+  // overwrite a kept setting.
+  let chosenW = 1200;
 
   const gapPx = () => {
     const g = state.props['--cs-gap'] ?? '1em';
@@ -1653,12 +1669,60 @@ ${PHOTO_CSS}
     fitFrameScale();
   }
 
-  // The frame is a real window of the width on the button, and the preview
-  // column is narrower than one on any normal screen - about 790px at 1440 with
-  // the settings beside it. It is SCALED to fit, never shrunk and never cut
-  // off: the iframe keeps its true inline-size, so its media queries fire at
-  // the width they would on the device and every number in the readout is a
-  // real px on a real window. transform changes the picture and nothing else.
+  // The room the stage has for a frame, in real px: its content box, padding
+  // and border taken off. One function because two callers have to agree on
+  // it - the scale below, and the tier floor in showFrame() that decides
+  // which width is worth previewing at all.
+  function stageAvail() {
+    const box = stage?.parentElement;
+    if (!box) return 0;
+    const cs = getComputedStyle(box);
+    return box.clientWidth - parseFloat(cs.paddingInlineStart) - parseFloat(cs.paddingInlineEnd);
+  }
+
+  // The height the stage may occupy, read back off the CSS cap on .ui-preview
+  // rather than guessed. The preview is pinned under the masthead and capped
+  // at 55vh, so a frame taller than the cap would need the preview scrolled to
+  // see the bottom of it - which is exactly what a pinned preview exists to
+  // avoid. The readout's own height comes off the cap because it lives inside
+  // it and has to stay readable; it is MEASURED, never a constant, because it
+  // wraps onto two or three lines depending on the window.
+  // No cap (the short-window fallback, where the preview goes back into flow)
+  // means no height to fit into - Infinity, so the width alone decides.
+  function stageAvailBlock() {
+    const box = stage?.parentElement;
+    const prev = box?.closest('.ui-preview');
+    if (!prev) return Infinity;
+    const cap = parseFloat(getComputedStyle(prev).maxBlockSize);
+    if (!Number.isFinite(cap)) return Infinity;
+    const cs = getComputedStyle(box);
+    const chrome = parseFloat(cs.paddingBlockStart) + parseFloat(cs.paddingBlockEnd) + parseFloat(cs.borderBlockStartWidth) + parseFloat(cs.borderBlockEndWidth);
+    // The readout's MARGINS count too: .ui-preview scrolls, so it is a block
+    // formatting context and the 1.5rem under the readout is scrollable
+    // overflow rather than collapsing away.
+    const spec = prev.querySelector('.ui-spec');
+    const scs = spec && getComputedStyle(spec);
+    const readout = spec ? spec.offsetHeight + parseFloat(scs.marginBlockStart) + parseFloat(scs.marginBlockEnd) : 0;
+    // Floor and a pixel of slack, because 55vh of an odd window height is a
+    // fraction: rounding the content one pixel past the cap would flip a
+    // scrollbar in, which narrows the stage, which rescales the frame, which
+    // takes the scrollbar back out - a loop, driven by the frame's own
+    // ResizeObserver, over one pixel.
+    return Math.floor(cap - readout - chrome) - 1;
+  }
+
+  // The frame is a real window of the width on the button, and the stage is
+  // whatever the page has room for - 1190px at 1440 with the settings under it
+  // rather than beside it, and a good deal less on a laptop. It is SCALED to
+  // fit, never shrunk and never cut off: the iframe keeps its true
+  // inline-size, so its media queries fire at the width they would on the
+  // device and every number in the readout is a real px on a real window.
+  // transform changes the picture and nothing else.
+  //
+  // Both axes, not just the width. The pinned preview is capped at 55vh so the
+  // settings under it stay usable, and a frame scaled to the width alone ran
+  // straight past that cap: a tall pattern put its bottom row behind the fold
+  // of a box that exists precisely so nothing has to be scrolled to.
   //
   // The negative margins are not decoration. A transform moves no layout box,
   // so without them the iframe still occupies its full unscaled width and
@@ -1674,24 +1738,33 @@ ${PHOTO_CSS}
     stage.style.transform = '';
     stage.style.marginInlineEnd = '';
     stage.style.marginBlockEnd = '';
-    const cs = getComputedStyle(box);
-    const avail = box.clientWidth - parseFloat(cs.paddingInlineStart) - parseFloat(cs.paddingInlineEnd);
+    const avail = stageAvail();
+    const availH = stageAvailBlock();
     // offsetWidth/offsetHeight, never getBoundingClientRect: the rect is the
     // TRANSFORMED box and offsetWidth is the layout one.
     const w = stage.offsetWidth;
     const h = stage.offsetHeight;
-    const k = w > 0 && avail > 0 && w > avail ? avail / w : 1;
+    const kW = w > 0 && avail > 0 ? avail / w : 1;
+    const kH = h > 0 && availH > 0 ? availH / h : 1;
+    const k = Math.min(kW, kH, 1);
     if (k < 1) {
       stage.style.transform = `scale(${k})`;
       stage.style.marginInlineEnd = `${-(w - w * k)}px`;
       stage.style.marginBlockEnd = `${-(h - h * k)}px`;
     }
     // A preview shown at 45% with a readout saying 1170px reads as a small
-    // slider unless the panel says which of the two it is looking at.
+    // slider unless the panel says which of the two it is looking at - and a
+    // preview showing a NARROWER screen than the button the designer pressed
+    // is worse than that, because the pressed button would be a lie. Say both
+    // in one line: which screen this is, and at what size.
     const pct = $('spec-scale');
     const item = $('spec-scale-item');
-    if (pct) pct.textContent = `${Math.round(k * 100)}%`;
-    if (item) item.hidden = k === 1;
+    const label = $('spec-scale-label');
+    const stepped = chosenW !== frameW;
+    const at = `${Math.round(k * 100)}%`;
+    if (label) label.textContent = stepped ? `${tierName(chosenW)} needs a wider window` : 'Shown at';
+    if (pct) pct.textContent = stepped ? `showing ${tierName(frameW)} at ${at}` : at;
+    if (item) item.hidden = k === 1 && !stepped;
   }
 
   // A measurement taken once is a measurement taken too early: images decode
@@ -3223,19 +3296,57 @@ ${PHOTO_CSS}
   // .container and you can step down through the other two tiers.
   const widthBtns = () => [...document.querySelectorAll('.ui-widths button')];
 
-  // `keep` false for a width the WINDOW forced rather than the designer chose:
-  // shrinking the browser steps the preview down, and that correction must not
-  // overwrite the width they picked and expect back next time.
+  // The tiers, widest first, and the size below which a preview stops being
+  // one. Half is the floor because a 1200px screen drawn 500px wide is a
+  // diagram of a slider: the type is unreadable, a 2px border is a hairline,
+  // and a card that is 4px short of fitting looks fine. Under it, the preview
+  // steps down a tier rather than carrying on shrinking.
+  const TIERS = [1200, 992, 768, 390];
+  const FLOOR = 0.5;
+
+  // The largest tier at or below the chosen one that the stage can show at the
+  // floor or better. Nothing is ever refused: if even a phone cannot clear the
+  // floor, the phone is what you get, scaled under it - a small preview beats
+  // no preview.
+  //
+  // Judged on the WIDTH alone, deliberately. The height a tier would come out
+  // at is not knowable without rendering it (a narrower screen wraps more and
+  // is usually taller), so a height-driven step-down would mean rendering each
+  // tier to ask - and the readout still reports the true scale either way.
+  function shownTier(chosen) {
+    if (!chosen) return 0; // Fill IS the stage; it always fits
+    const avail = stageAvail();
+    const down = TIERS.filter((t) => t <= chosen);
+    return down.find((t) => avail / t >= FLOOR) ?? down[down.length - 1];
+  }
+
+  // A click on a width button. `keep` false for a width restored from storage
+  // rather than chosen just now - re-saving it would be a write nobody asked
+  // for. What the window can or cannot hold is decided in showFrame(), never
+  // here: this records a decision, and a decision does not change when the
+  // browser is resized.
   const setFrame = (b, keep = true) => {
-    for (const x of widthBtns()) x.setAttribute('aria-pressed', String(x === b));
-    const w = +b.dataset.w;
+    chosenW = +b.dataset.w;
+    if (keep) saveFrame(chosenW);
+    showFrame();
+  };
+
+  // Presses and previews the tier that is actually worth looking at, which is
+  // the chosen one whenever the window can hold it and the next one down when
+  // it cannot. No button is ever disabled: clicking Desktop on a 600px window
+  // is a statement about the design, and the window is not entitled to refuse
+  // it - only to say, in the readout, that it is showing Laptop instead. Widen
+  // the window and the chosen tier comes back on its own, because chosenW was
+  // never touched.
+  function showFrame() {
+    const w = shownTier(chosenW);
+    for (const x of widthBtns()) x.setAttribute('aria-pressed', String(+x.dataset.w === w));
     stage.style.setProperty('--frame', w === 0 ? '100%' : `${w}px`);
     const moved = w !== frameW;
     frameW = w;
     // The preview's per-view is resolved for this frame now, so changing the
     // frame has to regenerate the CSS rather than only resize the box.
     if (moved) render();
-    if (keep) saveFrame(w);
     // fitFrameHeight, not fitFrameScale: a different frame width is a different
     // content height as well, and it ends by scaling. One call, so the height
     // and the scale can never be a frame apart.
@@ -3243,19 +3354,16 @@ ${PHOTO_CSS}
       fitFrameHeight();
       checkFit();
     });
-  };
+  }
 
-  // Every width is offered at every window size, and none is ever refused or
-  // stepped down. Two rules used to live here and both are gone with the same
-  // change: a width was refused when the COLUMN could not give it (the frame
-  // shrank to fit, so a Desktop button previewed 999px and still said Desktop),
-  // and then when the WINDOW could not (nothing on a 900px laptop to judge a
-  // 1200px screen against). fitFrameScale() answers both - the frame is always
-  // a real window of the width on the button, shown smaller when there is not
-  // room for it at full size, with the readout saying which. All that is left
-  // to do here is name the widths.
+  // Every width is OFFERED at every window size and none is ever disabled -
+  // that part has not changed. What is new is that the preview steps DOWN a
+  // tier when the window cannot show the chosen one at half size or better,
+  // and says so; the choice itself is kept and comes back with the width.
+  // Scaling answers the rest: the frame is always a real window of the width
+  // on the button, shown smaller when there is not room for it at full size.
+  // All that is left to do here is name the widths.
   function fitWidths() {
-    const SCREEN = { 390: TIER_LABEL.base, 768: TIER_LABEL[768], 992: TIER_LABEL[992], 1200: TIER_LABEL[1200] };
     // Bootstrap 3's own container for each screen. The button width is the
     // SCREEN, because that is what a media query asks; the slider gets the
     // narrower container inside it, and saying both is the honest label.
@@ -3415,13 +3523,18 @@ ${PHOTO_CSS}
     // the four finds no button. `keep: false` because the value came FROM
     // storage - re-saving it would be a write nobody asked for.
     const seat = widthBtns().find((b) => +b.dataset.w === readSettings().frame);
+    // showFrame() either way: with nothing stored the chosen width is the
+    // Desktop the markup ships pressed, and a window too narrow for it has to
+    // step down on the first paint rather than on the first resize.
     if (seat) setFrame(seat, false);
+    else showFrame();
     addEventListener('resize', () => {
       fitWidths();
-      // The column width is what the scale is measured against, so a window
-      // resize moves it even though the frame's own width has not changed.
-      fitFrameHeight();
-      checkFit();
+      // The stage width is what both the tier floor and the scale are measured
+      // against, so a window resize moves them even though the frame's own
+      // width has not changed. showFrame() ends in fitFrameHeight + checkFit,
+      // so this is one call and not three that could disagree.
+      showFrame();
     });
     fitWidths();
   };

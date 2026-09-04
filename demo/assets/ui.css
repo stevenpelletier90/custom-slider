@@ -333,59 +333,71 @@ body {
 }
 
 /* ---- work area ----------------------------------------------------------
-   Settings in one column, the preview beside it and pinned, so a change is
-   seen without scrolling back up. Below 1200px the preview goes back above
-   the settings and stays in flow: a laptop keeps its height.
+   One column at every width: the preview on top, the settings under it. It was
+   two columns from 1200px up, the settings in a 22-26rem rail and the preview
+   in what was left - which on a 1440 laptop is about 790px, so the 1200px
+   Desktop frame was shown at 63%. Judging a card style, a gap or a photo crop
+   at 63% is judging a picture of the thing rather than the thing. The preview
+   gets the WHOLE width now and that same frame renders at 99%, life size, with
+   nothing left to scale away.
 
-   The preview column is narrower than a 1170px .container on any normal
-   window, which used to mean a shrunken frame. It does not any more - the
-   frame keeps the width on the button and fitFrameScale() in workbench.js
-   scales the picture to the column, so the two-column layout costs no preview
-   fidelity and never cuts a card off. */
+   Nothing is ordered by CSS any more. The DOM says preview, then settings,
+   which is both the reading order and the visual one, so the `order` swaps
+   this block used to carry are gone with the second column.
+
+   A plain block box, not a grid: a sticky element is constrained to its
+   containing block, and a grid item's containing block is its own row - as
+   tall as the item, with nothing to slide within. In flow, the preview's
+   containing block is .ui-work, which is preview PLUS settings, and that is
+   the height it has to stay pinned over. */
 .ui-work {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr);
-  gap: 1.5rem;
+  display: block;
 }
 
+/* Pinned at every width now, not only where there was a second column to pin
+   it beside.
+
+   The masthead is sticky at 0, so a preview pinned any higher slides
+   underneath it - measured, the top 40px of the stage was painted over at
+   1rem. Its 3.5rem row plus its own 1px rule is 57px, which is why this is a
+   calc rather than the flat 3.5rem .ui-rail uses: the rail loses that pixel
+   under a border and nobody notices, here it is the top edge of a white
+   artboard.
+
+   The height cap and the scroll are the other half of the same borrowed rule:
+   a preview taller than the window would pin its top and put the readout under
+   it permanently out of reach. 55vh is the working number rather than the
+   whole window - the settings under it have to be usable while the preview is
+   held on screen, and a preview that takes the lot leaves a sliver of panel to
+   work in. fitFrameScale() in workbench.js reads this cap back off the
+   computed style and scales the frame into what is left of it, so the cap
+   shortens the picture instead of hiding the bottom of it.
+
+   z-index and a background are both load-bearing now that the settings pass
+   UNDER the preview instead of sitting beside it. Without the stacking context
+   the pane's own positioned rows interleaved with the frame - measured at 1440
+   scrolled 700px, panel rows painted over the stage while the slider's photos
+   painted over the panel, in one screenshot. Without the background the 1.5rem
+   under the readout is transparent, and the settings scrolled through the gap
+   in full view. --paper, so the strip reads as the page it is. */
 .ui-preview {
-  position: static;
-  min-inline-size: 0;
+  position: sticky;
+  inset-block-start: calc(3.5rem + 1px);
+  z-index: 2;
+  max-block-size: min(55vh, calc(100vh - 3.5rem - 1px));
+  overflow-y: auto;
+  background: var(--paper);
 }
 
-@media (width >= 1200px) {
-  .ui-work {
-    grid-template-columns: minmax(22rem, 26rem) minmax(0, 1fr);
-    align-items: start;
-  }
-
-  .ui-panel {
-    order: 0;
-  }
-
-  /* align-items: start is what makes this work: a stretched grid item is as
-     tall as the row and has nothing to slide within.
-
-     The masthead is sticky at 0, so a preview pinned any higher slides
-     underneath it - measured, the top 40px of the stage was painted over at
-     1rem. Its 3.5rem row plus its own 1px rule is 57px, which is why this is a
-     calc rather than the flat 3.5rem .ui-rail uses: the rail loses that pixel
-     under a border and nobody notices, here it is the top edge of a white
-     artboard. The height cap and the scroll are the other half of the same
-     borrowed rule: a preview taller than the window would pin its top and put
-     the readout under it permanently out of reach. */
+/* On a short window a pinned preview is not worth what it costs: 55vh of 600px
+   is 330px, and the settings would be read through a letterbox. Give the
+   height back and let the whole page scroll normally - and drop the cap with
+   it, which is what tells fitFrameScale() there is no height to fit into. */
+@media (height < 640px) {
   .ui-preview {
-    position: sticky;
-    inset-block-start: calc(3.5rem + 1px);
-    order: 1;
-    max-block-size: calc(100vh - 3.5rem - 1px);
-    overflow-y: auto;
-  }
-}
-
-@media (width < 1200px) {
-  .ui-preview {
-    order: -1;
+    position: static;
+    max-block-size: none;
+    overflow-y: visible;
   }
 }
 

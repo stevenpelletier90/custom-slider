@@ -105,31 +105,44 @@ test.describe('the settings come back with the slides once they are kept', () =>
     assert.doesNotMatch(r.code, /cs-xs-2\.5|cs-sm-99/, 'an out-of-range stored ladder value was restored');
   });
 
-  test('a resize scales the picture rather than reseating the chosen width', async () => {
+  // A resize may change the PICTURE - what is drawn, and how big - and may
+  // never change the DECISION. That was true when the only correction was a
+  // scale, and it is still the point now that a window too narrow to be worth
+  // previewing on steps the pressed tier down as well: the choice is what the
+  // designer said, the tier is what the window can show, and only the second
+  // one answers to a resize.
+  test('a narrow window steps the picture down without reseating the chosen width', async () => {
     await pick(page, 'modelbar');
     // The width buttons save immediately (setFrame -> saveFrame -> flushSettings)
     // rather than waiting on the Keep/Reset pair, because the frame stands for
     // the screen being designed for, not a per-pattern edit.
     await page.click('.ui-widths button[data-w="1200"]');
     await page.waitForTimeout(150);
-    // Shrink well past where a 1200px frame fits in the column. There is no
-    // step-down any more: a frame wider than the stage is SCALED
-    // (transform: scale(k) on #wb-stage, with the readout saying "Shown at
-    // nn%"), so the width button stays pressed at 1200 and the kept choice is
-    // never overwritten by a size the window merely forced.
-    await page.setViewportSize({ width: 900, height: 900 });
-    await page.waitForTimeout(300);
+    // 600px leaves the stage 558px, and a 1200px screen drawn 558px wide is
+    // 46% - under the floor where a preview stops being one. The preview steps
+    // down to the widest tier that clears the floor and SAYS so; what it must
+    // not do is write that tier back over the width the designer chose.
+    await page.setViewportSize({ width: 600, height: 900 });
+    await page.waitForTimeout(400);
     const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('cs-settings') ?? '{}').frame);
     assert.equal(stored, 1200, `a resize overwrote the chosen width with ${stored}`);
-    assert.equal((await shown(page)).frame, '1200', 'a resize reseated the width button');
+    assert.equal((await shown(page)).frame, '992', 'a 600px window did not step the preview down to a tier it can show');
     const scale = await page.evaluate(() => ({
       hidden: document.getElementById('spec-scale-item').hidden,
+      label: document.getElementById('spec-scale-label').textContent,
       pct: document.getElementById('spec-scale').textContent,
+      disabled: [...document.querySelectorAll('.ui-widths button')].filter((b) => b.disabled).length,
     }));
-    assert.equal(scale.hidden, false, 'the scale readout is not shown for a 1200px frame narrower than the stage');
-    assert.ok(parseFloat(scale.pct) < 100, `the readout says ${scale.pct}, not scaled under 100%`);
+    assert.equal(scale.hidden, false, 'the readout says nothing about a preview showing a narrower screen than the one that is pressed');
+    assert.match(scale.label, /Desktop needs a wider window/, `the readout does not name the width that will not fit: "${scale.label}"`);
+    assert.match(scale.pct, /showing Laptop at \d+%/, `the readout does not say what is being shown instead: "${scale.pct}"`);
+    assert.equal(scale.disabled, 0, 'a width button was disabled rather than stepped down');
+    // Widening it puts the choice back with no second click, which is the
+    // whole reason the choice is kept separately from the tier on screen.
     await page.setViewportSize({ width: 1500, height: 900 });
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(400);
+    assert.equal((await shown(page)).frame, '1200', 'widening the window did not restore the chosen width');
+    assert.equal(await page.evaluate(() => document.getElementById('spec-scale-label').textContent), 'Shown at', 'the step-down message outlived the window that caused it');
   });
 });
 
