@@ -10,27 +10,22 @@
 // minutes and a gate nobody runs is not a gate; the sweeps live in the
 // verification checklist in README, which is still the thing to run before
 // shipping. This is the fast one, for every commit.
-import { test, describe, before, after } from 'node:test';
+import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { serve, launch, openBuilder, pick, patternIds, copyParts, setField, hostHtml, engineFiles, readSlider } from './helpers.mjs';
+import { openBuilder, pick, patternIds, copyParts, setField, hostHtml, engineFiles, readSlider } from './helpers.mjs';
 
-let server, browser, ctx, page, host, errors, engine;
+test.describe.configure({ mode: 'serial' });
 
-before(async () => {
-  server = await serve();
-  browser = await launch();
+let ctx, page, host, errors, engine;
+
+test.beforeAll(async ({ browser }) => {
   // Wide enough that the 1170 preview frame is offered: the builder disables a
   // width the window cannot hold, and the paste-order test needs the frame and
   // the window in the same breakpoint tier to compare like with like.
-  ({ ctx, page, errors } = await openBuilder(browser, server.origin, 1500));
+  ({ ctx, page, errors } = await openBuilder(browser, 1500));
   host = await ctx.newPage();
   host.on('pageerror', (e) => errors.push(`host: ${e.message}`));
-  engine = await engineFiles(server.origin);
-});
-
-after(async () => {
-  await browser?.close();
-  await server?.close();
+  engine = await engineFiles();
 });
 
 const render = async (opts) => {
@@ -39,7 +34,7 @@ const render = async (opts) => {
   return readSlider(host);
 };
 
-describe('the three copy buttons', () => {
+test.describe('the three copy buttons', () => {
   // F004/F008: one Copy button handed over <style> + HTML + <script> as a
   // single blob for three different CMS fields. Style Only is a raw-CSS field,
   // and a tag left in it makes the parser read the tag and the first rule as
@@ -62,7 +57,7 @@ describe('the three copy buttons', () => {
   });
 });
 
-describe('values that must never reach the copied CSS', () => {
+test.describe('values that must never reach the copied CSS', () => {
   // Three findings, one broken slider: --cs-gap: 0px surviving minification as
   // a unitless 0 (F003), a cleared field emitting `--cs-gap: ;` (F022), and a
   // typed `10` (F028). Each invalidates the slide's flex basis, so the cards
@@ -119,7 +114,7 @@ describe('values that must never reach the copied CSS', () => {
   });
 });
 
-describe('the slider name', () => {
+test.describe('the slider name', () => {
   // F029: the field deleted characters it could not use rather than
   // hyphenating, so "2024 Specials" became `.2024specials` - not a valid
   // selector, so the browser dropped every rule of the copied CSS while the
@@ -175,7 +170,7 @@ describe('the slider name', () => {
   });
 });
 
-describe('the pasted block on a hostile host page', () => {
+test.describe('the pasted block on a hostile host page', () => {
   // F010: the snippet's root rules were (0,1,0), the same as the engine's `.cs`
   // and the shared `.cargo-<look>`, so source order decided - and where the
   // platform emits its Style Only sheet relative to a head <link> is not
@@ -352,7 +347,7 @@ describe('the pasted block on a hostile host page', () => {
   });
 });
 
-describe('the builder survives its own inputs', () => {
+test.describe('the builder survives its own inputs', () => {
   // F076: a star rating above 5 threw inside the review markup, the throw was
   // inside render(), and the bad value went to localStorage - so the next visit
   // booted into a blank page with nothing saying why.
@@ -401,7 +396,7 @@ describe('the builder survives its own inputs', () => {
   });
 });
 
-describe('nothing threw along the way', () => {
+test.describe('nothing threw along the way', () => {
   test('no page errors in the builder or the host pages', () => {
     assert.deepEqual(errors, []);
   });

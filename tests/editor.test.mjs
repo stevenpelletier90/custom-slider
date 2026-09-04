@@ -1,24 +1,19 @@
 // The slide editor: fields that took typing and shipped it nowhere, a field
 // type that rejected the editor's own suggestions, and a warning that named
 // the wrong brand on fourteen of seventeen patterns.
-import { test, describe, before, after } from 'node:test';
+import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { serve, launch, openBuilder, pick, patternIds } from './helpers.mjs';
+import { openBuilder, pick, patternIds } from './helpers.mjs';
 
-let server, browser, page, errors;
+test.describe.configure({ mode: 'serial' });
 
-before(async () => {
-  server = await serve();
-  browser = await launch();
-  ({ page, errors } = await openBuilder(browser, server.origin, 1500));
+let page, errors;
+
+test.beforeAll(async ({ browser }) => {
+  ({ page, errors } = await openBuilder(browser, 1500));
 });
 
-after(async () => {
-  await browser?.close();
-  await server?.close();
-});
-
-describe('every field the editor offers reaches the code', () => {
+test.describe('every field the editor offers reaches the code', () => {
   // F031: the cutout roster carries a wordmark and a paragraph for the looks
   // that have a slot. The tile has neither, so those two boxes accepted typing,
   // stored it in localStorage, and shipped it nowhere.
@@ -58,7 +53,7 @@ describe('every field the editor offers reaches the code', () => {
   });
 });
 
-describe('a field does not reject the value it suggests', () => {
+test.describe('a field does not reject the value it suggests', () => {
   // F032: Image URL and Link were type=url, which rejects #MISCPATH#..., a
   // /static/ library path and img/... - every shape the editor itself offers.
   // Chromium paints nothing for it, so the only symptom was 16 fields on the
@@ -83,7 +78,7 @@ describe('a field does not reject the value it suggests', () => {
   });
 });
 
-describe('the photo warning describes the photos that are there', () => {
+test.describe('the photo warning describes the photos that are there', () => {
   // F034: it said "Chevrolet stock art" on every pattern - true of three at
   // their default brand, wrong for the other twelve image patterns, seven of
   // which reference no vehicle at all.
@@ -108,13 +103,13 @@ describe('the photo warning describes the photos that are there', () => {
   });
 });
 
-describe('nothing threw', () => {
+test.describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);
   });
 });
 
-describe('the readout says what the slider is doing', () => {
+test.describe('the readout says what the slider is doing', () => {
   // F036: "Arrow clicks" counted stops so it was off by one; "Cards shown"
   // counted the whole stage, so the tabbed bar read "5 of 24" over a pane of
   // eight, and asking for more across than there are slides read "8 of 6".
@@ -163,7 +158,7 @@ describe('the readout says what the slider is doing', () => {
   });
 });
 
-describe('a discarded slide can be put back', () => {
+test.describe('a discarded slide can be put back', () => {
   // F037: Remove, "Use the example content" and picking a brand preset all
   // threw edited slides away instantly, and only the preset did it with no
   // warning at all.

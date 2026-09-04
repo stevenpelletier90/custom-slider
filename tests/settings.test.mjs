@@ -2,21 +2,16 @@
 // came back to their own slides under the wrong card style, with the wrong
 // class name and the wrong ladder - and nothing on the page said why. The
 // asymmetry was the bug: remembering half the state is worse than none.
-import { test, describe, before, after } from 'node:test';
+import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { serve, launch, openBuilder, pick, setField, stageReady } from './helpers.mjs';
+import { openBuilder, pick, setField, stageReady } from './helpers.mjs';
 
-let server, browser, ctx, page, errors;
+test.describe.configure({ mode: 'serial' });
 
-before(async () => {
-  server = await serve();
-  browser = await launch();
-  ({ ctx, page, errors } = await openBuilder(browser, server.origin, 1500));
-});
+let ctx, page, errors;
 
-after(async () => {
-  await browser?.close();
-  await server?.close();
+test.beforeAll(async ({ browser }) => {
+  ({ ctx, page, errors } = await openBuilder(browser, 1500));
 });
 
 const shown = (page) =>
@@ -33,7 +28,7 @@ const shown = (page) =>
 // still there next week - on a pattern the designer had forgotten touching,
 // holding out the shipped default it replaced. What survives a reload is what
 // someone decided should.
-describe('the settings come back with the slides once they are kept', () => {
+test.describe('the settings come back with the slides once they are kept', () => {
   test('card style, ladder, gap, name and preview width all survive a reload', async () => {
     await pick(page, 'cards');
     const nameField = page.locator('[data-name-field]');
@@ -124,7 +119,7 @@ describe('the settings come back with the slides once they are kept', () => {
   });
 });
 
-describe('nothing threw', () => {
+test.describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);
   });
@@ -140,7 +135,7 @@ describe('nothing threw', () => {
 // Persistence is opt-in; keeping your work while the page is open is not, or
 // clicking the next pattern would throw away the slides you just wrote - a
 // worse bug than the one being fixed (F007 again, by another route).
-describe('nothing is remembered across a reload unless it is kept', () => {
+test.describe('nothing is remembered across a reload unless it is kept', () => {
   const gap = (p) => p.locator('#wb-settings label:has(> span:text-is("Gap")) input[type=text]').first();
   const flags = (p) =>
     p.evaluate(() => ({

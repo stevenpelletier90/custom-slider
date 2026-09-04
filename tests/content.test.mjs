@@ -4,27 +4,22 @@
 // threw "Cannot set properties of undefined" and the edit was silently lost.
 // It also moved with a brand preset without saying so, and vanished after the
 // first edit.
-import { test, describe, before, after } from 'node:test';
+import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { serve, launch, openBuilder, pick, copyParts } from './helpers.mjs';
+import { openBuilder, pick, copyParts } from './helpers.mjs';
 
-let server, browser, page, errors;
+test.describe.configure({ mode: 'serial' });
 
-before(async () => {
-  server = await serve();
-  browser = await launch();
-  ({ page, errors } = await openBuilder(browser, server.origin, 1500));
-});
+let page, errors;
 
-after(async () => {
-  await browser?.close();
-  await server?.close();
+test.beforeAll(async ({ browser }) => {
+  ({ page, errors } = await openBuilder(browser, 1500));
 });
 
 const rows = (page) => page.locator('#wb-content fieldset').count();
 const note = (page) => page.evaluate(() => document.querySelector('#wb-content .wb-note')?.textContent ?? '');
 
-describe('one owner of the slide count', () => {
+test.describe('one owner of the slide count', () => {
   test('there is no second control for it', async () => {
     await pick(page, 'modelbar');
     const dial = await page.evaluate(() => [...document.querySelectorAll('#wb-settings label > span')].some((s) => /slides in this example/i.test(s.textContent)));
@@ -82,7 +77,7 @@ describe('one owner of the slide count', () => {
   });
 });
 
-describe('the demo describes what it is actually showing', () => {
+test.describe('the demo describes what it is actually showing', () => {
   // F075: all six filter-gallery captions described a different photograph
   // than the file they named - a blue Camaro in a desert for a technician
   // under a lift - with the categories wrong alongside them. The gallery
@@ -372,7 +367,7 @@ describe('the demo describes what it is actually showing', () => {
   });
 });
 
-describe('nothing threw', () => {
+test.describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);
   });

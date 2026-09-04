@@ -4,21 +4,17 @@
 // or a click that quietly threw away work. They are cheap to break again -
 // nothing about them is visible in the generated CSS, which is why the linters
 // never caught any of them.
-import { test, describe, before, after } from 'node:test';
+import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { serve, launch, openBuilder, pick, setField, copyParts, stageFrame, patternIds, hostHtml, engineFiles } from './helpers.mjs';
+import { ORIGIN, openBuilder, pick, setField, copyParts, stageFrame, patternIds, hostHtml, engineFiles } from './helpers.mjs';
 
-let server, browser, page, errors;
+test.describe.configure({ mode: 'serial' });
 
-before(async () => {
-  server = await serve();
-  browser = await launch();
-  ({ page, errors } = await openBuilder(browser, server.origin, 1500));
-});
+let browser, page, errors;
 
-after(async () => {
-  await browser?.close();
-  await server?.close();
+test.beforeAll(async ({ browser: b }) => {
+  browser = b;
+  ({ page, errors } = await openBuilder(browser, 1500));
 });
 
 // The value a knob displays, by its row label.
@@ -39,7 +35,7 @@ const colorKnob = (page, label) =>
     return row?.querySelector('input[type=text]')?.value ?? null;
   }, label);
 
-describe('a knob shows what the slider is actually using', () => {
+test.describe('a knob shows what the slider is actually using', () => {
   // F042: Tall photos set --cs-controls-space in its pattern CSS instead of its
   // props, so the knob read the engine's 2.5em while the strip resolved 3em -
   // and the copied CSS shipped both, in sequence, with no edit at all.
@@ -65,7 +61,7 @@ describe('a knob shows what the slider is actually using', () => {
   });
 });
 
-describe('a click that looks like a no-op is one', () => {
+test.describe('a click that looks like a no-op is one', () => {
   // F044: clicking the already-selected card style reset the ladder to that
   // look's default - 1/2/3/3 to 2/3/4/5 on the two-row grid, and the arrows and
   // dots vanished with it.
@@ -84,7 +80,7 @@ describe('a click that looks like a no-op is one', () => {
   });
 });
 
-describe('a control puts back everything it took', () => {
+test.describe('a control puts back everything it took', () => {
   // F039: "Start from the default" restored only the roster, so the previous
   // brand's card style and ladder survived - Vehicle cards came back as tall
   // tiles under a Honda and Toyota roster.
@@ -113,7 +109,7 @@ describe('a control puts back everything it took', () => {
   });
 });
 
-describe('a number field refuses what the engine cannot page', () => {
+test.describe('a number field refuses what the engine cannot page', () => {
   // F060: typing 2.5 emitted cs-lg-2 while the field went on showing 2.5, and
   // setting the property to 2.5 by hand makes the last page unreachable.
   test('a fractional count is not left showing in the field', async () => {
@@ -129,7 +125,7 @@ describe('a number field refuses what the engine cannot page', () => {
   });
 });
 
-describe('every producer reads the roster in effect', () => {
+test.describe('every producer reads the roster in effect', () => {
   // F077: the lightbox trigger read the pattern's own roster, the only producer
   // that did, so an edited slide 1 changed the photo inside the dialog and not
   // the thumbnail that opens it.
@@ -146,7 +142,7 @@ describe('every producer reads the roster in effect', () => {
   });
 });
 
-describe('a knob the page actually reads', () => {
+test.describe('a knob the page actually reads', () => {
   // F038: the generated gutter rule wrote its own width on the same element the
   // Side gutter knob sets, and wrote it last - so the field took the edit, the
   // declaration shipped, and nothing moved. Measured on the model bar: 50px
@@ -183,7 +179,7 @@ describe('a knob the page actually reads', () => {
   });
 });
 
-describe('the rotation the hero was born with is a control, not a literal', () => {
+test.describe('the rotation the hero was born with is a control, not a literal', () => {
   // F054: data-cs-autoplay has been a first-class engine option all along and
   // the panel never showed it. The hero shipped it hard-wired at 5000 and no
   // other pattern could turn it on, so slowing a hero, holding one still, or
@@ -245,7 +241,7 @@ describe('the rotation the hero was born with is a control, not a literal', () =
   });
 });
 
-describe('peek is offered wherever it can do something', () => {
+test.describe('peek is offered wherever it can do something', () => {
   // F058: the row appeared only where the pattern had already set --cs-peek,
   // which was the one pattern named after it. "Show a sliver of the next car"
   // lands on a model bar just as often.
@@ -293,7 +289,7 @@ describe('peek is offered wherever it can do something', () => {
   });
 });
 
-describe('a property the slider is already using has a control', () => {
+test.describe('a property the slider is already using has a control', () => {
   // F056 / F057: five engine properties the Reference documents and the panel
   // never offered. Two of them were worse than merely absent - the portrait
   // and logo looks ship --cs-arrow-bg-hover in their settings, and the hero
@@ -374,7 +370,7 @@ describe('a property the slider is already using has a control', () => {
   });
 });
 
-describe('card chrome is a knob, not a literal', () => {
+test.describe('card chrome is a knob, not a literal', () => {
   // F061: the vehicle card's 1px #e2e5ea border and its 1.04 hover zoom were
   // literals in the look's CSS, no look had a shadow, and there was no badge
   // slot at all - so a border colour or a "New" flash meant hand CSS.
@@ -412,7 +408,7 @@ describe('card chrome is a knob, not a literal', () => {
   });
 });
 
-describe('a tab can be renamed', () => {
+test.describe('a tab can be renamed', () => {
   // F018 (the half that needs no decision): Trucks/SUVs/Crossovers were
   // hard-coded, so a New/Used/Certified bar meant editing the pasted markup.
   test('renaming a tab moves its words, its id and its aria wiring together', async () => {
@@ -444,7 +440,7 @@ describe('a tab can be renamed', () => {
   });
 });
 
-describe('a link to a card style opens that card style', () => {
+test.describe('a link to a card style opens that card style', () => {
   // F074: all seven "Open in the builder" buttons under the card styles on the
   // Patterns page pointed at #modelbar, so six of the seven opened whichever
   // style happened to be remembered and read as a broken link.
@@ -452,7 +448,7 @@ describe('a link to a card style opens that card style', () => {
     const links = await page.evaluate(async (origin) => {
       const html = await fetch(`${origin}/demo/assets/gallery.js`).then((r) => r.text());
       return [...html.matchAll(/index\.html#([^"'`]*)/g)].map((m) => m[1]);
-    }, server.origin);
+    }, ORIGIN);
     assert.ok(
       links.some((h) => h.includes('/')),
       `no link carries a card style: ${JSON.stringify(links)}`,
@@ -468,7 +464,7 @@ describe('a link to a card style opens that card style', () => {
     // A query string as well as the hash: navigating from index.html to
     // index.html#... is a same-document move, so the script would never re-run
     // and this would test nothing.
-    await page.goto(`${server.origin}/demo/index.html?f074#modelbar/logo`, { waitUntil: 'load' });
+    await page.goto(`${ORIGIN}/demo/index.html?f074#modelbar/logo`, { waitUntil: 'load' });
     await page.waitForTimeout(600);
     const shown = await page.evaluate(() => document.querySelector('#wb-settings .wb-look[aria-pressed="true"] span:last-child')?.textContent);
     const cls = await page.evaluate(() => /cargo-(\w+)/.exec(document.getElementById('wb-code').textContent)?.[1]);
@@ -477,7 +473,7 @@ describe('a link to a card style opens that card style', () => {
   });
 });
 
-describe('the small things a designer trips over', () => {
+test.describe('the small things a designer trips over', () => {
   // F089: the builder read location.hash once at boot, so typing a different
   // #pattern and pressing Enter left the previous one on screen - and Back and
   // Forward were dead for the same reason.
@@ -538,7 +534,7 @@ describe('the small things a designer trips over', () => {
   });
 });
 
-describe('the hero can put its dots on the photo', () => {
+test.describe('the hero can put its dots on the photo', () => {
   // F057: the hero reserved a strip under the photo and drew its dots there,
   // where 57 of the 76 OEM heroes overlay them. Off by default, because the
   // census argues for making it easy and not for changing what exists.
@@ -647,7 +643,7 @@ describe('the hero can put its dots on the photo', () => {
   });
 });
 
-describe('the last engine properties reach the panel', () => {
+test.describe('the last engine properties reach the panel', () => {
   // F099 / F102 / F103: six properties the engine documents and the panel never
   // offered, so matching a focus ring or resizing a gallery thumbnail meant
   // reading the name off the Reference and hand-editing the snippet.
@@ -718,7 +714,7 @@ describe('the last engine properties reach the panel', () => {
 // colour crawl. Guarded here because it is invisible in the generated CSS: the
 // output is byte-identical either way, only the cost and the scroll position
 // differ.
-describe('picking a colour does not rebuild the slider', () => {
+test.describe('picking a colour does not rebuild the slider', () => {
   const drag = (page, label, values) =>
     page.evaluate(
       ([l, vals]) => {
@@ -793,7 +789,7 @@ describe('picking a colour does not rebuild the slider', () => {
 // box was set - measured, ten of seventeen patterns rendered differently on a
 // real narrow window. It is an iframe now, which IS a window of the previewed
 // width, so they resolve on their own.
-describe('the preview resolves the phone rules for real', () => {
+test.describe('the preview resolves the phone rules for real', () => {
   // The claim of the whole refactor, checked the way the defect was found: the
   // copied snippet in a genuinely narrow window, against what the builder shows
   // at that button. Every property, every pattern.
@@ -801,7 +797,7 @@ describe('the preview resolves the phone rules for real', () => {
     const PHONE = 390;
     const ctx = await browser.newContext({ viewport: { width: PHONE, height: 900 } });
     const real = await ctx.newPage();
-    const engine = await engineFiles(server.origin);
+    const engine = await engineFiles();
 
     const READ = (root) => {
       const slide = root.querySelector('.cs-slide');
@@ -860,7 +856,7 @@ describe('the preview resolves the phone rules for real', () => {
   });
 });
 
-describe('the ladder resolves without a pin', () => {
+test.describe('the ladder resolves without a pin', () => {
   // The pin resolved the designer's ladder alone. A card style carries its own
   // narrow override - the cutout tile drops to one across below 380px - and
   // that is a max-width rule, so it was as inert as everything else: the phone
@@ -877,7 +873,7 @@ describe('the ladder resolves without a pin', () => {
     // Its own page. This file shares one across every describe, and earlier tests
     // edit the ladder - which had this assertion agreeing with the broken code by
     // coincidence, because the leftover ladder happened to be 1 already.
-    const { page: fresh } = await openBuilder(browser, server.origin, 1500);
+    const { page: fresh } = await openBuilder(browser, 1500);
     // Every look that HAS a narrow per-view rule, so the guard widens on its own
     // when another one gains it.
     const cases = await fresh.evaluate(() =>
@@ -937,7 +933,7 @@ describe('the ladder resolves without a pin', () => {
 // Headless Chromium draws OVERLAY scrollbars that take no width, so it cannot
 // see this at all. The guard is therefore not "is there a scrollbar" but "does
 // the frame's own root refuse to scroll", which is true in every engine.
-describe('the frame viewport is never eaten by a scrollbar', () => {
+test.describe('the frame viewport is never eaten by a scrollbar', () => {
   test('the frame refuses to scroll, so its width is the width on the button', async () => {
     await pick(page, 'cards');
     for (const w of [390, 768, 992, 1200]) {
@@ -971,7 +967,7 @@ describe('the frame viewport is never eaten by a scrollbar', () => {
 // said so, and nothing could see it, because the preview was a box inside this
 // page and the phone rule never fired in it. Both halves of that are fixed now,
 // and this is the half a test can hold.
-describe('the arrow placement switch is not overruled by a breakpoint', () => {
+test.describe('the arrow placement switch is not overruled by a breakpoint', () => {
   const gut = (p) => p.locator('#wb-settings label:has-text("Arrows outside the cards") input[type=checkbox]').first();
 
   const placement = (p) =>
@@ -1032,7 +1028,7 @@ describe('the arrow placement switch is not overruled by a breakpoint', () => {
 // rather than from the picture - measured on the hero at 768, the image ran
 // 59-709 and the button sat 716-752, floating on the page beside it. The arrows
 // are in that channel deliberately; the pause is not.
-describe('the pause button sits on the thing it pauses', () => {
+test.describe('the pause button sits on the thing it pauses', () => {
   const placed = () =>
     stageFrame(page)
       .locator('.cs')
@@ -1081,7 +1077,7 @@ describe('the pause button sits on the thing it pauses', () => {
   });
 });
 
-describe('nothing threw', () => {
+test.describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);
   });

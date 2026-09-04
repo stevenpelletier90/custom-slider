@@ -8,25 +8,20 @@
 // One generic sweep over data-cs-label-* covers all eleven labels, so the test
 // that matters is that the MAPPING holds for every key in DEFAULTS, not that
 // some hand-picked three of them work.
-import { test, describe, before, after } from 'node:test';
+import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { serve, launch, hostHtml, engineFiles } from './helpers.mjs';
+import { hostHtml, engineFiles } from './helpers.mjs';
 
-let server, browser, ctx, page, engine, errors;
+test.describe.configure({ mode: 'serial' });
 
-before(async () => {
-  server = await serve();
-  browser = await launch();
-  engine = await engineFiles(server.origin);
+let ctx, page, engine, errors;
+
+test.beforeAll(async ({ browser }) => {
+  engine = await engineFiles();
   ctx = await browser.newContext({ viewport: { width: 1200, height: 900 } });
   page = await ctx.newPage();
   errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-});
-
-after(async () => {
-  await browser?.close();
-  await server?.close();
 });
 
 // A plain three-slide carousel, one card per view unless told otherwise.
@@ -51,7 +46,7 @@ const announced = () =>
     };
   });
 
-describe('data-cs-label-* reaches every announced string', () => {
+test.describe('data-cs-label-* reaches every announced string', () => {
   test('the defaults are English and unchanged when no attribute is set', async () => {
     await render('');
     const a = await announced();

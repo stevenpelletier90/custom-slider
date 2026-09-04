@@ -5,21 +5,16 @@
 //
 // Three shapes of the same bug, so three patterns: one shipping its own strip,
 // one shipping none, one shipping the collapse already.
-import { test, describe, before, after } from 'node:test';
+import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { serve, launch, openBuilder, pick } from './helpers.mjs';
+import { openBuilder, pick } from './helpers.mjs';
 
-let server, browser, page, errors;
+test.describe.configure({ mode: 'serial' });
 
-before(async () => {
-  server = await serve();
-  browser = await launch();
-  ({ page, errors } = await openBuilder(browser, server.origin, 1500));
-});
+let page, errors;
 
-after(async () => {
-  await browser?.close();
-  await server?.close();
+test.beforeAll(async ({ browser }) => {
+  ({ page, errors } = await openBuilder(browser, 1500));
 });
 
 const strip = (page) =>
@@ -34,7 +29,7 @@ const strip = (page) =>
     };
   });
 
-describe('the dot row is taken away and given back unchanged', () => {
+test.describe('the dot row is taken away and given back unchanged', () => {
   for (const [id, space] of [
     ['hero', '2em'],
     ['cards', '2.5em'],
@@ -72,7 +67,7 @@ describe('the dot row is taken away and given back unchanged', () => {
   }
 });
 
-describe('nothing threw', () => {
+test.describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);
   });

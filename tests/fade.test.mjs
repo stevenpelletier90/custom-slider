@@ -3,27 +3,22 @@
 // JS at init, so until the script runs the column classes are in charge: a hero
 // authored three across laid out as a three-across strip and jumped a whole
 // image height on init, which is also what a no-JS visitor was left with.
-import { test, describe, before, after } from 'node:test';
+import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { serve, launch, openBuilder, pick, copyParts, hostHtml, engineFiles } from './helpers.mjs';
+import { openBuilder, pick, copyParts, hostHtml, engineFiles } from './helpers.mjs';
 
-let server, browser, ctx, page, host, errors, engine;
+test.describe.configure({ mode: 'serial' });
 
-before(async () => {
-  server = await serve();
-  browser = await launch();
-  ({ ctx, page, errors } = await openBuilder(browser, server.origin, 1500));
+let ctx, page, host, errors, engine;
+
+test.beforeAll(async ({ browser }) => {
+  ({ ctx, page, errors } = await openBuilder(browser, 1500));
   host = await ctx.newPage();
   host.on('pageerror', (e) => errors.push(`host: ${e.message}`));
-  engine = await engineFiles(server.origin);
+  engine = await engineFiles();
 });
 
-after(async () => {
-  await browser?.close();
-  await server?.close();
-});
-
-describe('a fading hero is one across before the script runs', () => {
+test.describe('a fading hero is one across before the script runs', () => {
   test('authoring it three across shifts nothing on init', async () => {
     await pick(page, 'hero');
     for (const label of ['Phone · under 768', 'Tablet · 768+', 'Laptop · 992+', 'Desktop · 1200+']) {
@@ -76,7 +71,7 @@ describe('a fading hero is one across before the script runs', () => {
   });
 });
 
-describe('the panel says which controls the crossfade ignores', () => {
+test.describe('the panel says which controls the crossfade ignores', () => {
   const rowLabel = (page, text) =>
     page.evaluate((t) => {
       const row = [...document.querySelectorAll('#wb-settings label.wb-row')].find((r) => r.querySelector('span')?.textContent.trim().startsWith(t));
@@ -96,7 +91,7 @@ describe('the panel says which controls the crossfade ignores', () => {
   });
 });
 
-describe('nothing threw', () => {
+test.describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);
   });

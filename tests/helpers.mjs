@@ -1,89 +1,15 @@
-// Shared rig for the browser tests.
-//
-// No new dependencies: playwright is already a devDependency and node:test is
-// built in. The static server is written here rather than shelled out to
-// esbuild so there is no child process to kill - on Windows that is the part
-// that goes wrong, and a hung server on a port is worse than a slow test.
-import { createServer } from 'node:http';
-import { readFile } from 'node:fs/promises';
-import { extname, join, normalize } from 'node:path';
-
-const TYPES = {
-  '.html': 'text/html; charset=utf-8',
-  '.js': 'text/javascript; charset=utf-8',
-  '.mjs': 'text/javascript; charset=utf-8',
-  '.css': 'text/css; charset=utf-8',
-  '.json': 'application/json',
-  '.svg': 'image/svg+xml',
-  '.webp': 'image/webp',
-  '.jpg': 'image/jpeg',
-  '.png': 'image/png',
-  '.ico': 'image/x-icon',
-};
-
-// The repo's own dev server, if it happens to be running. CLAUDE.md is explicit
-// that a second server must never be started on 8137, so this reuses the one
-// that answers and otherwise takes a port of its own.
-const DEV = 'http://127.0.0.1:8137';
-
-async function devServerUp() {
-  try {
-    const c = new AbortController();
-    const t = setTimeout(() => c.abort(), 700);
-    const r = await fetch(`${DEV}/demo/index.html`, { signal: c.signal });
-    clearTimeout(t);
-    return r.ok;
-  } catch {
-    return false;
-  }
-}
-
-export async function serve(root = process.cwd()) {
-  if (await devServerUp()) return { origin: DEV, close: async () => {}, reused: true };
-
-  const server = createServer(async (req, res) => {
-    // Strip the query and keep the path inside the repo: this serves the whole
-    // working tree to a browser, so it refuses to walk out of it.
-    const rel = normalize(decodeURIComponent(req.url.split('?')[0])).replace(/^([/\\])+/, '');
-    if (rel.split(/[/\\]/).includes('..')) {
-      res.writeHead(403).end('no');
-      return;
-    }
-    try {
-      const body = await readFile(join(root, rel));
-      res.writeHead(200, { 'content-type': TYPES[extname(rel)] ?? 'application/octet-stream', 'cache-control': 'no-store' });
-      res.end(body);
-    } catch {
-      res.writeHead(404).end('not found');
-    }
-  });
-  await new Promise((r) => server.listen(0, '127.0.0.1', r));
-  const { port } = server.address();
-  return {
-    origin: `http://127.0.0.1:${port}`,
-    reused: false,
-    close: () =>
-      new Promise((r) => {
-        server.closeAllConnections?.();
-        server.close(r);
-      }),
-  };
-}
-
-export async function launch() {
-  const pw = await import('playwright');
-  const chromium = pw.chromium ?? pw.default.chromium;
-  return chromium.launch();
-}
+// Shared rig for the browser tests, run by @playwright/test
+// (playwright.config.mjs starts the server and hands each file a browser).
+export const ORIGIN = 'http://127.0.0.1:8137';
 
 // A demo page with the clipboard readable, which is the only way to test what
 // the copy buttons actually hand over rather than what the panel displays.
-export async function openBuilder(browser, origin, width = 1200) {
+export async function openBuilder(browser, width = 1200) {
   const ctx = await browser.newContext({ viewport: { width, height: 900 }, permissions: ['clipboard-read', 'clipboard-write'] });
   const page = await ctx.newPage();
   const errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
-  await page.goto(`${origin}/demo/index.html`, { waitUntil: 'load' });
+  await page.goto(`${ORIGIN}/demo/index.html`, { waitUntil: 'load' });
   await stageReady(page);
   return { ctx, page, errors };
 }
@@ -152,8 +78,8 @@ export function hostHtml({ engineCss, engineJs, css = '', html = '', js = '', bo
   );
 }
 
-export async function engineFiles(origin) {
-  const [engineCss, engineJs] = await Promise.all([fetch(`${origin}/dist/custom-slider.min.css`).then((r) => r.text()), fetch(`${origin}/dist/custom-slider.min.js`).then((r) => r.text())]);
+export async function engineFiles() {
+  const [engineCss, engineJs] = await Promise.all([fetch(`${ORIGIN}/dist/custom-slider.min.css`).then((r) => r.text()), fetch(`${ORIGIN}/dist/custom-slider.min.js`).then((r) => r.text())]);
   return { engineCss, engineJs };
 }
 

@@ -19,3 +19,9 @@ node_modules/
 #   demo/_*.html      — cache-busted / no-JS copies of the demo used for testing
 .playwright-mcp/
 demo/_*.html
+
+# Written by @playwright/test itself (tests/, playwright.config.mjs): a
+# .last-run.json plus any trace/screenshot from a failed run, and the HTML
+# report if one is ever generated.
+test-results/
+playwright-report/

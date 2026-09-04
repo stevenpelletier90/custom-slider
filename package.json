@@ -15,12 +15,14 @@
     "format:check": "npx prettier --check .",
     "check:looks": "node scripts/check-looks.mjs",
     "lint:css:generated": "node scripts/lint-generated-css.mjs",
-    "test": "node --test \"tests/**/*.test.mjs\"",
+    "test": "playwright test",
+    "test:ui": "playwright test --ui",
     "a11y": "node scripts/a11y.mjs",
     "validate": "npm run lint:css && npm run lint:css:generated && npm run lint:js && npm run format:check && npm run check:looks"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@playwright/test": "^1.62.1",
     "axe-core": "^4.13.0",
     "esbuild": "^0.28.2",
     "eslint": "^10.9.1",

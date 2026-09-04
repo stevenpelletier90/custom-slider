@@ -3,17 +3,17 @@
 // someone who cannot easily tell whether it worked, so each one is applied here
 // to a real pasted slider and measured. These fail if the engine's own arrow
 // rules change out from under them.
-import { test, describe, before, after } from 'node:test';
+import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { serve, launch, openBuilder, pick, copyParts, hostHtml, engineFiles } from './helpers.mjs';
+import { openBuilder, pick, copyParts, hostHtml, engineFiles } from './helpers.mjs';
 
-let server, browser, page, host, engine, snippet, recipes;
+test.describe.configure({ mode: 'serial' });
 
-before(async () => {
-  server = await serve();
-  browser = await launch();
-  ({ page } = await openBuilder(browser, server.origin, 1500));
-  engine = await engineFiles(server.origin);
+let page, host, engine, snippet, recipes;
+
+test.beforeAll(async ({ browser }) => {
+  ({ page } = await openBuilder(browser, 1500));
+  engine = await engineFiles();
   recipes = await page.evaluate(() => globalThis.CARGO.guide.ARROW_RECIPES);
   // A card strip with arrows over the cards, which is what the recipes restyle.
   await pick(page, 'cards');
@@ -21,11 +21,6 @@ before(async () => {
   await page.waitForTimeout(120);
   snippet = await copyParts(page);
   host = await browser.newPage();
-});
-
-after(async () => {
-  await browser?.close();
-  await server?.close();
 });
 
 // Renders the snippet with one recipe appended, exactly as a designer would
@@ -56,7 +51,7 @@ const arrow = (sel = '.cs-arrow--prev') =>
     };
   }, sel);
 
-describe('every arrow recipe the Reference publishes still works', () => {
+test.describe('every arrow recipe the Reference publishes still works', () => {
   test('the list is not empty and every entry is a name and some CSS', () => {
     assert.ok(Array.isArray(recipes) && recipes.length >= 5, 'the recipe list is missing or too short');
     for (const [name, css] of recipes) {
@@ -128,7 +123,7 @@ describe('every arrow recipe the Reference publishes still works', () => {
 // is a recipe rather than a feature - but only if all five declarations that
 // .cs-sr-only sets are actually undone. Leave clip-path in and the text takes
 // up space while being clipped to nothing, which reads as the recipe failing.
-describe('the visible counter recipe the Reference publishes', () => {
+test.describe('the visible counter recipe the Reference publishes', () => {
   const counter = () =>
     host.evaluate(() => {
       const s = document.querySelector('.cs-status');
@@ -186,7 +181,7 @@ describe('the visible counter recipe the Reference publishes', () => {
 // So what is guarded is the DEFAULT and the knob that changes it: a slider that
 // sets nothing must not move, and the knob is what makes this a design decision
 // per slider rather than a choice baked into the engine.
-describe('where the arrows sit', () => {
+test.describe('where the arrows sit', () => {
   const centreOffset = (page, sel) =>
     page.evaluate((s) => {
       const root = document.querySelector(s);
@@ -204,7 +199,7 @@ describe('where the arrows sit', () => {
     '</ul></div>';
 
   test('a slider that sets nothing is centred on the card', async () => {
-    const engine = await engineFiles(server.origin);
+    const engine = await engineFiles();
     await host.setContent(hostHtml({ ...engine, html: slider() }), { waitUntil: 'load' });
     await host.waitForTimeout(200);
     const off = await centreOffset(host, '#box .cs');
@@ -216,7 +211,7 @@ describe('where the arrows sit', () => {
   // can lift the arrows to the picture without the engine knowing what a
   // picture is.
   test('--cs-arrow-at moves them, and 0.5 is exactly the old behaviour', async () => {
-    const engine = await engineFiles(server.origin);
+    const engine = await engineFiles();
     const at = async (v) => {
       await host.setContent(hostHtml({ ...engine, html: slider(v == null ? '' : `;--cs-arrow-at:${v}`) }), { waitUntil: 'load' });
       await host.waitForTimeout(200);
