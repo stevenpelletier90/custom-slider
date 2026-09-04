@@ -40,7 +40,30 @@
     pane = null;
   };
 
-  const folder = (title, opts = {}) => pane.addFolder({ title, expanded: opts.expanded ?? true });
+  // A folder remembers whether it was open. buildPanel() throws the pane away
+  // and builds a new one on every structural change - a pattern, a look, a
+  // preset, a switch that adds a row - so without this, opening Advanced and
+  // then picking a card style closed it again. Keyed by title rather than by
+  // position, because the folders a pattern gets differ.
+  const KEY = 'cs-folders';
+  const remembered = () => {
+    try {
+      return JSON.parse(localStorage.getItem(KEY) ?? '{}');
+    } catch {
+      return {};
+    }
+  };
+  const folder = (title, opts = {}) => {
+    const f = pane.addFolder({ title, expanded: remembered()[title] ?? opts.expanded ?? true });
+    f.on('fold', (ev) => {
+      try {
+        localStorage.setItem(KEY, JSON.stringify({ ...remembered(), [title]: ev.expanded }));
+      } catch {
+        /* storage blocked: the fold still works, it is just not remembered */
+      }
+    });
+    return f;
+  };
 
   // Tweakpane's text input commits on change (Enter or blur). The workbench
   // used to update on every keystroke; the preview now updates on commit,

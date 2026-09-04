@@ -6,7 +6,7 @@
 // never caught any of them.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { ORIGIN, openBuilder, pick, setField, rowByLabel, switchRow, copyParts, stageFrame, patternIds, hostHtml, engineFiles } from './helpers.mjs';
+import { ORIGIN, openBuilder, pick, setField, rowByLabel, openFolder, switchRow, copyParts, stageFrame, patternIds, hostHtml, engineFiles } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -413,6 +413,9 @@ test.describe('a tab can be renamed', () => {
   // hard-coded, so a New/Used/Certified bar meant editing the pasted markup.
   test('renaming a tab moves its words, its id and its aria wiring together', async () => {
     await pick(page, 'tabs');
+    // Tab names starts closed - it is a rename, not a setting anyone reaches
+    // for on every build - so a person opens it before typing in it.
+    await openFolder(page, 'Tab names');
     const box = rowByLabel(page, 'Tab 1').locator('input').first();
     assert.equal(await box.count(), 1, 'the tabbed bar offers no way to rename a tab');
     assert.equal(await box.inputValue(), 'Trucks', 'the box does not show the name the bar is using');
@@ -428,6 +431,7 @@ test.describe('a tab can be renamed', () => {
 
   test('clearing a tab name puts the original back', async () => {
     await pick(page, 'tabs');
+    await openFolder(page, 'Tab names');
     const box = rowByLabel(page, 'Tab 2').locator('input').first();
     await box.fill('');
     await page.waitForTimeout(300);

@@ -2034,7 +2034,24 @@ ${PHOTO_CSS}
     // classified the day it ships.
     const scrolling = !fading && state.data['data-cs-gallery'] == null;
 
+    // Every folder is created here, in the order a slider actually gets built:
+    // what am I making (a brand, a card style), how many fit, what that card
+    // looks like, then the controls, then how it behaves. Rarely-touched things
+    // come last and start closed. The order lives in this one list rather than
+    // in the order the code below happens to add rows, so a row added later
+    // lands in the right folder without anything being reshuffled - and the
+    // panel's reading order can be checked at a glance instead of traced.
+    const style = p.look ? pane.folder('Brand and card style') : null;
     const grid = pane.folder('How many across');
+    const knobs = Object.keys(state.lookProps).length ? pane.folder('This card style') : null;
+    const colors = pane.folder('Arrows and dots');
+    const beh = pane.folder('Behaviour');
+    const names = p.panes ? pane.folder('Tab names', { expanded: false }) : null;
+    // Two engine properties nobody sets twice a year, and a switch about the
+    // PAGE rather than the slider. Closed by default; pane.folder remembers it
+    // if you open it.
+    const adv = pane.folder('Advanced', { expanded: false });
+
     for (const key of ['base', ...BPS]) {
       if (state.perView[key] == null) continue;
       // F083 and F060, both closed by the binding's own 1-8 range and whole-
@@ -2068,8 +2085,34 @@ ${PHOTO_CSS}
       );
     }
 
+    // The gap, the sliver of the next card and the card text size are all the
+    // same question as the count above them - does this fit - and they sat
+    // under the arrows, which is not where anyone adjusting a crowded strip
+    // went looking.
+    state.props['--cs-gap'] ??= '1em';
+    valueKnob(grid, fading ? 'Gap (a crossfade has no gap)' : 'Gap', '--cs-gap', state.props);
+    // "Show a sliver of the next car" lands on a model bar as often as on the
+    // pattern named after it, so the row is offered wherever it can do
+    // something rather than only where the pattern pre-set it. Not under fade
+    // or gallery: `.cs[data-cs-fade-on] .cs-track` and the gallery's own track
+    // rule both win over `.cs-track { padding: 0 var(--cs-peek) }`, so the
+    // field would move nothing and lie about it.
+    //
+    // Off is `0px`, not the dot row's `0.1px`. It is the engine's own default,
+    // so cssFor()'s delta filter drops it before it is written - it never
+    // reaches the platform minifier to be stripped to a unitless `0`, and off
+    // costs no declaration on any of the twelve patterns this now appears on.
+    if (scrolling) {
+      state.props['--cs-peek'] ??= '0px';
+      valueKnob(grid, 'Peek', '--cs-peek', state.props);
+    }
+    // Everything inside a card is sized in em off this. `1em` inherits the host
+    // page's body size, so the cards match the copy around them on whatever
+    // site they are pasted into; a length here pins them to that size instead.
+    state.props['--cargo-font'] ??= '1em';
+    valueKnob(grid, 'Card text size', '--cargo-font', state.props);
+
     if (p.look) {
-      const preset = pane.folder('Brand preset');
       const describe = () => {
         const b = BRANDS[state.brand];
         if (!b) return 'Sets how many cards across and which card style, from what that brand actually ships. Colours stay yours — pull them from the site theme.';
@@ -2081,7 +2124,7 @@ ${PHOTO_CSS}
           ? `${counts} cards across, on a phone / from 768px / from 992px / from 1200px. ${b.note ?? ''}`.trim()
           : `The ${b.label} demo sites we surveyed showed no clear pattern of how many across, so this starts from the card style's own. ${b.note ?? ''}`.trim();
       };
-      pane.list(preset, 'Brand', state.brand ?? '', [['', 'Start from the default'], ...Object.entries(BRANDS).map(([id, b]) => [id, b.label])], (v) => {
+      pane.list(style, 'Brand', state.brand ?? '', [['', 'Start from the default'], ...Object.entries(BRANDS).map(([id, b]) => [id, b.label])], (v) => {
         state.brand = v || null;
         // A preset brings its own vehicles, so it replaces the roster outright.
         // Keeping edited rows here would show Ford copy under a Kia preset - so
@@ -2120,7 +2163,7 @@ ${PHOTO_CSS}
           render();
         });
       });
-      pane.note(preset, describe());
+      pane.note(style, describe());
     }
 
     // Chosen visually: a dropdown reading "split photo card" helps nobody who
@@ -2130,7 +2173,6 @@ ${PHOTO_CSS}
     // seven and watching the preview, because the description only appeared
     // after choosing one - and calls back with the id.
     if (p.look) {
-      const style = pane.folder('Card style');
       pane.looks(style, LOOKS, state.look, (id) => {
         // Selecting what is already selected does nothing. It used to reset
         // the ladder to the look's own default, so clicking the highlighted
@@ -2157,7 +2199,6 @@ ${PHOTO_CSS}
       pane.note(style, LOOKS[state.look].note ?? '');
     }
 
-    const colors = pane.folder('Arrows and spacing');
     colourKnob(colors, 'Arrow colour', '--cs-arrow-fg', state.props);
     colourKnob(colors, 'Arrow background', '--cs-arrow-bg', state.props);
     // Both hover colours have been in the engine and in the Reference all
@@ -2179,28 +2220,6 @@ ${PHOTO_CSS}
     for (const [, cond, val] of `${p.css || ''}\n${LOOKS[state.look]?.css || ''}`.matchAll(/@media\s*\(([^)]+)\)[^{]*\{[^}]*--cs-arrow-size:\s*([^;}]+)/g)) {
       pane.note(colors, `This design also sets the arrow to ${val.trim()} at (${cond.trim()}), in its own CSS. The field above is the size everywhere else.`);
     }
-    // "Show a sliver of the next car" lands on a model bar as often as on the
-    // pattern named after it, so the row is offered wherever it can do
-    // something rather than only where the pattern pre-set it. Not under fade
-    // or gallery: `.cs[data-cs-fade-on] .cs-track` and the gallery's own track
-    // rule both win over `.cs-track { padding: 0 var(--cs-peek) }`, so the
-    // field would move nothing and lie about it.
-    //
-    // Off is `0px`, not the dot row's `0.1px`. It is the engine's own default,
-    // so cssFor()'s delta filter drops it before it is written - it never
-    // reaches the platform minifier to be stripped to a unitless `0`, and off
-    // costs no declaration on any of the twelve patterns this now appears on.
-    if (scrolling) {
-      state.props['--cs-peek'] ??= '0px';
-      valueKnob(colors, 'Peek', '--cs-peek', state.props);
-    }
-    state.props['--cs-gap'] ??= '1em';
-    valueKnob(colors, fading ? 'Gap (a crossfade has no gap)' : 'Gap', '--cs-gap', state.props);
-    // Everything inside a card is sized in em off this. `1em` inherits the host
-    // page's body size, so the cards match the copy around them on whatever
-    // site they are pasted into; a length here pins them to that size instead.
-    state.props['--cargo-font'] ??= '1em';
-    valueKnob(colors, 'Card text size', '--cargo-font', state.props);
     // Only worth showing when there are dots to make room for - this is the
     // reserved strip they are drawn into, and shrinking it puts them on the
     // card text. A gallery fills that same strip with the thumb rail instead,
@@ -2237,7 +2256,6 @@ ${PHOTO_CSS}
     // derived from the same names, so renaming a tab keeps them in step.
     // Which models sit under which tab is the part still to be decided.
     if (p.panes) {
-      const names = pane.folder('Tab names');
       (state.panes ?? p.panes).forEach((name, i) => {
         pane.text(
           names,
@@ -2254,8 +2272,7 @@ ${PHOTO_CSS}
       });
     }
 
-    if (Object.keys(state.lookProps).length) {
-      const knobs = pane.folder('This card style');
+    if (knobs) {
       for (const k of Object.keys(state.lookProps)) {
         const v = state.lookProps[k];
         if (/^#|rgb|transparent/.test(v)) colourKnob(knobs, knobLabel(k), k, state.lookProps);
@@ -2268,7 +2285,6 @@ ${PHOTO_CSS}
       }
     }
 
-    const beh = pane.folder('Behaviour');
     // data-cs-step takes a number as of 2026-08-27: how many cards one arrow
     // click moves. 'page' is a whole screenful; 'slide' is the old name for 1.
     pane.list(
@@ -2491,28 +2507,30 @@ ${PHOTO_CSS}
     // one setting whose consequence lands on the page rather than on this
     // slider - see the note in demo/index.html.
 
-    // Never disabled. On a pattern that draws its own cards this changes
-    // nothing, and the note below says so - a greyed-out control that will not
-    // explain itself is what the previous version of this got wrong.
-    pane.bool(beh, 'Paste the card styles too', state.standalone, (on) => {
-      state.standalone = on;
-      render();
-    });
-    pane.note(
-      beh,
-      state.look
-        ? 'Leave this off: the card styling comes from custom-slider.min.css, which is what keeps the snippet short. Tick it only for a page that cannot link that file — the slider looks the same either way.'
-        : 'This pattern draws its own cards, so its styling comes with the snippet either way — this setting changes nothing here.',
-    );
-
     // F103: the last two engine properties with no control anywhere. Matching a
     // site's focus-ring colour or slowing the control transitions meant reading
     // the name off the Reference and hand-editing the snippet. Both are rare
     // enough to sit at the end rather than among the settings people reach for
     // every time.
-    const adv = pane.folder('Everything else');
     colourKnob(adv, 'Focus ring', '--cs-focus', state.props);
     valueKnob(adv, 'Control transition', '--cs-transition', state.props);
+
+    // Not behaviour: this changes what the PAGE has to carry, not what the
+    // slider does - the same reason the slider's name sits beside the copy
+    // buttons rather than in the panel. Never disabled either. On a pattern
+    // that draws its own cards it changes nothing, and the note below says so -
+    // a greyed-out control that will not explain itself is what the previous
+    // version of this got wrong.
+    pane.bool(adv, 'Paste the card styles too', state.standalone, (on) => {
+      state.standalone = on;
+      render();
+    });
+    pane.note(
+      adv,
+      state.look
+        ? 'Leave this off: the card styling comes from custom-slider.min.css, which is what keeps the snippet short. Tick it only for a page that cannot link that file — the slider looks the same either way.'
+        : 'This pattern draws its own cards, so its styling comes with the snippet either way — this setting changes nothing here.',
+    );
   }
 
   /* ---- slide content ----------------------------------------------------- */
@@ -3067,16 +3085,17 @@ ${PHOTO_CSS}
     requestAnimationFrame(checkFit);
   };
 
-  // A width the column cannot actually give is a lie: the preview silently
-  // renders narrower, the fit gauge then reports "tight" for a layout that is
-  // fine on a real page, and the number beside it disagrees with the button
-  // you pressed. Offer only the widths that fit, and step down when the window
-  // shrinks past one.
+  // A width the WINDOW cannot give is a lie: there is nothing on a 900px laptop
+  // to judge a 1200px screen against. Offer the widths the window has, and step
+  // down when it shrinks past the chosen one.
+  //
+  // The COLUMN used to be the measure, because the frame shrank to fit it and a
+  // Desktop button previewing 999px says Desktop while showing something else.
+  // The frame keeps the width on the button now and .wb-stage scrolls when the
+  // column is narrower (assets/ui.css), so the column no longer decides what
+  // can be previewed - which is what lets the settings sit beside it at all.
   function fitWidths() {
-    const box = stage.parentElement;
-    const cs = getComputedStyle(box);
-    const avail = box.clientWidth - parseFloat(cs.paddingInlineStart) - parseFloat(cs.paddingInlineEnd);
-    const reach = avail;
+    const avail = innerWidth;
     const SCREEN = { 390: TIER_LABEL.base, 768: TIER_LABEL[768], 992: TIER_LABEL[992], 1200: TIER_LABEL[1200] };
     // Bootstrap 3's own container for each screen. The button width is the
     // SCREEN, because that is what a media query asks; the slider gets the
@@ -3085,18 +3104,15 @@ ${PHOTO_CSS}
     let active = null;
     for (const b of widthBtns()) {
       const w = +b.dataset.w;
-      b.disabled = w > reach + 1;
-      b.title = b.disabled
-        ? `Make the window about ${Math.round(w + (innerWidth - reach))}px wide to use this`
-        : w
-          ? `${SCREEN[w]} screen — a ${w}px window, where the slider gets ${CONTAINER[w]}`
-          : 'Use all the width this page has';
+      b.disabled = w > avail + 1;
+      b.title = b.disabled ? `Make the window about ${w}px wide to use this` : w ? `${SCREEN[w]} screen — a ${w}px window, where the slider gets ${CONTAINER[w]}` : 'Use all the width this page has';
       if (b.getAttribute('aria-pressed') === 'true') active = b;
     }
-    // A chosen width that no longer fits must not keep its label. Buttons stay
-    // enabled on `reach` so a collapse can still get you there, but the ACTIVE
-    // one is judged on the width available right now: re-opening the rail with
-    // Desktop selected rendered 999px and went on calling it Desktop.
+    // A chosen width the window no longer has must not keep its label: drag the
+    // browser narrower than Desktop and the button went on saying Desktop over
+    // a window that cannot show one. Step down to the widest that still fits -
+    // with keep false, so the correction does not overwrite the width the
+    // designer picked and expects back next time.
     if (active && +active.dataset.w > avail + 1) {
       const widest = widthBtns()
         .filter((b) => !b.disabled && +b.dataset.w <= avail + 1)

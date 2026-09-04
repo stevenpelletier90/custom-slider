@@ -104,7 +104,10 @@ body {
   color: inherit;
 }
 
-:where(button, input, select, a):focus-visible {
+/* [tabindex] is in here for the preview stage: it takes focus so the sideways
+   scroll can be reached from the keyboard, and a focusable thing with no ring
+   is worse than one that was never focusable. */
+:where(button, input, select, a, [tabindex]):focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
@@ -288,9 +291,9 @@ body {
   letter-spacing: 0.08em;
 }
 
-/* The settings sit across the top of the work column, so the preview below can
-   have the full width. Sections flow into as many columns as fit rather than
-   stacking, which is what made them a 312px sidebar in the first place. */
+/* The settings column. One column of folders, not a full-width band: the pane
+   puts a value at the right-hand edge of whatever it is given, so across the
+   whole page a label and its field sat 1200px apart. */
 .ui-panel {
   padding: 0.9rem 1rem 1rem;
   margin-block-end: 1.25rem;
@@ -330,6 +333,51 @@ body {
   --tp-monitor-foreground-color: var(--ink-soft);
   --tp-blade-value-width: 11rem;
   --tp-blade-horizontal-padding: 0.5rem;
+}
+
+/* ---- work area ----------------------------------------------------------
+   Settings in one column, the preview beside it and pinned, so a change is
+   seen without scrolling back up. Below 1200px the preview goes back above
+   the settings and stays in flow: a laptop keeps its height.
+
+   The preview column is narrower than a 1170px .container on any normal
+   window, which used to mean a shrunken frame. It does not any more - the
+   frame keeps the width on the button and .wb-stage scrolls (see #wb-stage),
+   so the two-column layout costs no preview fidelity. */
+.ui-work {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+}
+
+.ui-preview {
+  position: static;
+  min-inline-size: 0;
+}
+
+@media (width >= 1200px) {
+  .ui-work {
+    grid-template-columns: minmax(22rem, 26rem) minmax(0, 1fr);
+    align-items: start;
+  }
+
+  .ui-panel {
+    order: 0;
+  }
+
+  /* align-items: start is what makes this work: a stretched grid item is as
+     tall as the row and has nothing to slide within. */
+  .ui-preview {
+    position: sticky;
+    inset-block-start: 1rem;
+    order: 1;
+  }
+}
+
+@media (width < 1200px) {
+  .ui-preview {
+    order: -1;
+  }
 }
 
 .ui-main {
@@ -444,8 +492,15 @@ body {
    nothing demo-only ever lands in the snippet you paste. */
 .wb-stage {
   display: flex;
-  justify-content: center;
+
+  /* `safe` centre, not centre: with the settings beside it the column can be
+     narrower than the frame, and a centred flex item that overflows puts its
+     left edge out of reach - no scrollbar goes that way. `safe` falls back to
+     flex-start the moment it would overflow, so the scroll below reaches all
+     of it. */
+  justify-content: safe center;
   padding: 1.25rem;
+  overflow-x: auto;
   color: #10151c;
   background: #fff;
   border: 1px solid var(--rule);
@@ -464,13 +519,21 @@ body {
    baseline gap under it. */
 #wb-stage {
   display: block;
-  inline-size: 100%;
 
-  /* 1200, not 1170: the frame is the SCREEN the slider is being previewed on,
+  /* The frame is exactly the width on the button, never the width the column
+     happens to have: it used to be `inline-size: 100%` capped at --frame, so a
+     column narrower than the frame silently shrank it and the Desktop button
+     previewed a 999px screen while still calling itself Desktop. With the
+     settings beside it that would have been every window under ~1800px. It
+     keeps its width and .wb-stage scrolls instead - flex: none so the flex
+     container cannot shrink it either.
+     1200, not 1170: the frame is the SCREEN the slider is being previewed on,
      and Bootstrap hands out its 1170px container at 1200 and up. The fallback
      has to agree with the button that starts out pressed, or a first visit
-     renders one tier down from what the panel says. */
-  max-inline-size: var(--frame, 1200px);
+     renders one tier down from what the panel says. "Fill" sets --frame to
+     100%, which is how it still fills the column. */
+  flex: none;
+  inline-size: var(--frame, 1200px);
   border: 0;
 }
 
