@@ -1152,6 +1152,20 @@ ${PHOTO_CSS}
     const gutter = [
       needsRootPad ? `${sel}${ROOT} { padding-inline: ${gw}; }` : '',
       stripSel ? `${stripSel} { padding-inline: ${gw}; }` : '',
+      // The pause button belongs OVER the media it pauses, and the gutter took
+      // it off. An absolutely positioned element is placed against its
+      // ancestor's PADDING box, so `inset-inline-end: 0.5em` measures from the
+      // outer edge of the gutter, not from the picture: measured on the hero at
+      // the 768 tier, the image ran 59-709 and the button sat 716-752, floating
+      // on the page beside it. The arrows are in that channel on purpose; the
+      // pause is not, and it is the one control that has to read as belonging
+      // to what it controls.
+      //
+      // Emitted here rather than fixed in the engine because only the snippet
+      // knows how wide the channel is - the engine never sets that padding, the
+      // pasted CSS does. Gated on autoplay so a slider with no pause button
+      // does not carry a rule matching nothing.
+      gw !== '0' && +(state.data['data-cs-autoplay'] ?? 0) > 0 ? `${sel} .cs-pause { inset-inline-end: calc(0.5em + ${gw}); }` : '',
       // The STRIP only, never the carousel. A tab row or a filter bar has no
       // arrows beside it to line up with, and at a phone width the channel it
       // was matching cost more than the alignment bought: ~42px a side, which

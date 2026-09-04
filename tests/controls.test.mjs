@@ -1026,6 +1026,61 @@ describe('the arrow placement switch is not overruled by a breakpoint', () => {
   });
 });
 
+// The pause button belongs over the media it pauses. An absolutely positioned
+// element is placed against its ancestor's PADDING box, so the engine's
+// `inset-inline-end: 0.5em` measures from the outer edge of the arrow gutter
+// rather than from the picture - measured on the hero at 768, the image ran
+// 59-709 and the button sat 716-752, floating on the page beside it. The arrows
+// are in that channel deliberately; the pause is not.
+describe('the pause button sits on the thing it pauses', () => {
+  const placed = () =>
+    stageFrame(page)
+      .locator('.cs')
+      .first()
+      .evaluate((root) => {
+        const p = root.querySelector('.cs-pause');
+        const media = root.querySelector('img') ?? root.querySelector('.cs-slide');
+        if (!p || !media) return null;
+        const a = p.getBoundingClientRect();
+        const b = media.getBoundingClientRect();
+        return { inside: a.left >= b.left - 1 && a.right <= b.right + 1, pause: `${Math.round(a.left)}-${Math.round(a.right)}`, media: `${Math.round(b.left)}-${Math.round(b.right)}` };
+      });
+
+  test('with the arrows outside the cards or over them, at every width', async () => {
+    await pick(page, 'hero');
+    await page.waitForTimeout(300);
+    const auto = page.locator('#wb-settings label:has(> span:text-is("Rotate every (ms)")) input').first();
+    await auto.fill('4000');
+    await page.waitForTimeout(400);
+    const gut = page.locator('#wb-settings label:has-text("Arrows outside the cards") input[type=checkbox]').first();
+
+    for (const outside of [true, false]) {
+      if ((await gut.isChecked()) !== outside) {
+        await gut.setChecked(outside);
+        await page.waitForTimeout(400);
+      }
+      for (const w of [390, 768, 1200]) {
+        await page.click(`.ui-widths button[data-w="${w}"]`);
+        await page.waitForTimeout(350);
+        const r = await placed();
+        assert.ok(r, `outside=${outside} at ${w}: no pause button to measure`);
+        assert.equal(r.inside, true, `outside=${outside} at ${w}: the pause sits at ${r.pause} against media at ${r.media}`);
+      }
+    }
+  });
+
+  // A slider with no pause button must not carry the rule that positions one.
+  test('no autoplay, no rule', async () => {
+    await pick(page, 'hero');
+    await page.waitForTimeout(300);
+    const auto = page.locator('#wb-settings label:has(> span:text-is("Rotate every (ms)")) input').first();
+    await auto.fill('0');
+    await page.waitForTimeout(400);
+    const parts = await copyParts(page);
+    assert.doesNotMatch(parts.css, /cs-pause/, 'a slider with no pause button ships a rule for one');
+  });
+});
+
 describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);
