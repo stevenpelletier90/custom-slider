@@ -293,7 +293,11 @@ const LOOKS = {
     // A logo centred on a filled panel - brand strips, nothing else.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="5.5" y="5.5" width="33" height="19" rx="3" fill="currentColor" opacity=".85"/><circle cx="22" cy="15" r="5" fill="var(--wb-icon-bg, #fff)" opacity=".9"/><rect x="17" y="14" width="10" height="2" rx="1" fill="currentColor" opacity=".85"/></svg>`,
     label: 'Logo panel',
-    note: 'Made for a row of manufacturer logos on a dark panel, not for vehicles - which is why it looks odd holding cars. The navy is just a colour setting; change it in the panel.',
+    note: 'A row of manufacturer logos, each one a link to that make. Give it a background colour in the panel if you want it to read as a band.',
+    // It draws MARKS, so it is drawn with marks. Until it had a roster of its
+    // own the catalogue handed it the model bar's vehicle cutouts, and the note
+    // here apologised for the result rather than fixing it.
+    demoModels: 'logos',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
     minCard: 165,
@@ -302,20 +306,22 @@ const LOOKS = {
     // panel, which no tile setting produces.
     absorbs: ['logo-strip'],
     settings: {
-      '--strip-bg': '#16294f',
-      '--card-bg': '#253a5e',
-      '--card-fg': '#fff',
-      // The strip is dark, so the arrows have to be light. A look that sets its
-      // own background owns the contrast of the controls sitting on it - the
-      // navy panel with the engine's dark arrows measured 1.06:1.
-      '--cs-arrow-fg': '#fff',
-      '--cs-arrow-bg': 'rgba(255, 255, 255, 0.14)',
-      '--cs-arrow-bg-hover': 'rgba(255, 255, 255, 0.26)',
+      // No strip colour. The navy was there to make vehicle cutouts look like a
+      // deliberate panel; with real marks on it the look needs no band of its
+      // own, and one is a colour setting away for anyone who wants it.
+      '--strip-bg': 'transparent',
+      '--card-bg': '#f4f6f8',
+      '--card-fg': '#10151c',
+      // Back to the engine's own dark arrows now the strip is not dark. A look
+      // that sets its own background owns the contrast of the controls sitting
+      // on it, and this one no longer sets one.
+      '--cs-arrow-fg': '#262626',
+      '--cs-arrow-bg': 'transparent',
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1em; background: var(--strip-bg); }
 %root% .cs-track { padding-block-end: 1.5em; }
 @media (max-width: 460px) { %root% { --cs-per-view: 1; padding-block-start: 1em; padding-inline: 0.5em; } %root% .cs-track { padding-block-end: 1em; } }
-.cargo-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1em; color: var(--card-fg); background: var(--card-bg); border: 1px solid rgba(255, 255, 255, 0.07); border-radius: 10px; transition: background 0.2s; }
+.cargo-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1em; color: var(--card-fg); background: var(--card-bg); border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 10px; transition: background 0.2s; }
 .cargo-card img { inline-size: 75%; block-size: auto; object-fit: contain; }`,
     markup: (m) => `<a class="cargo-card" href="${m.href}" aria-label="${m.alt}">
   <img src="${m.img}" width="${m.w ?? 240}" height="${m.h ?? 160}" alt="" loading="lazy" decoding="async">
@@ -327,6 +333,10 @@ const LOOKS = {
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="6.5" y="3.5" width="31" height="23" rx="3" stroke="currentColor" opacity=".5"/><rect x="9" y="6" width="26" height="9" rx="1.6" fill="currentColor" opacity=".85"/><rect x="9" y="17" width="15" height="2.2" rx="1.1" fill="currentColor" opacity=".45"/><rect x="9" y="21" width="26" height="3.2" rx="1.6" fill="currentColor" opacity=".85"/></svg>`,
     label: 'Location card',
     note: 'A dealership: storefront photo, the store name, and a coloured action bar.',
+    // It promises a storefront photo, so it is drawn with one. The catalogue
+    // handed it vehicle cutouts labelled "In stock now", which is a different
+    // card entirely.
+    demoModels: 'places',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
     minCard: 170,
@@ -334,7 +344,10 @@ const LOOKS = {
     // Name, address line and a Visit button. Not a vehicle card at all.
     absorbs: ['location-card'],
     settings: {
-      '--strip-bg': '#f4f6f8',
+      // No band. #f4f6f8 behind white cards was a difference of four values on a
+      // white page - it read as a faint smudge rather than a panel, and the
+      // card's own shadow already separates it from whatever it sits on.
+      '--strip-bg': 'transparent',
       '--card-bg': '#fff',
       '--cta-bg': '#c8102e',
       '--cta-fg': '#fff',
@@ -343,7 +356,11 @@ const LOOKS = {
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1em; background: var(--strip-bg); }
 %root% .cs-track { padding-block-end: 1.5em; }
 .cargo-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.25em; text-align: center; text-decoration: none; background: var(--card-bg); border-radius: 10px; box-shadow: var(--card-shadow); }
-.cargo-card img { inline-size: 55%; block-size: auto; object-fit: contain; }
+/* Full width and cropped, not 55% and contained: that sizing was for a
+   transparent cutout floating on the card, and a storefront photograph wants
+   to fill the top of it. */
+.cargo-card { padding-block-start: 0; overflow: hidden; }
+.cargo-card img { inline-size: calc(100% + 2.5em); block-size: auto; margin-inline: -1.25em; margin-block-end: 1em; aspect-ratio: 16 / 10; object-fit: cover; }
 .cargo-name { margin: 0.5em 0 0.4em; font-size: 1.1em; font-weight: 700; line-height: 1.3; color: #222; }
 .cargo-card p { margin: 0 0 0.9em; font-size: 0.9em; color: #5f6368; }
 .cargo-cta { padding: 0.5em 1.3em; margin-block-start: auto; font-size: 0.8em; font-weight: 700; color: var(--cta-fg); background: var(--cta-bg); border-radius: 999px; }`,

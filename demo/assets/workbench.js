@@ -879,9 +879,32 @@ ${PHOTO_CSS}
   // A brand preset brings its own vehicles where the estate gave us the
   // cutouts. Seventeen of the 32 have none, and those keep the pattern's own
   // content rather than being shown someone else's cars under their name.
+  // Manufacturer marks, for the one look that is about marks rather than cars.
+  // /assets/logos/ is root-relative on any dealer domain, like /assets/stock/,
+  // so these paste and resolve with nothing uploaded.
+  const LOGOS = [
+    ['acura', 'Acura'],
+    ['bmw', 'BMW'],
+    ['chevrolet', 'Chevrolet'],
+    ['ford', 'Ford'],
+    ['honda', 'Honda'],
+    ['hyundai', 'Hyundai'],
+    ['nissan', 'Nissan'],
+    ['toyota', 'Toyota'],
+  ].map(([slug, name]) => ({ img: `img/logo-${slug}.png`, w: 116, h: 100, alt: `${name} logo`, name, mark: name, href: `/searchnew.aspx?Make=${name}`, badge: '', cta: '' }));
+
+  // Dealership photography for the location card, which promises "a storefront
+  // photo, the store name and a coloured action bar" and was drawing vehicle
+  // cutouts labelled "In stock now".
+  const PLACES = [
+    ['place-1.jpg', 1920, 1280, 'Downtown', 'Rows of new vehicles on a dealership lot'],
+    ['place-2.jpg', 800, 600, 'Northside', 'A dealership lot seen from the forecourt'],
+    ['place-3.jpg', 1920, 600, 'Airport Road', 'A dealership building and its forecourt'],
+  ].map(([f, w, h, name, alt]) => ({ img: `img/${f}`, w, h, name, alt, sub: 'Open today until 7pm', href: '/dealership/directions.htm', cta: 'Get directions', badge: '' }));
+
   // The rosters a LOOK may ask the catalogue to draw it with, by name. Only
   // the ones whose shape differs from the model bar's cutouts need an entry.
-  const ROSTERS = { models: MODELS, services: SERVICES, vehicles: VEHICLES, photos: PHOTOS };
+  const ROSTERS = { models: MODELS, services: SERVICES, vehicles: VEHICLES, photos: PHOTOS, logos: LOGOS, places: PLACES };
 
   const modelsFor = (p) => (state.content ? state.content : state.brand && BRANDS[state.brand]?.models ? BRANDS[state.brand].models : p.models);
 

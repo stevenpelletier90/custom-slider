@@ -128,6 +128,32 @@ const LIBRARY = {
   'photo-5.jpg': '/static/industry-automotive/medium-images/jet-wash.jpg',
   'photo-6.jpg': '/static/industry-automotive/medium-images/unlocking.jpg',
 
+  // Manufacturer marks for the logo panel, and dealership photography for the
+  // location card. Both looks were being drawn on the model bar's vehicle
+  // cutouts, which is why the logo panel's own note used to apologise for
+  // "looking odd holding cars".
+  //
+  // /assets/logos/ is NOT in the media library - it is not reachable through
+  // library_browse at all, which is where I looked first and wrongly concluded
+  // the platform had no logos. It behaves like /assets/stock/: root-relative
+  // and identical on any dealer domain (checked - onboard.dealeron.com, a
+  // dealer storefront and the CDN all return the same bytes), so these paste
+  // and resolve with nothing uploaded. Every marque the demo carries has one;
+  // only the `cdjr` folder name does not, which is correct - it is four
+  // marques, and each of the four has its own.
+  'logo-acura.png': '/assets/logos/transparent/acura.png',
+  'logo-bmw.png': '/assets/logos/transparent/bmw.png',
+  'logo-chevrolet.png': '/assets/logos/transparent/chevrolet.png',
+  'logo-ford.png': '/assets/logos/transparent/ford.png',
+  'logo-honda.png': '/assets/logos/transparent/honda.png',
+  'logo-hyundai.png': '/assets/logos/transparent/hyundai.png',
+  'logo-nissan.png': '/assets/logos/transparent/nissan.png',
+  'logo-toyota.png': '/assets/logos/transparent/toyota.png',
+
+  'place-1.jpg': '/static/industry-automotive/hero/lot/lot-hero6.jpg',
+  'place-2.jpg': '/static/industry-automotive/medium-images/lot/car-lot-02-800x600.jpg',
+  'place-3.jpg': '/static/industry-automotive/hero/dealership-hero.jpg',
+
   // Used-inventory cards. ChromeData ColorMatched renders at 640, which are
   // exactly 640x480 - the 4:3 the vehicle card crops to, so nothing is lost -
   // and which exist for every make, so the card can finally name the vehicle it

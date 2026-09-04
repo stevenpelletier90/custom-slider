@@ -12,7 +12,7 @@
 // the model is guaranteed, not the paint colour. They are still proved to
 // serve from an unrelated dealer domain like everything else here.
 
-// 125 of 126 cutouts byte-proved, 8 name-matched, 15 library photos.
+// 125 of 126 cutouts byte-proved, 8 name-matched, 26 library photos.
 // Harvested 2026-09-04 by re-running the script above.
 
 globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
@@ -25,6 +25,14 @@ globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
     'chrome-trailblazer.webp': '/assets/stock/ColorMatched_01/Transparent/320/cc_2025CHS08_01_320/cc_2025CHS081953550_01_320_GP5.png',
     'chrome-traverse.webp': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026CHS29_01_320/cc_2026CHS292054971_01_320_GB8.png',
     'chrome-trax.webp': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026CHS32_01_320/cc_2026CHS321968846_01_320_G42.png',
+    'logo-acura.png': '/assets/logos/transparent/acura.png',
+    'logo-bmw.png': '/assets/logos/transparent/bmw.png',
+    'logo-chevrolet.png': '/assets/logos/transparent/chevrolet.png',
+    'logo-ford.png': '/assets/logos/transparent/ford.png',
+    'logo-honda.png': '/assets/logos/transparent/honda.png',
+    'logo-hyundai.png': '/assets/logos/transparent/hyundai.png',
+    'logo-nissan.png': '/assets/logos/transparent/nissan.png',
+    'logo-toyota.png': '/assets/logos/transparent/toyota.png',
     'mixed-1.jpg': '/static/brand-chevrolet/custom-pages/models/2026/silverado-1500/ext-img1.jpg',
     'mixed-2.jpg': '/static/brand-nissan/vehicle/2026/Nissan/Altima/MRP/01.jpg',
     'mixed-3.jpg': '/static/brand-buick/vehicle/2026/Buick/Enclave/Hero/01.jpg',
@@ -159,6 +167,9 @@ globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
     'photo-4.jpg': '/static/industry-automotive/medium-images/car_ac.jpg',
     'photo-5.jpg': '/static/industry-automotive/medium-images/jet-wash.jpg',
     'photo-6.jpg': '/static/industry-automotive/medium-images/unlocking.jpg',
+    'place-1.jpg': '/static/industry-automotive/hero/lot/lot-hero6.jpg',
+    'place-2.jpg': '/static/industry-automotive/medium-images/lot/car-lot-02-800x600.jpg',
+    'place-3.jpg': '/static/industry-automotive/hero/dealership-hero.jpg',
     'vehicle-1.png': '/assets/stock/ColorMatched_01/Transparent/640/cc_2025HOS03_01_640/cc_2025HOS032071910_01_640_BK.png',
     'vehicle-2.png': '/assets/stock/Expanded/Transparent/640/2026TOS11_640/2026TOS112033662_640_01.png',
     'vehicle-3.png': '/assets/stock/ColorMatched_01/Transparent/640/cc_2023NIS11_01_640/cc_2023NIS110069_01_640_RBY.png',
