@@ -1,10 +1,10 @@
-# Workbench controls: colour, units, layout, test runner
+# Workbench controls: Tweakpane owns the panel
 
 **Date:** 2026-09-04
 **Status:** approved in conversation, awaiting spec review
-**Touches:** the demo (`demo/`), `tests/`, `package.json`. The engine (`src/`,
-`dist/`), the look definitions (`looks.js`), `cssFor()`/`htmlFor()` and the
-copied output are out of scope and must not change.
+**Touches:** the demo (`demo/`), `tests/`, `package.json`, `scripts/`. The engine
+(`src/`, `dist/`), the look definitions (`looks.js`), `cssFor()`/`htmlFor()` and
+the copied output are out of scope and must not change.
 
 ## Why
 
@@ -23,175 +23,189 @@ time on every visit:
   panel so every change means scrolling, and the order (how many across, then
   brand, then card style) is not the order anyone decides things in.
 
-The rule that the demo must be dependency-free was never a rule: the ENGINE is
-dependency-free, the demo can use whatever makes it better (Steven, 2026-09-04).
-Same for the tests: "no new devDependencies" was a constraint we set ourselves,
-not one anyone asked for.
+Decisions made 2026-09-04: the ENGINE is dependency-free; the demo and the tests
+use whatever library does the job properly. One system owns the panel, not two
+mixed on a page. That system is **Tweakpane v4**: a maintained pane library
+built for exactly this (bind a value, get a control), with folders, tabs, a
+colour picker with alpha, a plugin API for the controls it lacks, and JSON
+state export/import.
 
 ## Non-goals
 
 - No change to what is copied. `cssFor()` output for a given state is
   byte-identical before and after; the paste-parity test proves it.
 - No change to the engine, its budget, or `dist/`.
-- No move to a framework (React, Vue). The demo stays classic scripts on
-  `globalThis.CARGO` so it opens over `file://`.
-- No auto-conversion of existing saved settings: a kept `44px` stays `44px`.
+- No framework. The demo stays classic scripts on `globalThis.CARGO` and opens
+  over `file://`.
+- No auto-conversion of settings someone kept: a kept `44px` stays `44px`.
 
-## 1. Colour rows: Coloris
+## 0. Getting Tweakpane onto a `file://` page
 
-Coloris (mdbassit/coloris, MIT, vanilla ES6, ~10 KB) attaches to a text input
-and adds a swatch button beside it. The text field stays the source of truth,
-which is the property `colorRow()` already has, so `setProp` and `restyle()` are
-unchanged.
+Tweakpane v4 ships as an ES module only (v3 had a script-tag build). ES modules
+are blocked over `file://`, and the demo must open by double-click. So:
 
-- **Vendored**, not linked: `demo/assets/vendor/coloris.min.js` and
-  `coloris.min.css`, loaded as classic scripts from `index.html`. The demo runs
-  over `file://` and on GitHub Pages, so `node_modules` is never served.
-- **One global init** in `workbench.js` after the panel is built:
-  `format: 'mixed'` (emits `#rrggbb`, or legacy `rgba()` when alpha is under 1,
-  which is the form the platform minifier keeps), `alpha: true`,
-  `formatToggle: true`, `clearButton: true` (clear = fall back to the default,
-  same as today's empty field), `themeMode` following `theme.js`, `parent` set
-  to the settings column so the dialog scrolls with it.
-- **Swatches** are rebuilt on every `render()`: the brand preset's colours
-  first, then every distinct colour currently set on this slider, then
-  `transparent`. A designer pulling the arrow colour from the badge colour is
-  one click.
-- **Rows that can't be a swatch** (`currentcolor`, `inherit`, a `var()`) keep
-  working: Coloris only parses what it can and leaves the text alone. The
-  `wb-chip` fallback and the hidden-swatch dance in `colorRow()` are deleted.
-- **Copy** is the field itself, plus the format toggle to get hex or rgba as
-  needed. No separate copy button.
+- `tweakpane` and `@tweakpane/core` are devDependencies.
+- `scripts/build-vendor.mjs` bundles `demo/assets/vendor/tweakpane.entry.js`
+  (which imports `Pane` and our plugins) with esbuild into an IIFE at
+  `demo/assets/vendor/tweakpane.js`, assigning `globalThis.CARGO.Pane`. The
+  output is committed, like `dist/`, because GitHub Pages serves the repo as-is.
+- `npm run build` runs it. `npm run validate` fails if the committed bundle is
+  stale (rebuild to a temp path and compare), the same way `dist/` is guarded
+  by the tests.
+- `index.html` loads it as a classic script before `workbench.js`.
 
-Dark mode: Coloris has `themeMode: 'light' | 'dark'`. `theme.js` owns the
-demo's mode (a manual toggle, not only `prefers-color-scheme`), so it calls
-`Coloris({ themeMode })` on load and again on each toggle. The picker's dialog
-colours are overridden once in `ui.css` to the demo's own tokens.
+## 1. State model: bind Tweakpane straight to `state`
 
-## 2. Length rows: number + unit
+`state.props` and `state.lookProps` are plain objects of CSS custom property
+strings. Tweakpane binds to an object key and reads/writes through a plugin's
+`reader`/`writer`, so the stored value keeps its current shape (`'0.5em'`,
+`'#16324f'`, `'transparent'`) and `okValue()`, `cssFor()`, `setProp` and the
+placeholder/fallback logic do not change.
 
-A new `lengthRow(label, key, store)` replaces the free-text row for any knob
-whose default is a **single** length. `okValue()` already decides "is this a
-length" off the shape of the default; the same predicate picks the row type, so
-a knob added to a look gets the right control the day it ships.
+- One `Pane` in the settings column, container set to `#wb-settings`.
+- `render()` still rebuilds the panel on a structural change (pattern, look,
+  brand preset): dispose the pane, build it again from the same tables that
+  build it today. Value-only changes go through `pane.on('change')` →
+  `setProp` → `restyle()`, the fast path that keeps the colour drag at 0.5 ms.
+- Keep / Reset / the session store are unchanged; Keep may additionally save
+  `pane.exportState()` so folder open/closed state survives.
 
-- **Number box** keeps the arrow-key stepper (1 / Shift 10 / Alt 0.1).
-- **Unit dropdown**: `px`, `em`, `%`, `vw`. `rem` is not offered (README:
-  Bootstrap 3 sets `html { font-size: 10px }`, so it ships at 62.5%).
-- **Switching unit converts** where a conversion is exact: px↔em uses the
-  card's resolved font size read off the preview (`--cargo-font` on the root,
-  `getComputedStyle` in the iframe), so `16px` becomes `1em`. `%` and `vw`
-  have no fixed reference, so switching to or from them keeps the number and
-  changes the unit only, and the row's hint says so once.
-- **Stored value is unchanged in shape**: the store still holds `'0.5em'`, so
-  `okValue()`, `cssFor()` and the placeholder logic need no change. The zero
-  rule holds: a typed `0` stores as `0.1px` with the same note the tile look
-  already carries, never a bare `0`.
-- **Not converted**: multi-value knobs (`6% 6% 1%`), `calc()`, keywords
-  (`auto`, `none`, `normal`) and numbers with no unit (`--name-weight`,
-  `--zoom`) keep the text row. The text row gains a placeholder listing the
-  units accepted.
+## 2. Controls, one plugin each where Tweakpane has no native fit
 
-## 3. Panel layout: steps down one column, preview pinned
+| Knob shape (decided off the default, as `okValue()` does today) | Control                                                               |
+| --------------------------------------------------------------- | --------------------------------------------------------------------- |
+| Colour (hex, rgb/rgba, `transparent`, `currentcolor`)           | **Colour plugin** (section 2a) wrapping Tweakpane's picker with alpha |
+| Single length (`0.5em`, `44px`)                                 | **Length plugin** (section 2b): number + unit                         |
+| Closed set (`ENUMS`)                                            | native `options` list                                                 |
+| Unitless number (`--name-weight`, `--zoom`)                     | native number with `step`                                             |
+| Integer count (columns per tier, rotate ms)                     | native number, `step: 1`, `min`                                       |
+| Boolean (dots, outside arrows, paste cards)                     | native checkbox                                                       |
+| Multi-value, `calc()`, keywords (`6% 6% 1%`, `auto`, `none`)    | native text (`view: 'text'`) with the accepted units as the hint      |
 
-`index.html` and `ui.css` change; `workbench.js` changes only the order it
-appends sections and wraps each in a `<details>`.
+### 2a. Colour plugin
+
+Tweakpane's picker handles the spectrum, hue and alpha. The plugin exists for
+the reader/writer and the two values the picker can't represent:
+
+- **Reader**: `transparent` → `rgba(0, 0, 0, 0)`; `#222` → `#222222`;
+  `rgba()`/`rgb()`/hex parsed. `currentcolor`, `inherit`, `var()` mark the
+  binding as text-only (falls through to `view: 'text'`) so nothing is lost.
+- **Writer** normalises to the platform's form before storing: `#rrggbb` when
+  alpha is 1, legacy `rgba(r, g, b, a)` otherwise, `transparent` when alpha is 0. This is deliberate regardless of what the picker emits: the stylelint
+  rules on the copy panel require legacy notation, and the platform minifier
+  keeps it.
+- **Swatches**: a row of buttons under the picker, rebuilt on `render()`: the
+  brand preset's colours, then every distinct colour set on this slider, then
+  `transparent`. Click writes the value.
+- **Clear** (a button beside the field): back to the default, same as today's
+  emptied field, so the emitted CSS drops the declaration.
+- **Copy**: the text field is selectable; no separate copy button.
+
+### 2b. Length plugin
+
+- Number field with the existing stepper semantics (1 / Shift 10 / Alt 0.1)
+  and a unit list: `px`, `em`, `%`, `vw`. No `rem` (README: Bootstrap 3 sets
+  `html { font-size: 10px }`, so it ships at 62.5%).
+- **Switching unit converts** where exact: px↔em off the card's resolved font
+  size read from the preview iframe (`--cargo-font` on the root). `%` and `vw`
+  have no fixed reference: switching keeps the number, changes the unit, and
+  the field hint says so.
+- **Writer**: `number + unit`, with the zero rule: a typed `0` stores `0.1px`
+  (the tile look already documents why), never a bare `0`.
+- If the iframe isn't ready for a conversion, keep the number, change the unit.
+
+## 3. Layout: folders in decision order, preview pinned
 
 ```
-┌ Patterns rail ┐ ┌───────── settings (one column) ─────────┐ ┌── preview (sticky) ──┐
-│ Model bar     │ │ ▾ 1  Brand and card style               │ │ [390][750][970][1170] │
-│ Vehicle cards │ │ ▾ 2  How many across, gap, peek         │ │                       │
-│ …             │ │ ▾ 3  This card style                    │ │   live slider         │
-│               │ │ ▾ 4  Arrows and dots                    │ │                       │
-│               │ │ ▾ 5  Behaviour                          │ │  spec line / warnings │
-│               │ │ ▸    Advanced                           │ └───────────────────────┘
-│               │ └─────────────────────────────────────────┘
+┌ Patterns rail ┐ ┌──────── settings: one Pane ─────────┐ ┌── preview (sticky) ──┐
+│ Model bar     │ │ [Keep these settings] [Reset]        │ │ [390][750][970][1170] │
+│ Vehicle cards │ │ ▾ 1  Brand and card style            │ │                       │
+│ …             │ │ ▾ 2  How many across, gap, peek      │ │   live slider         │
+│               │ │ ▾ 3  This card style                 │ │                       │
+│               │ │ ▾ 4  Arrows and dots                 │ │  spec line / warnings │
+│               │ │ ▾ 5  Behaviour                       │ └───────────────────────┘
+│               │ │ ▸    Advanced                        │
+│               │ └──────────────────────────────────────┘
 │               │   Slide content  ·  Code  ·  Add the files   (unchanged, below)
 ```
 
-- **Order** is the order decisions get made: what brand and card, then how
-  many fit, then how the card looks, then the controls, then motion. The
-  brand preset moves up because it sets the card style and the column count,
-  and today it sits under the columns it overrides.
-- **Sections never split.** Each is a `<details open>` with the heading as
-  `<summary>`; "Advanced" (today's "Everything else") and "Tab names" start
-  closed. Open/closed state is remembered per section in `localStorage`.
+- Each step is a Tweakpane **folder**; "Advanced" (today's "Everything else")
+  and "Tab names" start `expanded: false`. Folders never split.
+- **Order** is the order decisions get made. The brand preset moves to the top
+  because it sets the card style and the column count, and today it sits under
+  the columns it overrides.
+- The card-style picker (seven thumbnails) is a **custom blade** plugin so it
+  keeps its icons; it lives in folder 1.
 - **The preview is `position: sticky`** in a second column from 1200px up,
-  with the width buttons and the spec line inside it. Below 1200px it goes
-  back above the column, not sticky, so a laptop keeps its height.
-- **Keep / Reset** stay at the top of the settings column.
-- **Row width** is fixed for the column, so labels stop wrapping to two lines
-  ("Arrow background · hover") and the number + unit pair fits.
+  with the width buttons and the spec line inside it. Below 1200px it sits
+  above the pane, not sticky.
+- **Theme**: Tweakpane is themed through `--tp-*` variables set on the
+  container, mapped to the `ui.css` tokens for light and dark, so `theme.js`
+  needs no extra work. The pane's default dark dev-tool look is not shipped.
 
 ## 4. Test runner: @playwright/test
 
 `node --test` plus hand-launched Chromium becomes the Playwright test runner.
 Same browser, same checks, ported file by file.
 
-- `playwright.config.mjs`: `webServer` starts `npm run serve` (the esbuild
-  server) and waits for it; `workers` default; `trace: 'on-first-retry'`,
-  `screenshot: 'only-on-failure'`; `reporter: 'list'` locally, HTML on demand.
-- `tests/helpers.mjs` loses its own server and `launchBrowser()`; each test
-  gets `page` from the fixture.
+- `playwright.config.mjs`: `webServer` starts `npm run serve` and waits;
+  `trace: 'on-first-retry'`, `screenshot: 'only-on-failure'`; `reporter:
+'list'` locally, HTML on demand.
+- `tests/helpers.mjs` loses its server and `launchBrowser()`; tests take
+  `page` from the fixture.
 - **Pixel checks become `toHaveScreenshot`**: the shared-vs-inline card parity
-  and the seven-looks-at-three-widths check that `build-cards.mjs` documents
-  as "proved pixel-identical" get a checked-in baseline under
-  `tests/__screenshots__/`, so the proof runs on every `npm test` instead of
-  once by hand.
-- **Every existing test keeps its finding tag** (F003, F022…) in its name.
-- `npm test` → `playwright test`. `npm run test:ui` → `playwright test --ui`
-  for debugging. The ~14 s wall time should fall with workers; measured, not
-  assumed, and recorded in CLAUDE.md when it lands.
+  and the seven-looks-at-three-widths proof get checked-in baselines under
+  `tests/__screenshots__/`, so the "proved pixel-identical" claim runs on
+  every `npm test`.
+- `controls.test.mjs` (a control shows what the slider is using, F039–F077) is
+  rewritten against the pane's DOM: every finding keeps its tag, and each
+  rewritten check is run against the OLD panel first to confirm it still
+  catches what it did.
+- `npm test` → `playwright test`; `npm run test:ui` → `playwright test --ui`.
+  Wall time is measured and recorded in CLAUDE.md when it lands.
 
-## 5. What from Tweakpane is worth taking, and what it would cost
+## 5. Sharing settings (comes with Tweakpane, kept small)
 
-Steven asked for the pane-library option to be broken down after B ships.
-Checked against the v4 docs:
+`pane.exportState()` gives a JSON of every binding. Two uses, both cheap:
 
-| Element                         | Feasible?     | Notes                                                                                                                                                                                         |
-| ------------------------------- | ------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Folders / tabs for the sections | Yes, but moot | Section 3 delivers the same with `<details>` and no library.                                                                                                                                  |
-| Colour input with alpha         | Yes           | Equivalent to Coloris, but without a format toggle or swatches; Coloris is the better fit for a text-first field.                                                                             |
-| Number input with step / slider | Partly        | Unitless. A unit would need a custom plugin (the docs show the plugin API) or a paired list; section 2 does it in ~60 lines without one.                                                      |
-| List / select                   | Yes           | Same as today's `<select>` for `ENUMS`.                                                                                                                                                       |
-| Whole-pane takeover             | **No, as-is** | v4 is ES-module only (v3 had a script tag). The demo must open over `file://` as classic scripts. It would need an esbuild step to bundle Tweakpane into an IIFE under `demo/assets/vendor/`. |
-| Theming                         | Yes           | CSS variables (`--tp-*`) on the container; would still be a second visual language beside `ui.css`.                                                                                           |
-| Preset export / import (JSON)   | Yes, useful   | `pane.exportState()` / `importState()`. The one thing the current panel lacks; could back "Keep these settings" and a shareable URL. Worth a spike on its own after B.                        |
-
-Verdict: nothing in A is blocked, and one piece (state export) is worth a spike.
-None of it should be taken before B lands, because B's rows and steps already
-cover the visible wins, and the whole-pane option would rewrite `controls.test.mjs`
-against a DOM the library owns.
+- **Keep these settings** stores it beside `state` so folder state survives.
+- **Copy a link**: the same JSON, compressed, in the URL hash; opening the link
+  restores the pane. Uniqueness and size are the only things to watch; it is
+  a follow-on, not part of the first landing.
 
 ## Error handling
 
-- Coloris fails to load (offline `file://` with a missing vendor file): the
-  text field still works; the swatch button is simply absent. `workbench.js`
-  guards `typeof Coloris === 'function'`.
-- A unit conversion that cannot read the preview font size (iframe not ready)
-  keeps the number and changes the unit only, same as the `%`/`vw` path.
-- `okValue()` remains the single gate; nothing in this spec adds a second one.
+- Vendor bundle missing (a stale checkout over `file://`): `workbench.js`
+  guards `CARGO.Pane` and shows one message in the settings column instead of
+  a blank panel. Everything else on the page (preview, content editor, code)
+  still works because the state object does not depend on the pane.
+- Colour that will not parse: falls to a text binding; nothing is dropped.
+- Conversion without a readable font size: keep the number, change the unit.
+- `okValue()` remains the single gate; no plugin adds a second one.
 
 ## Testing
 
 - **Paste parity**: for each pattern, `cssFor('.my-slider')` before and after
-  is identical for the same state. Runs as a unit-level check in the runner.
-- **Colour row** (new): typing `rgba(0, 0, 0, 0.5)` shows a swatch; picking a
-  swatch writes the field and the preview; Clear restores the default and the
-  emitted CSS drops the declaration.
-- **Length row** (new): `16px` → switch to em → field reads `1` `em` and the
-  store holds `1em`; typed `0` stores `0.1px`; switching to `%` keeps the number.
-- **Layout**: sections are in the specified order; none is split; Advanced is
-  closed on first load; the preview is sticky at 1440 and static at 1024.
-- **All 150 existing checks** pass under the new runner before any control
-  changes are merged. Runner migration is its own commit.
+  is identical for the same state.
+- **Colour plugin**: `rgba(0, 0, 0, 0.5)` binds with a swatch; a picked colour
+  with alpha 1 stores `#rrggbb`; with alpha 0.5 stores legacy `rgba()`; alpha 0
+  stores `transparent`; Clear restores the default and the emitted CSS drops
+  the declaration; `currentcolor` stays a text field.
+- **Length plugin**: `16px` → em → field reads `1` `em`, store holds `1em`;
+  typed `0` stores `0.1px`; switching to `%` keeps the number.
+- **Layout**: folders in the specified order; Advanced closed on first load;
+  preview sticky at 1440 and static at 1024.
+- **Vendor guard**: `npm run validate` fails on a stale bundle.
+- **All 150 existing checks** pass under the new runner before any panel
+  change is merged. Runner migration is its own commit.
 
 ## Order of work
 
 1. Runner migration (section 4), all green, one commit.
-2. Layout (section 3): order, `<details>`, sticky preview. Screenshot before and
-   after at 1440 and 1024.
-3. Length rows (section 2).
-4. Colour rows (section 1).
-5. Update CLAUDE.md: the "no new dependencies" line in the test paragraph, the
-   vendor folder, and the measured test time.
+2. Vendor bundle and build/validate guard (section 0).
+3. Pane skeleton bound to `state` with native controls only, old panel removed,
+   `controls.test.mjs` ported. Screenshot before and after at 1440 and 1024.
+4. Folders, order, sticky preview, theming (section 3).
+5. Length plugin (2b), then colour plugin (2a), each with its tests.
+6. Update CLAUDE.md: the test paragraph's "no new dependencies" line, the
+   vendor build, the measured test time.
