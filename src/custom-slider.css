@@ -14,8 +14,8 @@
   --cs-arrow-size: 44px; /* prev/next tap target */
   --cs-arrow-fg: #fff;
 
-  /* Classic rgba(), not the slash form, in every custom property. dist/paste/
-     1-style-only.css is pasted into Style Only, whose server-side minifier is
+  /* Classic rgba(), not the slash form, in every custom property. The per-slider
+     CSS the copy panel emits is pasted into Style Only, whose server-side minifier is
      documented (docs/cms-implementation.md §3, bisected live on dealer 26900)
      to fail on a modern function value inside a --x: declaration and then
      serve the last sheet that did minify - silently, so the page keeps its

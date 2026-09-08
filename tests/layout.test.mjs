@@ -133,19 +133,26 @@ test('a title bar is not in the tab order', async ({ browser }) => {
   assert.deepEqual(errors, []);
 });
 
-// Pinned UNDER the masthead, not behind it: the masthead is sticky at 0 and
-// 3.5rem tall, and a preview pinned at 1rem had its top 40px painted over.
-// Both widths, because the pinning is no longer something only a 1200px window
-// gets - the settings pass under the preview at every size now.
-test('the preview pins below the masthead when the settings scroll', async ({ browser }) => {
+// The preview scrolls away with the page. It used to be pinned under the
+// masthead with a height cap, so the settings passed beneath it - and that was
+// the objection: a panel you are reading slides under a white slab covering the
+// thing you came to look at. Unpinned 2026-09-08 at Steven's call, and this is
+// what stops it creeping back, because "sticky" is a one-word change that reads
+// as an improvement to anyone who did not have to use it.
+test('the preview scrolls with the page and never pins over the settings', async ({ browser }) => {
   for (const w of [1440, 1024]) {
     const { page, errors } = await openBuilder(browser, w);
-    await page.evaluate(() => window.scrollTo(0, 600));
+    const before = (await stageBox(page)).preview.top;
+    await page.evaluate(() => window.scrollTo(0, 900));
     await page.waitForTimeout(400);
     const box = await stageBox(page);
-    assert.equal(box.position, 'sticky', `at ${w}: the preview is not pinned`);
-    assert.ok(box.wrap.top >= box.headBottom, `at ${w}: the stage (${box.wrap.top}) is under the masthead (${box.headBottom})`);
-    assert.ok(box.wrap.top <= box.headBottom + 32, `at ${w}: the stage sits ${Math.round(box.wrap.top - box.headBottom)}px below the masthead, which is not pinned`);
+
+    assert.equal(box.position, 'static', `at ${w}: the preview is positioned "${box.position}", so it can pin again`);
+    // It moved with the page rather than holding station under the masthead.
+    assert.ok(before - box.preview.top > 300, `at ${w}: the preview only moved ${Math.round(before - box.preview.top)}px for a 900px scroll, so it is still pinning`);
+    // No cap and no inner scroller: both existed only to serve the pinning, and
+    // a leftover cap would silently shrink the frame for no reason.
+    assert.equal(box.previewScrolls, false, `at ${w}: the preview scrolls inside itself, so a height cap survived the unpinning`);
     assert.deepEqual(errors, [], `at ${w}: a page error occurred`);
   }
 });
@@ -263,34 +270,32 @@ test('a frame that fits is not scaled at all', async ({ browser }) => {
   assert.deepEqual(errors, []);
 });
 
-// A pinned preview that takes the whole window leaves a sliver of settings to
-// work in, so it is capped - and the cap has to SHORTEN the picture, not hide
-// the bottom of it. Tall photos is the pattern that proves it: 461px of frame
-// at 1200, against a 587px box on a 900px window.
+// This used to assert a height cap: the preview was pinned, so it was capped at
+// `max(24rem, 60vh, 100vh - 3.5rem - 1px - 16rem)` to leave a strip of settings
+// to work in, and the cap had to SHORTEN the picture rather than hide the bottom
+// of it. The pinning went on 2026-09-08 and the cap went with it, at which point
+// this test kept passing while asserting nothing - the cap it compared against
+// (587px on a 900px window) was simply larger than anything the preview did.
 //
-// The cap is `max(24rem, 60vh, 100vh - 3.5rem - 1px - 16rem)`, so this asserts
-// the rule rather than one of the three numbers: whichever term wins at this
-// viewport, the preview may not exceed it. The 16rem term is the real one on
-// anything tall - the preview takes what is left after the masthead and a
-// strip of settings - and the other two are floors under short windows.
-const capPx = (winH) => Math.max(24 * 16, winH * 0.6, winH - 3.5 * 16 - 1 - 16 * 16);
-
-test('the height cap keeps the pinned preview inside the reserved settings strip', async ({ browser }) => {
+// What still has to hold is the part that was never about the cap: a tall
+// pattern is scaled to fit the width it is given, the whole frame stays inside
+// the preview, the readout stays with it, and scaling the PICTURE never changes
+// the window the slider thinks it is in.
+test('a tall pattern is scaled into the preview, readout and all', async ({ browser }) => {
   const { page, errors } = await openBuilder(browser, 1440);
   await pick(page, 'models');
   await page.click('.ui-widths button[data-w="1200"]');
   await page.waitForTimeout(600);
   const box = await stageBox(page);
-  assert.ok(box.preview.height <= capPx(box.winH) + 1, `the pinned preview is ${Math.round(box.preview.height)}px of a ${box.winH}px window, past the ${Math.round(capPx(box.winH))}px cap`);
+
   assert.ok(box.frame.bottom <= box.preview.bottom + 1, `the frame runs ${Math.round(box.frame.bottom - box.preview.bottom)}px past the bottom of the preview`);
-  // The cap has to reach the SCALE, not just clip the box: with the width
-  // alone deciding, this frame is drawn at 99% of its 461px inside a 540px box
-  // that also has to hold the readout, and the readout goes below the fold of
-  // a preview that exists so nothing has to be scrolled to.
-  assert.equal(box.previewScrolls, false, 'the pinned preview has to be scrolled to see all of the frame');
   assert.ok(box.specBottom <= box.preview.bottom + 1, `the readout is ${Math.round(box.specBottom - box.preview.bottom)}px below the bottom of the preview it belongs to`);
-  assert.ok(box.specVisible, 'the readout is off screen under a preview that is meant to fit');
-  assert.ok(pct(box.shownAt) < 100, `the readout says ${box.shownAt} on a frame the cap had to shrink`);
+  // No cap means no inner scroller: a preview that scrolls inside itself is the
+  // signature of a leftover max-block-size.
+  assert.equal(box.previewScrolls, false, 'the preview scrolls inside itself, so a height cap survived the unpinning');
+  // The scale is a transform on the picture. The frame is still a real 1200px
+  // window, so the media queries inside it fire where they would on the device.
   assert.equal(box.frameClient, 1200, 'the frame stopped being a real 1200px window');
+  assert.ok(pct(box.shownAt) <= 100, `the readout says ${box.shownAt}, which is more than life size`);
   assert.deepEqual(errors, []);
 });

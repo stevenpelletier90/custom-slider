@@ -2,7 +2,7 @@
 
 Dependency-free scroll-snap slider/carousel. The engine is 6.2 KB gzip (JS 4.9 +
 CSS 1.4); the shipped stylesheet also carries 2 KB of card styles, so a site
-downloads 7.8 KB in total — the figure the demo masthead prints, from the same
+downloads 8.2 KB in total — the figure the demo masthead prints, from the same
 measurement. No build step required to use, themed entirely with CSS custom
 properties. Built to be maintained in-house: the whole engine is one commented
 file, `src/custom-slider.js`. `npm run size` is the authority on all of these.
@@ -16,8 +16,8 @@ content for SEO and no screen-reader confusion.
 The demo page (`demo/index.html`) is a workbench: pick a pattern, set it up
 (how many across at each breakpoint, card style, brand preset, arrow colours,
 how many cards an arrow moves), and copy code generated from those same
-settings — so the snippet is always exactly the slider on screen. It also hands
-you `custom-slider.min.css` and `custom-slider.min.js` themselves, to link or to paste.
+settings — so the snippet is always exactly the slider on screen. It also hands you all four
+`dist/` files themselves, to upload — the engine is linked, never pasted.
 
 ## Quick start (CMS / classic script)
 
@@ -298,7 +298,10 @@ Events (bubble from the root): `cs:change` `{index, page, slidesInView}`,
   and your own `--cs-per-view` are **ignored on a fading carousel**, which is
   intended: a crossfade is 1-up. `data-cs-fade="false"` keeps its columns.
 - Every programmatic scroll resolves smooth-vs-instant from
-  `prefers-reduced-motion` at call time. Never add CSS `scroll-behavior`.
+  `prefers-reduced-motion` at call time. Never add CSS `scroll-behavior: smooth`
+  — but `auto` IS declared on the track and must stay: without it a host page's
+  global `* { scroll-behavior: smooth }` captures every instant scroll the
+  engine makes, reduced motion included.
 
 ## Advanced use (escape hatches)
 
@@ -359,22 +362,27 @@ brand's model bar.
     /assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/
 
 Measured that day, cache-busted against `www.karlchevrolet.com`: all four
-answer 200, `last-modified` 2026-09-08 14:01 GMT. `custom-slider.css` (18,538
-B), `custom-slider.js` (25,549 B) and `custom-slider.min.js` (15,443 B) are
-byte-identical to `dist/`. The pre-rename `dl-carousel` build they replaced is
-gone — no `.dl-carousel{` or `--dlc-` anywhere at that path.
+answered 200, `last-modified` 2026-09-08 14:01 GMT, and three of them were
+byte-identical to `dist/` as it then stood. The pre-rename `dl-carousel` build
+they replaced is gone — no `.dl-carousel{` or `--dlc-` anywhere at that path.
 
-**`custom-slider.min.css` is NOT byte-identical, and that is the platform, not
-a bad upload.** It serves 15,307 B against the 15,425 B in `dist/` because the
-platform re-minifies CSS it is given: `:after` becomes `::after`, `.5s` becomes
-`500ms`, `.5` becomes `0.5`, `rgba(0,0,0,.8)` becomes `rgba(0,0,0,0.8)`,
-`background: none` becomes `background: 0`, and **`--cs-peek: 0px` becomes
-`--cs-peek: 0`**. Rendered side by side on a hostile host page at 1170px and
-four across, the two sheets resolve identically — slide 282px, flex basis
-`calc(25% - 10.5px)`, track padding `0px`, scroll padding `0px`, root
-`padding-bottom` 35px, snap type, overflow and dot colour all equal. Only the
-token differs. Re-upload only if a rendered difference appears; a byte
-difference in this one file is expected.
+**⚠ `src/` has changed since that upload, so the hosted files are a build
+behind.** Deliberately not restating which bytes: any commit touching `src/`
+puts the folder out of date, and a byte count written here goes stale the same
+day. **The rule, not the number: if `git log src/` has anything after the
+upload date above, re-upload.** Then update that date.
+
+**Do not expect `custom-slider.min.css` to match `dist/` byte for byte even
+when it is current** — the platform re-minifies CSS it is given: `:after`
+becomes `::after`, `.5s` becomes `500ms`, `.5` becomes `0.5`,
+`rgba(0,0,0,.8)` becomes `rgba(0,0,0,0.8)`, `background: none` becomes
+`background: 0`, and **`--cs-peek: 0px` becomes `--cs-peek: 0`**. Rendered
+side by side on a hostile host page at 1170px and four across, the two sheets
+resolved identically — slide 282px, flex basis `calc(25% - 10.5px)`, track
+padding `0px`, scroll padding `0px`, root `padding-bottom` 35px, snap type,
+overflow and dot colour all equal. Only the token differs. Compare the other
+three for a byte check, or prove the render; a byte difference in this one file
+is expected.
 
 That unitless zero is worth reading twice, because it is **F003 arriving from
 the platform rather than from the builder**. It is harmless here — `--cs-peek`
@@ -404,7 +412,7 @@ for up to three weeks.
 1. Run `npm run build`, then `npm run size`, and confirm the gate is green.
 2. Upload all four files from `dist/` into the folder above, overwriting what
    is there. The demo's install panel has a Download for each of the four and
-   a **Download all four** button, under "Link to the files" — the same bytes
+   a **Download all four** button, under "First, get the four files up there" — the same bytes
    as `dist/`, saved under their own names, if that is easier to reach than
    the repo.
 3. Verify with a cache-busted request, not a browser reload:
@@ -474,7 +482,7 @@ Rebuild and re-commit `dist/` whenever `src/` changes.
 
 ## Verification checklist (run before shipping changes)
 
-1. `npm run size` and `npm run validate` pass, and `npm test` is green — 210
+1. `npm run size` and `npm run validate` pass, and `npm test` is green — 213
    browser checks under `@playwright/test`, about 50 seconds. They cover what a
    linter cannot: that the pasted code still lays itself out, and lays itself
    out the way the preview did. **Steps 3, 4, 6 and 7 below now run in there

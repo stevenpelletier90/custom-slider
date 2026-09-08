@@ -73,7 +73,7 @@
     'Dots are one per <strong>page</strong>, and are plain buttons rather than tabs. The current dot is <code>aria-disabled</code> but stays focusable.',
     'When every slide already fits, the arrows and dots are hidden and the root gains <code>data-cs-fits</code>. Controls that cannot move anything must not be focusable, and a one-of-one dot group announces a choice that is not one.',
     'A screen reader is told the position in one short line ("Slides 4–6 of 12") from a hidden element of its own. If the track itself announced changes, moving three cards would read all three out.',
-    'Nothing rotates under <code>prefers-reduced-motion</code>, and scroll behaviour is resolved per call rather than set in CSS, because Safari animates CSS-set scrolling even when the move is meant to be instant.',
+    'Nothing rotates under <code>prefers-reduced-motion</code>, and whether a move animates is decided per call, never left to CSS — Safari animates CSS-set scrolling even when the move is meant to be instant. The track does declare <code>scroll-behavior: auto</code>, which is the opposite thing: without it a site shipping a global <code>* { scroll-behavior: smooth }</code> captures every instant move the engine makes, reduced motion included.',
     'The engine injects controls only. Every heading, link and image comes from your HTML, so the content is there for search engines and with JavaScript off.',
   ];
 
@@ -86,7 +86,8 @@
     '<b>Root</b> — the outer <code>&lt;div class="my-slider cs"&gt;</code>. Settings are written on it, and its own class is what your CSS hangs off.',
     '<b>Track</b> — the <code>&lt;ul&gt;</code> or <code>&lt;div&gt;</code> inside the root that actually scrolls. One per slider.',
     '<b>Slide</b> — one <code>&lt;li class="cs-slide"&gt;</code>: one card, one photo, one panel. One scroll stop.',
-    "<b><code>cs-</code> classes</b> — the engine's own: <code>cs</code>, <code>cs-track</code>, <code>cs-slide</code>, <code>cs-arrow</code>. Do not rename them; the engine looks for them by name.",
+    "<b><code>cs-</code> classes</b> — the engine's own: <code>cs</code>, <code>cs-track</code>, <code>cs-slide</code>, <code>cs-arrow</code>, plus the controls it generates. Do not rename them; the engine looks for them by name.",
+    '<b>What the engine writes onto YOUR markup</b> — one class and some attributes, and they are the hooks to style against. <code>cs-slide--current</code> goes on the visible slide in fade mode. <code>data-cs-fits</code> lands on the root when every slide already fits, <code>data-cs-fade-on</code> when fade is running, and <code>data-cs-draggable</code> / <code>data-cs-dragging</code> on the track for the grab cursor.',
     '<b><code>cargo-</code> classes</b> — the card styles that come with the builder: <code>cargo-tile</code>, <code>cargo-vcard</code> and the rest. These are how a card looks, not how it scrolls.',
     '<b>Auto-init</b> — the <code>data-cs</code> attribute on the root. It is what tells the engine "this one is mine, start it" when the page loads. Without it nothing happens.',
     '<b>Markup contract</b> — the handful of class names and attributes the engine promises never to rename, so a page built today still works after the engine is updated.',
@@ -242,6 +243,8 @@
     '--cs-focus': 'Focus ring colour.',
     '--cs-transition': 'Duration and easing for control state changes.',
     '--cs-fade-ms': 'Crossfade duration in fade mode. Ignored unless <code>data-cs-fade</code> is set.',
+    '--cs-arrow-at':
+      'Where the arrows sit down the strip, as a fraction of the card height: <code>0.5</code> is centred, lower rides higher over a card whose text sits low. Measured against the height minus the reserved dot row, so the dots stay accounted for.',
   };
 
   // What each card property is FOR. A better label than `strip-pad-x` was not
@@ -369,7 +372,7 @@
       </section>
 
       <section id="g-props"><h3>CSS custom properties</h3>
-        <p>Every setting the engine has. ${props.length ? `Read live from the <code>dist/custom-slider.min.css</code> this page is running, so the ${props.length} below are the ones that actually ship.` : 'Open this page over HTTP to list them from the shipped stylesheet.'} Override them on the root or any wrapper.</p>
+        <p>Every setting the engine has. ${props.length ? `Read at load time out of the shipped <code>dist/custom-slider.min.css</code> — fetched and parsed, not applied to this page — so the ${props.length} below are the ones a site actually gets.` : 'Open this page over HTTP to list them from the shipped stylesheet.'} Override them on the root or any wrapper.</p>
         ${props.length ? table(['Property', 'Default', 'Notes'], propRows) : ''}
       </section>
 
@@ -393,7 +396,7 @@
       </section>
 
       <section id="g-cms"><h3>Putting it on a DealerOn site</h3>
-        <p><strong>Link the two engine files. That is the route.</strong> Paste the engine into the page only where a site will not let you upload files — a pasted copy is frozen at the build you took it from and has to be pasted again after every update, on every page. The Build page says the same thing, and the full instructions — the CMS fields, what the minifier does to your CSS, replacement codes and cache-busting — are in <a href="https://github.com/stevenpelletier90/custom-slider/blob/master/docs/cms-implementation.md">cms-implementation.md</a>.</p>
+        <p><strong>Link the two engine files. That is the only route.</strong> There is no paste-the-engine option: a pasted copy is frozen at the build it was taken from, so a fix reaches every linked page and silently misses every pasted one, with nothing anywhere saying which sites are on which. The Build page says the same, and the full instructions — the CMS fields, what the minifier does to your CSS, replacement codes and cache-busting — are in <a href="https://github.com/stevenpelletier90/custom-slider/blob/master/docs/cms-implementation.md">cms-implementation.md</a>.</p>
         ${list([
           'The two engine files are linked with a <code>&lt;link&gt;</code> and a <code>&lt;script&gt;</code> in the <strong>Head Section</strong> tab — the one that takes HTML verbatim, not “Style Only, Head Section”, which takes raw CSS and would swallow a tag. They live at <code>/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/</code>, one copy per site. The <code>&lt;script&gt;</code> may sit in <strong>Body Section, Bottom</strong> instead if you prefer it there; the <code>&lt;link&gt;</code> may not.',
           "Your slider's own CSS goes in <strong>Style Only</strong>, the markup in a <strong>Custom HTML</strong> block, and a pattern's script in <strong>Body Section, Bottom</strong>. The Build page has a Copy button per field, because the three cannot go in as one paste.",

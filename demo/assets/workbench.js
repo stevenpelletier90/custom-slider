@@ -896,7 +896,7 @@ ${PHOTO_CSS}
   }
 
   // A brand preset brings its own vehicles where the estate gave us the
-  // cutouts. Seventeen of the 32 have none, and those keep the pattern's own
+  // cutouts. Only Fiat, of the 32, has none, and those keep the pattern's own
   // content rather than being shown someone else's cars under their name.
   // Manufacturer marks, for the one look that is about marks rather than cars.
   // /assets/logos/ is root-relative on any dealer domain, like /assets/stock/,
@@ -999,7 +999,7 @@ ${PHOTO_CSS}
   // to run only against a look's settings, so the 13 look-less patterns had
   // nothing to be filtered against and everything came through.
   //
-  // Kept in step with src/custom-slider.css by scripts/check-looks.mjs, which
+  // Kept in step with src/custom-slider.css by scripts/lint-generated-css.mjs, which
   // reads the .cs block and fails if any value here disagrees. A hand-kept copy
   // would drift, and the drift would only show as a line that quietly stopped
   // being dropped.
@@ -1684,37 +1684,6 @@ ${PHOTO_CSS}
     return box.clientWidth - parseFloat(cs.paddingInlineStart) - parseFloat(cs.paddingInlineEnd);
   }
 
-  // The height the stage may occupy, read back off the CSS cap on .ui-preview
-  // rather than guessed. The preview is pinned under the masthead and capped
-  // at 60vh, so a frame taller than the cap would need the preview scrolled to
-  // see the bottom of it - which is exactly what a pinned preview exists to
-  // avoid. The readout's own height comes off the cap because it lives inside
-  // it and has to stay readable; it is MEASURED, never a constant, because it
-  // wraps onto two or three lines depending on the window.
-  // No cap (the short-window fallback, where the preview goes back into flow)
-  // means no height to fit into - Infinity, so the width alone decides.
-  function stageAvailBlock() {
-    const box = stage?.parentElement;
-    const prev = box?.closest('.ui-preview');
-    if (!prev) return Infinity;
-    const cap = parseFloat(getComputedStyle(prev).maxBlockSize);
-    if (!Number.isFinite(cap)) return Infinity;
-    const cs = getComputedStyle(box);
-    const chrome = parseFloat(cs.paddingBlockStart) + parseFloat(cs.paddingBlockEnd) + parseFloat(cs.borderBlockStartWidth) + parseFloat(cs.borderBlockEndWidth);
-    // The readout's MARGINS count too: .ui-preview scrolls, so it is a block
-    // formatting context and the 1.5rem under the readout is scrollable
-    // overflow rather than collapsing away.
-    const spec = prev.querySelector('.ui-spec');
-    const scs = spec && getComputedStyle(spec);
-    const readout = spec ? spec.offsetHeight + parseFloat(scs.marginBlockStart) + parseFloat(scs.marginBlockEnd) : 0;
-    // Floor and a pixel of slack, because 60vh of an odd window height is a
-    // fraction: rounding the content one pixel past the cap would flip a
-    // scrollbar in, which narrows the stage, which rescales the frame, which
-    // takes the scrollbar back out - a loop, driven by the frame's own
-    // ResizeObserver, over one pixel.
-    return Math.floor(cap - readout - chrome) - 1;
-  }
-
   // The frame is a real window of the width on the button, and the stage is
   // whatever the page has room for - 1190px at 1440 with the settings under it
   // rather than beside it, and a good deal less on a laptop. It is SCALED to
@@ -1722,11 +1691,6 @@ ${PHOTO_CSS}
   // inline-size, so its media queries fire at the width they would on the
   // device and every number in the readout is a real px on a real window.
   // transform changes the picture and nothing else.
-  //
-  // Both axes, not just the width. The pinned preview is capped at 60vh so the
-  // settings under it stay usable, and a frame scaled to the width alone ran
-  // straight past that cap: a tall pattern put its bottom row behind the fold
-  // of a box that exists precisely so nothing has to be scrolled to.
   //
   // The negative margins are not decoration. A transform moves no layout box,
   // so without them the iframe still occupies its full unscaled width and
@@ -1743,14 +1707,17 @@ ${PHOTO_CSS}
     stage.style.marginInlineEnd = '';
     stage.style.marginBlockEnd = '';
     const avail = stageAvail();
-    const availH = stageAvailBlock();
     // offsetWidth/offsetHeight, never getBoundingClientRect: the rect is the
     // TRANSFORMED box and offsetWidth is the layout one.
     const w = stage.offsetWidth;
     const h = stage.offsetHeight;
-    const kW = w > 0 && avail > 0 ? avail / w : 1;
-    const kH = h > 0 && availH > 0 ? availH / h : 1;
-    const k = Math.min(kW, kH, 1);
+    // Width alone. There used to be a height term as well, because the preview
+    // was pinned under the masthead and capped, and a frame scaled to the width
+    // alone ran past that cap. The pinning and the cap went on 2026-09-08, so
+    // the cap it read back off .ui-preview is `none`, the ratio was always 1,
+    // and the whole branch had stopped doing anything while still looking as
+    // though it did.
+    const k = w > 0 && avail > 0 ? Math.min(avail / w, 1) : 1;
     if (k < 1) {
       stage.style.transform = `scale(${k})`;
       stage.style.marginInlineEnd = `${-(w - w * k)}px`;
@@ -2356,14 +2323,21 @@ ${PHOTO_CSS}
     if (p.look) {
       const describe = () => {
         const b = BRANDS[state.brand];
-        if (!b) return 'Sets how many cards across and which card style, from what that brand actually ships. Colours stay yours — pull them from the site theme.';
+        if (!b)
+          return 'Sets the vehicles and how many cards across, from what that brand actually ships. The card style stays yours — so does the colour, which comes from the site theme, not the OEM.';
         // Plain words: "ladder" and "the census" are how this was written down
         // while it was being researched, and neither is defined anywhere a
         // designer would look.
         const counts = ['base', 768, 992, 1200].map((k) => state.perView[k]).join(' / ');
-        return b.ladder
-          ? `${counts} cards across, on a phone / from 768px / from 992px / from 1200px. ${b.note ?? ''}`.trim()
-          : `The ${b.label} demo sites we surveyed showed no clear pattern of how many across, so this starts from the card style's own. ${b.note ?? ''}`.trim();
+        // The brand's own card style is offered, never applied - see the note
+        // on the Brand handler below. Only worth saying when it differs from
+        // what is already on screen.
+        const suggest = b.look && b.look !== state.look ? ` ${b.label} ran the ${LOOKS[b.look].label.toLowerCase()} card — pick it below if you want it.` : '';
+        return (
+          b.ladder
+            ? `${counts} cards across, on a phone / from 768px / from 992px / from 1200px. ${b.note ?? ''}${suggest}`
+            : `The ${b.label} demo sites we surveyed showed no clear pattern of how many across, so this leaves the count alone. ${b.note ?? ''}${suggest}`
+        ).trim();
       };
       pane.list(style, 'Brand', state.brand ?? '', [['', 'Start from the default'], ...Object.entries(BRANDS).map(([id, b]) => [id, b.label])], (v) => {
         state.brand = v || null;
@@ -2375,28 +2349,40 @@ ${PHOTO_CSS}
         state.content = null;
         clearContent();
         const b = BRANDS[state.brand];
+        // A BRAND CHANGES THE CONTENT AND THE COUNT, NEVER THE CARD STYLE.
+        // It used to call applyLook(b.look), and a look owns MARKUP, not just
+        // values - so picking Alfa Romeo on the model bar reordered the name
+        // above the photo, added a "Browse inventory" button, put the strip on
+        // a dark panel and cropped 3:5. You chose a pattern from the rail and
+        // got a different one back, which is not what a preset is for.
+        //
+        // The research does not support it either. brands.js said the census
+        // found "what actually differed between builds was the count and the
+        // card"; the census itself (docs/research/2026-08-18-oem-demo-slider-
+        // census.md) says the variety is "skin, not structure" and tabulates
+        // FOURTEEN BREAKPOINT LADDERS - it never claims the card differs per
+        // brand. So the ladder stays, because it is the part that was measured,
+        // and the look does not, because it never was.
+        //
+        // Each brand's recorded look survives as a SUGGESTION in the note under
+        // this control, so nothing researched is thrown away - it just stops
+        // reaching in and changing the pattern for you.
         if (!b) {
-          // "Start from the default" has to undo what a preset changed - its
-          // card style, its ladder and its slide count - and nothing else.
-          // Without this the previous brand's look and ladder survived, so
-          // Vehicle cards came back as tall tiles. loadPattern() would undo it
-          // all, but it would also throw away the slider name the designer
-          // typed, which no preset ever touched.
-          state.look = p.look ?? null;
-          state.lookProps = {};
-          if (p.look) applyLook(p.look);
-          state.perView = { ...(p.perView ?? LOOKS[p.look].perView) };
+          // "Start from the default" undoes the ladder and the slide count, the
+          // only two things a preset now touches. It must NOT reset the card
+          // style: that is the picker's to own, and resetting it here would
+          // throw away a choice no preset made.
+          state.perView = { ...(p.perView ?? LOOKS[state.look].perView) };
           state.count = p.models.length;
         }
         if (b) {
           if (b.models) state.count = b.models.length;
-          applyLook(b.look);
-          // A recorded ladder is read at the platform's tiers and clamped;
-          // a brand with none keeps the look's own sensible ladder.
+          // Read against the look actually on screen, not the one the brand
+          // suggests - the clamp has to protect the card being rendered.
           // The gap in effect, not a default: the two-row grid runs a 16px gap
           // where the model bar runs 8, and four cards plus three 16px gaps is a
           // different sum. Assuming 8 let seven presets through at 146px.
-          state.perView = b.ladder ? perViewFor(b.ladder, LOOKS[b.look].minCard, gapPx(), b.look) : { ...LOOKS[b.look].perView };
+          state.perView = b.ladder ? perViewFor(b.ladder, LOOKS[state.look].minCard, gapPx(), state.look) : { ...LOOKS[state.look].perView };
         }
         rebuild(() => {
           buildPanel();
@@ -3521,7 +3507,7 @@ ${PHOTO_CSS}
   };
 
   for (const btn of document.querySelectorAll('[data-file]')) {
-    // Eight buttons in the install panel say "Download", "Copy" or "View", and
+    // Twelve buttons in the install panel say "Download", "Copy" or "View", and
     // the filename that tells them apart is in a sibling <code> the button's own
     // name never reaches - so a screen reader's button list was those three
     // words over and over. Named once here, at wiring time, before flash() ever

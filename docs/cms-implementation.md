@@ -19,10 +19,10 @@ Two files, no dependencies, no build step on the site side:
 
 | File                    | Gzip   | What it does                                                                                                              |
 | ----------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `custom-slider.min.css` | 3.1 KB | Layout, scroll-snap physics, control styling — **plus** the card styles and column classes (1.4 KB engine + 2.0 KB cards) |
+| `custom-slider.min.css` | 3.3 KB | Layout, scroll-snap physics, control styling — **plus** the card styles and column classes (1.4 KB engine + 2.2 KB cards) |
 | `custom-slider.min.js`  | 4.9 KB | Wires controls, state, autoplay, fade, drag                                                                               |
 
-A site downloads 7.8 KB for the pair, which is what the demo masthead prints.
+A site downloads 8.2 KB for the pair, which is what the demo masthead prints.
 `npm run size` is the authority — these figures come from it and go stale;
 re-read them there rather than trusting this table.
 
@@ -39,9 +39,8 @@ alongside the platform's other shared slider code
 fixes at once — which is the whole point of the frozen HTML contract: the engine
 can be replaced underneath every site without touching a single page.
 
-The folder exists and both filenames answer 200 today, serving the pre-rename
-build; the upload replaces them in place. See "Deployment status" in
-[../README.md](../README.md) for what is on it right now and the steps.
+See "Deployment status" in [../README.md](../README.md) for what is on that
+folder right now and the steps to change it. Deliberately not repeated here.
 
 Per-dealer Media Gallery (`#MISCPATH#custom-slider.min.js`) remains the fallback if a
 shared location is ever unavailable, but it pins each site to whatever version it
@@ -57,7 +56,7 @@ already reserves the control space, so nothing shifts when the JS lands (CLS 0).
 
 ### Load it only on pages that use it
 
-The two tags above are cheap (7.8 KB gzip for both files, cached after the
+The two tags above are cheap (8.2 KB gzip for both files, cached after the
 first page), so on a page or template you **know** contains a slider, link them
 directly and be done. The question only gets interesting when the natural place
 to load the engine is a **sitewide include** — then most pages on the site have
@@ -106,13 +105,13 @@ stays 0.
 
 So: **direct tags on pages and templates known to contain a slider** (CLS 0,
 no flash); **the conditional loader for the sitewide-include case**, where it
-turns "every page pays 7.8 KB" into "only slider pages pay, slightly later".
+turns "every page pays 8.2 KB" into "only slider pages pay, slightly later".
 
 ### What about autoplay and fade?
 
 There is nothing further to conditionally load. Autoplay and fade are not
 separate resources or plugins — both ship inside the same two files
-(4.9 KB JS + 3.1 KB CSS gzip, 7.8 KB combined), and both are gated
+(4.9 KB JS + 3.3 KB CSS gzip, 8.2 KB combined), and both are gated
 at runtime:
 
 - Autoplay setup early-returns before creating any timer or observer when

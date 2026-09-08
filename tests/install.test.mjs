@@ -38,8 +38,10 @@ const saved = async (download) => ({ name: download.suggestedFilename(), body: a
 
 test.describe('the files the install panel hands over', () => {
   test('every Download saves the file its row is named after, byte for byte', async () => {
-    // Walked by index, not by label: custom-slider.min.css has a row in BOTH
-    // columns now, so a label selector matches two buttons.
+    // Walked by index rather than by label. It had to be when the panel had
+    // two columns and custom-slider.min.css appeared in each; the paste column
+    // is gone, but index-walking is still what makes this cover whatever rows
+    // exist rather than a list written down twice.
     const buttons = page.locator('.ui-file [data-act="download"]');
     const n = await buttons.count();
     assert.ok(n, 'the install panel has no Download buttons at all');
@@ -146,7 +148,7 @@ test.describe('the buttons the retag went through', () => {
     assert.match(text, /not.{0,30}for pasting the engine into a page/i, 'the panel no longer says what Copy is not for');
   });
 
-  // Eight buttons said "Download", "Copy" or "View" and nothing else - the
+  // Twelve buttons say "Download", "Copy" or "View" and nothing else - the
   // filename that tells them apart sits in a sibling <code> the button's own
   // name never reaches, so a screen reader's button list was three words over
   // and over and no way to pick one.

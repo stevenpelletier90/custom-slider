@@ -1,10 +1,23 @@
 // The 32 OEM brands on the platform, as presets for the one component.
 //
-// A preset is NOT a copy of a slider. It is a set of values for the settings
-// the workbench already exposes: how many cards across at each breakpoint, and
-// which card style. That is the whole finding from the census - 24 brands ran
-// 11 visual looks, 14 of them sharing a single one, and what actually differed
-// between builds was the count and the card, not the carousel.
+// A preset is NOT a copy of a slider, and as of 2026-09-08 it is not a card
+// style either. It sets the ROSTER (which vehicles) and the LADDER (how many
+// across at each breakpoint), and nothing else.
+//
+// It used to apply `look` as well, and that was wrong twice over. In practice:
+// a look owns MARKUP, so picking Alfa Romeo on the model bar reordered the name
+// above the photo, added a CTA button, went dark and cropped 3:5 - you chose a
+// pattern from the rail and got a different one back. And on the evidence: the
+// census this file cites (docs/research/2026-08-18-oem-demo-slider-census.md)
+// says the variety across OEMs is "skin, not structure" and tabulates FOURTEEN
+// BREAKPOINT LADDERS. It never found that the card differs per brand. The
+// ladder is measured; the card was an extrapolation, sourced to the `note`
+// fields below and nothing else.
+//
+// `look` stays in each entry, and the panel offers it in words - "Alfa Romeo
+// ran the tall tile card, pick it below if you want it" - so the research is
+// still there to act on. It just no longer reaches in and changes the pattern
+// for you.
 //
 // `ladder` is the brand's REAL slick config, recorded verbatim as
 // [minWidth, perView] pairs, so it stays auditable against the census:
@@ -41,8 +54,8 @@
   // 640x360, Alfa Romeo 300x500 portraits) and the wrong width/height
   // attribute is a layout shift on a real page.
   //
-  // Twelve of the 32 have imagery. The rest fall back to the Chevrolet
-  // cutouts and say so in the picker rather than pretending otherwise.
+  // Thirty-one of the 32 have imagery. Only Fiat falls back to the Chevrolet
+  // cutouts, and says so in the picker rather than pretending otherwise.
   const ROSTERS = {
     bmw: [
       'bmw',

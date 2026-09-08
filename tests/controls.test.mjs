@@ -1098,6 +1098,64 @@ test.describe('the pause button sits on the thing it pauses', () => {
   });
 });
 
+// A brand preset changes the CONTENT and the COUNT. It used to apply the
+// brand's card style too, and a look owns markup - so picking Alfa Romeo on the
+// model bar reordered the name above the photo, added a CTA button, went dark
+// and cropped 3:5. You picked a pattern from the rail and got a different one
+// back. The census behind the presets tabulates breakpoint ladders and calls
+// the variety "skin, not structure"; it never found the card differs by brand,
+// so the ladder stays and the look does not.
+test.describe('a brand preset swaps the vehicles, never the pattern', () => {
+  const cardState = () =>
+    page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      const root = d?.querySelector('.cs');
+      const slide = d?.querySelector('.cs-slide');
+      return {
+        look: [...(root?.classList ?? [])].filter((c) => c.startsWith('cargo-')),
+        shape: [...(slide?.querySelector('a')?.children ?? [])].map((e) => e.className || e.tagName.toLowerCase()),
+        // The slide's whole markup, not its text or a .cargo-name lookup. This
+        // file is serial and an earlier test may leave the model bar on any
+        // card style - including image-only ones, where a text probe reads ""
+        // for every brand and the roster check then passes or fails for
+        // entirely the wrong reason. The markup changes with the roster under
+        // every look, because at minimum the image filenames do.
+        first: slide?.innerHTML?.replace(/\s+/g, ' ').trim(),
+      };
+    });
+
+  test('the card style and its markup survive every brand on the model bar', async () => {
+    await pick(page, 'modelbar');
+    await page.waitForTimeout(300);
+    const start = await cardState();
+    assert.ok(start.look.length, 'the model bar renders no card style at all');
+
+    const brands = await page.evaluate(() => Object.keys(globalThis.CARGO.BRANDS).slice(0, 8));
+    const select = rowByLabel(page, 'Brand').locator('select').first();
+    const rosters = new Set([start.first]);
+
+    for (const id of brands) {
+      await select.selectOption(id);
+      await page.waitForTimeout(450);
+      const now = await cardState();
+      assert.deepEqual(now.look, start.look, `${id} changed the card style to ${now.look.join(' ')}`);
+      assert.deepEqual(now.shape, start.shape, `${id} changed the card's markup to ${now.shape.join(', ')}`);
+      rosters.add(now.first);
+    }
+    // ...and it did do the thing it is for.
+    assert.ok(rosters.size > 1, `no brand changed the vehicles: every one showed "${start.first}"`);
+  });
+
+  test('the note offers the brand its card style instead of applying it', async () => {
+    await pick(page, 'modelbar');
+    await rowByLabel(page, 'Brand').locator('select').first().selectOption('alfaromeo');
+    await page.waitForTimeout(450);
+    const note = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-notev')].map((n) => n.textContent).join(' '));
+    assert.match(note, /pick it below if you want it/, 'the brand no longer offers its own card style anywhere');
+    assert.doesNotMatch(note, /which card style/, 'the panel still says a brand sets the card style');
+  });
+});
+
 test.describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);

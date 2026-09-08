@@ -78,14 +78,13 @@
         <p class="ui-blurb" id="wb-blurb"></p>
 
         <!-- The preview on top and the settings under it, one column at every
-             width. The preview is pinned (assets/ui.css) and the settings
-             scroll beneath it, so a change to a knob is seen without scrolling
-             back up to the stage. It reads in source order now - no `order`
-             swap - because the DOM order and the reading order finally agree.
-             One wrapper, because the two are a pair: a sticky element is
-             constrained to its containing block, so the preview only has
-             something to slide within while the settings sit inside this same
-             element. -->
+             width, and the whole thing scrolls as one page. The preview was
+             pinned until 2026-09-08 with the settings passing beneath it - and
+             that was the objection: a panel you are reading slides under a
+             white slab covering the thing you came to look at. It reads in
+             source order, with no `order` swap, because the DOM order and the
+             reading order agree. The wrapper stays: it is what keeps the two
+             one block rather than two. -->
         <div class="ui-work">
           <div class="ui-preview">
             <h3 class="ui-sr">Live preview</h3>
@@ -277,8 +276,9 @@
               <code>custom-slider.js</code> are the same code unminified, for anyone opening the file to see what it does. Upload all four as they are.
             </p>
             <p class="ui-act"><button type="button" class="ui-btn" id="wb-download-all">Download all four</button></p>
-            <!-- Above the button, not below it. This warning used to be printed
-                 under the very thing that triggers it. -->
+            <!-- Attached to the button, not stranded after the rows. It used to
+                 sit in a grey card below the whole list, which is a long way
+                 from the press that triggers the prompt it warns about. -->
             <p>The browser asks “Download multiple files?” on the second one — allow it. Each saves under its own name.</p>
             <ul class="ui-files">
               <li class="ui-file">

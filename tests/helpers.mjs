@@ -24,18 +24,16 @@ export async function pick(page, id) {
 
 // The preview lives in an iframe, so that a media query asks a window of the
 // previewed width rather than the whole browser. Nothing in the builder page
-// can reach it with a plain selector any more, and these two are how the tests
-// do: a Playwright FrameLocator for interaction, and CARGO.sdoc() for reads
-// inside page.evaluate.
+// can reach it with a plain selector any more: stageFrame() is the Playwright
+// FrameLocator for interaction, and reads go through globalThis.CARGO.sdoc()
+// inside a page.evaluate. A helper wrapping that second half used to live here
+// too; no test ever imported it, so it went on 2026-09-08.
 export const stageFrame = (page) => page.frameLocator('#wb-stage');
 
 export async function stageReady(page) {
   await page.waitForSelector('#wb-stage');
   await stageFrame(page).locator('.cs-slide').first().waitFor({ state: 'attached', timeout: 15000 });
 }
-
-// Read something off the live slider from the parent page's context.
-export const inStage = (page, fn, arg) => page.evaluate(([body, a]) => new Function('d', 'a', body)(globalThis.CARGO.sdoc(), a), [`return (${fn.toString()})(d, a)`, arg ?? null]);
 
 export const patternIds = (page) => page.evaluate(() => Object.keys(globalThis.CARGO.PATTERNS));
 
