@@ -204,10 +204,29 @@ with static arrows, whatever the column classes say. Measured, not assumed: trac
 `display: block`, `overflow-x: visible`, `scroll-snap-type: none`, slide
 `flex-basis: auto`.
 
-For a page that genuinely cannot link the files, use `npm run paste`. It writes
-`dist/paste/1-style-only.css` (engine **and** cards, comment-free for the Style
-Only field) and `dist/paste/2-body-bottom.html`. That is the route that works
-without the stylesheet; the checkbox is not.
+### The engine is linked, never pasted
+
+A page gets the engine from the two `<link>`/`<script>` tags and no other way.
+There is no paste-the-engine route any more, and adding one back needs a better
+reason than a page being awkward.
+
+**Why, and it is not tidiness: a pasted engine can never be fixed.** Patch a bug
+and every linked page picks it up on its next cache cycle. Every pasted copy
+silently does not — and nothing on those pages, in this repo, or in the folder
+says which sites are carrying which build. That is permanent, undetectable
+divergence across dealer sites nobody owns. Sharing one cached copy and not
+repeating 15 KB per page are real gains too, and both are secondary to that one.
+
+`docs/cms-no-hosting.md` and `scripts/paste.mjs` used to be the escape hatch,
+written when nothing was hosted yet. Both are deleted: the condition that
+justified them ended when the four files went up (see Deployment status above),
+and the script emitted code onto live dealer pages with no test over it —
+the only thing in this repo shipping to a dealer without a gate. Git has them
+if the case ever turns out to be real, and it comes back with a test.
+
+Note this is about the ENGINE. The per-slider CSS the copy panel hands over is
+still pasted, still goes in **Style Only, Head Section**, and is still why
+`.stylelintrc.json` pins `rgba()` to the legacy form.
 
 ## CSS custom properties
 

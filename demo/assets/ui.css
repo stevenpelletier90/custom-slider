@@ -1418,13 +1418,6 @@ body {
   color: var(--ink-soft);
 }
 
-/* The two jobs the upload route is really made of - get the files up, then add
-   the tags - so the column can be scanned rather than read straight through. */
-.ui-get h5 {
-  margin: 1.4rem 0 0.35rem;
-  font-size: 0.9rem;
-}
-
 /* A button on its own line. This was an inline style on two <p>s, and it had to
    be: `.ui-get p` is (0,1,1) and beats a bare `.ui-act`, so the class is
    qualified to outrank it rather than fight it with !important. */

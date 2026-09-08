@@ -112,19 +112,38 @@ test.describe('the buttons the retag went through', () => {
     assert.ok(shown.selectors > 0, 'the stylesheet came back with no selector highlighting, so it was read as the wrong language');
   });
 
-  test('Copy wraps each file in the tag its CMS field takes', async () => {
-    for (const [name, open] of [
-      ['custom-slider.min.css', '<style>'],
-      ['custom-slider.min.js', '<script>'],
-    ]) {
+  // Copy used to wrap the file in <style>/<script>, for the one route that told
+  // a designer to paste the engine into a CMS field. That route is gone - the
+  // engine is linked, never pasted - so a wrapper would be the panel quietly
+  // handing over a paste-ready blob of the very thing it says not to paste.
+  test('Copy hands over the file itself, with no tag around it', async () => {
+    for (const name of DIST) {
       const row = `.ui-file:has(code:text-is("${name}")) [data-act="copy"]`;
       await page.click(row);
       // Same race as View: the fetch and the clipboard write both come after
       // the click. The button says "Copied" once the write has landed.
       await page.waitForSelector(`${row}:text-is("Copied")`);
       const text = await page.evaluate(() => navigator.clipboard.readText());
-      assert.ok(text.startsWith(open), `Copy on ${name} does not open with ${open}`);
+      assert.doesNotMatch(text.slice(0, 200), /<\/?(style|script)\b/i, `Copy on ${name} wrapped the file in a tag`);
+      assert.equal(text.replace(/\r\n/g, '\n').trimEnd(), (await served(name)).trimEnd(), `Copy on ${name} did not hand over dist/${name}`);
     }
+  });
+
+  // Every file is readable and copyable, not just the pair a page links - the
+  // unminified pair is the one worth opening, and it had neither button.
+  test('all four files can be read and copied, not only the minified pair', async () => {
+    for (const act of ['copy', 'view']) {
+      const offered = await page.evaluate((a) => [...document.querySelectorAll(`[data-act="${a}"]`)].map((b) => b.dataset.file), act);
+      assert.deepEqual(offered.slice().sort(), DIST.slice().sort(), `${act} is offered for ${offered.join(', ')}`);
+    }
+  });
+
+  // The paste route is gone from the panel: no instruction to put the engine
+  // into a CMS field, and nothing offering it as an alternative to linking.
+  test('the panel never tells anyone to paste the engine', async () => {
+    const text = await page.evaluate(() => document.querySelector('.ui-get').textContent.replace(/\s+/g, ' '));
+    assert.doesNotMatch(text, /paste the code|Style Only, Head Section.{0,40}engine|npm run paste/i, 'the panel still offers the paste route');
+    assert.match(text, /not.{0,30}for pasting the engine into a page/i, 'the panel no longer says what Copy is not for');
   });
 
   // Eight buttons said "Download", "Copy" or "View" and nothing else - the

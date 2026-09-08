@@ -3527,7 +3527,12 @@ ${PHOTO_CSS}
       const name = btn.dataset.file;
       const text = await grab(name);
       if (text === null) return flash(btn, 'Open over HTTP');
-      if (btn.dataset.act === 'copy') return copyText(btn, isJs(name) ? `<script>\n${text}\n</script>` : `<style>\n${text}\n</style>`);
+      // The file itself, with no <style>/<script> wrapper. The wrapper existed
+      // for one route - paste the engine into a CMS field - and that route is
+      // gone: the engine is linked, never pasted. Handing over a paste-ready
+      // blob of 15 KB of minified CSS is the thing the panel now tells you not
+      // to do, so Copy must not quietly make it easy.
+      if (btn.dataset.act === 'copy') return copyText(btn, text);
       if (btn.dataset.act === 'view') {
         const box = $('wb-file-view');
         box.hidden = false;

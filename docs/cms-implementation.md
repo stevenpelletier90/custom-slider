@@ -7,9 +7,11 @@
 > week of being written — which is the same failure that once had three
 > documents giving three different answers. Go and read the README.
 
-> **Cannot link the files on a given page?** The whole engine can be pasted
-> into it instead — see [cms-no-hosting.md](cms-no-hosting.md). Your markup and
-> CSS are the same either way.
+> **The engine is linked, never pasted.** There is no paste-the-engine route —
+> a pasted copy can never receive a fix, and nothing would tell you which sites
+> were carrying which build. The reasoning is in README, "The engine is linked,
+> never pasted". The per-slider CSS the copy panel gives you is still pasted;
+> that is a different thing.
 
 ## 1. What ships
 
@@ -217,9 +219,9 @@ So the two rules above are the whole of it, and the builder's
 `--strip-pad-x: calc(var(--cs-arrow-size) + 0.4em)` is safe on every route.
 For the record, the exposure was smaller than first counted: measured per
 route, the linked-engine route emits **zero** such declarations (the delta
-filter drops the value because it equals the look's own default), "Paste the
-card styles too" emits **two** (tile and vcard), and
-`dist/paste/1-style-only.css` carries **three**.
+filter drops the value because it equals the look's own default) and "Paste the
+card styles too" emits **two** (tile and vcard). A third route, the deleted
+paste-the-engine sheet, carried three; it is gone, and so is that exposure.
 
 Also expect **site CSS to outrank recipe classes**: OEM styles commonly set
 link decoration at id specificity (`#content-main a`), which beats

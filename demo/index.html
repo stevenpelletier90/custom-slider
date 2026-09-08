@@ -256,26 +256,24 @@
         </section>
 
         <h3 class="ui-h3"><b class="ui-step">3</b> Add the files to the site — once, not per slider</h3>
-        <p class="ui-blurb">
-          Link the files if you can upload them; paste the code if you can’t. One route or the other, not both — either way the slider above is running the very files you would take.
-        </p>
+        <p class="ui-blurb">Two steps, once per site: put the four files in the shared folder, then link them from the page. The slider above is running the very files you would take.</p>
 
+        <!-- Two cards, because the section is two jobs. It used to be a choice -
+             "link the files" or "paste the code" - and the paste half is gone:
+             the engine is not something a designer should be pasting into a
+             page. Copy and View stay on every file, because reading one and
+             taking one to the clipboard are still worth doing; what went is the
+             route that told you to paste 15 KB of minified CSS into a CMS
+             field. Exactly two children, so the auto-fit grid stays 2-up: a
+             lone card would stretch full width and run the prose to 1400px. -->
         <div class="ui-get">
           <div>
-            <h4>Link to the files</h4>
+            <!-- The files come FIRST, because that is the order the job is done
+                 in: a tag does nothing until the file it points at is in the
+                 folder. -->
+            <h4>First, get the four files up there</h4>
             <p>
-              Best choice — every page that links them shares one cached copy, and the stylesheet carries the card styling too, so a slider you copy from here is mostly just its markup. Without these
-              files, a pasted slider is a plain list.
-            </p>
-
-            <!-- The files come BEFORE the tags, because that is the order the job
-                 is done in: a tag does nothing until the file it points at is in
-                 the folder. The downloads used to sit fifth, under the tags and
-                 three grey notes, which read as "paste this, and by the way you
-                 needed to upload four files first". -->
-            <h5>First, get the four files up there</h5>
-            <p>
-              Four files, one folder. <code>custom-slider.min.css</code> and <code>custom-slider.min.js</code> are what the tags below link; <code>custom-slider.css</code> and
+              Four files, one folder. <code>custom-slider.min.css</code> and <code>custom-slider.min.js</code> are what the tags link; <code>custom-slider.css</code> and
               <code>custom-slider.js</code> are the same code unminified, for anyone opening the file to see what it does. Upload all four as they are.
             </p>
             <p class="ui-act"><button type="button" class="ui-btn" id="wb-download-all">Download all four</button></p>
@@ -286,23 +284,42 @@
               <li class="ui-file">
                 <code>custom-slider.css</code>
                 <button type="button" class="ui-btn" data-file="custom-slider.css" data-act="download">Download</button>
+                <button type="button" class="ui-btn" data-file="custom-slider.css" data-act="copy">Copy</button>
+                <button type="button" class="ui-btn" data-file="custom-slider.css" data-act="view">View</button>
               </li>
               <li class="ui-file">
                 <code>custom-slider.js</code>
                 <button type="button" class="ui-btn" data-file="custom-slider.js" data-act="download">Download</button>
+                <button type="button" class="ui-btn" data-file="custom-slider.js" data-act="copy">Copy</button>
+                <button type="button" class="ui-btn" data-file="custom-slider.js" data-act="view">View</button>
               </li>
               <li class="ui-file">
                 <code>custom-slider.min.css</code>
                 <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="download">Download</button>
+                <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="copy">Copy</button>
+                <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="view">View</button>
               </li>
               <li class="ui-file">
                 <code>custom-slider.min.js</code>
                 <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="download">Download</button>
+                <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="copy">Copy</button>
+                <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="view">View</button>
               </li>
             </ul>
-            <p>They go in <code>/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/</code> — one folder, every site. If you cannot put files there, take the other route.</p>
+            <p>They go in <code>/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/</code> — one folder, every site.</p>
+            <div class="ui-where">
+              <b>Copy and View hand over the file, nothing more</b>
+              View reads it here; Copy puts the file itself on your clipboard, with no <code>&lt;style&gt;</code> or <code>&lt;script&gt;</code> wrapper — these are for reading one and moving one
+              about, <strong>not</strong> for pasting the engine into a page. A page gets the engine by linking it.
+            </div>
+          </div>
 
-            <h5>Then, add the two tags to the page</h5>
+          <div>
+            <h4>Then, add the two tags to the page</h4>
+            <p>
+              Once per site, not once per slider — every page that links them shares one cached copy, and the stylesheet carries the card styling too, so a slider you copy from here is mostly just its
+              markup.
+            </p>
             <!-- tabindex, because it scrolls sideways: a scroll container with
                  nothing focusable in it cannot be reached by keyboard at all,
                  so the second line of the snippet was mouse-only. -->
@@ -330,40 +347,6 @@
               <code>&lt;script&gt;</code> can go in <strong>Body Section, Bottom</strong> instead if you prefer it there. If the slider comes out a plain vertical list, the tags are not resolving:
               open the <code>.css</code> address in a tab and check that it starts with <code>.cs{</code>.
             </div>
-          </div>
-
-          <div>
-            <h4>Or paste the code</h4>
-            <!-- "Fetched live, so it can never be a stale copy" was half true.
-                 The fetch is live; the clipboard is not. What you paste is
-                 pinned to today's build, carries no version marker, and nothing
-                 comes back to tell the page it is out of date. -->
-            <p>For a site where you can’t upload files. What you copy is today’s build — it carries nothing that says which build, so it has to be pasted again after each update.</p>
-            <!-- No Download here. It offered the same two files the upload column
-                 now offers, and someone who cannot put a file on the server has
-                 no use for one on their desktop. Copy and View are what this
-                 route is: read it, or take it to the clipboard. -->
-            <ul class="ui-files">
-              <li class="ui-file">
-                <code>custom-slider.min.css</code>
-                <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="copy">Copy</button>
-                <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="view">View</button>
-              </li>
-              <li class="ui-file">
-                <code>custom-slider.min.js</code>
-                <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="copy">Copy</button>
-                <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="view">View</button>
-              </li>
-            </ul>
-            <div class="ui-where">
-              <b>Where the pasted code goes</b>
-              Copy gives you the wrapper too, so both go in a field that takes HTML: the <code>&lt;style&gt;</code> in <strong>Head Section</strong>, the <code>&lt;script&gt;</code> in
-              <strong>Body Section, Bottom</strong>. Not “Style Only” — that field takes raw CSS with no tags and no comments, and this stylesheet has both.
-            </div>
-            <p>
-              If the only field you have takes raw CSS, <code>npm run paste</code> writes <code>dist/paste/1-style-only.css</code> (engine and card styles, comments stripped) and
-              <code>dist/paste/2-body-bottom.html</code>.
-            </p>
           </div>
         </div>
 
