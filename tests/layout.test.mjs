@@ -10,7 +10,7 @@
 // these tests are what says so.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick } from './helpers.mjs';
+import { openBuilder, pick, patternIds } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -317,5 +317,106 @@ test('a tall pattern is scaled into the preview, readout and all', async ({ brow
   // window, so the media queries inside it fire where they would on the device.
   assert.equal(box.frameClient, 1200, 'the frame stopped being a real 1200px window');
   assert.ok(pct(box.shownAt) <= 100, `the readout says ${box.shownAt}, which is more than life size`);
+  assert.deepEqual(errors, []);
+});
+
+// "the pane isnt tall enough because i still have to scroll to see the whole
+// card" / "the border doesnt show but when I scroll vertically the card goes up
+// and the border appears" (Steven, twice). Both were the same thing and neither
+// was the frame's height: the preview frame was running content-box while
+// BOOTSTRAP 3 SETS border-box on everything, and a card written `block-size:
+// 100%` with padding and a border only fits its slide under border-box.
+//
+// Measured before the fix, at the Desktop button: the review card came out
+// 184.61px tall inside a 147.61px slide - 37px out of its own slide and 1.6px
+// out of the frame, where html{overflow:hidden} cut it off - and the mixed-sizes
+// card overflowed by exactly its own two 1px borders, which is why its bottom
+// border was missing until the page scrolled and the browser repainted it.
+//
+// Verified in bootstrap@3.4.1's own dist/css/bootstrap.css, line 1069.
+test('the preview runs the box model the storefront runs', async ({ browser }) => {
+  const { page, errors } = await openBuilder(browser, 1500);
+  const box = await page.evaluate(() => {
+    const d = globalThis.CARGO.sdoc();
+    const win = globalThis.CARGO.swin();
+    const el = d.querySelector('.cs-slide') ?? d.body;
+    return { slide: win.getComputedStyle(el).boxSizing, html: win.getComputedStyle(d.documentElement).boxSizing };
+  });
+  assert.equal(box.slide, 'border-box', 'the preview frame is not running Bootstrap 3 box model');
+  assert.equal(box.html, 'border-box', 'the frame root is not running Bootstrap 3 box model');
+  assert.deepEqual(errors, []);
+});
+
+test('no card is taller than the slide holding it, on any pattern', async ({ browser }) => {
+  const { page, errors } = await openBuilder(browser, 1700);
+  const bad = [];
+  for (const id of await patternIds(page)) {
+    await pick(page, id);
+    await page.waitForTimeout(350);
+    const worst = await page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      const win = globalThis.CARGO.swin();
+      let over = 0;
+      let who = '';
+      for (const slide of d.querySelectorAll('.cs-slide')) {
+        const sr = slide.getBoundingClientRect();
+        for (const el of slide.children) {
+          const gap = +(el.getBoundingClientRect().bottom - sr.bottom).toFixed(2);
+          if (gap > over) {
+            over = gap;
+            who = `${el.tagName}.${typeof el.className === 'string' ? el.className.split(' ')[0] : ''}`;
+          }
+        }
+      }
+      // And nothing spills out of the frame either: the frame refuses to scroll,
+      // so a document taller than its viewport is content nobody can reach.
+      let bottom = 0;
+      for (const el of d.querySelectorAll('#wb-live-root *')) {
+        const r = el.getBoundingClientRect();
+        if (r.height && r.bottom > bottom) bottom = r.bottom;
+      }
+      return { over, who, clipped: +(bottom - win.innerHeight).toFixed(2) };
+    });
+    if (worst.over > 0.01) bad.push(`${id}: ${worst.who} hangs ${worst.over}px below its slide`);
+    if (worst.clipped > 0.01) bad.push(`${id}: ${worst.clipped}px of content is cut off by the frame`);
+  }
+  assert.deepEqual(bad, [], bad.join(' | '));
+  assert.deepEqual(errors, []);
+});
+
+// "When a user hits fill it doesnt seem to affect the display of the current
+// pattern" (Steven, 2026-09-08). It did not: Fill widened the FRAME, and the
+// frame's Bootstrap container rules then held the slider at 1170px anyway, so
+// on any window wide enough to matter Fill and Desktop drew the same picture.
+// The button's own tooltip has always said "use all the width this page has".
+test('Fill drops the container and uses the whole width', async ({ browser }) => {
+  const { page, errors } = await openBuilder(browser, 1900);
+  await pick(page, 'mixed');
+  const read = () =>
+    page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      return {
+        frame: d.documentElement.clientWidth,
+        root: Math.round(d.getElementById('wb-live-root').getBoundingClientRect().width),
+        slide: Math.round(d.querySelector('.cs-slide').getBoundingClientRect().width),
+      };
+    });
+
+  await page.click('.ui-widths button[data-w="1200"]');
+  await page.waitForTimeout(500);
+  const desktop = await read();
+  assert.equal(desktop.root, 1170, `the Desktop button gives the slider ${desktop.root}px, not Bootstrap's 1170`);
+
+  await page.click('.ui-widths button[data-w="0"]');
+  await page.waitForTimeout(600);
+  const fill = await read();
+  assert.equal(fill.root, fill.frame, `Fill left the slider in a ${fill.root}px container inside a ${fill.frame}px frame`);
+  assert.ok(fill.root > desktop.root, `Fill gave the slider ${fill.root}px, no more than Desktop's ${desktop.root}`);
+  assert.ok(fill.slide > desktop.slide, `the cards are ${fill.slide}px on Fill and ${desktop.slide}px on Desktop, so Fill changed nothing anyone can see`);
+
+  // And back: Fill is a choice, not a one-way door.
+  await page.click('.ui-widths button[data-w="1200"]');
+  await page.waitForTimeout(500);
+  assert.equal((await read()).root, 1170, 'the container did not come back when Fill was turned off');
   assert.deepEqual(errors, []);
 });

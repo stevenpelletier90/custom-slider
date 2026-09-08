@@ -1800,7 +1800,20 @@ ${PHOTO_CSS}
     // latched, too: content measured at 375 is taller than at 390, which keeps
     // the scrollbar justified. The parent sizes this frame to its content, so
     // there is nothing here to scroll and nothing to lose by refusing.
-    '<style>html{overflow:hidden}html{font-size:10px}body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#10151c;background:#fff}.wb-sr{position:absolute;inline-size:1px;block-size:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%)}' +
+    // box-sizing: border-box, because BOOTSTRAP 3 SETS IT and this frame exists
+    // to stand in for a Bootstrap 3 storefront. Verified in bootstrap@3.4.1's
+    // own dist/css/bootstrap.css, line 1069: `* { box-sizing: border-box }`,
+    // with `*:before, *:after` on the line after it. The frame simulated the
+    // 10px root font and not this, so the preview ran a DIFFERENT BOX MODEL from
+    // the page it was previewing - and the card CSS is written for the real one.
+    // Measured before the fix, at the Desktop button: the review card resolved
+    // 184.61px tall inside a 147.61px slide, breaking 37px out of its own slide
+    // and 1.6px out of the frame, where html{overflow:hidden} cut it off; the
+    // mixed-sizes card overflowed by exactly its own two 1px borders, which is
+    // why its bottom border was missing and came back if you scrolled. Both are
+    // `block-size: 100%` plus padding and a border, which only fits under
+    // border-box. Reported twice as "the border doesn't show".
+    '<style>html{overflow:hidden}html{font-size:10px}*,*::before,*::after{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#10151c;background:#fff}.wb-sr{position:absolute;inline-size:1px;block-size:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%)}' +
     // Bootstrap 3's own container, because the frame is now the SCREEN rather
     // than the box. That distinction is the whole reason this exists: a
     // .container is 750px BECAUSE the screen is 768, so a 750px-wide frame
@@ -1811,7 +1824,15 @@ ${PHOTO_CSS}
     '#wb-live-root{margin:0 auto}' +
     '@media(min-width:768px){#wb-live-root{inline-size:750px}}' +
     '@media(min-width:992px){#wb-live-root{inline-size:970px}}' +
-    '@media(min-width:1200px){#wb-live-root{inline-size:1170px}}</style>' +
+    '@media(min-width:1200px){#wb-live-root{inline-size:1170px}}' +
+    // Fill means FILL. The button's own tooltip has always said "use all the
+    // width this page has", but Fill only widened the frame - and the container
+    // rules above then held the slider at 1170px anyway, so on any window wide
+    // enough to matter Fill and Desktop drew exactly the same picture and the
+    // button looked broken. A full-bleed band with no .container around it is a
+    // real thing to build, and it is the thing this button is for.
+    // (1,1,1) against the bare id's (1,0,0), so it wins without !important.
+    'html[data-fill] #wb-live-root{inline-size:auto}</style>' +
     // wb-live-css stays EMPTY: restyle() replaces its textContent on every
     // edit, so anything parked in it is wiped the first time a knob moves. The
     // scaffolding rule for the heading lives in the block above with the rest
@@ -1954,6 +1975,14 @@ ${PHOTO_CSS}
     publish();
   }
 
+  // Full bleed or Bootstrap's container, written onto the frame's own <html>.
+  // Set from two places on purpose: showFrame() owns the decision, and render()
+  // repeats it because the frame document is written asynchronously and the
+  // first paint can land either side of the first width being chosen.
+  function fillFrame() {
+    sdoc()?.documentElement.toggleAttribute('data-fill', frameW === 0);
+  }
+
   function render() {
     const root = sroot();
     // Before the frame has loaded there is nothing to paint into. Queue it and
@@ -1962,6 +1991,7 @@ ${PHOTO_CSS}
       frameReady.then(render);
       return;
     }
+    fillFrame();
     live.forEach((s) => s.destroy());
     live = [];
     styleEl().textContent = cssFor('.wb-live');
@@ -3704,6 +3734,7 @@ ${PHOTO_CSS}
     const w = shownTier(chosenW);
     for (const x of widthBtns()) x.setAttribute('aria-pressed', String(+x.dataset.w === w));
     stage.style.setProperty('--frame', w === 0 ? '100%' : `${w}px`);
+    fillFrame();
     const moved = w !== frameW;
     frameW = w;
     // The preview's per-view is resolved for this frame now, so changing the

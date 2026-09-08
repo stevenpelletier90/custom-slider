@@ -118,7 +118,15 @@ export function hostHtml({ engineCss, engineJs, css = '', html = '', js = '', bo
   const sheets = cssFirst ? `<style>${css}</style><style>${engineCss}</style>` : `<style>${engineCss}</style><style>${css}</style>`;
   return (
     `<!doctype html><html><head><meta charset="utf-8">` +
-    `<style>html{font-size:10px}body{margin:0;font-family:Arial,sans-serif;font-size:14px}#box{inline-size:${box}px}</style>` +
+    // The same two things a Bootstrap 3 storefront does to everything on it:
+    // html{font-size:10px} (which is why every length in the card CSS is em),
+    // and `* { box-sizing: border-box }` - bootstrap@3.4.1 dist/css/bootstrap.css
+    // line 1069. The box model was missing here AND in the preview frame, so the
+    // paste-parity test compared two documents that were consistently wrong
+    // together and agreed with each other while both differed from a real
+    // dealer page. A card with `block-size: 100%` plus padding and a border only
+    // fits its slide under border-box.
+    `<style>html{font-size:10px}*,*::before,*::after{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;font-size:14px}#box{inline-size:${box}px}</style>` +
     `${sheets}</head><body><div id="box">${html}</div>` +
     `<script>${engineJs}<\/script>${js ? `<script>${js}<\/script>` : ''}</body></html>`
   );
