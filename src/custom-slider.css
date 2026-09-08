@@ -88,6 +88,24 @@
   margin: 0;
   overflow-x: auto;
 
+  /* NEVER `smooth` here — that is what lets Safari hijack an intended-instant
+     programmatic scroll, and JS passes `behavior` per call precisely so the
+     decision is made at call time from prefers-reduced-motion.
+
+     `auto` is the opposite, and it is a shield rather than a default restated.
+     scrollTo({behavior:'auto'}) defers to THIS property, so a host page with a
+     global `* { scroll-behavior: smooth }` — which nothing forbids a dealer
+     theme from shipping — captured every instant scroll the engine makes: the
+     reduced-motion path, gallery photo switching, and the re-align after a
+     drag. Measured on such a host: goTo(2, {behavior:'auto'}) sat at 0 after a
+     frame and crawled to 590px over ~700ms, and it did that WITH
+     prefers-reduced-motion active, so a visitor who asked for no motion got an
+     animation the engine had already decided not to play. Declaring `auto`
+     puts the choice back in the call: measured again, instant lands in one
+     frame and an explicit behavior:'smooth' still animates, because the
+     argument outranks the property. 5 B gzip. */
+  scroll-behavior: auto;
+
   /* Edge overscroll must not chain into the page / back gesture. */
   overscroll-behavior-x: contain;
   list-style: none;
@@ -97,8 +115,7 @@
   scroll-padding-inline: var(--cs-peek);
 
   /* Scrollbar hidden: arrows, dots, keyboard, and the peek remain as
-     affordances. NEVER set scroll-behavior here — Safari would hijack
-     intended-instant programmatic scrolls; JS passes behavior per call. */
+     affordances. */
   scrollbar-width: none;
 }
 

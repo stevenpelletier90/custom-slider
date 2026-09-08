@@ -205,6 +205,39 @@ test.describe('the contract, in the last window before it froze', () => {
     assert.deepEqual(result.after, ['aria-label', 'class', 'data-cs'], `destroy left ${result.after.join(', ')} behind`);
   });
 
+  // scrollTo({behavior:'auto'}) defers to the element's CSS scroll-behavior, so
+  // a host page shipping a global `* { scroll-behavior: smooth }` captured every
+  // instant scroll the engine makes - including the reduced-motion path, where
+  // a visitor who asked for no motion got an animation anyway. The track
+  // declares `auto` to take that decision back. Both directions are checked:
+  // instant must be instant, and an explicit smooth must still animate, because
+  // a shield that also disabled smooth scrolling would be a worse bug.
+  test('a host page with global smooth scroll cannot hijack an instant move', async ({ page }) => {
+    for (const [want, shouldBeInstant] of [
+      ['auto', true],
+      ['smooth', false],
+    ]) {
+      await page.setContent(build(8, 4).replace('<head>', '<head><style>*{scroll-behavior:smooth}</style>'), { waitUntil: 'load' });
+      await page.waitForTimeout(350);
+      const r = await page.evaluate(async (behavior) => {
+        const t = document.querySelector('.cs-track');
+        const cs = document.querySelector('.cs')._cs;
+        t.scrollLeft = 0;
+        await new Promise((done) => setTimeout(done, 100));
+        cs.goTo(2, { behavior });
+        // One frame later an instant move is already home; a smooth one has
+        // barely left.
+        await new Promise((done) => requestAnimationFrame(done));
+        const oneFrame = Math.round(t.scrollLeft);
+        await new Promise((done) => setTimeout(done, 700));
+        return { computed: getComputedStyle(t).scrollBehavior, oneFrame, settled: Math.round(t.scrollLeft) };
+      }, want);
+      assert.equal(r.computed, 'auto', 'the host page won the track scroll-behavior');
+      assert.ok(r.settled > 0, `behavior:${want} never arrived`);
+      assert.equal(r.oneFrame === r.settled, shouldBeInstant, `behavior:${want} landed at ${r.oneFrame} after one frame and settled at ${r.settled}`);
+    }
+  });
+
   // A property used only through a var() fallback is invisible to the
   // Reference page, which tabulates the knobs by reading them out of the
   // shipped stylesheet. --cs-arrow-at was such a knob. This guards the class of
