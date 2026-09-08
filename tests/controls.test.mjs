@@ -1248,6 +1248,33 @@ test.describe('a card is only offered where it could actually go', () => {
   });
 });
 
+// Docket item 1: "make sure the classes are the same, so that when users want
+// to edit/modify/or remove vehicles the process will be the same". check-looks
+// holds the seven card looks; this holds the PATTERNS that bring their own
+// slides, which check-looks never sees - three of them were emitting bare <h3>
+// and <p> inside a pattern-specific wrapper, so the name a designer edits had
+// no name.
+test.describe('one vocabulary for a card, whatever pattern it is in', () => {
+  test('every pattern that draws a titled card calls the title .cargo-name', async () => {
+    const offenders = [];
+    for (const id of await patternIds(page)) {
+      await pick(page, id);
+      await page.waitForTimeout(200);
+      const found = await page.evaluate(() => {
+        const d = globalThis.CARGO.sdoc();
+        const slide = d?.querySelector('.cs-slide');
+        if (!slide) return null;
+        // A heading or a paragraph carrying no cargo- class is a role the
+        // designer cannot target and cannot recognise from the last pattern.
+        const unnamed = [...slide.querySelectorAll('h1,h2,h3,h4,p,small')].filter((e) => ![...e.classList].some((c) => c.startsWith('cargo-')));
+        return { unnamed: unnamed.map((e) => e.tagName.toLowerCase()), hasName: !!slide.querySelector('.cargo-name') };
+      });
+      if (found?.unnamed.length) offenders.push(`${id}: unnamed <${found.unnamed.join('>, <')}>`);
+    }
+    assert.deepEqual(offenders, [], `a card role carries no class, so editing it is a different job here — ${offenders.join(' | ')}`);
+  });
+});
+
 test.describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);

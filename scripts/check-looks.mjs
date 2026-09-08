@@ -79,6 +79,32 @@ for (const [id, look] of Object.entries(LOOKS)) {
       console.error(`  ${id}: markup() emits an empty ${empty[1]} when optional content is missing — omit the element instead`);
       bad++;
     }
+
+    // ONE VOCABULARY, so editing a vehicle is the same job on every pattern: a
+    // designer finds the name at .cargo-name, the line under it at .cargo-sub,
+    // the button at .cargo-cta, whatever card they are looking at.
+    //
+    // Two looks had drifted. The location card put its address in a bare <p>
+    // with no class at all, so it could not be targeted and matched nothing
+    // else; the split card called its button .cargo-pill. Same roles, different
+    // names, and the edit was a different job each time.
+    //
+    // The ELEMENT is deliberately not checked. <p> and <span> both carry
+    // .cargo-name across the set, and unifying them would mean re-proving pixel
+    // parity for seven looks to change nothing a designer actually does - they
+    // edit the text inside the class either way.
+    const full = look.markup({ href: '#', img: 'x.png', alt: 'a', name: 'N', sub: 's', blurb: 'b', mark: 'm', cta: 'c' });
+    for (const [value, cls, role] of [
+      ['N', 'cargo-name', 'name'],
+      ['s', 'cargo-sub', 'sub'],
+      ['c', 'cargo-cta', 'button'],
+    ]) {
+      // Only a look that RENDERS the role has to name it. The logo panel draws
+      // a mark and no text, and an empty label would not improve it.
+      if (!full.includes('>' + value + '<') || full.includes(cls)) continue;
+      console.error(`  ${id}: renders a ${role} but does not call it .${cls} — the same role has to carry the same name on every card`);
+      bad++;
+    }
   }
 }
 

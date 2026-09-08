@@ -585,9 +585,9 @@ ${VIDEO_DIALOG_CSS}`,
 .cargo-model { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; border-radius: 10px; }
 .cargo-model img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; transition: transform 0.35s ease; }
 .cargo-model:hover img { transform: scale(1.05); }
-.cargo-model h3 { position: absolute; inset-block-end: 0; inset-inline: 0; padding: 2.5em 1em 1em; margin: 0; font-size: 1.15em; line-height: 1.3; background: linear-gradient(transparent, rgba(0, 0, 0, 0.78)); }`,
+.cargo-model .cargo-name { display: block; position: absolute; inset-block-end: 0; inset-inline: 0; padding: 2.5em 1em 1em; margin: 0; font-size: 1.15em; line-height: 1.3; background: linear-gradient(transparent, rgba(0, 0, 0, 0.78)); }`,
       slides: (models) =>
-        models.map((m) => `<a class="cargo-model" href="${m.href}"><img src="${m.img}" width="${m.w ?? 600}" height="${m.h ?? 1000}" alt="" loading="lazy" decoding="async"><h3>${m.name}</h3></a>`),
+        models.map((m) => `<a class="cargo-model" href="${m.href}"><img src="${m.img}" width="${m.w ?? 600}" height="${m.h ?? 1000}" alt="" loading="lazy" decoding="async"><h3 class="cargo-name">${m.name}</h3></a>`),
       // Site-level enhancement, not an engine feature: it reads the engine's
       // own current-dot class and writes two custom properties. Nothing in the
       // engine knows the bar exists.
@@ -619,10 +619,10 @@ ${VIDEO_DIALOG_CSS}`,
       css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-mix { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-mix img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
-.cargo-mix h3 { margin: 0.8em 0.9em 0.2em; font-size: 0.95em; line-height: 1.3; }
-.cargo-mix p { margin: 0 0.9em 0.9em; font-size: 0.85em; line-height: 1.45; color: #5f6368; }`,
+.cargo-mix .cargo-name { display: block; margin: 0.8em 0.9em 0.2em; font-size: 0.95em; line-height: 1.3; }
+.cargo-mix .cargo-sub { display: block; margin: 0 0.9em 0.9em; font-size: 0.85em; line-height: 1.45; color: #5f6368; }`,
       slides: (models) =>
-        models.map((m) => `<article class="cargo-mix"><img src="${m.img}" width="${m.w}" height="${m.h}" alt="${m.alt}" loading="lazy" decoding="async"><h3>${m.name}</h3><p>${m.blurb}</p></article>`),
+        models.map((m) => `<article class="cargo-mix"><img src="${m.img}" width="${m.w}" height="${m.h}" alt="${m.alt}" loading="lazy" decoding="async"><h3 class="cargo-name">${m.name}</h3><p class="cargo-sub">${m.blurb}</p></article>`),
     },
 
     service: {
@@ -640,8 +640,8 @@ ${VIDEO_DIALOG_CSS}`,
 .cargo-svc img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.35s ease; }
 .cargo-svc:hover img { transform: scale(1.05); }
 @media (prefers-reduced-motion: reduce) { .cargo-svc:hover img { transform: none; } }
-.cargo-svc h3 { margin: 1em 1.1em 0.35em; font-size: 1.1em; line-height: 1.3; }
-.cargo-svc p { margin: 0 1.1em; font-size: 0.9em; line-height: 1.5; color: #5f6368; }
+.cargo-svc .cargo-name { display: block; margin: 1em 1.1em 0.35em; font-size: 1.1em; line-height: 1.3; }
+.cargo-svc .cargo-sub { display: block; margin: 0 1.1em; font-size: 0.9em; line-height: 1.5; color: #5f6368; }
 .cargo-svc-more { display: block; margin: 0.9em 1.1em 1.1em; font-size: 0.85em; font-weight: 700; line-height: 1.35; }`,
       slides: (models) =>
         models.map(
@@ -649,7 +649,7 @@ ${VIDEO_DIALOG_CSS}`,
             // aria-hidden because the whole card is already the link: without
             // it a screen reader reads the heading, the blurb and then "Read
             // more" as a second, separate destination.
-            `<a class="cargo-svc" href="${m.href}"><span class="cargo-media">${pic(m)}</span><h3>${m.name}</h3><p>${m.blurb}</p><span class="cargo-svc-more" aria-hidden="true">${m.cta || 'Read more &#8594;'}</span></a>`,
+            `<a class="cargo-svc" href="${m.href}"><span class="cargo-media">${pic(m)}</span><h3 class="cargo-name">${m.name}</h3><p class="cargo-sub">${m.blurb}</p><span class="cargo-svc-more" aria-hidden="true">${m.cta || 'Read more &#8594;'}</span></a>`,
         ),
     },
 
@@ -666,11 +666,11 @@ ${VIDEO_DIALOG_CSS}`,
 .cargo-review figcaption { display: flex; gap: 0.7em; align-items: center; line-height: 1.35; }
 .cargo-avatar { display: grid; flex: none; place-items: center; inline-size: 40px; block-size: 40px; font-weight: 700; line-height: 1; color: #fff; background: var(--avatar-bg); border-radius: 50%; }
 .cargo-byline { display: flex; flex-direction: column; line-height: 1.35; }
-.cargo-byline strong { font-size: 0.95em; }
-.cargo-byline small { font-size: 0.8em; opacity: 0.7; }
+.cargo-byline .cargo-name { font-size: 0.95em; }
+.cargo-byline .cargo-sub { font-size: 0.8em; opacity: 0.7; }
 .cargo-stars { display: block; margin: 0.7em 0 0.4em; font-size: 1em; line-height: 1; color: #e0a012; letter-spacing: 0.1em; }
 .cargo-review blockquote { margin: 0; }
-.cargo-review blockquote p { margin: 0; font-size: 0.95em; line-height: 1.55; }`,
+.cargo-review .cargo-quote { display: block; margin: 0; font-size: 0.95em; line-height: 1.55; }`,
       // The stars ship as HTML entities, not as the glyphs themselves. CMS
       // block storage is Windows-1252 and U+2605/U+2606 are not in it, so a
       // pasted literal star comes back mangled; an entity is plain ASCII and
@@ -680,10 +680,10 @@ ${VIDEO_DIALOG_CSS}`,
           (m) => `<figure class="cargo-review">
   <figcaption>
     <span class="cargo-avatar" aria-hidden="true" style="--avatar-bg: ${m.bg}">${initial(m.name)}</span>
-    <span class="cargo-byline"><strong>${m.name}</strong><small>${m.when}</small></span>
+    <span class="cargo-byline"><strong class="cargo-name">${m.name}</strong><small class="cargo-sub">${m.when}</small></span>
   </figcaption>
   <span class="cargo-stars" role="img" aria-label="Rated ${clamp(m.stars, 0, 5)} out of 5">${'&starf;'.repeat(clamp(m.stars, 0, 5))}${'&star;'.repeat(5 - clamp(m.stars, 0, 5))}</span>
-  <blockquote><p>${m.quote}</p></blockquote>
+  <blockquote><p class="cargo-quote">${m.quote}</p></blockquote>
 </figure>`,
         ),
     },
@@ -815,8 +815,8 @@ ${PHOTO_CSS}
 .cargo-cg-card { overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-cg-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 .cargo-cg-body { padding: 0.8em 0.9em 1em; }
-.cargo-cg-body h3 { margin: 0; font-size: 0.95em; line-height: 1.35; }
-.cargo-cg-body p { margin: 0.2em 0 0; font-size: 0.85em; line-height: 1.4; color: #5f6368; }`,
+.cargo-cg-body .cargo-name { display: block; margin: 0; font-size: 0.95em; line-height: 1.35; }
+.cargo-cg-body .cargo-sub { display: block; margin: 0.2em 0 0; font-size: 0.85em; line-height: 1.4; color: #5f6368; }`,
     },
 
     stock: {
@@ -835,14 +835,14 @@ ${PHOTO_CSS}
       ].map(([name, blurb]) => ({ name, blurb })),
       css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
 .cargo-stock { block-size: 100%; padding: 1.1em; background: #f0f2f5; border-radius: 8px; }
-.cargo-stock h3 { margin: 0 0 0.35em; font-size: 1em; line-height: 1.3; }
-.cargo-stock p { margin: 0; font-size: 0.9em; line-height: 1.5; color: #5f6368; }
+.cargo-stock .cargo-name { display: block; margin: 0 0 0.35em; font-size: 1em; line-height: 1.3; }
+.cargo-stock .cargo-sub { display: block; margin: 0; font-size: 0.9em; line-height: 1.5; color: #5f6368; }
 /* Inline code sits INSIDE the paragraph, so this em is measured against the
    paragraph's 0.9em, not the card base - deliberately, since code should track
    the copy it interrupts. 0.94 of 0.9 is the 0.85-of-base this rendered at
    before the rem-to-em pass; the two-decimal value is that ratio, not a guess. */
-.cargo-stock code { font-size: 0.94em; }`,
-      slides: (models) => models.map((m) => `<article class="cargo-stock"><h3>${m.name}</h3><p>${m.blurb}</p></article>`),
+.cargo-stock .cargo-sub code { font-size: 0.94em; }`,
+      slides: (models) => models.map((m) => `<article class="cargo-stock"><h3 class="cargo-name">${m.name}</h3><p class="cargo-sub">${m.blurb}</p></article>`),
     },
   };
 
@@ -1495,7 +1495,7 @@ ${PHOTO_CSS}
           const pics = [{ img: m.img, alt: m.alt }, PHOTOS[i % PHOTOS.length], PHOTOS[(i + 2) % PHOTOS.length]].map(
             (x) => `<img src="${x.img}" width="${x.w ?? 800}" height="${x.h ?? 600}" alt="${x.alt}" loading="lazy" decoding="async">`,
           );
-          return [`  <div class="cargo-cg-card">`, carousel(pics, `Photos of the ${m.name}`, '    '), `    <div class="cargo-cg-body"><h3>${m.name}</h3><p>${m.sub}</p></div>`, `  </div>`].join('\n');
+          return [`  <div class="cargo-cg-card">`, carousel(pics, `Photos of the ${m.name}`, '    '), `    <div class="cargo-cg-body"><h3 class="cargo-name">${m.name}</h3><p class="cargo-sub">${m.sub}</p></div>`, `  </div>`].join('\n');
         });
       return `<div class="${cls}-wrap">\n${cards.join('\n')}\n</div>`;
     }

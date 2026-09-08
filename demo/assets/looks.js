@@ -264,8 +264,8 @@ const LOOKS = {
 .cargo-sub { font-size: 0.85em; color: #d9d9d9; }
 .cargo-name { display: block; margin: 0; font-size: 1.5em; font-weight: 700; line-height: 1.2; }
 .cargo-blurb { font-size: 0.95em; line-height: 1.4; color: #d9d9d9; }
-.cargo-pill { padding: 0.5em 1.3em; margin-block-start: auto; font-size: 0.9em; font-weight: 600; color: var(--pill-fg); background: var(--pill-bg); border-radius: 999px; }
-@media (max-width: 767.98px) { .cargo-copy { gap: 0.35em; padding: 1em; } .cargo-name { font-size: 1.15em; } .cargo-pill { padding: 0.45em 1em; font-size: 0.8em; white-space: nowrap; } }
+.cargo-cta { padding: 0.5em 1.3em; margin-block-start: auto; font-size: 0.9em; font-weight: 600; color: var(--pill-fg); background: var(--pill-bg); border-radius: 999px; }
+@media (max-width: 767.98px) { .cargo-copy { gap: 0.35em; padding: 1em; } .cargo-name { font-size: 1.15em; } .cargo-cta { padding: 0.45em 1em; font-size: 0.8em; white-space: nowrap; } }
 @media (max-width: 480px) { .cargo-card { flex-direction: column; } .cargo-card img { flex: none; inline-size: 100%; aspect-ratio: 16 / 9; } }`,
     // An absent field emits NO element. Rendering an empty <span> left the copy
     // column with a blank row, and the pill's `margin-block-start: auto` then
@@ -278,7 +278,7 @@ const LOOKS = {
         m.sub ? `    <small class="cargo-sub">${m.sub}</small>` : null,
         `    <span class="cargo-name">${m.name}</span>`,
         m.blurb ? `    <span class="cargo-blurb">${m.blurb}</span>` : null,
-        `    <span class="cargo-pill">${m.cta || 'Shop Now'}</span>`,
+        `    <span class="cargo-cta">${m.cta || 'Shop Now'}</span>`,
         `  </span>`,
         `</a>`,
       ]
@@ -408,7 +408,7 @@ const LOOKS = {
 .cargo-card { padding-block-start: 0; overflow: hidden; }
 .cargo-card img { inline-size: calc(100% + 2.5em); block-size: auto; margin-inline: -1.25em; margin-block-end: 1em; aspect-ratio: 16 / 10; object-fit: cover; }
 .cargo-name { margin: 0.5em 0 0.4em; font-size: 1.1em; font-weight: 700; line-height: 1.3; color: #222; }
-.cargo-card p { margin: 0 0 0.9em; font-size: 0.9em; color: #5f6368; }
+.cargo-sub { display: block; margin: 0 0 0.9em; font-size: 0.9em; color: #5f6368; }
 .cargo-cta { padding: 0.5em 1.3em; margin-block-start: auto; font-size: 0.8em; font-weight: 700; color: var(--cta-fg); background: var(--cta-bg); border-radius: 999px; }`,
     // An absent field emits NO element - see the note on the split look.
     markup: (m) =>
@@ -416,7 +416,7 @@ const LOOKS = {
         `<a class="cargo-card" href="${m.href}">`,
         `  <img src="${m.img}" width="${m.w ?? 240}" height="${m.h ?? 160}" alt="${m.alt}" loading="lazy" decoding="async">`,
         `  <span class="cargo-name">${m.name}</span>`,
-        m.sub ? `  <p>${m.sub}</p>` : null,
+        m.sub ? `  <small class="cargo-sub">${m.sub}</small>` : null,
         `  <span class="cargo-cta">${m.cta || 'Visit'}</span>`,
         `</a>`,
       ]

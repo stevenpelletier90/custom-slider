@@ -12,11 +12,44 @@ Raised by Steven, 2026-09-08.
 vehicle is the same job every time. A designer who learns it on the model bar
 should not have to relearn it on the grid or the tabbed bar.
 
-Probably already true — the card classes (`cargo-card`, `cargo-media`,
-`cargo-name`, `cargo-sub`) come from one generator and are believed
-interchangeable with what the CMS already uses. **Not verified.** Verify before
-closing: build every pattern, diff the per-slide class sets, and check them
-against the classes a dealer page actually carries.
+### DONE 2026-09-08 — the vocabulary half
+
+It was NOT already true. Eight places drew a card role under a name nothing else
+used, so the same edit was a different job each time:
+
+| Where | Role | Was | Now |
+| --- | --- | --- | --- |
+| `location` look | the address line | a bare `<p>`, **no class at all** | `.cargo-sub` |
+| `split` look | the button | `.cargo-pill` | `.cargo-cta` |
+| `models` | the name over the photo | bare `<h3>` | `.cargo-name` |
+| `service` | name and blurb | bare `<h3>` / `<p>` | `.cargo-name` / `.cargo-sub` |
+| `reviews` | reviewer, date, quote | bare `<strong>` / `<small>` / `<p>` | `.cargo-name` / `.cargo-sub` / `.cargo-quote` |
+| `mixed` | name and blurb | bare `<h3>` / `<p>` | `.cargo-name` / `.cargo-sub` |
+| `stock` | name and blurb | bare `<h3>` / `<p>` | `.cargo-name` / `.cargo-sub` |
+| `card-gallery` | name and sub | bare `<h3>` / `<p>` | `.cargo-name` / `.cargo-sub` |
+
+Every CSS rule moved from the element selector to the class in the same edit, and
+the computed styling of each was re-measured after: margins, colours, sizes and
+`models`' absolute-positioned gradient caption all unchanged.
+
+Two gates hold it. `check-looks.mjs` fails a LOOK that renders a name, sub or
+button without the shared class (verified: restoring `.cargo-pill` prints
+"split: renders a button but does not call it .cargo-cta"). A browser test walks
+all 19 patterns and fails any slide carrying a heading or paragraph with no
+`cargo-` class — it is what found `models`, `service` and `reviews`, which the
+audit had missed.
+
+**Deliberately NOT done: the element and the depth.** `<p>` and `<span>` both
+carry `.cargo-name` across the set, and `.cargo-media` wraps the image in only
+two looks. Unifying those means rewriting seven looks' CSS and re-proving pixel
+parity at three widths, to change nothing a designer does — they edit the text
+inside the class either way.
+
+**Still open: the CMS claim.** Searched every doc; the only platform class names
+recorded anywhere are `.corpcell-slider`, `.carousel-model` and
+`vehicle-image-carousel`, from the OEM census. **Nothing in this repo names a CMS
+`cargo-` convention**, so "interchangeable with what the CMS already uses" is
+unverified and needs checking against a live dealer page before it is repeated.
 
 ## 2. Replacement code → settings
 
@@ -115,4 +148,4 @@ Design in `docs/superpowers/specs/2026-09-08-library-taxonomy-design.md`.
 Also fixed on the way: `gallery.js` linked every card as `#modelbar/<id>`, which
 became two dead links the moment the picker was family-filtered.
 
-**Still open** — item 1 (class parity) and item 2 (replacement codes) above.
+**Still open** — item 2 (replacement codes) above, and the CMS half of item 1.
