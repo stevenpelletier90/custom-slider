@@ -127,6 +127,29 @@ test.describe('the buttons the retag went through', () => {
     }
   });
 
+  // Eight buttons said "Download", "Copy" or "View" and nothing else - the
+  // filename that tells them apart sits in a sibling <code> the button's own
+  // name never reaches, so a screen reader's button list was three words over
+  // and over and no way to pick one.
+  test('every file button says which file it is', async () => {
+    const names = await page.evaluate(() => [...document.querySelectorAll('.ui-get [data-file]')].map((b) => b.getAttribute('aria-label') ?? b.textContent.trim()));
+    assert.ok(names.length >= 8, `only ${names.length} file buttons found in the install panel`);
+    assert.deepEqual([...new Set(names)].sort(), names.slice().sort(), `two buttons share a name: ${names.join(', ')}`);
+    for (const n of names) assert.match(n, /custom-slider\.(min\.)?(css|js)$/, `"${n}" does not name the file it acts on`);
+  });
+
+  // README.md "Deployment status - the one place it is written down" ends "do
+  // not restate a status in them". The panel used to say the shared folder
+  // still served the old dl-carousel build, which is a status, and one that
+  // goes false the hour the upload lands with nothing to catch it. What
+  // replaced it is a check the reader runs themselves, which never goes stale.
+  test('the panel states no deployment status', async () => {
+    const text = await page.evaluate(() => document.querySelector('.ui-get').textContent);
+    assert.doesNotMatch(text, /dl-carousel/, 'the install panel names the old build, which is a deployment status README owns');
+    assert.doesNotMatch(text, /not yet|still serves|has not been uploaded/i, 'the install panel claims a deployment state that will go stale');
+    assert.match(text, /\.cs\{/, 'the self-check a reader runs instead of being told a status is gone');
+  });
+
   test('no page errors along the way', () => {
     assert.deepEqual(errors, [], `the install panel threw: ${errors.join(' | ')}`);
   });

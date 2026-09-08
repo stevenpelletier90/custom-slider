@@ -89,6 +89,35 @@ test('every section is open, and nothing can close one', async ({ browser }) => 
   assert.deepEqual(errors, []);
 });
 
+// The page numbers three steps, and only step 3 was ever a heading - the other
+// two were <span>s in a code bar with a styled badge. So a screen-reader user
+// listing headings found a "3" with no 1 or 2 in front of it, and the sequence
+// the whole page is built around existed on screen only. All three are h3 now,
+// siblings, and they must stay that way and stay looking the same.
+test('all three numbered steps are headings, at one level, in order', async ({ browser }) => {
+  const { page, errors } = await openBuilder(browser, 1440);
+  const steps = await page.evaluate(() =>
+    [...document.querySelectorAll('.ui-main h2, .ui-main h3, .ui-main h4, .ui-main h5')]
+      .filter((h) => h.querySelector('.ui-step'))
+      .map((h) => ({ tag: h.tagName, n: h.querySelector('.ui-step').textContent, name: h.textContent.replace(/\s+/g, ' ').trim() })),
+  );
+
+  assert.deepEqual(
+    steps.map((s) => s.n),
+    ['1', '2', '3'],
+    `the numbered steps that are headings are ${steps.map((s) => s.n).join(', ') || 'none'}`,
+  );
+  assert.deepEqual([...new Set(steps.map((s) => s.tag))], ['H3'], 'the three steps are not all at the same heading level');
+
+  // Step 2 carries a legend about class prefixes. Inside the heading it became
+  // part of the name, so the heading read as two sentences about cs- and cargo-.
+  assert.doesNotMatch(steps[1].name, /cargo-/, "step 2's heading name swallowed the class-prefix legend");
+
+  // The badge is decoration; the heading has to say something after it.
+  for (const s of steps) assert.ok(s.name.replace(s.n, '').trim().length > 10, `step ${s.n} is a heading with no text`);
+  assert.deepEqual(errors, []);
+});
+
 // The title bar is a real <button> that no longer does anything, so it must not
 // take a Tab. Nothing else in the pane may lose its place in the tab order.
 test('a title bar is not in the tab order', async ({ browser }) => {

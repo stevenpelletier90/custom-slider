@@ -190,7 +190,10 @@
              a template someone still has to retype the content into. -->
         <section class="ui-content" aria-label="Slide content">
           <div class="ui-code-bar">
-            <span><b class="ui-step">1</b> Write your slides — the headings, links and photos that go in the slider</span>
+            <!-- A heading, not a decorated span. The three steps are numbered on
+                 screen but only step 3 was ever in the outline, so a screen
+                 reader listing headings found a "3" with no 1 or 2 before it. -->
+            <h3><b class="ui-step">1</b> Write your slides — the headings, links and photos that go in the slider</h3>
             <span class="ui-content-acts">
               <button type="button" class="ui-btn" id="wb-content-add">Add a slide</button>
               <button type="button" class="ui-btn" id="wb-content-reset">Use the example content</button>
@@ -208,10 +211,15 @@
             <!-- `cargo-` shows up 34 times in this panel and was explained
                  nowhere on this page - only in the Reference's eighth section,
                  which is not where anyone reading the code is standing. -->
-            <span id="wb-code-note"
-              ><b class="ui-step">2</b> Copy each part into its own field — the box below is the three of them together.
-              <span class="ui-code-legend"><code>cs-</code> is the slider, <code>cargo-</code> is the card design; both come from <code>custom-slider.min.css</code>.</span></span
-            >
+            <!-- A <div> around the pair, not a <span>: the heading is the step
+                 sentence alone, and the legend stays out of its accessible name
+                 - inside the heading it made the name run on for two sentences
+                 about class prefixes. One flex child either way, so the bar
+                 lays out exactly as it did. -->
+            <div id="wb-code-note">
+              <h3><b class="ui-step">2</b> Copy each part into its own field — the box below is the three of them together.</h3>
+              <span class="ui-code-legend"><code>cs-</code> is the slider, <code>cargo-</code> is the card design; both come from <code>custom-slider.min.css</code>.</span>
+            </div>
             <!-- One button per field, not one button for the lot. Style Only
                  takes raw CSS: a <style> tag pasted into it makes the parser
                  read the tag and the first rule as one invalid selector and
@@ -249,13 +257,52 @@
 
         <h3 class="ui-h3"><b class="ui-step">3</b> Add the files to the site — once, not per slider</h3>
         <p class="ui-blurb">
-          Once per site, not once per slider. Link the files if you can upload them; paste the code if you can’t. Either way the slider above is running the very ones you would take.
+          Link the files if you can upload them; paste the code if you can’t. One route or the other, not both — either way the slider above is running the very files you would take.
         </p>
 
         <div class="ui-get">
           <div>
             <h4>Link to the files</h4>
-            <p>Best choice — every page that links them shares one cached copy.</p>
+            <p>
+              Best choice — every page that links them shares one cached copy, and the stylesheet carries the card styling too, so a slider you copy from here is mostly just its markup. Without these
+              files, a pasted slider is a plain list.
+            </p>
+
+            <!-- The files come BEFORE the tags, because that is the order the job
+                 is done in: a tag does nothing until the file it points at is in
+                 the folder. The downloads used to sit fifth, under the tags and
+                 three grey notes, which read as "paste this, and by the way you
+                 needed to upload four files first". -->
+            <h5>First, get the four files up there</h5>
+            <p>
+              Four files, one folder. <code>custom-slider.min.css</code> and <code>custom-slider.min.js</code> are what the tags below link; <code>custom-slider.css</code> and
+              <code>custom-slider.js</code> are the same code unminified, for anyone opening the file to see what it does. Upload all four as they are.
+            </p>
+            <p class="ui-act"><button type="button" class="ui-btn" id="wb-download-all">Download all four</button></p>
+            <!-- Above the button, not below it. This warning used to be printed
+                 under the very thing that triggers it. -->
+            <p>The browser asks “Download multiple files?” on the second one — allow it. Each saves under its own name.</p>
+            <ul class="ui-files">
+              <li class="ui-file">
+                <code>custom-slider.css</code>
+                <button type="button" class="ui-btn" data-file="custom-slider.css" data-act="download">Download</button>
+              </li>
+              <li class="ui-file">
+                <code>custom-slider.js</code>
+                <button type="button" class="ui-btn" data-file="custom-slider.js" data-act="download">Download</button>
+              </li>
+              <li class="ui-file">
+                <code>custom-slider.min.css</code>
+                <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="download">Download</button>
+              </li>
+              <li class="ui-file">
+                <code>custom-slider.min.js</code>
+                <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="download">Download</button>
+              </li>
+            </ul>
+            <p>They go in <code>/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/</code> — one folder, every site. If you cannot put files there, take the other route.</p>
+
+            <h5>Then, add the two tags to the page</h5>
             <!-- tabindex, because it scrolls sideways: a scroll container with
                  nothing focusable in it cannot be reached by keyboard at all,
                  so the second line of the snippet was mouse-only. -->
@@ -266,58 +313,22 @@
               aria-label="The two tags to paste"
             ><code>&lt;link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.css"&gt;
 &lt;script src="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.js" defer&gt;&lt;/script&gt;</code></pre>
-            <div class="ui-where">
-              <b>Two files, that’s all</b>
-              The stylesheet carries the card styling as well, so a slider you copy from here is mostly just its markup. Without these two files linked, a pasted slider is a plain list.
-            </div>
+            <p class="ui-act"><button type="button" class="ui-btn" id="wb-copy-tags">Copy both tags</button></p>
             <!-- Two tabs in the Custom HTML panel have overlapping names, and
                  sending the <link> to the wrong one is silent: "Style Only,
                  Head Section" is styleCode and takes RAW CSS, so a tag pasted
                  there corrupts the sheet. The tab called just "Head Section" is
                  headerCode, which emits HTML verbatim into <head>. Verified
-                 live on dealer 32700. -->
+                 live on dealer 32700.
+                 The last sentence replaced a note saying the shared folder still
+                 served the old dl-carousel build. That was a deployment STATUS,
+                 which README owns in one place and which goes false the hour the
+                 upload lands; a check the reader can run themselves never does. -->
             <div class="ui-where">
-              <b>Where these go</b>
-              Both tags go in the <strong>Head Section</strong> tab — the one that takes HTML, <em>not</em> “Style Only, Head Section”, which takes raw CSS and would swallow a tag. The
-              <code>&lt;script&gt;</code> can go in <strong>Body Section, Bottom</strong> instead if you prefer it there.
-            </div>
-            <div class="ui-where">
-              <b>The path</b>
-              These live at <code>/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/</code> — one shared copy for every site. Until the current build is uploaded there, that address still
-              serves the old <code>dl-carousel</code> engine, and a slider linked to it renders as a plain list.
-            </div>
-            <p style="margin: 0.8rem 0 0"><button type="button" class="ui-btn" id="wb-copy-tags">Copy both tags</button></p>
-            <!-- Download used to live only in the OTHER column - the one headed
-                 "for a site where you can't upload files" - and only for the
-                 .min pair. So the person who CAN upload had no way to get the
-                 readable build at all, and the one Download there handed over
-                 minified bytes named custom-slider.css. All four are here now,
-                 each button named for the file it saves. -->
-            <div class="ui-where">
-              <b>Get the files to upload</b>
-              All four go in that one folder. <code>custom-slider.css</code> and <code>custom-slider.js</code> are the readable build, there to be opened and read; the <code>.min</code> pair is the
-              same code minified, and is the pair the tags above link.
-            </div>
-            <div class="ui-file">
-              <code>custom-slider.css</code>
-              <button type="button" class="ui-btn" data-file="custom-slider.css" data-act="download">Download</button>
-            </div>
-            <div class="ui-file">
-              <code>custom-slider.js</code>
-              <button type="button" class="ui-btn" data-file="custom-slider.js" data-act="download">Download</button>
-            </div>
-            <div class="ui-file">
-              <code>custom-slider.min.css</code>
-              <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="download">Download</button>
-            </div>
-            <div class="ui-file">
-              <code>custom-slider.min.js</code>
-              <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="download">Download</button>
-            </div>
-            <p style="margin: 0.8rem 0 0"><button type="button" class="ui-btn" id="wb-download-all">Download all four</button></p>
-            <div class="ui-where">
-              <b>Four files, one press</b>
-              The browser asks “Download multiple files?” on the second one — allow it, or take them one at a time above. Each saves under its own name; upload all four to that folder as they are.
+              <b>Where the tags go</b>
+              Both go in the <strong>Head Section</strong> tab — the one that takes HTML, <em>not</em> “Style Only, Head Section”, which takes raw CSS and would swallow a tag. The
+              <code>&lt;script&gt;</code> can go in <strong>Body Section, Bottom</strong> instead if you prefer it there. If the slider comes out a plain vertical list, the tags are not resolving:
+              open the <code>.css</code> address in a tab and check that it starts with <code>.cs{</code>.
             </div>
           </div>
 
@@ -327,29 +338,32 @@
                  The fetch is live; the clipboard is not. What you paste is
                  pinned to today's build, carries no version marker, and nothing
                  comes back to tell the page it is out of date. -->
-            <p>For a site where you can’t upload files. What you copy is today’s build — a pasted copy stays on that build, so it has to be pasted again after each update.</p>
-            <div class="ui-file">
-              <code>custom-slider.min.css</code>
-              <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="copy">Copy</button>
-              <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="view">View</button>
-              <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="download">Download</button>
-            </div>
-            <div class="ui-file">
-              <code>custom-slider.min.js</code>
-              <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="copy">Copy</button>
-              <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="view">View</button>
-              <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="download">Download</button>
-            </div>
+            <p>For a site where you can’t upload files. What you copy is today’s build — it carries nothing that says which build, so it has to be pasted again after each update.</p>
+            <!-- No Download here. It offered the same two files the upload column
+                 now offers, and someone who cannot put a file on the server has
+                 no use for one on their desktop. Copy and View are what this
+                 route is: read it, or take it to the clipboard. -->
+            <ul class="ui-files">
+              <li class="ui-file">
+                <code>custom-slider.min.css</code>
+                <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="copy">Copy</button>
+                <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="view">View</button>
+              </li>
+              <li class="ui-file">
+                <code>custom-slider.min.js</code>
+                <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="copy">Copy</button>
+                <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="view">View</button>
+              </li>
+            </ul>
             <div class="ui-where">
-              <b>Where these go</b>
+              <b>Where the pasted code goes</b>
               Copy gives you the wrapper too, so both go in a field that takes HTML: the <code>&lt;style&gt;</code> in <strong>Head Section</strong>, the <code>&lt;script&gt;</code> in
               <strong>Body Section, Bottom</strong>. Not “Style Only” — that field takes raw CSS with no tags and no comments, and this stylesheet has both.
             </div>
-            <div class="ui-where">
-              <b>Or the comment-free pair</b>
-              <code>npm run paste</code> writes <code>dist/paste/1-style-only.css</code> (engine and card styles, comments stripped, for the Style Only field) and
-              <code>dist/paste/2-body-bottom.html</code>. That is the route for a page where you have no file access at all.
-            </div>
+            <p>
+              If the only field you have takes raw CSS, <code>npm run paste</code> writes <code>dist/paste/1-style-only.css</code> (engine and card styles, comments stripped) and
+              <code>dist/paste/2-body-bottom.html</code>.
+            </p>
           </div>
         </div>
 

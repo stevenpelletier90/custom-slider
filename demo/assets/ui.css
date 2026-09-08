@@ -104,7 +104,10 @@ body {
   color: inherit;
 }
 
-:where(button, input, select, a):focus-visible {
+/* pre[tabindex], for the tags block: it is focusable because it scrolls
+   sideways, and a focusable element with no focus ring is WCAG 2.4.7. It was
+   the one thing on the page you could Tab to and not see. */
+:where(button, input, select, a, pre[tabindex]):focus-visible {
   outline: 2px solid var(--focus);
   outline-offset: 2px;
 }
@@ -1322,6 +1325,15 @@ body {
   border-color: var(--signal);
 }
 
+/* Steps 1 and 2 are real headings now, so the numbered sequence is in the
+   outline and not only on screen. Nothing about them may LOOK different: a
+   browser's own h3 size and margins would break the bar, so the bar's type
+   wins. */
+.ui-code-bar h3 {
+  margin: 0;
+  font: inherit;
+}
+
 .ui-code-bar .ui-btn {
   color: #f8f8f2;
   background: #3e3d32;
@@ -1404,6 +1416,34 @@ body {
   margin: 0 0 0.8rem;
   font-size: 0.85rem;
   color: var(--ink-soft);
+}
+
+/* The two jobs the upload route is really made of - get the files up, then add
+   the tags - so the column can be scanned rather than read straight through. */
+.ui-get h5 {
+  margin: 1.4rem 0 0.35rem;
+  font-size: 0.9rem;
+}
+
+/* A button on its own line. This was an inline style on two <p>s, and it had to
+   be: `.ui-get p` is (0,1,1) and beats a bare `.ui-act`, so the class is
+   qualified to outrank it rather than fight it with !important. */
+.ui-get .ui-act {
+  margin: 0.8rem 0 0;
+}
+
+/* A hint belongs to the button above it, not to the paragraph after it. */
+.ui-get .ui-act + p {
+  margin-block-start: 0.45rem;
+}
+
+/* A list of files is a list. `.ui-parts` above is the same shape and the same
+   decision; the row keeps `.ui-file` so nothing that reaches for one has to
+   know it moved into a <ul>. */
+.ui-files {
+  padding: 0;
+  margin: 0 0 0.8rem;
+  list-style: none;
 }
 
 .ui-tags {

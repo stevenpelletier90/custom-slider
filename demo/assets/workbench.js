@@ -3517,6 +3517,12 @@ ${PHOTO_CSS}
   };
 
   for (const btn of document.querySelectorAll('[data-file]')) {
+    // Eight buttons in the install panel say "Download", "Copy" or "View", and
+    // the filename that tells them apart is in a sibling <code> the button's own
+    // name never reaches - so a screen reader's button list was those three
+    // words over and over. Named once here, at wiring time, before flash() ever
+    // touches the text.
+    btn.setAttribute('aria-label', `${btn.textContent} ${btn.dataset.file}`);
     btn.addEventListener('click', async () => {
       const name = btn.dataset.file;
       const text = await grab(name);
