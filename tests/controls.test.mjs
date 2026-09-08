@@ -75,19 +75,28 @@ test.describe('a knob shows what the slider is actually using', () => {
 });
 
 test.describe('a click that looks like a no-op is one', () => {
-  // F044: clicking the already-selected card style reset the ladder to that
-  // look's default - 1/2/3/3 to 2/3/4/5 on the two-row grid, and the arrows and
-  // dots vanished with it.
-  test('re-selecting the current card style keeps a hand-set ladder', async () => {
-    await pick(page, 'grid');
-    const before = await page.evaluate(() => JSON.stringify(globalThis.CARGO.PATTERNS.grid.perView));
-    // Change the ladder by hand first, so there is something to lose.
+  // F044 was about the card-style picker: clicking the ALREADY-selected style
+  // reset the ladder to that look's default - 1/2/3/3 to 2/3/4/5 on the two-row
+  // grid, and the arrows and dots vanished with it. Both the picker and that
+  // rail entry went on 2026-09-08, so the click that caused it cannot be made.
+  //
+  // What replaced the two-row grid is a Rows knob, and the same shape of bug is
+  // available to it: rows and the across-ladder are two answers to one question,
+  // so a Rows change that reached over and reset the counts would lose a
+  // hand-set ladder exactly as F044 did. This holds the boundary.
+  test('changing the rows leaves a hand-set ladder alone', async () => {
+    await pick(page, 'modelbar');
     await setField(page, 'Laptop · 992+', '3');
     const set = await knob(page, 'Laptop · 992+');
-    await page.click('#wb-settings .tp-lookv button[aria-pressed="true"]');
-    await page.waitForTimeout(150);
-    assert.equal(await knob(page, 'Laptop · 992+'), set, 're-selecting the current look reset the ladder');
-    assert.ok(before, 'pattern defaults unreadable');
+    await setField(page, 'Rows', '2');
+    await page.waitForTimeout(250);
+    assert.equal(await knob(page, 'Laptop · 992+'), set, 'changing the rows reset the across-ladder');
+    // And it did something: two rows means a column per slide, not a card.
+    const { html } = await copyParts(page);
+    assert.match(html, /class="cargo-col"/, 'Rows 2 emitted no column');
+    await setField(page, 'Rows', '1');
+    await page.waitForTimeout(250);
+    assert.doesNotMatch((await copyParts(page)).html, /cargo-col/, 'Rows 1 still ships a column wrapper');
   });
 });
 
@@ -111,8 +120,9 @@ test.describe('a control puts back everything it took', () => {
     await rowByLabel(page, 'Brand').locator('select').selectOption('');
     await page.waitForTimeout(200);
 
+    // Read off the CODE, not off a picker: the card is the pattern now, so the
+    // only place the choice is visible is the class the snippet ships.
     const after = await page.evaluate(() => ({
-      look: document.querySelector('#wb-settings .tp-lookv button[aria-pressed="true"] span:last-child')?.textContent,
       cls: document.getElementById('wb-code').textContent.match(/^\.([\w-]+)\.cs \{/m)?.[1],
       lookClass: /cargo-(\w+)/.exec(document.getElementById('wb-code').textContent)?.[1],
     }));
@@ -262,7 +272,7 @@ test.describe('peek is offered wherever it can do something', () => {
   // which was the one pattern named after it. "Show a sliver of the next car"
   // lands on a model bar just as often.
   test('a scrolling strip can show a sliver of the next card', async () => {
-    for (const id of ['modelbar', 'cards', 'grid', 'service']) {
+    for (const id of ['modelbar', 'cards', 'portrait', 'service']) {
       await pick(page, id);
       assert.equal(await hasKnob(page, 'Peek'), true, `${id}: no Peek row`);
     }
@@ -320,17 +330,18 @@ test.describe('a property the slider is already using has a control', () => {
     for (const label of ROWS) assert.equal(await hasKnob(page, label), true, `no "${label}" row`);
   });
 
-  test('a look that ships a hover colour shows the one it ships', async () => {
-    await pick(page, 'cards');
-    // Ask the data which look carries it rather than naming one here - the
-    // point is that whichever look ships a value, the field shows that value.
+  test('a card that ships a hover colour shows the one it ships', async () => {
+    // Ask the data which card carries it, and which rail entry wears that card,
+    // rather than naming either here: the point is that whichever card ships a
+    // value, the field shows that value.
     const look = await page.evaluate(() => {
-      const L = globalThis.CARGO.LOOKS;
-      const id = Object.keys(L).find((k) => L[k].settings['--cs-arrow-bg-hover']);
-      return id ? { label: L[id].label, value: L[id].settings['--cs-arrow-bg-hover'] } : null;
+      const { LOOKS, PATTERNS } = globalThis.CARGO;
+      const id = Object.keys(LOOKS).find((k) => LOOKS[k].settings['--cs-arrow-bg-hover']);
+      const at = id && Object.keys(PATTERNS).find((k) => PATTERNS[k].look === id);
+      return id && at ? { at, label: LOOKS[id].label, value: LOOKS[id].settings['--cs-arrow-bg-hover'] } : null;
     });
-    assert.ok(look, 'no card style ships an arrow hover colour, so this guards nothing');
-    await page.evaluate((label) => [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((b) => b.textContent.includes(label))?.click(), look.label);
+    assert.ok(look, 'no card ships an arrow hover colour, so this guards nothing');
+    await pick(page, look.at);
     await page.waitForTimeout(300);
     assert.equal(await colorKnob(page, 'Arrow background · hover'), look.value, `${look.label} ships ${look.value} and the field does not show it`);
   });
@@ -390,12 +401,11 @@ test.describe('card chrome is a knob, not a literal', () => {
   // F061: the vehicle card's 1px #e2e5ea border and its 1.04 hover zoom were
   // literals in the look's CSS, no look had a shadow, and there was no badge
   // slot at all - so a border colour or a "New" flash meant hand CSS.
-  // The card style has to be chosen, not assumed: an earlier test in this file
-  // switches the style on `cards`, and picking the pattern again does not put
-  // the original back.
+  // Picking the pattern IS picking the card since 2026-09-08, so there is
+  // nothing to select afterwards and nothing an earlier test can have left
+  // behind - the rail entry named `cards` is the vehicle card, always.
   const wearVcard = async (page) => {
     await pick(page, 'cards');
-    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((b) => b.textContent.includes('Vehicle card'))?.click());
     await page.waitForTimeout(300);
   };
 
@@ -416,7 +426,7 @@ test.describe('card chrome is a knob, not a literal', () => {
   });
 
   test('the defaults are still dropped from the snippet', async () => {
-    await pick(page, 'grid'); // the tile look, untouched
+    await pick(page, 'modelbar'); // the cutout tile, untouched
     const { css } = await copyParts(page);
     for (const k of ['--card-shadow', '--badge-bg', '--badge-fg']) {
       assert.doesNotMatch(css, new RegExp(k), `${k} is pasted even though it equals the card style's own default`);
@@ -456,55 +466,52 @@ test.describe('a tab can be renamed', () => {
   });
 });
 
-test.describe('a link to a card style opens that card style', () => {
-  // F074: all seven "Open in the builder" buttons under the card styles on the
-  // Patterns page pointed at #modelbar, so six of the seven opened whichever
-  // style happened to be remembered and read as a broken link.
-  test('the Patterns page names the style in every link', async () => {
+// F074: all seven "Open in the builder" buttons under the card styles on the
+// Patterns page pointed at #modelbar, so six of the seven opened whichever style
+// happened to be remembered and read as a broken link. The fix at the time was a
+// two-segment hash, `#modelbar/wordmark`. Both the second segment and the card
+// styles section went on 2026-09-08 - every card is a pattern - so the guard is
+// now the simpler statement the change makes true: every link the Patterns page
+// prints names a real rail entry, and lands on it.
+test.describe('every link on the Patterns page opens what it names', () => {
+  test('the links name patterns, and only patterns', async () => {
     const links = await page.evaluate(async (origin) => {
       const html = await fetch(`${origin}/demo/assets/gallery.js`).then((r) => r.text());
-      return [...html.matchAll(/index\.html#([^"'`]*)/g)].map((m) => m[1]);
+      return [...html.matchAll(/index\.html#\$\{([^}]*)\}|index\.html#([^"'`]*)/g)].map((m) => m[1] ?? m[2]);
     }, ORIGIN);
-    assert.ok(
-      links.some((h) => h.includes('/')),
-      `no link carries a card style: ${JSON.stringify(links)}`,
+    assert.ok(links.length, 'the Patterns page prints no links into the builder at all');
+    // The one link it prints is templated on the pattern id, which is what makes
+    // a dead link impossible rather than merely absent today.
+    assert.deepEqual(
+      links.filter((h) => h.includes('/')),
+      [],
+      `a link still carries a card style after the picker: ${JSON.stringify(links)}`,
     );
   });
 
-  test('opening one lands on it, not on whatever was last used', async () => {
-    // Leave a different style remembered first, so the link has to beat it.
+  test('opening a card pattern lands on that card', async () => {
+    // Leave a different pattern showing first, so the link has to beat it.
     await pick(page, 'modelbar');
-    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((b) => b.textContent.includes('Vehicle card'))?.click());
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(200);
 
     // A query string as well as the hash: navigating from index.html to
     // index.html#... is a same-document move, so the script would never re-run
     // and this would test nothing.
-    // wordmark, not logo: a deep link can only open a card the pattern can
-    // actually show, and the logo panel is its own rail entry now. wordmark
-    // specifically because this file is serial and the pattern remembers what
-    // it was last set to - portrait and logo are the two cards that override
-    // the engine's arrow properties, so leaving either behind changes what a
-    // later arrow test measures on the same model bar.
-    await page.goto(`${ORIGIN}/demo/index.html?f074#modelbar/wordmark`, { waitUntil: 'load' });
+    await page.goto(`${ORIGIN}/demo/index.html?f074#wordmark`, { waitUntil: 'load' });
     await page.waitForTimeout(600);
-    const shown = await page.evaluate(() => document.querySelector('#wb-settings .tp-lookv button[aria-pressed="true"] span:last-child')?.textContent);
     const cls = await page.evaluate(() => /cargo-(\w+)/.exec(document.getElementById('wb-code').textContent)?.[1]);
-    assert.equal(cls, 'wordmark', `the link opened ${cls}, not the style it named`);
-    assert.ok(shown, 'no card style is shown as selected');
+    assert.equal(cls, 'wordmark', `the link opened ${cls}, not the pattern it named`);
+    const showing = await page.evaluate(() => document.querySelector('#wb-nav button[aria-current="true"]')?.dataset.go);
+    assert.equal(showing, 'wordmark', 'the rail does not mark the pattern the address names');
 
-    // Put the model bar back - card style AND ladder. This file is serial on
-    // one page and the builder remembers both per pattern, so a deep link that
-    // walks away leaves the next test measuring something it never chose.
-    //
-    // Two hops, not one: picking the card that is ALREADY selected early-returns,
-    // so a single hop to #modelbar/tile does nothing when tile is current, and
-    // the model bar would stay on wordmark - whose markup has no .cargo-media
-    // for a later test to measure an arrow against. Hop through a different
-    // card first so the second hop is a genuine change.
-    await page.goto(`${ORIGIN}/demo/index.html?f074b#modelbar/vcard`, { waitUntil: 'load' });
-    await page.waitForTimeout(500);
-    await page.goto(`${ORIGIN}/demo/index.html?f074c#modelbar/tile`, { waitUntil: 'load' });
+    // A stale two-segment link from a bookmark still opens the pattern it names
+    // rather than falling back to the model bar.
+    await page.goto(`${ORIGIN}/demo/index.html?f074b#portrait/tile`, { waitUntil: 'load' });
+    await page.waitForTimeout(600);
+    assert.equal(await page.evaluate(() => document.querySelector('#wb-nav button[aria-current="true"]')?.dataset.go), 'portrait', 'an old two-part link no longer reaches the pattern it names');
+
+    // Put the model bar back: this file is serial on one page.
+    await page.goto(`${ORIGIN}/demo/index.html?f074c#modelbar`, { waitUntil: 'load' });
     await page.waitForTimeout(500);
     const ladder = await page.evaluate(() => [...document.querySelector('#wb-code').textContent.matchAll(/cs-xs-(\d+)/g)].map((m) => m[1])[0]);
     assert.equal(ladder, '2', `the model bar was left at ${ladder} cards on a phone, so the cleanup did not take`);
@@ -536,24 +543,36 @@ test.describe('the small things a designer trips over', () => {
   });
 
   // F086: comparing the card styles meant clicking each and watching the
-  // preview, because the description only appeared once you had chosen one.
-  //
-  // Five on a vehicle pattern, not seven: since 2026-09-08 the picker offers
-  // only cards of the same family, and the logo panel and location card are
-  // their own rail entries. Counted against LOOKS rather than a literal, so the
-  // number cannot go stale again - what matters is that EVERY card the picker
-  // offers explains itself, not how many there happen to be.
-  test('every card style button says what it is before you click it', async () => {
-    await pick(page, 'modelbar');
-    const titles = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-lookv button')].map((b) => b.getAttribute('title')));
-    const vehicleLooks = await page.evaluate(() => Object.values(globalThis.CARGO.LOOKS).filter((l) => l.content !== 'mark' && l.content !== 'place').length);
-    assert.equal(titles.length, vehicleLooks, `the picker offers ${titles.length} cards, but ${vehicleLooks} are in the family`);
-    assert.ok(titles.length >= 4, `only ${titles.length} card styles`);
+  // preview, because the description only appeared once you had chosen one. The
+  // picker that carried those tooltips went on 2026-09-08 - every card is a rail
+  // entry - so the same promise now has to be kept by the RAIL, which is a
+  // stronger place for it: one list, every pattern, nothing nested.
+  test('every rail entry says what it is before you click it', async () => {
+    const rail = await page.evaluate(() => [...document.querySelectorAll('#wb-nav button')].map((b) => ({ id: b.dataset.go, title: b.title, name: b.textContent.trim() })));
+    const ids = await patternIds(page);
     assert.deepEqual(
-      titles.filter((t) => !t || t.length < 10),
-      [],
-      'a card style button carries no usable tooltip',
+      rail.map((r) => r.id),
+      ids,
+      'the rail and the pattern list disagree',
     );
+    assert.deepEqual(
+      rail.filter((r) => !r.title || r.title.length < 5).map((r) => r.id),
+      [],
+      'a rail entry carries no usable tooltip',
+    );
+    assert.deepEqual(
+      rail.filter((r) => !r.name).map((r) => r.id),
+      [],
+      'a rail entry has no visible name',
+    );
+    // Every card in the library is reachable from the rail, which is the whole
+    // claim the picker's removal rests on.
+    const homeless = await page.evaluate(() => {
+      const { LOOKS, PATTERNS } = globalThis.CARGO;
+      const worn = new Set(Object.values(PATTERNS).map((p) => p.look));
+      return Object.keys(LOOKS).filter((id) => !worn.has(id));
+    });
+    assert.deepEqual(homeless, [], 'a card style has no rail entry, so there is no way to reach it');
   });
 
   // F093: "3 sliders" is true of the card grid and misleading on the tabbed
@@ -1198,53 +1217,72 @@ test.describe('a brand preset swaps the vehicles, never the pattern', () => {
 // PICTURE the card takes. The third was never written down, and everything that
 // felt muddy traced back to it - a split photo card offered on a bar of
 // transparent cutouts, a logo panel cluttering every vehicle job.
-test.describe('a card is only offered where it could actually go', () => {
-  const picker = () => page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-lookv button')].map((b) => b.textContent.replace(/\s+/g, ' ').trim()));
-
-  test('the picker offers the cards of one family, never all seven', async () => {
-    await pick(page, 'modelbar');
-    const offered = await picker();
-    const { vehicle, other } = await page.evaluate(() => {
-      const L = Object.values(globalThis.CARGO.LOOKS);
-      return { vehicle: L.filter((l) => l.content !== 'mark' && l.content !== 'place').map((l) => l.label), other: L.filter((l) => l.content === 'mark' || l.content === 'place').map((l) => l.label) };
-    });
-    assert.deepEqual(offered.slice().sort(), vehicle.slice().sort(), 'the vehicle picker does not match the vehicle cards');
-    for (const label of other) assert.ok(!offered.includes(label), `${label} is offered on a vehicle pattern, and it is not a vehicle card`);
+//
+// The first answer was to filter the picker by family. The second, on
+// 2026-09-08, was to delete the picker: a card cannot be put somewhere it does
+// not belong if the only way to choose one is to choose the pattern that IS it.
+// These hold that end state.
+test.describe('a card cannot be put where it does not belong', () => {
+  test('no pattern offers a way to swap its card for another', async () => {
+    for (const id of await patternIds(page)) {
+      await pick(page, id);
+      const picker = await page.evaluate(() => document.querySelectorAll('#wb-settings .tp-lookv button').length);
+      assert.equal(picker, 0, `${id} still draws a card-style picker`);
+    }
   });
 
-  // A logo panel and a location card are not restyles of a vehicle card - by
-  // their own source, one "draws MARKS" and the other is "not a vehicle card at
-  // all". A purpose belongs in the rail, and a picker of one button is a
-  // control that cannot move anything.
-  test('the non-vehicle cards are rail entries with no picker of their own', async () => {
-    for (const id of ['logostrip', 'locations']) {
+  // Brand swaps the roster for that marque's CUTOUTS, so it is offered on the
+  // cards built to take a cutout and nowhere else. Read off the card's own
+  // declared content type, not a list of ids, so a card added later is
+  // classified the day it ships.
+  test('the OEM brand list is offered only where a cutout roster fits', async () => {
+    const { cutout, other } = await page.evaluate(() => {
+      const { LOOKS, PATTERNS } = globalThis.CARGO;
+      const ids = Object.keys(PATTERNS).filter((k) => PATTERNS[k].look);
+      const takes = (k) => String(LOOKS[PATTERNS[k].look].content).includes('cutout');
+      return { cutout: ids.filter(takes), other: ids.filter((k) => !takes(k)) };
+    });
+    assert.ok(cutout.length && other.length, 'every card takes the same content, so this guards nothing');
+    for (const id of cutout) {
       await pick(page, id);
-      await page.waitForTimeout(300);
-      assert.deepEqual(await picker(), [], `${id} still draws a card picker`);
-      assert.equal(await hasKnob(page, 'Brand'), false, `${id} offers the OEM brand list, and it is not showing vehicles`);
+      assert.equal(await hasKnob(page, 'Brand'), true, `${id} takes a cutout roster but is offered no brand`);
+    }
+    for (const id of other) {
+      await pick(page, id);
+      assert.equal(await hasKnob(page, 'Brand'), false, `${id} offers the OEM brand list, and its card is not built for cutouts`);
     }
   });
 
   // Measured, not categorical. "A photo card on a cutout roster is wrong" would
   // flag the demo's own cards+vcard pairing, which is a 640x480 cutout in a 4/3
-  // card: the aspects agree and it trims nothing.
+  // card: the aspects agree and it trims nothing. The only doors a mismatch can
+  // still come through are an edited source size and a brand preset, so the
+  // check moved out of the brand block and this comes through the other one.
   test('a crop is only called out when it would actually trim', async () => {
     const warning = () => page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-notev')].map((n) => n.textContent).find((t) => /crops every picture/.test(t)) ?? null);
+    const sizeBox = (label) => page.locator('#wb-content fieldset').first().locator(`label:has(> span:text-is("${label}")) input`).first();
 
     await pick(page, 'cards');
     await page.waitForTimeout(300);
     assert.equal(await warning(), null, 'a 4:3 cutout in a 4/3 card was reported as a crop, which would be crying wolf');
 
-    await pick(page, 'modelbar');
-    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((b) => b.textContent.includes('Tall tile with CTA'))?.click());
+    // Retype the first slide's real source size as a tall one. The card crops to
+    // 4/3 and the picture is now 3:5, so the sides go.
+    await sizeBox('Source width').fill('300');
+    await page.waitForTimeout(200);
+    await sizeBox('Source height').fill('500');
     await page.waitForTimeout(600);
     const warn = await warning();
-    assert.ok(warn, 'a 3:5 card over landscape cutouts said nothing');
+    assert.ok(warn, 'a 4/3 card over 3:5 pictures said nothing');
     assert.match(warn, /trimmed/, `the warning does not say what happens: ${warn}`);
     // ...and it reaches the copy panel, which is the last screen before a
     // dealer's page.
     const parts = await page.evaluate(() => [...document.querySelectorAll('#wb-parts li')].map((li) => li.textContent).join(' '));
     assert.match(parts, /crops every picture/, 'the copy panel hands the code over without mentioning the crop');
+
+    // Put the roster back: this file is serial on one page.
+    await page.click('#wb-content-reset');
+    await page.waitForTimeout(400);
   });
 });
 
@@ -1272,6 +1310,161 @@ test.describe('one vocabulary for a card, whatever pattern it is in', () => {
       if (found?.unnamed.length) offenders.push(`${id}: unnamed <${found.unnamed.join('>, <')}>`);
     }
     assert.deepEqual(offenders, [], `a card role carries no class, so editing it is a different job here — ${offenders.join(' | ')}`);
+  });
+});
+
+// "the lightbox is like contained in whatever container it's in and doesn't show
+// a true example" (Steven, 2026-09-08). A modal is only fullscreen relative to
+// ITS OWN document, and the preview's document is a frame the size of a
+// simulated device - so the one pattern whose whole point is covering the page
+// demonstrated itself inside a box. The frame stays, because a media query has
+// to ask a real window; the dialog comes out.
+test.describe('the lightbox is shown covering the page', () => {
+  const overlay = () =>
+    page.evaluate(() => {
+      const d = document.querySelector('.wb-overlay dialog');
+      if (!d) return null;
+      const r = d.getBoundingClientRect();
+      return {
+        modal: d.matches(':modal'),
+        w: Math.round(r.width),
+        h: Math.round(r.height),
+        fits: r.height <= innerHeight && r.top >= 0,
+        slides: d.querySelectorAll('.cs-slide').length,
+        thumbs: d.querySelectorAll('.cs-thumb').length,
+        arrows: d.querySelectorAll('.cs-arrow').length,
+        opener: d.parentElement.querySelectorAll('[data-lb-open]').length,
+      };
+    });
+
+  test('pressing the trigger opens it over this page, not inside the frame', async () => {
+    await pick(page, 'lightbox');
+    await page.waitForTimeout(300);
+    assert.equal(await overlay(), null, 'something is already open before the trigger is pressed');
+    await stageFrame(page).locator('[data-lb-open]').click();
+    await page.waitForTimeout(600);
+    const o = await overlay();
+    assert.ok(o, 'pressing the trigger opened nothing on the page');
+    assert.equal(o.modal, true, 'the dialog is not modal, so it is not covering anything');
+    // The gallery is data-cs-init="manual" because one measured while hidden has
+    // no width. Built at the wrong moment it comes out with no thumbs and no
+    // arrows - a static photo in a dark box, which is a different wrong example.
+    assert.equal(o.slides, 6, `the dialog holds ${o.slides} slides`);
+    assert.ok(o.thumbs >= 6, `the gallery came up with ${o.thumbs} thumbnails, so it was built before it was visible`);
+    assert.equal(o.arrows, 2, 'the gallery came up with no arrows');
+    // The clone's own opener is removed, not hidden: the pattern CSS gives it
+    // `display: inline-flex`, which outranks the UA's [hidden] rule, and in a
+    // host pinned to 0x0 it overflowed into the corner of the page.
+    assert.equal(o.opener, 0, 'the trigger is cloned into the overlay and shows through it');
+    // Nothing opened in the frame as well - the capture listener has to beat the
+    // snippet's own, or both fire and the frame gets a second copy.
+    assert.equal(await page.evaluate(() => globalThis.CARGO.sdoc().querySelectorAll('dialog[open]').length), 0, 'the dialog opened inside the preview frame too');
+  });
+
+  // A lightbox that scrolls is not a lightbox. Sized on width alone, its content
+  // overflowed on any viewport shorter than head + photo + thumb strip, and the
+  // UA gave it a scrollbar - the same arithmetic on a phone in landscape.
+  test('it fits the viewport instead of growing a scrollbar', async () => {
+    const o = await overlay();
+    assert.ok(o.fits, `the dialog is ${o.h}px tall in a ${await page.evaluate(() => innerHeight)}px window`);
+    const scrolls = await page.evaluate(() => {
+      const d = document.querySelector('.wb-overlay dialog');
+      return d.scrollHeight > d.clientHeight + 1;
+    });
+    assert.equal(scrolls, false, 'the dialog scrolls its own content');
+  });
+
+  test('closing it takes the whole overlay with it', async () => {
+    await page.keyboard.press('Escape');
+    await page.waitForTimeout(400);
+    assert.equal(await page.evaluate(() => document.querySelectorAll('.wb-overlay').length), 0, 'the overlay host is left behind after closing');
+  });
+
+  // The regression this pair exists for, found by looking: `.cargo-lb { display:
+  // flex }` is (0,2,0) once scoped, and the UA's `dialog:not([open]) { display:
+  // none }` is (0,1,1) - so every CLOSED lightbox on the page rendered inline,
+  // 1100px wide, wherever it sat in the markup. It spilled out of a 176px frame
+  // as a dark panel with a Close button in it.
+  test('a closed dialog draws nothing at all', async () => {
+    await pick(page, 'lightbox');
+    await page.waitForTimeout(400);
+    const shut = await page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc().querySelector('dialog.cargo-lb');
+      const r = d.getBoundingClientRect();
+      return { display: globalThis.CARGO.swin().getComputedStyle(d).display, w: r.width, h: r.height };
+    });
+    assert.equal(shut.display, 'none', 'a closed lightbox dialog is rendered');
+    assert.equal(shut.w + shut.h, 0, `a closed lightbox dialog occupies ${shut.w}x${shut.h}`);
+  });
+});
+
+// "the ones with the video have to have a field where the video can go as well"
+// (Steven, 2026-09-08). Both video patterns shipped a placeholder div and a
+// comment, so the address had to be typed into the pasted markup by hand.
+test.describe('a video slide can name its own video', () => {
+  const urlBox = () => page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Video URL")) input').first();
+
+  test('the box is offered on the patterns with a video dialog, and nowhere else', async () => {
+    const { withVideo, without } = await page.evaluate(() => {
+      const { PATTERNS } = globalThis.CARGO;
+      const ids = Object.keys(PATTERNS);
+      return { withVideo: ids.filter((k) => PATTERNS[k].videoDialog), without: ids.filter((k) => !PATTERNS[k].videoDialog).slice(0, 4) };
+    });
+    assert.ok(withVideo.length, 'no pattern opens a video dialog, so this guards nothing');
+    for (const id of withVideo) {
+      await pick(page, id);
+      await page.waitForTimeout(250);
+      assert.equal(await urlBox().count(), 1, `${id} opens a video dialog but offers nowhere to put the video`);
+    }
+    for (const id of without) {
+      await pick(page, id);
+      await page.waitForTimeout(250);
+      assert.equal(await urlBox().count(), 0, `${id} has no video dialog but offers a Video URL box`);
+    }
+  });
+
+  test('an address reaches the markup, builds a player on open and is gone on close', async () => {
+    await pick(page, 'video');
+    await page.waitForTimeout(300);
+    await urlBox().fill('https://www.youtube.com/embed/abc123');
+    await page.waitForTimeout(400);
+    const { html } = await copyParts(page);
+    assert.match(html, /data-video-src="https:\/\/www\.youtube\.com\/embed\/abc123"/, 'the address never reached the copied markup');
+    // Still no player in the markup itself: a page carrying six posters must not
+    // start six players on load, which is the whole reason the poster exists.
+    assert.doesNotMatch(html, /<iframe/, 'the snippet ships a player before anyone has asked for one');
+
+    await stageFrame(page).locator('.cargo-video').first().click();
+    await page.waitForTimeout(400);
+    const open = await page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc().querySelector('.cargo-vdlg');
+      return { open: d.open, media: d.querySelector('.cargo-vdlg-media').innerHTML };
+    });
+    assert.equal(open.open, true, 'the poster did not open the dialog');
+    assert.match(open.media, /<iframe[^>]+abc123/, `the dialog did not build the player: ${open.media.slice(0, 80)}`);
+
+    // And it stops. A player left in the DOM keeps playing audio behind a closed
+    // dialog, which is the bug every hand-rolled lightbox ships with.
+    await page.evaluate(() => globalThis.CARGO.sdoc().querySelector('.cargo-vdlg').close());
+    await page.waitForTimeout(300);
+    const shut = await page.evaluate(() => globalThis.CARGO.sdoc().querySelector('.cargo-vdlg-media').innerHTML);
+    assert.doesNotMatch(shut, /<iframe/, 'the player is still in the dialog after it closed');
+    assert.match(shut, /Your video goes here/, 'the placeholder did not come back');
+
+    await page.click('#wb-content-reset');
+    await page.waitForTimeout(400);
+  });
+
+  // An untouched roster must emit exactly what it always did: the placeholder
+  // div and the comment saying what to replace it with.
+  test('a slide with no address still ships the placeholder', async () => {
+    await pick(page, 'media-gallery');
+    await page.waitForTimeout(300);
+    const { html } = await copyParts(page);
+    // `="`, because the dialog's own comment names the attribute in prose - it
+    // is the line telling a designer where the address goes.
+    assert.doesNotMatch(html, /data-video-src="/, 'an empty Video URL still emitted an attribute');
+    assert.match(html, /cargo-vdlg-media/, 'the placeholder is gone from the dialog');
   });
 });
 

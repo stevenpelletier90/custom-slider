@@ -50,67 +50,11 @@
     },
   });
 
-  /* ---- lookpicker: the seven card-style thumbnails ---------------------- */
-
-  const lookCls = ClassName('look');
-
-  class LookView {
-    constructor(doc, config) {
-      this.element = doc.createElement('div');
-      this.element.classList.add(lookCls());
-      config.viewProps.bindClassModifiers(this.element);
-      this.buttons = new Map();
-      for (const [id, look] of Object.entries(config.looks)) {
-        const b = doc.createElement('button');
-        b.type = 'button';
-        b.dataset.look = id;
-        b.title = look.note ?? look.label;
-        b.innerHTML = `<span class="${lookCls('icon')}">${look.icon}</span><span>${look.label}</span>`;
-        this.element.append(b);
-        this.buttons.set(id, b);
-      }
-      this.select(config.current);
-    }
-
-    select(id) {
-      for (const [k, b] of this.buttons) b.setAttribute('aria-pressed', String(k === id));
-    }
-  }
-
-  class LookController extends BladeController {
-    constructor(doc, config) {
-      const view = new LookView(doc, { looks: config.looks, current: config.current, viewProps: config.viewProps });
-      super({ blade: config.blade, view, viewProps: config.viewProps });
-      this.current = config.current;
-      view.element.addEventListener('click', (e) => {
-        const b = e.target.closest('button[data-look]');
-        if (!b) return;
-        this.current = b.dataset.look;
-        view.select(this.current);
-        config.onPick(this.current);
-      });
-    }
-  }
-
-  const LookPickerPlugin = createPlugin({
-    id: 'lookpicker',
-    type: 'blade',
-    accept(params) {
-      const r = parseRecord(params, (p) => ({
-        view: p.required.constant('lookpicker'),
-        looks: p.required.raw,
-        current: p.required.string,
-        onPick: p.required.raw,
-      }));
-      return r ? { params: r } : null;
-    },
-    controller(args) {
-      return new LookController(args.document, { blade: args.blade, viewProps: args.viewProps, looks: args.params.looks, current: args.params.current, onPick: args.params.onPick });
-    },
-    api(args) {
-      return args.controller instanceof LookController ? new BladeApi(args.controller) : null;
-    },
-  });
+  // A `lookpicker` blade lived here: a grid of seven card thumbnails, each
+  // with the look's icon, its label and its note as a tooltip. It went on
+  // 2026-09-08 with the picker it drew - every card is a rail entry now, so
+  // there is no control that swaps one card style for another and nothing left
+  // for the blade to draw. The .tp-lookv rules went from ui.css with it.
 
   /* ---- length: number + unit -------------------------------------------- */
 
@@ -546,5 +490,5 @@
   // LAST one here is the first asked to accept a binding. Tweakpane's own
   // string input accepts any string and would otherwise draw every length row
   // as a plain text field.
-  CARGO.tpPlugins = [NotePlugin, LookPickerPlugin, LengthPlugin, ColourPlugin];
+  CARGO.tpPlugins = [NotePlugin, LengthPlugin, ColourPlugin];
 })();

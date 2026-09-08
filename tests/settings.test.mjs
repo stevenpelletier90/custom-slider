@@ -17,7 +17,10 @@ test.beforeAll(async ({ browser }) => {
 const shown = (page) =>
   page.evaluate(() => ({
     name: document.querySelector('[data-name-field]').value,
-    look: document.querySelector('#wb-settings .tp-lookv button[aria-pressed="true"] span:last-child')?.textContent ?? null,
+    // The card the snippet ships, read off the code. It used to be read off the
+    // style picker, which went on 2026-09-08 - the card is the pattern now, so
+    // the class in the CSS is the only place the choice is stated.
+    look: /cargo-(\w+)/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null,
     gap: /--cs-gap:\s*([^;]*);/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null,
     perView: [...document.querySelectorAll('#wb-settings .tp-lblv')]
       .filter((r) => /Phone|Tablet|Laptop|Desktop/.test(r.querySelector('.tp-lblv_l')?.textContent ?? ''))

@@ -17,16 +17,16 @@ should not have to relearn it on the grid or the tabbed bar.
 It was NOT already true. Eight places drew a card role under a name nothing else
 used, so the same edit was a different job each time:
 
-| Where | Role | Was | Now |
-| --- | --- | --- | --- |
-| `location` look | the address line | a bare `<p>`, **no class at all** | `.cargo-sub` |
-| `split` look | the button | `.cargo-pill` | `.cargo-cta` |
-| `models` | the name over the photo | bare `<h3>` | `.cargo-name` |
-| `service` | name and blurb | bare `<h3>` / `<p>` | `.cargo-name` / `.cargo-sub` |
-| `reviews` | reviewer, date, quote | bare `<strong>` / `<small>` / `<p>` | `.cargo-name` / `.cargo-sub` / `.cargo-quote` |
-| `mixed` | name and blurb | bare `<h3>` / `<p>` | `.cargo-name` / `.cargo-sub` |
-| `stock` | name and blurb | bare `<h3>` / `<p>` | `.cargo-name` / `.cargo-sub` |
-| `card-gallery` | name and sub | bare `<h3>` / `<p>` | `.cargo-name` / `.cargo-sub` |
+| Where           | Role                    | Was                                 | Now                                           |
+| --------------- | ----------------------- | ----------------------------------- | --------------------------------------------- |
+| `location` look | the address line        | a bare `<p>`, **no class at all**   | `.cargo-sub`                                  |
+| `split` look    | the button              | `.cargo-pill`                       | `.cargo-cta`                                  |
+| `models`        | the name over the photo | bare `<h3>`                         | `.cargo-name`                                 |
+| `service`       | name and blurb          | bare `<h3>` / `<p>`                 | `.cargo-name` / `.cargo-sub`                  |
+| `reviews`       | reviewer, date, quote   | bare `<strong>` / `<small>` / `<p>` | `.cargo-name` / `.cargo-sub` / `.cargo-quote` |
+| `mixed`         | name and blurb          | bare `<h3>` / `<p>`                 | `.cargo-name` / `.cargo-sub`                  |
+| `stock`         | name and blurb          | bare `<h3>` / `<p>`                 | `.cargo-name` / `.cargo-sub`                  |
+| `card-gallery`  | name and sub            | bare `<h3>` / `<p>`                 | `.cargo-name` / `.cargo-sub`                  |
 
 Every CSS rule moved from the element selector to the class in the same edit, and
 the computed styling of each was re-measured after: margins, colours, sizes and
@@ -35,7 +35,7 @@ the computed styling of each was re-measured after: margins, colours, sizes and
 Two gates hold it. `check-looks.mjs` fails a LOOK that renders a name, sub or
 button without the shared class (verified: restoring `.cargo-pill` prints
 "split: renders a button but does not call it .cargo-cta"). A browser test walks
-all 19 patterns and fails any slide carrying a heading or paragraph with no
+all 21 patterns and fails any slide carrying a heading or paragraph with no
 `cargo-` class — it is what found `models`, `service` and `reviews`, which the
 audit had missed.
 
@@ -127,25 +127,55 @@ ladders, differing only in slide markup and `minCard`. `hero` and `peek` are
 another. `gallery` is the bare member of a `track:'div'` family that
 `gallery-filter`, `media-gallery` and `lightbox` extend.
 
-### DONE 2026-09-08 — all four shipped
+### DONE 2026-09-08, first pass — the picker, filtered
 
 Design in `docs/superpowers/specs/2026-09-08-library-taxonomy-design.md`.
 
 1. **The third axis is in the data.** Every look declares `content` and `crop`;
    `check-looks.mjs` fails on a look without one (verified: removing one prints
    "tile: missing content").
-2. **A mismatch is surfaced, never hidden.** The picker offers only same-family
-   cards; a crop that would actually trim is called out in the settings panel
-   AND the copy panel, in real numbers — "This card crops every picture to
-   1:1.67 tall. Yours are 1.33:1 wide, so their sides will be trimmed."
-   Measured, so `cards` + `vcard` stays silent. Never a gate.
-3. **`logo` and `location` are rail entries.** 19 starting points; the picker
-   drops to five on a vehicle pattern, and those two draw no picker (a family of
-   one) and no OEM brand list (they are not vehicles).
-4. **The axes are named for what they are** — the rail is "Start from", and the
-   folder is "The card" where there is no brand to set.
+2. **A mismatch is surfaced, never hidden.** A crop that would actually trim is
+   called out in the settings panel AND the copy panel, in real numbers — "This
+   card crops every picture to 1:1.67 tall. Yours are 1.33:1 wide, so their
+   sides will be trimmed." Measured, so `cards` + `vcard` stays silent. Never a
+   gate.
+3. **`logo` and `location` became rail entries**, and the picker was filtered to
+   cards of the same family.
+4. **The axes are named for what they are** — the rail is "Start from".
 
-Also fixed on the way: `gallery.js` linked every card as `#modelbar/<id>`, which
-became two dead links the moment the picker was family-filtered.
+### DONE 2026-09-08, second pass — there is no picker
+
+Steven, on seeing the filtered version: "the tabbed bar should not have nested
+styles, those styles need to be their own pattern… model bar should not have card
+styles. The different patterns are the card styles basically."
+
+That is the right end state and the first pass had stopped one step short. A look
+owns MARKUP — `looks.js` says so in its own header — so a control that swaps one
+look for another does not restyle the slider, it replaces it, and it was doing
+that from inside a structural pattern.
+
+- **All seven cards are rail entries.** `wordmark`, `portrait` (tall tile with
+  CTA) and `split` joined `modelbar`/tile, `cards`/vcard, `logostrip` and
+  `locations`. Each carries the roster its card is built for, which is what the
+  look's own `demoModels` already said: services for the split card, Alfa's 3:5
+  portraits for the tall tile.
+- **The picker is deleted**, not hidden: `pane.looks()`, the `lookpicker` blade
+  in `tp-plugins.js` and the `.tp-lookv` rules in `ui.css` are gone, and the
+  deep-link form is `#pattern`, never `#pattern/look`. A test walks every
+  pattern and fails if a picker reappears.
+- **Brand follows the card's content type.** A preset swaps in that marque's
+  cutouts, so the OEM list is drawn where the card takes a cutout — `tile`,
+  `vcard`, `wordmark` — and nowhere else. Read off `content`, never a list of
+  ids, so a card added later is classified the day it ships.
+- **Two-row grid became a Rows setting** (1–3), beside "how many across", on
+  every pattern that draws cards into a track. It was the model bar with
+  `pairUp: true` and a two-rung ladder, so choosing it meant leaving the pattern
+  you had picked.
+- **The "Every card style" grid is off `patterns.html`.** All seven are in the
+  pattern grid above it; showing a card twice, once as itself and once as a
+  style of something else, was the muddle being fixed.
+
+Also fixed on the way: `gallery.js` linked every card as `#modelbar/<id>`, dead
+links the moment the picker was filtered and meaningless once it went.
 
 **Still open** — item 2 (replacement codes) above, and the CMS half of item 1.

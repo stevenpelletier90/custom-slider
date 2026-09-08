@@ -75,26 +75,9 @@ test('a note is a paragraph in the folder', async () => {
   assert.equal(text, 'Hello there');
 });
 
-test('the card-style picker shows every look and reports a click', async () => {
-  const got = await page.evaluate(async () => {
-    const { pane, LOOKS } = globalThis.CARGO;
-    const box = document.createElement('div');
-    document.body.append(box);
-    pane.create(box);
-    let picked = null;
-    pane.looks(pane.folder('Probe'), LOOKS, 'tile', (id) => (picked = id));
-    const btns = [...box.querySelectorAll('.tp-lookv button')];
-    const pressed = btns.filter((b) => b.getAttribute('aria-pressed') === 'true').map((b) => b.dataset.look);
-    btns.find((b) => b.dataset.look === 'vcard').click();
-    await new Promise((r) => setTimeout(r, 20));
-    pane.dispose();
-    box.remove();
-    return { count: btns.length, pressed, picked };
-  });
-  assert.equal(got.count, 7);
-  assert.deepEqual(got.pressed, ['tile']);
-  assert.equal(got.picked, 'vcard');
-});
+// A test for the card-style picker blade stood here. Both it and the blade went
+// on 2026-09-08: every card is a rail entry, so there is no control that swaps
+// one card for another and nothing left for pane.looks() to add.
 
 test.describe('nothing threw', () => {
   test('no page errors', () => {

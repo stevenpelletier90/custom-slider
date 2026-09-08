@@ -58,9 +58,11 @@ const pct = (s) => parseFloat(/(\d+)%/.exec(s ?? '')?.[1] ?? 'NaN');
 test('folders come in decision order on the model bar', async ({ browser }) => {
   const { page, errors } = await openBuilder(browser, 1440);
   await pick(page, 'modelbar');
-  // The two card-style folders lead and sit together; the rest follow the order
-  // a slider gets built, rare last.
-  assert.deepEqual(await titles(page), ['Brand and card style', 'This card style', 'How many across', 'Arrows and dots', 'Behaviour', 'Advanced']);
+  // The two card folders lead and sit together; the rest follow the order a
+  // slider gets built, rare last. "Brand and cards" rather than "Brand and card
+  // style" since 2026-09-08: there is no card-style control in it any more, so
+  // the old title promised a second control that is not there.
+  assert.deepEqual(await titles(page), ['Brand and cards', 'This card style', 'How many across', 'Arrows and dots', 'Behaviour', 'Advanced']);
   assert.deepEqual(errors, []);
 });
 

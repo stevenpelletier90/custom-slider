@@ -27,7 +27,7 @@ test.describe('one owner of the slide count', () => {
   });
 
   test('the note counts the rows listed underneath it', async () => {
-    for (const id of ['modelbar', 'grid', 'tabs']) {
+    for (const id of ['modelbar', 'wordmark', 'tabs']) {
       await pick(page, id);
       const n = await rows(page);
       const text = await note(page);
@@ -177,20 +177,23 @@ test.describe('the demo describes what it is actually showing', () => {
     assert.equal((done.html.match(/cargo-badge/g) || []).length, 1, 'the badge landed on more than the card it was typed into');
   });
 
-  test('the Badge box is offered only on the card styles that draw it', async () => {
-    await pick(page, 'grid'); // tile draws it
-    assert.equal(await badgeBox(page).count(), 1, 'no Badge box on a card style whose markup draws one');
-    // Switch to a style that does not read it and the box must go with it.
-    const other = await page.evaluate(() => {
-      const L = globalThis.CARGO.LOOKS;
-      const id = Object.keys(L).find((k) => !/badge/.test(String(L[k].markup)));
-      const b = [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((x) => x.textContent.includes(L[id].label));
-      b?.click();
-      return !!b && L[id].label;
+  // The card is chosen in the RAIL now, so this walks patterns rather than
+  // clicking a picker. Which pattern is which is asked of the data - a
+  // hard-coded pair would quietly assert the opposite of its own point the day
+  // a card gains or loses a badge slot.
+  test('the Badge box is offered only on the cards that draw one', async () => {
+    const { drawsBadge, noBadge } = await page.evaluate(() => {
+      const { LOOKS, PATTERNS } = globalThis.CARGO;
+      const has = (id) => /badge/.test(String(LOOKS[id].markup));
+      const byLook = (want) => Object.keys(PATTERNS).find((k) => PATTERNS[k].look && has(PATTERNS[k].look) === want);
+      return { drawsBadge: byLook(true), noBadge: byLook(false) };
     });
-    assert.ok(other, 'every card style draws a badge, so this guards nothing');
-    await page.waitForTimeout(300);
-    assert.equal(await badgeBox(page).count(), 0, `${other} does not draw a badge but still offers the box`);
+    assert.ok(drawsBadge && noBadge, 'every card draws a badge, or none does, so this guards nothing');
+
+    await pick(page, drawsBadge);
+    assert.equal(await badgeBox(page).count(), 1, `${drawsBadge}: no Badge box on a card whose markup draws one`);
+    await pick(page, noBadge);
+    assert.equal(await badgeBox(page).count(), 0, `${noBadge} does not draw a badge but still offers the box`);
   });
 
   // F019 (the half that needs no decision): the words on a card style's button
@@ -213,16 +216,13 @@ test.describe('the demo describes what it is actually showing', () => {
   // Asks the data which style has no button rather than naming one: the cutout
   // tile used to be the example here and now draws one, so a hard-coded name
   // would have made this test quietly assert the opposite of its own point.
-  test('a card style with no button does not offer the box', async () => {
-    await pick(page, 'grid');
+  test('a card with no button does not offer the box', async () => {
     const noButton = await page.evaluate(() => {
-      const L = globalThis.CARGO.LOOKS;
-      const id = Object.keys(L).find((k) => !/m\.cta/.test(String(L[k].markup)));
-      if (!id) return null;
-      [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((b) => b.textContent.includes(L[id].label))?.click();
-      return L[id].label;
+      const { LOOKS, PATTERNS } = globalThis.CARGO;
+      return Object.keys(PATTERNS).find((k) => PATTERNS[k].look && !/m\.cta/.test(String(LOOKS[PATTERNS[k].look].markup)));
     });
-    assert.ok(noButton, 'every card style draws a button, so this guards nothing');
+    assert.ok(noButton, 'every card draws a button, so this guards nothing');
+    await pick(page, noButton);
     await page.waitForTimeout(300);
     const box = page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Button text")) input');
     assert.equal(await box.count(), 0, `${noButton} has no button but offers a Button text box`);
@@ -329,15 +329,11 @@ test.describe('the demo describes what it is actually showing', () => {
   // when there are words for it, so nothing already built moves.
   const ctaBox = (page) => page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Button text")) input').first();
 
+  // The pattern IS the card since 2026-09-08, so there is no style to select
+  // first and no per-pattern memory of one to fight.
   test('the tile and the vehicle card draw a button only once it is filled in', async () => {
-    for (const [id, style] of [
-      ['modelbar', 'Cutout tile'],
-      ['cards', 'Vehicle card'],
-    ]) {
+    for (const id of ['modelbar', 'cards']) {
       await pick(page, id);
-      // The style has to be chosen, not assumed: earlier tests in this file
-      // switch it, and the choice is remembered per pattern.
-      await page.evaluate((s) => [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((b) => b.textContent.includes(s))?.click(), style);
       await page.waitForTimeout(300);
       // And the box cleared, for the same reason - a previous test may have
       // typed into it.

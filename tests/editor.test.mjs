@@ -37,19 +37,38 @@ test.describe('every field the editor offers reaches the code', () => {
     assert.deepEqual(await fillFirstSlide(page, 'MB'), [], 'these fields took typing and shipped it nowhere');
   });
 
-  test('switching card style adds and removes the fields with it', async () => {
-    await pick(page, 'grid');
-    const before = await page.locator('#wb-content fieldset').first().locator('input[type="text"], textarea').count();
-    const other = await page.evaluate(() => {
-      const b = [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((x) => x.getAttribute('aria-pressed') !== 'true');
-      b?.click();
-      return !!b;
+  // The card is chosen in the rail now, not in a picker inside the panel, so
+  // "switching card" means switching PATTERN - and the property this guards is
+  // unchanged: the boxes the editor offers must be the boxes the card in front
+  // of you can draw. Every look-carrying pattern is walked, so a card added to
+  // the rail is covered the day it ships rather than the day someone remembers.
+  test('each card offers only the boxes it can draw', async () => {
+    // Not the tabbed bar: its Tab box decides which PANE a row lands in, so
+    // typing a word no tab is called sends that row to no pane at all and every
+    // other value on it correctly disappears from the code with it. That is the
+    // pattern working, not a field shipping nowhere.
+    const withCards = await page.evaluate(() => {
+      const { PATTERNS } = globalThis.CARGO;
+      return Object.keys(PATTERNS).filter((k) => PATTERNS[k].look && !PATTERNS[k].panes);
     });
-    if (!other) return;
-    await page.waitForTimeout(250);
-    assert.deepEqual(await fillFirstSlide(page, 'GR'), [], 'after switching style, a field is offered that the new style cannot draw');
-    const after = await page.locator('#wb-content fieldset').first().locator('input[type="text"], textarea').count();
-    assert.ok(Number.isInteger(before) && Number.isInteger(after), 'field counts unreadable');
+    assert.ok(withCards.length >= 5, `only ${withCards.length} patterns draw a shared card`);
+    for (const id of withCards) {
+      await pick(page, id);
+      await page.waitForTimeout(250);
+      assert.deepEqual(await fillFirstSlide(page, id.slice(0, 2).toUpperCase()), [], `${id}: a box took typing and shipped it nowhere`);
+    }
+  });
+
+  // The wordmark is the case that proves the filter is doing something: the
+  // cutout roster carries `mark` on every row, and only one card has a slot for
+  // it. Offered on the wrong pattern it is a box that stores what you type and
+  // ships it nowhere - which is exactly the bug readsOf() was written for.
+  test('the Wordmark box follows the one card with a slot for it', async () => {
+    const box = () => page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Wordmark")) input');
+    await pick(page, 'wordmark');
+    assert.equal(await box().count(), 1, 'the wordmark strip offers no Wordmark box');
+    await pick(page, 'modelbar');
+    assert.equal(await box().count(), 0, 'the cutout tile has no wordmark slot but offers the box');
   });
 });
 

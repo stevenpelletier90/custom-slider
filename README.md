@@ -14,7 +14,7 @@ variant — plus the one physics gap browsers leave open: mouse drag-to-scroll
 content for SEO and no screen-reader confusion.
 
 The demo page (`demo/index.html`) is a workbench: pick a pattern, set it up
-(how many across at each breakpoint, card style, brand preset, arrow colours,
+(how many across at each breakpoint, how many rows, brand preset, arrow colours,
 how many cards an arrow moves), and copy code generated from those same
 settings — so the snippet is always exactly the slider on screen. It also hands you all four
 `dist/` files themselves, to upload — the engine is linked, never pasted.
@@ -202,7 +202,7 @@ than the card half. It went on 2026-09-08, for the reason the paste-the-engine
 route went: an inlined copy can never be fixed, so patching a card style reaches
 every linked page and silently misses every inlined one, with nothing saying
 which pages are on which. The gap it covered closes with a re-upload — see
-"Deployment status". It was also a no-op on 13 of the 19 patterns, where it drew
+"Deployment status". It was also a no-op on most of the patterns, where it drew
 a control that announced it did nothing.
 
 Worth keeping in mind either way: the card CSS carries the card styling **only**,
@@ -464,7 +464,7 @@ what changed:
 - **Content** (a heading, a link, a photo, adding or removing a card): edit the
   **Custom HTML** block directly. Copy an existing `<li class="cs-slide">…</li>`
   and change it. Nothing else has to move.
-- **Settings** (how many across, gap, arrow colours, card style, a different
+- **Settings** (how many across, how many rows, gap, arrow colours, a different
   pattern): rebuild it in the builder and re-paste all three parts — CSS, HTML
   and script. Re-pasting only the CSS leaves markup that no longer matches it.
 

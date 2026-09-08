@@ -18,7 +18,6 @@
   // the only way to find one. These collect a tile per example for the index at
   // the top, which is the whole catalogue on one screen.
   const index = [];
-  const lookIndex = [];
 
   for (const [id, p] of Object.entries(PATTERNS)) {
     const cls = `gx-${id}`;
@@ -41,14 +40,6 @@
       </div>
       <div class="gx-stage"></div>`;
     card.querySelector('.gx-stage').innerHTML = html;
-    // The lightbox card showed a closed trigger and nothing else - a button
-    // reading "View all 6 photos" is not an example of a fullscreen gallery,
-    // it is an example of a button. Open it in place instead: the `open`
-    // attribute (never showModal, which would hijack a page of 26 cards) puts
-    // the dialog in normal flow, and .gx-lb-inline unsets the centring it only
-    // needs as a modal. The slider inside is data-cs-init="manual", so it is
-    // constructed here for the same reason the pattern's own script does it on
-    // click - a slider measured while hidden has no width to measure.
     grid.append(card);
     // The lightbox card showed a closed trigger and nothing else - a button
     // reading "View all 6 photos" is not an example of a fullscreen gallery,
@@ -79,52 +70,14 @@
     index.push([`p-${id}`, SHORT?.[id] ?? p.label, `wb-glyph--${id}`, '']);
   }
 
-  // The card looks, same treatment. Each one is a real slider rather than a
-  // picture of one, so what you see here is what the builder gives you.
-  const looksGrid = document.getElementById('gx-looks');
-  const { LOOKS, renderLook } = globalThis.CARGO;
-
-  // Where a card can actually be opened. Every card used to link
-  // index.html#modelbar/<id>, which stopped being true on 2026-09-08: the
-  // builder's picker now offers only cards of the same family, so the logo
-  // panel and the location card are not reachable on a model bar at all and
-  // those two links pointed at a combination that no longer exists. Prefer a
-  // pattern whose own default IS this card - the logo strip, the locations
-  // strip - and fall back to the model bar for the vehicle cards.
-  const openAt = (id) => {
-    const own = Object.entries(PATTERNS).find(([, p]) => p.look === id);
-    return own && own[1].look === id && !['modelbar', 'cards', 'grid', 'tabs'].includes(own[0]) ? `index.html#${own[0]}` : `index.html#modelbar/${id}`;
-  };
-  if (looksGrid && LOOKS && renderLook) {
-    for (const [id, look] of Object.entries(LOOKS)) {
-      const cls = `gl-${id}`;
-      const { css: sheet, html } = renderLook(id, cls);
-      css.push(sheet);
-
-      const card = document.createElement('section');
-      card.className = 'gx-card';
-      card.id = `l-${id}`;
-      card.innerHTML = `
-        <div class="gx-head">
-          <span class="wb-glyph"></span>
-          <div>
-            <h2>${look.label}</h2>
-            <p>${look.note ?? ''}</p>
-          </div>
-          <a class="ui-btn" href="${openAt(id)}">Open in the builder</a>
-        </div>
-        <div class="gx-stage"></div>`;
-      // A look that brings its own strip colour does not need a white card
-      // behind it: that is a container around a container, and it read as a
-      // white frame bolted onto the navy logo panel. The frame exists so
-      // light-background cards stay legible on a dark page, and nothing else.
-      if (/^#|rgb/.test(look.settings?.['--strip-bg'] ?? '')) card.querySelector('.gx-stage').classList.add('gx-stage--bare');
-      card.querySelector('.wb-glyph').innerHTML = look.icon ?? '';
-      card.querySelector('.gx-stage').innerHTML = html;
-      looksGrid.append(card);
-      lookIndex.push([`l-${id}`, look.label, '', look.icon ?? '']);
-    }
-  }
+  // A second grid used to follow this one, drawing each card LOOK on a borrowed
+  // model bar under the heading "Every card style". It went on 2026-09-08 with
+  // the style picker: every card is a pattern now, so all seven are already
+  // above - and a card shown twice, once as itself and once as a style of
+  // something else, is precisely the muddle that got fixed.
+  //
+  // The openAt() helper went with it. It existed to guess which pattern could
+  // display a given card, which is a question with a one-word answer now.
 
   // The index. Built from what was just rendered rather than from a hand-kept
   // list, so a pattern cannot exist on the page without a tile pointing at it.
@@ -139,13 +92,12 @@
     }
   };
   drawIndex(document.getElementById('gx-index'), index);
-  drawIndex(document.getElementById('gx-look-index'), lookIndex);
 
   styleEl.textContent = css.join('\n\n');
 
-  // Init after every example is in the DOM, so each measures a real width.
-  // Both grids: a slider left uninitialised is a static row of cards that
-  // silently claims the pattern does not scroll.
+  // Init after every example is in the DOM, so each measures a real width. A
+  // slider left uninitialised is a static row of cards that silently claims the
+  // pattern does not scroll.
   for (const root of document.querySelectorAll('.gx-stage .cs')) {
     if (!root.dataset.csInit) live.push(new globalThis.CustomSlider(root));
   }

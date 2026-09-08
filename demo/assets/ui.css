@@ -515,6 +515,23 @@ body {
   border-radius: 12px 12px 0 0;
 }
 
+/* The host for a pattern whose point is covering the page - today only the
+   lightbox. workbench.js clones the snippet's wrapper into it and opens the
+   dialog HERE rather than inside the preview frame, because a modal is only
+   ever fullscreen relative to its own document and the frame's document is a
+   simulated device. The host itself must take no space and paint nothing: the
+   only thing it holds that renders is the dialog, and a modal dialog is in the
+   top layer, positioned against the viewport whatever its parent does. No
+   transform, filter or contain here, ever - any of the three would give the
+   dialog a containing block and pull it back into a box. */
+.wb-overlay {
+  position: fixed;
+  inset-block-start: 0;
+  inset-inline-start: 0;
+  inline-size: 0;
+  block-size: 0;
+}
+
 /* border: 0 is load-bearing, not tidying. An iframe's default 2px inset border
    comes out of its VIEWPORT, so a frame set to 390px gave the slider a 386px
    window and every measurement landed 4px short of a real phone - which is the
@@ -765,65 +782,11 @@ body {
   color: var(--ink-soft);
 }
 
-/* Auto-fill, not two fixed columns: the panel used to be a 16rem-wide column
-   and two tiles filled it. It is the full width of the work area now, and two
-   columns stretched each thumbnail to about 590px - a 2.9rem diagram floating
-   in a half-metre box. Fitting as many ~9rem tiles as the width allows keeps
-   them the size they were drawn for. */
-.tp-lookv {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(9rem, 1fr));
-  gap: 0.4rem;
-}
-
-.tp-lookv button {
-  display: flex;
-  flex-direction: column;
-  gap: 0.35rem;
-  align-items: center;
-  padding: 0.45rem 0.3rem;
-  font: inherit;
-  font-size: 0.72rem;
-  color: var(--ink-soft);
-  cursor: pointer;
-  background: var(--surface);
-  border: 1px solid var(--rule);
-  border-radius: 8px;
-}
-
-.tp-lookv button:hover {
-  color: var(--ink);
-}
-
-.tp-lookv button[aria-pressed="true"] {
-  color: var(--ink);
-  border-color: var(--signal);
-  box-shadow: inset 0 0 0 1px var(--signal);
-}
-
-/* A diagram of the card's LAYOUT, not a swatch of its background colour. The
-   shape is what you are choosing between; the colours are settings underneath. */
-.tp-lookv_icon {
-  --wb-icon-bg: var(--surface);
-
-  display: grid;
-  place-items: center;
-  inline-size: 100%;
-  padding-block: 0.25rem;
-  background: var(--sunken);
-  border-radius: 5px;
-}
-
-.tp-lookv_icon svg {
-  inline-size: 2.9rem;
-  block-size: auto;
-  color: var(--ink-soft);
-}
-
-.tp-lookv button:hover .tp-lookv_icon svg,
-.tp-lookv button[aria-pressed="true"] .tp-lookv_icon svg {
-  color: var(--ink);
-}
+/* The .tp-lookv rules for the card-style picker lived here. They went on
+   2026-09-08 with the picker itself: every card is a rail entry now, so the
+   grid of thumbnails has nothing to draw. The card ICONS survive in looks.js -
+   the rail's own glyphs are CSS, but check-looks still requires each look to
+   carry one, and the Reference draws them. */
 
 /* A settings field holding something its property cannot use — a gap of `10`,
    which is a number and not a length. The declaration is dropped rather than
@@ -1710,18 +1673,42 @@ code {
   background: repeating-linear-gradient(90deg, var(--glyph-mid) 0 5px, transparent 5px 8px);
 }
 
-/* Two rows of cards, split by a gap. */
-.wb-glyph--grid::before {
-  inset: 4px 5px;
-  background: repeating-linear-gradient(90deg, var(--glyph-mid) 0 8px, transparent 8px 11px);
+/* A wordmark bar over a row of cutouts. */
+.wb-glyph--wordmark::before {
+  inset: 4px 9px auto;
+  block-size: 3px;
+  background: var(--glyph-ink);
+  border-radius: 2px;
 }
 
-.wb-glyph--grid::after {
-  inset-block-start: 50%;
-  inset-inline: 3px;
+.wb-glyph--wordmark::after {
+  inset: 11px 4px 5px;
+  background: repeating-linear-gradient(90deg, var(--glyph-mid) 0 5px, transparent 5px 8px);
+}
+
+/* Tall cards, each with a button bar across its foot. */
+.wb-glyph--portrait::before {
+  inset: 2px 5px;
+  background: repeating-linear-gradient(90deg, var(--glyph-mid) 0 6px, transparent 6px 9px);
+}
+
+.wb-glyph--portrait::after {
+  inset: auto 5px 4px;
   block-size: 3px;
+  background: repeating-linear-gradient(90deg, var(--glyph-ink) 0 6px, transparent 6px 9px);
+}
+
+/* One wide card: a photo half beside a copy half. */
+.wb-glyph--split::before {
+  inset: 5px 4px;
+  background: var(--glyph-mid);
+  border-radius: 2px;
+}
+
+.wb-glyph--split::after {
+  inset: 5px 4px 5px 50%;
   background: var(--glyph-bg);
-  transform: translateY(-50%);
+  border-radius: 0 2px 2px 0;
 }
 
 /* One card centred, slivers of its neighbours at both edges. */

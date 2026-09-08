@@ -274,7 +274,11 @@
   const VIDEO_DIALOG_CSS = `.cargo-vdlg { inline-size: min(94vw, 720px); padding: 1em 1.2em; color: inherit; background: #fff; border: 0; border-radius: 12px; }
 .cargo-vdlg::backdrop { background: rgba(0, 0, 0, 0.8); }
 .cargo-vdlg-title { margin: 0 0 0.6em; font-size: 1.1em; font-weight: 700; line-height: 1.3; }
-.cargo-vdlg-media { display: grid; place-items: center; inline-size: 100%; aspect-ratio: 16 / 9; margin-block-end: 0.8em; font-size: 0.9em; color: #fff; text-align: center; background: #16324f; border-radius: 8px; }
+.cargo-vdlg-media { display: grid; place-items: center; inline-size: 100%; aspect-ratio: 16 / 9; margin-block-end: 0.8em; overflow: hidden; font-size: 0.9em; color: #fff; text-align: center; background: #16324f; border-radius: 8px; }
+/* The player the script builds from the slide's Video URL. It fills the box the
+   placeholder already reserved, so the dialog is the same size either way and
+   nothing reflows when a video is added to a slide. */
+.cargo-vdlg-media > iframe, .cargo-vdlg-media > video { inline-size: 100%; block-size: 100%; border: 0; }
 .cargo-vdlg-close { padding: 0.4em 1em; font: inherit; line-height: 1.55; cursor: pointer; background: #eef1f4; border: 0; border-radius: 6px; }`;
 
   // The dialog held a title, a Close button, and an HTML COMMENT where the
@@ -298,22 +302,46 @@
   const VIDEO_DIALOG_HTML = [
     `<dialog class="cargo-vdlg">`,
     `  <h3 class="cargo-vdlg-title"></h3>`,
-    `  <!-- Replace this div with your video: a YouTube or Vimeo <iframe>, or a <video> element. -->`,
+    `  <!-- Filled from the poster's data-video-src, or left as this placeholder when a slide has no video yet. -->`,
     `  <div class="cargo-vdlg-media">Your video goes here</div>`,
     `  <form method="dialog"><button type="submit" class="cargo-vdlg-close">Close</button></form>`,
     `</dialog>`,
   ];
 
+  // The player is built AT OPEN TIME from the poster's own address, and torn
+  // down on close. Three reasons, and none of them is tidiness:
+  //
+  //   Nothing loads until someone asks. A page carrying six posters would
+  //   otherwise start six YouTube players on load - the cost this pattern
+  //   exists to avoid, since the whole point of a poster is that video never
+  //   plays inline.
+  //   The video STOPS when the dialog closes. A player left in the DOM keeps
+  //   playing audio behind a closed dialog, which is the one bug every
+  //   hand-rolled lightbox ships with.
+  //   A slide with no address still gets the placeholder and the comment, so
+  //   an untouched roster emits exactly what it always did.
+  //
+  // A YouTube/Vimeo address becomes an <iframe>; anything else becomes a
+  // <video> with controls, which is what a file uploaded to the platform needs.
   const VIDEO_DIALOG_JS = `document.querySelectorAll('[data-video-dialog]').forEach((root) => {
   const dlg = root.querySelector('.cargo-vdlg');
   const title = dlg.querySelector('.cargo-vdlg-title');
+  const media = dlg.querySelector('.cargo-vdlg-media');
+  const empty = media.innerHTML;
   root.querySelectorAll('[data-video]').forEach((poster) => {
     poster.addEventListener('click', () => {
       title.textContent = poster.dataset.video;
       dlg.setAttribute('aria-label', poster.dataset.video);
+      const src = poster.dataset.videoSrc;
+      if (!src) media.innerHTML = empty;
+      else if (/youtube|youtu\\.be|vimeo/.test(src)) media.innerHTML = '<iframe src="' + src + '" title="' + poster.dataset.video + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+      else media.innerHTML = '<video src="' + src + '" controls playsinline></video>';
       dlg.showModal();
     });
   });
+  // Covers the Close button, the Escape key and a click on the backdrop with
+  // one listener, because all three end in the same event.
+  dlg.addEventListener('close', () => { media.innerHTML = empty; });
 });`;
 
   // A pattern is content plus defaults. `look` means it draws its cards with a
@@ -366,13 +394,59 @@
       props: { '--cs-gap': '0.5em', '--cs-controls-space': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       hideDots: true,
     },
-    // Logo panel and Location card were filed as CARD STYLES until 2026-09-08,
-    // which was wrong in both directions. Neither is a vehicle card by its own
-    // source - the logo look "draws MARKS, so it is drawn with marks" and emits
-    // no text node at all; the location look says "Not a vehicle card at all".
-    // So they were noise in the picker on every vehicle job (two of seven
-    // choices that could not apply), and invisible to anyone looking for the
-    // job they ARE for. A purpose belongs in the rail.
+    // EVERY CARD IS A RAIL ENTRY, and there is no card-style picker anywhere
+    // (2026-09-08). Two of these were promoted first, for a reason that turned
+    // out to apply to all seven: the logo look "draws MARKS, so it is drawn
+    // with marks" and emits no text node at all, and the location look says
+    // "Not a vehicle card at all" - so both were noise in the picker on every
+    // vehicle job and invisible to anyone looking for the job they ARE for.
+    //
+    // The same is true of the rest. looks.js has said since it was written that
+    // "a split card is not a stacked card with different numbers, and no
+    // property turns one into the other" - all seven emit different element
+    // trees. A control that swaps the markup out from under you is not a style
+    // control, and nesting it inside a structural pattern (a tabbed bar, a
+    // model bar) made the tab strip look like it owned a decision about cards.
+    // A purpose belongs in the rail, and the rail is now the only place a card
+    // is chosen: pick the thing you want, and the settings are settings.
+    wordmark: {
+      label: 'Wordmark strip',
+      blurb: "The model's wordmark set above the vehicle — the one slot the cutout tile has no room for. A strip like the model bar, one card per step.",
+      look: 'wordmark',
+      models: cutouts,
+      data: { 'data-cs-step': 'slide' },
+      props: { '--cs-gap': '0.5em', '--cs-controls-space': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      hideDots: true,
+    },
+    cards: {
+      label: 'Vehicle cards',
+      blurb: 'Photo, title, price and a link. The whole card is clickable through one stretched link, so there is no nested-link or duplicate-announcement problem.',
+      look: 'vcard',
+      models: VEHICLES,
+      data: {},
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+    },
+    // The roster is the look's own `demoModels`, not the model bar's cutouts.
+    // A 3:5 card drawn on landscape cutouts is a car floating in dead space,
+    // and a square photo half is a photograph's slot, not a transparent PNG's -
+    // which is exactly what the picker used to hand you and what promoting
+    // these to patterns fixes at the source.
+    portrait: {
+      label: 'Tall tile with CTA',
+      blurb: 'Tall photography with the name and a button over the bottom of the image, on a dark strip. Wants portrait art — 3:5 is the shape it crops to.',
+      look: 'portrait',
+      models: MODELS,
+      data: {},
+      props: { '--cs-gap': '1em' },
+    },
+    split: {
+      label: 'Split photo cards',
+      blurb: 'Photo down one half, copy and a button down the other. Needs a wide card: 260px is the floor, so it runs one or two across, not five.',
+      look: 'split',
+      models: SERVICES,
+      data: {},
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+    },
     logostrip: {
       label: 'Logo strip',
       blurb: 'Manufacturer marks on panels — the brands a dealer group carries, or the badges on a service page. Not a vehicle card: no name, no price, just the mark.',
@@ -386,14 +460,6 @@
       blurb: 'A card per rooftop — storefront photo, name, address and a link. For a dealer group with more than one site.',
       look: 'location',
       models: PLACES,
-      data: {},
-      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
-    },
-    cards: {
-      label: 'Vehicle cards',
-      blurb: 'Photo, title, price and a link. The whole card is clickable through one stretched link, so there is no nested-link or duplicate-announcement problem.',
-      look: 'vcard',
-      models: VEHICLES,
       data: {},
       props: { '--cs-gap': '1em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
     },
@@ -426,18 +492,12 @@
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }`,
       slides: (models) => models.map((m) => photo(m)),
     },
-    grid: {
-      label: 'Two-row grid',
-      blurb: 'Twice as many fit before you scroll. Each slide is a COLUMN holding two cards, so one slide is still one scroll stop — the model the engine is built on.',
-      look: 'tile',
-      models: cutouts,
-      data: {},
-      props: { '--cs-gap': '1em', '--cs-controls-space': '2em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
-      perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
-      pairUp: true,
-      css: `.cargo-col { display: grid; grid-template-rows: repeat(2, auto); gap: var(--cs-gap); }
-`,
-    },
+    // Two-row grid was a rail entry until 2026-09-08. It was the model bar with
+    // `pairUp: true` and a two-rung ladder, and nothing else - so it answered
+    // "how many rows" by making you leave the pattern you had chosen and lose
+    // your settings. Rows is a SETTING now, beside "how many across", and it
+    // works on every pattern that draws cards into a track rather than on the
+    // one that shipped with it pre-set.
     peek: {
       gutter: false,
       label: 'Peek at the next slide',
@@ -467,7 +527,10 @@
       perView: { base: 1, 768: 2, 992: 2, 1200: 3 },
       minCard: 260,
       videoDialog: true,
-      models: PHOTOS.slice(0, 3).map((m, i) => ({ ...m, name: ['Dana W.', 'Marcus T.', 'Gene &amp; Marta L.'][i] })),
+      // videoSrc empty on purpose: an example roster must not put a real third
+      // party's video on a dealer page, and empty is what makes the Video URL
+      // box appear on every slide with the placeholder still shipping.
+      models: PHOTOS.slice(0, 3).map((m, i) => ({ ...m, name: ['Dana W.', 'Marcus T.', 'Gene &amp; Marta L.'][i], videoSrc: '' })),
       // `color: inherit` is load-bearing, not tidiness. A <button> takes the UA's
       // `buttontext` system colour unless told otherwise, and `font: inherit`
       // does not carry colour with it. `buttontext` follows color-scheme, so in
@@ -488,7 +551,7 @@ ${VIDEO_DIALOG_CSS}`,
             // announced as the photo's alt plus a person's name, which says
             // nothing about pressing it. The label keeps the visible name
             // inside it, so it still satisfies label-in-name.
-            `<button type="button" class="cargo-video" data-video="${m.name}" aria-label="Play video: ${m.name}" aria-haspopup="dialog">${pic(m)}<span class="cargo-play" aria-hidden="true">&#9654;</span><span class="cargo-name">${m.name}</span></button>`,
+            `<button type="button" class="cargo-video" data-video="${m.name}"${m.videoSrc ? ` data-video-src="${m.videoSrc}"` : ''} aria-label="Play video: ${m.name}" aria-haspopup="dialog">${pic(m)}<span class="cargo-play" aria-hidden="true">&#9654;</span><span class="cargo-name">${m.name}</span></button>`,
         ),
       script: VIDEO_DIALOG_JS,
     },
@@ -585,9 +648,12 @@ ${VIDEO_DIALOG_CSS}`,
 .cargo-model { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; border-radius: 10px; }
 .cargo-model img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; transition: transform 0.35s ease; }
 .cargo-model:hover img { transform: scale(1.05); }
-.cargo-model .cargo-name { display: block; position: absolute; inset-block-end: 0; inset-inline: 0; padding: 2.5em 1em 1em; margin: 0; font-size: 1.15em; line-height: 1.3; background: linear-gradient(transparent, rgba(0, 0, 0, 0.78)); }`,
+.cargo-model .cargo-name { position: absolute; inset-block-end: 0; inset-inline: 0; display: block; padding: 2.5em 1em 1em; margin: 0; font-size: 1.15em; line-height: 1.3; background: linear-gradient(transparent, rgba(0, 0, 0, 0.78)); }`,
       slides: (models) =>
-        models.map((m) => `<a class="cargo-model" href="${m.href}"><img src="${m.img}" width="${m.w ?? 600}" height="${m.h ?? 1000}" alt="" loading="lazy" decoding="async"><h3 class="cargo-name">${m.name}</h3></a>`),
+        models.map(
+          (m) =>
+            `<a class="cargo-model" href="${m.href}"><img src="${m.img}" width="${m.w ?? 600}" height="${m.h ?? 1000}" alt="" loading="lazy" decoding="async"><h3 class="cargo-name">${m.name}</h3></a>`,
+        ),
       // Site-level enhancement, not an engine feature: it reads the engine's
       // own current-dot class and writes two custom properties. Nothing in the
       // engine knows the bar exists.
@@ -622,7 +688,10 @@ ${VIDEO_DIALOG_CSS}`,
 .cargo-mix .cargo-name { display: block; margin: 0.8em 0.9em 0.2em; font-size: 0.95em; line-height: 1.3; }
 .cargo-mix .cargo-sub { display: block; margin: 0 0.9em 0.9em; font-size: 0.85em; line-height: 1.45; color: #5f6368; }`,
       slides: (models) =>
-        models.map((m) => `<article class="cargo-mix"><img src="${m.img}" width="${m.w}" height="${m.h}" alt="${m.alt}" loading="lazy" decoding="async"><h3 class="cargo-name">${m.name}</h3><p class="cargo-sub">${m.blurb}</p></article>`),
+        models.map(
+          (m) =>
+            `<article class="cargo-mix"><img src="${m.img}" width="${m.w}" height="${m.h}" alt="${m.alt}" loading="lazy" decoding="async"><h3 class="cargo-name">${m.name}</h3><p class="cargo-sub">${m.blurb}</p></article>`,
+        ),
     },
 
     service: {
@@ -745,7 +814,7 @@ ${PHOTO_CSS}
       minCard: 240,
       track: 'div',
       videoDialog: true,
-      models: PHOTOS.map((m, i) => ({ ...m, video: i === 2 || i === 4 })),
+      models: PHOTOS.map((m, i) => ({ ...m, video: i === 2 || i === 4, videoSrc: '' })),
       css: `.cargo-photo { display: block; }
 .cargo-photo img, .cargo-mv img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
 .cargo-mv { position: relative; display: block; inline-size: 100%; padding: 0; font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
@@ -760,7 +829,7 @@ ${VIDEO_DIALOG_CSS}`,
               // about what pressing it does - and the play triangle beside it is
               // aria-hidden, so there was no second chance. The alt stays on the
               // image where it belongs; the BUTTON says what it is for.
-              `<button type="button" class="cargo-mv" data-video="${m.alt}" aria-label="Play video: ${m.alt}" aria-haspopup="dialog">${pic(m)}<span class="cargo-mv-play" aria-hidden="true">&#9654;</span></button>`
+              `<button type="button" class="cargo-mv" data-video="${m.alt}"${m.videoSrc ? ` data-video-src="${m.videoSrc}"` : ''} aria-label="Play video: ${m.alt}" aria-haspopup="dialog">${pic(m)}<span class="cargo-mv-play" aria-hidden="true">&#9654;</span></button>`
             : `<span class="cargo-photo">${pic(m)}</span>`,
         ),
       script: VIDEO_DIALOG_JS,
@@ -770,24 +839,40 @@ ${VIDEO_DIALOG_CSS}`,
       gutter: false,
       label: 'Fullscreen gallery in a dialog',
       blurb:
-        'A thumbnail that opens the full gallery in a native dialog. Built with data-cs-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure. The Patterns page shows it open, because a closed button is not an example of a gallery. In the builder the stage starts on the trigger — press it to see the gallery at the width you are previewing, and note that changing a setting rebuilds the dialog closed, so it goes open, look, close, change.',
+        'A thumbnail that opens the full gallery in a native dialog. Built with data-cs-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure. Press the thumbnail: the gallery opens over this whole page, the way it will over a dealer page. The Patterns page shows it open too, because a closed button is not an example of a gallery.',
       data: { 'data-cs-gallery': '', 'data-cs-init': 'manual' },
       props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
-      // A fullscreen dialog is only fullscreen relative to ITS OWN document,
-      // and here that document is the preview frame - which is fitted to its
-      // content, and this pattern's content is one small button. The modal
-      // therefore filled a ~320px-tall box and looked nothing like the thing it
-      // is demonstrating. The frame is a window of the chosen width; give it a
-      // window's HEIGHT too, so the overlay reads the way it will on a device.
-      frameMin: 620,
+      // There was a frameMin: 620 here, propping the preview frame up to a
+      // window's height so the dialog had something to cover. It was treating
+      // the symptom: the dialog opens over the whole page now (liftOverlay in
+      // this file), so the frame is back to showing what the pattern actually
+      // puts ON the page, which is one button.
       track: 'div',
       models: captioned(PHOTOS),
       css: `.cargo-lb-open { display: inline-flex; gap: 0.7em; align-items: center; padding: 0.6em 1em; font: inherit; font-weight: 600; line-height: 1.55; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-lb-open img { inline-size: 68px; block-size: 44px; object-fit: cover; border-radius: 5px; }
 %root% { --cs-dot-current: #fff; --cs-dot-fg: #9aa3ad; }
-.cargo-lb { inline-size: min(94vw, 1100px); padding: 0; background: #111; border: 0; border-radius: 12px; }
+/* A lightbox that scrolls is not a lightbox. The dialog was sized on its width
+   alone, so on any viewport shorter than head + photo + thumb strip its own
+   content overflowed and the UA gave it a scrollbar - measured in the preview
+   frame, and it is the same arithmetic on a phone held in landscape. Bound it
+   to the viewport, let the flex column give the track the space that is left,
+   and cap the photo so it shrinks instead of pushing. min-block-size: 0 is the
+   load-bearing line: a flex item's default min-size is its content, so without
+   it the track refuses to shrink and the cap above it does nothing. */
+.cargo-lb { inline-size: min(94vw, 1100px); max-block-size: min(92dvh, 900px); padding: 0; background: #111; border: 0; border-radius: 12px; }
+/* [open], and it is not decoration. A closed <dialog> is hidden by the UA rule
+   dialog:not([open]) { display: none }, which is (0,1,1) - so a bare
+   .name-wrap .cargo-lb { display: flex } at (0,2,0) OUTRANKS it and every
+   closed lightbox on the page renders inline, 1100px wide, wherever it happens
+   to sit in the markup. Caught in the preview, where the frame is 176px tall
+   and a 1100x162 dark panel spilled out of it. Naming the state costs nothing
+   and cannot come back. */
+.cargo-lb[open] { display: flex; flex-direction: column; }
+.cargo-lb .cs { min-block-size: 0; }
+.cargo-lb .cargo-photo img { max-block-size: 70dvh; }
 .cargo-lb::backdrop { background: rgba(0, 0, 0, 0.8); }
 .cargo-lb-head { display: flex; align-items: center; justify-content: space-between; padding: 0.6em 0.9em; font-size: 0.9em; line-height: 1.55; color: #fff; }
 .cargo-lb-close { padding: 0.35em 0.85em; font: inherit; line-height: 1.55; color: #fff; cursor: pointer; background: rgba(255, 255, 255, 0.15); border: 0; border-radius: 6px; }
@@ -864,6 +949,7 @@ ${PHOTO_CSS}
     props: null,
     lookProps: null,
     data: null,
+    rows: 1,
     hideDots: false,
     dotSpace: null, // what the reserved dot row measured before the dots were hidden
     content: null,
@@ -904,10 +990,14 @@ ${PHOTO_CSS}
   // the 17 did - and a column of wrapped sentences cannot be scanned.
   const SHORT = {
     modelbar: 'Model bar',
+    wordmark: 'Wordmark strip',
     cards: 'Vehicle cards',
+    portrait: 'Tall tile + CTA',
+    split: 'Split photo',
+    logostrip: 'Logo strip',
+    locations: 'Locations',
     hero: 'Hero banner',
     gallery: 'Photo gallery',
-    grid: 'Two-row grid',
     peek: 'Peek',
     video: 'Testimonials',
     tabs: 'Tabbed bar',
@@ -931,6 +1021,12 @@ ${PHOTO_CSS}
     state.props = { ...p.props };
     state.data = { ...p.data };
     state.hideDots = !!p.hideDots;
+    // How many cards are stacked in one slide. 1 is one card per stop, which is
+    // every pattern's default; 2 is what the Two-row grid rail entry used to
+    // be. A slide is still ONE scroll stop whatever this says - that is the
+    // whole point of stacking inside the slide rather than adding a second
+    // track - so the dots and the announced count stay honest.
+    state.rows = p.rows ?? 1;
     state.dotsOver = false;
     state.dotsWere = null;
     state.dotSpace = null;
@@ -960,12 +1056,20 @@ ${PHOTO_CSS}
   // the ones whose shape differs from the model bar's cutouts need an entry.
   const ROSTERS = { models: MODELS, services: SERVICES, vehicles: VEHICLES, photos: PHOTOS, logos: LOGOS, places: PLACES };
 
-  // Which cards could stand in for each other. A vehicle card and a logo panel
-  // are not two ways of drawing the same thing, so they do not belong in one
-  // picker; cutout, photo and either-of-those are.
-  // ABOVE `if (!stage) return`, because cropWarning() is reached from the
-  // generator that patterns.html and lint-generated-css.mjs run.
-  const family = (content) => (content === 'mark' || content === 'place' ? content : 'vehicle');
+  // There was a family() here, deciding which cards could stand in for each
+  // other in the style picker. The picker went on 2026-09-08 - every card is a
+  // rail entry - so the question it answered no longer gets asked.
+  //
+  // Where stacking cards inside one slide is a thing that can happen. A gallery
+  // is one photograph per stop and its thumb strip counts slides; a card grid
+  // draws its own layout and never uses the track; a crossfade stacks the
+  // slides on top of each other already. Everything else answers yes.
+  // ABOVE `if (!stage) return`, because htmlFor() and cssFor() both call it and
+  // both run in the generator that patterns.html and lint-generated-css.mjs use.
+  const rowsApply = () => {
+    const p = PATTERNS[state.pattern];
+    return !p.cardGrid && !p.filters && p.track !== 'div' && state.data?.['data-cs-fade'] == null;
+  };
 
   // What a card will actually DO to the pictures it is given, or null when it
   // will do nothing worth saying.
@@ -986,11 +1090,15 @@ ${PHOTO_CSS}
     // A tenth is the smallest difference worth a sentence; below it the trim is
     // a pixel or two on a 300px card.
     if (Math.abs(natural - look.crop) / look.crop < 0.1) return null;
-    const say = (r) => (Math.abs(r - 1) < 0.02 ? 'square' : r > 1 ? `${(Math.round(r * 100) / 100).toFixed(2).replace(/0+$/, '').replace(/\.$/, '')}:1 wide` : `1:${(Math.round((1 / r) * 100) / 100).toFixed(2).replace(/0+$/, '').replace(/\.$/, '')} tall`);
+    const say = (r) =>
+      Math.abs(r - 1) < 0.02
+        ? 'square'
+        : r > 1
+          ? `${(Math.round(r * 100) / 100).toFixed(2).replace(/0+$/, '').replace(/\.$/, '')}:1 wide`
+          : `1:${(Math.round((1 / r) * 100) / 100).toFixed(2).replace(/0+$/, '').replace(/\.$/, '')} tall`;
     const side = natural > look.crop ? 'sides' : 'top and bottom';
     return `This card crops every picture to ${say(look.crop)}. Yours are ${say(natural)}, so their ${side} will be trimmed${look.content === 'photo' && models.some((v) => /\.(png|webp)$/i.test(v.src || '')) ? ' — and a cutout loses the transparent margin it is composed with' : ''}.`;
   };
-
 
   const modelsFor = (p) => (state.content ? state.content : state.brand && BRANDS[state.brand]?.models ? BRANDS[state.brand].models : p.models);
 
@@ -1239,7 +1347,13 @@ ${PHOTO_CSS}
     // same dead line the tab and filter-bar rules are already filtered for.
     const photoRows = (p.css || '').includes('cargo-photo') ? modelsFor(p) : [];
     const captionCss = [photoRows.some((m) => m.caption) ? PHOTO_CAPTION_CSS : '', photoRows.some((m) => m.href) ? PHOTO_LINK_CSS : ''].filter(Boolean).join('\n');
-    const body = [state.look && !shared() ? scope(LOOKS[state.look].css) : '', p.css ? scope(captionCss ? `${p.css}\n${captionCss}` : p.css) : ''].filter(Boolean).join('\n');
+    // The column a stacked slide wraps its cards in. Emitted from the Rows
+    // setting rather than carried by one pattern, so the rule and the markup
+    // that needs it can never be out of step - the two-row grid used to ship
+    // the rule unconditionally and the markup only when `pairUp` was set.
+    const rowsCss = state.rows > 1 && rowsApply() ? `.cargo-col { display: grid; grid-template-rows: repeat(${state.rows}, auto); gap: var(--cs-gap); }` : '';
+    const patternCss = [p.css || '', captionCss, rowsCss].filter(Boolean).join('\n');
+    const body = [state.look && !shared() ? scope(LOOKS[state.look].css) : '', patternCss ? scope(patternCss) : ''].filter(Boolean).join('\n');
     // Arrows either sit in a gutter beside the content or float over it. Last
     // in the sheet so it beats the padding-inline a card look sets for itself -
     // which is exactly why it has to READ the look's value rather than restate
@@ -1370,15 +1484,18 @@ ${PHOTO_CSS}
     // A pattern draws its slides one of three ways: its own slides(), a shared
     // card look, or - for the card grid - entirely inside its own branch below.
     const draw = (list) => (p.slides ? p.slides(list) : state.look ? list.map((m) => LOOKS[state.look].markup(m)) : []);
-    let items = draw(take(state.count));
-
-    // The two-row grid puts a COLUMN in each slide, not a card - one slide is
-    // one scroll stop, which is what keeps the dots and the count honest.
-    if (p.pairUp) {
+    // Rows > 1 puts a COLUMN in each slide, not a card - one slide is still one
+    // scroll stop, which is what keeps the dots and the announced count honest.
+    // Applied wherever slides are drawn, so it works on the tabbed bar's panes
+    // as well as on a plain track; the two-row grid was a whole rail entry for
+    // this one line and nothing else.
+    const stack = (list) => {
+      if (!(state.rows > 1) || !rowsApply()) return list;
       const cols = [];
-      for (let i = 0; i < items.length; i += 2) cols.push(`<div class="cargo-col">${items.slice(i, i + 2).join('')}</div>`);
-      items = cols;
-    }
+      for (let i = 0; i < list.length; i += state.rows) cols.push(`<div class="cargo-col">${list.slice(i, i + state.rows).join('')}</div>`);
+      return cols;
+    };
+    const items = stack(draw(take(state.count)));
 
     const tag = p.track === 'div' ? 'div' : 'ul';
     const item = tag === 'ul' ? 'li' : 'div';
@@ -1454,7 +1571,7 @@ ${PHOTO_CSS}
           .toLowerCase();
       const panes = names
         .map((name, i) => {
-          const sub = tagged ? draw(source.filter((m) => !norm(m.tab) || norm(m.tab) === norm(name))) : draw(take(state.count, i * stride));
+          const sub = stack(tagged ? draw(source.filter((m) => !norm(m.tab) || norm(m.tab) === norm(name))) : draw(take(state.count, i * stride)));
           return `  <div class="cargo-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}"${i === 0 ? '' : ' hidden'}>\n${carousel(sub, name, '  ', i === 0)}\n  </div>`;
         })
         .join('\n');
@@ -1503,7 +1620,12 @@ ${PHOTO_CSS}
           const pics = [{ img: m.img, alt: m.alt }, PHOTOS[i % PHOTOS.length], PHOTOS[(i + 2) % PHOTOS.length]].map(
             (x) => `<img src="${x.img}" width="${x.w ?? 800}" height="${x.h ?? 600}" alt="${x.alt}" loading="lazy" decoding="async">`,
           );
-          return [`  <div class="cargo-cg-card">`, carousel(pics, `Photos of the ${m.name}`, '    '), `    <div class="cargo-cg-body"><h3 class="cargo-name">${m.name}</h3><p class="cargo-sub">${m.sub}</p></div>`, `  </div>`].join('\n');
+          return [
+            `  <div class="cargo-cg-card">`,
+            carousel(pics, `Photos of the ${m.name}`, '    '),
+            `    <div class="cargo-cg-body"><h3 class="cargo-name">${m.name}</h3><p class="cargo-sub">${m.sub}</p></div>`,
+            `  </div>`,
+          ].join('\n');
         });
       return `<div class="${cls}-wrap">\n${cards.join('\n')}\n</div>`;
     }
@@ -1864,9 +1986,127 @@ ${PHOTO_CSS}
         console.error(`${state.pattern}: page script failed`, e);
       }
     }
+    wireOverlay();
     fitFrameHeight();
     checkFit();
     publish();
+  }
+
+  /* ---- the lightbox, opened over this page rather than inside the frame ---- */
+
+  // A fullscreen overlay is only fullscreen relative to ITS OWN document, and
+  // the preview's document is a frame sized to a simulated device. So the one
+  // pattern whose whole point is "this covers the page" demonstrated itself
+  // inside a box: the dialog filled the frame edge to edge, the trigger showed
+  // through the backdrop beside it, and on a short frame the dialog's own
+  // content overflowed and it grew a scrollbar. Reported as "contained in
+  // whatever container it's in and doesn't show a true example", and that is
+  // exactly what it was.
+  //
+  // The frame is not the problem and does not go: a media query asks a WINDOW,
+  // and the frame is the only way to preview a 768px window inside a 1700px
+  // one. What comes out is the DIALOG. Pressing the trigger in the preview
+  // opens the same markup over the whole demo page, which is what it does on a
+  // dealer page.
+  //
+  // The SNIPPET is untouched by any of this. What is copied still carries the
+  // pattern's own script, and that script still calls showModal() on the
+  // document it is pasted into - the right thing there, where the document IS
+  // the page. This is builder chrome, and it is the only place in this file
+  // where the preview deliberately does something the copied code does not.
+  let overlayWired = false;
+  let overlayHost = null;
+
+  function wireOverlay() {
+    const doc = sdoc();
+    if (!doc || overlayWired) return;
+    overlayWired = true;
+    // Capture, and stopPropagation: at the target itself, listeners run in
+    // REGISTRATION order whatever phase they asked for, and the snippet's own
+    // listener is bound to the button. A bubble-phase listener here would fire
+    // second, after the dialog had already opened inside the frame. The same
+    // ordering rule the folder-collapse fix turns on, used the other way round.
+    doc.addEventListener(
+      'click',
+      (e) => {
+        const btn = e.target.closest?.('[data-lb-open]');
+        if (!btn) return;
+        e.stopPropagation();
+        e.preventDefault();
+        openOverlay(btn);
+      },
+      { capture: true },
+    );
+  }
+
+  function closeOverlay() {
+    // destroy() before remove(), not instead of it. Every listener the engine
+    // adds rides one AbortController, and some of them are on the WINDOW - a
+    // detached instance left behind would still be measuring on every resize,
+    // once per lightbox opened.
+    overlayHost?.querySelector('.cs')?._cs?.destroy();
+    overlayHost?.remove();
+    overlayHost = null;
+  }
+
+  function openOverlay(trigger) {
+    const doc = sdoc();
+    const src = doc?.querySelector('.wb-live-wrap');
+    if (!src) return;
+    closeOverlay();
+
+    const host = document.createElement('div');
+    host.className = 'wb-overlay';
+    // The frame's own base, handed over rather than guessed. Every length in
+    // the card CSS is em by house rule, and the frame carries Bootstrap 3's
+    // html{font-size:10px} with a 14px body because that is what a storefront
+    // runs - so a clone taking THIS page's 15px Archivo would be a different
+    // size and a different typeface from the thing being previewed.
+    const fbody = swin().getComputedStyle(doc.body);
+    host.style.font = `${fbody.fontSize}/${fbody.lineHeight} ${fbody.fontFamily}`;
+
+    // The same text cssFor() wrote into the frame, not a second generation of
+    // it: parity is the rule this whole file is built on. Every rule in it is
+    // prefixed with .wb-live or .wb-live-wrap, so it reaches the clone and
+    // nothing else on this page.
+    const css = document.createElement('style');
+    css.textContent = cssFor('.wb-live');
+
+    const wrap = src.cloneNode(true);
+    // REMOVED from the clone, not hidden. Hidden is what the Patterns page does,
+    // because there the pattern's own script has bound a click to that button and
+    // taking it away is a TypeError on load. Nothing is bound to this copy - the
+    // click that opened the dialog happened on the real one, inside the frame -
+    // and `hidden` does not work here anyway: the pattern's own CSS gives
+    // .cargo-lb-open `display: inline-flex`, which outranks the UA's
+    // `[hidden] { display: none }`, so the button stayed visible and, in a host
+    // pinned to 0x0, overflowed into the top-left corner of the page.
+    wrap.querySelector('[data-lb-open]')?.remove();
+    host.append(css, wrap);
+    document.body.append(host);
+    overlayHost = host;
+
+    const dlg = wrap.querySelector('dialog');
+    dlg.showModal();
+    // AFTER showModal(). The gallery is data-cs-init="manual" precisely because
+    // a slider measured while its container is display:none has no width, and
+    // every slide comes out the same wrong size - built early it had no thumbs
+    // and no arrows at all.
+    const root = dlg.querySelector('.cs');
+    if (root && globalThis.CustomSlider) new globalThis.CustomSlider(root);
+    dlg.querySelector('[data-lb-close]')?.addEventListener('click', () => dlg.close());
+    // One listener for the Close button, Escape and a backdrop dismissal, since
+    // all three end in the same event. Focus goes back to the control that was
+    // pressed, which is in the frame - closing a modal has to return focus, and
+    // the element it came from is not in this document.
+    dlg.addEventListener(
+      'close',
+      () => {
+        closeOverlay();
+        trigger.focus();
+      },
+      { once: true },
+    );
   }
 
   // A value a colour row can offer as a swatch. Deliberately narrow: a card
@@ -2315,25 +2555,28 @@ ${PHOTO_CSS}
     // without anything being reshuffled - and the panel's reading order can be
     // checked at a glance instead of traced.
     //
-    // The two card-style folders lead, and sit together. They are also the two
-    // tallest - Brand carries a seven-thumbnail grid, This card style runs from
-    // 3 rows to 19 depending on the look - and the panel is `columns: 23rem`
-    // with `break-inside: avoid` (ui.css), so a column is at least as tall as
-    // the tallest folder in it. Leading with the tall pair fills the first
-    // columns and lets the short folders pack into what is left. Only 4 of the
-    // 17 patterns carry a look at all, so on the other 13 this list starts at
-    // "How many across" and none of that applies.
+    // The two card folders lead, and sit together. They are also the two
+    // tallest - This card style runs from 3 rows to 19 depending on the look -
+    // and the panel is `columns: 23rem` with `break-inside: avoid` (ui.css), so
+    // a column is at least as tall as the tallest folder in it. Leading with
+    // the tall pair fills the first columns and lets the short folders pack
+    // into what is left.
     //
     // Nothing starts closed, and nothing CAN be closed - see pane.js folder().
     // Advanced used to, and a setting nobody can see is a setting nobody knows
     // is there.
-    // Named for what it actually holds. On a vehicle pattern that is the OEM
-    // brand list and a choice of card; on the logo strip and the locations strip
-    // there is neither - no brand (they are not vehicles) and no picker (a
-    // family of one), just the card's own settings - so calling it "Brand and
-    // card style" there promised two controls that are not in it.
-    const vehicleFamily = family(LOOKS[state.look]?.content) === 'vehicle';
-    const style = p.look ? pane.folder(vehicleFamily ? 'Brand and card style' : 'The card') : null;
+    // Named for what it actually holds. There is no card-STYLE control in it
+    // any more - the card is what you picked in the rail - so on a pattern
+    // whose roster is vehicles this folder is the OEM brand list, and on one
+    // whose roster is not, it is the card's own settings and nothing else.
+    //
+    // Brandable is read off the CARD, not off a list of pattern ids: a brand
+    // preset swaps in that marque's cutouts, so it belongs on a card built to
+    // take a cutout and nowhere else. Handing Alfa Romeo's cutouts to a split
+    // photo card or a 3:5 tall tile is the crop mismatch this library spent a
+    // day naming, arriving through the one door that was still open.
+    const brandable = !!p.look && String(LOOKS[p.look].content).includes('cutout');
+    const style = p.look ? pane.folder(brandable ? 'Brand and cards' : 'The card') : null;
     const knobs = Object.keys(state.lookProps).length ? pane.folder('This card style') : null;
     const grid = pane.folder('How many across');
     const colors = pane.folder('Arrows and dots');
@@ -2365,6 +2608,27 @@ ${PHOTO_CSS}
         { min: 1, max: 8, step: 1, note: 'Whole cards only — use Peek to show a sliver of the next one.' },
       );
     }
+    // Rows, right under the counts, because it is the second half of the same
+    // question: how many cards fit before someone has to scroll. Two rows was a
+    // rail entry of its own until 2026-09-08 - the model bar with one extra key
+    // set - so choosing it meant leaving the pattern you had picked and losing
+    // every setting on it. Capped at 3: the slide is as tall as its column, and
+    // a four-high stack on a phone is taller than the screen.
+    if (rowsApply()) {
+      pane.int(
+        grid,
+        'Rows',
+        state.rows,
+        (n) => {
+          state.rows = n;
+          // Structural: a row change re-wraps the slides, so the editor and the
+          // readout have to be rebuilt rather than restyled.
+          render();
+        },
+        { min: 1, max: 3, step: 1, note: 'Cards stacked inside each slide. One slide is still one scroll stop, so the dots and the announced count do not change.' },
+      );
+    }
+
     // A crossfade ignores all three of these, and saying so is better than
     // hiding them: this file already carries a note that a greyed-out control
     // which will not explain itself was the mistake the previous version made,
@@ -2408,7 +2672,7 @@ ${PHOTO_CSS}
     // strip, which are not showing vehicles at all, so it is not drawn there.
     // Family, not a list of pattern ids, so a non-vehicle card added later is
     // covered the day it ships.
-    if (p.look && vehicleFamily) {
+    if (brandable) {
       const describe = () => {
         const b = BRANDS[state.brand];
         if (!b)
@@ -2479,54 +2743,34 @@ ${PHOTO_CSS}
         });
       });
       pane.note(style, describe());
-      // What this card will do to these pictures, when it is worth saying. Not
-      // a gate: modelsFor() swaps the roster under a brand preset or edited
-      // content, so a strip can legitimately end up holding photographs, and
+    }
+
+    // THERE IS NO CARD-STYLE PICKER, and there must not be one again
+    // (2026-09-08). A thumbnail grid of seven cards used to live here on every
+    // pattern that carried a look. It was wrong for a reason that only reads as
+    // obvious once it is written down: a look owns MARKUP, not values. All
+    // seven emit different element trees, so the control did not restyle the
+    // slider you had built, it replaced it - and it did that from INSIDE a
+    // structural pattern, which is how a tabbed bar ended up appearing to own a
+    // decision about cards. Every card is a rail entry now; the rail is where a
+    // card is chosen, and this folder holds settings that leave the markup
+    // alone.
+    //
+    // What the card in hand is FOR still belongs here - it is the sentence the
+    // rail's one-line blurb cannot fit.
+    if (p.look) {
+      pane.note(style, LOOKS[state.look].note ?? '');
+      // What this card will do to these pictures, when it is worth saying. It
+      // used to sit inside the brand block, which was where a mismatch could
+      // only arrive from a preset. Both other doors are still open - editing a
+      // slide's source size, and a preset on a card that crops - so the check
+      // belongs wherever there is a card, not wherever there is a brand.
+      //
+      // Never a gate: modelsFor() swaps the roster under a preset or edited
+      // content, so a strip can legitimately end up holding photographs and
       // hiding the option would sometimes hide the right answer.
       const warn = cropWarning(LOOKS[state.look], modelsFor(p));
       if (warn) pane.note(style, warn);
-    }
-
-    // Chosen visually: a dropdown reading "split photo card" helps nobody who
-    // does not already know they want it. The picker is a blade of its own
-    // (assets/tp-plugins.js); it draws the thumbnails, carries each style's
-    // description as a tooltip - comparing seven styles meant clicking all
-    // seven and watching the preview, because the description only appeared
-    // after choosing one - and calls back with the id.
-    // The picker offers the cards that could actually replace this one. A card
-    // is built for a kind of picture (looks.js `content`), and swapping a
-    // vehicle card for a logo panel is not a restyle, it is a different job -
-    // which is why those two are rail entries now. Family, not a hand-kept
-    // list, so a card added later lands in the right picker the day it ships.
-    // A family of one draws no picker at all: a grid of one button that cannot
-    // change anything is the "control that cannot move anything" problem the
-    // engine already refuses to ship.
-    const sameFamily = Object.fromEntries(Object.entries(LOOKS).filter(([, l]) => family(l.content) === family(LOOKS[state.look]?.content)));
-    if (p.look && Object.keys(sameFamily).length > 1) {
-      pane.looks(style, sameFamily, state.look, (id) => {
-        // Selecting what is already selected does nothing. It used to reset
-        // the ladder to the look's own default, so clicking the highlighted
-        // style on the two-row grid took 1/2/3/3 to 2/3/4/5 and the arrows
-        // and dots disappeared - a hand-set ladder thrown away by a click
-        // that looked like a no-op.
-        if (id === state.look) return;
-        state.brand = null;
-        applyLook(id);
-        // Each look brings the ladder that suits it: a split card at five
-        // across is unreadable, a cutout at one across is a waste.
-        state.perView = { ...LOOKS[id].perView };
-        rebuild(() => {
-          buildPanel();
-          // The editor too: which fields a card style reads is part of the
-          // style, so switching one has to add or remove the rows for them.
-          buildContent();
-          render();
-        });
-      });
-      // What the selected style is FOR. A thumbnail cannot say "this one is a
-      // logo strip, so it will look wrong under a model bar" - and that is
-      // exactly the question the navy panel raises the first time you pick it.
-      pane.note(style, LOOKS[state.look].note ?? '');
     }
 
     colourKnob(colors, 'Arrow colour', '--cs-arrow-fg', state.props);
@@ -2846,7 +3090,6 @@ ${PHOTO_CSS}
     valueKnob(adv, 'Control transition', '--cs-transition', state.props);
 
     // Not behaviour: this changes what the PAGE has to carry, not what the
-
   }
 
   /* ---- slide content ----------------------------------------------------- */
@@ -2893,6 +3136,15 @@ ${PHOTO_CSS}
     // /finance.aspx, /trade.aspx, /testdrive.aspx, /orderparts.aspx for the rest.
     href: { label: 'Link', type: 'text', hint: '/searchnew.aspx?Model=Tahoe — or /service.aspx, /finance.aspx, /trade.aspx' },
     video: { label: 'Opens a video', type: 'checkbox' },
+    // The address of the actual video, per slide. Empty ships the placeholder
+    // div and the comment telling you what to put in it, which is what the two
+    // video patterns did for everybody before this field existed - so an
+    // untouched roster emits exactly the markup it always has. Filled in, the
+    // snippet carries a real player.
+    //
+    // Type text, not url, for the same reason as the image box above: a url
+    // field marks every platform path invalid and paints nothing to say why.
+    videoSrc: { label: 'Video URL', type: 'text', hint: 'https://www.youtube.com/embed/… or a .mp4 — empty ships a placeholder for you to replace' },
   };
 
   // Which of the editor's keys a card look's markup() actually reads. The look
@@ -3019,7 +3271,7 @@ ${PHOTO_CSS}
   // card style, with the wrong class name, and nothing on the page saying why.
   // Same shape as the content store, keyed by pattern for the same reason.
   const SKEY = 'cs-settings';
-  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'name', 'count', 'panes', 'dotsOver', 'dotsWere'];
+  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'name', 'count', 'rows', 'panes', 'dotsOver', 'dotsWere'];
 
   // Same split as the slides: what is on screen is the session's, what is in
   // localStorage is what Keep was pressed on.
@@ -3192,6 +3444,10 @@ ${PHOTO_CSS}
     // the preset's own, undoing every edit made after picking it.
     if (BRANDS[s.brand]) state.brand = s.brand;
     if (Number.isInteger(s.count) && s.count >= 1 && s.count <= 16) state.count = s.count;
+    // Clamped to the knob's own range, and only where stacking means anything:
+    // a stored 2 must not survive onto a gallery, where the thumb strip counts
+    // slides and a column of two would announce half as many photos as it holds.
+    if (Number.isInteger(s.rows) && s.rows >= 1 && s.rows <= 3 && rowsApply()) state.rows = s.rows;
   }
 
   // The roster as it stands, ignoring any edits — the example content, or the
@@ -3211,6 +3467,13 @@ ${PHOTO_CSS}
     }
     return state.content;
   }
+
+  // A debounced buildPanel(), for the one caller that fires per keystroke.
+  let repanelT = null;
+  const repanel = () => {
+    clearTimeout(repanelT);
+    repanelT = setTimeout(buildPanel, 250);
+  };
 
   function buildContent() {
     if (!contentBox) return;
@@ -3319,6 +3582,14 @@ ${PHOTO_CSS}
           // Deliberately NOT rebuilding this editor: it would replace the field
           // being typed into and drop the caret on every keystroke.
           render();
+          // The settings panel is built once and does not listen to the editor,
+          // and one thing in it depends on these rows: whether this card's crop
+          // will actually trim the pictures it is given. Retyping a source size
+          // changes that answer, so the sentence has to be rebuilt or the panel
+          // sits there saying nothing about a crop that now costs the sides of
+          // every photo. Only w and h, and only after a pause - typing 300 is
+          // one rebuild rather than three.
+          if (k === 'w' || k === 'h') repanel();
         });
         card.append(control(f.label, input));
       }
@@ -3662,17 +3933,16 @@ ${PHOTO_CSS}
     // style per card, and every one of those seven links used to say
     // #modelbar - so six of the seven opened whichever style was last used and
     // read as a broken link.
-    const [id, look] = location.hash.slice(1).split('/');
+    // `#pattern`, and nothing after it. The hash used to take a second segment
+    // naming a card style - `#modelbar/wordmark` - which was the deep-link half
+    // of the picker. It went with the picker on 2026-09-08: the wordmark strip
+    // IS a pattern, so its link is `#wordmark`. A stale two-segment link still
+    // opens the pattern it names rather than 404ing, because everything after
+    // the first slash is now dropped.
+    const [id] = location.hash.slice(1).split('/');
     loadPattern(PATTERNS[id] ? id : 'modelbar');
     restoreSettings();
     restoreContent();
-    // After restoreSettings, so a style named in the link beats the remembered
-    // one. Same two steps the style buttons take: each look brings the ladder
-    // that suits it.
-    if (look && LOOKS[look] && PATTERNS[state.pattern].look) {
-      applyLook(look);
-      state.perView = { ...LOOKS[look].perView };
-    }
     for (const x of nav.querySelectorAll('button')) x.setAttribute('aria-current', String(x.dataset.go === state.pattern));
     buildPanel();
     buildContent();

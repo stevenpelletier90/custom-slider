@@ -25,15 +25,15 @@ an existing component serve this need as a variant?) they are components.
 
 **Content type is encoded in the CSS, and only there:**
 
-| Look | Content | Deciding declaration |
-| --- | --- | --- |
-| tile | cutout | `object-fit: contain`, `aspect-ratio: auto`, `--plate-bg` behind transparency |
-| wordmark | cutout | `object-fit: contain`, no `aspect-ratio` at all |
-| vcard | photo | `aspect-ratio: 4/3` + `object-fit: cover` |
-| split | photo | source: "wants a photograph, not a transparent cutout on a coloured panel" |
-| portrait | photo | `3/5` + `cover`; source records drawing it on cutouts as a past mistake |
-| logo | mark | source: "It draws MARKS, so it is drawn with marks" |
-| location | place | source: "Not a vehicle card at all" |
+| Look     | Content | Deciding declaration                                                          |
+| -------- | ------- | ----------------------------------------------------------------------------- |
+| tile     | cutout  | `object-fit: contain`, `aspect-ratio: auto`, `--plate-bg` behind transparency |
+| wordmark | cutout  | `object-fit: contain`, no `aspect-ratio` at all                               |
+| vcard    | photo   | `aspect-ratio: 4/3` + `object-fit: cover`                                     |
+| split    | photo   | source: "wants a photograph, not a transparent cutout on a coloured panel"    |
+| portrait | photo   | `3/5` + `cover`; source records drawing it on cutouts as a past mistake       |
+| logo     | mark    | source: "It draws MARKS, so it is drawn with marks"                           |
+| location | place   | source: "Not a vehicle card at all"                                           |
 
 **Every look-taking pattern ships cutouts.** Verified at the byte level:
 `chrome-*.webp` carry the VP8X alpha flag; `vehicle-*.png` are PNG colour-type 6

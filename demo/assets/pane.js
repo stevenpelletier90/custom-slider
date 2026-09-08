@@ -194,9 +194,9 @@
   // exists a separator keeps the adapter loadable.
   const note = (parent, textContent) => (CARGO.tpPlugins?.some((p) => p.id === 'note') ? parent.addBlade({ view: 'note', text: textContent }) : parent.addBlade({ view: 'separator' }));
 
-  // The seven card-style thumbnails. The `lookpicker` blade comes from
-  // tp-plugins.js; it owns its own click handling and calls back on pick.
-  const looks = (parent, LOOKS, current, onPick) => parent.addBlade({ view: 'lookpicker', looks: LOOKS, current, onPick });
+  // A looks() helper stood here, adding the `lookpicker` blade. It went on
+  // 2026-09-08: there is no card-style picker anywhere in the builder, because
+  // every card is its own rail entry.
 
   CARGO.pane = {
     create,
@@ -211,7 +211,6 @@
     bool,
     flag,
     note,
-    looks,
     get pane() {
       return pane;
     },
