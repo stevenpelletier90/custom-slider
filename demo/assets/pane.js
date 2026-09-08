@@ -40,32 +40,25 @@
     pane = null;
   };
 
-  // A folder remembers whether it was open. buildPanel() throws the pane away
-  // and builds a new one on every structural change - a pattern, a look, a
-  // preset, a switch that adds a row - so without this, opening Advanced and
-  // then picking a card style closed it again. Keyed by title rather than by
-  // position, because the folders a pattern gets differ.
-  const KEY = 'cs-folders';
-  const remembered = () => {
-    try {
-      // Parsed, then checked: a stored "null" or "3" is valid JSON and neither
-      // is a map. null in particular would throw on the very next property
-      // read and take the whole panel build down with it.
-      const v = JSON.parse(localStorage.getItem(KEY) ?? '{}');
-      return v && typeof v === 'object' ? v : {};
-    } catch {
-      return {};
-    }
-  };
-  const folder = (title, opts = {}) => {
-    const f = pane.addFolder({ title, expanded: remembered()[title] ?? opts.expanded ?? true });
-    f.on('fold', (ev) => {
-      try {
-        localStorage.setItem(KEY, JSON.stringify({ ...remembered(), [title]: ev.expanded }));
-      } catch {
-        /* storage blocked: the fold still works, it is just not remembered */
-      }
-    });
+  // A folder is a heading, not a drawer: every section is open, always, and
+  // none of them can be shut. A section you cannot see is a section whose
+  // settings you do not know are there, and the panel is the whole point of the
+  // page. The fold used to be remembered in localStorage['cs-folders'] so a
+  // rebuild would not reopen what you closed; with nothing left to close, that
+  // store is gone too - a stale one would re-collapse a folder that no longer
+  // has a toggle to open it again, which is unreachable from the UI.
+  //
+  // Tweakpane 4.0.5 has no say in this: FolderParams is { title, expanded? } and
+  // nothing else, and FolderController wires the click in its constructor
+  // unconditionally. So the click is STARVED, not unbound - ui.css puts
+  // `pointer-events: none` on .tp-fldv_b, which kills the hover styling with it.
+  // A same-element capture listener would not do: at the target, listeners run
+  // in registration order whatever their phase, and Tweakpane's is registered
+  // first. tabindex here for the other half of it, since the button is a real
+  // <button> and would otherwise still take a Tab and an Enter.
+  const folder = (title) => {
+    const f = pane.addFolder({ title, expanded: true });
+    f.element.querySelector('.tp-fldv_b')?.setAttribute('tabindex', '-1');
     return f;
   };
 

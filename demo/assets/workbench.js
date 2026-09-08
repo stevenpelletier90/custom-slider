@@ -2260,22 +2260,34 @@ ${PHOTO_CSS}
     const scrolling = !fading && state.data['data-cs-gallery'] == null;
 
     // Every folder is created here, in the order a slider actually gets built:
-    // what am I making (a brand, a card style), how many fit, what that card
-    // looks like, then the controls, then how it behaves. Rarely-touched things
-    // come last and start closed. The order lives in this one list rather than
-    // in the order the code below happens to add rows, so a row added later
-    // lands in the right folder without anything being reshuffled - and the
-    // panel's reading order can be checked at a glance instead of traced.
+    // what am I making, what that card looks like, how many fit, then the
+    // controls, then how it behaves, and the rarely-touched things last. The
+    // order lives in this one list rather than in the order the code below
+    // happens to add rows, so a row added later lands in the right folder
+    // without anything being reshuffled - and the panel's reading order can be
+    // checked at a glance instead of traced.
+    //
+    // The two card-style folders lead, and sit together. They are also the two
+    // tallest - Brand carries a seven-thumbnail grid, This card style runs from
+    // 3 rows to 19 depending on the look - and the panel is `columns: 23rem`
+    // with `break-inside: avoid` (ui.css), so a column is at least as tall as
+    // the tallest folder in it. Leading with the tall pair fills the first
+    // columns and lets the short folders pack into what is left. Only 4 of the
+    // 17 patterns carry a look at all, so on the other 13 this list starts at
+    // "How many across" and none of that applies.
+    //
+    // Nothing starts closed, and nothing CAN be closed - see pane.js folder().
+    // Advanced used to, and a setting nobody can see is a setting nobody knows
+    // is there.
     const style = p.look ? pane.folder('Brand and card style') : null;
-    const grid = pane.folder('How many across');
     const knobs = Object.keys(state.lookProps).length ? pane.folder('This card style') : null;
+    const grid = pane.folder('How many across');
     const colors = pane.folder('Arrows and dots');
     const beh = pane.folder('Behaviour');
-    const names = p.panes ? pane.folder('Tab names', { expanded: false }) : null;
+    const names = p.panes ? pane.folder('Tab names') : null;
     // Two engine properties nobody sets twice a year, and a switch about the
-    // PAGE rather than the slider. Closed by default; pane.folder remembers it
-    // if you open it.
-    const adv = pane.folder('Advanced', { expanded: false });
+    // PAGE rather than the slider. Last, because rare, not because hidden.
+    const adv = pane.folder('Advanced');
 
     for (const key of ['base', ...BPS]) {
       if (state.perView[key] == null) continue;
@@ -3471,29 +3483,88 @@ ${PHOTO_CSS}
 
   // The engine files, fetched at click time from the very files this page is
   // running - so what lands on the clipboard can never be a stale copy.
-  const ENGINE = { css: '../dist/custom-slider.min.css', js: '../dist/custom-slider.min.js' };
-  const grab = (k) => fetch(ENGINE[k]).then((r) => r.text());
+  //
+  // data-file names the FILE, never a kind. It used to say "css"/"js" against a
+  // map holding only the .min pair, and the download built the name back up as
+  // `custom-slider.${kind}` - so Download on the custom-slider.min.css row
+  // saved the MINIFIED bytes under the READABLE name. Upload that to the shared
+  // folder and custom-slider.css there holds minified code, with nothing on the
+  // page or in the folder to say so. One string now picks the bytes AND names
+  // the file, so the two cannot disagree again.
+  const DIST = ['custom-slider.css', 'custom-slider.js', 'custom-slider.min.css', 'custom-slider.min.js'];
+  const isJs = (name) => name.endsWith('.js');
+  const wait = (ms) => new Promise((done) => setTimeout(done, ms));
+
+  // Opened by double-click over file:// - which the demo has to support, and is
+  // why these are classic scripts - both engines treat the folder as an opaque
+  // origin and fetch rejects with a TypeError. Unhandled, the button just sat
+  // there doing nothing.
+  const grab = (name) =>
+    fetch(`../dist/${name}`)
+      .then((r) => r.text())
+      .catch(() => null);
+
+  // Revoked on a timer, not on the next line. WHATWG html#954: nothing tells
+  // the page a download has started, and revoking underneath one killed blob
+  // downloads outright before Firefox 50 (bug 1282407). Revoking a URL that is
+  // already finished with does nothing, so the wait costs nothing either.
+  const save = (name, text) => {
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(new Blob([text], { type: isJs(name) ? 'text/javascript' : 'text/css' }));
+    a.download = name;
+    a.click();
+    setTimeout(() => URL.revokeObjectURL(a.href), 30000);
+  };
 
   for (const btn of document.querySelectorAll('[data-file]')) {
     btn.addEventListener('click', async () => {
-      const kind = btn.dataset.file;
-      const text = await grab(kind);
-      if (btn.dataset.act === 'copy') return copyText(btn, kind === 'js' ? `<script>\n${text}\n</script>` : `<style>\n${text}\n</style>`);
+      const name = btn.dataset.file;
+      const text = await grab(name);
+      if (text === null) return flash(btn, 'Open over HTTP');
+      if (btn.dataset.act === 'copy') return copyText(btn, isJs(name) ? `<script>\n${text}\n</script>` : `<style>\n${text}\n</style>`);
       if (btn.dataset.act === 'view') {
         const box = $('wb-file-view');
         box.hidden = false;
-        box.querySelector('code').innerHTML = kind === 'css' ? globalThis.CARGO.hl.css(text) : globalThis.CARGO.hl.js(text);
+        box.querySelector('code').innerHTML = isJs(name) ? globalThis.CARGO.hl.js(text) : globalThis.CARGO.hl.css(text);
         box.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         return;
       }
-      const a = document.createElement('a');
-      a.href = URL.createObjectURL(new Blob([text], { type: kind === 'js' ? 'text/javascript' : 'text/css' }));
-      a.download = `custom-slider.${kind}`;
-      a.click();
-      URL.revokeObjectURL(a.href);
+      save(name, text);
       flash(btn, 'Downloaded');
     });
   }
+
+  // All four in one press, because all four go in the same folder and a folder
+  // missing one of them half-works. Chromium allows the first download of a
+  // gesture and prompts for the rest (ALLOW_ONE_DOWNLOAD -> PROMPT_BEFORE_
+  // DOWNLOAD, download_request_limiter.h), so "Download multiple files?" on the
+  // second file is the browser working, not a fault - the note under the button
+  // says so. The gap between saves is NOT what answers that prompt, which is
+  // gesture-based and no delay avoids: it is there because a run of back-to-back
+  // anchor clicks is reported to drop the later ones, and four small files can
+  // afford to wait. A busy flag rather than `disabled`, which has no style here.
+  let saving = false;
+  $('wb-download-all').addEventListener('click', async (e) => {
+    if (saving) return;
+    saving = true;
+    const btn = e.currentTarget;
+    const label = btn.textContent;
+    for (const [i, name] of DIST.entries()) {
+      btn.textContent = `Saving ${i + 1} of ${DIST.length}…`;
+      const text = await grab(name);
+      // Restored before the flash, or flash captures "Saving 1 of 4…" as the
+      // text to put back and the button keeps it.
+      btn.textContent = label;
+      if (text === null) {
+        saving = false;
+        return flash(btn, 'Open over HTTP');
+      }
+      save(name, text);
+      await wait(150);
+    }
+    saving = false;
+    flash(btn, 'All four saved');
+  });
 
   // This script is inline-loaded before the deferred engine, so wait for it.
   const boot = () => {

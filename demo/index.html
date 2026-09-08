@@ -287,6 +287,38 @@
               serves the old <code>dl-carousel</code> engine, and a slider linked to it renders as a plain list.
             </div>
             <p style="margin: 0.8rem 0 0"><button type="button" class="ui-btn" id="wb-copy-tags">Copy both tags</button></p>
+            <!-- Download used to live only in the OTHER column - the one headed
+                 "for a site where you can't upload files" - and only for the
+                 .min pair. So the person who CAN upload had no way to get the
+                 readable build at all, and the one Download there handed over
+                 minified bytes named custom-slider.css. All four are here now,
+                 each button named for the file it saves. -->
+            <div class="ui-where">
+              <b>Get the files to upload</b>
+              All four go in that one folder. <code>custom-slider.css</code> and <code>custom-slider.js</code> are the readable build, there to be opened and read; the <code>.min</code> pair is the
+              same code minified, and is the pair the tags above link.
+            </div>
+            <div class="ui-file">
+              <code>custom-slider.css</code>
+              <button type="button" class="ui-btn" data-file="custom-slider.css" data-act="download">Download</button>
+            </div>
+            <div class="ui-file">
+              <code>custom-slider.js</code>
+              <button type="button" class="ui-btn" data-file="custom-slider.js" data-act="download">Download</button>
+            </div>
+            <div class="ui-file">
+              <code>custom-slider.min.css</code>
+              <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="download">Download</button>
+            </div>
+            <div class="ui-file">
+              <code>custom-slider.min.js</code>
+              <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="download">Download</button>
+            </div>
+            <p style="margin: 0.8rem 0 0"><button type="button" class="ui-btn" id="wb-download-all">Download all four</button></p>
+            <div class="ui-where">
+              <b>Four files, one press</b>
+              The browser asks “Download multiple files?” on the second one — allow it, or take them one at a time above. Each saves under its own name; upload all four to that folder as they are.
+            </div>
           </div>
 
           <div>
@@ -298,15 +330,15 @@
             <p>For a site where you can’t upload files. What you copy is today’s build — a pasted copy stays on that build, so it has to be pasted again after each update.</p>
             <div class="ui-file">
               <code>custom-slider.min.css</code>
-              <button type="button" class="ui-btn" data-file="css" data-act="copy">Copy</button>
-              <button type="button" class="ui-btn" data-file="css" data-act="view">View</button>
-              <button type="button" class="ui-btn" data-file="css" data-act="download">Download</button>
+              <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="copy">Copy</button>
+              <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="view">View</button>
+              <button type="button" class="ui-btn" data-file="custom-slider.min.css" data-act="download">Download</button>
             </div>
             <div class="ui-file">
               <code>custom-slider.min.js</code>
-              <button type="button" class="ui-btn" data-file="js" data-act="copy">Copy</button>
-              <button type="button" class="ui-btn" data-file="js" data-act="view">View</button>
-              <button type="button" class="ui-btn" data-file="js" data-act="download">Download</button>
+              <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="copy">Copy</button>
+              <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="view">View</button>
+              <button type="button" class="ui-btn" data-file="custom-slider.min.js" data-act="download">Download</button>
             </div>
             <div class="ui-where">
               <b>Where these go</b>

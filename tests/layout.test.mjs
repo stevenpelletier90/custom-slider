@@ -58,9 +58,49 @@ const pct = (s) => parseFloat(/(\d+)%/.exec(s ?? '')?.[1] ?? 'NaN');
 test('folders come in decision order on the model bar', async ({ browser }) => {
   const { page, errors } = await openBuilder(browser, 1440);
   await pick(page, 'modelbar');
-  assert.deepEqual(await titles(page), ['Brand and card style', 'How many across', 'This card style', 'Arrows and dots', 'Behaviour', 'Advanced']);
-  assert.equal(await expanded(page, 'Advanced'), false, 'Advanced starts closed');
-  assert.equal(await expanded(page, 'Brand and card style'), true);
+  // The two card-style folders lead and sit together; the rest follow the order
+  // a slider gets built, rare last.
+  assert.deepEqual(await titles(page), ['Brand and card style', 'This card style', 'How many across', 'Arrows and dots', 'Behaviour', 'Advanced']);
+  assert.deepEqual(errors, []);
+});
+
+// Advanced used to start closed, and Tab names with it. A setting nobody can
+// see is a setting nobody knows is there, so every section is open and none of
+// them can be shut. Tweakpane offers no non-collapsible folder - the fold is
+// starved by pointer-events in ui.css and tabindex in pane.js - so this checks
+// the outcome a person gets rather than the mechanism: click each title bar and
+// none of them closes.
+test('every section is open, and nothing can close one', async ({ browser }) => {
+  const { page, errors } = await openBuilder(browser, 1440);
+  for (const id of ['modelbar', 'tabs']) {
+    await pick(page, id);
+    for (const title of await titles(page)) {
+      assert.equal(await expanded(page, title), true, `${id}: "${title}" is closed on load`);
+      // force:true because pointer-events: none is exactly what is being
+      // tested - Playwright would otherwise refuse the click and pass by luck.
+      await page.locator(`#wb-settings .tp-fldv:has(.tp-fldv_t:text-is("${title}")) .tp-fldv_b`).first().click({ force: true });
+      await page.waitForTimeout(250);
+      assert.equal(await expanded(page, title), true, `${id}: clicking "${title}" closed it`);
+    }
+  }
+  // The fold store is gone with the fold. A stale one would re-collapse a
+  // folder that no longer has a toggle to open it again.
+  assert.equal(await page.evaluate(() => localStorage.getItem('cs-folders')), null, 'something still writes cs-folders');
+  assert.deepEqual(errors, []);
+});
+
+// The title bar is a real <button> that no longer does anything, so it must not
+// take a Tab. Nothing else in the pane may lose its place in the tab order.
+test('a title bar is not in the tab order', async ({ browser }) => {
+  const { page, errors } = await openBuilder(browser, 1440);
+  await pick(page, 'modelbar');
+  const tabbable = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-fldv_b')].map((b) => b.getAttribute('tabindex')));
+  assert.ok(tabbable.length, 'no folder title bars found at all');
+  assert.deepEqual(
+    tabbable.filter((t) => t !== '-1'),
+    [],
+    'a folder title bar is still reachable by Tab',
+  );
   assert.deepEqual(errors, []);
 });
 

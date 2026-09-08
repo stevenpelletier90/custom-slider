@@ -1375,10 +1375,16 @@ body {
   font-stretch: 112%;
 }
 
+/* align-items, because a grid item defaults to `stretch`: the two cards were
+   drawn the same height whatever was in them, and once the upload column grew
+   the four file rows the paste column was padded from its own 370px out to
+   911px - half a card of empty white with a border round it. `start` lets each
+   card stop where its content does. */
 .ui-get {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(min(21rem, 100%), 1fr));
   gap: 1rem;
+  align-items: start;
   margin-block-start: 1.1rem;
 }
 
@@ -2097,4 +2103,21 @@ code {
 #wb-settings .tp-fldv {
   -webkit-column-break-inside: avoid;
   break-inside: avoid;
+}
+
+/* Every section stays open, so the fold has to go - see the note on folder() in
+   pane.js for why this is CSS and not an option. Tweakpane 4.0.5 offers no
+   non-collapsible folder, and its click listener is registered on this button
+   in the controller's constructor, so the click is starved rather than unbound.
+   pointer-events takes the hover styling with it, which is right: nothing here
+   responds any more. pane.js puts tabindex="-1" on the same button, because it
+   is a real <button> and would otherwise still answer a Tab and an Enter. */
+#wb-settings .tp-fldv_b {
+  pointer-events: none;
+  cursor: default;
+}
+
+/* The chevron. It only ever meant "this opens and closes". */
+#wb-settings .tp-fldv_m {
+  display: none;
 }

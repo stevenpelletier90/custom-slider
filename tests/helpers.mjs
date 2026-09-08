@@ -59,18 +59,11 @@ export async function copyParts(page) {
   return { css, html, js, jsHidden };
 }
 
-// A folder that starts closed - Tab names, Advanced - keeps its rows in the
-// DOM but out of reach: a hidden input can still be READ, never filled or
-// clicked. Open it the way a person would, and only when it is shut, so a
-// second call does not close it again. pane.folder remembers the state, so
-// this survives the rebuild a pattern switch does.
-export const openFolder = async (page, title) => {
-  const folder = page.locator(`#wb-settings .tp-fldv:has(.tp-fldv_t:text-is("${title}"))`).first();
-  if (await folder.evaluate((f) => f.classList.contains('tp-fldv-expanded'))) return;
-  await folder.locator('.tp-fldv_b').first().click();
-  // The fold animates its height; a row is not clickable until it settles.
-  await page.waitForTimeout(250);
-};
+// There used to be an openFolder() here, because Tab names and Advanced
+// started closed and a closed folder keeps its rows in the DOM but out of
+// reach - a hidden input can still be READ, never filled or clicked. Every
+// folder is open now and none of them can be shut, so a test reaches any row
+// the moment the panel is built. tests/pane.test.mjs is what holds that.
 
 // A row by its label, in the pane. Tweakpane commits a text input on change
 // (Enter or blur), not on every keystroke, so the fill is followed by Enter.

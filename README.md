@@ -346,7 +346,10 @@ for up to three weeks.
 1. Run `npm run build`, then `npm run size`, and confirm the gate is green.
 2. Upload all four files from `dist/` into the folder above. The readable
    pair overwrites the old dl-carousel files under the same names; the `.min`
-   pair is new.
+   pair is new. The demo's install panel has a Download for each of the four
+   and a **Download all four** button, under "Link to the files" — the same
+   bytes as `dist/`, saved under their own names, if that is easier to reach
+   than the repo.
 3. Verify with a cache-busted request, not a browser reload:
    `curl -s ".../custom-slider.min.css?cb=$RANDOM" | head -c 40` should begin
    `.cs{--cs-per-view` — if it still says `.dl-carousel`, the upload has not
