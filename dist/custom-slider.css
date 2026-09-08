@@ -17,6 +17,7 @@
   --cs-focus: #1a5fb4;
   --cs-fade-ms: 500ms;
   --cs-transition: 250ms ease-in-out;
+  --cs-arrow-at: 0.5;
   position: relative;
   padding-bottom: var(--cs-controls-space);
 }
@@ -252,7 +253,7 @@
   opacity: 0;
   transition: opacity var(--cs-fade-ms, 500ms) ease;
 }
-.cs[data-cs-fade-on] .cs-slide.is-current {
+.cs[data-cs-fade-on] .cs-slide.cs-slide--current {
   opacity: 1;
 }
 @media (prefers-reduced-motion: reduce) {

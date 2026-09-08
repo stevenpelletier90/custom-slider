@@ -1022,6 +1022,10 @@ ${PHOTO_CSS}
     '--cs-focus': '#1a5fb4',
     '--cs-fade-ms': '500ms',
     '--cs-transition': '250ms ease-in-out',
+    // Where the arrows sit down the strip; 0.5 is centred. Declared in the
+    // engine stylesheet as of 2026-09-08 - it was previously only a var()
+    // fallback at its use site, so nothing could see it was a knob at all.
+    '--cs-arrow-at': '0.5',
   };
 
   const knobDefault = (key) => LOOKS[state.look]?.settings?.[key] ?? PATTERNS[state.pattern].props?.[key] ?? SHARED_DEFAULTS[key] ?? ENGINE_DEFAULTS[key];

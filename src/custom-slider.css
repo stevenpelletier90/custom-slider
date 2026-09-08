@@ -40,6 +40,13 @@
      container and janks the strip mid-gesture. */
   --cs-transition: 250ms ease-in-out;
 
+  /* Where the arrows sit down the strip: 0.5 is centred, 0.4 rides higher over
+     a card whose text sits low. Declared rather than left to the var() fallback
+     at the use site, because the Reference page tabulates the properties by
+     READING this block out of the shipped stylesheet - a knob that exists only
+     as a fallback is a knob nobody is told about. */
+  --cs-arrow-at: 0.5;
+
   position: relative;
 
   /* Dots (or the gallery thumb strip) are injected later, absolutely
@@ -385,7 +392,7 @@
 
 /* Stacked crossfade for 1-up heroes. The track stops being a scroll container
    entirely; slides pile up in one grid cell so the tallest defines the height
-   (no absolute positioning = no collapsed box, no CLS). JS owns .is-current. */
+   (no absolute positioning = no collapsed box, no CLS). JS owns .cs-slide--current. */
 .cs[data-cs-fade-on] .cs-track {
   display: grid;
   padding: 0;
@@ -399,7 +406,7 @@
   transition: opacity var(--cs-fade-ms, 500ms) ease;
 }
 
-.cs[data-cs-fade-on] .cs-slide.is-current {
+.cs[data-cs-fade-on] .cs-slide.cs-slide--current {
   opacity: 1;
 }
 

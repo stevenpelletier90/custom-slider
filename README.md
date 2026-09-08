@@ -326,6 +326,25 @@ replacing it = replacing the contents of the two dist files, with zero site edit
    `goTo/next/prev/pause/play/destroy` + `CustomSlider.autoInit`.
 4. Keep the accessibility behaviors listed above — they are part of the contract,
    not this engine's private choices.
+5. Write the same attributes and classes back onto the page. The engine puts
+   `data-cs-fits` on the root when every slide already fits (and removes it
+   again on `destroy()`), `data-cs-gallery` / `data-cs-fade-on` on the root to
+   let the CSS reserve space, and `data-cs-draggable` / `data-cs-dragging` on
+   the track for the grab cursor. Its generated controls are `.cs-controls`,
+   `.cs-arrow` + `.cs-arrow--prev` / `--next`, `.cs-pause`, `.cs-dots`,
+   `.cs-dot` + `.cs-dot--current`, `.cs-status.cs-sr-only`, `.cs-thumbs`,
+   `.cs-thumb`.
+6. **The one class it writes onto markup the site authored is
+   `cs-slide--current`**, on the visible slide in fade mode. It was a bare
+   `is-current` until 2026-09-08 — renamed in the last window before the
+   contract froze, because a name with no `cs-` stem can collide with whatever
+   the site's own theme already calls things, and the collision shows as a
+   slide stuck visible or invisible on their page with nothing to explain it.
+   A replacement engine must use the same name; nothing else it writes may land
+   outside its own generated elements.
+
+Everything in 5 and 6 was undocumented until 2026-09-08. Undocumented does not
+mean unfrozen — a site can already be relying on it.
 
 ## Putting it on a DealerOn site
 
@@ -455,23 +474,24 @@ Rebuild and re-commit `dist/` whenever `src/` changes.
 
 ## Verification checklist (run before shipping changes)
 
-1. `npm run size` and `npm run validate` pass, and `npm test` is green — 180
-   browser checks under `@playwright/test` of what the copy panel hands over,
-   about 50 seconds. They cover what a linter cannot: that the pasted code
-   still lays itself out, and lays itself out the way the preview did. They
-   are not a substitute for the rest of this list, which is the sweep across
-   every pattern and width.
+1. `npm run size` and `npm run validate` pass, and `npm test` is green — 210
+   browser checks under `@playwright/test`, about 50 seconds. They cover what a
+   linter cannot: that the pasted code still lays itself out, and lays itself
+   out the way the preview did. **Steps 3, 4, 6 and 7 below now run in there
+   too** (`tests/engine.test.mjs`), so what is left in this list is the part a
+   machine cannot answer.
 2. Demo page: Lighthouse accessibility = 100, performance ≈ 100, CLS = 0.
-3. Keyboard-only: tab order is pause → prev → next → dots → cards; gallery
-   tabs respond to Arrow/Home/End; focus is never trapped or lost.
-4. Autoplay: pauses on hover, stops on focus/drag, button restarts, nothing
-   rotates under emulated `prefers-reduced-motion`.
+3. Keyboard-only: **the tab order is asserted by `npm test`**. Still by hand:
+   gallery tabs respond to Arrow/Home/End, and focus is never trapped or lost.
+4. Autoplay: **focus stopping it, the button restarting it, and reduced motion
+   are asserted by `npm test`**. Still by hand: pauses on hover, stops on drag.
 5. Screenshots at 375 / 768 / 1280 look right; slides-per-view matches the
    breakpoints.
-6. With JavaScript disabled the strips still scroll and all content is visible.
+6. With JavaScript disabled the strips still scroll and all content is visible
+   — **asserted by `npm test`** on authored markup.
 7. Widen until every slide fits: the arrows and dots disappear (the root gains
-   `data-cs-fits`), and narrowing brings them back. Controls that cannot move
-   anything must not be focusable.
+   `data-cs-fits`) and controls that cannot move anything are not focusable —
+   **asserted by `npm test`**. Worth an eye at a real window anyway.
 8. Paste parity: drop a generated snippet into a page with hostile typography
    (serif, 19px, line-height 2.1) at the same container width. The rendered
    slide must match the preview to the pixel — a mismatch means a card is

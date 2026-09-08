@@ -576,6 +576,11 @@ export class CustomSlider {
     // than at build time because --cs-per-view is CSS, so a resize across a
     // breakpoint can make a strip fit (or stop fitting) at any moment.
     const fits = this._stops().length <= 1;
+    // Registered, not just toggled: destroy() removes only what it finds in
+    // _addedRootAttrs, and this was the one root attribute written outside
+    // _setRootAttr - so a destroyed slider left data-cs-fits behind on the
+    // dealer's element, still hiding the controls of whatever was built next.
+    if (fits && !this._addedRootAttrs.includes('data-cs-fits')) this._addedRootAttrs.push('data-cs-fits');
     this.root.toggleAttribute('data-cs-fits', fits);
     if (this.prevBtn) this.prevBtn.hidden = this.nextBtn.hidden = fits;
     if (this.dots) this.dots.hidden = fits;
@@ -592,7 +597,14 @@ export class CustomSlider {
     // mode. Never inert a slide holding focus (it would strand the caret).
     this.slides.forEach((sl, i) => {
       const on = i === this.current;
-      sl.classList.toggle('is-current', on);
+      // cs-slide--current, not a bare `is-current`. This is the ONE class the
+      // engine puts on markup the dealer authored, and `is-current` is a name
+      // any site theme or framework may already be using for something else -
+      // a collision that would show as a slide stuck visible or invisible, on
+      // their page, with nothing here to say why. Every other engine class
+      // carries the cs- stem; this one was the exception. Renamed 2026-09-08,
+      // in the last window before the contract froze.
+      sl.classList.toggle('cs-slide--current', on);
       if (on || sl.contains(document.activeElement)) sl.removeAttribute('inert');
       else sl.setAttribute('inert', '');
     });

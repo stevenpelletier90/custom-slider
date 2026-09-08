@@ -440,6 +440,7 @@
     }
     _updateUI() {
       const fits = this._stops().length <= 1;
+      if (fits && !this._addedRootAttrs.includes("data-cs-fits")) this._addedRootAttrs.push("data-cs-fits");
       this.root.toggleAttribute("data-cs-fits", fits);
       if (this.prevBtn) this.prevBtn.hidden = this.nextBtn.hidden = fits;
       if (this.dots) this.dots.hidden = fits;
@@ -452,7 +453,7 @@
     _updateFade() {
       this.slides.forEach((sl, i) => {
         const on = i === this.current;
-        sl.classList.toggle("is-current", on);
+        sl.classList.toggle("cs-slide--current", on);
         if (on || sl.contains(document.activeElement)) sl.removeAttribute("inert");
         else sl.setAttribute("inert", "");
       });
