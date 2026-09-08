@@ -1,16 +1,15 @@
 # Putting Custom Slider on a DealerOn site
 
 > **Deployment status lives in ONE place:** the "Deployment status" section of
-> [../README.md](../README.md). Short version as of 2026-09-02: the two URLs
-> under `/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/` answer
-> 200 but serve the pre-rename dl-carousel build, so the current engine is not
-> deployed yet. The README has the upload steps, the 21-day cache TTL, and the
-> rename map. Do not restate a status here — three documents once gave three
-> different answers.
+> [../README.md](../README.md), which has what is hosted, the upload steps, the
+> 21-day cache TTL and the rename map. **Do not restate a status here, not even
+> a "short version".** This block used to carry one, and it was wrong within a
+> week of being written — which is the same failure that once had three
+> documents giving three different answers. Go and read the README.
 
-> **No hosted files yet?** You do not have to wait — the whole engine can be
-> pasted into a page today. See [cms-no-hosting.md](cms-no-hosting.md). Your
-> markup and CSS do not change when the hosted files land.
+> **Cannot link the files on a given page?** The whole engine can be pasted
+> into it instead — see [cms-no-hosting.md](cms-no-hosting.md). Your markup and
+> CSS are the same either way.
 
 ## 1. What ships
 

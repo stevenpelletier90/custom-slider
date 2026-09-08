@@ -316,20 +316,40 @@ brand's model bar.
 
 ### Deployment status — the one place it is written down
 
-**As of 2026-09-04 the current engine is NOT yet on FTP.** The folder is
+**As of 2026-09-08 all four files are on FTP.** The folder is
 
     /assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/
 
-and `custom-slider.css` / `custom-slider.js` there answer 200 today — but with
-the **pre-rename dl-carousel build**. Measured 2026-09-02, cache-busted: the CSS
-is 4,885 B and begins `.dl-carousel{--dlc-per-view: 1;--dlc-gap: 1rem`, with
-zero occurrences of `.cs{` or `--cs-`; the JS is 15,444 B and exposes
-`DLCarousel`. `last-modified` on both is 2026-08-28. `dl-carousel.css` and
-`dl-carousel.js` are **404** at that path — the old build is there only under
-those two names, and the `.min` pair does not exist there yet.
+Measured that day, cache-busted against `www.karlchevrolet.com`: all four
+answer 200, `last-modified` 2026-09-08 14:01 GMT. `custom-slider.css` (18,538
+B), `custom-slider.js` (25,549 B) and `custom-slider.min.js` (15,443 B) are
+byte-identical to `dist/`. The pre-rename `dl-carousel` build they replaced is
+gone — no `.dl-carousel{` or `--dlc-` anywhere at that path.
 
-Nothing on a live site links any of them, which is what makes the upload
-simple. `npm run build` writes four files to `dist/`: `custom-slider.css` and
+**`custom-slider.min.css` is NOT byte-identical, and that is the platform, not
+a bad upload.** It serves 15,307 B against the 15,425 B in `dist/` because the
+platform re-minifies CSS it is given: `:after` becomes `::after`, `.5s` becomes
+`500ms`, `.5` becomes `0.5`, `rgba(0,0,0,.8)` becomes `rgba(0,0,0,0.8)`,
+`background: none` becomes `background: 0`, and **`--cs-peek: 0px` becomes
+`--cs-peek: 0`**. Rendered side by side on a hostile host page at 1170px and
+four across, the two sheets resolve identically — slide 282px, flex basis
+`calc(25% - 10.5px)`, track padding `0px`, scroll padding `0px`, root
+`padding-bottom` 35px, snap type, overflow and dot colour all equal. Only the
+token differs. Re-upload only if a rendered difference appears; a byte
+difference in this one file is expected.
+
+That unitless zero is worth reading twice, because it is **F003 arriving from
+the platform rather than from the builder**. It is harmless here — `--cs-peek`
+is only ever consumed by `padding` and `scroll-padding-inline`
+(`src/custom-slider.css:80`, `:90`), and both accept a unitless `0`. It would
+not be harmless on `--cs-gap`, which `src/custom-slider.css:119` feeds to
+`calc((100% - (var(--cs-per-view) - 1) * var(--cs-gap)) / var(--cs-per-view))`
+— subtracting a unitless number from a percentage is invalid, the declaration
+is dropped and the cards collapse to content width. So `okValue()` refusing a
+bare `0` is no longer an inference about what the minifier might do; the
+minifier has now been observed doing it.
+
+`npm run build` writes four files to `dist/`: `custom-slider.css` and
 `custom-slider.js` are the **readable** engine, for anyone opening the file to
 see what it does; `custom-slider.min.css` and `custom-slider.min.js` are the
 same code minified, and **the `.min` pair is what every page links** — the
@@ -344,17 +364,21 @@ file does not shorten that: a browser that already fetched the old one keeps it
 for up to three weeks.
 
 1. Run `npm run build`, then `npm run size`, and confirm the gate is green.
-2. Upload all four files from `dist/` into the folder above. The readable
-   pair overwrites the old dl-carousel files under the same names; the `.min`
-   pair is new. The demo's install panel has a Download for each of the four
-   and a **Download all four** button, under "Link to the files" — the same
-   bytes as `dist/`, saved under their own names, if that is easier to reach
-   than the repo.
+2. Upload all four files from `dist/` into the folder above, overwriting what
+   is there. The demo's install panel has a Download for each of the four and
+   a **Download all four** button, under "Link to the files" — the same bytes
+   as `dist/`, saved under their own names, if that is easier to reach than
+   the repo.
 3. Verify with a cache-busted request, not a browser reload:
    `curl -s ".../custom-slider.min.css?cb=$RANDOM" | head -c 40` should begin
-   `.cs{--cs-per-view` — if it still says `.dl-carousel`, the upload has not
-   landed.
-4. Anyone who opened a page linking the old file needs a hard refresh, or to
+   `.cs{--cs-per-view`. Check `last-modified` too — a 200 alone only says
+   something is there, not that yours is.
+4. Do NOT expect `custom-slider.min.css` to match `dist/` byte for byte; the
+   platform re-minifies it (see above). The other three do match, so compare
+   those if you want a byte check. What matters for the `.min.css` is that it
+   still renders the same — the paste-parity test in the verification
+   checklist is the way to prove that.
+5. Anyone who opened a page linking the old file needs a hard refresh, or to
    wait out the TTL. Say so when you hand a test page over.
 
 ### Moving a page off dl-carousel
