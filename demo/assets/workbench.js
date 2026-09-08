@@ -328,6 +328,34 @@
   // and the cards collapse to their content width, in Chromium and WebKit
   // alike. Same reason `--cs-controls-space` is 0.1px (bfe446c).
   // scripts/lint-generated-css.mjs fails the build on a new one.
+  // LOGOS and PLACES live up here, above PATTERNS, because the Logo strip and
+  // Locations rail entries consume them. Declared after it they are in the
+  // temporal dead zone for the generator that patterns.html and
+  // lint-generated-css.mjs run, and the failure is a ReferenceError nowhere
+  // near the cause - the same trap CLAUDE.md records for cssFor()/htmlFor().
+  // Manufacturer marks, for the one look that is about marks rather than cars.
+  // /assets/logos/ is root-relative on any dealer domain, like /assets/stock/,
+  // so these paste and resolve with nothing uploaded.
+  const LOGOS = [
+    ['acura', 'Acura'],
+    ['bmw', 'BMW'],
+    ['chevrolet', 'Chevrolet'],
+    ['ford', 'Ford'],
+    ['honda', 'Honda'],
+    ['hyundai', 'Hyundai'],
+    ['nissan', 'Nissan'],
+    ['toyota', 'Toyota'],
+  ].map(([slug, name]) => ({ img: `img/logo-${slug}.png`, w: 116, h: 100, alt: `${name} logo`, name, mark: name, href: `/searchnew.aspx?Make=${name}`, badge: '', cta: '' }));
+
+  // Dealership photography for the location card, which promises "a storefront
+  // photo, the store name and a coloured action bar" and was drawing vehicle
+  // cutouts labelled "In stock now".
+  const PLACES = [
+    ['place-1.jpg', 1920, 1280, 'Downtown', 'Rows of new vehicles on a dealership lot'],
+    ['place-2.jpg', 800, 600, 'Northside', 'A dealership lot seen from the forecourt'],
+    ['place-3.jpg', 1920, 600, 'Airport Road', 'A dealership building and its forecourt'],
+  ].map(([f, w, h, name, alt]) => ({ img: `img/${f}`, w, h, name, alt, sub: 'Open today until 7pm', href: '/dealership/directions.htm', cta: 'Get directions', badge: '' }));
+
   const PATTERNS = {
     modelbar: {
       label: 'Model bar',
@@ -337,6 +365,29 @@
       data: { 'data-cs-step': 'slide' },
       props: { '--cs-gap': '0.5em', '--cs-controls-space': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
       hideDots: true,
+    },
+    // Logo panel and Location card were filed as CARD STYLES until 2026-09-08,
+    // which was wrong in both directions. Neither is a vehicle card by its own
+    // source - the logo look "draws MARKS, so it is drawn with marks" and emits
+    // no text node at all; the location look says "Not a vehicle card at all".
+    // So they were noise in the picker on every vehicle job (two of seven
+    // choices that could not apply), and invisible to anyone looking for the
+    // job they ARE for. A purpose belongs in the rail.
+    logostrip: {
+      label: 'Logo strip',
+      blurb: 'Manufacturer marks on panels — the brands a dealer group carries, or the badges on a service page. Not a vehicle card: no name, no price, just the mark.',
+      look: 'logo',
+      models: LOGOS,
+      data: {},
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+    },
+    locations: {
+      label: 'Locations',
+      blurb: 'A card per rooftop — storefront photo, name, address and a link. For a dealer group with more than one site.',
+      look: 'location',
+      models: PLACES,
+      data: {},
+      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
     },
     cards: {
       label: 'Vehicle cards',
@@ -898,32 +949,42 @@ ${PHOTO_CSS}
   // A brand preset brings its own vehicles where the estate gave us the
   // cutouts. Only Fiat, of the 32, has none, and those keep the pattern's own
   // content rather than being shown someone else's cars under their name.
-  // Manufacturer marks, for the one look that is about marks rather than cars.
-  // /assets/logos/ is root-relative on any dealer domain, like /assets/stock/,
-  // so these paste and resolve with nothing uploaded.
-  const LOGOS = [
-    ['acura', 'Acura'],
-    ['bmw', 'BMW'],
-    ['chevrolet', 'Chevrolet'],
-    ['ford', 'Ford'],
-    ['honda', 'Honda'],
-    ['hyundai', 'Hyundai'],
-    ['nissan', 'Nissan'],
-    ['toyota', 'Toyota'],
-  ].map(([slug, name]) => ({ img: `img/logo-${slug}.png`, w: 116, h: 100, alt: `${name} logo`, name, mark: name, href: `/searchnew.aspx?Make=${name}`, badge: '', cta: '' }));
-
-  // Dealership photography for the location card, which promises "a storefront
-  // photo, the store name and a coloured action bar" and was drawing vehicle
-  // cutouts labelled "In stock now".
-  const PLACES = [
-    ['place-1.jpg', 1920, 1280, 'Downtown', 'Rows of new vehicles on a dealership lot'],
-    ['place-2.jpg', 800, 600, 'Northside', 'A dealership lot seen from the forecourt'],
-    ['place-3.jpg', 1920, 600, 'Airport Road', 'A dealership building and its forecourt'],
-  ].map(([f, w, h, name, alt]) => ({ img: `img/${f}`, w, h, name, alt, sub: 'Open today until 7pm', href: '/dealership/directions.htm', cta: 'Get directions', badge: '' }));
 
   // The rosters a LOOK may ask the catalogue to draw it with, by name. Only
   // the ones whose shape differs from the model bar's cutouts need an entry.
   const ROSTERS = { models: MODELS, services: SERVICES, vehicles: VEHICLES, photos: PHOTOS, logos: LOGOS, places: PLACES };
+
+  // Which cards could stand in for each other. A vehicle card and a logo panel
+  // are not two ways of drawing the same thing, so they do not belong in one
+  // picker; cutout, photo and either-of-those are.
+  // ABOVE `if (!stage) return`, because cropWarning() is reached from the
+  // generator that patterns.html and lint-generated-css.mjs run.
+  const family = (content) => (content === 'mark' || content === 'place' ? content : 'vehicle');
+
+  // What a card will actually DO to the pictures it is given, or null when it
+  // will do nothing worth saying.
+  //
+  // Deliberately measured rather than categorical. The obvious rule - "a photo
+  // card on a cutout roster is wrong" - flags the demo's own cards+vcard
+  // pairing, which is a 640x480 cutout in a 4/3 card: the aspects agree and it
+  // trims nothing. A cover crop only costs you something when the aspects
+  // disagree, and then it costs a lot, because a cutout's transparent margin is
+  // part of its composition (the set carries 13-17% below the vehicle, measured)
+  // and cropping it sits the car against the card edge. It renders without
+  // erroring, which is exactly how it reaches a dealer's homepage.
+  const cropWarning = (look, models) => {
+    if (!look?.crop || !models?.length) return null;
+    const m = models.find((v) => v.w > 0 && v.h > 0);
+    if (!m) return null;
+    const natural = m.w / m.h;
+    // A tenth is the smallest difference worth a sentence; below it the trim is
+    // a pixel or two on a 300px card.
+    if (Math.abs(natural - look.crop) / look.crop < 0.1) return null;
+    const say = (r) => (Math.abs(r - 1) < 0.02 ? 'square' : r > 1 ? `${(Math.round(r * 100) / 100).toFixed(2).replace(/0+$/, '').replace(/\.$/, '')}:1 wide` : `1:${(Math.round((1 / r) * 100) / 100).toFixed(2).replace(/0+$/, '').replace(/\.$/, '')} tall`);
+    const side = natural > look.crop ? 'sides' : 'top and bottom';
+    return `This card crops every picture to ${say(look.crop)}. Yours are ${say(natural)}, so their ${side} will be trimmed${look.content === 'photo' && models.some((v) => /\.(png|webp)$/i.test(v.src || '')) ? ' — and a cutout loses the transparent margin it is composed with' : ''}.`;
+  };
+
 
   const modelsFor = (p) => (state.content ? state.content : state.brand && BRANDS[state.brand]?.models ? BRANDS[state.brand].models : p.models);
 
@@ -1864,6 +1925,11 @@ ${PHOTO_CSS}
       ['CSS', lines(css), '<strong>Style Only</strong> — raw CSS, no <code>&lt;style&gt;</code> tags'],
     ];
     if (shared()) parts.push(['Card style', `.cargo-${state.look}`, 'comes from <strong>custom-slider.min.css</strong> — nothing to paste for it']);
+    // The same warning at paste time. The panel above is where the choice is
+    // made; this is the last screen before the code leaves for a real page, and
+    // a crop that trims a cutout renders perfectly and looks cheap.
+    const cropNote = cropWarning(LOOKS[state.look], modelsFor(PATTERNS[state.pattern]));
+    if (cropNote) parts.push(['Check the pictures', LOOKS[state.look].label, cropNote]);
     // The one line in the snippet nobody can read the purpose of: 0.1px is not
     // a measurement, it is "no room, and do not let the minifier turn it into a
     // bare 0". Said here rather than left to be puzzled over on a dealer page.
@@ -2250,7 +2316,13 @@ ${PHOTO_CSS}
     // Nothing starts closed, and nothing CAN be closed - see pane.js folder().
     // Advanced used to, and a setting nobody can see is a setting nobody knows
     // is there.
-    const style = p.look ? pane.folder('Brand and card style') : null;
+    // Named for what it actually holds. On a vehicle pattern that is the OEM
+    // brand list and a choice of card; on the logo strip and the locations strip
+    // there is neither - no brand (they are not vehicles) and no picker (a
+    // family of one), just the card's own settings - so calling it "Brand and
+    // card style" there promised two controls that are not in it.
+    const vehicleFamily = family(LOOKS[state.look]?.content) === 'vehicle';
+    const style = p.look ? pane.folder(vehicleFamily ? 'Brand and card style' : 'The card') : null;
     const knobs = Object.keys(state.lookProps).length ? pane.folder('This card style') : null;
     const grid = pane.folder('How many across');
     const colors = pane.folder('Arrows and dots');
@@ -2320,7 +2392,12 @@ ${PHOTO_CSS}
     state.props['--cargo-font'] ??= '1em';
     valueKnob(grid, 'Card text size', '--cargo-font', state.props);
 
-    if (p.look) {
+    // The OEM brand list is about VEHICLES - a roster of cars and the count that
+    // brand ships them at. It has nothing to offer a logo strip or a locations
+    // strip, which are not showing vehicles at all, so it is not drawn there.
+    // Family, not a list of pattern ids, so a non-vehicle card added later is
+    // covered the day it ships.
+    if (p.look && vehicleFamily) {
       const describe = () => {
         const b = BRANDS[state.brand];
         if (!b)
@@ -2391,6 +2468,12 @@ ${PHOTO_CSS}
         });
       });
       pane.note(style, describe());
+      // What this card will do to these pictures, when it is worth saying. Not
+      // a gate: modelsFor() swaps the roster under a brand preset or edited
+      // content, so a strip can legitimately end up holding photographs, and
+      // hiding the option would sometimes hide the right answer.
+      const warn = cropWarning(LOOKS[state.look], modelsFor(p));
+      if (warn) pane.note(style, warn);
     }
 
     // Chosen visually: a dropdown reading "split photo card" helps nobody who
@@ -2399,8 +2482,17 @@ ${PHOTO_CSS}
     // description as a tooltip - comparing seven styles meant clicking all
     // seven and watching the preview, because the description only appeared
     // after choosing one - and calls back with the id.
-    if (p.look) {
-      pane.looks(style, LOOKS, state.look, (id) => {
+    // The picker offers the cards that could actually replace this one. A card
+    // is built for a kind of picture (looks.js `content`), and swapping a
+    // vehicle card for a logo panel is not a restyle, it is a different job -
+    // which is why those two are rail entries now. Family, not a hand-kept
+    // list, so a card added later lands in the right picker the day it ships.
+    // A family of one draws no picker at all: a grid of one button that cannot
+    // change anything is the "control that cannot move anything" problem the
+    // engine already refuses to ship.
+    const sameFamily = Object.fromEntries(Object.entries(LOOKS).filter(([, l]) => family(l.content) === family(LOOKS[state.look]?.content)));
+    if (p.look && Object.keys(sameFamily).length > 1) {
+      pane.looks(style, sameFamily, state.look, (id) => {
         // Selecting what is already selected does nothing. It used to reset
         // the ladder to the look's own default, so clicking the highlighted
         // style on the two-row grid took 1/2/3/3 to 2/3/4/5 and the arrows

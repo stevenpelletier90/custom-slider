@@ -197,12 +197,14 @@ test.describe('the demo describes what it is actually showing', () => {
   // were literals - "Shop Now", "Browse inventory", "Visit" - so changing them
   // meant editing the pasted markup by hand on every card.
   test('the button keeps its own wording until someone types other words', async () => {
-    await pick(page, 'cards');
-    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((b) => b.textContent.includes('Location card'))?.click());
+    // The locations strip, not the location card picked on a vehicle pattern:
+    // since 2026-09-08 the picker offers only cards of the same family, and a
+    // location card is not a vehicle card. This is the route a designer has.
+    await pick(page, 'locations');
     await page.waitForTimeout(300);
     const box = page.locator('#wb-content fieldset').first().locator('label:has(> span:text-is("Button text")) input').first();
     assert.equal(await box.count(), 1, 'a card style with a button offers no Button text box');
-    assert.match((await copyParts(page)).html, /Visit/, 'the card style stopped printing its own wording');
+    assert.match((await copyParts(page)).html, /Get directions/, 'the card style stopped printing the wording its roster supplies');
     await box.fill('See this store');
     await page.waitForTimeout(250);
     assert.match((await copyParts(page)).html, /See this store/, 'the typed wording never reached the markup');

@@ -480,12 +480,34 @@ test.describe('a link to a card style opens that card style', () => {
     // A query string as well as the hash: navigating from index.html to
     // index.html#... is a same-document move, so the script would never re-run
     // and this would test nothing.
-    await page.goto(`${ORIGIN}/demo/index.html?f074#modelbar/logo`, { waitUntil: 'load' });
+    // wordmark, not logo: a deep link can only open a card the pattern can
+    // actually show, and the logo panel is its own rail entry now. wordmark
+    // specifically because this file is serial and the pattern remembers what
+    // it was last set to - portrait and logo are the two cards that override
+    // the engine's arrow properties, so leaving either behind changes what a
+    // later arrow test measures on the same model bar.
+    await page.goto(`${ORIGIN}/demo/index.html?f074#modelbar/wordmark`, { waitUntil: 'load' });
     await page.waitForTimeout(600);
     const shown = await page.evaluate(() => document.querySelector('#wb-settings .tp-lookv button[aria-pressed="true"] span:last-child')?.textContent);
     const cls = await page.evaluate(() => /cargo-(\w+)/.exec(document.getElementById('wb-code').textContent)?.[1]);
-    assert.equal(cls, 'logo', `the link opened ${cls}, not the style it named`);
+    assert.equal(cls, 'wordmark', `the link opened ${cls}, not the style it named`);
     assert.ok(shown, 'no card style is shown as selected');
+
+    // Put the model bar back - card style AND ladder. This file is serial on
+    // one page and the builder remembers both per pattern, so a deep link that
+    // walks away leaves the next test measuring something it never chose.
+    //
+    // Two hops, not one: picking the card that is ALREADY selected early-returns,
+    // so a single hop to #modelbar/tile does nothing when tile is current, and
+    // the model bar would stay on wordmark - whose markup has no .cargo-media
+    // for a later test to measure an arrow against. Hop through a different
+    // card first so the second hop is a genuine change.
+    await page.goto(`${ORIGIN}/demo/index.html?f074b#modelbar/vcard`, { waitUntil: 'load' });
+    await page.waitForTimeout(500);
+    await page.goto(`${ORIGIN}/demo/index.html?f074c#modelbar/tile`, { waitUntil: 'load' });
+    await page.waitForTimeout(500);
+    const ladder = await page.evaluate(() => [...document.querySelector('#wb-code').textContent.matchAll(/cs-xs-(\d+)/g)].map((m) => m[1])[0]);
+    assert.equal(ladder, '2', `the model bar was left at ${ladder} cards on a phone, so the cleanup did not take`);
   });
 });
 
@@ -513,12 +535,20 @@ test.describe('the small things a designer trips over', () => {
     assert.equal(showing, 'modelbar', 'an unknown hash changed the pattern');
   });
 
-  // F086: comparing seven card styles meant clicking all seven and watching the
+  // F086: comparing the card styles meant clicking each and watching the
   // preview, because the description only appeared once you had chosen one.
+  //
+  // Five on a vehicle pattern, not seven: since 2026-09-08 the picker offers
+  // only cards of the same family, and the logo panel and location card are
+  // their own rail entries. Counted against LOOKS rather than a literal, so the
+  // number cannot go stale again - what matters is that EVERY card the picker
+  // offers explains itself, not how many there happen to be.
   test('every card style button says what it is before you click it', async () => {
     await pick(page, 'modelbar');
     const titles = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-lookv button')].map((b) => b.getAttribute('title')));
-    assert.ok(titles.length >= 7, `only ${titles.length} card styles`);
+    const vehicleLooks = await page.evaluate(() => Object.values(globalThis.CARGO.LOOKS).filter((l) => l.content !== 'mark' && l.content !== 'place').length);
+    assert.equal(titles.length, vehicleLooks, `the picker offers ${titles.length} cards, but ${vehicleLooks} are in the family`);
+    assert.ok(titles.length >= 4, `only ${titles.length} card styles`);
     assert.deepEqual(
       titles.filter((t) => !t || t.length < 10),
       [],
@@ -1008,6 +1038,14 @@ test.describe('the arrow placement switch is not overruled by a breakpoint', () 
     for (const id of ['modelbar', 'cards']) {
       await pick(page, id);
       await page.waitForTimeout(250);
+      // Pin the phone count. This file is serial on one shared page and the
+      // builder remembers a ladder per pattern, so an earlier test that clamps
+      // the phone count to 8 leaves the model bar at eight cards across a 390px
+      // window - and an arrow cannot be measured as sitting "on" a 40px card.
+      // The subject here is WHERE the arrow sits, not what it inherited, so the
+      // count is set rather than assumed.
+      await setField(page, 'Phone · under 768', '2');
+      await page.waitForTimeout(250);
       for (const outside of [true, false]) {
         const box = gut(page);
         if ((await box.isChecked()) !== outside) {
@@ -1153,6 +1191,60 @@ test.describe('a brand preset swaps the vehicles, never the pattern', () => {
     const note = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-notev')].map((n) => n.textContent).join(' '));
     assert.match(note, /pick it below if you want it/, 'the brand no longer offers its own card style anywhere');
     assert.doesNotMatch(note, /which card style/, 'the panel still says a brand sets the card style');
+  });
+});
+
+// The library has three axes, not two: structure, the card, and what KIND OF
+// PICTURE the card takes. The third was never written down, and everything that
+// felt muddy traced back to it - a split photo card offered on a bar of
+// transparent cutouts, a logo panel cluttering every vehicle job.
+test.describe('a card is only offered where it could actually go', () => {
+  const picker = () => page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-lookv button')].map((b) => b.textContent.replace(/\s+/g, ' ').trim()));
+
+  test('the picker offers the cards of one family, never all seven', async () => {
+    await pick(page, 'modelbar');
+    const offered = await picker();
+    const { vehicle, other } = await page.evaluate(() => {
+      const L = Object.values(globalThis.CARGO.LOOKS);
+      return { vehicle: L.filter((l) => l.content !== 'mark' && l.content !== 'place').map((l) => l.label), other: L.filter((l) => l.content === 'mark' || l.content === 'place').map((l) => l.label) };
+    });
+    assert.deepEqual(offered.slice().sort(), vehicle.slice().sort(), 'the vehicle picker does not match the vehicle cards');
+    for (const label of other) assert.ok(!offered.includes(label), `${label} is offered on a vehicle pattern, and it is not a vehicle card`);
+  });
+
+  // A logo panel and a location card are not restyles of a vehicle card - by
+  // their own source, one "draws MARKS" and the other is "not a vehicle card at
+  // all". A purpose belongs in the rail, and a picker of one button is a
+  // control that cannot move anything.
+  test('the non-vehicle cards are rail entries with no picker of their own', async () => {
+    for (const id of ['logostrip', 'locations']) {
+      await pick(page, id);
+      await page.waitForTimeout(300);
+      assert.deepEqual(await picker(), [], `${id} still draws a card picker`);
+      assert.equal(await hasKnob(page, 'Brand'), false, `${id} offers the OEM brand list, and it is not showing vehicles`);
+    }
+  });
+
+  // Measured, not categorical. "A photo card on a cutout roster is wrong" would
+  // flag the demo's own cards+vcard pairing, which is a 640x480 cutout in a 4/3
+  // card: the aspects agree and it trims nothing.
+  test('a crop is only called out when it would actually trim', async () => {
+    const warning = () => page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-notev')].map((n) => n.textContent).find((t) => /crops every picture/.test(t)) ?? null);
+
+    await pick(page, 'cards');
+    await page.waitForTimeout(300);
+    assert.equal(await warning(), null, 'a 4:3 cutout in a 4/3 card was reported as a crop, which would be crying wolf');
+
+    await pick(page, 'modelbar');
+    await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-lookv button')].find((b) => b.textContent.includes('Tall tile with CTA'))?.click());
+    await page.waitForTimeout(600);
+    const warn = await warning();
+    assert.ok(warn, 'a 3:5 card over landscape cutouts said nothing');
+    assert.match(warn, /trimmed/, `the warning does not say what happens: ${warn}`);
+    // ...and it reaches the copy panel, which is the last screen before a
+    // dealer's page.
+    const parts = await page.evaluate(() => [...document.querySelectorAll('#wb-parts li')].map((li) => li.textContent).join(' '));
+    assert.match(parts, /crops every picture/, 'the copy panel hands the code over without mentioning the crop');
   });
 });
 

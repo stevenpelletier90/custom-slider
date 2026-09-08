@@ -49,6 +49,18 @@
   // picture of one, so what you see here is what the builder gives you.
   const looksGrid = document.getElementById('gx-looks');
   const { LOOKS, renderLook } = globalThis.CARGO;
+
+  // Where a card can actually be opened. Every card used to link
+  // index.html#modelbar/<id>, which stopped being true on 2026-09-08: the
+  // builder's picker now offers only cards of the same family, so the logo
+  // panel and the location card are not reachable on a model bar at all and
+  // those two links pointed at a combination that no longer exists. Prefer a
+  // pattern whose own default IS this card - the logo strip, the locations
+  // strip - and fall back to the model bar for the vehicle cards.
+  const openAt = (id) => {
+    const own = Object.entries(PATTERNS).find(([, p]) => p.look === id);
+    return own && own[1].look === id && !['modelbar', 'cards', 'grid', 'tabs'].includes(own[0]) ? `index.html#${own[0]}` : `index.html#modelbar/${id}`;
+  };
   if (looksGrid && LOOKS && renderLook) {
     for (const [id, look] of Object.entries(LOOKS)) {
       const cls = `gl-${id}`;
@@ -65,7 +77,7 @@
             <h2>${look.label}</h2>
             <p>${look.note ?? ''}</p>
           </div>
-          <a class="ui-btn" href="index.html#modelbar/${id}">Open in the builder</a>
+          <a class="ui-btn" href="${openAt(id)}">Open in the builder</a>
         </div>
         <div class="gx-stage"></div>`;
       // A look that brings its own strip colour does not need a white card

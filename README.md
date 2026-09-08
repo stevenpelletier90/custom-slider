@@ -482,7 +482,7 @@ Rebuild and re-commit `dist/` whenever `src/` changes.
 
 ## Verification checklist (run before shipping changes)
 
-1. `npm run size` and `npm run validate` pass, and `npm test` is green — 213
+1. `npm run size` and `npm run validate` pass, and `npm test` is green — 216
    browser checks under `@playwright/test`, about 50 seconds. They cover what a
    linter cannot: that the pasted code still lays itself out, and lays itself
    out the way the preview did. **Steps 3, 4, 6 and 7 below now run in there

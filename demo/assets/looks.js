@@ -11,8 +11,21 @@
 // other. Six components cover all 17 old skins; a seventh, the vehicle card,
 // is new.
 //
-// Every point of variation is a custom property, so a preset is a handful of
-// values and the browser does the rendering. If a new brand needs something no
+// `content` and `crop` are the third axis, added 2026-09-08 because it was the
+// one nobody had written down. A card is built for a KIND OF PICTURE:
+//   cutout          a transparent PNG/WebP shown whole, never cropped
+//   photo           an edge-to-edge photograph, cropped to an aspect
+//   cutout-or-photo either survives it
+//   mark            a manufacturer logo on a panel
+//   place           a storefront or a map - not a vehicle at all
+// `crop` is the aspect the card forces, or null when it forces none. The pair is
+// what lets the panel say what will actually HAPPEN to a picture rather than
+// guessing from a name: a cover crop only trims when the aspects disagree, and
+// the demo's own cards+vcard pairing is a cutout in a 4/3 card at 4:3, which
+// trims nothing. Categorical rules got that case wrong; measured ones do not.
+//
+// Every other point of variation is a custom property, so a preset is a handful
+// of values and the browser does the rendering. If a new brand needs something no
 // property can express, that is a new component - shared, so the next brand
 // that wants it selects it rather than getting a copy.
 //
@@ -38,6 +51,9 @@ const LOOKS = {
     // A vehicle cutout with its name under it - no card, no plate.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><path d="M9 16h26l-3-5.5a3 3 0 0 0-2.6-1.5H14.6A3 3 0 0 0 12 10.5L9 16Z" fill="currentColor" opacity=".85"/><rect x="7" y="15.5" width="30" height="3.5" rx="1.6" fill="currentColor" opacity=".85"/><circle cx="14" cy="19.5" r="2.6" fill="currentColor"/><circle cx="30" cy="19.5" r="2.6" fill="currentColor"/><rect x="13" y="25" width="18" height="2.4" rx="1.2" fill="currentColor" opacity=".45"/></svg>`,
     label: 'Cutout tile',
+    // object-fit: contain with no aspect-ratio, over a --plate-bg that exists only to sit behind transparency.
+    content: 'cutout',
+    crop: null,
     note: 'The workhorse - a vehicle cutout with its name under it. Fourteen of the 24 brands in the census ship this one.',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
@@ -106,6 +122,9 @@ const LOOKS = {
     // Photo on top, title and price under it, all inside one card.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="6.5" y="3.5" width="31" height="23" rx="3" stroke="currentColor" opacity=".5"/><rect x="9" y="6" width="26" height="11" rx="1.6" fill="currentColor" opacity=".85"/><rect x="9" y="19" width="18" height="2.2" rx="1.1" fill="currentColor" opacity=".55"/><rect x="9" y="22.6" width="11" height="2" rx="1" fill="currentColor" opacity=".3"/></svg>`,
     label: 'Vehicle card',
+    // aspect-ratio: 4/3 + object-fit: cover. A cutout survives it when the source is 4:3, which the demo roster is - so this one is not a mismatch, it is a crop to check.
+    content: 'cutout-or-photo',
+    crop: 4 / 3,
     note: 'Photo, title and price in one card. The whole card is one link, so nothing is announced twice.',
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
@@ -172,6 +191,9 @@ const LOOKS = {
     // has no room for, which is why this is its own component.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="12" y="4" width="20" height="2.8" rx="1.4" fill="currentColor" opacity=".85"/><rect x="9" y="12.5" width="26" height="3.5" rx="1.6" fill="currentColor" opacity=".85"/><path d="M11 13h22l-2.4-4a2.6 2.6 0 0 0-2.2-1.2H15.6A2.6 2.6 0 0 0 13.4 9L11 13Z" fill="currentColor" opacity=".45"/><circle cx="15.5" cy="16.5" r="2.2" fill="currentColor"/><circle cx="28.5" cy="16.5" r="2.2" fill="currentColor"/><rect x="13" y="22" width="18" height="2.4" rx="1.2" fill="currentColor" opacity=".45"/></svg>`,
     label: 'Wordmark above',
+    // object-fit: contain and no aspect-ratio at all.
+    content: 'cutout',
+    crop: null,
     note: "The model's wordmark set above the vehicle - the one slot the cutout tile has no room for.",
     // Narrowest card this look's content fits in, measured by narrowing it
     // until text overflowed. The workbench warns rather than letting you cram it.
@@ -213,6 +235,9 @@ const LOOKS = {
     // Photo down one half, copy and a pill down the other.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="4.5" y="6.5" width="35" height="17" rx="3" stroke="currentColor" opacity=".5"/><path d="M7 9.5a2 2 0 0 1 2-2h11v15H9a2 2 0 0 1-2-2v-11Z" fill="currentColor" opacity=".85"/><rect x="23" y="10" width="13" height="2.4" rx="1.2" fill="currentColor" opacity=".55"/><rect x="23" y="14" width="9" height="1.8" rx=".9" fill="currentColor" opacity=".3"/><rect x="23" y="18" width="10" height="3.4" rx="1.7" fill="currentColor" opacity=".55"/></svg>`,
     label: 'Split photo card',
+    // the source says it outright: a square photo half wants a photograph, not a transparent cutout on a coloured panel.
+    content: 'photo',
+    crop: 1 / 1,
     note: 'Photo down one half, copy and a button down the other. Needs a wide card: 260px is the floor.',
     // A square photo half wants a photograph, not a transparent cutout on a
     // coloured panel - and this card has a sub, a blurb and a button, which the
@@ -265,6 +290,9 @@ const LOOKS = {
     // Tall photo with the name and a button over the bottom of it.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="13.5" y="2.5" width="17" height="25" rx="3" fill="currentColor" opacity=".85"/><rect x="16" y="17" width="12" height="2.2" rx="1.1" fill="var(--wb-icon-bg, #fff)" opacity=".9"/><rect x="16" y="21" width="12" height="4" rx="2" fill="var(--wb-icon-bg, #fff)" opacity=".55"/></svg>`,
     label: 'Tall tile with CTA',
+    // 3/5 + cover. Drawing it on the model bar's landscape cutouts is recorded above as a mistake already made and undone.
+    content: 'photo',
+    crop: 3 / 5,
     note: 'Tall photography with the name and a button over the bottom of the image.',
     // 3:5 is the whole point of this card, and the catalogue was drawing it on
     // the model bar's landscape cutouts - a car in the middle of a tall frame
@@ -305,6 +333,9 @@ const LOOKS = {
     // A logo centred on a filled panel - brand strips, nothing else.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="5.5" y="5.5" width="33" height="19" rx="3" fill="currentColor" opacity=".85"/><circle cx="22" cy="15" r="5" fill="var(--wb-icon-bg, #fff)" opacity=".9"/><rect x="17" y="14" width="10" height="2" rx="1" fill="currentColor" opacity=".85"/></svg>`,
     label: 'Logo panel',
+    // it draws marks, contained on a panel, and emits no text node at all.
+    content: 'mark',
+    crop: null,
     note: 'A row of manufacturer logos, each one a link to that make. Give it a background colour in the panel if you want it to read as a band.',
     // It draws MARKS, so it is drawn with marks. Until it had a roster of its
     // own the catalogue handed it the model bar's vehicle cutouts, and the note
@@ -344,6 +375,9 @@ const LOOKS = {
     // Storefront photo, the store name, then a coloured action bar.
     icon: `<svg viewBox="0 0 44 30" fill="none" aria-hidden="true"><rect x="6.5" y="3.5" width="31" height="23" rx="3" stroke="currentColor" opacity=".5"/><rect x="9" y="6" width="26" height="9" rx="1.6" fill="currentColor" opacity=".85"/><rect x="9" y="17" width="15" height="2.2" rx="1.1" fill="currentColor" opacity=".45"/><rect x="9" y="21" width="26" height="3.2" rx="1.6" fill="currentColor" opacity=".85"/></svg>`,
     label: 'Location card',
+    // not a vehicle card - a storefront, cropped full-bleed.
+    content: 'place',
+    crop: 16 / 10,
     note: 'A dealership: storefront photo, the store name, and a coloured action bar.',
     // It promises a storefront photo, so it is drawn with one. The catalogue
     // handed it vehicle cutouts labelled "In stock now", which is a different
