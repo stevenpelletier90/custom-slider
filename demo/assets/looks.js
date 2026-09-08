@@ -63,9 +63,8 @@ const LOOKS = {
     absorbs: ['white', 'counts', 'tile', 'band-gray', 'band-flat', 'band-dark', 'cdjr-dark', 'category-tile', 'brand-logo', 'photo-overlay', 'name-top-chip'],
     settings: {
       '--strip-bg': 'transparent',
-      // 0.1px, not 0px: the standalone snippet pastes this into Style Only,
-      // whose minifier strips the unit off a zero. See the note above PATTERNS
-      // in workbench.js.
+      // 0.1px, not 0px: this value reaches Style Only, whose minifier strips
+      // the unit off a zero. See the note above PATTERNS in workbench.js.
       '--strip-pad': '0.1px',
       // Space under the cards goes on the TRACK, never as padding on the root:
       // the root's bottom padding is the engine's reserved dot row, and a look
@@ -136,9 +135,8 @@ const LOOKS = {
     isNew: true,
     settings: {
       '--strip-bg': 'transparent',
-      // 0.1px, not 0px: the standalone snippet pastes this into Style Only,
-      // whose minifier strips the unit off a zero. See the note above PATTERNS
-      // in workbench.js.
+      // 0.1px, not 0px: this value reaches Style Only, whose minifier strips
+      // the unit off a zero. See the note above PATTERNS in workbench.js.
       '--strip-pad': '0.1px',
       // Space under the cards goes on the TRACK, never as padding on the root:
       // the root's bottom padding is the engine's reserved dot row, and a look

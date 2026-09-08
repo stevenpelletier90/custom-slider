@@ -770,11 +770,18 @@ ${VIDEO_DIALOG_CSS}`,
       gutter: false,
       label: 'Fullscreen gallery in a dialog',
       blurb:
-        'A thumbnail that opens the full gallery in a native dialog. Built with data-cs-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure. Open the gallery to see your settings: the stage below shows only the closed trigger until you do, the readout has nothing to measure yet, and changing a setting rebuilds the dialog closed, so it is open, look, close, change.',
+        'A thumbnail that opens the full gallery in a native dialog. Built with data-cs-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure. The Patterns page shows it open, because a closed button is not an example of a gallery. In the builder the stage starts on the trigger — press it to see the gallery at the width you are previewing, and note that changing a setting rebuilds the dialog closed, so it goes open, look, close, change.',
       data: { 'data-cs-gallery': '', 'data-cs-init': 'manual' },
       props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
+      // A fullscreen dialog is only fullscreen relative to ITS OWN document,
+      // and here that document is the preview frame - which is fitted to its
+      // content, and this pattern's content is one small button. The modal
+      // therefore filled a ~320px-tall box and looked nothing like the thing it
+      // is demonstrating. The frame is a window of the chosen width; give it a
+      // window's HEIGHT too, so the overlay reads the way it will on a device.
+      frameMin: 620,
       track: 'div',
       models: captioned(PHOTOS),
       css: `.cargo-lb-open { display: inline-flex; gap: 0.7em; align-items: center; padding: 0.6em 1em; font: inherit; font-weight: 600; line-height: 1.55; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
@@ -862,7 +869,6 @@ ${PHOTO_CSS}
     content: null,
     label: null,
     name: 'my-slider',
-    standalone: false,
   };
 
   // A look that sets --cs-* is choosing how the ENGINE's controls sit on the
@@ -1026,14 +1032,17 @@ ${PHOTO_CSS}
   // so a snippet does not repeat them - it carries only what THIS slider changed
   // from its card style's defaults. The delta is computed, never trusted: a
   // value equal to the default is dropped, so the block cannot go stale against
-  // the file. `standalone` is the escape hatch for a block that has to work
-  // somewhere the stylesheet is not linked.
+  // the file.
   //
-  // A pattern that draws its own cards has nothing in the file, so its CSS comes
-  // along either way and the flag changes nothing for it - which the panel says,
-  // rather than disabling a control, the mistake the old version made on 13 of
-  // the 17 patterns.
-  const shared = () => !!state.look && !state.standalone;
+  // There used to be a "Paste the card styles too" switch here, inlining a
+  // look's rules for a page linking a stylesheet older than the card half. It
+  // went on 2026-09-08 for the reason the paste-the-engine route went: an
+  // inlined copy can never be fixed. Patch a card style and every linked page
+  // takes it while every inlined one silently does not, with nothing saying
+  // which pages are on which. The gap it covered closes with a re-upload, which
+  // README documents. It was also a no-op on 13 of the 19 patterns, where it
+  // drew a control that announced it did nothing.
+  const shared = () => !!state.look;
 
   // Every rule the snippet puts on the carousel itself is written `.name.cs`,
   // not `.name`. Specificity, not source order, then decides against the two
@@ -1144,7 +1153,6 @@ ${PHOTO_CSS}
 
   function cssFor(sel, preview) {
     const p = PATTERNS[state.pattern];
-    const lib = shared();
     const defaults = cssDefaults();
     const merged = { ...state.lookProps, ...state.props };
     const kept = Object.fromEntries(Object.entries(merged).filter(([k, v]) => defaults[k] !== v));
@@ -1173,7 +1181,7 @@ ${PHOTO_CSS}
     // look already has it; a pattern drawing its own cards has no card class to
     // carry it and states it here. It is the one line that cannot ride on the
     // column classes.
-    const font = lib ? '' : `  font-size: var(--cargo-font, 1em);`;
+    const font = shared() ? '' : `  font-size: var(--cargo-font, 1em);`;
 
     // The preview used to pin --cs-per-view here, because a media query could
     // not fire inside a box. The frame is a real window now, so the ladder and
@@ -1231,7 +1239,7 @@ ${PHOTO_CSS}
     // same dead line the tab and filter-bar rules are already filtered for.
     const photoRows = (p.css || '').includes('cargo-photo') ? modelsFor(p) : [];
     const captionCss = [photoRows.some((m) => m.caption) ? PHOTO_CAPTION_CSS : '', photoRows.some((m) => m.href) ? PHOTO_LINK_CSS : ''].filter(Boolean).join('\n');
-    const body = [state.look && !lib ? scope(LOOKS[state.look].css) : '', p.css ? scope(captionCss ? `${p.css}\n${captionCss}` : p.css) : ''].filter(Boolean).join('\n');
+    const body = [state.look && !shared() ? scope(LOOKS[state.look].css) : '', p.css ? scope(captionCss ? `${p.css}\n${captionCss}` : p.css) : ''].filter(Boolean).join('\n');
     // Arrows either sit in a gutter beside the content or float over it. Last
     // in the sheet so it beats the padding-inline a card look sets for itself -
     // which is exactly why it has to READ the look's value rather than restate
@@ -1722,11 +1730,14 @@ ${PHOTO_CSS}
     // after a tall one inherited its height. The div is its content, both ways.
     const root = d.getElementById('wb-live-root');
     if (!root) return;
-    stage.style.blockSize = `${Math.ceil(Math.max(root.getBoundingClientRect().height, root.scrollHeight))}px`;
+    // frameMin: a pattern whose point is an overlay needs a window to overlay,
+    // not a box the size of its trigger.
+    const floor = PATTERNS[state.pattern]?.frameMin ?? 0;
+    stage.style.blockSize = `${Math.ceil(Math.max(root.getBoundingClientRect().height, root.scrollHeight, floor))}px`;
     // The frame refuses to scroll, so a height that came out short would clip
     // rather than scroll. Measure once more against what the document ended up
     // needing and grow if it disagrees - one correction, not a loop.
-    const need = Math.ceil(Math.max(d.documentElement.scrollHeight, root.scrollHeight));
+    const need = Math.ceil(Math.max(d.documentElement.scrollHeight, root.scrollHeight, floor));
     if (need > parseFloat(stage.style.blockSize)) stage.style.blockSize = `${need}px`;
     // The height it just set is one of the two numbers the scale is built from,
     // so the scale is recomputed here rather than beside it - the two cannot
@@ -2835,21 +2846,7 @@ ${PHOTO_CSS}
     valueKnob(adv, 'Control transition', '--cs-transition', state.props);
 
     // Not behaviour: this changes what the PAGE has to carry, not what the
-    // slider does - the same reason the slider's name sits beside the copy
-    // buttons rather than in the panel. Never disabled either. On a pattern
-    // that draws its own cards it changes nothing, and the note below says so -
-    // a greyed-out control that will not explain itself is what the previous
-    // version of this got wrong.
-    pane.bool(adv, 'Paste the card styles too', state.standalone, (on) => {
-      state.standalone = on;
-      render();
-    });
-    pane.note(
-      adv,
-      state.look
-        ? 'Leave this off: the card styling comes from custom-slider.min.css, which is what keeps the snippet short. Tick it only for a page that cannot link that file — the slider looks the same either way.'
-        : 'This pattern draws its own cards, so its styling comes with the snippet either way — this setting changes nothing here.',
-    );
+
   }
 
   /* ---- slide content ----------------------------------------------------- */
@@ -3022,7 +3019,7 @@ ${PHOTO_CSS}
   // card style, with the wrong class name, and nothing on the page saying why.
   // Same shape as the content store, keyed by pattern for the same reason.
   const SKEY = 'cs-settings';
-  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'standalone', 'name', 'count', 'panes', 'dotsOver', 'dotsWere'];
+  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'name', 'count', 'panes', 'dotsOver', 'dotsWere'];
 
   // Same split as the slides: what is on screen is the session's, what is in
   // localStorage is what Keep was pressed on.
@@ -3186,7 +3183,7 @@ ${PHOTO_CSS}
     // this panel, so it is refused whole rather than obeyed in half.
     const data = cleanMap(s.data, ATTR);
     if (data && isMap(s.data) && Object.keys(data).length === Object.keys(s.data).length) state.data = data;
-    for (const k of ['hideDots', 'gutter', 'standalone', 'dotsOver']) if (typeof s[k] === 'boolean') state[k] = s[k];
+    for (const k of ['hideDots', 'gutter', 'dotsOver']) if (typeof s[k] === 'boolean') state[k] = s[k];
     // Through toClass() rather than trusted: a name stored before the sanitiser
     // existed could be an invalid selector.
     if (okStored(s.name) && toClass(s.name)) state.name = toClass(s.name);

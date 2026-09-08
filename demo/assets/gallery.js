@@ -41,7 +41,41 @@
       </div>
       <div class="gx-stage"></div>`;
     card.querySelector('.gx-stage').innerHTML = html;
+    // The lightbox card showed a closed trigger and nothing else - a button
+    // reading "View all 6 photos" is not an example of a fullscreen gallery,
+    // it is an example of a button. Open it in place instead: the `open`
+    // attribute (never showModal, which would hijack a page of 26 cards) puts
+    // the dialog in normal flow, and .gx-lb-inline unsets the centring it only
+    // needs as a modal. The slider inside is data-cs-init="manual", so it is
+    // constructed here for the same reason the pattern's own script does it on
+    // click - a slider measured while hidden has no width to measure.
     grid.append(card);
+    // The lightbox card showed a closed trigger and nothing else - a button
+    // reading "View all 6 photos" is not an example of a fullscreen gallery,
+    // it is an example of a button. Open it in place instead.
+    //
+    // AFTER the append, and that ordering is the whole trick: the slider is
+    // data-cs-init="manual" precisely because one measured while hidden has no
+    // width, so it has to be constructed once the dialog is both open AND in
+    // the document. Built before either, it came out with no thumb strip and no
+    // arrows - a static photo in a dark box, which is a different wrong example
+    // from the one this replaced.
+    //
+    // `open`, never showModal(): a modal on a page of 26 cards would take the
+    // page over. The trigger is HIDDEN rather than removed, because the
+    // pattern's own script - which this page runs verbatim - binds a click to
+    // it, and hiding also stops a click reaching showModal() on a dialog that
+    // is already open, which throws.
+    if (id === 'lightbox') {
+      const dlg = card.querySelector('dialog');
+      if (dlg) {
+        dlg.classList.add('gx-lb-inline');
+        dlg.open = true;
+        card.querySelector('.cargo-lb-open')?.setAttribute('hidden', '');
+        const root = dlg.querySelector('.cs');
+        if (root && !root._cs && globalThis.CustomSlider) new globalThis.CustomSlider(root);
+      }
+    }
     index.push([`p-${id}`, SHORT?.[id] ?? p.label, `wb-glyph--${id}`, '']);
   }
 

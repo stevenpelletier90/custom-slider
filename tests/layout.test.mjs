@@ -147,12 +147,30 @@ test('the preview scrolls with the page and never pins over the settings', async
     await page.waitForTimeout(400);
     const box = await stageBox(page);
 
-    assert.equal(box.position, 'static', `at ${w}: the preview is positioned "${box.position}", so it can pin again`);
+    // Not "must be static": it is `relative`, which does not pin but does give
+    // it a z-index, and it needs one - the masthead is sticky at z-index 20 and
+    // was painting over the top of the frame as the page scrolled under it,
+    // which reads as a card with its top border missing. What must never come
+    // back is a POSITION THAT PINS.
+    assert.ok(!['sticky', 'fixed'].includes(box.position), `at ${w}: the preview is positioned "${box.position}", so it pins over the settings again`);
     // It moved with the page rather than holding station under the masthead.
     assert.ok(before - box.preview.top > 300, `at ${w}: the preview only moved ${Math.round(before - box.preview.top)}px for a 900px scroll, so it is still pinning`);
     // No cap and no inner scroller: both existed only to serve the pinning, and
     // a leftover cap would silently shrink the frame for no reason.
     assert.equal(box.previewScrolls, false, `at ${w}: the preview scrolls inside itself, so a height cap survived the unpinning`);
+    // NOTHING on this page pins over anything. The preview was unpinned so it
+    // would stop sliding over the settings; the masthead was doing the same to
+    // the preview, painting over the top 87px of the frame at 1700x900 scrolled
+    // 260 - which reads as a card with its top border missing. Raising the
+    // preview above it was tried and reverted: that fixes the card and puts a
+    // slider over the site nav.
+    //
+    // So the masthead scrolls away too, and this asserts the outcome rather
+    // than the property: scrolled down, the header is off screen. The rail is
+    // the one exception and is allowed to stick, because it sits BESIDE the
+    // content instead of over it.
+    const headTop = await page.evaluate(() => Math.round(document.querySelector('.ui-head').getBoundingClientRect().bottom));
+    assert.ok(headTop <= 0, `at ${w}: the masthead is still on screen at ${headTop}px after a 900px scroll, so it pins over the preview`);
     assert.deepEqual(errors, [], `at ${w}: a page error occurred`);
   }
 });

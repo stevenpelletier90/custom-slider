@@ -114,10 +114,17 @@ body {
 
 /* ---- header ------------------------------------------------------------ */
 
+/* NOT sticky, as of 2026-09-08, and the two halves of that decision belong
+   together: the preview was unpinned so it would stop sliding over the settings
+   you are reading, and a sticky masthead does the same thing to the preview -
+   measured at 1700x900 scrolled 260px, it painted over the top 87px of the
+   frame, which reads as a card with its top border missing.
+
+   Raising the preview above it was tried and reverted: it fixes the card and
+   breaks the header, putting a slider over the site nav. Nothing on this page
+   overlaps anything now; the whole thing scrolls as one. The rail below stays
+   sticky because it sits BESIDE the content rather than over it. */
 .ui-head {
-  position: sticky;
-  inset-block-start: 0;
-  z-index: 20;
   background: var(--surface);
   border-block-end: 1px solid var(--rule);
 }
@@ -251,10 +258,15 @@ body {
   margin: 0 auto;
 }
 
+/* Sticky at 0 and full height, not 3.5rem and short of it: those numbers were
+   clearing a masthead that stayed put, and it no longer does. Left as they were
+   the rail would hold a 3.5rem gap above itself against nothing, and stop 3.5rem
+   short of the bottom of the window. The rail may stick because it sits BESIDE
+   the content, never over it. */
 .ui-rail {
   position: sticky;
-  inset-block-start: 3.5rem;
-  max-block-size: calc(100vh - 3.5rem);
+  inset-block-start: 0;
+  max-block-size: 100vh;
   padding: 1.25rem 0.75rem 2.5rem;
   overflow-y: auto;
   overscroll-behavior: contain;
@@ -1864,6 +1876,33 @@ code {
   background: var(--glyph-mid);
 }
 
+/* Logo strip: squat panels, wider apart than the model bar's cards and each
+   holding one centred mark rather than a vehicle and its name. Added with the
+   pattern on 2026-09-08 - the rail draws .wb-glyph--<id>, so a pattern without
+   a rule of its own gets an empty box beside its name. */
+.wb-glyph--logostrip::before {
+  inset: 7px 4px;
+  background: repeating-linear-gradient(90deg, var(--glyph-mid) 0 9px, transparent 9px 12px);
+}
+
+.wb-glyph--logostrip::after {
+  inset: 11px 4px;
+  background: repeating-linear-gradient(90deg, var(--glyph-ink) 0 4px, transparent 4px 12px);
+}
+
+/* Locations: a photo band with a line of address under it, two across. */
+.wb-glyph--locations::before {
+  inset: 5px 4px 12px;
+  background: repeating-linear-gradient(90deg, var(--glyph-mid) 0 15px, transparent 15px 19px);
+}
+
+.wb-glyph--locations::after {
+  inset-block-end: 7px;
+  inset-inline: 4px;
+  block-size: 3px;
+  background: repeating-linear-gradient(90deg, var(--glyph-ink) 0 15px, transparent 15px 19px);
+}
+
 .wb-glyph--stock::after {
   inset: 0;
   display: flex;
@@ -1975,6 +2014,37 @@ code {
    FRAME_DOC in workbench.js; html{font-size} is deliberately NOT copied,
    because the engine and card CSS carry no rem at all (enforced by
    unit-disallowed-list), so it changes nothing here. */
+
+/* The lightbox card, shown OPEN. A <dialog open> is not a modal - no backdrop,
+   no top layer - but it keeps the UA's centring and its auto width, which on
+   this page put a 1100px panel half outside its card. Unset both so it lays out
+   like the block it is standing in for, and let the card's own dark background
+   read as the overlay it is. gallery.js is what opens it; see the note there
+   for why the closed trigger was not an example of anything. */
+.gx-stage .gx-lb-inline {
+  position: static;
+  inline-size: 100%;
+  max-inline-size: none;
+  margin: 0;
+}
+
+/* [hidden] alone does not hide it: .cargo-lb-open is display: inline-flex in the
+   pattern's own CSS, and a display beats the UA's [hidden] rule - the same trap
+   the engine documents for its own controls. gallery.js hides rather than
+   removes it, because the pattern's script binds a click to it. */
+.gx-stage .cargo-lb-open[hidden] {
+  display: none;
+}
+
+/* The real dialog is a 1100px panel on a dark backdrop, and the photo inside it
+   is only ever as tall as the window allows. Standing in a card it has no window
+   to be bounded by, so it grew to a full-width 16:10 and made one example taller
+   than the four around it. Cap the picture, not the panel: the point of the card
+   is the arrangement - dark surround, header, close - not the photograph's size. */
+.gx-stage .gx-lb-inline .cargo-photo img {
+  max-block-size: 42vh;
+}
+
 .gx-stage {
   padding: 1.25rem;
   overflow: hidden;

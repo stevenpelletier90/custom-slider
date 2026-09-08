@@ -115,10 +115,11 @@ const zeroLength = (name, prop, val) => {
   console.error(`  ${name} [zero-length-custom-property] "${prop}: ${val}" - the styleCode minifier strips the unit and the calc() dies; use 0.1px`);
 };
 
-// The sheets above are the shared-stylesheet form. A look's own settings only
-// reach the snippet under "Paste the card styles too", which nothing here
-// renders, so read those maps directly - exhaustive by construction rather
-// than by whichever variant happened to be generated.
+// The sheets above are the shared-stylesheet form, which is now the only form -
+// the "Paste the card styles too" switch that emitted a self-contained block
+// went on 2026-09-08. A look's own settings therefore never reach a snippet at
+// all, so read those maps directly: exhaustive by construction rather than by
+// whichever variant happened to be generated.
 for (const [what, map] of [
   ['pattern', Object.entries(PATTERNS).map(([id, p]) => [id, p.props])],
   ['look', Object.entries(LOOKS).map(([id, l]) => [id, l.settings])],

@@ -196,13 +196,20 @@ the preview cannot disagree. `npm run size` splits on that marker and weighs onl
 engine against the budget below — the budget's job is to show the engine undercuts
 Embla's core and Splide, and neither of those ships a card library.
 
-**Paste the card styles too** in the builder inlines a look's own rules into the
-snippet, for a page that links a `custom-slider.min.css` older than the card half. It
-carries the card styling **only** — never the engine's layout and physics — so on
-a page with no stylesheet at all the block renders as a full-width vertical list
-with static arrows, whatever the column classes say. Measured, not assumed: track
-`display: block`, `overflow-x: visible`, `scroll-snap-type: none`, slide
-`flex-basis: auto`.
+There was a **Paste the card styles too** switch in the builder that inlined a
+look's rules into the snippet, for a page linking a `custom-slider.min.css` older
+than the card half. It went on 2026-09-08, for the reason the paste-the-engine
+route went: an inlined copy can never be fixed, so patching a card style reaches
+every linked page and silently misses every inlined one, with nothing saying
+which pages are on which. The gap it covered closes with a re-upload — see
+"Deployment status". It was also a no-op on 13 of the 19 patterns, where it drew
+a control that announced it did nothing.
+
+Worth keeping in mind either way: the card CSS carries the card styling **only**,
+never the engine's layout and physics, so on a page with no stylesheet linked at
+all a block renders as a full-width vertical list with static arrows, whatever
+the column classes say. Measured, not assumed: track `display: block`,
+`overflow-x: visible`, `scroll-snap-type: none`, slide `flex-basis: auto`.
 
 ### The engine is linked, never pasted
 
