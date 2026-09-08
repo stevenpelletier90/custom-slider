@@ -695,7 +695,7 @@
   line-height: 1.4;
   color: #d9d9d9;
 }
-:where(.cargo-split) .cargo-pill {
+:where(.cargo-split) .cargo-cta {
   padding: 0.5em 1.3em;
   margin-block-start: auto;
   font-size: 0.9em;
@@ -712,7 +712,7 @@
   :where(.cargo-split) .cargo-name {
     font-size: 1.15em;
   }
-  :where(.cargo-split) .cargo-pill {
+  :where(.cargo-split) .cargo-cta {
     padding: 0.45em 1em;
     font-size: 0.8em;
     white-space: nowrap;
@@ -872,7 +872,8 @@
   line-height: 1.3;
   color: #222;
 }
-:where(.cargo-location) .cargo-card p {
+:where(.cargo-location) .cargo-sub {
+  display: block;
   margin: 0 0 0.9em;
   font-size: 0.9em;
   color: #5f6368;
