@@ -76,7 +76,7 @@ chevrolet: {
     // Pattern values, keyed by PATTERN. Only what that structure adds.
     patterns: {
       tabs: {
-        props: { '--tab-size': '1.125em', '--tab-dim': '1', '--tab-line': '#006dc7', '--tab-rule': 'transparent', '--tab-divider': '"|"' },
+        props: { '--tab-size': '1.125em', '--tab-dim': '1', '--tab-line': '#006dc7', '--tab-rule': 'transparent', '--tab-divider': "'|'" },
         panes: ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial'],
       },
     },
@@ -110,12 +110,14 @@ match what the CSS does now, so an untouched pattern ships the same picture:
 | `--tab-dim`     | `0.65`         | `1`           | `opacity` on an unselected tab                     |
 | `--tab-line`    | `currentcolor` | `#006dc7`     | `border-block-end-color` on the selected tab       |
 | `--tab-rule`    | `#e2e5ea`      | `transparent` | `border-block-end-color` on `.cargo-tabs`          |
-| `--tab-divider` | `none`         | `"\|"`        | `content` on `[role="tab"] + [role="tab"]::before` |
+| `--tab-divider` | `none`         | `'\|'`        | `content` on `[role="tab"] + [role="tab"]::before` |
 
 The divider is a pseudo-element on the tab list, drawn at `--tab-dim` opacity
 in `currentcolor`, so the markup does not change and `none` draws nothing. This
-is the one knob whose value is a string; `okValue()` must accept a quoted string
-for `content` and refuse it everywhere else.
+is the one knob whose value is a string. Single quotes, not double: the saved-
+settings sanitiser (`okStored()` in `workbench.js`) refuses a value holding `"`,
+so a double-quoted divider would survive the session and vanish on reload.
+`okValue()` already passes it, because it only ever refuses a length.
 
 `knobLabel()` gets plain-words labels for the five: Tab text size, Dim unselected
 tabs, Selected tab line, Rule under the tabs, Between tabs.
@@ -191,8 +193,9 @@ Each is checked to fail against the code from before it.
 - `patterns.html` renders one stage per variant, and the Chevrolet `tabs`
   stage's copied snippet matches it pixel for pixel on the hostile host
   (paste parity, the same helper `builder` uses).
-- An untouched `tabs` pattern ships byte-identical CSS to before the knobs
-  were added.
+- An untouched `tabs` pattern renders the same tab row as before the knobs
+  were added: measured computed styles, since the CSS text itself now reads
+  `var(--tab-*)` where it had literals.
 
 ## Scope
 
