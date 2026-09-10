@@ -301,3 +301,40 @@ test.describe('kept settings bring the brand tab names back', () => {
     assert.deepEqual(errors, []);
   });
 });
+
+test.describe('the variant strip above the stage', () => {
+  const chips = (page) => page.evaluate(() => [...document.querySelectorAll('#wb-variants button')].map((b) => [b.dataset.brand, b.getAttribute('aria-pressed')]));
+
+  test('hidden where no brand is measured, shown with Default plus the brands on tabs', async () => {
+    await pick(page, 'logostrip');
+    assert.equal(await page.evaluate(() => document.getElementById('wb-variants').hidden), true);
+    await pick(page, 'tabs');
+    assert.equal(await page.evaluate(() => document.getElementById('wb-variants').hidden), false);
+    const c = await chips(page);
+    assert.equal(c[0][0], '');
+    assert.ok(c.some(([b]) => b === 'chevrolet'));
+    assert.ok(c.some(([b]) => b === 'toyota'));
+  });
+
+  test('a chip applies the brand, and the Brand list agrees', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, '');
+    await page.click('#wb-variants button[data-brand="chevrolet"]');
+    await page.waitForTimeout(250);
+    assert.equal((await tabStyles(page)).line, 'rgb(0, 109, 199)');
+    assert.equal(await rowByLabel(page, 'Brand').locator('select').inputValue(), 'chevrolet');
+    const pressed = (await chips(page)).find(([, p]) => p === 'true')[0];
+    assert.equal(pressed, 'chevrolet');
+    await selectBrand(page, '');
+    assert.equal((await chips(page)).find(([, p]) => p === 'true')[0], '', 'Default should be pressed after Start from the default');
+    assert.deepEqual(errors, []);
+  });
+
+  test('patternsOf mirrors variantsOf', async () => {
+    const ok = await page.evaluate(() => {
+      const { PATTERNS, BRANDS, variantsOf, patternsOf } = globalThis.CARGO;
+      return Object.keys(BRANDS).every((b) => patternsOf(b).every((p) => variantsOf(p).includes(b))) && Object.keys(PATTERNS).every((p) => variantsOf(p).every((b) => patternsOf(b).includes(p)));
+    });
+    assert.equal(ok, true);
+  });
+});

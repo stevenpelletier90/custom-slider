@@ -1822,6 +1822,18 @@ ${PHOTO_CSS}
     return el ? parseFloat((swin() ?? window).getComputedStyle(el).fontSize) || null : null;
   };
 
+  // The brands that carry values for a pattern or for its card, in the order
+  // brands.js lists them. Read off the data, never a list of ids. A plain
+  // function rather than a CARGO method, so patternsOf() below and the
+  // variant strip in buildPanel() can call it without going through `this`
+  // - the test file calls the exported copy destructured, which strips it.
+  const variantsOf = (id) => {
+    const look = PATTERNS[id].look;
+    return Object.entries(BRANDS)
+      .filter(([, b]) => b.styles?.patterns?.[id] || (look && b.styles?.looks?.[look]))
+      .map(([bid]) => bid);
+  };
+
   // The index page (patterns.html) loads this file for the generator alone: one
   // example of every pattern, built by the same cssFor/htmlFor pair the builder
   // uses, so an example there cannot drift from the same example here.
@@ -1846,11 +1858,12 @@ ${PHOTO_CSS}
     },
     // The brands that carry values for a pattern or for its card, in the
     // order brands.js lists them. Read off the data, never a list of ids.
-    variantsOf(id) {
-      const look = PATTERNS[id].look;
-      return Object.entries(BRANDS)
-        .filter(([, b]) => b.styles?.patterns?.[id] || (look && b.styles?.looks?.[look]))
-        .map(([bid]) => bid);
+    variantsOf,
+    // The other direction: every pattern a brand has measured values for, in
+    // rail order. The Brands page is built off this the way the patterns page
+    // is built off variantsOf().
+    patternsOf(bid) {
+      return Object.keys(PATTERNS).filter((id) => variantsOf(id).includes(bid));
     },
     BRANDS,
     // The card LOOKS, drawn the same way. A look is not a pattern - it is the
@@ -2710,6 +2723,44 @@ ${PHOTO_CSS}
     }
   };
 
+  // Picking a brand, from the Brand list or from the strip above the stage.
+  // One function so the two cannot drift: both replace the roster, apply the
+  // brand's values (applyBrand) and rebuild.
+  const pickBrand = (id) => {
+    // A preset brings its own vehicles, so it replaces the roster outright.
+    // Keeping edited rows here would show Ford copy under a Kia preset - so
+    // it is offered back instead, which is the one of the three discards
+    // that used to happen with no warning at all.
+    rememberDiscard('the preset');
+    state.content = null;
+    clearContent();
+    // A BRAND CHANGES THE CONTENT, THE COUNT AND - where measured - its
+    // knob values, NEVER THE CARD STYLE. It used to call applyLook(b.look),
+    // and a look owns MARKUP, not just values - so picking Alfa Romeo on
+    // the model bar reordered the name above the photo, added a "Browse
+    // inventory" button, put the strip on a dark panel and cropped 3:5. You
+    // chose a pattern from the rail and got a different one back, which is
+    // not what a preset is for.
+    //
+    // The research does not support it either. brands.js said the census
+    // found "what actually differed between builds was the count and the
+    // card"; the census itself (docs/research/2026-08-18-oem-demo-slider-
+    // census.md) says the variety is "skin, not structure" and tabulates
+    // FOURTEEN BREAKPOINT LADDERS - it never claims the card differs per
+    // brand. So the ladder stays, because it is the part that was measured,
+    // and the look does not, because it never was.
+    //
+    // Each brand's recorded look survives as a SUGGESTION in the note under
+    // this control, so nothing researched is thrown away - it just stops
+    // reaching in and changing the pattern for you.
+    applyBrand(id || null);
+    rebuild(() => {
+      buildPanel();
+      buildContent();
+      render();
+    });
+  };
+
   function buildPanel() {
     // A structural change - a pattern, a look, a preset, a switch that adds or
     // removes rows - throws the whole pane away and builds a new one. Nothing
@@ -2893,40 +2944,9 @@ ${PHOTO_CSS}
             : `The ${b.label} demo sites we surveyed showed no clear pattern of how many across, so this leaves the count alone. ${b.note ?? ''}${suggest}${measured}`
         ).trim();
       };
-      pane.list(style, 'Brand', state.brand ?? '', [['', 'Start from the default'], ...brandsFor.map(([id, b]) => [id, b.label])], (v) => {
-        // A preset brings its own vehicles, so it replaces the roster outright.
-        // Keeping edited rows here would show Ford copy under a Kia preset - so
-        // it is offered back instead, which is the one of the three discards
-        // that used to happen with no warning at all.
-        rememberDiscard('the preset');
-        state.content = null;
-        clearContent();
-        // A BRAND CHANGES THE CONTENT, THE COUNT AND - where measured - its
-        // knob values, NEVER THE CARD STYLE. It used to call applyLook(b.look),
-        // and a look owns MARKUP, not just values - so picking Alfa Romeo on
-        // the model bar reordered the name above the photo, added a "Browse
-        // inventory" button, put the strip on a dark panel and cropped 3:5. You
-        // chose a pattern from the rail and got a different one back, which is
-        // not what a preset is for.
-        //
-        // The research does not support it either. brands.js said the census
-        // found "what actually differed between builds was the count and the
-        // card"; the census itself (docs/research/2026-08-18-oem-demo-slider-
-        // census.md) says the variety is "skin, not structure" and tabulates
-        // FOURTEEN BREAKPOINT LADDERS - it never claims the card differs per
-        // brand. So the ladder stays, because it is the part that was measured,
-        // and the look does not, because it never was.
-        //
-        // Each brand's recorded look survives as a SUGGESTION in the note under
-        // this control, so nothing researched is thrown away - it just stops
-        // reaching in and changing the pattern for you.
-        applyBrand(v || null);
-        rebuild(() => {
-          buildPanel();
-          buildContent();
-          render();
-        });
-      });
+      // pickBrand() (above) is the one function that runs whether this is
+      // picked from this list or from the strip above the stage.
+      pane.list(style, 'Brand', state.brand ?? '', [['', 'Start from the default'], ...brandsFor.map(([id, b]) => [id, b.label])], (v) => pickBrand(v));
       pane.note(style, describe());
     }
 
@@ -3276,6 +3296,36 @@ ${PHOTO_CSS}
     valueKnob(adv, 'Control transition', '--cs-transition', state.props);
 
     // Not behaviour: this changes what the PAGE has to carry, not what the
+
+    // The strip above the stage: Default plus every brand measured for this
+    // pattern. Read off the same data as the Brand list, so a chip and a
+    // list entry are the same brand and the pressed chip is the selected
+    // option.
+    const strip = document.getElementById('wb-variants');
+    if (strip) {
+      const ids = variantsOf(state.pattern);
+      strip.hidden = ids.length === 0;
+      strip.replaceChildren();
+      if (ids.length) {
+        for (const [bid, label] of [['', 'Default'], ...ids.map((b) => [b, BRANDS[b].label])]) {
+          const btn = document.createElement('button');
+          btn.type = 'button';
+          btn.dataset.brand = bid;
+          btn.setAttribute('aria-pressed', String((state.brand ?? '') === bid || (!bid && !ids.includes(state.brand))));
+          if (bid) {
+            const img = document.createElement('img');
+            img.src = `img/logo-${bid}.png`;
+            img.alt = '';
+            img.width = 116;
+            img.height = 100;
+            btn.append(img);
+          }
+          btn.append(label);
+          btn.addEventListener('click', () => pickBrand(bid));
+          strip.append(btn);
+        }
+      }
+    }
   }
 
   /* ---- slide content ----------------------------------------------------- */

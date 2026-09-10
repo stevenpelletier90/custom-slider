@@ -515,6 +515,43 @@ body {
   border-radius: 12px 12px 0 0;
 }
 
+.wb-variants {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  margin-block-end: 0.6rem;
+}
+
+.wb-variants button {
+  display: inline-flex;
+  gap: 0.4rem;
+  align-items: center;
+  padding: 0.3rem 0.7rem 0.3rem 0.4rem;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ink);
+  cursor: pointer;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+}
+
+.wb-variants button img {
+  inline-size: 1.6rem;
+  block-size: auto;
+}
+
+.wb-variants button[aria-pressed="true"] {
+  color: var(--paper);
+  background: var(--ink);
+  border-color: var(--ink);
+}
+
+.wb-variants button:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
 /* The host for a pattern whose point is covering the page - today only the
    lightbox. workbench.js clones the snippet's wrapper into it and opens the
    dialog HERE rather than inside the preview frame, because a modal is only
