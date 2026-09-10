@@ -286,6 +286,8 @@
     '--cta-fg': 'Text colour of the button.',
     '--tab-size': 'Size of the tab labels. <code>1em</code> matches the page’s body text; Chevrolet runs them a step larger.',
     '--tab-dim': 'How faded an unselected tab is, 0 to 1. <code>1</code> shows every tab at full strength and leaves the line to mark the selected one.',
+    '--tab-selected':
+      'Colour of the selected tab’s label. <code>currentcolor</code> keeps the page’s text colour; with the line left at <code>currentcolor</code> it follows this, which is how Toyota draws its red tab.',
     '--tab-line': 'Colour of the 2px line under the selected tab. <code>currentcolor</code> uses the text colour; a hex pins it to a brand colour.',
     '--tab-rule': 'Colour of the 1px rule under the whole tab row. <code>transparent</code> removes it.',
     '--tab-divider': "Text drawn between tabs, in quotes — <code>'|'</code> for the Chevrolet bar. <code>none</code> draws nothing.",

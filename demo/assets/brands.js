@@ -669,16 +669,16 @@
       // `<li role="presentation">|</li>`, no .text-muted - but it is the same
       // tabbed-model-bar feature, just a different template build. The active
       // tab's border-bottom-color measured identical to its own text color
-      // (rgb(187, 22, 43) both, 3px), so there is no line colour independent
-      // of the text to capture - --tab-line stays at the pattern default and
-      // the added test drops that one assertion instead of inventing a value.
+      // (rgb(187, 22, 43) both, 3px) - Toyota colours the SELECTED TAB'S TEXT
+      // and the line follows it via currentcolor, which is exactly what
+      // --tab-selected + the untouched --tab-line: currentcolor reproduce.
       // The rule under the tabs measured border-bottom-width: 0px, which
       // reads as transparent regardless of its border-bottom-color.
       styles: {
         looks: { tile: { '--name-color': '#333' } },
         patterns: {
           tabs: {
-            props: { '--tab-dim': '1', '--tab-rule': 'transparent', '--tab-divider': "'|'" },
+            props: { '--tab-dim': '1', '--tab-selected': '#bb162b', '--tab-rule': 'transparent', '--tab-divider': "'|'" },
             panes: ['Popular', 'Cars & Minivan', 'Trucks', 'Crossovers & SUVs', 'Electrified'],
           },
         },

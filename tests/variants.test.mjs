@@ -62,10 +62,11 @@ const cardNameStyle = (page) =>
   });
 
 test.describe('the tab row has knobs', () => {
-  test('the five tab knobs show what the untouched tabs pattern is drawing', async () => {
+  test('the six tab knobs show what the untouched tabs pattern is drawing', async () => {
     await pick(page, 'tabs');
     assert.equal(await knob(page, 'Tab text size'), '1em');
     assert.equal(await knob(page, 'Dim unselected tabs'), '0.65');
+    assert.equal(await knob(page, 'Selected tab text'), 'currentcolor');
     assert.equal(await knob(page, 'Selected tab line'), 'currentcolor');
     assert.equal(await knob(page, 'Rule under the tabs'), '#e2e5ea');
     assert.equal(await knob(page, 'Between tabs'), 'none');
@@ -207,11 +208,12 @@ test.describe('a brand applies its values', () => {
     const variants = await page.evaluate(() => globalThis.CARGO.variantsOf('tabs'));
     assert.ok(variants.includes('toyota'), `tabs variants: ${variants}`);
     await selectBrand(page, 'toyota');
-    // No assert.notEqual(s.line, s.colour) here: measured on toyotademo1
-    // 2026-09-10, the active tab's border-bottom-color and its own text color
-    // were the same rgb(187, 22, 43) - Toyota is not choosing an underline
-    // colour independent of the text, so --tab-line stays at the pattern
-    // default and there is no distinct line value for this assertion to check.
+    // Toyota colours the SELECTED TAB'S TEXT (not the line independently) and
+    // the line follows it via currentcolor - --tab-selected carries the red,
+    // --tab-line stays at the pattern default, and both read back the same.
+    const s = await tabStyles(page);
+    assert.equal(s.line, 'rgb(187, 22, 43)');
+    assert.equal(s.colour, 'rgb(187, 22, 43)');
     const tabs = await page.evaluate(() => [...globalThis.CARGO.sdoc().querySelectorAll('.cargo-tabs [role="tab"]')].map((t) => t.textContent.trim()));
     assert.ok(tabs.length >= 4, `expected Toyota's body-style tabs, got ${tabs}`);
     assert.deepEqual(errors, []);

@@ -577,6 +577,11 @@ ${VIDEO_DIALOG_CSS}`,
         // were, so an untouched pattern draws the same row.
         '--tab-size': '1em',
         '--tab-dim': '0.65',
+        // The selected tab's text colour. currentcolor keeps the inherited
+        // colour, which is what the untouched pattern drew before this knob
+        // existed - --tab-line defaults to currentcolor too, so with this one
+        // left alone the line still follows the text exactly as it always has.
+        '--tab-selected': 'currentcolor',
         '--tab-line': 'currentcolor',
         '--tab-rule': '#e2e5ea',
         // A string, single-quoted: okStored() refuses a value holding a double
@@ -587,7 +592,7 @@ ${VIDEO_DIALOG_CSS}`,
       panes: ['Trucks', 'SUVs', 'Crossovers'],
       css: `.cargo-tabs { display: flex; flex-wrap: wrap; gap: 0.25em; justify-content: center; margin-block-end: 1em; border-block-end: 1px solid var(--tab-rule); }
 .cargo-tabs [role="tab"] { padding: 0.6em 1.1em; font: inherit; font-size: var(--tab-size); font-weight: 600; line-height: 1.55; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: var(--tab-dim); }
-.cargo-tabs [role="tab"][aria-selected="true"] { border-block-end-color: var(--tab-line); opacity: 1; }
+.cargo-tabs [role="tab"][aria-selected="true"] { color: var(--tab-selected); border-block-end-color: var(--tab-line); opacity: 1; }
 /* The divider sits on the tab that FOLLOWS it, outside its own box, so it
    never widens the hit target. none draws nothing. */
 .cargo-tabs [role="tab"] + [role="tab"]::before { position: absolute; inset-inline-start: -0.125em; color: currentcolor; content: var(--tab-divider); opacity: var(--tab-dim); transform: translateX(-50%); }
@@ -2507,6 +2512,7 @@ ${PHOTO_CSS}
     '--mark-size': 'Wordmark size',
     '--tab-size': 'Tab text size',
     '--tab-dim': 'Dim unselected tabs',
+    '--tab-selected': 'Selected tab text',
     '--tab-line': 'Selected tab line',
     '--tab-rule': 'Rule under the tabs',
     '--tab-divider': 'Between tabs',
