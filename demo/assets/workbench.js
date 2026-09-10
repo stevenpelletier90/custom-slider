@@ -1039,6 +1039,7 @@ ${PHOTO_CSS}
       }
       for (const k of Object.keys(s.patterns?.[state.pattern]?.props ?? {})) {
         if (k in (p.props ?? {})) state.props[k] = p.props[k];
+        else if (state.look && k in LOOKS[state.look].settings) state.props[k] = LOOKS[state.look].settings[k];
         else delete state.props[k];
       }
       if (s.patterns?.[state.pattern]?.panes) state.panes = null;
