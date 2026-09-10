@@ -2,7 +2,7 @@
 // Spec: docs/superpowers/specs/2026-09-09-oem-variants-design.md
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, rowByLabel, stageFrame, copyParts } from './helpers.mjs';
+import { openBuilder, pick, rowByLabel, stageFrame, copyParts, ORIGIN, hostHtml, engineFiles, readSlider } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -143,5 +143,61 @@ test.describe('a brand applies its values', () => {
       .evaluate((s) => [...s.options].map((o) => o.value).filter(Boolean));
     assert.ok(opts.includes('chevrolet'));
     assert.ok(opts.length >= 32, 'a cutout card offers every brand, because every brand has a roster');
+  });
+});
+
+test.describe('the patterns page shows the variants', () => {
+  test('one stage per brand that carries values, with a tile in the index', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+    const p = await ctx.newPage();
+    const errs = [];
+    p.on('pageerror', (e) => errs.push(e.message));
+    await p.goto(`${ORIGIN}/demo/patterns.html`, { waitUntil: 'load' });
+    await p.waitForSelector('#p-tabs .cs-slide');
+    const found = await p.evaluate(() => ({
+      stage: !!document.querySelector('#p-tabs-chevrolet .cs'),
+      caption: document.querySelector('#p-tabs-chevrolet .gx-variant')?.textContent.trim(),
+      tile: !!document.querySelector('.gx-tile[href="#p-tabs-chevrolet"]'),
+      builderLink: document.querySelector('#p-tabs-chevrolet a.ui-btn')?.getAttribute('href'),
+      line: (() => {
+        const t = document.querySelector('#p-tabs-chevrolet [role="tab"][aria-selected="true"]');
+        return t && getComputedStyle(t).borderBottomColor;
+      })(),
+      noneOnLogo: !document.querySelector('#p-logostrip-chevrolet'),
+    }));
+    assert.equal(found.stage, true, 'no Chevrolet stage under the tabbed bar');
+    assert.match(found.caption ?? '', /Chevrolet/);
+    assert.equal(found.tile, true);
+    assert.equal(found.builderLink, 'index.html#tabs?brand=chevrolet');
+    assert.equal(found.line, 'rgb(0, 109, 199)');
+    assert.equal(found.noneOnLogo, true);
+    assert.deepEqual(errs, []);
+    await ctx.close();
+  });
+
+  test('the deep link opens the builder on the variant', async () => {
+    const ctx = await browser.newContext({ viewport: { width: 1500, height: 900 } });
+    const p = await ctx.newPage();
+    await p.goto(`${ORIGIN}/demo/index.html#tabs?brand=chevrolet`, { waitUntil: 'load' });
+    await p.waitForSelector('#wb-stage');
+    await p.frameLocator('#wb-stage').locator('.cs-slide').first().waitFor({ state: 'attached', timeout: 15000 });
+    const brand = await rowByLabel(p, 'Brand').locator('select').inputValue();
+    assert.equal(brand, 'chevrolet');
+    assert.equal((await tabStyles(p)).line, 'rgb(0, 109, 199)');
+    await ctx.close();
+  });
+
+  test('the Chevrolet tabbed bar pastes onto a hostile host the way the page shows it', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'chevrolet');
+    const parts = await copyParts(page);
+    const engine = await engineFiles();
+    const host = await browser.newPage();
+    await host.setContent(hostHtml({ ...engine, css: parts.css, html: parts.html, js: parts.js }), { waitUntil: 'load' });
+    const hostLine = await host.evaluate(() => getComputedStyle(document.querySelector('[role="tab"][aria-selected="true"]')).borderBottomColor);
+    assert.equal(hostLine, 'rgb(0, 109, 199)');
+    const slider = await readSlider(host);
+    assert.ok(slider && slider.width > 0);
+    await host.close();
   });
 });

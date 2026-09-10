@@ -42,7 +42,7 @@ sandbox.history = { replaceState: noop };
 for (const f of ['looks.js', 'brands.js', 'cms-paths.js', 'workbench.js']) {
   new Function('globalThis', 'document', 'window', readFileSync(`demo/assets/${f}`, 'utf8')).call(sandbox, sandbox, sandbox.document, sandbox);
 }
-const { PATTERNS, LOOKS, renderPattern, renderLook, ENGINE_DEFAULTS } = sandbox.CARGO;
+const { PATTERNS, LOOKS, renderPattern, renderLook, ENGINE_DEFAULTS, variantsOf } = sandbox.CARGO;
 
 // cssFor() drops any value equal to an engine default, so that map has to BE
 // the engine. Read the real `.cs { … }` block out of src/custom-slider.css and
@@ -64,10 +64,21 @@ if (drift) {
   process.exit(1);
 }
 
-// One sheet per pattern and per card look, named so a failure says which.
-const sheets = [...Object.keys(PATTERNS).map((id) => [`pattern “${id}”`, renderPattern(id, 'demo').css]), ...Object.keys(LOOKS).map((id) => [`look “${id}”`, renderLook(id, 'demo').css])];
+// One sheet per pattern, per measured brand variant, and per card look, named
+// so a failure says which. A variant is what the patterns page hands a
+// designer under a brand's name, so it pastes through this same gate.
+const variantSheets = Object.keys(PATTERNS).flatMap((id) => variantsOf(id).map((bid) => [`pattern “${id}” × ${bid}`, renderPattern(id, 'demo', { brand: bid })]));
+const sheets = [
+  ...Object.keys(PATTERNS).map((id) => [`pattern “${id}”`, renderPattern(id, 'demo').css]),
+  ...variantSheets.map(([name, r]) => [name, r.css]),
+  ...Object.keys(LOOKS).map((id) => [`look “${id}”`, renderLook(id, 'demo').css]),
+];
 // The markup too, for the encoding scan below.
-const markup = [...Object.keys(PATTERNS).map((id) => [`pattern “${id}”`, renderPattern(id, 'demo').html]), ...Object.keys(LOOKS).map((id) => [`look “${id}”`, renderLook(id, 'demo').html])];
+const markup = [
+  ...Object.keys(PATTERNS).map((id) => [`pattern “${id}”`, renderPattern(id, 'demo').html]),
+  ...variantSheets.map(([name, r]) => [name, r.html]),
+  ...Object.keys(LOOKS).map((id) => [`look “${id}”`, renderLook(id, 'demo').html]),
+];
 
 // CMS block storage is Windows-1252. A character outside that code page comes
 // back mangled on the storefront - the service cards shipped a literal → six
@@ -158,4 +169,4 @@ if (problems) {
   console.error(`\nlint-generated-css: ${problems} problem(s) in the CSS the copy panel ships.`);
   process.exit(1);
 }
-console.log(`lint-generated-css: ${sheets.length} generated sheets clean (${Object.keys(PATTERNS).length} patterns, ${Object.keys(LOOKS).length} looks).`);
+console.log(`lint-generated-css: ${sheets.length} generated sheets clean (${Object.keys(PATTERNS).length} patterns, ${variantSheets.length} variants, ${Object.keys(LOOKS).length} looks).`);

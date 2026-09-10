@@ -1826,10 +1826,23 @@ ${PHOTO_CSS}
     // Exposed for tests to READ (applyBrand, cssFor and htmlFor stay the only
     // writers) - sdoc() already crosses this boundary for the same reason.
     state,
-    renderPattern(id, cls) {
+    // `brand` draws the pattern in that brand's measured values - the
+    // patterns page shows one stage per variant, and the generated-CSS lint
+    // walks the same list, so a variant that pastes badly fails validate.
+    renderPattern(id, cls, { brand = null } = {}) {
       loadPattern(id);
+      if (brand) applyBrand(brand);
       return { css: cssFor(`.${cls}`), html: htmlFor(cls) };
     },
+    // The brands that carry values for a pattern or for its card, in the
+    // order brands.js lists them. Read off the data, never a list of ids.
+    variantsOf(id) {
+      const look = PATTERNS[id].look;
+      return Object.entries(BRANDS)
+        .filter(([, b]) => b.styles?.patterns?.[id] || (look && b.styles?.looks?.[look]))
+        .map(([bid]) => bid);
+    },
+    BRANDS,
     // The card LOOKS, drawn the same way. A look is not a pattern - it is the
     // card inside one - but a style you can only reach by guessing which brand
     // wears it is a style nobody finds. Alfa Romeo's tall dark tiles are the
@@ -3923,8 +3936,16 @@ ${PHOTO_CSS}
   // the same reason. `writeHash: false` because the hash is already what the
   // browser navigated to; writing it again would stack history entries.
   addEventListener('hashchange', () => {
-    const [id] = location.hash.slice(1).split('/');
+    const [seg] = location.hash.slice(1).split('/');
+    const [id, query] = seg.split('?');
+    const wantBrand = new URLSearchParams(query ?? '').get('brand');
     if (PATTERNS[id] && id !== state.pattern) goToPattern(id, false);
+    if (wantBrand && BRANDS[wantBrand] && wantBrand !== state.brand) {
+      applyBrand(wantBrand);
+      buildPanel();
+      buildContent();
+      render();
+    }
   });
 
   /* ---- copy / download --------------------------------------------------- */
@@ -4089,10 +4110,15 @@ ${PHOTO_CSS}
     // IS a pattern, so its link is `#wordmark`. A stale two-segment link still
     // opens the pattern it names rather than 404ing, because everything after
     // the first slash is now dropped.
-    const [id] = location.hash.slice(1).split('/');
+    const [seg] = location.hash.slice(1).split('/');
+    const [id, query] = seg.split('?');
+    const wantBrand = new URLSearchParams(query ?? '').get('brand');
     loadPattern(PATTERNS[id] ? id : 'modelbar');
     restoreSettings();
     restoreContent();
+    // A deep link to a variant wins over remembered edits: the link named the
+    // brand, and a page that opens on something else is a broken link.
+    if (wantBrand && BRANDS[wantBrand]) applyBrand(wantBrand);
     for (const x of nav.querySelectorAll('button')) x.setAttribute('aria-current', String(x.dataset.go === state.pattern));
     buildPanel();
     buildContent();

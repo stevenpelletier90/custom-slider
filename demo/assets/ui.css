@@ -1983,6 +1983,24 @@ code {
   color: var(--ink-soft);
 }
 
+/* The brand name on a variant stage's heading — not the one accent (that's
+   amber, reserved for the current thing and the out-of-tolerance thing).
+   --glyph-ink was tried first: it reads fine in light mode but flips to a
+   pale blue in dark mode, which put white text at ~2.1:1 - measured in the
+   rendered dark-theme page, not assumed. The page's own ink/paper pair,
+   inverted, is always the page's own text-on-background contrast: 17.06:1 in
+   light, 15.67:1 in dark. */
+.gx-variant {
+  padding: 0.1em 0.5em;
+  margin-inline-end: 0.3em;
+  font-size: 0.7em;
+  font-weight: 600;
+  vertical-align: middle;
+  color: var(--paper);
+  background: var(--ink);
+  border-radius: 999px;
+}
+
 .gx-head .ui-btn {
   flex: none;
   margin-inline-start: auto;
