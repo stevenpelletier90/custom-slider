@@ -59,10 +59,11 @@ test('folders come in decision order on the model bar', async ({ browser }) => {
   const { page, errors } = await openBuilder(browser, 1440);
   await pick(page, 'modelbar');
   // The two card folders lead and sit together; the rest follow the order a
-  // slider gets built, rare last. "Brand and cards" rather than "Brand and card
-  // style" since 2026-09-08: there is no card-style control in it any more, so
-  // the old title promised a second control that is not there.
-  assert.deepEqual(await titles(page), ['Brand and cards', 'This card style', 'How many across', 'Arrows and dots', 'Behaviour', 'Advanced']);
+  // slider gets built, rare last. "The card" rather than "Brand and cards"
+  // since 2026-09-10: the brand control moved above the stage (one control,
+  // in the strip, replacing the Brand list that used to live in here), so
+  // this folder holds the card's own settings and nothing else.
+  assert.deepEqual(await titles(page), ['The card', 'This card style', 'How many across', 'Arrows and dots', 'Behaviour', 'Advanced']);
   assert.deepEqual(errors, []);
 });
 

@@ -6,7 +6,7 @@
 // first edit.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, copyParts, rowByLabel } from './helpers.mjs';
+import { openBuilder, pick, copyParts } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -53,14 +53,22 @@ test.describe('one owner of the slide count', () => {
 
   test('a preset says it brought the slides, and Fiat is not credited with cars it has none of', async () => {
     await pick(page, 'cards');
-    const select = rowByLabel(page, 'Brand').locator('select');
+    const select = page.locator('#wb-brand');
+    // A measured brand lives on a chip, not in the select's own options - the
+    // scans below only ever see roster-only brands, so this covers the door
+    // a measured brand would come through if one is ever added for `cards`.
+    const pickBrand = async (id) => {
+      const chip = page.locator(`#wb-variants button[data-brand="${id}"]`);
+      if (await chip.count()) await chip.click();
+      else await select.selectOption(id);
+      await page.waitForTimeout(250);
+    };
     const withCars = await select.evaluate((s) => {
       const b = globalThis.CARGO.BRANDS ?? {};
       return [...s.options].map((o) => o.value).find((v) => v && b[v]?.models);
     });
     if (withCars) {
-      await select.selectOption(withCars);
-      await page.waitForTimeout(250);
+      await pickBrand(withCars);
       const text = await note(page);
       assert.match(text, /preset/, 'the note does not say the slides came from a preset');
       assert.match(text, new RegExp(`\\b${await rows(page)}\\b`), 'the note count disagrees with the rows after a preset');
@@ -70,8 +78,7 @@ test.describe('one owner of the slide count', () => {
       return [...s.options].map((o) => o.value).find((v) => v && b[v] && !b[v].models);
     });
     if (noCars) {
-      await select.selectOption(noCars);
-      await page.waitForTimeout(250);
+      await pickBrand(noCars);
       assert.doesNotMatch(await note(page), /preset/, 'a preset with no roster was credited with the slides');
     }
   });

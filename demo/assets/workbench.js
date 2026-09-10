@@ -2732,9 +2732,10 @@ ${PHOTO_CSS}
     }
   };
 
-  // Picking a brand, from the Brand list or from the strip above the stage.
-  // One function so the two cannot drift: both replace the roster, apply the
-  // brand's values (applyBrand) and rebuild.
+  // Picking a brand: from a chip or from the strip's own select, since
+  // 2026-09-10 the only two doors there are. One function so they cannot
+  // drift: both replace the roster, apply the brand's values (applyBrand)
+  // and rebuild.
   const pickBrand = (id) => {
     // A preset brings its own vehicles, so it replaces the roster outright.
     // Keeping edited rows here would show Ford copy under a Kia preset - so
@@ -2806,10 +2807,11 @@ ${PHOTO_CSS}
     // Nothing starts closed, and nothing CAN be closed - see pane.js folder().
     // Advanced used to, and a setting nobody can see is a setting nobody knows
     // is there.
-    // Named for what it actually holds. There is no card-STYLE control in it
-    // any more - the card is what you picked in the rail - so on a pattern
-    // whose roster is vehicles this folder is the OEM brand list, and on one
-    // whose roster is not, it is the card's own settings and nothing else.
+    // Named for what it actually holds: the card's own settings and nothing
+    // else. The brand control moved above the stage on 2026-09-10 - it used
+    // to live in here too, as a second control over the same data, and the
+    // two disagreed on a measured pattern (a pressed chip, a picker still
+    // saying "Start from the default"). One control, in the strip.
     //
     // Brandable is read off the CARD, not off a list of pattern ids: a brand
     // preset swaps in that marque's cutouts, so it belongs on a card built to
@@ -2822,7 +2824,43 @@ ${PHOTO_CSS}
     const takesCutouts = !!p.look && String(LOOKS[p.look].content).includes('cutout');
     const brandsFor = Object.entries(BRANDS).filter(([, b]) => takesCutouts || b.styles?.patterns?.[state.pattern] || (state.look && b.styles?.looks?.[state.look]));
     const brandable = brandsFor.length > 0;
-    const style = p.look || brandable ? pane.folder(brandable ? (p.look ? 'Brand and cards' : 'Brand') : 'The card') : null;
+    // The note under the strip. Moved out here (it used to live inside the
+    // Brand list's own `if (brandable)` block) so the strip-building code at
+    // the end of this function can call it too - it needs BRANDS, LOOKS,
+    // state and knobLabel, all already in scope in buildPanel().
+    const describeBrand = () => {
+      const b = BRANDS[state.brand];
+      if (!b)
+        return 'Sets the vehicles and how many cards across, from what that brand actually ships — and, where a brand has been measured, the values its live bar draws. Everything stays yours to change.';
+      // Plain words: "ladder" and "the census" are how this was written down
+      // while it was being researched, and neither is defined anywhere a
+      // designer would look.
+      const counts = ['base', 768, 992, 1200].map((k) => state.perView[k]).join(' / ');
+      // What the preset actually touched beyond the roster and the ladder,
+      // in the same words the knobs use - so the note never claims a value
+      // it did not set.
+      const applied = [];
+      const s = b.styles;
+      if (s?.patterns?.[state.pattern]?.panes) applied.push(`${s.patterns[state.pattern].panes.length} tabs`);
+      const keys = [...Object.keys(s?.looks?.[state.look] ?? {}), ...Object.keys(s?.patterns?.[state.pattern]?.props ?? {})];
+      if (keys.length) applied.push(keys.map((k) => knobLabel(k).toLowerCase()).join(', '));
+      // "Measured on" only when something besides the roster/ladder was
+      // actually measured - gallery.js's own variant caption already says
+      // "Measured on" once, and a brand with nothing in `applied` has
+      // nothing that note would be claiming credit for.
+      const measured = applied.length ? ` Also sets ${applied.join(' and ')}. Measured on ${b.source}.` : '';
+      // The brand's own card style is offered, never applied - see the note
+      // on pickBrand() above. Only worth saying when it differs from what is
+      // already on screen. No "pick it below" any more - there is no picker
+      // below, the card was chosen from the rail.
+      const suggest = b.look && b.look !== state.look ? ` ${b.label} ran the ${LOOKS[b.look].label.toLowerCase()} card — it is a rail entry of its own.` : '';
+      return (
+        b.ladder
+          ? `${counts} cards across, on a phone / from 768px / from 992px / from 1200px. ${b.note ?? ''}${suggest}${measured}`
+          : `The ${b.label} demo sites we surveyed showed no clear pattern of how many across, so this leaves the count alone. ${b.note ?? ''}${suggest}${measured}`
+      ).trim();
+    };
+    const style = p.look ? pane.folder('The card') : null;
     const knobs = Object.keys(state.lookProps).length ? pane.folder('This card style') : null;
     const grid = pane.folder('How many across');
     const colors = pane.folder('Arrows and dots');
@@ -2915,49 +2953,6 @@ ${PHOTO_CSS}
     // site they are pasted into; a length here pins them to that size instead.
     state.props['--cargo-font'] ??= '1em';
     valueKnob(grid, 'Card text size', '--cargo-font', state.props);
-
-    // The OEM brand list is about VEHICLES - a roster of cars and the count that
-    // brand ships them at. It has nothing to offer a logo strip or a locations
-    // strip, which are not showing vehicles at all, so it is not drawn there.
-    // Family, not a list of pattern ids, so a non-vehicle card added later is
-    // covered the day it ships.
-    if (brandable) {
-      const describe = () => {
-        const b = BRANDS[state.brand];
-        if (!b)
-          return 'Sets the vehicles and how many cards across, from what that brand actually ships — and, where a brand has been measured, the values its live bar draws. Everything stays yours to change.';
-        // Plain words: "ladder" and "the census" are how this was written down
-        // while it was being researched, and neither is defined anywhere a
-        // designer would look.
-        const counts = ['base', 768, 992, 1200].map((k) => state.perView[k]).join(' / ');
-        // What the preset actually touched beyond the roster and the ladder,
-        // in the same words the knobs use - so the note never claims a value
-        // it did not set.
-        const applied = [];
-        const s = b.styles;
-        if (s?.patterns?.[state.pattern]?.panes) applied.push(`${s.patterns[state.pattern].panes.length} tabs`);
-        const keys = [...Object.keys(s?.looks?.[state.look] ?? {}), ...Object.keys(s?.patterns?.[state.pattern]?.props ?? {})];
-        if (keys.length) applied.push(keys.map((k) => knobLabel(k).toLowerCase()).join(', '));
-        // "Measured on" only when something besides the roster/ladder was
-        // actually measured - gallery.js's own variant caption already says
-        // "Measured on" once, and a brand with nothing in `applied` has
-        // nothing that note would be claiming credit for.
-        const measured = applied.length ? ` Also sets ${applied.join(' and ')}. Measured on ${b.source}.` : '';
-        // The brand's own card style is offered, never applied - see the note
-        // on the Brand handler below. Only worth saying when it differs from
-        // what is already on screen.
-        const suggest = b.look && b.look !== state.look ? ` ${b.label} ran the ${LOOKS[b.look].label.toLowerCase()} card — pick it below if you want it.` : '';
-        return (
-          b.ladder
-            ? `${counts} cards across, on a phone / from 768px / from 992px / from 1200px. ${b.note ?? ''}${suggest}${measured}`
-            : `The ${b.label} demo sites we surveyed showed no clear pattern of how many across, so this leaves the count alone. ${b.note ?? ''}${suggest}${measured}`
-        ).trim();
-      };
-      // pickBrand() (above) is the one function that runs whether this is
-      // picked from this list or from the strip above the stage.
-      pane.list(style, 'Brand', state.brand ?? '', [['', 'Start from the default'], ...brandsFor.map(([id, b]) => [id, b.label])], (v) => pickBrand(v));
-      pane.note(style, describe());
-    }
 
     // THERE IS NO CARD-STYLE PICKER, and there must not be one again
     // (2026-09-08). A thumbnail grid of seven cards used to live here on every
@@ -3304,22 +3299,31 @@ ${PHOTO_CSS}
     colourKnob(adv, 'Focus ring', '--cs-focus', state.props);
     valueKnob(adv, 'Control transition', '--cs-transition', state.props);
 
-    // The strip above the stage: Default plus every brand measured for this
-    // pattern. Read off the same data as the Brand list, so a chip and a
-    // list entry are the same brand and the pressed chip is the selected
-    // option. No chip pressed is the honest state for a brand this strip
-    // does not offer (state.brand set from the Brand list rather than a
-    // chip) - a pressed Default there would be claiming a default that is
-    // not what is actually live.
+    // The one brand control (2026-09-10): a Default chip, a chip per brand
+    // MEASURED for this pattern, a select for every other brand this card can
+    // take, and the note describeBrand() writes. Shown whenever `brandable`
+    // is true (the same brandsFor computation the chips and the select both
+    // read), hidden otherwise - a logo strip or a locations strip has no
+    // roster of vehicles for a brand to fill. A cutout card offers every
+    // brand in the select even where none is measured (`cards`): Default
+    // plus the select, no chips.
+    //
+    // A chip and a select option are the same brand read off the same data,
+    // so the pressed chip and the select's value can never disagree. No chip
+    // pressed and the select on its placeholder is the honest state for a
+    // roster-only brand picked from the select - a pressed Default there
+    // would be claiming a default that is not what is actually live.
     const strip = document.getElementById('wb-variants');
     if (strip) {
       const ids = variantsOf(state.pattern);
-      strip.hidden = ids.length === 0;
-      // replaceChildren() destroys whichever button held focus, so a click
-      // that rebuilds the strip must not drop keyboard focus to <body>.
+      strip.hidden = !brandable;
+      // replaceChildren() destroys whichever control held focus, so a click
+      // or a change that rebuilds the strip must not drop keyboard focus to
+      // <body>.
       const hadFocus = strip.contains(document.activeElement);
+      const selectHadFocus = hadFocus && document.activeElement.id === 'wb-brand';
       strip.replaceChildren();
-      if (ids.length) {
+      if (brandable) {
         for (const [bid, label] of [['', 'Default'], ...ids.map((b) => [b, BRANDS[b].label])]) {
           const btn = document.createElement('button');
           btn.type = 'button';
@@ -3337,7 +3341,39 @@ ${PHOTO_CSS}
           btn.addEventListener('click', () => pickBrand(bid));
           strip.append(btn);
         }
-        if (hadFocus) (strip.querySelector('button[aria-pressed="true"]') ?? strip.querySelector('button')).focus();
+
+        // Every brand this card can take that is NOT already a chip - the
+        // roster-only ones, plus every brand at all on a cutout card that
+        // has nothing measured. Same order brandsFor is already in: BRANDS'
+        // own order, because brandsFor is built off Object.entries(BRANDS).
+        const rest = brandsFor.filter(([bid]) => !ids.includes(bid));
+        const select = document.createElement('select');
+        select.id = 'wb-brand';
+        select.setAttribute('aria-label', 'Other brand');
+        const placeholder = document.createElement('option');
+        placeholder.value = '';
+        placeholder.textContent = 'Other brand…';
+        select.append(placeholder);
+        for (const [bid, b] of rest) {
+          const opt = document.createElement('option');
+          opt.value = bid;
+          opt.textContent = b.label;
+          select.append(opt);
+        }
+        // Shows state.brand only when it is one of THIS select's own
+        // options; a measured brand lives on a chip instead, and the select
+        // sits on its placeholder while a chip is pressed.
+        select.value = rest.some(([bid]) => bid === state.brand) ? state.brand : '';
+        select.addEventListener('change', () => pickBrand(select.value || null));
+        strip.append(select);
+
+        const note = document.createElement('p');
+        note.className = 'wb-brand-note';
+        note.textContent = describeBrand();
+        strip.append(note);
+
+        if (selectHadFocus) select.focus();
+        else if (hadFocus) (strip.querySelector('button[aria-pressed="true"]') ?? strip.querySelector('button'))?.focus();
       }
     }
   }

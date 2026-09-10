@@ -118,3 +118,13 @@ ours, reviewed like any other, never a copy.
 - Live thumbnails in the strip. The stage is the preview.
 - Measuring any brand beyond Toyota.
 - A search or filter over the 32 tiles.
+
+## Addendum 2026-09-10: one brand control
+
+The chip strip above the stage and the Brand list in the settings panel turned out
+to be two controls over the same data, and they disagreed on a measured pattern - a
+pressed chip with the panel's picker still reading "Start from the default". The
+strip is now the only brand control: a chip per measured brand, a select for every
+other brand the card can take, and the note underneath it. The Brand list left the
+settings panel, and its folder - "Brand and cards" where a pattern carried both - is
+"The card" again, holding the card's own settings and nothing else.

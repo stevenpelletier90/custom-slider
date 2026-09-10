@@ -96,19 +96,47 @@ test.describe('the tab row has knobs', () => {
   });
 });
 
+// The one brand control (2026-09-10): a Default chip, a chip per measured
+// brand, a select for every other brand the card can take. `id === ''` is
+// always a chip (Default is drawn whenever the strip is shown); a measured
+// brand is a chip; anything else goes through the select.
 const selectBrand = async (page, id) => {
-  const select = rowByLabel(page, 'Brand').locator('select');
+  if (id === '') {
+    await page.click('#wb-variants button[data-brand=""]');
+    await page.waitForTimeout(200);
+    return;
+  }
+  const chip = page.locator(`#wb-variants button[data-brand="${id}"]`);
+  if (await chip.count()) {
+    await chip.click();
+    await page.waitForTimeout(200);
+    return;
+  }
+  const select = page.locator('#wb-brand');
   // restoreSettings() remembers state.brand across a pattern revisit without
   // replaying applyBrand()'s side effects (the panel's own comment: "the
   // preset is NOT re-run"), and this file's tests share one page/localStorage
-  // across the whole run - so a prior test can leave the picker already
+  // across the whole run - so a prior test can leave the select already
   // showing `id`. Selecting an already-selected <option> fires no change
   // event, so applyBrand() never runs and state.panes/props stay stale. Route
-  // through "Start from the default" first to guarantee a real change.
-  if ((await select.inputValue()) === id) await select.selectOption('');
+  // through the Default chip first to guarantee a real change.
+  if ((await select.inputValue()) === id) {
+    await page.click('#wb-variants button[data-brand=""]');
+    await page.waitForTimeout(200);
+  }
   await select.selectOption(id);
   await page.waitForTimeout(200);
 };
+
+// What the strip is actually showing: the pressed chip's brand, or the
+// select's value when no chip is pressed - the same reading a designer gets
+// from looking at it, whichever of the two doors the brand came through.
+const currentBrand = (page) =>
+  page.evaluate(() => {
+    const pressed = document.querySelector('#wb-variants button[aria-pressed="true"]');
+    if (pressed) return pressed.dataset.brand;
+    return document.getElementById('wb-brand')?.value ?? '';
+  });
 
 test.describe('a brand applies its values', () => {
   test('Chevrolet on the tabbed bar draws the blue line and ships it', async () => {
@@ -192,15 +220,14 @@ test.describe('a brand applies its values', () => {
     assert.deepEqual(errors, []);
   });
 
-  test('the brand list is offered only where a brand has something to give', async () => {
+  test('the brand control is offered only where a brand has something to give', async () => {
     await pick(page, 'logostrip');
-    assert.equal(await rowByLabel(page, 'Brand').count(), 0, 'no brand carries values for the logo strip');
+    assert.equal(await page.evaluate(() => document.getElementById('wb-variants').hidden), true, 'no brand carries values for the logo strip');
     await pick(page, 'tabs');
-    const opts = await rowByLabel(page, 'Brand')
-      .locator('select')
-      .evaluate((s) => [...s.options].map((o) => o.value).filter(Boolean));
-    assert.ok(opts.includes('chevrolet'));
-    assert.ok(opts.length >= 32, 'a cutout card offers every brand, because every brand has a roster');
+    assert.equal(await page.locator('#wb-variants button[data-brand="chevrolet"]').count(), 1, 'Chevrolet should be a chip on tabs');
+    assert.equal(await page.locator('#wb-variants button[data-brand="toyota"]').count(), 1, 'Toyota should be a chip on tabs');
+    const optCount = await page.locator('#wb-brand option:not([value=""])').count();
+    assert.ok(optCount >= 30, `a cutout card offers every other brand in the select, got ${optCount}`);
   });
 
   test('Toyota is a second measured brand on the tabbed bar', async () => {
@@ -265,7 +292,7 @@ test.describe('the patterns page shows the variants', () => {
     await p.goto(`${ORIGIN}/demo/index.html#tabs?brand=chevrolet`, { waitUntil: 'load' });
     await p.waitForSelector('#wb-stage');
     await p.frameLocator('#wb-stage').locator('.cs-slide').first().waitFor({ state: 'attached', timeout: 15000 });
-    const brand = await rowByLabel(p, 'Brand').locator('select').inputValue();
+    const brand = await currentBrand(p);
     assert.equal(brand, 'chevrolet');
     assert.equal((await tabStyles(p)).line, 'rgb(0, 109, 199)');
     await ctx.close();
@@ -304,7 +331,7 @@ test.describe('kept settings bring the brand tab names back', () => {
     await page.waitForTimeout(200);
     await page.reload({ waitUntil: 'load' });
     await stageReady(page);
-    const brand = await rowByLabel(page, 'Brand').locator('select').inputValue();
+    const brand = await currentBrand(page);
     assert.equal(brand, 'chevrolet');
     const tabs = await page.evaluate(() => [...globalThis.CARGO.sdoc().querySelectorAll('.cargo-tabs [role="tab"]')].map((t) => t.textContent.trim()));
     assert.deepEqual(tabs, ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial']);
@@ -315,7 +342,7 @@ test.describe('kept settings bring the brand tab names back', () => {
 test.describe('the variant strip above the stage', () => {
   const chips = (page) => page.evaluate(() => [...document.querySelectorAll('#wb-variants button')].map((b) => [b.dataset.brand, b.getAttribute('aria-pressed')]));
 
-  test('hidden where no brand is measured, shown with Default plus the brands on tabs', async () => {
+  test('hidden where no brand has anything to give, shown with Default plus the brands on tabs', async () => {
     await pick(page, 'logostrip');
     assert.equal(await page.evaluate(() => document.getElementById('wb-variants').hidden), true);
     await pick(page, 'tabs');
@@ -326,13 +353,26 @@ test.describe('the variant strip above the stage', () => {
     assert.ok(c.some(([b]) => b === 'toyota'));
   });
 
-  test('a chip applies the brand, and the Brand list agrees', async () => {
+  test('shown on a cutout card with nothing measured: Default plus the select, no chips', async () => {
+    await pick(page, 'cards');
+    assert.equal(await page.evaluate(() => document.getElementById('wb-variants').hidden), false, 'a cutout card takes every brand, even with nothing measured');
+    const c = await chips(page);
+    assert.deepEqual(
+      c.map(([b]) => b),
+      [''],
+      'only the Default chip should be drawn - no brand is measured for cards',
+    );
+    const optCount = await page.locator('#wb-brand option:not([value=""])').count();
+    assert.ok(optCount >= 30, `expected every brand in the select, got ${optCount}`);
+  });
+
+  test('a chip applies the brand, and the strip agrees with itself', async () => {
     await pick(page, 'tabs');
     await selectBrand(page, '');
     await page.click('#wb-variants button[data-brand="chevrolet"]');
     await page.waitForTimeout(250);
     assert.equal((await tabStyles(page)).line, 'rgb(0, 109, 199)');
-    assert.equal(await rowByLabel(page, 'Brand').locator('select').inputValue(), 'chevrolet');
+    assert.equal(await currentBrand(page), 'chevrolet');
     const pressed = (await chips(page)).find(([, p]) => p === 'true')[0];
     assert.equal(pressed, 'chevrolet');
     await selectBrand(page, '');
@@ -349,11 +389,12 @@ test.describe('the variant strip above the stage', () => {
     assert.equal(inside, true, `activeElement was ${await page.evaluate(() => document.activeElement.tagName)}`);
   });
 
-  test('no chip is pressed when a brand not on this strip is picked from the Brand list', async () => {
+  test('no chip is pressed when a roster-only brand is picked from the select', async () => {
     await pick(page, 'modelbar');
     await selectBrand(page, 'kia');
     const pressedCount = (await chips(page)).filter(([, p]) => p === 'true').length;
     assert.equal(pressedCount, 0, `chips: ${JSON.stringify(await chips(page))}`);
+    assert.equal(await page.locator('#wb-brand').inputValue(), 'kia');
   });
 
   test('patternsOf mirrors variantsOf', async () => {

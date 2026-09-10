@@ -97,10 +97,11 @@
              side gutter and photo crop all resolve the way they will on the
              device. Its document is written by the same cssFor()/htmlFor() pair
              that fills the code panel, so the parity guarantee is unchanged. -->
-            <!-- Measured brands for the pattern on screen. Filled by buildPanel();
-                 a chip runs the same pickBrand() the Brand list runs, so the two
-                 cannot disagree. Hidden when nothing is measured. -->
-            <nav id="wb-variants" class="wb-variants" aria-label="Measured brands for this pattern" hidden></nav>
+            <!-- The one brand control (2026-09-10) - there is no Brand list in the
+                 settings panel any more. Filled by buildPanel(): a chip per measured
+                 brand, a select for the rest, a note under it. Hidden when the card
+                 on screen has nothing a brand can give it. -->
+            <nav id="wb-variants" class="wb-variants" aria-label="Brand" hidden></nav>
 
             <div class="wb-stage"><iframe id="wb-stage" title="Live preview of your slider"></iframe></div>
 

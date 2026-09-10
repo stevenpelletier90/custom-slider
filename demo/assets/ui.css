@@ -563,6 +563,32 @@ body {
   outline-offset: 2px;
 }
 
+/* The rest of the brand control: every brand a card can take that is not
+   already a chip, so a roster-only brand (or every brand on a card with
+   nothing measured) is still one control away, and the note under it. */
+#wb-brand {
+  padding: 0.3rem 1.6rem 0.3rem 0.7rem;
+  font: inherit;
+  font-size: 0.85rem;
+  color: var(--ink);
+  cursor: pointer;
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 999px;
+}
+
+#wb-brand:focus-visible {
+  outline: 2px solid var(--focus);
+  outline-offset: 2px;
+}
+
+.wb-brand-note {
+  flex-basis: 100%;
+  margin: 0.25rem 0 0.6rem;
+  font-size: 0.85rem;
+  color: var(--ink-soft);
+}
+
 /* The host for a pattern whose point is covering the page - today only the
    lightbox. workbench.js clones the snippet's wrapper into it and opens the
    dialog HERE rather than inside the preview frame, because a modal is only

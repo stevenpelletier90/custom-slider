@@ -112,12 +112,11 @@ test.describe('a control puts back everything it took', () => {
     await nameField.fill(name);
     await nameField.blur();
 
-    const select = rowByLabel(page, 'Brand').locator('select');
+    const select = page.locator('#wb-brand');
     const brand = await select.evaluate((s) => [...s.options].map((o) => o.value).find((v) => v));
     await select.selectOption(brand);
     await page.waitForTimeout(200);
-    // The panel is rebuilt by the change, so the row has to be found again.
-    await rowByLabel(page, 'Brand').locator('select').selectOption('');
+    await page.click('#wb-variants button[data-brand=""]');
     await page.waitForTimeout(200);
 
     // Read off the CODE, not off a picker: the card is the pattern now, so the
@@ -1195,11 +1194,14 @@ test.describe('a brand preset swaps the vehicles, never the pattern', () => {
     assert.ok(start.look.length, 'the model bar renders no card style at all');
 
     const brands = await page.evaluate(() => Object.keys(globalThis.CARGO.BRANDS).slice(0, 8));
-    const select = rowByLabel(page, 'Brand').locator('select').first();
     const rosters = new Set([start.first]);
 
     for (const id of brands) {
-      await select.selectOption(id);
+      // Chevrolet and Toyota are measured for the model bar (its look is
+      // `tile`), so they live on a chip; every other brand in this slice is
+      // roster-only and lives in the select.
+      if (id === 'chevrolet' || id === 'toyota') await page.click(`#wb-variants button[data-brand="${id}"]`);
+      else await page.selectOption('#wb-brand', id);
       await page.waitForTimeout(450);
       const now = await cardState();
       assert.deepEqual(now.look, start.look, `${id} changed the card style to ${now.look.join(' ')}`);
@@ -1212,10 +1214,10 @@ test.describe('a brand preset swaps the vehicles, never the pattern', () => {
 
   test('the note offers the brand its card style instead of applying it', async () => {
     await pick(page, 'modelbar');
-    await rowByLabel(page, 'Brand').locator('select').first().selectOption('alfaromeo');
+    await page.selectOption('#wb-brand', 'alfaromeo');
     await page.waitForTimeout(450);
-    const note = await page.evaluate(() => [...document.querySelectorAll('#wb-settings .tp-notev')].map((n) => n.textContent).join(' '));
-    assert.match(note, /pick it below if you want it/, 'the brand no longer offers its own card style anywhere');
+    const note = await page.evaluate(() => document.querySelector('.wb-brand-note')?.textContent ?? '');
+    assert.match(note, /rail entry of its own/, 'the brand no longer offers its own card style anywhere');
     assert.doesNotMatch(note, /which card style/, 'the panel still says a brand sets the card style');
   });
 });
@@ -1242,7 +1244,13 @@ test.describe('a card cannot be put where it does not belong', () => {
   // cards built to take a cutout and nowhere else. Read off the card's own
   // declared content type, not a list of ids, so a card added later is
   // classified the day it ships.
-  test('the OEM brand list is offered only where a cutout roster fits', async () => {
+  //
+  // The brand control moved out of the settings panel and above the stage on
+  // 2026-09-10, so "offered" is read off the strip's hidden state rather than
+  // a settings-panel row - hasKnob('Brand') has nothing to find any more.
+  const brandOffered = (page) => page.evaluate(() => !document.getElementById('wb-variants').hidden);
+
+  test('the brand control is offered only where a cutout roster fits', async () => {
     const { cutout, other } = await page.evaluate(() => {
       const { LOOKS, PATTERNS } = globalThis.CARGO;
       const ids = Object.keys(PATTERNS).filter((k) => PATTERNS[k].look);
@@ -1252,11 +1260,11 @@ test.describe('a card cannot be put where it does not belong', () => {
     assert.ok(cutout.length && other.length, 'every card takes the same content, so this guards nothing');
     for (const id of cutout) {
       await pick(page, id);
-      assert.equal(await hasKnob(page, 'Brand'), true, `${id} takes a cutout roster but is offered no brand`);
+      assert.equal(await brandOffered(page), true, `${id} takes a cutout roster but is offered no brand`);
     }
     for (const id of other) {
       await pick(page, id);
-      assert.equal(await hasKnob(page, 'Brand'), false, `${id} offers the OEM brand list, and its card is not built for cutouts`);
+      assert.equal(await brandOffered(page), false, `${id} offers the brand control, and its card is not built for cutouts`);
     }
   });
 
