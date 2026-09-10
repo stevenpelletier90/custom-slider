@@ -201,6 +201,21 @@ test.describe('a brand applies its values', () => {
     assert.ok(opts.includes('chevrolet'));
     assert.ok(opts.length >= 32, 'a cutout card offers every brand, because every brand has a roster');
   });
+
+  test('Toyota is a second measured brand on the tabbed bar', async () => {
+    await pick(page, 'tabs');
+    const variants = await page.evaluate(() => globalThis.CARGO.variantsOf('tabs'));
+    assert.ok(variants.includes('toyota'), `tabs variants: ${variants}`);
+    await selectBrand(page, 'toyota');
+    // No assert.notEqual(s.line, s.colour) here: measured on toyotademo1
+    // 2026-09-10, the active tab's border-bottom-color and its own text color
+    // were the same rgb(187, 22, 43) - Toyota is not choosing an underline
+    // colour independent of the text, so --tab-line stays at the pattern
+    // default and there is no distinct line value for this assertion to check.
+    const tabs = await page.evaluate(() => [...globalThis.CARGO.sdoc().querySelectorAll('.cargo-tabs [role="tab"]')].map((t) => t.textContent.trim()));
+    assert.ok(tabs.length >= 4, `expected Toyota's body-style tabs, got ${tabs}`);
+    assert.deepEqual(errors, []);
+  });
 });
 
 test.describe('the patterns page shows the variants', () => {
