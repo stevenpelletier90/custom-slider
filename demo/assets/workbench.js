@@ -1363,7 +1363,7 @@ ${PHOTO_CSS}
     // anything outside the root to reach, so only there do its own properties
     // move to the wrap; everything else keeps declaring on the root exactly as
     // it always has.
-    const ownKey = (k) => !k.startsWith('--cs-') && !k.startsWith('--cargo-');
+    const ownKey = (k) => k in (p.props ?? {}) && !k.startsWith('--cs-') && !k.startsWith('--cargo-');
     const decl = ([k, v]) => `  ${k}: ${v};`;
     const decls = usable
       .filter(([k]) => !hasWrap() || !ownKey(k))
@@ -3003,11 +3003,16 @@ ${PHOTO_CSS}
           name,
           (v) => {
             const next = [...(state.panes ?? p.panes)];
-            next[i] = v.trim() || p.panes[i];
-            state.panes = next.every((n, j) => n === p.panes[j]) ? null : next;
+            // p.panes[i] is undefined past the pattern's own count - a brand
+            // can hand tabs it does not (Chevrolet's five against three) - so
+            // a cleared field falls back to what it started as (name, this
+            // forEach's own closed-over value) rather than storing undefined,
+            // which htmlFor() cannot toLowerCase().
+            next[i] = v.trim() || p.panes[i] || name;
+            state.panes = next.length === p.panes.length && next.every((n, j) => n === p.panes[j]) ? null : next;
             render();
           },
-          { placeholder: p.panes[i] },
+          { placeholder: p.panes[i] ?? name },
         );
       });
     }

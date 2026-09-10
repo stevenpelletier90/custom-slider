@@ -46,6 +46,17 @@ const tabStyles = (page) =>
     };
   });
 
+// What the strip's card name is actually drawing - the look half of a brand's
+// values (--name-color/--name-case), which is a different route through
+// cssFor() than the tab row's own --tab-* properties tabStyles() reads.
+const cardNameStyle = (page) =>
+  page.evaluate(() => {
+    const d = globalThis.CARGO.sdoc();
+    const el = d.querySelector('.cargo-name');
+    const cs = d.defaultView.getComputedStyle(el);
+    return { colour: cs.color, transform: cs.textTransform };
+  });
+
 test.describe('the tab row has knobs', () => {
   test('the five tab knobs show what the untouched tabs pattern is drawing', async () => {
     await pick(page, 'tabs');
@@ -79,7 +90,16 @@ test.describe('the tab row has knobs', () => {
 });
 
 const selectBrand = async (page, id) => {
-  await rowByLabel(page, 'Brand').locator('select').selectOption(id);
+  const select = rowByLabel(page, 'Brand').locator('select');
+  // restoreSettings() remembers state.brand across a pattern revisit without
+  // replaying applyBrand()'s side effects (the panel's own comment: "the
+  // preset is NOT re-run"), and this file's tests share one page/localStorage
+  // across the whole run - so a prior test can leave the picker already
+  // showing `id`. Selecting an already-selected <option> fires no change
+  // event, so applyBrand() never runs and state.panes/props stay stale. Route
+  // through "Start from the default" first to guarantee a real change.
+  if ((await select.inputValue()) === id) await select.selectOption('');
+  await select.selectOption(id);
   await page.waitForTimeout(200);
 };
 
@@ -94,6 +114,13 @@ test.describe('a brand applies its values', () => {
     assert.equal(s.divider, '"|"');
     assert.equal(await knob(page, 'Selected tab line'), '#006dc7');
     assert.equal(await knob(page, 'Name case'), 'capitalize');
+    // The look half of the brand's values (--name-color/--name-case) has to
+    // land on the carousel root, not the tabs wrap: an own declaration on the
+    // wrap loses to the shared card sheet's own --name-color on the root, so
+    // this used to draw #222/none no matter what the knobs said.
+    const name = await cardNameStyle(page);
+    assert.equal(name.colour, 'rgb(51, 51, 51)');
+    assert.equal(name.transform, 'capitalize');
     const tabs = await page.evaluate(() => [...globalThis.CARGO.sdoc().querySelectorAll('.cargo-tabs [role="tab"]')].map((t) => t.textContent.trim()));
     assert.deepEqual(tabs, ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial']);
     const { css } = await copyParts(page);
@@ -109,6 +136,20 @@ test.describe('a brand applies its values', () => {
     const { css } = await copyParts(page);
     assert.match(css, /--name-case: capitalize;/);
     assert.doesNotMatch(css, /--tab-/);
+  });
+
+  test('clearing a brand-added tab name falls back instead of throwing', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'chevrolet');
+    // Chevrolet hands the pattern five tabs; the pattern's own default is
+    // three, so Tab 4/5 have no pattern value to fall back to.
+    const input = rowByLabel(page, 'Tab 5').locator('input[type="text"]').first();
+    await input.fill('');
+    await input.press('Enter');
+    await page.waitForTimeout(150);
+    const tabs = await page.evaluate(() => [...globalThis.CARGO.sdoc().querySelectorAll('.cargo-tabs [role="tab"]')].map((t) => t.textContent.trim()));
+    assert.equal(tabs[4], 'Commercial');
+    assert.deepEqual(errors, []);
   });
 
   test('resetting a knob goes back to the brand; Start from the default goes back to the pattern', async () => {
