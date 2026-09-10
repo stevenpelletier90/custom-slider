@@ -156,14 +156,40 @@ for (const [id, look] of Object.entries(LOOKS)) {
 }
 
 // A pattern's own props are knobs too (the tab row's, since 2026-09-09), and
-// the builder shows CARD_NOTES as their tooltip - so the same rule holds.
-// Scoped to each `props: { ... }` map rather than the whole file: the same
+// the builder shows CARD_NOTES as their tooltip - so the same rule holds. A
+// brand variant's styles.patterns block (also 2026-09-09, below) needs the
+// same per-pattern prop map to check its values against, so PATTERN_PROPS is
+// read once here and both gates share it rather than scanning workbench.js
+// text two incompatible ways.
+//
+// workbench.js is a classic script too, but PATTERNS and ENGINE_DEFAULTS sit
+// behind other module-scoped consts (state, LOOKS) that a bare `new Function`
+// sandbox can't supply, so this reads them off the SOURCE TEXT instead of
+// loading the file.
+const wbSrc = readFileSync('demo/assets/workbench.js', 'utf8');
+const patternsStart = wbSrc.indexOf('const PATTERNS = {');
+const patternsText = wbSrc.slice(patternsStart, wbSrc.indexOf('/* ---- ', patternsStart));
+const PATTERN_PROPS = {};
+const PATTERN_PANES = new Set();
+for (const m of patternsText.matchAll(/\n {4}([a-z-]+|'[a-z-]+'): \{([\s\S]*?)\n {4}\},/g)) {
+  const pid = m[1].replace(/'/g, '');
+  const body = m[2];
+  PATTERN_PROPS[pid] = Object.fromEntries([...(body.match(/props: \{[\s\S]*?\}/)?.[0] ?? '').matchAll(/'(--[a-z0-9-]+)'/g)].map(([, k]) => [k, true]));
+  if (/\n {6}panes: \[/.test(body)) PATTERN_PANES.add(pid);
+}
+const ENGINE_KEYS = new Set([...(wbSrc.match(/const ENGINE_DEFAULTS = \{[\s\S]*?\n {2}\};/)?.[0] ?? '').matchAll(/'(--cs-[a-z0-9-]+)'/g)].map(([, k]) => k));
+if (!Object.keys(PATTERN_PROPS).length || !ENGINE_KEYS.size) {
+  console.error('  check-looks: could not read PATTERNS or ENGINE_DEFAULTS out of workbench.js — the text scan needs updating');
+  bad++;
+}
+
+// Scoped to each pattern's own props map rather than the whole file: the same
 // `'--x': 'value'` shape also appears in KNOB_LABELS (a label, not a note),
 // and matching the whole file double-reported every key found there too.
-const wbSrc = readFileSync('demo/assets/workbench.js', 'utf8');
 const seen = new Set();
-for (const [, propsBlock] of wbSrc.matchAll(/props:\s*\{([^}]*)\}/gs)) {
-  for (const [, prop] of propsBlock.matchAll(/'(--(?!cs-|cargo-)[a-z0-9-]+)':\s*'[^']*'/g)) {
+for (const propsMap of Object.values(PATTERN_PROPS)) {
+  for (const prop of Object.keys(propsMap)) {
+    if (!/^--(?!cs-|cargo-)/.test(prop)) continue;
     if (seen.has(prop)) continue;
     seen.add(prop);
     if (Object.values(LOOKS).some((l) => prop in (l.settings ?? {}))) continue; // already checked above
@@ -193,6 +219,53 @@ for (const [id, b] of brands) {
     console.error(`  ${id}: look "${b.look}" does not exist`);
     bad++;
     continue;
+  }
+  // A variant (2026-09-09) is knob VALUES and nothing else. Every key has to
+  // be a knob that exists, or the value is written to nothing and the preset
+  // claims a change it never makes. `panes` is the one non-property field:
+  // tab names are content, set the way the roster is.
+  if (b.styles != null) {
+    if (typeof b.source !== 'string' || !b.source.trim()) {
+      console.error(`  ${id}: has styles but no source — say which live site the values were measured on`);
+      bad++;
+    }
+    for (const [lk, vals] of Object.entries(b.styles.looks ?? {})) {
+      if (!LOOKS[lk]) {
+        console.error(`  ${id}: styles.looks.${lk} names a look that does not exist`);
+        bad++;
+        continue;
+      }
+      for (const k of Object.keys(vals)) {
+        if (!(k in LOOKS[lk].settings) && !k.startsWith('--cs-')) {
+          console.error(`  ${id}: styles.looks.${lk} sets ${k}, which the ${lk} look has no knob for`);
+          bad++;
+        }
+      }
+    }
+    for (const [pid, entry] of Object.entries(b.styles.patterns ?? {})) {
+      const props = PATTERN_PROPS[pid];
+      if (!props) {
+        console.error(`  ${id}: styles.patterns.${pid} names a pattern that does not exist`);
+        bad++;
+        continue;
+      }
+      for (const field of Object.keys(entry)) {
+        if (field !== 'props' && field !== 'panes') {
+          console.error(`  ${id}: styles.patterns.${pid}.${field} — a variant carries props and panes only, never structure`);
+          bad++;
+        }
+      }
+      for (const k of Object.keys(entry.props ?? {})) {
+        if (!(k in props) && !ENGINE_KEYS.has(k)) {
+          console.error(`  ${id}: styles.patterns.${pid} sets ${k}, which the ${pid} pattern has no knob for`);
+          bad++;
+        }
+      }
+      if (entry.panes && !PATTERN_PANES.has(pid)) {
+        console.error(`  ${id}: styles.patterns.${pid} sets panes on a pattern with no tabs`);
+        bad++;
+      }
+    }
   }
   if (b.ladder === null) continue;
   if (!Array.isArray(b.ladder) || !b.ladder.length || b.ladder[0][0] !== 0) {

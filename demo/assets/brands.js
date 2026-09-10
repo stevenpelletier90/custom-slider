@@ -1,40 +1,32 @@
 // The 32 OEM brands on the platform, as presets for the one component.
 //
-// A preset is NOT a copy of a slider, and as of 2026-09-08 it is not a card
-// style either. It sets the ROSTER (which vehicles) and the LADDER (how many
-// across at each breakpoint), and nothing else.
+// A preset is NOT a copy of a slider. It sets the ROSTER (which vehicles), the
+// LADDER (how many across at each breakpoint), and - since 2026-09-09, where a
+// brand has been measured - the VALUES that brand's live demo draws: a
+// `styles` block of knob values keyed by look and by pattern. See
+// docs/superpowers/specs/2026-09-09-oem-variants-design.md.
 //
-// It used to apply `look` as well, and that was wrong twice over. In practice:
-// a look owns MARKUP, so picking Alfa Romeo on the model bar reordered the name
-// above the photo, added a CTA button, went dark and cropped 3:5 - you chose a
-// pattern from the rail and got a different one back. And on the evidence: the
-// census this file cites (docs/research/2026-08-18-oem-demo-slider-census.md)
-// says the variety across OEMs is "skin, not structure" and tabulates FOURTEEN
-// BREAKPOINT LADDERS. It never found that the card differs per brand. The
-// ladder is measured; the card was an extrapolation, sourced to the `note`
-// fields below and nothing else.
-//
-// `look` stays in each entry, and the panel offers it in words - "Alfa Romeo
-// ran the tall tile card, pick it below if you want it" - so the research is
-// still there to act on. It just no longer reaches in and changes the pattern
-// for you.
+// What a preset never does is change MARKUP. It used to apply `look` as well,
+// and a look owns an element tree: picking Alfa Romeo on the model bar
+// reordered the name above the photo, added a CTA button, went dark and
+// cropped 3:5 - you chose a pattern from the rail and got a different one
+// back. The census this file cites (docs/research/2026-08-18-oem-demo-slider-
+// census.md) says the variety across OEMs is "skin, not structure", and a skin
+// is values, which is exactly what `styles` holds. `look` stays in each entry
+// as a suggestion the panel offers in words.
 //
 // `ladder` is the brand's REAL slick config, recorded verbatim as
-// [minWidth, perView] pairs, so it stays auditable against the census:
-// docs/research/2026-08-18-oem-demo-slider-census.md
+// [minWidth, perView] pairs, so it stays auditable against the census. It is
+// deliberately not what gets emitted: perViewFor() reads each ladder at the
+// platform's own Bootstrap 3 tiers (768 / 992 / 1200) and clamps anything that
+// would squeeze a card below the width its content needs.
 //
-// It is deliberately not what gets emitted. perViewFor() reads each ladder at
-// the platform's own Bootstrap 3 tiers (768 / 992 / 1200) and clamps anything
-// that would squeeze a card below the width its content needs. The OEM values
-// - 460, 539, 540, 400, 600, 1440, 1800 - are one-off numbers from a dozen
-// different agencies, and none of them line up with the grid the page around
-// the slider is using. Reproducing them is how a strip ends up flipping to
-// 5-across one tier before the page does.
-//
-// Colour is not in here on purpose. A DealerOn site's colours come from its
-// own theme, not from a hardcoded OEM hex, so the picker sets layout and card
-// style and leaves the two arrow colours to the site. That is also why the
-// four arrow/gap controls sit right next to the picker.
+// Colour: a `styles` block may carry a brand's hex (Chevrolet's tab line is
+// its link blue) because the live site draws it. It is a starting value the
+// designer overrides with the site's theme colour, not a claim about the
+// theme - the builder cannot see the page it is pasted into. A brand with no
+// `styles` block sets no colour at all, which is why the arrow/gap controls
+// sit right next to the picker.
 
 (() => {
   // Bootstrap 3's own .container widths, measured in the DealerOn CSS bundle -
@@ -416,6 +408,23 @@
       ],
       demos: 3,
       note: 'Since Nov 2025 the official bar is the tabbed version; the plain slick look was deprecated and its sites migrated.',
+      // The variant: what chevroletdemo1 draws, as knob values. Measured with
+      // Playwright against the demo's own tabs pattern on 2026-09-09 - every
+      // difference was a value, none was structure, which is what lets this be
+      // a preset rather than a second pattern. The blue is the site's link
+      // colour; on a real Chevy site a designer swaps it for the theme's.
+      styles: {
+        looks: {
+          tile: { '--name-case': 'capitalize', '--name-color': '#333' },
+        },
+        patterns: {
+          tabs: {
+            props: { '--tab-size': '1.125em', '--tab-dim': '1', '--tab-line': '#006dc7', '--tab-rule': 'transparent', '--tab-divider': "'|'" },
+            panes: ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial'],
+          },
+        },
+      },
+      source: 'chevroletdemo1.dealeron.com, measured 2026-09-09',
     },
     chrysler: {
       label: 'Chrysler',
