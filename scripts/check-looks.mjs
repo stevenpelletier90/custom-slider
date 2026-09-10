@@ -215,6 +215,10 @@ for (const [id, b] of brands) {
     console.error(`  ${id}: no label`);
     bad++;
   }
+  if (!existsSync(`demo/img/logo-${id}.png`)) {
+    console.error(`  ${id}: no demo/img/logo-${id}.png — the Brands page draws every brand by its mark`);
+    bad++;
+  }
   if (!LOOKS[b.look]) {
     console.error(`  ${id}: look "${b.look}" does not exist`);
     bad++;

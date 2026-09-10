@@ -1987,6 +1987,29 @@ code {
   white-space: nowrap;
 }
 
+/* A brands.html tile swaps the glyph for a logo and adds a badge, so both new
+   children need the same "never shrink" treatment .wb-glyph already gets
+   above (.gx-tile is a flex row, and .gx-tile-name is the only child that
+   overflow:hidden lets flex-shrink actually squeeze - see the ellipsis rule
+   above). Without it the badge's own text would wrap onto a second line
+   inside its pill before the name gave up any width. */
+.bb-tile img {
+  flex: none;
+  inline-size: 2.4rem;
+  block-size: auto;
+}
+
+.bb-badge {
+  flex: none;
+  padding: 0.1em 0.5em;
+  font-size: 0.7em;
+  font-weight: 600;
+  color: var(--paper);
+  white-space: nowrap;
+  background: var(--ink);
+  border-radius: 999px;
+}
+
 .gx-card {
   padding: 1.25rem 1.4rem 1.5rem;
   margin-block-start: 1.5rem;
@@ -2048,6 +2071,33 @@ code {
   margin-inline-start: auto;
   white-space: nowrap;
   text-decoration: none;
+}
+
+/* brands.html's section head carries the OEM's mark instead of a glyph. */
+.bb-logo {
+  flex: none;
+  inline-size: 3.5rem;
+  block-size: auto;
+}
+
+/* One of these per pattern a brand section shows — a heading and the same
+   "open in the builder" link the pattern gets on patterns.html, above the
+   live stage. */
+.bb-block {
+  margin-block-start: 1rem;
+}
+
+.bb-block-head {
+  display: flex;
+  gap: 1rem;
+  align-items: center;
+  justify-content: space-between;
+  margin-block-end: 0.5rem;
+}
+
+.bb-block-head h3 {
+  margin: 0;
+  font-size: 1rem;
 }
 
 /* Same light artboard the builder previews on, for the same reason. */
