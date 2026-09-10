@@ -2022,11 +2022,6 @@ code {
   border-radius: 12px;
 }
 
-/* A brand variant stage, visually nested under the pattern it belongs to. */
-.gx-card--variant {
-  margin-inline-start: 1.5rem;
-}
-
 .gx-head {
   display: flex;
   gap: 1rem;
@@ -2045,6 +2040,12 @@ code {
   max-inline-size: 66ch;
   margin: 0.2rem 0 0;
   font-size: 0.87rem;
+  color: var(--ink-soft);
+}
+
+.gx-also {
+  margin: 0.3rem 0 0;
+  font-size: 0.85em;
   color: var(--ink-soft);
 }
 

@@ -35,6 +35,13 @@
         <div>
           <h2>${p.label}</h2>
           <p>${p.blurb}</p>
+          ${
+            variantsOf(id).length
+              ? `<p class="gx-also">Also measured for ${variantsOf(id)
+                  .map((bid) => `<a href="brands.html#${bid}">${BRANDS[bid].label}</a>`)
+                  .join(', ')}</p>`
+              : ''
+          }
         </div>
         <a class="ui-btn" href="index.html#${id}">Open in the builder</a>
       </div>
@@ -68,31 +75,6 @@
       }
     }
     index.push([`p-${id}`, SHORT?.[id] ?? p.label, `wb-glyph--${id}`, '']);
-
-    // Every brand measured for this pattern, as its own stage under the
-    // default. Built by the same generator with the brand applied, so the
-    // Chevrolet bar here is the Chevrolet bar the builder hands over.
-    for (const bid of variantsOf(id)) {
-      const vcls = `gx-${id}-${bid}`;
-      const v = renderPattern(id, vcls, { brand: bid });
-      css.push(v.css);
-      const vcard = document.createElement('section');
-      vcard.className = 'gx-card gx-card--variant';
-      vcard.id = `p-${id}-${bid}`;
-      vcard.innerHTML = `
-      <div class="gx-head">
-        <span class="wb-glyph wb-glyph--${id}"></span>
-        <div>
-          <h2><span class="gx-variant">${BRANDS[bid].label}</span> ${p.label}</h2>
-          <p>As ${BRANDS[bid].label} draws it. ${BRANDS[bid].source ? `Measured on ${BRANDS[bid].source}.` : ''}</p>
-        </div>
-        <a class="ui-btn" href="index.html#${id}?brand=${bid}">Open in the builder</a>
-      </div>
-      <div class="gx-stage"></div>`;
-      vcard.querySelector('.gx-stage').innerHTML = v.html;
-      grid.append(vcard);
-      index.push([`p-${id}-${bid}`, `${BRANDS[bid].label} ${SHORT?.[id] ?? p.label}`, `wb-glyph--${id}`, '']);
-    }
   }
 
   // A second grid used to follow this one, drawing each card LOOK on a borrowed

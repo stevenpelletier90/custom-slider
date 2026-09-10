@@ -221,7 +221,7 @@ test.describe('a brand applies its values', () => {
 });
 
 test.describe('the patterns page shows the variants', () => {
-  test('one stage per brand that carries values, with a tile in the index', async () => {
+  test('one card per pattern, with a link to the Brands page where a brand is measured', async () => {
     const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
     const p = await ctx.newPage();
     const errs = [];
@@ -229,22 +229,21 @@ test.describe('the patterns page shows the variants', () => {
     await p.goto(`${ORIGIN}/demo/patterns.html`, { waitUntil: 'load' });
     await p.waitForSelector('#p-tabs .cs-slide');
     const found = await p.evaluate(() => ({
-      stage: !!document.querySelector('#p-tabs-chevrolet .cs'),
-      caption: document.querySelector('#p-tabs-chevrolet .gx-variant')?.textContent.trim(),
-      tile: !!document.querySelector('.gx-tile[href="#p-tabs-chevrolet"]'),
-      builderLink: document.querySelector('#p-tabs-chevrolet a.ui-btn')?.getAttribute('href'),
-      line: (() => {
-        const t = document.querySelector('#p-tabs-chevrolet [role="tab"][aria-selected="true"]');
-        return t && getComputedStyle(t).borderBottomColor;
-      })(),
-      noneOnLogo: !document.querySelector('#p-logostrip-chevrolet'),
+      nested: document.querySelectorAll('.gx-card--variant, #p-tabs-chevrolet').length,
+      cards: document.querySelectorAll('.gx-card').length,
+      patterns: Object.keys(globalThis.CARGO.PATTERNS).length,
+      also: [...document.querySelectorAll('#p-tabs .gx-also a')].map((a) => [a.textContent.trim(), a.getAttribute('href')]),
+      alsoOnLogo: document.querySelector('#p-logostrip .gx-also'),
+      tiles: document.querySelectorAll('.gx-tile').length,
     }));
-    assert.equal(found.stage, true, 'no Chevrolet stage under the tabbed bar');
-    assert.match(found.caption ?? '', /Chevrolet/);
-    assert.equal(found.tile, true);
-    assert.equal(found.builderLink, 'index.html#tabs?brand=chevrolet');
-    assert.equal(found.line, 'rgb(0, 109, 199)');
-    assert.equal(found.noneOnLogo, true);
+    assert.equal(found.nested, 0);
+    assert.equal(found.cards, found.patterns);
+    assert.equal(found.tiles, found.patterns);
+    assert.ok(
+      found.also.some(([t, h]) => t === 'Chevrolet' && h === 'brands.html#chevrolet'),
+      `also: ${JSON.stringify(found.also)}`,
+    );
+    assert.equal(found.alsoOnLogo, null);
     assert.deepEqual(errs, []);
     await ctx.close();
   });
