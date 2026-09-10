@@ -3305,6 +3305,9 @@ ${PHOTO_CSS}
     if (strip) {
       const ids = variantsOf(state.pattern);
       strip.hidden = ids.length === 0;
+      // replaceChildren() destroys whichever button held focus, so a click
+      // that rebuilds the strip must not drop keyboard focus to <body>.
+      const hadFocus = strip.contains(document.activeElement);
       strip.replaceChildren();
       if (ids.length) {
         for (const [bid, label] of [['', 'Default'], ...ids.map((b) => [b, BRANDS[b].label])]) {
@@ -3324,6 +3327,7 @@ ${PHOTO_CSS}
           btn.addEventListener('click', () => pickBrand(bid));
           strip.append(btn);
         }
+        if (hadFocus) (strip.querySelector('button[aria-pressed="true"]') ?? strip.querySelector('button')).focus();
       }
     }
   }

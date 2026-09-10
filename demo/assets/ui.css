@@ -33,6 +33,15 @@
   --glyph-ink: #16324f;
   --glyph-soft: #cdd9e3;
 
+  /* An OEM mark is drawn black-on-transparent and sits straight on --surface,
+     which is fine in light mode and invisible once --surface inverts in dark
+     mode (Chrysler vanished outright; Lincoln, Jaguar, Kia, Land Rover, Lexus,
+     Porsche, RAM, Genesis and Infiniti barely showed). filter: invert() was
+     tried and reverted - it also inverts Toyota's red and BMW's blue, which
+     are not black. A plate under the mark is the fix that touches only the
+     background, not the mark's own colours. */
+  --mark-plate: transparent;
+
   /* The code panel keeps Monokai in both themes: it is a quotation of an
      editor, and an editor does not change colour with the page around it. */
   --code-bg: #272822;
@@ -63,6 +72,7 @@
   --glyph-mid: #5b6d84;
   --glyph-ink: #9db6d4;
   --glyph-soft: #2b3542;
+  --mark-plate: #fff;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -83,6 +93,7 @@
     --glyph-mid: #5b6d84;
     --glyph-ink: #9db6d4;
     --glyph-soft: #2b3542;
+    --mark-plate: #fff;
   }
 }
 
@@ -1987,6 +1998,19 @@ code {
   white-space: nowrap;
 }
 
+/* Brands tiles only, not patterns.html: a brand's name is what identifies
+   the tile, so it wraps instead of ellipsising - Chevro…, Alfa Ro…, Land R…,
+   Mitsubi… and Volksw… were unreadable. */
+.bb-tile {
+  align-items: center;
+}
+
+.bb-tile .gx-tile-name {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+
 /* A brands.html tile swaps the glyph for a logo and adds a badge, so both new
    children need the same "never shrink" treatment .wb-glyph already gets
    above (.gx-tile is a flex row, and .gx-tile-name is the only child that
@@ -2079,6 +2103,18 @@ code {
   flex: none;
   inline-size: 3.5rem;
   block-size: auto;
+}
+
+/* Every mark on the page (the index tile, the section head, the variant
+   strip's chips) gets its own plate under it - see --mark-plate at the top
+   of this file for why: the marks are black-on-transparent, --surface
+   inverts in dark mode, and most of them nearly vanished on it. */
+.bb-tile img,
+.bb-logo,
+.wb-variants button img {
+  padding: 0.15em;
+  background: var(--mark-plate);
+  border-radius: 4px;
 }
 
 /* One of these per pattern a brand section shows — a heading and the same

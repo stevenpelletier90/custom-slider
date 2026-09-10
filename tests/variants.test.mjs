@@ -329,6 +329,15 @@ test.describe('the variant strip above the stage', () => {
     assert.deepEqual(errors, []);
   });
 
+  test('a chip click keeps keyboard focus on the strip', async () => {
+    await pick(page, 'tabs');
+    await page.focus('#wb-variants button[data-brand="chevrolet"]');
+    await page.keyboard.press('Enter');
+    await page.waitForTimeout(250);
+    const inside = await page.evaluate(() => document.getElementById('wb-variants').contains(document.activeElement));
+    assert.equal(inside, true, `activeElement was ${await page.evaluate(() => document.activeElement.tagName)}`);
+  });
+
   test('patternsOf mirrors variantsOf', async () => {
     const ok = await page.evaluate(() => {
       const { PATTERNS, BRANDS, variantsOf, patternsOf } = globalThis.CARGO;

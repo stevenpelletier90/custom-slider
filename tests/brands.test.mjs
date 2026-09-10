@@ -90,6 +90,40 @@ test('a roster-only brand shows its own cars on the model bar', async () => {
   assert.match(kia.note ?? '', /not measured yet/i);
 });
 
+test('a roster-only brand with no cutouts of its own says so; a brand with its own roster does not', async () => {
+  const notes = await page.evaluate(() => ({
+    fiat: [...document.querySelectorAll('#b-fiat .bb-note')].map((p) => p.textContent).join(' '),
+    kia: [...document.querySelectorAll('#b-kia .bb-note')].map((p) => p.textContent).join(' '),
+  }));
+  assert.match(notes.fiat, /no cutout roster of its own/);
+  assert.doesNotMatch(notes.kia, /no cutout roster of its own/);
+});
+
+test('a brand tile name wraps instead of ellipsising', async () => {
+  const name = await page.evaluate(() => {
+    const el = document.querySelector('#bb-index a[href="#chevrolet"] .gx-tile-name');
+    const cs = getComputedStyle(el);
+    return { text: el.textContent, scrollWidth: el.scrollWidth, clientWidth: el.clientWidth, textOverflow: cs.textOverflow };
+  });
+  assert.equal(name.text, 'Chevrolet');
+  assert.ok(name.scrollWidth <= name.clientWidth + 1, `scrollWidth ${name.scrollWidth} vs clientWidth ${name.clientWidth}`);
+  assert.notEqual(name.textOverflow, 'ellipsis');
+});
+
+test('a black OEM mark gets a plate under it in dark mode, none in light', async ({ browser }) => {
+  const light = await page.evaluate(() => getComputedStyle(document.querySelector('#b-chrysler .bb-logo')).backgroundColor);
+  assert.match(light, /rgba\(0, 0, 0, 0\)|transparent/);
+
+  const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
+  const p = await ctx.newPage();
+  await p.addInitScript(() => localStorage.setItem('cs-theme', 'dark'));
+  await p.goto(`${ORIGIN}/demo/brands.html`, { waitUntil: 'load' });
+  await p.waitForSelector('#b-chrysler .bb-logo');
+  const dark = await p.evaluate(() => getComputedStyle(document.querySelector('#b-chrysler .bb-logo')).backgroundColor);
+  assert.equal(dark, 'rgb(255, 255, 255)');
+  await ctx.close();
+});
+
 test('the deep link lands on the brand and nothing threw', async () => {
   await page.goto(`${ORIGIN}/demo/brands.html#toyota`, { waitUntil: 'load' });
   await page.waitForSelector('#b-toyota .cs-slide');

@@ -33,8 +33,14 @@
     const sec = document.createElement('section');
     sec.className = 'gx-card bb-section';
     sec.id = `b-${id}`;
-    const note = measured.length ? `Measured on ${esc(b.source ?? '')}.` : `Vehicles and how many across, from ${esc(b.label)}'s demo sites. Values not measured yet.`;
-    sec.innerHTML = `<div class="gx-head"><img class="bb-logo" src="img/logo-${id}.png" width="116" height="100" alt=""><div><h2>${esc(b.label)}</h2><p class="bb-note">${note}</p></div></div>`;
+    // A roster-only brand with no cutouts of its own (only Fiat, of the 32)
+    // draws the Chevrolet default set, and the note used to say "from Fiat's
+    // demo sites" over six Chevrolets - true of the ladder, false of the
+    // cars. The appended sentence says which part is whose.
+    const note = measured.length
+      ? `Measured on ${esc(b.source ?? '')}.`
+      : `${esc(b.label)}'s vehicles and how many across, from its demo sites. Values not measured yet.${b.models ? '' : ` ${esc(b.label)} has no cutout roster of its own, so the cars below are the default ones — the count and the layout are ${esc(b.label)}'s, the vehicles are not.`}`;
+    sec.innerHTML = `<div class="gx-head"><img class="bb-logo" src="img/logo-${id}.png" width="116" height="100" alt=""><div><h2>${esc(b.label)}</h2><p class="bb-note">${note}</p>${b.note ? `<p class="bb-note">${esc(b.note)}</p>` : ''}</div></div>`;
     for (const pid of measured.length ? measured : ['modelbar']) {
       const cls = `bb-${id}-${pid}`;
       const r = renderPattern(pid, cls, { brand: id });
