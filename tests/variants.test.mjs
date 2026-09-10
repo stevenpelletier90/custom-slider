@@ -218,6 +218,17 @@ test.describe('a brand applies its values', () => {
     assert.ok(tabs.length >= 4, `expected Toyota's body-style tabs, got ${tabs}`);
     assert.deepEqual(errors, []);
   });
+
+  test('a tab name with an & escapes in the copied markup and still reads correctly', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'toyota');
+    const { html } = await copyParts(page);
+    assert.match(html, /Cars &amp; Minivan/);
+    assert.doesNotMatch(html, /Cars & Minivan</);
+    const tabs = await page.evaluate(() => [...globalThis.CARGO.sdoc().querySelectorAll('.cargo-tabs [role="tab"]')].map((t) => t.textContent.trim()));
+    assert.ok(tabs.includes('Cars & Minivan'), `tabs: ${tabs}`);
+    assert.deepEqual(errors, []);
+  });
 });
 
 test.describe('the patterns page shows the variants', () => {
@@ -336,6 +347,13 @@ test.describe('the variant strip above the stage', () => {
     await page.waitForTimeout(250);
     const inside = await page.evaluate(() => document.getElementById('wb-variants').contains(document.activeElement));
     assert.equal(inside, true, `activeElement was ${await page.evaluate(() => document.activeElement.tagName)}`);
+  });
+
+  test('no chip is pressed when a brand not on this strip is picked from the Brand list', async () => {
+    await pick(page, 'modelbar');
+    await selectBrand(page, 'kia');
+    const pressedCount = (await chips(page)).filter(([, p]) => p === 'true').length;
+    assert.equal(pressedCount, 0, `chips: ${JSON.stringify(await chips(page))}`);
   });
 
   test('patternsOf mirrors variantsOf', async () => {

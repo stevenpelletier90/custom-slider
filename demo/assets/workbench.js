@@ -384,6 +384,15 @@
     ['place-3.jpg', 1920, 600, 'Airport Road', 'A dealership building and its forecourt'],
   ].map(([f, w, h, name, alt]) => ({ img: `img/${f}`, w, h, name, alt, sub: 'Open today until 7pm', href: '/dealership/directions.htm', cta: 'Get directions', badge: '' }));
 
+  // Escapes a tab name for the tabs markup builder inside htmlFor() below -
+  // both the button text and the aria-label carousel() sets from it. Declared
+  // here, ABOVE `if (!stage) return`, because htmlFor() calls it and htmlFor()
+  // runs in the generator that patterns.html and lint-generated-css.mjs use
+  // (the same trap CLAUDE.md records for cssFor()/htmlFor() itself). The
+  // fuller esc()/unesc() pair near the bottom of the file is declared below
+  // that return and is in the temporal dead zone for that generator.
+  const escTab = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
+
   const PATTERNS = {
     modelbar: {
       label: 'Model bar',
@@ -1656,7 +1665,7 @@ ${PHOTO_CSS}
     if (p.panes) {
       const names = state.panes ?? p.panes;
       const ids = names.map((name) => name.toLowerCase().replace(/\W+/g, '-'));
-      const tabs = names.map((name, i) => `    <button type="button" role="tab" id="tab-${ids[i]}" aria-controls="pane-${ids[i]}" aria-selected="${i === 0}">${name}</button>`).join('\n');
+      const tabs = names.map((name, i) => `    <button type="button" role="tab" id="tab-${ids[i]}" aria-controls="pane-${ids[i]}" aria-selected="${i === 0}">${escTab(name)}</button>`).join('\n');
       // Two ways to fill the panes, and which one is in force is decided by the
       // rows themselves rather than by a switch.
       //
@@ -1680,7 +1689,7 @@ ${PHOTO_CSS}
       const panes = names
         .map((name, i) => {
           const sub = stack(tagged ? draw(source.filter((m) => !norm(m.tab) || norm(m.tab) === norm(name))) : draw(take(state.count, i * stride)));
-          return `  <div class="cargo-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}"${i === 0 ? '' : ' hidden'}>\n${carousel(sub, name, '  ', i === 0)}\n  </div>`;
+          return `  <div class="cargo-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}"${i === 0 ? '' : ' hidden'}>\n${carousel(sub, escTab(name), '  ', i === 0)}\n  </div>`;
         })
         .join('\n');
       return `<div class="${cls}-wrap" data-tabs>\n  <div class="cargo-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n${panes}\n</div>`;
@@ -3295,12 +3304,13 @@ ${PHOTO_CSS}
     colourKnob(adv, 'Focus ring', '--cs-focus', state.props);
     valueKnob(adv, 'Control transition', '--cs-transition', state.props);
 
-    // Not behaviour: this changes what the PAGE has to carry, not what the
-
     // The strip above the stage: Default plus every brand measured for this
     // pattern. Read off the same data as the Brand list, so a chip and a
     // list entry are the same brand and the pressed chip is the selected
-    // option.
+    // option. No chip pressed is the honest state for a brand this strip
+    // does not offer (state.brand set from the Brand list rather than a
+    // chip) - a pressed Default there would be claiming a default that is
+    // not what is actually live.
     const strip = document.getElementById('wb-variants');
     if (strip) {
       const ids = variantsOf(state.pattern);
@@ -3314,7 +3324,7 @@ ${PHOTO_CSS}
           const btn = document.createElement('button');
           btn.type = 'button';
           btn.dataset.brand = bid;
-          btn.setAttribute('aria-pressed', String((state.brand ?? '') === bid || (!bid && !ids.includes(state.brand))));
+          btn.setAttribute('aria-pressed', String((state.brand ?? '') === bid));
           if (bid) {
             const img = document.createElement('img');
             img.src = `img/logo-${bid}.png`;

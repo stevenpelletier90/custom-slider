@@ -21,6 +21,11 @@
     return BRANDS[a].label.localeCompare(BRANDS[b].label);
   });
 
+  // Every pid actually rendered onto the page, filled in as the grid is
+  // built, so the script pass below can run only those patterns' scripts
+  // instead of every pattern's whether it appears here or not.
+  const rendered = new Set();
+
   for (const id of ids) {
     const b = BRANDS[id];
     const measured = patternsOf(id);
@@ -40,8 +45,9 @@
     const note = measured.length
       ? `Measured on ${esc(b.source ?? '')}.`
       : `${esc(b.label)}'s vehicles and how many across, from its demo sites. Values not measured yet.${b.models ? '' : ` ${esc(b.label)} has no cutout roster of its own, so the cars below are the default ones — the count and the layout are ${esc(b.label)}'s, the vehicles are not.`}`;
-    sec.innerHTML = `<div class="gx-head"><img class="bb-logo" src="img/logo-${id}.png" width="116" height="100" alt=""><div><h2>${esc(b.label)}</h2><p class="bb-note">${note}</p>${b.note ? `<p class="bb-note">${esc(b.note)}</p>` : ''}</div></div>`;
+    sec.innerHTML = `<div class="gx-head"><img class="bb-logo" src="img/logo-${id}.png" width="116" height="100" alt="" loading="lazy"><div><h2>${esc(b.label)}</h2><p class="bb-note">${note}</p>${b.note ? `<p class="bb-note">${esc(b.note)}</p>` : ''}</div></div>`;
     for (const pid of measured.length ? measured : ['modelbar']) {
+      rendered.add(pid);
       const cls = `bb-${id}-${pid}`;
       const r = renderPattern(pid, cls, { brand: id });
       css.push(r.css);
@@ -60,7 +66,10 @@
     if (!root.dataset.csInit) new globalThis.CustomSlider(root);
   }
   const scripts = new Set();
-  for (const p of Object.values(PATTERNS)) if (p.script) scripts.add(p.script);
+  for (const pid of rendered) {
+    const p = PATTERNS[pid];
+    if (p.script) scripts.add(p.script);
+  }
   for (const s of scripts) {
     try {
       new Function(s)();
@@ -78,5 +87,9 @@
   // inherits) is what clears the sticky masthead.
   const gotoHash = () => document.getElementById(`b-${location.hash.slice(1)}`)?.scrollIntoView();
   gotoHash();
+  // Webfonts land after first paint and reflow the page under a scroll that
+  // already happened, so a deep link can settle short of the section it named
+  // - re-run once everything (including the fonts) has actually loaded.
+  addEventListener('load', gotoHash);
   addEventListener('hashchange', gotoHash);
 })();
