@@ -128,6 +128,13 @@ test.describe('a control puts back everything it took', () => {
     }));
     assert.equal(after.lookClass, look0, `the preset's card style survived the reset (${after.lookClass})`);
     assert.equal(after.cls, name, 'resetting the preset also threw away the slider name');
+
+    // 2026-09-09: a brand can carry values. On the vcard the first brand
+    // carries none, so this holds that the reset leaves the look's knobs
+    // exactly where they started rather than at a brand's.
+    const props = await page.evaluate(() => ({ ...globalThis.CARGO.state.lookProps }));
+    const own = await page.evaluate(() => globalThis.CARGO.LOOKS[globalThis.CARGO.state.look].settings);
+    for (const k of Object.keys(props)) if (!k.startsWith('--cs-')) assert.equal(props[k], own[k], `${k} did not come back to the look's own value`);
   });
 });
 

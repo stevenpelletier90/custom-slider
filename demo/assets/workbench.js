@@ -1004,6 +1004,64 @@ ${PHOTO_CSS}
     }
   };
 
+  // What the picked brand says a knob should be, or undefined. Read off the
+  // brand's styles for the LOOK on screen and the PATTERN on screen, which is
+  // the same split the state keeps: card values by look, the rest by pattern.
+  const brandValue = (key, store) => {
+    const s = BRANDS[state.brand]?.styles;
+    if (!s) return undefined;
+    if (store === state.lookProps) return s.looks?.[state.look]?.[key];
+    return s.patterns?.[state.pattern]?.props?.[key] ?? s.looks?.[state.look]?.[key];
+  };
+
+  // A preset sets the roster, the ladder and - where the brand has been
+  // measured - its values. Never markup: see the note at the top of brands.js.
+  // Values land where the panel edits them: a card value in lookProps, unless
+  // it is an engine --cs-* property, which applyLook() already moves to props
+  // for the same reason; a pattern value in props; tab names in panes.
+  //
+  // null is "Start from the default": every key a variant could have touched
+  // goes back to the pattern's or look's own value, and only those - a knob the
+  // designer set that no brand ever supplies is theirs to keep.
+  const applyBrand = (id) => {
+    const p = PATTERNS[state.pattern];
+    const prev = BRANDS[state.brand]?.styles;
+    state.brand = id && BRANDS[id] ? id : null;
+    const b = BRANDS[state.brand];
+    const undo = (s) => {
+      if (!s) return;
+      for (const k of Object.keys(s.looks?.[state.look] ?? {})) {
+        if (k.startsWith('--cs-')) {
+          if (k in (p.props ?? {})) state.props[k] = p.props[k];
+          else if (k in LOOKS[state.look].settings) state.props[k] = LOOKS[state.look].settings[k];
+          else delete state.props[k];
+        } else state.lookProps[k] = LOOKS[state.look].settings[k];
+      }
+      for (const k of Object.keys(s.patterns?.[state.pattern]?.props ?? {})) {
+        if (k in (p.props ?? {})) state.props[k] = p.props[k];
+        else delete state.props[k];
+      }
+      if (s.patterns?.[state.pattern]?.panes) state.panes = null;
+    };
+    undo(prev);
+    if (!b) {
+      state.perView = { ...(p.perView ?? LOOKS[state.look].perView) };
+      state.count = p.models.length;
+      return;
+    }
+    if (b.models) state.count = b.models.length;
+    state.perView = b.ladder ? perViewFor(b.ladder, LOOKS[state.look].minCard, gapPx(), state.look) : { ...LOOKS[state.look].perView };
+    const s = b.styles;
+    if (!s) return;
+    for (const [k, v] of Object.entries(s.looks?.[state.look] ?? {})) {
+      if (k.startsWith('--cs-')) state.props[k] = v;
+      else if (k in state.lookProps) state.lookProps[k] = v;
+    }
+    Object.assign(state.props, s.patterns?.[state.pattern]?.props ?? {});
+    const panes = s.patterns?.[state.pattern]?.panes;
+    if (panes && p.panes) state.panes = [...panes];
+  };
+
   // The rail shows a short name; `label` stays the descriptive title used for
   // the page heading and the patterns page. At the width the rail has to be for
   // the preview to reach 1170px, a sentence wraps to three or four lines - 16 of
@@ -1764,6 +1822,9 @@ ${PHOTO_CSS}
     // The index on patterns.html labels its tiles from the same map the rail
     // uses, so the two pages cannot call the same pattern different things.
     SHORT,
+    // Exposed for tests to READ (applyBrand, cssFor and htmlFor stay the only
+    // writers) - sdoc() already crosses this boundary for the same reason.
+    state,
     renderPattern(id, cls) {
       loadPattern(id);
       return { css: cssFor(`.${cls}`), html: htmlFor(cls) };
@@ -2479,7 +2540,7 @@ ${PHOTO_CSS}
   // field started with instead: a look knob goes back to that look's setting, a
   // pattern knob to the pattern's own, and a knob the pattern never set is
   // deleted so the engine's default applies.
-  const defaultFor = (key, store) => (store === state.lookProps ? LOOKS[state.look]?.settings?.[key] : PATTERNS[state.pattern].props?.[key]);
+  const defaultFor = (key, store) => brandValue(key, store) ?? (store === state.lookProps ? LOOKS[state.look]?.settings?.[key] : PATTERNS[state.pattern].props?.[key]);
 
   // What a knob started as, wherever that came from. Also what its placeholder
   // shows, so an empty field says what it will fall back to.
@@ -2666,8 +2727,13 @@ ${PHOTO_CSS}
     // take a cutout and nowhere else. Handing Alfa Romeo's cutouts to a split
     // photo card or a 3:5 tall tile is the crop mismatch this library spent a
     // day naming, arriving through the one door that was still open.
-    const brandable = !!p.look && String(LOOKS[p.look].content).includes('cutout');
-    const style = p.look ? pane.folder(brandable ? 'Brand and cards' : 'The card') : null;
+    // Two doors. A cutout card takes every brand, because every brand has a
+    // roster. Any other pattern takes the brands that carry values for it or
+    // for its card - read off the data, never a list of pattern ids.
+    const takesCutouts = !!p.look && String(LOOKS[p.look].content).includes('cutout');
+    const brandsFor = Object.entries(BRANDS).filter(([, b]) => takesCutouts || b.styles?.patterns?.[state.pattern] || (state.look && b.styles?.looks?.[state.look]));
+    const brandable = brandsFor.length > 0;
+    const style = p.look || brandable ? pane.folder(brandable ? (p.look ? 'Brand and cards' : 'Brand') : 'The card') : null;
     const knobs = Object.keys(state.lookProps).length ? pane.folder('This card style') : null;
     const grid = pane.folder('How many across');
     const colors = pane.folder('Arrows and dots');
@@ -2770,23 +2836,31 @@ ${PHOTO_CSS}
       const describe = () => {
         const b = BRANDS[state.brand];
         if (!b)
-          return 'Sets the vehicles and how many cards across, from what that brand actually ships. The card style stays yours — so does the colour, which comes from the site theme, not the OEM.';
+          return 'Sets the vehicles and how many cards across, from what that brand actually ships — and, where a brand has been measured, the values its live bar draws. Everything stays yours to change.';
         // Plain words: "ladder" and "the census" are how this was written down
         // while it was being researched, and neither is defined anywhere a
         // designer would look.
         const counts = ['base', 768, 992, 1200].map((k) => state.perView[k]).join(' / ');
+        // What the preset actually touched beyond the roster and the ladder,
+        // in the same words the knobs use - so the note never claims a value
+        // it did not set.
+        const applied = [];
+        const s = b.styles;
+        if (s?.patterns?.[state.pattern]?.panes) applied.push(`${s.patterns[state.pattern].panes.length} tabs`);
+        const keys = [...Object.keys(s?.looks?.[state.look] ?? {}), ...Object.keys(s?.patterns?.[state.pattern]?.props ?? {})];
+        if (keys.length) applied.push(keys.map((k) => knobLabel(k).toLowerCase()).join(', '));
+        const measured = s ? ` ${applied.length ? `Also sets ${applied.join(' and ')}.` : ''} Measured on ${b.source}.` : '';
         // The brand's own card style is offered, never applied - see the note
         // on the Brand handler below. Only worth saying when it differs from
         // what is already on screen.
         const suggest = b.look && b.look !== state.look ? ` ${b.label} ran the ${LOOKS[b.look].label.toLowerCase()} card — pick it below if you want it.` : '';
         return (
           b.ladder
-            ? `${counts} cards across, on a phone / from 768px / from 992px / from 1200px. ${b.note ?? ''}${suggest}`
-            : `The ${b.label} demo sites we surveyed showed no clear pattern of how many across, so this leaves the count alone. ${b.note ?? ''}${suggest}`
+            ? `${counts} cards across, on a phone / from 768px / from 992px / from 1200px. ${b.note ?? ''}${suggest}${measured}`
+            : `The ${b.label} demo sites we surveyed showed no clear pattern of how many across, so this leaves the count alone. ${b.note ?? ''}${suggest}${measured}`
         ).trim();
       };
-      pane.list(style, 'Brand', state.brand ?? '', [['', 'Start from the default'], ...Object.entries(BRANDS).map(([id, b]) => [id, b.label])], (v) => {
-        state.brand = v || null;
+      pane.list(style, 'Brand', state.brand ?? '', [['', 'Start from the default'], ...brandsFor.map(([id, b]) => [id, b.label])], (v) => {
         // A preset brings its own vehicles, so it replaces the roster outright.
         // Keeping edited rows here would show Ford copy under a Kia preset - so
         // it is offered back instead, which is the one of the three discards
@@ -2794,13 +2868,13 @@ ${PHOTO_CSS}
         rememberDiscard('the preset');
         state.content = null;
         clearContent();
-        const b = BRANDS[state.brand];
-        // A BRAND CHANGES THE CONTENT AND THE COUNT, NEVER THE CARD STYLE.
-        // It used to call applyLook(b.look), and a look owns MARKUP, not just
-        // values - so picking Alfa Romeo on the model bar reordered the name
-        // above the photo, added a "Browse inventory" button, put the strip on
-        // a dark panel and cropped 3:5. You chose a pattern from the rail and
-        // got a different one back, which is not what a preset is for.
+        // A BRAND CHANGES THE CONTENT, THE COUNT AND - where measured - its
+        // knob values, NEVER THE CARD STYLE. It used to call applyLook(b.look),
+        // and a look owns MARKUP, not just values - so picking Alfa Romeo on
+        // the model bar reordered the name above the photo, added a "Browse
+        // inventory" button, put the strip on a dark panel and cropped 3:5. You
+        // chose a pattern from the rail and got a different one back, which is
+        // not what a preset is for.
         //
         // The research does not support it either. brands.js said the census
         // found "what actually differed between builds was the count and the
@@ -2813,23 +2887,7 @@ ${PHOTO_CSS}
         // Each brand's recorded look survives as a SUGGESTION in the note under
         // this control, so nothing researched is thrown away - it just stops
         // reaching in and changing the pattern for you.
-        if (!b) {
-          // "Start from the default" undoes the ladder and the slide count, the
-          // only two things a preset now touches. It must NOT reset the card
-          // style: that is the picker's to own, and resetting it here would
-          // throw away a choice no preset made.
-          state.perView = { ...(p.perView ?? LOOKS[state.look].perView) };
-          state.count = p.models.length;
-        }
-        if (b) {
-          if (b.models) state.count = b.models.length;
-          // Read against the look actually on screen, not the one the brand
-          // suggests - the clamp has to protect the card being rendered.
-          // The gap in effect, not a default: the two-row grid runs a 16px gap
-          // where the model bar runs 8, and four cards plus three 16px gaps is a
-          // different sum. Assuming 8 let seven presets through at 146px.
-          state.perView = b.ladder ? perViewFor(b.ladder, LOOKS[state.look].minCard, gapPx(), state.look) : { ...LOOKS[state.look].perView };
-        }
+        applyBrand(v || null);
         rebuild(() => {
           buildPanel();
           buildContent();

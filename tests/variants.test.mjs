@@ -77,3 +77,71 @@ test.describe('the tab row has knobs', () => {
     assert.deepEqual(errors, []);
   });
 });
+
+const selectBrand = async (page, id) => {
+  await rowByLabel(page, 'Brand').locator('select').selectOption(id);
+  await page.waitForTimeout(200);
+};
+
+test.describe('a brand applies its values', () => {
+  test('Chevrolet on the tabbed bar draws the blue line and ships it', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'chevrolet');
+    const s = await tabStyles(page);
+    assert.equal(s.line, 'rgb(0, 109, 199)');
+    assert.equal(s.dim, '1');
+    assert.equal(s.rule, 'rgba(0, 0, 0, 0)');
+    assert.equal(s.divider, '"|"');
+    assert.equal(await knob(page, 'Selected tab line'), '#006dc7');
+    assert.equal(await knob(page, 'Name case'), 'capitalize');
+    const tabs = await page.evaluate(() => [...globalThis.CARGO.sdoc().querySelectorAll('.cargo-tabs [role="tab"]')].map((t) => t.textContent.trim()));
+    assert.deepEqual(tabs, ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial']);
+    const { css } = await copyParts(page);
+    assert.match(css, /--tab-line: #006dc7;/);
+    assert.match(css, /--name-case: capitalize;/);
+    assert.deepEqual(errors, []);
+  });
+
+  test('the same brand on the plain model bar brings the card values and nothing about tabs', async () => {
+    await pick(page, 'modelbar');
+    await selectBrand(page, 'chevrolet');
+    assert.equal(await knob(page, 'Name case'), 'capitalize');
+    const { css } = await copyParts(page);
+    assert.match(css, /--name-case: capitalize;/);
+    assert.doesNotMatch(css, /--tab-/);
+  });
+
+  test('resetting a knob goes back to the brand; Start from the default goes back to the pattern', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'chevrolet');
+    const row = rowByLabel(page, 'Selected tab line');
+    const input = row.locator('input[type="text"]').first();
+    await input.fill('#123456');
+    await input.press('Enter');
+    await page.waitForTimeout(150);
+    assert.equal((await tabStyles(page)).line, 'rgb(18, 52, 86)');
+    await input.fill('');
+    await input.press('Enter');
+    await page.waitForTimeout(150);
+    assert.equal((await tabStyles(page)).line, 'rgb(0, 109, 199)', 'clearing the field should fall back to the brand value');
+    await selectBrand(page, '');
+    const s = await tabStyles(page);
+    assert.equal(s.line, s.colour, 'Start from the default should put the pattern value back');
+    assert.equal(s.dim, '0.65');
+    assert.equal(await knob(page, 'Name case'), 'none');
+    const tabs = await page.evaluate(() => [...globalThis.CARGO.sdoc().querySelectorAll('.cargo-tabs [role="tab"]')].map((t) => t.textContent.trim()));
+    assert.deepEqual(tabs, ['Trucks', 'SUVs', 'Crossovers']);
+    assert.deepEqual(errors, []);
+  });
+
+  test('the brand list is offered only where a brand has something to give', async () => {
+    await pick(page, 'logostrip');
+    assert.equal(await rowByLabel(page, 'Brand').count(), 0, 'no brand carries values for the logo strip');
+    await pick(page, 'tabs');
+    const opts = await rowByLabel(page, 'Brand')
+      .locator('select')
+      .evaluate((s) => [...s.options].map((o) => o.value).filter(Boolean));
+    assert.ok(opts.includes('chevrolet'));
+    assert.ok(opts.length >= 32, 'a cutout card offers every brand, because every brand has a roster');
+  });
+});
