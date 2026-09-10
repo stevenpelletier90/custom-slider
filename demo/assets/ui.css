@@ -1962,6 +1962,11 @@ code {
   border-radius: 12px;
 }
 
+/* A brand variant stage, visually nested under the pattern it belongs to. */
+.gx-card--variant {
+  margin-inline-start: 1.5rem;
+}
+
 .gx-head {
   display: flex;
   gap: 1rem;

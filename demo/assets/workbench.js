@@ -1046,12 +1046,17 @@ ${PHOTO_CSS}
     };
     undo(prev);
     if (!b) {
-      state.perView = { ...(p.perView ?? LOOKS[state.look].perView) };
+      state.perView = { ...(p.perView ?? LOOKS[state.look]?.perView) };
       state.count = p.models.length;
       return;
     }
     if (b.models) state.count = b.models.length;
-    state.perView = b.ladder ? perViewFor(b.ladder, LOOKS[state.look].minCard, gapPx(), state.look) : { ...LOOKS[state.look].perView };
+    // LOOKS[state.look] can be undefined: the Brand folder is offered on a
+    // look-less pattern (state.look is null) once a brand carries
+    // styles.patterns.<that pattern>, and there is no look to read a minCard
+    // or a perView off. Fall back to the pattern's own minCard/perView, the
+    // same fallback minCard() uses elsewhere in this file.
+    state.perView = b.ladder ? perViewFor(b.ladder, LOOKS[state.look]?.minCard ?? p.minCard ?? 200, gapPx(), state.look) : { ...(p.perView ?? LOOKS[state.look]?.perView) };
     const s = b.styles;
     if (!s) return;
     for (const [k, v] of Object.entries(s.looks?.[state.look] ?? {})) {
@@ -2641,7 +2646,11 @@ ${PHOTO_CSS}
     };
     // The placeholder is what clearing it falls back to, shown rather than
     // described. Clearing means "go back to the default", not "ship nothing".
-    const opts = { placeholder: String(knobDefault(key) ?? ''), note: knobNote(key) };
+    // defaultFor()/setProp() already fall back to the brand's value first -
+    // the placeholder has to say the same thing, or a cleared field under a
+    // brand shows the pattern's plain default while the slider draws the
+    // brand's.
+    const opts = { placeholder: String(brandValue(key, store) ?? knobDefault(key) ?? ''), note: knobNote(key) };
     // Which control a knob gets is read off the shape of its DEFAULT, the way
     // okValue() decides what to check, so a knob added to a look is covered the
     // day it ships rather than the day someone remembers a list. The value in
@@ -2675,7 +2684,7 @@ ${PHOTO_CSS}
         setProp(store, key, v);
         restyle();
       },
-      { placeholder: String(knobDefault(key) ?? ''), note: knobNote(key) },
+      { placeholder: String(brandValue(key, store) ?? knobDefault(key) ?? ''), note: knobNote(key) },
     );
 
   // One knob per key, the control read off the value's shape: a colour gets
@@ -2685,7 +2694,7 @@ ${PHOTO_CSS}
   const drawKnobs = (folder, store, keys) => {
     for (const k of keys) {
       const v = store[k];
-      if (/^#|rgb|transparent/.test(v)) colourKnob(folder, knobLabel(k), k, store);
+      if (/^#|rgb|transparent|currentcolor/.test(v)) colourKnob(folder, knobLabel(k), k, store);
       else if (ENUMS[k])
         pane.list(folder, knobLabel(k), String(v).trim(), ENUMS[k], (picked) => {
           store[k] = picked;
@@ -2863,7 +2872,11 @@ ${PHOTO_CSS}
         if (s?.patterns?.[state.pattern]?.panes) applied.push(`${s.patterns[state.pattern].panes.length} tabs`);
         const keys = [...Object.keys(s?.looks?.[state.look] ?? {}), ...Object.keys(s?.patterns?.[state.pattern]?.props ?? {})];
         if (keys.length) applied.push(keys.map((k) => knobLabel(k).toLowerCase()).join(', '));
-        const measured = s ? ` ${applied.length ? `Also sets ${applied.join(' and ')}.` : ''} Measured on ${b.source}.` : '';
+        // "Measured on" only when something besides the roster/ladder was
+        // actually measured - gallery.js's own variant caption already says
+        // "Measured on" once, and a brand with nothing in `applied` has
+        // nothing that note would be claiming credit for.
+        const measured = applied.length ? ` Also sets ${applied.join(' and ')}. Measured on ${b.source}.` : '';
         // The brand's own card style is offered, never applied - see the note
         // on the Brand handler below. Only worth saying when it differs from
         // what is already on screen.
@@ -3945,8 +3958,20 @@ ${PHOTO_CSS}
     const [id, query] = seg.split('?');
     const wantBrand = new URLSearchParams(query ?? '').get('brand');
     if (PATTERNS[id] && id !== state.pattern) goToPattern(id, false);
+    // Rebuilds a second time when id and brand both changed in one hash -
+    // goToPattern already rebuilt above for the pattern, and applying the
+    // brand needs its own rebuild too. Rare enough (both changing at once)
+    // not to be worth merging into one.
     if (wantBrand && BRANDS[wantBrand] && wantBrand !== state.brand) {
       applyBrand(wantBrand);
+      buildPanel();
+      buildContent();
+      render();
+    } else if (!wantBrand && state.brand) {
+      // A hash that dropped its brand (edited by hand, or Back past one) has
+      // to clear it too, or the stale brand goes on drawing after the address
+      // bar stopped naming it.
+      applyBrand(null);
       buildPanel();
       buildContent();
       render();

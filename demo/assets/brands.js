@@ -424,7 +424,7 @@
           },
         },
       },
-      source: 'chevroletdemo1.dealeron.com, measured 2026-09-09',
+      source: 'chevroletdemo1.dealeron.com, 2026-09-09',
     },
     chrysler: {
       label: 'Chrysler',

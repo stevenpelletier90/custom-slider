@@ -2,7 +2,7 @@
 // Spec: docs/superpowers/specs/2026-09-09-oem-variants-design.md
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, rowByLabel, stageFrame, copyParts, ORIGIN, hostHtml, engineFiles, readSlider } from './helpers.mjs';
+import { openBuilder, pick, rowByLabel, copyParts, ORIGIN, hostHtml, engineFiles, readSlider } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -27,7 +27,10 @@ const knob = (page, label) =>
     return el ? el.value : null;
   }, label);
 
-// What the tab row is actually drawing in the preview frame.
+// What the tab row is actually drawing in the preview frame. bodySize rides
+// along in the same evaluate as size, rather than a second call, so the two
+// are read off the same paint - --tab-size: 1em inherits it, and reading them
+// apart would risk comparing two different frames if one raced a rebuild.
 const tabStyles = (page) =>
   page.evaluate(() => {
     const d = globalThis.CARGO.sdoc();
@@ -38,6 +41,7 @@ const tabStyles = (page) =>
     const w = d.defaultView;
     return {
       size: w.getComputedStyle(sel).fontSize,
+      bodySize: w.getComputedStyle(d.body).fontSize,
       dim: w.getComputedStyle(other).opacity,
       line: w.getComputedStyle(sel).borderBottomColor,
       colour: w.getComputedStyle(sel).color,
@@ -66,8 +70,10 @@ test.describe('the tab row has knobs', () => {
     assert.equal(await knob(page, 'Rule under the tabs'), '#e2e5ea');
     assert.equal(await knob(page, 'Between tabs'), 'none');
     const s = await tabStyles(page);
-    // Same picture as before the knobs existed: 14px inherits the frame's body,
-    // 0.65 dim, line in the text colour, the #e2e5ea rule, no divider.
+    // Same picture as before the knobs existed: 1em inherits the frame's body
+    // size (whatever it is - never hardcoded), 0.65 dim, line in the text
+    // colour, the #e2e5ea rule, no divider.
+    assert.equal(s.size, s.bodySize);
     assert.equal(s.dim, '0.65');
     assert.equal(s.line, s.colour);
     assert.equal(s.rule, 'rgb(226, 229, 234)');
@@ -108,6 +114,7 @@ test.describe('a brand applies its values', () => {
     await pick(page, 'tabs');
     await selectBrand(page, 'chevrolet');
     const s = await tabStyles(page);
+    assert.equal(parseFloat(s.size), parseFloat(s.bodySize) * 1.125, '--tab-size: 1.125em should be 1.125x the body it inherits from');
     assert.equal(s.line, 'rgb(0, 109, 199)');
     assert.equal(s.dim, '1');
     assert.equal(s.rule, 'rgba(0, 0, 0, 0)');
@@ -136,6 +143,15 @@ test.describe('a brand applies its values', () => {
     const { css } = await copyParts(page);
     assert.match(css, /--name-case: capitalize;/);
     assert.doesNotMatch(css, /--tab-/);
+  });
+
+  test('the placeholder shows the brand value, then the pattern default', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'chevrolet');
+    const field = () => rowByLabel(page, 'Selected tab line').locator('input[type="text"]').first();
+    assert.equal(await field().getAttribute('placeholder'), '#006dc7');
+    await selectBrand(page, '');
+    assert.equal(await field().getAttribute('placeholder'), 'currentcolor');
   });
 
   test('clearing a brand-added tab name falls back instead of throwing', async () => {

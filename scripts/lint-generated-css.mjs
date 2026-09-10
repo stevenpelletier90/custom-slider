@@ -42,7 +42,7 @@ sandbox.history = { replaceState: noop };
 for (const f of ['looks.js', 'brands.js', 'cms-paths.js', 'workbench.js']) {
   new Function('globalThis', 'document', 'window', readFileSync(`demo/assets/${f}`, 'utf8')).call(sandbox, sandbox, sandbox.document, sandbox);
 }
-const { PATTERNS, LOOKS, renderPattern, renderLook, ENGINE_DEFAULTS, variantsOf } = sandbox.CARGO;
+const { PATTERNS, LOOKS, BRANDS, renderPattern, renderLook, ENGINE_DEFAULTS, variantsOf } = sandbox.CARGO;
 
 // cssFor() drops any value equal to an engine default, so that map has to BE
 // the engine. Read the real `.cs { … }` block out of src/custom-slider.css and
@@ -66,8 +66,12 @@ if (drift) {
 
 // One sheet per pattern, per measured brand variant, and per card look, named
 // so a failure says which. A variant is what the patterns page hands a
-// designer under a brand's name, so it pastes through this same gate.
-const variantSheets = Object.keys(PATTERNS).flatMap((id) => variantsOf(id).map((bid) => [`pattern “${id}” × ${bid}`, renderPattern(id, 'demo', { brand: bid })]));
+// designer under a brand's name, so it pastes through this same gate. Kept as
+// {id, bid, r} rather than the bare [name, r] tuple below so the variant-value
+// gate further down can look the brand and the pattern back up without
+// reparsing the display name.
+const variantPairs = Object.keys(PATTERNS).flatMap((id) => variantsOf(id).map((bid) => ({ id, bid, r: renderPattern(id, 'demo', { brand: bid }) })));
+const variantSheets = variantPairs.map(({ id, bid, r }) => [`pattern “${id}” × ${bid}`, r]);
 const sheets = [
   ...Object.keys(PATTERNS).map((id) => [`pattern “${id}”`, renderPattern(id, 'demo').css]),
   ...variantSheets.map(([name, r]) => [name, r.css]),
@@ -161,6 +165,31 @@ for (const [name, css] of sheets) {
       const line = css.split('\n')[w.line - 1] ?? '';
       console.error(`  ${name} ${w.line}:${w.column} [${w.rule}] ${w.text}`);
       console.error(`    ${line.trim().slice(0, 140)}`);
+    }
+  }
+}
+
+// Every value a measured brand variant carries has to actually reach the
+// sheet it ships in. Everything above lints what DID come out; this is the
+// gate on what DIDN'T - okValue() (workbench.js) silently drops a value it
+// refuses (a unitless length, an empty string) and cssFor()'s delta filter
+// silently drops one that equals the default it is measured against, so a
+// variant naming a bad value can pass every check above while shipping
+// nothing at all. Exhaustive by construction: walk BRANDS itself rather than
+// trust what got generated.
+for (const { id, bid, r } of variantPairs) {
+  const b = BRANDS[bid];
+  const look = PATTERNS[id].look;
+  const entries = [...Object.entries(b.styles?.patterns?.[id]?.props ?? {}), ...(look ? Object.entries(b.styles?.looks?.[look] ?? {}) : [])];
+  for (const [key, val] of entries) {
+    // The same three sources cssDefaults() merges in workbench.js, in the
+    // same order: a look that restates an engine value wins over the engine,
+    // and --cargo-font has no engine entry to fall back on at all.
+    const dflt = look && key in LOOKS[look].settings ? LOOKS[look].settings[key] : key in ENGINE_DEFAULTS ? ENGINE_DEFAULTS[key] : key === '--cargo-font' ? '1em' : undefined;
+    if (String(val) === String(dflt)) continue;
+    if (!r.css.includes(`${key}: ${val};`)) {
+      problems++;
+      console.error(`  pattern “${id}” × ${bid} [variant-value-dropped] "${key}: ${val}" - okValue() refused it or the default filter ate it, so the variant does not ship it`);
     }
   }
 }
