@@ -255,26 +255,40 @@
         ['mx-5-miata.png', 480, 209, 'MX-5 Miata'],
       ],
     ],
+    // Cutouts from the folder toyotademo1's own model bar reads
+    // (brand-toyota/Homepage/model-bar/2026/angular-left, 29 models at
+    // 518x220). The picture-based JPGs that were here until 2026-09-10 were the
+    // split card's photographs, and a brand roster is only ever drawn on a
+    // cutout card - so they were the wrong asset class on every card that
+    // could show them.
     toyota: [
       'toyota',
       [
-        ['camry.jpg', 800, 747, 'Camry'],
-        ['corolla.jpg', 800, 744, 'Corolla'],
-        ['rav4.jpg', 800, 744, 'RAV4'],
-        ['tacoma.jpg', 800, 744, 'Tacoma'],
-        ['tundra.jpg', 800, 744, 'Tundra'],
-        ['4runner.jpg', 800, 744, '4Runner'],
+        ['rav4.png', 518, 220, 'RAV4'],
+        ['highlander.png', 518, 220, 'Highlander'],
+        ['4runner.png', 518, 220, '4Runner'],
+        ['corolla.png', 518, 220, 'Corolla'],
+        ['corolla-hatchback.png', 518, 220, 'Corolla Hatchback'],
+        ['camry.png', 518, 220, 'Camry'],
+        ['tacoma.png', 518, 220, 'Tacoma'],
+        ['tundra.png', 518, 220, 'Tundra'],
+        ['landcruiser.png', 518, 220, 'Land Cruiser'],
+        ['grand-highlander.png', 518, 220, 'Grand Highlander'],
       ],
     ],
+    // The mb-*.png cutouts alfaromeodemo1 ships beside its tall portrait
+    // photographs (brand-alfa-romeo/homepage/model-bar/2025, 580x344). The
+    // 300x500 ar-*.jpg portraits that were here until 2026-09-10 are the tall
+    // tile's own art, and a brand roster is only ever drawn on a cutout card.
     alfaromeo: [
       'alfaromeo',
       [
-        ['tonale.jpg', 300, 500, 'Tonale'],
-        ['tonale-hybrid.jpg', 300, 500, 'Tonale Hybrid'],
-        ['giulia.jpg', 300, 500, 'Giulia'],
-        ['stelvio.jpg', 300, 500, 'Stelvio'],
-        ['giulia-quadrifoglio.jpg', 300, 500, 'Giulia Quadrifoglio'],
-        ['stelvio-quadrifoglio.jpg', 300, 500, 'Stelvio Quadrifoglio'],
+        ['mb-tonale-sprint.png', 580, 344, 'Tonale'],
+        ['mb-tonale-hybrid.png', 580, 344, 'Tonale Hybrid'],
+        ['mb-giulia-sprint.png', 580, 344, 'Giulia'],
+        ['mb-stelvio-veloce.png', 580, 344, 'Stelvio'],
+        ['mb-giulia-qv.png', 580, 344, 'Giulia Quadrifoglio'],
+        ['mb-stelvio-qv.png', 580, 344, 'Stelvio Quadrifoglio'],
       ],
     ],
     chevrolet: [
@@ -632,13 +646,20 @@
     },
     toyota: {
       label: 'Toyota',
-      look: 'split',
+      // toyotademo1 runs a tabbed cutout bar on the Chevrolet template
+      // (measured 2026-09-10: slidesToShow 5, 3 under 991, 2 under 600, 1 under
+      // 400, four body-style tabs). toyotademo2's split photo cards are what the
+      // census recorded and are still on that site; the tile is the one a
+      // roster of cutouts is for.
+      look: 'tile',
       ladder: [
         [0, 1],
-        [540, 2],
+        [400, 2],
+        [600, 3],
+        [991, 5],
       ],
       demos: 3,
-      note: 'Split photo cards — photo left, year and inventory count right, Shop Now pill. On the tabbed sites these group by body style.',
+      note: 'toyotademo1 runs the tabbed cutout bar in body-style tabs; toyotademo2 still shows the older split photo cards.',
     },
     volkswagen: {
       label: 'Volkswagen',
