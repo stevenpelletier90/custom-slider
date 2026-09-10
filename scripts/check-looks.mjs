@@ -155,6 +155,25 @@ for (const [id, look] of Object.entries(LOOKS)) {
   }
 }
 
+// A pattern's own props are knobs too (the tab row's, since 2026-09-09), and
+// the builder shows CARD_NOTES as their tooltip - so the same rule holds.
+// Scoped to each `props: { ... }` map rather than the whole file: the same
+// `'--x': 'value'` shape also appears in KNOB_LABELS (a label, not a note),
+// and matching the whole file double-reported every key found there too.
+const wbSrc = readFileSync('demo/assets/workbench.js', 'utf8');
+const seen = new Set();
+for (const [, propsBlock] of wbSrc.matchAll(/props:\s*\{([^}]*)\}/gs)) {
+  for (const [, prop] of propsBlock.matchAll(/'(--(?!cs-|cargo-)[a-z0-9-]+)':\s*'[^']*'/g)) {
+    if (seen.has(prop)) continue;
+    seen.add(prop);
+    if (Object.values(LOOKS).some((l) => prop in (l.settings ?? {}))) continue; // already checked above
+    if (!guideSrc.includes(`'${prop}':`)) {
+      console.error(`  pattern prop ${prop} has no entry in CARD_NOTES (demo/assets/guide.js) — a knob nobody can look up`);
+      bad++;
+    }
+  }
+}
+
 // The brand presets. The roster is the census's 32-brand table; a preset that
 // names a look which no longer exists would fail silently in the picker, and a
 // ladder that lands a card under its look's minCard would ship a preset that

@@ -566,12 +566,32 @@ ${VIDEO_DIALOG_CSS}`,
       // offer a field those two draw nothing from.
       models: cutouts.map((m) => ({ ...m, tab: '' })),
       data: { 'data-cs-step': 'slide' },
-      props: { '--cs-gap': '0.5em', '--cs-controls-space': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      props: {
+        '--cs-gap': '0.5em',
+        '--cs-controls-space': '0.1px',
+        '--cs-arrow-bg': 'transparent',
+        '--cs-arrow-fg': '#262626',
+        // The tab row's own values. They were literals in the css below until
+        // 2026-09-09, which meant no control showed them - the F039 shape - and
+        // a brand variant had nothing to set. Defaults are what the literals
+        // were, so an untouched pattern draws the same row.
+        '--tab-size': '1em',
+        '--tab-dim': '0.65',
+        '--tab-line': 'currentcolor',
+        '--tab-rule': '#e2e5ea',
+        // A string, single-quoted: okStored() refuses a value holding a double
+        // quote, so '"|"' would survive the session and vanish on reload.
+        '--tab-divider': 'none',
+      },
       hideDots: true,
       panes: ['Trucks', 'SUVs', 'Crossovers'],
-      css: `.cargo-tabs { display: flex; flex-wrap: wrap; gap: 0.25em; justify-content: center; margin-block-end: 1em; border-block-end: 1px solid #e2e5ea; }
-.cargo-tabs [role="tab"] { padding: 0.6em 1.1em; font: inherit; font-weight: 600; line-height: 1.55; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: 0.65; }
-.cargo-tabs [role="tab"][aria-selected="true"] { border-block-end-color: currentcolor; opacity: 1; }
+      css: `.cargo-tabs { display: flex; flex-wrap: wrap; gap: 0.25em; justify-content: center; margin-block-end: 1em; border-block-end: 1px solid var(--tab-rule); }
+.cargo-tabs [role="tab"] { padding: 0.6em 1.1em; font: inherit; font-size: var(--tab-size); font-weight: 600; line-height: 1.55; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: var(--tab-dim); }
+.cargo-tabs [role="tab"][aria-selected="true"] { border-block-end-color: var(--tab-line); opacity: 1; }
+/* The divider sits on the tab that FOLLOWS it, outside its own box, so it
+   never widens the hit target. none draws nothing. */
+.cargo-tabs [role="tab"] + [role="tab"]::before { position: absolute; inset-inline-start: -0.125em; color: currentcolor; content: var(--tab-divider); opacity: var(--tab-dim); transform: translateX(-50%); }
+.cargo-tabs [role="tab"] + [role="tab"] { position: relative; }
 .cargo-pane[hidden] { display: none; }
 /* Three tabs need 272px at the default padding, and a 320px phone leaves 236 -
    so Chevrolet's own three body styles wrapped onto two rows at the narrowest
@@ -1267,16 +1287,35 @@ ${PHOTO_CSS}
     // Per-view is always cs-xs-N / cs-sm-N classes now - see the ladder in
     // htmlFor() - so it never appears as a declaration here.
     const base = kept;
-    const decls = Object.entries(base)
+    const usable = Object.entries(base)
       // A value that is empty is not a value: `--cs-gap: ;` is an invalid
       // declaration and takes the whole rule's meaning with it. Nothing should
       // reach here blank now that a cleared field restores its default, but
       // this is the one place every property passes through - so the length
       // check rides here too, and a knob left mid-typo falls back to its
       // default instead of shipping a slider that cannot lay itself out.
-      .filter(([k, v]) => String(v).trim() !== '' && okValue(k, v))
-      .map(([k, v]) => `  ${k}: ${v};`)
+      .filter(([k, v]) => String(v).trim() !== '' && okValue(k, v));
+    // A pattern's OWN custom properties (not --cs-*/--cargo-*) can be consumed
+    // outside the carousel itself - the tab row's --tab-* rules style
+    // .cargo-tabs, a SIBLING of the per-pane .cs roots, not a descendant of any
+    // of them, so declaring them there the way every --cs-*/look property
+    // always has left them inheriting nothing (measured: an unselected tab's
+    // opacity read 1, not --tab-dim's 0.65). Only a structural pattern has
+    // anything outside the root to reach, so only there do its own properties
+    // move to the wrap; everything else keeps declaring on the root exactly as
+    // it always has.
+    const ownKey = (k) => !k.startsWith('--cs-') && !k.startsWith('--cargo-');
+    const decl = ([k, v]) => `  ${k}: ${v};`;
+    const decls = usable
+      .filter(([k]) => !hasWrap() || !ownKey(k))
+      .map(decl)
       .join('\n');
+    const wrapDecls = hasWrap()
+      ? usable
+          .filter(([k]) => ownKey(k))
+          .map(decl)
+          .join('\n')
+      : '';
 
     // The base every em inside the card is measured from. It has to be stated
     // here, on the carousel itself, because the card CSS cannot trust either
@@ -1441,7 +1480,7 @@ ${PHOTO_CSS}
     // and a shared-look pattern at its defaults with nothing at all. Join only
     // what is there, or the rule ships with blank lines in it.
     const rootRule = [decls, font].filter(Boolean).join('\n');
-    return [rootRule ? `${sel}${ROOT} {\n${rootRule}\n}` : '', pin, dots, body, gutter].filter(Boolean).join('\n\n');
+    return [rootRule ? `${sel}${ROOT} {\n${rootRule}\n}` : '', wrapDecls ? `${sel}-wrap {\n${wrapDecls}\n}` : '', pin, dots, body, gutter].filter(Boolean).join('\n\n');
   }
 
   function htmlFor(cls) {
@@ -2386,6 +2425,11 @@ ${PHOTO_CSS}
     '--pill-bg': 'Pill background',
     '--pill-fg': 'Pill text',
     '--mark-size': 'Wordmark size',
+    '--tab-size': 'Tab text size',
+    '--tab-dim': 'Dim unselected tabs',
+    '--tab-line': 'Selected tab line',
+    '--tab-rule': 'Rule under the tabs',
+    '--tab-divider': 'Between tabs',
   };
   const knobLabel = (k) => KNOB_LABELS[k] ?? k.replace(/^--/, '').replace(/-/g, ' ');
 
@@ -2559,6 +2603,23 @@ ${PHOTO_CSS}
       { placeholder: String(knobDefault(key) ?? ''), note: knobNote(key) },
     );
 
+  // One knob per key, the control read off the value's shape: a colour gets
+  // the picker, a closed set a list, anything else the length/text control.
+  // Shared by the look's settings and a pattern's own props, so a knob added
+  // to either is drawn the same way the day it ships.
+  const drawKnobs = (folder, store, keys) => {
+    for (const k of keys) {
+      const v = store[k];
+      if (/^#|rgb|transparent/.test(v)) colourKnob(folder, knobLabel(k), k, store);
+      else if (ENUMS[k])
+        pane.list(folder, knobLabel(k), String(v).trim(), ENUMS[k], (picked) => {
+          store[k] = picked;
+          render();
+        });
+      else valueKnob(folder, knobLabel(k), k, store);
+    }
+  };
+
   function buildPanel() {
     // A structural change - a pattern, a look, a preset, a switch that adds or
     // removes rows - throws the whole pane away and builds a new one. Nothing
@@ -2611,7 +2672,10 @@ ${PHOTO_CSS}
     const grid = pane.folder('How many across');
     const colors = pane.folder('Arrows and dots');
     const beh = pane.folder('Behaviour');
-    const names = p.panes ? pane.folder('Tab names') : null;
+    // "Tabs", not "Tab names": since 2026-09-09 it holds the tab row's own
+    // knobs under the names, and a folder called "names" with a colour in it
+    // is a folder nobody looks in for the colour.
+    const names = p.panes ? pane.folder('Tabs') : null;
     // Two engine properties nobody sets twice a year, and a switch about the
     // PAGE rather than the slider. Last, because rare, not because hidden.
     const adv = pane.folder('Advanced');
@@ -2876,18 +2940,14 @@ ${PHOTO_CSS}
       });
     }
 
-    if (knobs) {
-      for (const k of Object.keys(state.lookProps)) {
-        const v = state.lookProps[k];
-        if (/^#|rgb|transparent/.test(v)) colourKnob(knobs, knobLabel(k), k, state.lookProps);
-        else if (ENUMS[k])
-          pane.list(knobs, knobLabel(k), String(v).trim(), ENUMS[k], (picked) => {
-            state.lookProps[k] = picked;
-            render();
-          });
-        else valueKnob(knobs, knobLabel(k), k, state.lookProps);
-      }
-    }
+    // A pattern's OWN props - the tab row's values today. Engine (--cs-*) and
+    // shared (--cargo-*) properties are drawn by their named rows elsewhere;
+    // what is left is what the pattern added, and it goes in the pattern's
+    // folder where one exists, or its own.
+    const ownProps = Object.keys(p.props ?? {}).filter((k) => !k.startsWith('--cs-') && !k.startsWith('--cargo-'));
+    if (ownProps.length) drawKnobs(names ?? pane.folder('This pattern'), state.props, ownProps);
+
+    if (knobs) drawKnobs(knobs, state.lookProps, Object.keys(state.lookProps));
 
     // data-cs-step takes a number as of 2026-08-27: how many cards one arrow
     // click moves. 'page' is a whole screenful; 'slide' is the old name for 1.
