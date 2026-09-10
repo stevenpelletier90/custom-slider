@@ -2,7 +2,7 @@
 // Spec: docs/superpowers/specs/2026-09-09-oem-variants-design.md
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, rowByLabel, copyParts, ORIGIN, hostHtml, engineFiles, readSlider } from './helpers.mjs';
+import { openBuilder, pick, rowByLabel, copyParts, ORIGIN, hostHtml, engineFiles, readSlider, stageReady } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -256,5 +256,31 @@ test.describe('the patterns page shows the variants', () => {
     const slider = await readSlider(host);
     assert.ok(slider && slider.width > 0);
     await host.close();
+  });
+});
+
+// A brand's tab names were SAVED on Keep but never read back: restoreSettings()
+// restored `brand` (so the picker showed Chevrolet) and left `panes` alone (so
+// the bar reverted to the pattern's three), which is a picker saying one thing
+// over a strip doing another. Found by the final review of the variants work.
+test.describe('kept settings bring the brand tab names back', () => {
+  test('after Keep and a reload the five Chevrolet tabs are still there', async () => {
+    // From a clean store: this file shares one page, and an earlier test can
+    // leave the session entry already holding Chevrolet's five tabs - in which
+    // case re-picking the brand changes nothing and Keep is rightly disabled.
+    await page.evaluate(() => localStorage.clear());
+    await page.reload({ waitUntil: 'load' });
+    await stageReady(page);
+    await pick(page, 'tabs');
+    await selectBrand(page, 'chevrolet');
+    await page.click('#wb-keep');
+    await page.waitForTimeout(200);
+    await page.reload({ waitUntil: 'load' });
+    await stageReady(page);
+    const brand = await rowByLabel(page, 'Brand').locator('select').inputValue();
+    assert.equal(brand, 'chevrolet');
+    const tabs = await page.evaluate(() => [...globalThis.CARGO.sdoc().querySelectorAll('.cargo-tabs [role="tab"]')].map((t) => t.textContent.trim()));
+    assert.deepEqual(tabs, ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial']);
+    assert.deepEqual(errors, []);
   });
 });

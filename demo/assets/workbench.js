@@ -3623,6 +3623,11 @@ ${PHOTO_CSS}
     // re-run: it would overwrite the ladder and card style restored above with
     // the preset's own, undoing every edit made after picking it.
     if (BRANDS[s.brand]) state.brand = s.brand;
+    // Tab names were SAVED and never read back, so a kept Chevrolet came back
+    // with the picker saying Chevrolet over the pattern's own three tabs. Only
+    // where the pattern has tabs, only whole non-empty strings, and only a
+    // plausible count - a brand hands out five, nobody hands out fifty.
+    if (PATTERNS[state.pattern].panes && Array.isArray(s.panes) && s.panes.length >= 1 && s.panes.length <= 8 && s.panes.every((n) => okStored(n) && n.trim())) state.panes = [...s.panes];
     if (Number.isInteger(s.count) && s.count >= 1 && s.count <= 16) state.count = s.count;
     // Clamped to the knob's own range, and only where stacking means anything:
     // a stored 2 must not survive onto a gallery, where the thumb strip counts
