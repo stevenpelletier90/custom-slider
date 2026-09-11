@@ -64,6 +64,12 @@ for (const [id, look] of Object.entries(LOOKS)) {
       bad++;
     }
   }
+  // `crop: null` is a real value (the card keeps the picture's own aspect), so
+  // presence is the test, not truthiness.
+  if (!('crop' in look) || (look.crop !== null && !(typeof look.crop === 'number' && look.crop > 0))) {
+    console.error(`  ${id}: crop must be a positive aspect ratio or null`);
+    bad++;
+  }
   if (typeof look.markup === 'function') {
     const out = look.markup({ href: '#', img: 'x.png', alt: 'a', name: 'N', sub: 's', blurb: 'b', mark: 'm' });
     if (!out.includes('cargo-card')) {

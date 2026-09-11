@@ -7,7 +7,8 @@
         "hooks": [
           {
             "type": "command",
-            "command": "node \"$CLAUDE_PROJECT_DIR/scripts/claude-format-hook.js\""
+            "command": "node",
+            "args": ["${CLAUDE_PROJECT_DIR}/scripts/claude-format-hook.js"]
           }
         ]
       }

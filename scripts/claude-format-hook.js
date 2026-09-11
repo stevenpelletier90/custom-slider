@@ -15,7 +15,7 @@
 
 import { spawnSync } from 'node:child_process';
 import { existsSync, readFileSync } from 'node:fs';
-import { extname } from 'node:path';
+import { extname, resolve, sep } from 'node:path';
 
 let input;
 try {
@@ -29,6 +29,14 @@ if (filePath === '' || !existsSync(filePath)) process.exit(0);
 
 const projectDir = process.env.CLAUDE_PROJECT_DIR || input.cwd || process.cwd();
 const isWin = process.platform === 'win32';
+
+// Only files in THIS repo. The hook fires for every Edit/Write in the session,
+// including the additional working directories (~/.claude, Downloads), and
+// prettier run from here on a file out there applies this repo's config — or
+// its defaults, since .prettierignore can't match a path outside cwd — to a
+// file that has no git history to recover from.
+const fold = (p) => (isWin ? resolve(p).toLowerCase() : resolve(p));
+if (!fold(filePath).startsWith(fold(projectDir) + sep)) process.exit(0);
 
 // spawnSync({ shell: true }) runs via cmd.exe on Windows, /bin/sh elsewhere.
 // Quote the path for that shell: cmd treats backslashes literally inside double

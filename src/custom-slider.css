@@ -119,6 +119,8 @@
   scrollbar-width: none;
 }
 
+/* Not redundant with scrollbar-width: Android WebView has no scrollbar-width
+   support, and in-app browsers are real dealer traffic. Keep both. */
 .cs-track::-webkit-scrollbar {
   display: none;
 }
@@ -343,6 +345,7 @@
   scrollbar-width: none;
 }
 
+/* Same as the track: Android WebView needs the -webkit- rule too. */
 .cs-thumbs::-webkit-scrollbar {
   display: none;
 }
