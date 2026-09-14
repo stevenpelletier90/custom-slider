@@ -19,5 +19,18 @@
         "message": "Write rgba() when there is an alpha, not rgb() with four arguments — the playbook's rule is classic rgba(), and a four-argument rgb() is the same CSS Color 4 syntax the styleCode minifier is documented to reject."
       }
     ]
-  }
+  },
+  "overrides": [
+    {
+      "files": ["src/**/*.css"],
+      "rules": {
+        "unit-disallowed-list": [
+          ["rem"],
+          {
+            "message": "Use em, not rem. The engine ships to Bootstrap 3 storefronts that set `html { font-size: 10px }`, so a rem here lands at 62.5%. Scoped to src/ because demo/assets/ui.css is never pasted and may keep its rem. The generated card CSS has the same rule in .stylelintrc.generated.json."
+          }
+        ]
+      }
+    }
+  ]
 }

@@ -1,0 +1,16 @@
+{
+  // Project VS Code settings. Personal preferences (theme, font, rulers,
+  // format-on-save) live in user settings; only what this repo needs is here.
+
+  // Stylelint owns CSS (npm run lint:css). The built-in validator would
+  // report the same problems a second time, and flag custom-property tricks
+  // (`0.1px`, `%root%` placeholders in generated CSS) it cannot understand.
+  "css.validate": false,
+  "stylelint.validate": ["css"],
+
+  // Regenerating tool output — git-ignored noise in the explorer.
+  "files.exclude": {
+    "test-results": true,
+    ".playwright-mcp": true
+  }
+}

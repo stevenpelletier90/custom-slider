@@ -1,17 +1,15 @@
 # Putting Custom Slider on a DealerOn site
 
 > **Deployment status lives in ONE place:** the "Deployment status" section of
-> [../README.md](../README.md), which has what is hosted, the upload steps, the
-> 21-day cache TTL and the rename map. **Do not restate a status here, not even
-> a "short version".** This block used to carry one, and it was wrong within a
-> week of being written — which is the same failure that once had three
-> documents giving three different answers. Go and read the README.
+> [../README.md](../README.md), which has what is hosted, the upload steps, the 21-day cache TTL and
+> the rename map. **Do not restate a status here, not even a "short version".** This block used to
+> carry one, and it was wrong within a week of being written — which is the same failure that once
+> had three documents giving three different answers. Go and read the README.
 
-> **The engine is linked, never pasted.** There is no paste-the-engine route —
-> a pasted copy can never receive a fix, and nothing would tell you which sites
-> were carrying which build. The reasoning is in README, "The engine is linked,
-> never pasted". The per-slider CSS the copy panel gives you is still pasted;
-> that is a different thing.
+> **The engine is linked, never pasted.** There is no paste-the-engine route — a pasted copy can
+> never receive a fix, and nothing would tell you which sites were carrying which build. The
+> reasoning is in README, "The engine is linked, never pasted". The per-slider CSS the copy panel
+> gives you is still pasted; that is a different thing.
 
 ## 1. What ships
 
@@ -22,47 +20,44 @@ Two files, no dependencies, no build step on the site side:
 | `custom-slider.min.css` | 3.3 KB | Layout, scroll-snap physics, control styling — **plus** the card styles and column classes (1.4 KB engine + 2.2 KB cards) |
 | `custom-slider.min.js`  | 4.9 KB | Wires controls, state, autoplay, fade, drag                                                                               |
 
-A site downloads 8.2 KB for the pair, which is what the demo masthead prints.
-`npm run size` is the authority — these figures come from it and go stale;
-re-read them there rather than trusting this table.
+A site downloads 8.2 KB for the pair, which is what the demo masthead prints. `npm run size` is the
+authority — these figures come from it and go stale; re-read them there rather than trusting this
+table.
 
-Both come from `dist/` in this repo — never from `src/`, which is ES modules
-and does not run as a classic script. `dist/` also holds `custom-slider.css`
-and `custom-slider.js`, the same build unminified, for reading; pages link the
-`.min` pair.
+Both come from `dist/` in this repo — never from `src/`, which is ES modules and does not run as a
+classic script. `dist/` also holds `custom-slider.css` and `custom-slider.js`, the same build
+unminified, for reading; pages link the `.min` pair.
 
 ### Where they go
 
 **Settled: the shared path**, `/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/`,
 alongside the platform's other shared slider code
-(`/assets/shared/CustomHTMLFiles/slick/slick.min.js`). One copy, every site gets
-fixes at once — which is the whole point of the frozen HTML contract: the engine
-can be replaced underneath every site without touching a single page.
+(`/assets/shared/CustomHTMLFiles/slick/slick.min.js`). One copy, every site gets fixes at once —
+which is the whole point of the frozen HTML contract: the engine can be replaced underneath every
+site without touching a single page.
 
-See "Deployment status" in [../README.md](../README.md) for what is on that
-folder right now and the steps to change it. Deliberately not repeated here.
+See "Deployment status" in [../README.md](../README.md) for what is on that folder right now and the
+steps to change it. Deliberately not repeated here.
 
-Per-dealer Media Gallery (`#MISCPATH#custom-slider.min.js`) remains the fallback if a
-shared location is ever unavailable, but it pins each site to whatever version it
-got and a fix means re-uploading to every one — treat it as temporary.
+Per-dealer Media Gallery (`#MISCPATH#custom-slider.min.js`) remains the fallback if a shared
+location is ever unavailable, but it pins each site to whatever version it got and a fix means
+re-uploading to every one — treat it as temporary.
 
 ### How a page loads them
 
     <link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.css">
     <script src="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.js" defer></script>
 
-`defer` matters: the engine auto-initializes on `DOMContentLoaded`, and the CSS
-already reserves the control space, so nothing shifts when the JS lands (CLS 0).
+`defer` matters: the engine auto-initializes on `DOMContentLoaded`, and the CSS already reserves the
+control space, so nothing shifts when the JS lands (CLS 0).
 
 ### Load it only on pages that use it
 
-The two tags above are cheap (8.2 KB gzip for both files, cached after the
-first page), so on a page or template you **know** contains a slider, link them
-directly and be done. The question only gets interesting when the natural place
-to load the engine is a **sitewide include** — then most pages on the site have
-no slider and would pay for the files anyway. For that case, paste this once
-into the sitewide Body Section, Bottom (or the footer include) instead of the
-two tags:
+The two tags above are cheap (8.2 KB gzip for both files, cached after the first page), so on a page
+or template you **know** contains a slider, link them directly and be done. The question only gets
+interesting when the natural place to load the engine is a **sitewide include** — then most pages on
+the site have no slider and would pay for the files anyway. For that case, paste this once into the
+sitewide Body Section, Bottom (or the footer include) instead of the two tags:
 
     <script>
       (function () {
@@ -87,42 +82,37 @@ two tags:
       })();
     </script>
 
-It looks for a `.cs` on the page and injects the stylesheet and script
-only if it finds one. Pages with no slider load zero slider bytes.
+It looks for a `.cs` on the page and injects the stylesheet and script only if it finds one. Pages
+with no slider load zero slider bytes.
 
-Injecting the engine this late is fine because its entry point does not blindly
-wait for `DOMContentLoaded`: it checks `document.readyState` and initializes
-**immediately** when the document has already finished parsing (see
-`src/auto.js`). A script tag added after the page loaded therefore still
-auto-inits every `[data-cs]` — there is no event it sits waiting for.
+Injecting the engine this late is fine because its entry point does not blindly wait for
+`DOMContentLoaded`: it checks `document.readyState` and initializes **immediately** when the
+document has already finished parsing (see `src/auto.js`). A script tag added after the page loaded
+therefore still auto-inits every `[data-cs]` — there is no event it sits waiting for.
 
-**The trade-off is real.** On pages that _do_ have a slider, the CSS now starts
-downloading only after the DOM is parsed — one extra round-trip — so the
-un-upgraded stacked list can show briefly before the styles land. That is a
-small layout shift the direct `<link>` + `defer` approach never has: its CSS
-arrives before first paint and reserves the control space, which is why CLS
-stays 0.
+**The trade-off is real.** On pages that _do_ have a slider, the CSS now starts downloading only
+after the DOM is parsed — one extra round-trip — so the un-upgraded stacked list can show briefly
+before the styles land. That is a small layout shift the direct `<link>` + `defer` approach never
+has: its CSS arrives before first paint and reserves the control space, which is why CLS stays 0.
 
-So: **direct tags on pages and templates known to contain a slider** (CLS 0,
-no flash); **the conditional loader for the sitewide-include case**, where it
-turns "every page pays 8.2 KB" into "only slider pages pay, slightly later".
+So: **direct tags on pages and templates known to contain a slider** (CLS 0, no flash); **the
+conditional loader for the sitewide-include case**, where it turns "every page pays 8.2 KB" into
+"only slider pages pay, slightly later".
 
 ### What about autoplay and fade?
 
-There is nothing further to conditionally load. Autoplay and fade are not
-separate resources or plugins — both ship inside the same two files
-(4.9 KB JS + 3.3 KB CSS gzip, 8.2 KB combined), and both are gated
-at runtime:
+There is nothing further to conditionally load. Autoplay and fade are not separate resources or
+plugins — both ship inside the same two files (4.9 KB JS + 3.3 KB CSS gzip, 8.2 KB combined), and
+both are gated at runtime:
 
-- Autoplay setup early-returns before creating any timer or observer when
-  `data-cs-autoplay` is absent, so a page without it executes essentially none of
-  the autoplay code.
-- The fade transition CSS applies only under the `data-cs-fade-on` attribute,
-  which the engine sets only when a block opts in with `data-cs-fade`. Without it
-  the rules never match and the transition is inert.
+- Autoplay setup early-returns before creating any timer or observer when `data-cs-autoplay` is
+  absent, so a page without it executes essentially none of the autoplay code.
+- The fade transition CSS applies only under the `data-cs-fade-on` attribute, which the engine sets
+  only when a block opts in with `data-cs-fade`. Without it the rules never match and the transition
+  is inert.
 
-A page that uses neither pays for neither beyond the bytes already counted
-above. The conditional loader is the whole story.
+A page that uses neither pays for neither beyond the bytes already counted above. The conditional
+loader is the whole story.
 
 ## 2. The markup contract
 
@@ -137,57 +127,51 @@ Everything the engine needs, and nothing it generates for you:
 
 Rules that are not negotiable:
 
-- **The engine never injects slide content.** Every heading, link, and image is
-  authored in the block. That is what keeps the content indexable and readable
-  with JS off.
-- **Never author control markup.** Arrows, dots, the pause button and gallery
-  thumbs are all generated. A block containing its own arrows will end up with two sets.
-- Give the root an `aria-label` (or `aria-labelledby`). A missing one logs a
-  console warning at init.
-- Images need `width` and `height` — that is what holds CLS at 0 — with
-  `loading="eager"` on what is visible at the narrowest tier (the hero's first
-  slide also takes `fetchpriority="high"`) and `loading="lazy"` on everything
-  below it. The builder emits this for you; an image inside a hidden tab pane or
-  a closed dialog stays lazy, because an eager one there is fetched anyway.
+- **The engine never injects slide content.** Every heading, link, and image is authored in the
+  block. That is what keeps the content indexable and readable with JS off.
+- **Never author control markup.** Arrows, dots, the pause button and gallery thumbs are all
+  generated. A block containing its own arrows will end up with two sets.
+- Give the root an `aria-label` (or `aria-labelledby`). A missing one logs a console warning at
+  init.
+- Images need `width` and `height` — that is what holds CLS at 0 — with `loading="eager"` on what is
+  visible at the narrowest tier (the hero's first slide also takes `fetchpriority="high"`) and
+  `loading="lazy"` on everything below it. The builder emits this for you; an image inside a hidden
+  tab pane or a closed dialog stays lazy, because an eager one there is fetched anyway.
 
 ## 3. Where the CSS goes
 
-Per-site styling goes in **Style Only / Head Section (`styleCode`)**, which is
-**raw CSS — no `<style>` tags and no comments.** The platform wraps and minifies
-it. Do not put slider CSS in the block itself.
+Per-site styling goes in **Style Only / Head Section (`styleCode`)**, which is **raw CSS — no
+`<style>` tags and no comments.** The platform wraps and minifies it. Do not put slider CSS in the
+block itself.
 
 ### The minifier's rules (live-tested on dealer 26900, 2026-08-20)
 
-The styleCode minifier has two **probed** behaviors every recipe must respect,
-and one shape that has **not** been probed — see the note after them.
+The styleCode minifier has two **probed** behaviors every recipe must respect, and one shape that
+has **not** been probed — see the note after them.
 
-- **Modern function values inside custom-property declarations fail the whole
-  sheet.** `--cs-peek: clamp(32px, 9vw, 60px)` and
-  `--cs-arrow-bg: rgb(0 0 0 / 40%)` each kill minification — and the
-  storefront then **silently serves the last successfully-minified styleCode**
-  (or nothing, if there was none). No error surfaces anywhere; your CSS just
-  never appears. The same functions are fine in _normal_ properties
-  (`width: clamp(...)`, `color: rgb(0 0 0 / 40%)`, slash-rgb in box-shadows) —
-  the failure is specific to `--*:` declarations. Every recipe in the library
-  therefore uses plain values and classic `rgba(r, g, b, a)` inside `--cs-*`
-  declarations, with media queries instead of `clamp()`.
-- **Zero lengths lose their unit** (`0px` → `0`), and a unitless `0` invalidates
-  every `calc()` that reads the variable — in **every** browser, Chrome
-  included. **Never write a zero length in a `--*` declaration; write `0.1px`.**
-  The visible failure is not a stray arrow, it is the strip: `.cs-slide`'s
-  `flex: 0 0 calc((100% - (var(--cs-per-view) - 1) * var(--cs-gap)) /
-var(--cs-per-view))` falls back to `auto` and every card collapses to its
-  content width. Measured 2026-09-02 in the same 750px host, three per view:
-  `--cs-gap: 0.1px` gives a 249.9px slide, `--cs-gap: 0` gives 42.0px. Chromium
-  and WebKit behave identically — an earlier version of this bullet called
-  Chrome "lenient" here, which was wrong, and six patterns shipped `0px` on the
-  strength of it. `0.1px` survives minification (it serves as `.1px`).
+- **Modern function values inside custom-property declarations fail the whole sheet.**
+  `--cs-peek: clamp(32px, 9vw, 60px)` and `--cs-arrow-bg: rgb(0 0 0 / 40%)` each kill minification —
+  and the storefront then **silently serves the last successfully-minified styleCode** (or nothing,
+  if there was none). No error surfaces anywhere; your CSS just never appears. The same functions
+  are fine in _normal_ properties (`width: clamp(...)`, `color: rgb(0 0 0 / 40%)`, slash-rgb in
+  box-shadows) — the failure is specific to `--*:` declarations. Every recipe in the library
+  therefore uses plain values and classic `rgba(r, g, b, a)` inside `--cs-*` declarations, with
+  media queries instead of `clamp()`.
+- **Zero lengths lose their unit** (`0px` → `0`), and a unitless `0` invalidates every `calc()` that
+  reads the variable — in **every** browser, Chrome included. **Never write a zero length in a `--*`
+  declaration; write `0.1px`.** The visible failure is not a stray arrow, it is the strip:
+  `.cs-slide`'s
+  `flex: 0 0 calc((100% - (var(--cs-per-view) - 1) * var(--cs-gap)) / var(--cs-per-view))` falls
+  back to `auto` and every card collapses to its content width. Measured 2026-09-02 in the same
+  750px host, three per view: `--cs-gap: 0.1px` gives a 249.9px slide, `--cs-gap: 0` gives 42.0px.
+  Chromium and WebKit behave identically — an earlier version of this bullet called Chrome "lenient"
+  here, which was wrong, and six patterns shipped `0px` on the strength of it. `0.1px` survives
+  minification (it serves as `.1px`).
 
-**`calc()` with a `var()` inside a `--*` declaration is SAFE — probed live
-2026-09-03, dealer 26900, page 2965393.** This shape was missing from the
-bisect above, and the list read as though it were exhaustive. It was not, so it
-was tested the same way: two rules appended to a page's Style Only, published,
-cache reset, then the served page read with a fresh cache-buster.
+**`calc()` with a `var()` inside a `--*` declaration is SAFE — probed live 2026-09-03, dealer 26900,
+page 2965393.** This shape was missing from the bisect above, and the list read as though it were
+exhaustive. It was not, so it was tested the same way: two rules appended to a page's Style Only,
+published, cache reset, then the served page read with a fresh cache-buster.
 
 ```css
 .f045-control {
@@ -200,41 +184,35 @@ cache reset, then the served page read with a fresh cache-buster.
 }
 ```
 
-Both served, and the probe came back **verbatim** —
-`--f045-b:calc(var(--f045-a, 44px) + 0.4em)`. The sheet had definitely
-minified: `--dlc-controls-space: 0.1px` was served as `.1px` in the same
-response, which is the zero-unit strip signature from the bisect. Three
-consecutive cache-busted fetches agreed, no flips. The control rule is what
-makes this readable — the documented failure kills the _whole_ sheet, so a
-known-good rule beside the probe distinguishes "the shape is fatal" from "the
-sheet has not published yet".
+Both served, and the probe came back **verbatim** — `--f045-b:calc(var(--f045-a, 44px) + 0.4em)`.
+The sheet had definitely minified: `--dlc-controls-space: 0.1px` was served as `.1px` in the same
+response, which is the zero-unit strip signature from the bisect. Three consecutive cache-busted
+fetches agreed, no flips. The control rule is what makes this readable — the documented failure
+kills the _whole_ sheet, so a known-good rule beside the probe distinguishes "the shape is fatal"
+from "the sheet has not published yet".
 
-Note the minifier leaves `calc()` contents alone: it shortened `0.1px` to
-`.1px` elsewhere in the same sheet but left `0.4em` inside the calc untouched,
-and kept the spaces around the `+` that `calc()` requires. That conservatism is
-presumably why the shape survives when `clamp()` does not.
+Note the minifier leaves `calc()` contents alone: it shortened `0.1px` to `.1px` elsewhere in the
+same sheet but left `0.4em` inside the calc untouched, and kept the spaces around the `+` that
+`calc()` requires. That conservatism is presumably why the shape survives when `clamp()` does not.
 
 So the two rules above are the whole of it, and the builder's
-`--strip-pad-x: calc(var(--cs-arrow-size) + 0.4em)` is safe on every route.
-For the record, the exposure was smaller than first counted: measured per
-route, the linked-engine route emits **zero** such declarations (the delta
-filter drops the value because it equals the look's own default) and "Paste the
-card styles too" emits **two** (tile and vcard). A third route, the deleted
+`--strip-pad-x: calc(var(--cs-arrow-size) + 0.4em)` is safe on every route. For the record, the
+exposure was smaller than first counted: measured per route, the linked-engine route emits **zero**
+such declarations (the delta filter drops the value because it equals the look's own default) and
+"Paste the card styles too" emits **two** (tile and vcard). A third route, the deleted
 paste-the-engine sheet, carried three; it is gone, and so is that exposure.
 
-Also expect **site CSS to outrank recipe classes**: OEM styles commonly set
-link decoration at id specificity (`#content-main a`), which beats
-`.my-modelbar-card { text-decoration: none }`. If pasted card names come out
-underlined, add one page-scoped rule:
+Also expect **site CSS to outrank recipe classes**: OEM styles commonly set link decoration at id
+specificity (`#content-main a`), which beats `.my-modelbar-card { text-decoration: none }`. If
+pasted card names come out underlined, add one page-scoped rule:
 `#content-main .my-modelbar-card { text-decoration: none; }`.
 
 ## 4. Picking a variation
 
-Every variation is authored HTML plus site CSS over the same two files. The demo
-page (`demo/index.html`) is a builder: pick the pattern, set how many are across
-at each breakpoint and which card style it wears, and the code panel prints the
-markup and CSS for exactly what is on screen. `demo/patterns.html` shows all
-seventeen at once; `demo/reference.html` is the API.
+Every variation is authored HTML plus site CSS over the same two files. The demo page
+(`demo/index.html`) is a builder: pick the pattern, set how many are across at each breakpoint and
+which card style it wears, and the code panel prints the markup and CSS for exactly what is on
+screen. `demo/patterns.html` shows all seventeen at once; `demo/reference.html` is the API.
 
 | You want                         | Use                                              |
 | -------------------------------- | ------------------------------------------------ |
@@ -244,20 +222,18 @@ seventeen at once; `demo/reference.html` is the API.
 | Vehicle / service / offer cards  | Default page stepping, 1-2-3 per view            |
 | Photo gallery with thumbnails    | `data-cs-gallery`                                |
 
-**For a model bar, start from the brand preset.** The OEM demo estate shares one
-anatomy and differs only in how many cards are across at each width. Every one of
-the 32 brands is a preset in the builder (`demo/assets/brands.js` records each
-brand's real slick config verbatim), read at the platform's own Bootstrap 3 tiers
-— 768 / 992 / 1200 — rather than at the one-off breakpoints the original agencies
-used. Pick the brand rather than re-deriving a ladder by hand.
+**For a model bar, start from the brand preset.** The OEM demo estate shares one anatomy and differs
+only in how many cards are across at each width. Every one of the 32 brands is a preset in the
+builder (`demo/assets/brands.js` records each brand's real slick config verbatim), read at the
+platform's own Bootstrap 3 tiers — 768 / 992 / 1200 — rather than at the one-off breakpoints the
+original agencies used. Pick the brand rather than re-deriving a ladder by hand.
 
-If you ever do need to convert one yourself, the rule is: **slick's
-`breakpoint: N` becomes `min-width: N`.** Not `N + 1`. slick compares
-`windowWidth < breakpoint` (a strict `<`), so `breakpoint: 768` applies _below_
-768 and the tier above starts at exactly 768. Adding 1 puts the strip one pixel
-out of step with the platform's Bootstrap 3 grid (768 / 992 / 1200), and at
-768px — iPad portrait — the page goes `md` while the slider is still on its
-phone tier. That off-by-one was live in this repo until 2026-08-27.
+If you ever do need to convert one yourself, the rule is: **slick's `breakpoint: N` becomes
+`min-width: N`.** Not `N + 1`. slick compares `windowWidth < breakpoint` (a strict `<`), so
+`breakpoint: 768` applies _below_ 768 and the tier above starts at exactly 768. Adding 1 puts the
+strip one pixel out of step with the platform's Bootstrap 3 grid (768 / 992 / 1200), and at 768px —
+iPad portrait — the page goes `md` while the slider is still on its phone tier. That off-by-one was
+live in this repo until 2026-08-27.
 
 ## 5. Theming per OEM
 
@@ -271,18 +247,17 @@ Override custom properties in `styleCode`. Never edit the engine:
       --cs-dot-current: #0b2a4a;
     }
 
-**`em`, never `rem`.** `rem` is locked to `<html>`, and Bootstrap 3 — what the
-storefronts run — sets `html { font-size: 10px }`, so a `1rem` gap written here
-ships at 62.5% of what it looked like. The repo's own linters fail on `rem` for
-exactly this reason; the docs used to show it anyway.
+**`em`, never `rem`.** `rem` is locked to `<html>`, and Bootstrap 3 — what the storefronts run —
+sets `html { font-size: 10px }`, so a `1rem` gap written here ships at 62.5% of what it looked like.
+The repo's own linters fail on `rem` for exactly this reason; the docs used to show it anyway.
 
-**`.my-strip.cs`, not `.my-strip`.** A bare class ties with the engine's own
-`.cs` and with the shared `.cargo-*` card styles, so source order decides — and
-where the platform emits the aggregated Style Only sheet relative to a head
-`<link>` is not documented. Adding `.cs` costs nothing and settles it.
+**`.my-strip.cs`, not `.my-strip`.** A bare class ties with the engine's own `.cs` and with the
+shared `.cargo-*` card styles, so source order decides — and where the platform emits the aggregated
+Style Only sheet relative to a head `<link>` is not documented. Adding `.cs` costs nothing and
+settles it.
 
-Slides-per-view is not in that block: use the `cs-xs-N` / `cs-sm-N` /
-`cs-md-N` / `cs-lg-N` classes on the root, which ship in the stylesheet.
+Slides-per-view is not in that block: use the `cs-xs-N` / `cs-sm-N` / `cs-md-N` / `cs-lg-N` classes
+on the root, which ship in the stylesheet.
 
 Full list in the README under "CSS custom properties".
 
@@ -290,101 +265,89 @@ Full list in the README under "CSS custom properties".
 
 The slider is ordinary block HTML, so the usual rules apply unchanged:
 
-- **Tokenize dealer identity** — `#NAME#`, `#CITY#`, `#STATE#`, `#CONTACTUS#`
-  (wide `#CONTACTUSW|#`, narrow `#CONTACTUSN|#`) — rather than hardcoding it.
-- **`%(…)` SEO codes NEVER resolve inside a Custom HTML block.** They work only
-  in the platform's own SEO fields. Do not put them in slide copy.
-- **Images: every example the builder gives you already resolves.** Library
-  photos copy out as `/static/industry-automotive/…`, cutouts as
-  `/assets/stock/…` or `/static/brand-<make>/…`. All three are platform-shared,
-  serve the same bytes on any dealer domain, and are pasted **literally** — a
-  snippet taken from the workbench needs nothing uploaded. Verified: zero of the
-  17 patterns emit a `#MISCPATH#` today.
-- **`#MISCPATH#` is for images you upload yourself.** Upload `hero.jpg` to the
-  site, then reference it flat as `#MISCPATH#hero.jpg`; the platform expands it
-  to that dealer's own uploads folder. Never write the expanded path by hand —
-  subfolder behaviour is per-dealer, so verify the served URL after uploading.
-- **`?width=N` is the platform resizing on the way out, not a URL convention.**
-  It only works where the CMS serves the file, so it does nothing in the demo or
-  on any other host — measured on one 900×600 photo: from a dealer domain
-  `?width=400` returns 400×267 and 24 KB against 88, and the identical file from
-  a static host comes back untouched. It only ever shrinks (a 900 px file asked
-  for 1600 returns the 900 byte for byte), and adding `&height=` re-crops rather
-  than fits (300×500 asked for 400×300 returns 300×225). Write the `width` and
-  `height` attributes for the size the page actually receives.
-- **Vehicle cutouts for a model bar:** `#CHROMEPHOTOPATH|<StyleID>|<angle>|<size>#`
-  — Style IDs from the Chrome Photo Builder. Angle 1 at 640 is what the demo uses.
-- **The demo's copy panel already does this for you.** What you paste out of the
-  workbench carries platform image paths, not the repo-relative ones the preview
-  shows: `/assets/stock/…` (the ChromeData ColorMatched service) for the vehicle
-  cutouts, `/static/brand-<make>/…` for the OEM model-bar art. Both are global —
-  no dealer id in the path, identical bytes on every dealer domain — so a pasted
-  model bar draws its cars with nothing uploaded to that dealer's gallery. Slots
-  with no shared equivalent (the demo's photography) come out as
-  `#MISCPATH#<file>`: that image is the dealer's to supply. The map lives in
-  `demo/assets/cms-paths.js` and is regenerated by
-  `node scripts/harvest-cms-paths.mjs`; OEMs rotate model-year art, so re-run it
-  when a cutout starts 404ing rather than hand-editing a path.
-- **Block storage is Windows-1252**, not Latin-1 — the distinction matters in
-  the useful direction: curly quotes, en and em dashes, the ellipsis and the
-  bullet are all IN 1252 and can be written literally. An arrow (`→`, U+2192),
-  a star (`★`), emoji and non-Latin scripts are not; entity-encode those
-  (`&#8594;`). `npm run validate` scans the generated markup and fails on any
+- **Tokenize dealer identity** — `#NAME#`, `#CITY#`, `#STATE#`, `#CONTACTUS#` (wide `#CONTACTUSW|#`,
+  narrow `#CONTACTUSN|#`) — rather than hardcoding it.
+- **`%(…)` SEO codes NEVER resolve inside a Custom HTML block.** They work only in the platform's
+  own SEO fields. Do not put them in slide copy.
+- **Images: every example the builder gives you already resolves.** Library photos copy out as
+  `/static/industry-automotive/…`, cutouts as `/assets/stock/…` or `/static/brand-<make>/…`. All
+  three are platform-shared, serve the same bytes on any dealer domain, and are pasted **literally**
+  — a snippet taken from the workbench needs nothing uploaded. Verified: zero of the 17 patterns
+  emit a `#MISCPATH#` today.
+- **`#MISCPATH#` is for images you upload yourself.** Upload `hero.jpg` to the site, then reference
+  it flat as `#MISCPATH#hero.jpg`; the platform expands it to that dealer's own uploads folder.
+  Never write the expanded path by hand — subfolder behaviour is per-dealer, so verify the served
+  URL after uploading.
+- **`?width=N` is the platform resizing on the way out, not a URL convention.** It only works where
+  the CMS serves the file, so it does nothing in the demo or on any other host — measured on one
+  900×600 photo: from a dealer domain `?width=400` returns 400×267 and 24 KB against 88, and the
+  identical file from a static host comes back untouched. It only ever shrinks (a 900 px file asked
+  for 1600 returns the 900 byte for byte), and adding `&height=` re-crops rather than fits (300×500
+  asked for 400×300 returns 300×225). Write the `width` and `height` attributes for the size the
+  page actually receives.
+- **Vehicle cutouts for a model bar:** `#CHROMEPHOTOPATH|<StyleID>|<angle>|<size>#` — Style IDs from
+  the Chrome Photo Builder. Angle 1 at 640 is what the demo uses.
+- **The demo's copy panel already does this for you.** What you paste out of the workbench carries
+  platform image paths, not the repo-relative ones the preview shows: `/assets/stock/…` (the
+  ChromeData ColorMatched service) for the vehicle cutouts, `/static/brand-<make>/…` for the OEM
+  model-bar art. Both are global — no dealer id in the path, identical bytes on every dealer domain
+  — so a pasted model bar draws its cars with nothing uploaded to that dealer's gallery. Slots with
+  no shared equivalent (the demo's photography) come out as `#MISCPATH#<file>`: that image is the
+  dealer's to supply. The map lives in `demo/assets/cms-paths.js` and is regenerated by
+  `node scripts/harvest-cms-paths.mjs`; OEMs rotate model-year art, so re-run it when a cutout
+  starts 404ing rather than hand-editing a path.
+- **Block storage is Windows-1252**, not Latin-1 — the distinction matters in the useful direction:
+  curly quotes, en and em dashes, the ellipsis and the bullet are all IN 1252 and can be written
+  literally. An arrow (`→`, U+2192), a star (`★`), emoji and non-Latin scripts are not;
+  entity-encode those (`&#8594;`). `npm run validate` scans the generated markup and fails on any
   character outside the code page.
-- Replacement codes do **not** resolve in hosted WordPress blogs. Use literal
-  text there.
+- Replacement codes do **not** resolve in hosted WordPress blogs. Use literal text there.
 
 ### A preset as a replacement code
 
-The two files are shared; **the sliders built on them are not, and are not
-meant to be.** A snippet out of the builder is one page's HTML and one page's
-CSS, and it stays that way unless somebody decides otherwise.
+The two files are shared; **the sliders built on them are not, and are not meant to be.** A snippet
+out of the builder is one page's HTML and one page's CSS, and it stays that way unless somebody
+decides otherwise.
 
 Two things sit above that, and they are separate:
 
-- **Presets on the FTP server.** DealerOn wants a set of finished sliders kept
-  there as the defaults — what goes onto a demo site, and what a designer starts
-  a build from rather than opening the builder cold. That is a library of
-  known-good snippets, not a platform feature: each one is still pasted into a
-  page, and a site that has one has a copy, not a link.
-- **A preset promoted to a platform-level replacement code.** This _can_
-  happen — a preset becomes a code the platform expands, so a page carries the
-  code rather than the markup. **Which presets get promoted is a decision the
-  senior designers make, not this repo and not the builder.** Nothing here
-  promotes anything, and no snippet the builder emits is a replacement code.
+- **Presets on the FTP server.** DealerOn wants a set of finished sliders kept there as the defaults
+  — what goes onto a demo site, and what a designer starts a build from rather than opening the
+  builder cold. That is a library of known-good snippets, not a platform feature: each one is still
+  pasted into a page, and a site that has one has a copy, not a link.
+- **A preset promoted to a platform-level replacement code.** This _can_ happen — a preset becomes a
+  code the platform expands, so a page carries the code rather than the markup. **Which presets get
+  promoted is a decision the senior designers make, not this repo and not the builder.** Nothing
+  here promotes anything, and no snippet the builder emits is a replacement code.
 
-The difference that matters when one _is_ promoted: a pasted snippet is frozen
-at the moment it was pasted and changing it means editing every page that has
-it, while a replacement code is edited once. That is the same argument as the
-shared engine path, one level up — and the same risk, since a mistake also
-reaches every page at once. Which is why the call is a person's.
+The difference that matters when one _is_ promoted: a pasted snippet is frozen at the moment it was
+pasted and changing it means editing every page that has it, while a replacement code is edited
+once. That is the same argument as the shared engine path, one level up — and the same risk, since a
+mistake also reaches every page at once. Which is why the call is a person's.
 
-Do **not** auto-number or otherwise adjust a preset's slider name on the way
-into a page. The builder cannot see the page it is being pasted into, so
-uniqueness can only be surfaced, never enforced — see §3.
+Do **not** auto-number or otherwise adjust a preset's slider name on the way into a page. The
+builder cannot see the page it is being pasted into, so uniqueness can only be surfaced, never
+enforced — see §3.
 
 ## 7. What not to do
 
-- **Do not fork the engine per site.** If a site needs something the engine
-  cannot do, that is a request against this repo, not a local copy. A forked
-  copy silently opts that site out of every future fix.
+- **Do not fork the engine per site.** If a site needs something the engine cannot do, that is a
+  request against this repo, not a local copy. A forked copy silently opts that site out of every
+  future fix.
 - **Do not add slider CSS to the block.** It belongs in `styleCode`.
-- **Do not rename the classes or data attributes.** `cs`,
-  `-track`, `-slide`, the `data-*` options and the `--cs-*` properties are a
-  frozen contract precisely so the engine can be swapped later without editing
-  any site.
-- **Do not add autoplay to a card strip.** Zero of the 55 OEM model bars
-  autoplay. Rotation belongs on the hero and nowhere else.
-- **Do not hide slides to "fix" screen-reader counts.** Off-screen cards stay in
-  the accessibility tree deliberately.
+- **Do not rename the classes or data attributes.** `cs`, `-track`, `-slide`, the `data-*` options
+  and the `--cs-*` properties are a frozen contract precisely so the engine can be swapped later
+  without editing any site.
+- **Do not add autoplay to a card strip.** Zero of the 55 OEM model bars autoplay. Rotation belongs
+  on the hero and nowhere else.
+- **Do not hide slides to "fix" screen-reader counts.** Off-screen cards stay in the accessibility
+  tree deliberately.
 
 ## 8. After placing a slider
 
-- Everything is Fastly edge-cached — hand out review links cache-busted (`?123`,
-  any query value forces a miss), and clear your own browser cache before
-  debugging anything "missing".
-- Check it with the keyboard: Tab should reach pause → prev → next → dots →
-  the cards, and focus should never disappear.
-- Check it with JS disabled — the strip must still scroll and every slide must
-  still be readable.
+- Everything is Fastly edge-cached — hand out review links cache-busted (`?123`, any query value
+  forces a miss), and clear your own browser cache before debugging anything "missing".
+- Check it with the keyboard: Tab should reach pause → prev → next → dots → the cards, and focus
+  should never disappear.
+- Check it with JS disabled — the strip must still scroll and every slide must still be readable.
 - Run the ADA scanner before closing the case.

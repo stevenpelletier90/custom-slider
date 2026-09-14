@@ -1,0 +1,28 @@
+# The gates a human runs before committing (CLAUDE.md: validate, size, test),
+# now run by a machine on every push and PR too. Before this file existed
+# nothing ran them unless someone remembered: the markdown drifted to
+# 1204-character lines with `prettier --check` in validate the whole time.
+name: validate
+on:
+  push:
+  pull_request:
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      # stylelint (files + generated), eslint, prettier --check, check:looks,
+      # check:vendor.
+      - run: npm run validate
+      # Rebuilds dist and fails at the gzip budget in scripts/size.mjs.
+      - run: npm run size
+      # playwright.config.mjs has no `projects`, so the runner uses Chromium
+      # only; installing the other browsers would be minutes for nothing.
+      - run: npx playwright install --with-deps chromium
+      # Starts its own server on 8137 (webServer in playwright.config.mjs).
+      - run: npm test
