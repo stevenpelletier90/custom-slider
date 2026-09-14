@@ -64,7 +64,11 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   colour for either; the four `--title-*`/`--more-*` knobs went. The preview frame, the
   Patterns/Brands stages and the tests' hostile host carry the theme layer as stand-ins (the demo's
   navy, Chevrolet's `theme` in `brands.js` overriding it), marked preview-only like the font;
-  `check-looks` holds `theme` to those four keys as hexes.
+  `check-looks` holds `theme` to those four keys as hexes. Then, so the preview still shows the
+  brand's heading weight and button shape without the snippet carrying them: `theme.css`, the site's
+  own rules for `.h1`/`.btn`/`.btn-lg`/`.btn-cta` only (check-looks refuses any other selector), a
+  sheet in the frame's head and scoped onto the brand's Brands-page stages; Chevrolet's are headings
+  600 capitalised, buttons bold with a 2px border, 8px radius and 8px 20px padding.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

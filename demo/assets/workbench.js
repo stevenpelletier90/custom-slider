@@ -2282,6 +2282,19 @@ ${PHOTO_CSS}
       if (t[k]) d.documentElement.style.setProperty(k, t[k]);
       else d.documentElement.style.removeProperty(k);
     }
+    // And the brand's own rules for the classes the snippet names (theme.css,
+    // held to .h1/.btn/.btn-lg/.btn-cta by check-looks): a sheet in the
+    // frame's head after the stand-ins, so the heading and button wear the
+    // brand's weight, case and shape. Removed on Default.
+    let sheet = d.getElementById('wb-live-theme');
+    if (t.css) {
+      if (!sheet) {
+        sheet = d.createElement('style');
+        sheet.id = 'wb-live-theme';
+        d.head.append(sheet);
+      }
+      if (sheet.textContent !== t.css) sheet.textContent = t.css;
+    } else sheet?.remove();
   }
 
   function render() {

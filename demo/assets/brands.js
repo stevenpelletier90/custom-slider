@@ -519,7 +519,19 @@
       // page set them so a value written as var(--cta-background-color)
       // draws this blue here; on a real Chevrolet site the theme supplies
       // them and the copied code carries none of these hexes.
-      theme: { '--cta-background-color': '#006dc7', '--cta-font-color': '#fff', '--cta-hover-color': '#0e4180', '--main-color': '#262626' },
+      theme: {
+        '--cta-background-color': '#006dc7',
+        '--cta-font-color': '#fff',
+        '--cta-hover-color': '#0e4180',
+        '--main-color': '#262626',
+        // The site's own heading and button rules, read off chevroletdemo1's
+        // theme layer the same day, so the preview draws the h1 class and the
+        // btn-cta class the way that site does: headings 600 and capitalised
+        // in ChevySans, buttons bold with a 2px border, an 8px radius and
+        // 8px 20px of padding, 18px at btn-lg. Preview only - the snippet
+        // names the classes and the site supplies exactly these.
+        css: '.h1{font-weight:600;text-transform:capitalize}.btn{padding:8px 20px;font-weight:700;border-width:2px;border-radius:8px;transition:all 250ms ease-in-out}.btn-lg{padding:8px 20px;font-size:18px;line-height:1.3333}',
+      },
       source: 'chevroletdemo1.dealeron.com, 2026-09-14',
     },
     chrysler: {

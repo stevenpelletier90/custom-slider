@@ -127,7 +127,9 @@ export const themeCss = (theme = {}) =>
   '.btn{display:inline-block;padding:6px 12px;font-size:14px;font-weight:400;line-height:1.42857143;text-align:center;white-space:nowrap;vertical-align:middle;cursor:pointer;text-decoration:none;border:1px solid transparent;border-radius:4px}' +
   '.btn-lg{padding:10px 16px;font-size:18px;line-height:1.3333333;border-radius:6px}' +
   '.btn-cta{color:var(--cta-font-color);background-color:var(--cta-background-color);border-color:var(--cta-background-color)}' +
-  '.btn-cta:hover,.btn-cta:focus{color:var(--cta-font-color);background-color:var(--cta-hover-color);border-color:var(--cta-hover-color)}';
+  '.btn-cta:hover,.btn-cta:focus{color:var(--cta-font-color);background-color:var(--cta-hover-color);border-color:var(--cta-hover-color)}' +
+  // A brand's own heading and button rules on top, as its site's theme has.
+  (theme.css ?? '');
 
 export function hostHtml({ engineCss, engineJs, css = '', html = '', js = '', box = 1170, cssFirst = false, theme = {} }) {
   const sheets = cssFirst ? `<style>${css}</style><style>${engineCss}</style>` : `<style>${engineCss}</style><style>${css}</style>`;

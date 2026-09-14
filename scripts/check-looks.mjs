@@ -295,9 +295,27 @@ for (const [id, b] of brands) {
   // tokens every DealerOn theme defines, as hexes, so the frame and the
   // Brands page can resolve a knob written as var(--cta-background-color).
   // Exactly those four keys, or a typo would sit there resolving nothing.
+  // `theme.css` may add the site's own rules for the classes the snippet
+  // names - .h1, .btn, .btn-lg, .btn-cta - and nothing else, so the preview
+  // can draw a brand's headings and buttons the way its theme does. Held to
+  // those selectors: a rule on anything else would style the preview in a
+  // way no dealer page would, and rules are the one thing cssFor() must never
+  // read from here.
   if (b.theme != null) {
     const TOKENS = ['--cta-background-color', '--cta-font-color', '--cta-hover-color', '--main-color'];
+    if (typeof b.theme.css === 'string') {
+      for (const sel of b.theme.css
+        .split('}')
+        .map((r) => r.split('{')[0].trim())
+        .filter(Boolean)) {
+        if (!/^\.(h1|btn|btn-lg|btn-cta)(:(hover|focus))?(,\s*\.(h1|btn|btn-lg|btn-cta)(:(hover|focus))?)*$/.test(sel)) {
+          console.error(`  ${id}: theme.css rule "${sel}" — theme rules may target .h1, .btn, .btn-lg and .btn-cta only`);
+          bad++;
+        }
+      }
+    }
     for (const [k, v] of Object.entries(b.theme)) {
+      if (k === 'css') continue;
       if (!TOKENS.includes(k) || !/^#[0-9a-f]{3,8}$/i.test(String(v))) {
         console.error(`  ${id}: theme.${k} = ${v} — theme carries only ${TOKENS.join(', ')}, each a hex`);
         bad++;

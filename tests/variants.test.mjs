@@ -370,6 +370,14 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
           fg: w.getComputedStyle(d.querySelector('.cargo-more .btn')).color,
         },
         body: w.getComputedStyle(d.body).fontSize,
+        // The brand's theme rules (brands.js theme.css) on the heading and
+        // the button: what the preview wears, never what the snippet ships.
+        titleWeight: d.querySelector('.cargo-title') && w.getComputedStyle(d.querySelector('.cargo-title')).fontWeight,
+        titleCase: d.querySelector('.cargo-title') && w.getComputedStyle(d.querySelector('.cargo-title')).textTransform,
+        btnWeight: d.querySelector('.cargo-more .btn') && w.getComputedStyle(d.querySelector('.cargo-more .btn')).fontWeight,
+        btnRadius: d.querySelector('.cargo-more .btn') && w.getComputedStyle(d.querySelector('.cargo-more .btn')).borderTopLeftRadius,
+        btnBorder: d.querySelector('.cargo-more .btn') && w.getComputedStyle(d.querySelector('.cargo-more .btn')).borderTopWidth,
+        btnH: d.querySelector('.cargo-more .btn') && +d.querySelector('.cargo-more .btn').getBoundingClientRect().height.toFixed(1),
       };
     });
 
@@ -384,6 +392,9 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     assert.equal(g.zoomSpeed, '0.2s, 0.25s', 'the default zoom speed moved');
     assert.equal(g.nameLine, `${(parseFloat(g.body) * 1.35).toFixed(2).replace(/\.?0+$/, '')}px`.replace('18.9px', '18.9px'), 'the default name line height moved');
     assert.equal(g.titleTag, 'H2', 'the heading over the bar is not an h2');
+    // Default wears the stand-in theme (Bootstrap 3's own), not Chevrolet's.
+    assert.equal(g.titleWeight, '500', "Chevrolet's heading weight leaked onto the default");
+    assert.equal(g.btnRadius, '6px', "Chevrolet's button shape leaked onto the default");
     assert.deepEqual(g.more && { href: g.more.href, text: g.more.text }, { href: '/searchnew.aspx', text: 'Explore All New Inventory' });
     assert.equal(await knob(page, 'Space between tabs'), '0.25em');
     assert.equal(await knob(page, 'Pane fade'), '0s');
@@ -405,6 +416,15 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     assert.equal(g.arrowFg, 'rgb(102, 102, 102)');
     assert.equal(g.more.bg, 'rgb(0, 109, 199)', "the button under the bar is Chevrolet's blue");
     assert.equal(g.more.fg, 'rgb(255, 255, 255)');
+    // The preview wears the site's own heading and button rules (theme.css):
+    // 600 and capitalised, bold with a 2px border and an 8px radius, 44px
+    // tall - the live block, measured. None of it is in the snippet.
+    assert.equal(g.titleWeight, '600');
+    assert.equal(g.titleCase, 'capitalize');
+    assert.equal(g.btnWeight, '700');
+    assert.equal(g.btnRadius, '8px');
+    assert.equal(g.btnBorder, '2px');
+    assert.ok(Math.abs(g.btnH - 44) < 1.5, `the live button is 44px tall, got ${g.btnH}`);
     const { css, html } = await copyParts(page);
     for (const line of [
       '--tab-gap: 1.7em;',

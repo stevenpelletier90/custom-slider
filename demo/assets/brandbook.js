@@ -73,7 +73,25 @@
       // The brand's theme tokens (brands.js `theme`), page scaffolding the
       // same way: a value written as var(--cta-background-color) draws the
       // brand's own here. ui.css carries the demo's stand-in values.
-      for (const [k, v] of Object.entries(b.theme ?? {})) stage.style.setProperty(k, v);
+      for (const [k, v] of Object.entries(b.theme ?? {})) if (k !== 'css') stage.style.setProperty(k, v);
+      // The brand's own heading and button rules (theme.css), scoped to its
+      // stages: each selector gets the stage in front of it, so Chevrolet's
+      // bold button does not restyle Toyota's stage further down.
+      if (b.theme?.css) {
+        css.push(
+          b.theme.css
+            .split('}')
+            .filter((r) => r.trim())
+            .map((r) => {
+              const [sel, body] = r.split('{');
+              return `${sel
+                .split(',')
+                .map((s) => `#b-${id} .bb-stage ${s.trim()}`)
+                .join(', ')} {${body}}`;
+            })
+            .join('\n'),
+        );
+      }
       sec.append(block);
     }
     grid.append(sec);
