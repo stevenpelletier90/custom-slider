@@ -4,7 +4,24 @@
 // docs/specs/2026-09-10-brands-page-design.md
 
 (() => {
-  const { PATTERNS, BRANDS, SHORT, renderPattern, patternsOf } = globalThis.CARGO;
+  const { PATTERNS, BRANDS, SHORT, renderPattern, renderSnippet, patternsOf, hl } = globalThis.CARGO;
+
+  // Copy, the way the builder's buttons do it: the clipboard gets the text,
+  // the button says so for a moment, and a browser that refuses says what to
+  // press instead.
+  const flash = (btn, msg) => {
+    const old = btn.textContent;
+    btn.textContent = msg;
+    setTimeout(() => (btn.textContent = old), 1600);
+  };
+  const copyText = async (btn, text) => {
+    try {
+      await navigator.clipboard.writeText(text);
+      flash(btn, 'Copied');
+    } catch {
+      flash(btn, 'Press Ctrl+C');
+    }
+  };
   const grid = document.getElementById('bb-grid');
   const index = document.getElementById('bb-index');
   if (!grid || !index || !renderPattern) return;
@@ -69,6 +86,18 @@
       block.innerHTML = `<div class="bb-block-head"><h3>${esc(SHORT?.[pid] ?? PATTERNS[pid].label)}</h3><a class="ui-btn" href="index.html#${pid}?brand=${id}">Open in the builder</a></div><div class="gx-stage bb-stage" data-pattern="${pid}"></div>`;
       const stage = block.querySelector('.bb-stage');
       stage.innerHTML = r.html;
+      // The code under the stage: the same three parts the builder copies,
+      // from the same generator (renderSnippet), so a designer can take a
+      // measured brand's bar from here without a trip through the builder.
+      // Closed by default - the page is for looking, and 24 open code boxes
+      // are a wall - and highlighted the way the builder's box is.
+      const snip = renderSnippet(pid, { brand: id });
+      const whole = `<style>\n${snip.css}\n</style>\n\n${snip.html}${snip.js ? `\n\n<script>\n${snip.js}\n</script>` : ''}`;
+      const code = document.createElement('details');
+      code.className = 'bb-code';
+      code.innerHTML = `<summary>Code</summary><div class="ui-code-bar"><h3>Copy, one part per CMS field</h3><span class="ui-content-acts"><button type="button" class="ui-btn" data-copy="css">Copy CSS</button><button type="button" class="ui-btn" data-copy="html">Copy HTML</button><button type="button" class="ui-btn" data-copy="js"${snip.js ? '' : ' hidden'}>Copy JS</button></span></div><pre class="g-code" tabindex="0"><code>${hl ? hl.snippet(whole) : esc(whole)}</code></pre>`;
+      for (const btn of code.querySelectorAll('[data-copy]')) btn.addEventListener('click', () => copyText(btn, snip[btn.dataset.copy]));
+      block.append(code);
       if (b.font) stage.style.fontFamily = `${b.font.family}, Arial, Helvetica, sans-serif`;
       // The brand's theme tokens (brands.js `theme`), page scaffolding the
       // same way: a value written as var(--cta-background-color) draws the

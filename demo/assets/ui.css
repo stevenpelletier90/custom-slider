@@ -2143,6 +2143,41 @@ code {
   margin-block-start: 1rem;
 }
 
+/* The code under each stage: closed by default (the page is for looking), the
+   builder's own code bar and Monokai box when opened. */
+.bb-code {
+  margin-block-start: 0.5rem;
+}
+
+.bb-code > summary {
+  inline-size: fit-content;
+  padding: 0.32rem 0.8rem;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ink);
+  cursor: pointer;
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+}
+
+.bb-code > summary:hover {
+  color: var(--on-signal);
+  background: var(--signal);
+  border-color: var(--signal);
+}
+
+.bb-code[open] > summary {
+  margin-block-end: 0.5rem;
+}
+
+/* A five-pane bar is ~380 lines; the box scrolls rather than swallowing the
+   page, and the copy buttons stay in reach at its top. */
+.bb-code .g-code {
+  max-block-size: 60vh;
+  margin-block-start: 0;
+  overflow: auto;
+}
+
 .bb-block-head {
   display: flex;
   gap: 1rem;

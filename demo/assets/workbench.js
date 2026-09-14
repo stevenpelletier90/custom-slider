@@ -1958,6 +1958,18 @@ ${PHOTO_CSS}
       if (brand) applyBrand(brand);
       return { css: cssFor(`.${cls}`), html: htmlFor(cls) };
     },
+    // The three parts the builder's copy buttons hand over, for the same
+    // pattern under the same brand, under the pattern's own slider name:
+    // CSS for Style Only, markup with platform image paths for a Custom HTML
+    // block, the pattern script behind its readiness guard. The Brands page
+    // shows and copies these, so what it hands over is byte for byte what the
+    // builder would - one generator, one more caller.
+    renderSnippet(id, { brand = null } = {}) {
+      loadPattern(id);
+      if (brand) applyBrand(brand);
+      const p = PATTERNS[id];
+      return { name: state.name, css: cssFor(`.${state.name}`), html: toCms(htmlFor(state.name)), js: p.script ? guarded(p.script) : '' };
+    },
     // The brands that carry values for a pattern or for its card, in the
     // order brands.js lists them. Read off the data, never a list of ids.
     variantsOf,

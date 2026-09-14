@@ -69,6 +69,13 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   own rules for `.h1`/`.btn`/`.btn-lg`/`.btn-cta` only (check-looks refuses any other selector), a
   sheet in the frame's head and scoped onto the brand's Brands-page stages; Chevrolet's are headings
   600 capitalised, buttons bold with a 2px border, 8px radius and 8px 20px padding.
+- 2026-09-14, Brands page code: each measured stage shows and copies its three parts, from
+  `renderSnippet()` in `workbench.js` - the builder's own
+  `cssFor`/`toCms(htmlFor)`/`guarded(script)` under the pattern's own slider name - so the two pages
+  cannot hand out two Chevrolet bars; a test compares the Brands page text with the builder's code
+  box byte for byte. The first cut differed in every image path: `brands.html` did not load
+  `cms-paths.js`, so `toCms()` fell back to `#MISCPATH#` placeholders where the builder names the
+  platform files.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

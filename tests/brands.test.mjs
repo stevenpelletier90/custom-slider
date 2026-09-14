@@ -74,6 +74,43 @@ test('a measured brand has one live stage per pattern it is measured for', async
   assert.equal(line, 'rgb(0, 109, 199)', 'the tabbed stage should draw Chevrolet values');
 });
 
+// 2026-09-14: Steven wants to take a measured brand's code from here without
+// the builder. It has to be the builder's code - the same generator, the same
+// three parts, the same slider name - or the two pages would hand out two
+// versions of the Chevrolet bar.
+test('every measured stage shows its code, closed, and it is byte for byte the builder’s', async ({ browser }) => {
+  const boxes = await page.evaluate(() =>
+    [...document.querySelectorAll('#b-chevrolet .bb-block')].map((b) => ({
+      pattern: b.querySelector('.bb-stage').dataset.pattern,
+      open: b.querySelector('.bb-code')?.open,
+      buttons: [...(b.querySelectorAll('.bb-code [data-copy]') ?? [])].filter((x) => !x.hidden).map((x) => x.dataset.copy),
+      code: b.querySelector('.bb-code pre')?.textContent ?? null,
+    })),
+  );
+  assert.ok(boxes.length >= 2);
+  for (const b of boxes) {
+    assert.equal(b.open, false, `${b.pattern}: the code box starts open`);
+    assert.ok(b.buttons.includes('css') && b.buttons.includes('html'), `${b.pattern}: copy buttons missing (${b.buttons})`);
+    assert.ok(b.code && b.code.startsWith('<style>'), `${b.pattern}: no code shown`);
+  }
+  const tabs = boxes.find((b) => b.pattern === 'tabs');
+  assert.ok(tabs.buttons.includes('js'), 'the tabbed bar has a script and the box should offer it');
+  // The builder, same pattern, same brand: its code box text is what its
+  // three copy buttons assemble, so this is the copy buttons by proxy.
+  const ctx = await browser.newContext({ viewport: { width: 1500, height: 900 } });
+  const wb = await ctx.newPage();
+  await wb.goto(`${ORIGIN}/demo/index.html#tabs?brand=chevrolet`, { waitUntil: 'load' });
+  await wb.waitForSelector('#wb-stage');
+  await wb.frameLocator('#wb-stage').locator('.cs-slide').first().waitFor({ state: 'attached', timeout: 15000 });
+  await wb.waitForTimeout(500);
+  const builder = await wb.evaluate(() => document.getElementById('wb-code').textContent);
+  await ctx.close();
+  assert.equal(tabs.code, builder, 'the Brands page shows a different Chevrolet tabbed bar than the builder copies');
+  // The snippet carries none of the page's own theme stand-ins.
+  assert.doesNotMatch(tabs.code, /#006dc7|\.btn\s*\{|--cta-background-color:\s*#/i, 'preview scaffolding leaked into the code');
+  assert.deepEqual(errors, []);
+});
+
 test('a brand with a font is shown in it; the generated CSS never names one', async () => {
   const got = await page.evaluate(() => {
     const chevy = document.querySelector('#b-chevrolet .bb-stage [role="tab"]');
