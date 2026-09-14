@@ -76,6 +76,17 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   box byte for byte. The first cut differed in every image path: `brands.html` did not load
   `cms-paths.js`, so `toCms()` fell back to `#MISCPATH#` placeholders where the builder names the
   platform files.
+- 2026-09-14, `patterns.js`: the 21 pattern definitions and their example rosters (970 lines) came
+  out of `workbench.js` (4,509 lines, most of it builder UI) into their own classic script beside
+  `looks.js` and `brands.js`, so a new replacement code is an entry in a data file. A
+  cross-reference script proved the cut: the region reached back for `clamp` and `BRANDS` only, and
+  the builder reached forward for `PATTERNS`, the six rosters, the two photo rules, the video dialog
+  markup and `escTab` - all now on `globalThis.CARGO`. The two gates that read `PATTERNS` off source
+  text read `patterns.js`; `ENGINE_DEFAULTS` stays in the builder. The shared-structure move
+  (pattern rules and scripts into the linked files, the snippet down to values and markup) is
+  specced in `docs/specs/2026-09-14-shared-pattern-structure-design.md` and not started; measured
+  for it: chevroletdemo1 serves its whole theme as 287 KB of inline `<style>` in a 469 KB page, so
+  Style Only CSS is paid for on every page view and never cached.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

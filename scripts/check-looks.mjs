@@ -165,16 +165,18 @@ for (const [id, look] of Object.entries(LOOKS)) {
 // the builder shows CARD_NOTES as their tooltip - so the same rule holds. A
 // brand variant's styles.patterns block (also 2026-09-09, below) needs the
 // same per-pattern prop map to check its values against, so PATTERN_PROPS is
-// read once here and both gates share it rather than scanning workbench.js
+// read once here and both gates share it rather than scanning the source
 // text two incompatible ways.
 //
-// workbench.js is a classic script too, but PATTERNS and ENGINE_DEFAULTS sit
-// behind other module-scoped consts (state, LOOKS) that a bare `new Function`
-// sandbox can't supply, so this reads them off the SOURCE TEXT instead of
-// loading the file.
+// patterns.js and workbench.js are classic scripts too, but PATTERNS and
+// ENGINE_DEFAULTS sit behind other module-scoped consts (BRANDS, state) that
+// a bare `new Function` sandbox can't supply, so this reads them off the
+// SOURCE TEXT instead of loading the files. PATTERNS lives in patterns.js
+// since 2026-09-14; ENGINE_DEFAULTS stays in the builder.
+const ptSrc = readFileSync('demo/assets/patterns.js', 'utf8');
 const wbSrc = readFileSync('demo/assets/workbench.js', 'utf8');
-const patternsStart = wbSrc.indexOf('const PATTERNS = {');
-const patternsText = wbSrc.slice(patternsStart, wbSrc.indexOf('/* ---- ', patternsStart));
+const patternsStart = ptSrc.indexOf('const PATTERNS = {');
+const patternsText = ptSrc.slice(patternsStart, ptSrc.indexOf('/* ---- ', patternsStart));
 const PATTERN_PROPS = {};
 const PATTERN_PANES = new Set();
 for (const m of patternsText.matchAll(/\n {4}([a-z-]+|'[a-z-]+'): \{([\s\S]*?)\n {4}\},/g)) {
@@ -185,7 +187,7 @@ for (const m of patternsText.matchAll(/\n {4}([a-z-]+|'[a-z-]+'): \{([\s\S]*?)\n
 }
 const ENGINE_KEYS = new Set([...(wbSrc.match(/const ENGINE_DEFAULTS = \{[\s\S]*?\n {2}\};/)?.[0] ?? '').matchAll(/'(--cs-[a-z0-9-]+)'/g)].map(([, k]) => k));
 if (!Object.keys(PATTERN_PROPS).length || !ENGINE_KEYS.size) {
-  console.error('  check-looks: could not read PATTERNS or ENGINE_DEFAULTS out of workbench.js — the text scan needs updating');
+  console.error('  check-looks: could not read PATTERNS out of patterns.js or ENGINE_DEFAULTS out of workbench.js — the text scan needs updating');
   bad++;
 }
 

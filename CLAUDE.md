@@ -35,8 +35,10 @@ settings panel, live stage, slide-content editor, code panel (`state.content` ho
 rows, null = example content, kept per pattern in localStorage). `demo/patterns.html` renders every
 pattern (`gallery.js`), `demo/brands.html` browses by OEM (`brandbook.js`), `demo/reference.html` is
 the technical guide (`guide.js`) — all built from the workbench's generator. Other `demo/assets/`:
-`looks.js` (7 card components), `brands.js` (32 brand presets), `workbench.js` (state and
-generators), `pane.js` (the only Tweakpane contact), `tp-plugins.js` (`note`, length and colour
+`looks.js` (7 card components), `brands.js` (32 brand presets), `patterns.js` (the 21 rail entries:
+example rosters, each pattern's CSS, markup and page script — a new replacement code is an entry
+here), `workbench.js` (state and generators; reads `PATTERNS` off `globalThis.CARGO` like `LOOKS`
+and `BRANDS`), `pane.js` (the only Tweakpane contact), `tp-plugins.js` (`note`, length and colour
 controls), `vendor/tweakpane.js` (committed classic-script bundle from `scripts/build-vendor.mjs`;
 `npm run check:vendor` fails `validate` after an `npm update` moves
 `esbuild`/`tweakpane`/`@tweakpane/core` until it is rebuilt and committed — the intended loud
@@ -317,5 +319,5 @@ console warning; fade is a 1-up stacked crossfade, see README `data-cs-fade`).
   missing `aria-label` or a conflicting option combination. Keep that pattern for new validation.
 - Extending behavior belongs in page script, not the engine — listen for `cs:change` (bubbles from
   the root) or read the instance at `element._cs`. The two video patterns carry their own `<dialog>`
-  and handler inside the emitted snippet (`workbench.js`) — the reference example: wiring ships with
+  and handler inside the emitted snippet (`patterns.js`) — the reference example: wiring ships with
   the copied code, not the demo.

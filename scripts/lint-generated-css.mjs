@@ -39,7 +39,7 @@ sandbox.getComputedStyle = () => ({ getPropertyValue: () => '', fontSize: '16px'
 sandbox.location = { hash: '' };
 sandbox.history = { replaceState: noop };
 
-for (const f of ['looks.js', 'brands.js', 'cms-paths.js', 'workbench.js']) {
+for (const f of ['looks.js', 'brands.js', 'cms-paths.js', 'patterns.js', 'workbench.js']) {
   new Function('globalThis', 'document', 'window', readFileSync(`demo/assets/${f}`, 'utf8')).call(sandbox, sandbox, sandbox.document, sandbox);
 }
 const { PATTERNS, LOOKS, BRANDS, renderPattern, renderLook, ENGINE_DEFAULTS, variantsOf } = sandbox.CARGO;
