@@ -85,6 +85,16 @@ const LOOKS = {
       // the fold on most of these sites and a strip that grows under the cursor
       // is a decision to make deliberately, not one to inherit.
       '--img-hover-scale': '1',
+      // How long the zoom takes. 0.25s was a literal in the css below until
+      // 2026-09-14; chevroletdemo1's bar grows its cutout in 0.1s, and a
+      // brand could not say so.
+      '--img-hover-speed': '0.25s',
+      // The name's distance from the vehicle and its line box. Both were
+      // literals (0.4em, 1.35) until 2026-09-14: chevroletdemo1 pulls the name
+      // 2px under the cutout on a 17.6px line, and matching that meant
+      // editing the shared sheet.
+      '--name-gap': '0.4em',
+      '--name-leading': '1.35',
       '--plate-bg': 'transparent', // coloured plate behind the vehicle
       // The cutouts already carry 13-17% transparent margin below the vehicle
       // (measured across the set), so the plate adds very little underneath or
@@ -105,10 +115,10 @@ const LOOKS = {
 .cargo-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .cargo-media { position: relative; display: block; overflow: hidden; }
 .cargo-badge { position: absolute; inset-block-start: 0.6em; inset-inline-start: 0.6em; padding: 0.25em 0.7em; font-size: 0.75em; font-weight: 700; line-height: 1.4; color: var(--badge-fg); background: var(--badge-bg); border-radius: 999px; }
-.cargo-card img { box-sizing: border-box; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); padding: var(--plate-pad); object-fit: contain; background: var(--plate-bg); filter: var(--img-filter); transition: filter 0.2s, transform 0.25s ease; }
+.cargo-card img { box-sizing: border-box; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); padding: var(--plate-pad); object-fit: contain; background: var(--plate-bg); filter: var(--img-filter); transition: filter 0.2s, transform var(--img-hover-speed) ease; }
 .cargo-card:hover img { filter: none; transform: scale(var(--img-hover-scale)); }
 @media (prefers-reduced-motion: reduce) { .cargo-card:hover img { transform: none; } }
-.cargo-name { order: var(--name-order); margin: 0.4em 0 0; font-size: var(--name-size); font-weight: var(--name-weight); line-height: 1.35; color: var(--name-color); text-transform: var(--name-case); letter-spacing: var(--name-tracking); }
+.cargo-name { order: var(--name-order); margin: var(--name-gap) 0 0; font-size: var(--name-size); font-weight: var(--name-weight); line-height: var(--name-leading); color: var(--name-color); text-transform: var(--name-case); letter-spacing: var(--name-tracking); }
 .cargo-sub { display: block; margin-block-start: 0.15em; font-size: 0.8em; line-height: 1.35; color: #5f6368; }
 .cargo-cta { display: inline-block; align-self: center; padding: 0.4em 1em; margin-block-start: 0.5em; font-size: 0.8em; font-weight: 600; line-height: 1.4; color: var(--cta-fg); background: var(--cta-bg); border-radius: 999px; }`,
     markup: (m) => `<a class="cargo-card" href="${m.href}">

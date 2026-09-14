@@ -392,6 +392,9 @@
   --img-filter: none;
   --img-aspect: auto;
   --img-hover-scale: 1;
+  --img-hover-speed: 0.25s;
+  --name-gap: 0.4em;
+  --name-leading: 1.35;
   --plate-bg: transparent;
   --plate-pad: 6% 6% 1%;
   --badge-bg: #16324f;
@@ -453,7 +456,7 @@
   object-fit: contain;
   background: var(--plate-bg);
   filter: var(--img-filter);
-  transition: filter 0.2s, transform 0.25s ease;
+  transition: filter 0.2s, transform var(--img-hover-speed) ease;
 }
 :where(.cargo-tile) .cargo-card:hover img {
   filter: none;
@@ -466,10 +469,10 @@
 }
 :where(.cargo-tile) .cargo-name {
   order: var(--name-order);
-  margin: 0.4em 0 0;
+  margin: var(--name-gap) 0 0;
   font-size: var(--name-size);
   font-weight: var(--name-weight);
-  line-height: 1.35;
+  line-height: var(--name-leading);
   color: var(--name-color);
   text-transform: var(--name-case);
   letter-spacing: var(--name-tracking);

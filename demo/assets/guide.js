@@ -265,6 +265,9 @@
     '--name-weight': 'How bold the model name is. 600 is the usual.',
     '--name-case': 'Leave the name as typed, or force capitals.',
     '--name-tracking': 'Letter spacing on the name. A little positive space suits all-capitals; leave it <code>normal</code> otherwise.',
+    '--name-gap': 'Space between the vehicle and its name. Chevrolet pulls the name up to <code>0.14em</code>, 2px on a 14px page.',
+    '--name-leading': 'The name’s line height, as a number. <code>1.35</code> gives a wrapped name room; Chevrolet runs <code>1.1</code>.',
+    '--img-hover-speed': 'How long the hover zoom takes. Chevrolet’s cutout grows in <code>0.1s</code>. Reduced motion turns the zoom off regardless.',
     '--name-order': 'Whether the name sits under the photo or above it.',
     '--img-filter': 'A filter over the photo — <code>grayscale(1)</code> is the one that matters, for a logo strip that comes back to colour on hover.',
     '--img-aspect': 'Forces every photo to one shape, so a row of differently sized uploads still lines up. <code>auto</code> leaves each as it comes.',
@@ -294,6 +297,16 @@
     '--tab-divider': "Text drawn between tabs, in quotes — <code>'|'</code> for the Chevrolet bar. <code>none</code> draws nothing.",
     '--tab-divider-color':
       'Colour of that divider. <code>currentcolor</code> follows the tab text, faded by the dim value; Chevrolet draws its <code>|</code> in <code>#767676</code> with the tabs at full strength.',
+    '--tab-gap': 'Space between one tab and the next, in the tab’s own em; the divider sits in the middle of it. Chevrolet leaves <code>1.7em</code>, 31px.',
+    '--tab-pad': 'Space above and below each tab label, in the tab’s own em. It sets the row’s height: Chevrolet’s <code>0.75em</code> makes a 57px row.',
+    '--tab-divider-size':
+      'Size of the divider as a fraction of the tab text. <code>1</code> is the tab size; Chevrolet draws its <code>|</code> at the page’s body size, <code>0.78</code> of an 18px tab.',
+    '--tab-fade':
+      'How long a pane takes to fade in when a tab is picked. <code>0s</code> switches at once; Chevrolet fades over <code>0.15s</code>. Never plays for a reader who asked for reduced motion, and never on page load.',
+    '--title-size': 'Size of the heading over the bar, in em of the page text. <code>2.57em</code> is 36px on a 14px page, the platform’s own.',
+    '--title-weight': 'Weight of that heading.',
+    '--more-bg': 'Background of the button under the bar. Chevrolet uses its link blue, <code>#006dc7</code>; the platform’s own button class colour is the one to match on a real site.',
+    '--more-fg': 'Text colour of that button.',
   };
 
   // Built by walking LOOKS, so the table is the card styles that actually ship.

@@ -27,6 +27,25 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   every difference was a value, which moved the tab row's five values out of hardcoded CSS into
   props (F039). 2026-09-10: the Brand list left the settings panel (spec
   `2026-09-10-brands-page-design.md`).
+- 2026-09-14, afternoon, Chevrolet tabbed bar: the morning pass measured static values and the bar
+  still did not look like chevroletdemo1's (Steven: "it's the animations, the spacing"). Measured
+  live at 1280 with computed styles, hover states, a mid-flight tab switch and a mid-flight slide:
+  cutout grows 0.85→0.90 in 0.1s ease-in (ours 0.25s); name 2px under the cutout on a 17.6px line
+  (ours 6.4px on 21.5px, the bar 9px taller); 31px between tab labels with the `|` at the 14px body
+  size (ours 3.5px and 18px); tab row 57.7px (ours 51.6); a picked pane fades in over 0.15s
+  (Bootstrap `.fade`); arrows `#666` turning `#006dc7` on hover on no background (ours went white on
+  a dark circle, the engine default); "View Our Lineup" h3 above and a blue "Explore All New
+  Inventory" button below. All became values: `--img-hover-speed`, `--name-gap`, `--name-leading` on
+  the tile, `--tab-gap`, `--tab-pad`, `--tab-divider-size`, `--tab-fade`, `--title-*`, `--more-*` on
+  the tabbed bar, two hover values in the preset. The heading and button are the pattern's own words
+  (an h2, a real link), emitted only when filled. Kept on purpose: the engine's bare chevron (the
+  live icon is a chevron in a circle), the engine's scroll physics (slick's 500ms), the
+  reduced-motion rule (the fade and the zoom never play for a reader who asked for none). The
+  `.vehicleModelsItem:not(:hover)` dimming rule in the live CSS matches no element on the live page.
+  A first cut of the divider offset resolved `--tab-gap` in the divider's own em (14px) instead of
+  the tab's (18px) and sat 3px off centre, which is why `--tab-divider-size` is a fraction, not a
+  length. The axe audit's one finding (the tall tile's current dot on `patterns.html`, 1.43:1) is
+  the same before and after this work.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

@@ -442,15 +442,45 @@
       //   within a pixel of the live bar;
       // - name 16px = 1.14em, 600, #333, capitalised;
       // - arrows (shown on a pane with more than five models) #666.
+      //
+      // The afternoon pass the same day, after the bar still did not look
+      // like the live one - motion and spacing, which the morning never
+      // measured (Steven: "it's the animations, the spacing"):
+      // - the cutout grows in 0.1s, not the look's 0.25s;
+      // - the name sits 2px under the cutout on a 17.6px line (0.14em gap on
+      //   the 14px body, line-height 1.1), which took 9px off the bar's height;
+      // - 31px between one tab and the next (1.7em of the 18px tab), the row
+      //   57px tall (0.75em of vertical padding), the divider at the body's
+      //   14px (0.78em of the tab);
+      // - a picked pane fades in over 0.15s (Bootstrap's .fade);
+      // - the arrows turn the link blue on hover, on no background - the
+      //   engine's default hover is white on a dark circle, which is not what
+      //   the live bar does;
+      // - "View Our Lineup" over the bar and a blue "Explore All New
+      //   Inventory" button under it, both the pattern's own words; only the
+      //   button's blue is Chevrolet's.
+      // Kept on purpose: the engine's bare chevron (the live icon is a chevron
+      // in a circle) and the engine's scroll physics (slick's 500ms slide).
       styles: {
         looks: {
-          tile: { '--name-case': 'capitalize', '--name-color': '#333', '--name-size': '1.14em', '--plate-pad': '5.6% 7.5% 0', '--img-hover-scale': '1.06' },
+          tile: {
+            '--name-case': 'capitalize',
+            '--name-color': '#333',
+            '--name-size': '1.14em',
+            '--plate-pad': '5.6% 7.5% 0',
+            '--img-hover-scale': '1.06',
+            '--img-hover-speed': '0.1s',
+            '--name-gap': '0.14em',
+            '--name-leading': '1.1',
+          },
         },
         patterns: {
           tabs: {
             props: {
               '--cs-gap': '0.1px',
               '--cs-arrow-fg': '#666',
+              '--cs-arrow-fg-hover': '#006dc7',
+              '--cs-arrow-bg-hover': 'transparent',
               '--tab-size': '1.29em',
               '--tab-weight': '700',
               '--tab-dim': '1',
@@ -458,6 +488,11 @@
               '--tab-rule': 'transparent',
               '--tab-divider': "'|'",
               '--tab-divider-color': '#767676',
+              '--tab-gap': '1.7em',
+              '--tab-pad': '0.75em',
+              '--tab-divider-size': '0.78',
+              '--tab-fade': '0.15s',
+              '--more-bg': '#006dc7',
             },
             panes: ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial'],
           },

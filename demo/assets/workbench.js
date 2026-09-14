@@ -605,17 +605,55 @@ ${VIDEO_DIALOG_CSS}`,
         // own (#767676) with the tabs at full strength, which no other knob
         // could say.
         '--tab-divider-color': 'currentcolor',
+        // Measured on chevroletdemo1, 2026-09-14, after Steven asked why the
+        // bar still did not look like the live one: the spacing and the
+        // motion were literals. Space between tabs (was a 0.25em flex gap,
+        // now half of this on each tab so the divider can sit centred in it,
+        // in the tab's own em), the tab's vertical padding (was 0.6em), the
+        // divider's size (was the tab size; the live one is the body size)
+        // and how long a pane takes to fade in when a tab is picked (the
+        // live bar is Bootstrap's 0.15s; 0s is the instant switch this
+        // pattern always had).
+        '--tab-gap': '0.25em',
+        '--tab-pad': '0.6em',
+        // A fraction of the tab text, not a length: the divider's own em
+        // would otherwise be its own size, and the offset that centres it
+        // in the gap has to be in the TAB's em. 1 is the tab size.
+        '--tab-divider-size': '1',
+        '--tab-fade': '0s',
+        // The heading over the bar and the button under it - the platform's
+        // own block carries both, and a Chevrolet designer rebuilt them by
+        // hand every time. 36px on the 14px body, and the demo's navy on
+        // white (10.4:1) until a brand says otherwise.
+        '--title-size': '2.57em',
+        '--title-weight': '600',
+        '--more-bg': '#16324f',
+        '--more-fg': '#fff',
       },
       hideDots: true,
       panes: ['Trucks', 'SUVs', 'Crossovers'],
-      css: `.cargo-tabs { display: flex; flex-wrap: wrap; gap: 0.25em; justify-content: center; margin-block-end: 1em; border-block-end: 1px solid var(--tab-rule); }
-.cargo-tabs [role="tab"] { padding: 0.6em 1.1em; font: inherit; font-size: var(--tab-size); font-weight: var(--tab-weight); line-height: 1.55; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: var(--tab-dim); }
+      // The words around the bar. Empty means absent, so a bar that wants
+      // neither ships neither. An <h2>, not the platform's h3-styled-as-h1:
+      // a section under the page's h1 is an h2, and copying the site's level
+      // would ship a heading outline that skips a level.
+      title: 'View Our Lineup',
+      more: { text: 'Explore All New Inventory', href: '/searchnew.aspx' },
+      css: `.cargo-title { margin: 0 0 0.19em; font-size: var(--title-size); font-weight: var(--title-weight); line-height: 1.1; text-align: center; }
+.cargo-tabs { display: flex; flex-wrap: wrap; justify-content: center; margin-block-end: 1em; border-block-end: 1px solid var(--tab-rule); }
+.cargo-tabs [role="tab"] { position: relative; padding: var(--tab-pad) 1.1em; margin-inline: calc(var(--tab-gap) / 2); font: inherit; font-size: var(--tab-size); font-weight: var(--tab-weight); line-height: 1.55; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: var(--tab-dim); }
 .cargo-tabs [role="tab"][aria-selected="true"] { color: var(--tab-selected); border-block-end-color: var(--tab-line); opacity: 1; }
-/* The divider sits on the tab that FOLLOWS it, outside its own box, so it
-   never widens the hit target. none draws nothing. */
-.cargo-tabs [role="tab"] + [role="tab"]::before { position: absolute; inset-inline-start: -0.125em; color: var(--tab-divider-color); content: var(--tab-divider); opacity: var(--tab-dim); transform: translateX(-50%); }
-.cargo-tabs [role="tab"] + [role="tab"] { position: relative; }
+/* The divider sits on the tab that FOLLOWS it, centred in the space before
+   it and outside its own box, so it never widens the hit target. none draws
+   nothing. */
+.cargo-tabs [role="tab"] + [role="tab"]::before { position: absolute; inset-block-start: 50%; inset-inline-start: calc(var(--tab-gap) / -2 / var(--tab-divider-size)); font-size: calc(1em * var(--tab-divider-size)); line-height: 1; color: var(--tab-divider-color); content: var(--tab-divider); opacity: var(--tab-dim); transform: translate(-50%, -50%); }
 .cargo-pane[hidden] { display: none; }
+/* A pane picked by the reader fades in; the one the page loads with does
+   not (the script marks only a switch), and nobody who asked for reduced
+   motion sees it at all. Opacity only, so nothing moves. */
+@media (prefers-reduced-motion: no-preference) { .cargo-pane[data-in] { animation: cargo-tab-fade var(--tab-fade) linear; } }
+@keyframes cargo-tab-fade { from { opacity: 0; } }
+.cargo-more { margin: 2.29em 0 0; text-align: center; }
+.cargo-more .cargo-cta { display: inline-block; padding: 0.44em 1.11em; font-size: 1.29em; font-weight: 700; line-height: 1.33; color: var(--more-fg); text-decoration: none; background: var(--more-bg); border: 2px solid var(--more-bg); border-radius: 0.44em; }
 /* Three tabs need 272px at the default padding, and a 320px phone leaves 236 -
    so Chevrolet's own three body styles wrapped onto two rows at the narrowest
    size anyone browses at. The padding gives way, not the type: 99px of that
@@ -639,12 +677,16 @@ ${VIDEO_DIALOG_CSS}`,
     t.setAttribute('aria-controls', pid);
     panes[i].setAttribute('aria-labelledby', tid);
   });
-  const show = (i) => tabs.forEach((t, j) => {
+  // picked marks a pane the reader switched to, which is what the fade in
+  // the CSS keys on - the pane the page loads with is shown without it, so
+  // nothing fades on load.
+  const show = (i, picked) => tabs.forEach((t, j) => {
     t.setAttribute('aria-selected', String(i === j));
     t.tabIndex = i === j ? 0 : -1;
     panes[j].hidden = i !== j;
+    if (picked && i === j) panes[j].setAttribute('data-in', '');
   });
-  tabs.forEach((t, i) => t.addEventListener('click', () => show(i)));
+  tabs.forEach((t, i) => t.addEventListener('click', () => show(i, true)));
   wrap.addEventListener('keydown', (e) => {
     const i = tabs.indexOf(e.target);
     if (i < 0) return;
@@ -652,7 +694,7 @@ ${VIDEO_DIALOG_CSS}`,
     if (to < 0) return;
     e.preventDefault();
     const n = (to + tabs.length) % tabs.length;
-    show(n);
+    show(n, true);
     tabs[n].focus();
   });
   show(0);
@@ -1142,6 +1184,9 @@ ${PHOTO_CSS}
     // photo row has none, so edited slides can never carry across.
     state.content = null;
     state.panes = null;
+    state.title = null;
+    state.moreText = null;
+    state.moreHref = null;
     state.label = null; // only renderLook overrides it — see the note there
     // The class this slider's CSS hangs off. Every snippet used to be
     // `.my-slider`, so a second slider pasted on the same page redefined the
@@ -1701,7 +1746,15 @@ ${PHOTO_CSS}
           return `  <div class="cargo-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}"${i === 0 ? '' : ' hidden'}>\n${carousel(sub, escTab(name), '  ', i === 0)}\n  </div>`;
         })
         .join('\n');
-      return `<div class="${cls}-wrap" data-tabs>\n  <div class="cargo-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n${panes}\n</div>`;
+      // The heading over the bar and the button under it are authored HTML
+      // in the snippet - a crawler and a reader with scripts off get both.
+      // Either one left empty is left out.
+      const title = (state.title ?? p.title ?? '').trim();
+      const moreText = (state.moreText ?? p.more?.text ?? '').trim();
+      const moreHref = (state.moreHref ?? p.more?.href ?? '').trim();
+      const head = title ? `  <h2 class="cargo-title">${escTab(title)}</h2>\n` : '';
+      const foot = moreText ? `\n  <p class="cargo-more"><a class="cargo-cta" href="${moreHref || '#'}">${escTab(moreText)}</a></p>` : '';
+      return `<div class="${cls}-wrap" data-tabs>\n${head}  <div class="cargo-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n${panes}${foot}\n</div>`;
     }
 
     // Filter buttons above a gallery; the script rebuilds it per category.
@@ -2566,6 +2619,9 @@ ${PHOTO_CSS}
     '--name-weight': 'Name weight',
     '--name-case': 'Name case',
     '--name-tracking': 'Name tracking',
+    '--name-gap': 'Name gap',
+    '--name-leading': 'Name line height',
+    '--img-hover-speed': 'Zoom speed',
     '--name-order': 'Name position',
     '--img-filter': 'Photo filter',
     '--img-aspect': 'Photo shape',
@@ -2593,6 +2649,14 @@ ${PHOTO_CSS}
     '--tab-rule': 'Rule under the tabs',
     '--tab-divider': 'Between tabs',
     '--tab-divider-color': 'Divider colour',
+    '--tab-gap': 'Space between tabs',
+    '--tab-pad': 'Tab padding',
+    '--tab-divider-size': 'Divider size',
+    '--tab-fade': 'Pane fade',
+    '--title-size': 'Heading size',
+    '--title-weight': 'Heading weight',
+    '--more-bg': 'Bottom button background',
+    '--more-fg': 'Bottom button text',
   };
   const knobLabel = (k) => KNOB_LABELS[k] ?? k.replace(/^--/, '').replace(/-/g, ' ');
 
@@ -3119,6 +3183,23 @@ ${PHOTO_CSS}
           { placeholder: p.panes[i] ?? name },
         );
       });
+      // The words around the bar. Stored only when they differ from the
+      // pattern's own, the same way the tab names are; cleared means the
+      // pattern's default, and the default can itself be empty.
+      const wordKnob = (label, key, dflt, note) =>
+        pane.text(
+          names,
+          label,
+          state[key] ?? dflt,
+          (v) => {
+            state[key] = v.trim() === dflt ? null : v.trim();
+            render();
+          },
+          { placeholder: dflt, note },
+        );
+      wordKnob('Heading over the bar', 'title', p.title ?? '', 'The heading over the bar, an <h2>. Empty leaves it out.');
+      wordKnob('Button under the bar', 'moreText', p.more?.text ?? '', 'The button under the bar. Empty leaves it out.');
+      wordKnob('Button under the bar, link', 'moreHref', p.more?.href ?? '', 'Where the button goes - /searchnew.aspx for new inventory.');
     }
 
     // A pattern's OWN props - the tab row's values today. Engine (--cs-*) and
@@ -3618,7 +3699,7 @@ ${PHOTO_CSS}
   // card style, with the wrong class name, and nothing on the page saying why.
   // Same shape as the content store, keyed by pattern for the same reason.
   const SKEY = 'cs-settings';
-  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'name', 'count', 'rows', 'panes', 'dotsOver', 'dotsWere'];
+  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'name', 'count', 'rows', 'panes', 'title', 'moreText', 'moreHref', 'dotsOver', 'dotsWere'];
 
   // Same split as the slides: what is on screen is the session's, what is in
   // localStorage is what Keep was pressed on.
@@ -3795,6 +3876,9 @@ ${PHOTO_CSS}
     // where the pattern has tabs, only whole non-empty strings, and only a
     // plausible count - a brand hands out five, nobody hands out fifty.
     if (PATTERNS[state.pattern].panes && Array.isArray(s.panes) && s.panes.length >= 1 && s.panes.length <= 8 && s.panes.every((n) => okStored(n) && n.trim())) state.panes = [...s.panes];
+    // The words around the tabbed bar, same terms: only where the pattern has
+    // tabs, only plain strings. An empty string is a kept choice (no heading).
+    if (PATTERNS[state.pattern].panes) for (const k of ['title', 'moreText', 'moreHref']) if (typeof s[k] === 'string' && okStored(s[k])) state[k] = s[k];
     if (Number.isInteger(s.count) && s.count >= 1 && s.count <= 16) state.count = s.count;
     // Clamped to the knob's own range, and only where stacking means anything:
     // a stored 2 must not survive onto a gallery, where the thumb strip counts

@@ -2,7 +2,7 @@
 // Spec: docs/specs/2026-09-09-oem-variants-design.md
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, rowByLabel, copyParts, ORIGIN, hostHtml, engineFiles, readSlider, stageReady } from './helpers.mjs';
+import { openBuilder, pick, rowByLabel, copyParts, ORIGIN, hostHtml, engineFiles, readSlider, stageReady, setField } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -324,6 +324,225 @@ test.describe('the patterns page shows the variants', () => {
     assert.equal(hostLine, 'rgb(0, 109, 199)');
     const slider = await readSlider(host);
     assert.ok(slider && slider.width > 0);
+    await host.close();
+  });
+});
+
+// 2026-09-14, afternoon. The morning's Chevrolet pass measured static values
+// and the bar still did not look like chevroletdemo1's: the motion and the
+// spacing were literals nobody had measured. Every number here is the live
+// bar's at 1280 (docs/history.md), and every one reaches the page as a value.
+test.describe('the tabbed bar moves and spaces like the live one', () => {
+  const geometry = (page) =>
+    page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      const w = d.defaultView;
+      const tabs = [...d.querySelectorAll('.cargo-tabs [role="tab"]')];
+      const [a, b] = tabs.map((t) => t.getBoundingClientRect());
+      const divider = w.getComputedStyle(tabs[1], '::before');
+      const pane = d.querySelector('.cargo-pane:not([hidden])');
+      const img = pane.querySelector('.cargo-card img');
+      const name = pane.querySelector('.cargo-name');
+      const arrow = pane.querySelector('.cs-arrow--prev');
+      return {
+        gap: +(b.left - a.right).toFixed(1),
+        rowH: +a.height.toFixed(1),
+        dividerSize: divider.fontSize,
+        // Centred in the space between the two tabs: its box's middle against
+        // the gap's middle.
+        // The pseudo's box starts at the tab's left plus its offset; the
+        // translate(-50%) then centres the glyph on that point.
+        dividerCentred: Math.abs(b.left + parseFloat(divider.left) - (a.right + b.left) / 2) < 1,
+        nameGap: +(name.getBoundingClientRect().top - img.getBoundingClientRect().bottom).toFixed(1),
+        nameLine: w.getComputedStyle(name).lineHeight,
+        zoomSpeed: w.getComputedStyle(img).transitionDuration,
+        arrowFg: w.getComputedStyle(arrow).color,
+        title: d.querySelector('.cargo-title'),
+        titleTag: d.querySelector('.cargo-title')?.tagName,
+        titleSize: d.querySelector('.cargo-title') && w.getComputedStyle(d.querySelector('.cargo-title')).fontSize,
+        more: d.querySelector('.cargo-more .cargo-cta') && {
+          href: d.querySelector('.cargo-more .cargo-cta').getAttribute('href'),
+          text: d.querySelector('.cargo-more .cargo-cta').textContent.trim(),
+          bg: w.getComputedStyle(d.querySelector('.cargo-more .cargo-cta')).backgroundColor,
+          fg: w.getComputedStyle(d.querySelector('.cargo-more .cargo-cta')).color,
+        },
+        body: w.getComputedStyle(d.body).fontSize,
+      };
+    });
+
+  test('the untouched bar keeps every value it had, and gains its heading and button', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, '');
+    await page.click('.ui-widths button[data-w="1200"]');
+    await page.waitForTimeout(200);
+    const g = await geometry(page);
+    assert.equal(g.gap, 3.5, 'the default 0.25em gap moved');
+    assert.equal(g.dividerSize, g.body, 'the default divider is the tab size, which is the body size here');
+    assert.equal(g.zoomSpeed, '0.2s, 0.25s', 'the default zoom speed moved');
+    assert.equal(g.nameLine, `${(parseFloat(g.body) * 1.35).toFixed(2).replace(/\.?0+$/, '')}px`.replace('18.9px', '18.9px'), 'the default name line height moved');
+    assert.equal(g.titleTag, 'H2', 'the heading over the bar is not an h2');
+    assert.deepEqual(g.more && { href: g.more.href, text: g.more.text }, { href: '/searchnew.aspx', text: 'Explore All New Inventory' });
+    assert.equal(await knob(page, 'Space between tabs'), '0.25em');
+    assert.equal(await knob(page, 'Pane fade'), '0s');
+    assert.deepEqual(errors, []);
+  });
+
+  test('Chevrolet lands every measured number', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'chevrolet');
+    await page.waitForTimeout(200);
+    const g = await geometry(page);
+    assert.ok(Math.abs(g.gap - 31) < 1, `31px between tabs on the live bar, got ${g.gap}`);
+    assert.ok(Math.abs(g.rowH - 57) < 1.5, `the live tab is 57px tall, got ${g.rowH}`);
+    assert.ok(Math.abs(parseFloat(g.dividerSize) - parseFloat(g.body)) < 0.2, `the live divider is the body size, got ${g.dividerSize} on a ${g.body} body`);
+    assert.equal(g.dividerCentred, true, 'the divider is not centred between the tabs');
+    assert.ok(Math.abs(g.nameGap - 2) < 0.6, `the live name sits 2px under the cutout, got ${g.nameGap}`);
+    assert.ok(Math.abs(parseFloat(g.nameLine) - 17.6) < 0.3, `the live name line is 17.6px, got ${g.nameLine}`);
+    assert.equal(g.zoomSpeed, '0.2s, 0.1s', 'the live cutout grows in 0.1s');
+    assert.equal(g.arrowFg, 'rgb(102, 102, 102)');
+    assert.equal(g.more.bg, 'rgb(0, 109, 199)', "the button under the bar is Chevrolet's blue");
+    assert.equal(g.more.fg, 'rgb(255, 255, 255)');
+    const { css, html } = await copyParts(page);
+    for (const line of [
+      '--tab-gap: 1.7em;',
+      '--tab-pad: 0.75em;',
+      '--tab-divider-size: 0.78;',
+      '--tab-fade: 0.15s;',
+      '--more-bg: #006dc7;',
+      '--cs-arrow-fg-hover: #006dc7;',
+      '--cs-arrow-bg-hover: transparent;',
+      '--name-gap: 0.14em;',
+      '--name-leading: 1.1;',
+      '--img-hover-speed: 0.1s;',
+    ]) {
+      assert.ok(css.includes(line), `${line} never reached the copied CSS`);
+    }
+    assert.match(html, /<h2 class="cargo-title">View Our Lineup<\/h2>/);
+    assert.match(html, /<p class="cargo-more"><a class="cargo-cta" href="\/searchnew\.aspx">Explore All New Inventory<\/a><\/p>/);
+    assert.deepEqual(errors, []);
+  });
+
+  test('the arrows turn blue on hover, on nothing', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'chevrolet');
+    // Only a pane with more models than fit draws arrows; the Chevrolet
+    // roster is eight across five, so the first pane has them.
+    const arrow = page.frameLocator('#wb-stage').locator('.cargo-pane:not([hidden]) .cs-arrow--next').first();
+    await arrow.hover();
+    await page.waitForTimeout(400);
+    const r = await page.evaluate(() => {
+      const a = globalThis.CARGO.sdoc().querySelector('.cargo-pane:not([hidden]) .cs-arrow--next');
+      const cs = a.ownerDocument.defaultView.getComputedStyle(a);
+      return { fg: cs.color, bg: cs.backgroundColor };
+    });
+    assert.equal(r.fg, 'rgb(0, 109, 199)', 'the hovered arrow is not the link blue');
+    assert.equal(r.bg, 'rgba(0, 0, 0, 0)', 'the hovered arrow grew a background');
+  });
+
+  test('a picked pane fades in; the pane the page loads with does not; reduced motion never fades', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'chevrolet');
+    await page.waitForTimeout(300);
+    const atLoad = await page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      const p = d.querySelector('.cargo-pane:not([hidden])');
+      return { marked: p.hasAttribute('data-in'), anim: d.defaultView.getComputedStyle(p).animationName };
+    });
+    assert.equal(atLoad.marked, false, 'the first pane is marked as picked at load');
+    assert.equal(atLoad.anim, 'none', 'the first pane animates at load');
+    await page.frameLocator('#wb-stage').locator('.cargo-tabs [role="tab"]').nth(1).click();
+    const mid = await page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      const p = d.querySelector('.cargo-pane:not([hidden])');
+      const cs = d.defaultView.getComputedStyle(p);
+      return { marked: p.hasAttribute('data-in'), anim: cs.animationName, duration: cs.animationDuration, opacity: +cs.opacity };
+    });
+    assert.equal(mid.marked, true);
+    assert.equal(mid.anim, 'cargo-tab-fade');
+    assert.equal(mid.duration, '0.15s');
+    assert.ok(mid.opacity < 1, `read mid-fade, the pane should still be fading in, got opacity ${mid.opacity}`);
+    await page.waitForTimeout(300);
+    // Reduced motion: the same click, no animation at all.
+    const ctx = await browser.newContext({ viewport: { width: 1500, height: 900 }, reducedMotion: 'reduce' });
+    const p2 = await ctx.newPage();
+    await p2.goto(`${ORIGIN}/demo/index.html#tabs?brand=chevrolet`, { waitUntil: 'load' });
+    await p2.waitForSelector('#wb-stage');
+    await p2.frameLocator('#wb-stage').locator('.cs-slide').first().waitFor({ state: 'attached', timeout: 15000 });
+    await p2.waitForTimeout(500);
+    await p2.frameLocator('#wb-stage').locator('.cargo-tabs [role="tab"]').nth(1).click();
+    const rm = await p2.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      const p = d.querySelector('.cargo-pane:not([hidden])');
+      const cs = d.defaultView.getComputedStyle(p);
+      return { anim: cs.animationName, opacity: +cs.opacity };
+    });
+    assert.equal(rm.anim, 'none', 'reduced motion still fades');
+    assert.equal(rm.opacity, 1);
+    await ctx.close();
+  });
+
+  test("the heading and button are the pattern's words: editable, empty means absent, kept across a reload", async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, '');
+    await setField(page, 'Heading over the bar', 'Our Lineup');
+    await setField(page, 'Button under the bar', '');
+    let { html, css } = await copyParts(page);
+    assert.match(html, /<h2 class="cargo-title">Our Lineup<\/h2>/);
+    assert.doesNotMatch(html, /cargo-more/, 'an empty button text still ships a button');
+    assert.match(css, /\.cargo-title \{/, 'the heading rule did not ship');
+    await setField(page, 'Heading over the bar', '');
+    ({ html } = await copyParts(page));
+    assert.doesNotMatch(html, /cargo-title/, 'an empty heading still ships an h2');
+    await setField(page, 'Button under the bar', 'See them all');
+    await setField(page, 'Button under the bar, link', '/searchused.aspx');
+    ({ html } = await copyParts(page));
+    assert.match(html, /<a class="cargo-cta" href="\/searchused\.aspx">See them all<\/a>/);
+    // Kept: pressed Keep, reloaded, the typed words are still there and the
+    // cleared heading is still cleared - an empty string is a choice, not a
+    // missing value.
+    await page.click('#wb-keep');
+    await page.waitForTimeout(200);
+    await page.reload({ waitUntil: 'load' });
+    await stageReady(page);
+    await page.waitForTimeout(300);
+    ({ html } = await copyParts(page));
+    assert.doesNotMatch(html, /cargo-title/, 'the cleared heading came back after a reload');
+    assert.match(html, /See them all/, 'the typed button was lost on reload');
+    // Back to the pattern's own words for the tests that follow.
+    await setField(page, 'Heading over the bar', 'View Our Lineup');
+    await setField(page, 'Button under the bar', 'Explore All New Inventory');
+    await setField(page, 'Button under the bar, link', '/searchnew.aspx');
+    assert.deepEqual(errors, []);
+  });
+
+  test('the heading and button paste onto a hostile host at the size the page shows', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'chevrolet');
+    const parts = await copyParts(page);
+    const engine = await engineFiles();
+    const host = await browser.newPage();
+    await host.setContent(hostHtml({ ...engine, css: parts.css, html: parts.html, js: parts.js }), { waitUntil: 'load' });
+    const r = await host.evaluate(() => {
+      const h = document.querySelector('.cargo-title');
+      const a = document.querySelector('.cargo-more .cargo-cta');
+      const tabs = [...document.querySelectorAll('.cargo-tabs [role="tab"]')].map((t) => t.getBoundingClientRect());
+      return {
+        h2: h.tagName,
+        size: getComputedStyle(h).fontSize,
+        btn: getComputedStyle(a).fontSize,
+        btnH: +a.getBoundingClientRect().height.toFixed(1),
+        gap: +(tabs[1].left - tabs[0].right).toFixed(1),
+        headings: [...document.querySelectorAll('h1,h2,h3')].map((e) => e.tagName),
+      };
+    });
+    assert.equal(r.h2, 'H2');
+    assert.ok(Math.abs(parseFloat(r.size) - 36) < 0.1, `the live heading is 36px on a 14px page, got ${r.size}`);
+    assert.ok(Math.abs(parseFloat(r.btn) - 18) < 0.1, `the live button is 18px, got ${r.btn}`);
+    assert.ok(Math.abs(r.btnH - 44) < 1.5, `the live button is 44px tall, got ${r.btnH}`);
+    assert.ok(Math.abs(r.gap - 31) < 1, `31px between tabs on the host, got ${r.gap}`);
+    // Only the pattern's own heading: the slides carry names, never headings,
+    // so the snippet adds exactly one level to the host page's outline.
+    assert.deepEqual(r.headings, ['H2']);
     await host.close();
   });
 });
