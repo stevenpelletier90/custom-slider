@@ -45,7 +45,12 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   A first cut of the divider offset resolved `--tab-gap` in the divider's own em (14px) instead of
   the tab's (18px) and sat 3px off centre, which is why `--tab-divider-size` is a fraction, not a
   length. The axe audit's one finding (the tall tile's current dot on `patterns.html`, 1.43:1) is
-  the same before and after this work.
+  the same before and after this work. Missed by that pass and caught by Steven: the live tab line
+  is an `::after` on the link (2px, `#006dc7`, `left: 50%; width: 0` at rest, `left: 0; width: 100%`
+  selected, width and left over 0.15s `cubic-bezier(0.215, 0.61, 0.355, 1)`), so it grows out from
+  the centre on a switch; ours was a border colour flipping. The line is now a box over the tab's
+  transparent 2px border with `--tab-line-grow` (0s by default), under reduced-motion:
+  no-preference.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

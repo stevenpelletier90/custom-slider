@@ -621,6 +621,10 @@ ${VIDEO_DIALOG_CSS}`,
         // in the gap has to be in the TAB's em. 1 is the tab size.
         '--tab-divider-size': '1',
         '--tab-fade': '0s',
+        // How long the line under a newly picked tab takes to grow out from
+        // its centre (the live bar: 0.15s, ease-out). 0s is the instant
+        // switch this pattern always had.
+        '--tab-line-grow': '0s',
         // The heading over the bar and the button under it - the platform's
         // own block carries both, and a Chevrolet designer rebuilt them by
         // hand every time. 36px on the 14px body, and the demo's navy on
@@ -641,7 +645,13 @@ ${VIDEO_DIALOG_CSS}`,
       css: `.cargo-title { margin: 0 0 0.19em; font-size: var(--title-size); font-weight: var(--title-weight); line-height: 1.1; text-align: center; }
 .cargo-tabs { display: flex; flex-wrap: wrap; justify-content: center; margin-block-end: 1em; border-block-end: 1px solid var(--tab-rule); }
 .cargo-tabs [role="tab"] { position: relative; padding: var(--tab-pad) 1.1em; margin-inline: calc(var(--tab-gap) / 2); font: inherit; font-size: var(--tab-size); font-weight: var(--tab-weight); line-height: 1.55; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: var(--tab-dim); }
-.cargo-tabs [role="tab"][aria-selected="true"] { color: var(--tab-selected); border-block-end-color: var(--tab-line); opacity: 1; }
+.cargo-tabs [role="tab"][aria-selected="true"] { color: var(--tab-selected); opacity: 1; }
+/* The line under the selected tab is a box over the tab's (transparent) 2px
+   border, not the border itself, so it can grow out from the centre the way
+   the live bar's does. Zero wide on an unselected tab, so nothing shows. */
+.cargo-tabs [role="tab"]::after { position: absolute; inset-block-end: -2px; inset-inline-start: 50%; inline-size: 0; block-size: 2px; content: ""; background: var(--tab-line); }
+.cargo-tabs [role="tab"][aria-selected="true"]::after { inset-inline-start: 0; inline-size: 100%; }
+@media (prefers-reduced-motion: no-preference) { .cargo-tabs [role="tab"]::after { transition: inline-size var(--tab-line-grow) cubic-bezier(0.215, 0.61, 0.355, 1), inset-inline-start var(--tab-line-grow) cubic-bezier(0.215, 0.61, 0.355, 1); } }
 /* The divider sits on the tab that FOLLOWS it, centred in the space before
    it and outside its own box, so it never widens the hit target. none draws
    nothing. */
@@ -2653,6 +2663,7 @@ ${PHOTO_CSS}
     '--tab-pad': 'Tab padding',
     '--tab-divider-size': 'Divider size',
     '--tab-fade': 'Pane fade',
+    '--tab-line-grow': 'Line grow time',
     '--title-size': 'Heading size',
     '--title-weight': 'Heading weight',
     '--more-bg': 'Bottom button background',

@@ -492,6 +492,9 @@
               '--tab-pad': '0.75em',
               '--tab-divider-size': '0.78',
               '--tab-fade': '0.15s',
+              // The line under a picked tab (an ::after on the live link) grows
+              // from the centre over 0.15s, cubic-bezier(0.215, 0.61, 0.355, 1).
+              '--tab-line-grow': '0.15s',
               '--more-bg': '#006dc7',
             },
             panes: ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial'],

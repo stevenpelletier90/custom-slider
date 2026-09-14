@@ -67,7 +67,9 @@ test('a measured brand has one live stage per pattern it is measured for', async
     assert.equal(g.link, `index.html#${g.pattern}?brand=chevrolet`);
   }
   const line = await page.evaluate(
-    () => document.querySelector('#b-chevrolet [role="tab"][aria-selected="true"]') && getComputedStyle(document.querySelector('#b-chevrolet [role="tab"][aria-selected="true"]')).borderBottomColor,
+    () =>
+      document.querySelector('#b-chevrolet [role="tab"][aria-selected="true"]') &&
+      getComputedStyle(document.querySelector('#b-chevrolet [role="tab"][aria-selected="true"]'), '::after').backgroundColor,
   );
   assert.equal(line, 'rgb(0, 109, 199)', 'the tabbed stage should draw Chevrolet values');
 });

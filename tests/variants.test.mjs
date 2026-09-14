@@ -44,7 +44,7 @@ const tabStyles = (page) =>
       bodySize: w.getComputedStyle(d.body).fontSize,
       weight: w.getComputedStyle(sel).fontWeight,
       dim: w.getComputedStyle(other).opacity,
-      line: w.getComputedStyle(sel).borderBottomColor,
+      line: w.getComputedStyle(sel, '::after').backgroundColor,
       colour: w.getComputedStyle(sel).color,
       rule: w.getComputedStyle(list).borderBottomColor,
       divider: w.getComputedStyle(other, '::before').content,
@@ -320,7 +320,7 @@ test.describe('the patterns page shows the variants', () => {
     const engine = await engineFiles();
     const host = await browser.newPage();
     await host.setContent(hostHtml({ ...engine, css: parts.css, html: parts.html, js: parts.js }), { waitUntil: 'load' });
-    const hostLine = await host.evaluate(() => getComputedStyle(document.querySelector('[role="tab"][aria-selected="true"]')).borderBottomColor);
+    const hostLine = await host.evaluate(() => getComputedStyle(document.querySelector('[role="tab"][aria-selected="true"]'), '::after').backgroundColor);
     assert.equal(hostLine, 'rgb(0, 109, 199)');
     const slider = await readSlider(host);
     assert.ok(slider && slider.width > 0);
@@ -419,6 +419,52 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     }
     assert.match(html, /<h2 class="cargo-title">View Our Lineup<\/h2>/);
     assert.match(html, /<p class="cargo-more"><a class="cargo-cta" href="\/searchnew\.aspx">Explore All New Inventory<\/a><\/p>/);
+    assert.deepEqual(errors, []);
+  });
+
+  // The live line is an ::after on the tab link: 2px, left 50% and zero wide
+  // at rest, left 0 and full width when selected, width and left over 0.15s
+  // cubic-bezier(0.215, 0.61, 0.355, 1) - so it grows out from the centre.
+  test('the line under a picked tab grows from the centre over 0.15s, and instantly by default', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'chevrolet');
+    await page.waitForTimeout(300);
+    const lineOf = (i) =>
+      page.evaluate((n) => {
+        const d = globalThis.CARGO.sdoc();
+        const t = d.querySelectorAll('.cargo-tabs [role="tab"]')[n];
+        const cs = d.defaultView.getComputedStyle(t, '::after');
+        return {
+          width: parseFloat(cs.width),
+          left: parseFloat(cs.left),
+          tab: t.getBoundingClientRect().width,
+          duration: cs.transitionDuration,
+          easing: cs.transitionTimingFunction,
+          height: cs.height,
+          bg: cs.backgroundColor,
+        };
+      }, i);
+    const rest = await lineOf(1);
+    assert.equal(rest.width, 0, 'an unselected tab shows a line');
+    assert.equal(rest.height, '2px');
+    assert.equal(rest.bg, 'rgb(0, 109, 199)');
+    assert.match(rest.duration, /^0\.15s/, `the line grows over 0.15s, got ${rest.duration}`);
+    assert.match(rest.easing, /cubic-bezier\(0\.215, 0\.61, 0\.355, 1\)/);
+    await page.frameLocator('#wb-stage').locator('.cargo-tabs [role="tab"]').nth(1).click();
+    await page.waitForTimeout(40);
+    const mid = await lineOf(1);
+    assert.ok(mid.width > 0 && mid.width < mid.tab, `read mid-grow the line should be part way out, got ${mid.width} of ${mid.tab}`);
+    assert.ok(mid.left > 0 && mid.left < mid.tab / 2, `growing from the centre means left is moving in from 50%, got ${mid.left}`);
+    await page.waitForTimeout(300);
+    const done = await lineOf(1);
+    assert.ok(Math.abs(done.width - done.tab) < 0.5, 'the line should end the full tab width');
+    assert.equal(done.left, 0);
+    assert.ok(((await copyParts(page)).css || '').includes('--tab-line-grow: 0.15s;'), 'the grow time never reached the copied CSS');
+    // The untouched pattern: same box, no motion.
+    await selectBrand(page, '');
+    await page.waitForTimeout(200);
+    assert.match((await lineOf(0)).duration, /^0s/, 'the default line should switch at once');
+    assert.equal(await knob(page, 'Line grow time'), '0s');
     assert.deepEqual(errors, []);
   });
 
