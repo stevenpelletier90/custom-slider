@@ -2,7 +2,7 @@
 // Spec: docs/specs/2026-09-09-oem-variants-design.md
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, rowByLabel, copyParts, ORIGIN, hostHtml, engineFiles, readSlider, stageReady, switchRow, setLength } from './helpers.mjs';
+import { openBuilder, pick, rowByLabel, copyParts, ORIGIN, hostHtml, engineFiles, readSlider, stageReady } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -311,118 +311,6 @@ test.describe('the patterns page shows the variants', () => {
     assert.equal(brand, 'chevrolet');
     assert.equal((await tabStyles(p)).line, 'rgb(0, 109, 199)');
     await ctx.close();
-  });
-
-  // The hero, measured on chevroletdemo1 on 2026-09-14: 3.2:1 at every width,
-  // square corners, a light grey chevron on nothing, dots on the picture. The
-  // banner's shape and corners were literals in the hero's CSS, so no brand
-  // could set them and no control showed them (F039's shape, on the hero).
-  const heroStyles = (page) =>
-    page.evaluate(() => {
-      const d = globalThis.CARGO.sdoc();
-      const w = d.defaultView;
-      const root = d.querySelector('.cs');
-      const img = d.querySelector('.cargo-photo img');
-      const i = img.getBoundingClientRect();
-      const dots = d.querySelector('.cs-dots');
-      const cs = w.getComputedStyle(root);
-      return {
-        ratio: +(i.width / i.height).toFixed(2),
-        radius: w.getComputedStyle(img).borderTopLeftRadius,
-        arrowFg: cs.getPropertyValue('--cs-arrow-fg').trim(),
-        arrowBg: cs.getPropertyValue('--cs-arrow-bg').trim(),
-        ring: w.getComputedStyle(d.querySelector('.cs-arrow--prev')).boxShadow,
-        slides: d.querySelectorAll('.cs-slide').length,
-        photo: d.querySelector('.cargo-photo img').getAttribute('src'),
-        dotsOnPhoto: !!dots && dots.getBoundingClientRect().top < i.bottom - 1,
-        dotsZ: dots ? w.getComputedStyle(dots).zIndex : null,
-      };
-    });
-
-  test('Chevrolet on the hero draws the 3.2 banner, dots on it, and ships every value', async () => {
-    await pick(page, 'hero');
-    await page.click('.ui-widths button[data-w="1200"]');
-    await page.waitForTimeout(150);
-    const plain = await heroStyles(page);
-    assert.equal(plain.ratio, 2.33, `the untouched hero is 21:9, got ${plain.ratio}`);
-    assert.equal(plain.radius, '8px');
-    assert.equal(plain.dotsOnPhoto, false, 'the untouched hero draws its dots in the strip');
-    assert.equal(await knob(page, 'Banner shape'), '21 / 9');
-    await selectBrand(page, 'chevrolet');
-    const s = await heroStyles(page);
-    assert.equal(s.ratio, 3.2, `1920x600 art is 3.2:1, got ${s.ratio}`);
-    assert.equal(s.radius, '0.1px', 'square corners');
-    assert.equal(s.arrowFg, 'rgba(214, 214, 214, 0.5)', 'the live chevron is #d6d6d6 at half opacity');
-    assert.equal(s.ring, 'rgba(214, 214, 214, 0.5) 0px 0px 0px 1.5px inset', 'the live arrow is a chevron inside a thin ring');
-    assert.equal(s.arrowBg, 'transparent');
-    assert.equal(s.dotsOnPhoto, true, 'the live hero draws its dots on the picture');
-    // Positioned over the photo is not painted over it: the dot row needs the
-    // z-index the switch used to add, and a brand arrives without the switch.
-    assert.equal(s.dotsZ, '1', 'the track paints over the dots');
-    assert.equal(await knob(page, 'Banner shape'), '3.2');
-    assert.equal(await knob(page, 'Banner corners'), '0.1px');
-    assert.equal(await knob(page, 'Room for the dots'), '0.1px');
-    assert.equal(await switchRow(page, 'Dots over the image').isChecked(), true, 'the switch says off while the dots are on the picture');
-    const { css } = await copyParts(page);
-    assert.match(css, /--hero-aspect: 3\.2;/);
-    assert.match(css, /--hero-aspect-phone: 3\.2;/);
-    assert.match(css, /--hero-radius: 0\.1px;/);
-    assert.ok(css.includes('--cs-arrow-fg: rgba(214, 214, 214, 0.5);'), 'the arrow colour never reached the copied CSS');
-    assert.ok(css.includes('--hero-arrow-ring: rgba(214, 214, 214, 0.5);'), 'the ring never reached the copied CSS');
-    // The brand's roster and ladder are its model bar's. On a photo banner
-    // they stay home: three photographs, not eight cutouts and eight dots.
-    assert.equal(s.slides, plain.slides, `the roster changed under the brand: ${plain.slides} -> ${s.slides}`);
-    assert.equal(s.photo, plain.photo, `Chevrolet swapped the banner photograph for ${s.photo}`);
-    assert.doesNotMatch(css, /--cs-per-view: [2-9]/, 'the model-bar ladder reached a one-across banner');
-    assert.match(css, /\.cs-dots \{ z-index: 1; \}/, 'the copied CSS ships no z-index for the dots');
-    assert.doesNotMatch(css, /font-family/, 'ChevySans is preview scaffolding and never ships');
-    assert.deepEqual(errors, []);
-  });
-
-  test('the Chevrolet hero pastes onto a hostile host at 3.2 with the dots painted on top', async () => {
-    await pick(page, 'hero');
-    await selectBrand(page, 'chevrolet');
-    const parts = await copyParts(page);
-    const engine = await engineFiles();
-    const host = await browser.newPage();
-    await host.setContent(hostHtml({ ...engine, css: parts.css, html: parts.html, js: parts.js }), { waitUntil: 'load' });
-    await host.waitForTimeout(300);
-    const r = await host.evaluate(() => {
-      const img = document.querySelector('.cargo-photo img');
-      const i = img.getBoundingClientRect();
-      const dot = document.querySelector('.cs-dot');
-      const d = dot.getBoundingClientRect();
-      const top = document.elementsFromPoint(d.left + d.width / 2, d.top + d.height / 2)[0];
-      return { ratio: +(i.width / i.height).toFixed(2), width: +i.width.toFixed(0), onPhoto: d.top < i.bottom - 1, topmost: top ? top.className.split(' ')[0] : null };
-    });
-    assert.equal(r.width, 1170, 'the banner should fill the 1170 box');
-    assert.equal(r.ratio, 3.2);
-    assert.equal(r.onPhoto, true);
-    assert.equal(r.topmost, 'cs-dot', `the photo paints over the dots on the host: ${r.topmost}`);
-    await selectBrand(page, '');
-    await host.close();
-  });
-
-  // The same fact by hand: a designer who types the strip away gets the dots
-  // painted, and the switch tells the truth about it. Before, only the switch
-  // shipped the z-index, so this drew the dots under the track.
-  test('"Room for the dots" typed to 0.1px lights the switch and ships the z-index', async () => {
-    await pick(page, 'hero');
-    await selectBrand(page, '');
-    assert.equal(await switchRow(page, 'Dots over the image').isChecked(), false);
-    await setLength(page, 'Room for the dots', '0.1', 'px');
-    await page.waitForTimeout(250);
-    assert.equal((await heroStyles(page)).dotsZ, '1');
-    assert.match((await copyParts(page)).css, /\.cs-dots \{ z-index: 1; \}/);
-    // The switch is rebuilt with the panel; read it fresh.
-    await pick(page, 'gallery');
-    await pick(page, 'hero');
-    await page.waitForTimeout(250);
-    assert.equal(await switchRow(page, 'Dots over the image').isChecked(), true, 'the switch says off over a collapsed strip');
-    await switchRow(page, 'Dots over the image').uncheck();
-    await page.waitForTimeout(250);
-    assert.equal(await knob(page, 'Room for the dots'), '2em', 'unticking should hand back the pattern strip');
-    assert.deepEqual(errors, []);
   });
 
   test('the Chevrolet tabbed bar pastes onto a hostile host the way the page shows it', async () => {

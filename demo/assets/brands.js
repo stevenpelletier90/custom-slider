@@ -461,41 +461,6 @@
             },
             panes: ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial'],
           },
-          // The homepage hero, measured on chevroletdemo1 on 2026-09-14 at
-          // 1280/800/390 with the site's computed styles: a Bootstrap
-          // carousel-fade at 5000ms (the pattern's own timer), the picture
-          // 3.2:1 at every width (1920x600 desktop art, 768x240 under 768)
-          // with square corners, the arrows a 38px #d6d6d6 chevron on nothing
-          // at 50% opacity (brighter on hover, still on nothing), and the dots
-          // 13px on the picture 10px up from its bottom edge, white. Values
-          // only: the platform's dots are hollow rings and its pause control
-          // is 16x6px with tabindex="-1" - the engine's solid discs and real
-          // pause button are kept on purpose, and the dots stay on phones
-          // where the platform hides them (Steven, 2026-09-14).
-          hero: {
-            props: {
-              '--hero-aspect': '3.2',
-              '--hero-aspect-phone': '3.2',
-              // 0.1px, never 0: the platform's styleCode minifier turns a 0px
-              // custom property into a unitless 0, which the generated-CSS
-              // lint refuses for every knob. A tenth of a pixel is square.
-              '--hero-radius': '0.1px',
-              // #d6d6d6 drawn at opacity 0.5 (0.9 on hover) is this colour at
-              // that alpha over the picture; the icon is a chevron in a thin
-              // circle, so the ring takes the same value.
-              '--cs-arrow-fg': 'rgba(214, 214, 214, 0.5)',
-              '--cs-arrow-bg': 'transparent',
-              '--cs-arrow-fg-hover': 'rgba(214, 214, 214, 0.9)',
-              '--cs-arrow-bg-hover': 'transparent',
-              '--hero-arrow-ring': 'rgba(214, 214, 214, 0.5)',
-              // The three values "Dots over the image" writes: the strip under
-              // the picture collapsed and light dots that read on a photo.
-              '--cs-controls-space': '0.1px',
-              '--cs-dot-size': '13px',
-              '--cs-dot-fg': 'rgba(255, 255, 255, 0.55)',
-              '--cs-dot-current': '#fff',
-            },
-          },
         },
       },
       // PREVIEW ONLY. The typeface Chevrolet sites load, from the stylesheet

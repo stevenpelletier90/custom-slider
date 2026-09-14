@@ -477,32 +477,13 @@
       label: 'Hero banner',
       blurb: 'Full width, one at a time, crossfading on a timer. Autoplay adds the pause button and never starts under reduced motion.',
       data: { 'data-cs-fade': '', 'data-cs-autoplay': '5000' },
-      props: {
-        '--cs-gap': '0.1px',
-        '--cs-controls-space': '2em',
-        '--cs-dot-current': '#16324f',
-        // The banner's own shape. Literals in the css below until 2026-09-14,
-        // which meant no control showed them and a brand had nothing to set:
-        // chevroletdemo1 draws its hero at 3.2:1 at EVERY width (1920x600
-        // desktop art, 768x240 phone art) with square corners, and the only
-        // way to get there was editing the pasted CSS. Defaults are what the
-        // literals were, so an untouched banner draws exactly as before.
-        '--hero-aspect': '21 / 9',
-        '--hero-aspect-phone': '4 / 3',
-        '--hero-radius': '8px',
-        // A ring drawn inside the arrow's circle. The platform hero's arrows
-        // are bootstrap-icons' arrow-left-circle - a chevron inside a thin
-        // outline - and the engine ships one glyph for every slider, so the
-        // outline is the hero's own. transparent draws nothing.
-        '--hero-arrow-ring': 'transparent',
-      },
+      props: { '--cs-gap': '0.1px', '--cs-controls-space': '2em', '--cs-dot-current': '#16324f' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       models: captioned(PHOTOS.slice(0, 3)).map((m) => ({ ...m, href: '', phone: '' })),
       css: `${PHOTO_CSS}
-.cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: var(--hero-aspect); object-fit: cover; border-radius: var(--hero-radius); }
-%root% .cs-arrow { box-shadow: inset 0 0 0 1.5px var(--hero-arrow-ring); }
-@media (max-width: 767.98px) { .cargo-photo img { aspect-ratio: var(--hero-aspect-phone); } }`,
+.cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 21 / 9; object-fit: cover; border-radius: 8px; }
+@media (max-width: 767.98px) { .cargo-photo img { aspect-ratio: 4 / 3; } }`,
       slides: (models) => models.map((m) => photo(m)),
     },
     gallery: {
@@ -1092,15 +1073,13 @@ ${PHOTO_CSS}
       state.count = p.models.length;
       return;
     }
-    // The roster and the ladder are the brand's MODEL BAR - they land only on
-    // a card built for a cutout (takesCutouts). A look-less pattern such as
-    // the hero, offered the brand because it carries styles.patterns.hero,
-    // keeps its own photographs, its own count and its own one-across.
-    if (b.models && takesCutouts(p)) state.count = b.models.length;
-    // LOOKS[state.look] can be undefined on that look-less pattern, so the
-    // fallback reads the pattern's own minCard/perView, the same fallback
-    // minCard() uses elsewhere in this file.
-    state.perView = b.ladder && takesCutouts(p) ? perViewFor(b.ladder, LOOKS[state.look]?.minCard ?? p.minCard ?? 200, gapPx(), state.look) : { ...(p.perView ?? LOOKS[state.look]?.perView) };
+    if (b.models) state.count = b.models.length;
+    // LOOKS[state.look] can be undefined: the Brand folder is offered on a
+    // look-less pattern (state.look is null) once a brand carries
+    // styles.patterns.<that pattern>, and there is no look to read a minCard
+    // or a perView off. Fall back to the pattern's own minCard/perView, the
+    // same fallback minCard() uses elsewhere in this file.
+    state.perView = b.ladder ? perViewFor(b.ladder, LOOKS[state.look]?.minCard ?? p.minCard ?? 200, gapPx(), state.look) : { ...(p.perView ?? LOOKS[state.look]?.perView) };
     const s = b.styles;
     if (!s) return;
     for (const [k, v] of Object.entries(s.looks?.[state.look] ?? {})) {
@@ -1155,6 +1134,7 @@ ${PHOTO_CSS}
     // whole point of stacking inside the slide rather than adding a second
     // track - so the dots and the announced count stay honest.
     state.rows = p.rows ?? 1;
+    state.dotsOver = false;
     state.dotsWere = null;
     state.dotSpace = null;
     state.count = p.models.length;
@@ -1227,7 +1207,7 @@ ${PHOTO_CSS}
     return `This card crops every picture to ${say(look.crop)}. Yours are ${say(natural)}, so their ${side} will be trimmed${look.content === 'photo' && models.some((v) => /\.(png|webp)$/i.test(v.src || '')) ? ' — and a cutout loses the transparent margin it is composed with' : ''}.`;
   };
 
-  const modelsFor = (p) => (state.content ? state.content : state.brand && takesCutouts(p) && BRANDS[state.brand]?.models ? BRANDS[state.brand].models : p.models);
+  const modelsFor = (p) => (state.content ? state.content : state.brand && BRANDS[state.brand]?.models ? BRANDS[state.brand].models : p.models);
 
   const minCard = () => PATTERNS[state.pattern].minCard ?? (state.look ? LOOKS[state.look].minCard : 200);
 
@@ -1371,30 +1351,6 @@ ${PHOTO_CSS}
     if (/[a-z-]+\(/i.test(s)) return true;
     return LENGTH.test(s);
   };
-
-  // The patterns whose slide is nothing but a photograph - the five that draw
-  // .cargo-photo. Read off the pattern's css rather than kept as a list, so a
-  // sixth is covered the day it ships.
-  const photoSlides = (p) => (p.css || '').includes('cargo-photo');
-  // Whether a pattern's card is built to take a vehicle cutout - the only
-  // place a brand's ROSTER and LADDER belong. A preset on any other pattern
-  // (a measured hero, say) brings its values and nothing else: handing
-  // Chevrolet's 320x240 cutouts and its five-across model-bar ladder to a
-  // 3.2:1 photo banner drew a blurry truck and eight dots where the live
-  // hero has four photographs. Read off the look's declared content, the
-  // same fact the brand strip already reads.
-  const takesCutouts = (p) => !!p.look && String(LOOKS[p.look].content).includes('cutout');
-  // Whether the dots are drawn ON the picture: shown, on a photo pattern, with
-  // the strip the engine reserves under the track collapsed. A fact about the
-  // values, not a flag - the "Dots over the image" switch, "Room for the dots"
-  // typed to 0.1px and a brand preset all arrive here, and cssFor() has to
-  // ship the z-index that keeps the dots painted over the track for every one
-  // of them. 0.1px is the one collapsed value the workbench ever writes (a
-  // plain 0 breaks the arrow's centring calc(), see okValue).
-  const dotsOver = () => {
-    const p = PATTERNS[state.pattern];
-    return !state.hideDots && photoSlides(p) && state.data['data-cs-gallery'] == null && state.props['--cs-controls-space'] === '0.1px';
-  };
   // What a declaration is measured against before it is written: a value equal
   // to one of these is a line that changes nothing, and 48 such lines were once
   // being pasted across 15 patterns. Engine first, then the look: a look that
@@ -1479,14 +1435,7 @@ ${PHOTO_CSS}
     // elementsFromPoint, the stack at a dot's centre read IMG, .cargo-photo,
     // .cs-slide, .cs-track, and only then the dot. The engine's own .cs-arrow
     // carries z-index: 1 for exactly this reason.
-    //
-    // Read off the VALUES, not a switch. dotsOver() is true whenever the dots
-    // are shown and the strip they normally sit in is collapsed, however that
-    // came about - the "Dots over the image" switch, "Room for the dots" typed
-    // to 0.1px by hand, or a brand preset carrying the three values (Chevrolet's
-    // hero draws its dots on the picture). Keyed to a flag, the last two drew
-    // the dots under the track where nobody could see them.
-    const dots = state.hideDots ? `${sel} .cs-dots { display: none; }` : dotsOver() ? `${sel} .cs-dots { z-index: 1; }\n${sel} .cs-dot::after { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45); }` : '';
+    const dots = state.hideDots ? `${sel} .cs-dots { display: none; }` : state.dotsOver ? `${sel} .cs-dots { z-index: 1; }\n${sel} .cs-dot::after { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45); }` : '';
     // No arrow-inset override any more: the engine's own default is 0, which
     // is what all 17 patterns and all 7 looks were restating. Three lines a
     // snippet, and the gutter formula every look uses (arrow-size + 0.25em)
@@ -2626,10 +2575,6 @@ ${PHOTO_CSS}
     '--card-bg': 'Card background',
     '--card-fg': 'Card text',
     '--card-radius': 'Corner radius',
-    '--hero-aspect': 'Banner shape',
-    '--hero-aspect-phone': 'Banner shape on phones',
-    '--hero-radius': 'Banner corners',
-    '--hero-arrow-ring': 'Arrow ring',
     '--card-border': 'Card border',
     '--card-shadow': 'Card shadow',
     '--badge-bg': 'Badge background',
@@ -2933,7 +2878,8 @@ ${PHOTO_CSS}
     // Two doors. A cutout card takes every brand, because every brand has a
     // roster. Any other pattern takes the brands that carry values for it or
     // for its card - read off the data, never a list of pattern ids.
-    const brandsFor = Object.entries(BRANDS).filter(([, b]) => takesCutouts(p) || b.styles?.patterns?.[state.pattern] || (state.look && b.styles?.looks?.[state.look]));
+    const takesCutouts = !!p.look && String(LOOKS[p.look].content).includes('cutout');
+    const brandsFor = Object.entries(BRANDS).filter(([, b]) => takesCutouts || b.styles?.patterns?.[state.pattern] || (state.look && b.styles?.looks?.[state.look]));
     const brandable = brandsFor.length > 0;
     // The note under the strip. Moved out here (it used to live inside the
     // Brand list's own `if (brandable)` block) so the strip-building code at
@@ -2969,9 +2915,6 @@ ${PHOTO_CSS}
       // already on screen. No "pick it below" any more - there is no picker
       // below, the card was chosen from the rail.
       const suggest = b.look && b.look !== state.look ? ` ${b.label} ran the ${LOOKS[b.look].label.toLowerCase()} card — it is a rail entry of its own.` : '';
-      // On a pattern that takes no cutout the roster and the ladder stayed
-      // home, so the note says only what the brand did bring.
-      if (!takesCutouts(p)) return `${b.label}'s measured values on this pattern; the photographs and the count are the pattern's own.${measured}${font}`.trim();
       return (
         b.ladder
           ? `${counts} cards across, on a phone / from 768px / from 992px / from 1200px. ${b.note ?? ''}${suggest}${measured}${font}`
@@ -3340,19 +3283,15 @@ ${PHOTO_CSS}
     // same size (415.7px either way) and does not move the arrows (207.8px
     // either way - .cs-arrow centres on 100% of a root that shrank by exactly
     // the strip, so the formula corrects itself). The hero simply loses 30px.
-    //
-    // The switch shows dotsOver(), which is read off the values - so a brand
-    // preset that collapses the strip (Chevrolet's hero) lights it, and the
-    // copied CSS carries the z-index the dots need to be painted over the
-    // track. Ticking it writes the three values; unticking hands back what
-    // was there.
-    if (photoSlides(p) && !galleryMode && !state.hideDots) {
+    const photoSlides = (p.css || '').includes('cargo-photo');
+    if (photoSlides && !galleryMode && !state.hideDots) {
       pane.bool(
         beh,
         'Dots over the image',
-        dotsOver(),
+        !!state.dotsOver,
         (on) => {
-          if (on) {
+          state.dotsOver = on;
+          if (state.dotsOver) {
             // Remember all three, because all three change together and a tick
             // round trip has to hand back exactly what was there.
             state.dotsWere = {
@@ -3370,19 +3309,14 @@ ${PHOTO_CSS}
             state.props['--cs-dot-fg'] = 'rgba(255, 255, 255, 0.55)';
             state.props['--cs-dot-current'] = '#fff';
           } else {
-            // Nothing remembered (the strip was collapsed by hand or by a
-            // brand, never by this switch): hand back the pattern's own
-            // value, not the engine's - the hero reserves 2em, and deleting
-            // the key would let the "Room for the dots" row fill in 2.5em.
             const was = state.dotsWere ?? {};
             for (const [k, v] of [
               ['--cs-controls-space', was.space],
               ['--cs-dot-fg', was.fg],
               ['--cs-dot-current', was.current],
             ]) {
-              if (v != null) state.props[k] = v;
-              else if (k in (p.props ?? {})) state.props[k] = p.props[k];
-              else delete state.props[k];
+              if (v == null) delete state.props[k];
+              else state.props[k] = v;
             }
             state.dotsWere = null;
           }
@@ -3684,7 +3618,7 @@ ${PHOTO_CSS}
   // card style, with the wrong class name, and nothing on the page saying why.
   // Same shape as the content store, keyed by pattern for the same reason.
   const SKEY = 'cs-settings';
-  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'name', 'count', 'rows', 'panes', 'dotsWere'];
+  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'name', 'count', 'rows', 'panes', 'dotsOver', 'dotsWere'];
 
   // Same split as the slides: what is on screen is the session's, what is in
   // localStorage is what Keep was pressed on.
@@ -3848,9 +3782,7 @@ ${PHOTO_CSS}
     // this panel, so it is refused whole rather than obeyed in half.
     const data = cleanMap(s.data, ATTR);
     if (data && isMap(s.data) && Object.keys(data).length === Object.keys(s.data).length) state.data = data;
-    // dotsOver used to be saved as a flag; it is read off the props now, which
-    // are restored above, so an older Keep still comes back the way it looked.
-    for (const k of ['hideDots', 'gutter']) if (typeof s[k] === 'boolean') state[k] = s[k];
+    for (const k of ['hideDots', 'gutter', 'dotsOver']) if (typeof s[k] === 'boolean') state[k] = s[k];
     // Through toClass() rather than trusted: a name stored before the sanitiser
     // existed could be an invalid selector.
     if (okStored(s.name) && toClass(s.name)) state.name = toClass(s.name);
@@ -3922,7 +3854,7 @@ ${PHOTO_CSS}
     note.className = 'wb-note';
     // Credited to the preset only when the preset actually supplied cars.
     // Fiat is the one of the 32 with no roster of its own.
-    const preset = state.brand && takesCutouts(pat) ? BRANDS[state.brand] : null;
+    const preset = state.brand ? BRANDS[state.brand] : null;
     const setNote = () => {
       note.textContent =
         (state.content ? OWN_ROWS(state.content.length) : EXAMPLE_ROWS(rows.length, preset?.models ? preset.label : null)) +

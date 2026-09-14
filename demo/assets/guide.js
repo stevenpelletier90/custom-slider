@@ -294,14 +294,6 @@
     '--tab-divider': "Text drawn between tabs, in quotes — <code>'|'</code> for the Chevrolet bar. <code>none</code> draws nothing.",
     '--tab-divider-color':
       'Colour of that divider. <code>currentcolor</code> follows the tab text, faded by the dim value; Chevrolet draws its <code>|</code> in <code>#767676</code> with the tabs at full strength.',
-    '--hero-aspect':
-      'Shape of the banner photo from 768px up, width over height. <code>21 / 9</code> is the default; <code>3.2</code> is what Chevrolet’s hero draws (1920×600 art). The upload is cropped to it, never letterboxed.',
-    '--hero-aspect-phone':
-      'Shape of the banner photo under 768px. <code>4 / 3</code> keeps a tall crop on a phone; Chevrolet stays at <code>3.2</code> and serves a 768×240 file for it. Set the Phone image on each slide when the two shapes differ.',
-    '--hero-radius':
-      'Rounding on the banner’s corners. <code>0.1px</code> for a full-bleed banner with square corners — a tenth of a pixel rather than 0, because the platform minifier strips the unit off a zero.',
-    '--hero-arrow-ring':
-      'A thin ring drawn inside the arrow’s circle, on top of the arrow background. <code>transparent</code> draws nothing; Chevrolet’s hero draws a chevron inside a light grey outline, which is this in <code>rgba(214, 214, 214, 0.5)</code>.',
   };
 
   // Built by walking LOOKS, so the table is the card styles that actually ship.
@@ -454,11 +446,7 @@
         ${table(
           ['Pattern', 'Shape', 'Upload'],
           [
-            [
-              'Hero banner',
-              '21:9 on desktop, 4:3 under 768 — both are settings',
-              '1600×686. It crops to 4:3 on a phone, so keep the subject centred, or give the slide a Phone image cut for it. Chevrolet’s 3.2:1 wants 1920×600.',
-            ],
+            ['Hero banner', '21:9 on desktop, 4:3 under 768', '1600×686. It crops to 4:3 on a phone, so keep the subject centred.'],
             ['Photo gallery, Peek, Filterable gallery', '16:10', '1200×750'],
             ['Lightbox', 'uncropped — the whole photo is shown', '1600 wide; the dialog fits it to the space'],
             ['Vehicle card', '4:3', '800×600'],
