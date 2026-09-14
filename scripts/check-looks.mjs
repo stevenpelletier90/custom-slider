@@ -270,8 +270,14 @@ for (const [id, b] of brands) {
       // The words around a tabbed bar (2026-09-14, Ford): plain strings for
       // the four word fields and nothing else - a tag in one would be markup.
       for (const [k, v] of Object.entries(entry.words ?? {})) {
-        if (!['title', 'lead', 'moreText', 'moreHref'].includes(k) || typeof v !== 'string' || /[<>]/.test(v)) {
-          console.error(`  ${id}: styles.patterns.${pid}.words.${k} — words are title, lead, moreText and moreHref, each plain text`);
+        if (!['title', 'lead', 'moreText', 'moreHref', 'titleClass', 'wrapClass'].includes(k) || typeof v !== 'string' || /[<>]/.test(v)) {
+          console.error(`  ${id}: styles.patterns.${pid}.words.${k} — words are title, lead, moreText, moreHref, titleClass and wrapClass, each plain text`);
+          bad++;
+        }
+        // The two class words name platform classes the markup wears and
+        // nothing else: a class list, no punctuation that could be markup.
+        if ((k === 'titleClass' || k === 'wrapClass') && !/^[a-z][\w-]*( [a-z][\w-]*)*$/i.test(v)) {
+          console.error(`  ${id}: styles.patterns.${pid}.words.${k} = "${v}" — a list of platform class names, nothing else`);
           bad++;
         }
       }
@@ -325,8 +331,12 @@ for (const [id, b] of brands) {
         .split('}')
         .map((r) => r.split('{')[0].trim())
         .filter(Boolean)) {
-        if (!/^\.(h1|btn|btn-lg|btn-cta)(:(hover|focus))?(,\s*\.(h1|btn|btn-lg|btn-cta)(:(hover|focus))?)*$/.test(sel)) {
-          console.error(`  ${id}: theme.css rule "${sel}" — theme rules may target .h1, .btn, .btn-lg and .btn-cta only`);
+        // One selector: a snippet class (.h1, .heading-lg, .btn, .btn-lg,
+        // .btn-cta, .bg-main), optionally under .bg-main the way a theme
+        // restyles its buttons on a band, optionally :hover/:focus.
+        const ONE = /(\.bg-main )?\.(h1|heading-lg|btn|btn-lg|btn-cta|bg-main)(:(hover|focus))?/.source;
+        if (!new RegExp(`^${ONE}(,\\s*${ONE})*$`).test(sel)) {
+          console.error(`  ${id}: theme.css rule "${sel}" — theme rules may target .h1, .heading-lg, .btn, .btn-lg, .btn-cta and .bg-main only`);
           bad++;
         }
       }

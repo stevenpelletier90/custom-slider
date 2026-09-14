@@ -88,7 +88,9 @@ because `modelsFor()` swaps the roster under a brand preset or edited content.
 
 **A brand variant is knob values, never a CSS block and never markup.** `brands.js` entries may
 carry `styles` (card values by look, pattern values by pattern, tab names, and since 2026-09-14 the
-`words` around a tabbed bar: heading, lead, button text and link), measured on the OEM's live demo
+`words` around a tabbed bar: heading, lead, button text and link, plus the platform classes the
+heading and the wrap wear — `titleClass`, `wrapClass` — which is how Cadillac's bar is a `bg-main`
+band with a `heading-lg` heading and the theme does the colouring), measured on the OEM's live demo
 and cited in `source`. A tab name may hold a phone-only part in square brackets
 (`SUVs [& Crossovers]`), which `htmlFor()` wraps in the platform's own `hidden-xs` span — markup the
 platform already styles, not CSS of ours. Ford's bar (forddemo1) is the second measured tabbed bar

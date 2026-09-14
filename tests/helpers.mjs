@@ -130,6 +130,8 @@ export const themeCss = (theme = {}) =>
   '.btn-cta:hover,.btn-cta:focus{color:var(--cta-font-color);background-color:var(--cta-hover-color);border-color:var(--cta-hover-color)}' +
   '.lead{margin:0 0 20px;font-size:16px;font-weight:300;line-height:1.4}@media(min-width:768px){.lead{font-size:21px}}' +
   '.text-muted{color:#777}@media(max-width:767px){.hidden-xs{display:none!important}}' +
+  '.bg-main{color:#fff;background-color:var(--main-color)}.bg-main .btn-cta{color:#fff;background-color:transparent;border-color:#fff}.bg-main .btn-cta:hover,.bg-main .btn-cta:focus{color:var(--main-color);background-color:#fff;border-color:#fff}' +
+  '.heading-lg{font-size:42px;line-height:1.1}' +
   // A brand's own heading and button rules on top, as its site's theme has.
   (theme.css ?? '');
 

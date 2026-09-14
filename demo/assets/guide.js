@@ -332,6 +332,11 @@
     '--title-gap': 'Space under the heading, in the heading’s own em (36px on the platform). <code>0.19em</code> over the tabs; Ford leaves 10px, <code>0.28em</code>, over its lead paragraph.',
     '--lead-gap': 'Space under the lead paragraph, in its own em (21px on the platform, 16px on a phone). Ford’s <code>2em</code> is 42px.',
     '--more-gap': 'Space between the bar and the button under it, in the body’s em. Chevrolet leaves <code>2.29em</code>, 32px; Ford <code>3.29em</code>, 46px.',
+    '--bar-bg':
+      'The band’s colour, when the bar wears the platform’s bg-main class (the Band class field). <code>var(--main-color)</code> is what bg-main paints anyway; Cadillac’s section goes darker, <code>#0a0a0a</code>. Does nothing on a bar with no band.',
+    '--bar-pad':
+      'Padding over and under everything in the band, in the body’s em (side to side, the page’s container insets it). <code>0.1px</code> is none; Cadillac’s section leaves 100px, <code>7.14em</code>.',
+    '--bar-pad-narrow': 'The same padding below 992px. <code>var(--bar-pad)</code> keeps the wide value; Cadillac drops to 35px, <code>2.5em</code>.',
     '--tab-divider-size':
       'Size of the divider as a fraction of the tab text. <code>1</code> is the tab size; Chevrolet draws its <code>|</code> at the page’s body size, <code>0.78</code> of an 18px tab.',
     '--tab-fade':

@@ -123,7 +123,10 @@
   //
   // The words around a tabbed bar, in state and in a brand's `words` block:
   // the heading, the lead paragraph, the button's text and where it goes.
-  const WORDS = ['title', 'lead', 'moreText', 'moreHref'];
+  // titleClass and wrapClass are the platform classes the heading and the
+  // wrap wear (Cadillac: heading-lg, and bg-main for the band) - which site
+  // style a thing wears is a value, and the theme does the styling.
+  const WORDS = ['title', 'lead', 'moreText', 'moreHref', 'titleClass', 'wrapClass'];
   const applyBrand = (id) => {
     const p = PATTERNS[state.pattern];
     const prev = BRANDS[state.brand]?.styles;
@@ -228,6 +231,8 @@
     state.panes = null;
     state.title = null;
     state.lead = null;
+    state.titleClass = null;
+    state.wrapClass = null;
     state.moreText = null;
     state.moreHref = null;
     state.label = null; // only renderLook overrides it — see the note there
@@ -386,7 +391,13 @@
     // The lead paragraph's classes and the phone-only span the tab names can
     // carry, Bootstrap 3's own again (checked on forddemo1, 2026-09-14).
     '.lead{margin:0 0 20px;font-size:16px;font-weight:300;line-height:1.4}@media(min-width:768px){.lead{font-size:21px}}' +
-    '.text-muted{color:#777}@media(max-width:767px){.hidden-xs{display:none!important}}';
+    '.text-muted{color:#777}@media(max-width:767px){.hidden-xs{display:none!important}}' +
+    // The platform's dark band and its large-heading class (cadillacdemo1,
+    // 2026-09-14): bg-main paints the main colour with white text and gives
+    // the outline button a white edge; heading-lg is the storefront's larger
+    // heading size, 42px in the platform's own sheet.
+    '.bg-main{color:#fff;background-color:var(--main-color)}.bg-main .btn-cta{color:#fff;background-color:transparent;border-color:#fff}.bg-main .btn-cta:hover,.bg-main .btn-cta:focus{color:var(--main-color);background-color:#fff;border-color:#fff}' +
+    '.heading-lg{font-size:42px;line-height:1.1}';
 
   // The engine's own `.cs` defaults. A snippet restating one of these is a line
   // that changes nothing, and 48 such lines were being pasted across 15
@@ -857,11 +868,20 @@
       // The lead wears `lead text-muted`, the platform's own paragraph
       // classes (Bootstrap 3's, on every storefront) - forddemo1 writes
       // exactly those under its heading - so the site sizes and greys it.
-      const head = (title ? `  <h2 class="h1 cargo-title">${escTab(title)}</h2>\n` : '') + (lead ? `  <p class="lead text-muted cargo-lead">${escTab(lead)}</p>\n` : '');
+      // Which platform heading class the h2 wears (h1 is the storefront's
+      // 36px size class; cadillacdemo1's bar uses heading-lg), and which
+      // classes the wrap wears (bg-main makes it the platform's dark band,
+      // which colours the text and swaps the button by itself). Class names
+      // only - a stray character would be markup.
+      const classes = (v, dflt) => (state[v] ?? p[v] ?? dflt).replace(/[^\w -]/g, '').trim();
+      const titleClass = classes('titleClass', 'h1');
+      const wrapClass = classes('wrapClass', '');
+      const head =
+        (title ? `  <h2 class="${titleClass ? `${titleClass} ` : ''}cargo-title">${escTab(title)}</h2>\n` : '') + (lead ? `  <p class="lead text-muted cargo-lead">${escTab(lead)}</p>\n` : '');
       const foot = moreText ? `\n  <p class="cargo-more"><a class="btn btn-cta btn-lg" href="${moreHref || '#'}">${escTab(moreText)}</a></p>` : '';
       // The row and the panes in one box, the panes and the button in a
       // padded body inside it - see .cargo-box in the pattern's css.
-      return `<div class="${cls}-wrap" data-cargo="tabs" data-tabs>\n${head}  <div class="cargo-box">\n  <div class="cargo-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n  <div class="cargo-body">\n${panes}${foot}\n  </div>\n  </div>\n</div>`;
+      return `<div class="${cls}-wrap${wrapClass ? ` ${wrapClass}` : ''}" data-cargo="tabs" data-tabs>\n${head}  <div class="cargo-box">\n  <div class="cargo-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n  <div class="cargo-body">\n${panes}${foot}\n  </div>\n  </div>\n</div>`;
     }
 
     // Filter buttons above a gallery; the script rebuilds it per category.
@@ -1824,6 +1844,9 @@
     '--title-gap': 'Space under the heading',
     '--lead-gap': 'Space under the lead',
     '--more-gap': 'Space over the button',
+    '--bar-bg': 'Band colour',
+    '--bar-pad': 'Band padding',
+    '--bar-pad-narrow': 'Band padding, tablet and phone',
   };
   const knobLabel = (k) => KNOB_LABELS[k] ?? k.replace(/^--/, '').replace(/-/g, ' ');
 
@@ -2373,6 +2396,18 @@
       wordKnob('Lead under the heading', 'lead', p.lead ?? '', "A paragraph under the heading, in the platform's lead class - Ford's bar has one. Empty leaves it out.");
       wordKnob('Button under the bar', 'moreText', p.more?.text ?? '', 'The button under the bar. Empty leaves it out.');
       wordKnob('Button under the bar, link', 'moreHref', p.more?.href ?? '', 'Where the button goes - /searchnew.aspx for new inventory.');
+      wordKnob(
+        'Heading class',
+        'titleClass',
+        p.titleClass ?? 'h1',
+        "The platform class the heading wears, so the site's theme sizes it: h1 is the storefront's largest heading size; Cadillac's bar uses heading-lg.",
+      );
+      wordKnob(
+        'Band class',
+        'wrapClass',
+        p.wrapClass ?? '',
+        "Platform classes on the whole bar. bg-main makes it the site's dark band - white text and the outline button the theme gives a band - which is how Cadillac's bar sits. Empty for none.",
+      );
     }
 
     // A pattern's OWN props - the tab row's values today. Engine (--cs-*) and
@@ -2872,7 +2907,7 @@
   // card style, with the wrong class name, and nothing on the page saying why.
   // Same shape as the content store, keyed by pattern for the same reason.
   const SKEY = 'cs-settings';
-  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'name', 'count', 'rows', 'panes', 'title', 'lead', 'moreText', 'moreHref', 'dotsOver', 'dotsWere'];
+  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'name', 'count', 'rows', 'panes', ...WORDS, 'dotsOver', 'dotsWere'];
 
   // Same split as the slides: what is on screen is the session's, what is in
   // localStorage is what Keep was pressed on.
@@ -3051,7 +3086,7 @@
     if (PATTERNS[state.pattern].panes && Array.isArray(s.panes) && s.panes.length >= 1 && s.panes.length <= 8 && s.panes.every((n) => okStored(n) && n.trim())) state.panes = [...s.panes];
     // The words around the tabbed bar, same terms: only where the pattern has
     // tabs, only plain strings. An empty string is a kept choice (no heading).
-    if (PATTERNS[state.pattern].panes) for (const k of ['title', 'lead', 'moreText', 'moreHref']) if (typeof s[k] === 'string' && okStored(s[k])) state[k] = s[k];
+    if (PATTERNS[state.pattern].panes) for (const k of WORDS) if (typeof s[k] === 'string' && okStored(s[k])) state[k] = s[k];
     if (Number.isInteger(s.count) && s.count >= 1 && s.count <= 16) state.count = s.count;
     // Clamped to the knob's own range, and only where stacking means anything:
     // a stored 2 must not survive onto a gallery, where the thumb strip counts

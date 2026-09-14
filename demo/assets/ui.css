@@ -2317,6 +2317,31 @@ code {
   color: #777;
 }
 
+/* The platform's dark band and its large-heading class, as bg-main and
+   heading-lg draw on a storefront. */
+.gx-stage .bg-main {
+  color: #fff;
+  background-color: var(--main-color);
+}
+
+.gx-stage .bg-main .btn-cta {
+  color: #fff;
+  background-color: transparent;
+  border-color: #fff;
+}
+
+.gx-stage .bg-main .btn-cta:hover,
+.gx-stage .bg-main .btn-cta:focus {
+  color: var(--main-color);
+  background-color: #fff;
+  border-color: #fff;
+}
+
+.gx-stage .heading-lg {
+  font-size: 42px;
+  line-height: 1.1;
+}
+
 @media (width <= 767px) {
   .gx-stage .hidden-xs {
     display: none !important;

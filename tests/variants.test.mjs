@@ -242,9 +242,10 @@ test.describe('a brand applies its values', () => {
     assert.equal(await page.locator('#wb-variants button[data-brand="chevrolet"]').count(), 1, 'Chevrolet should be a chip on tabs');
     assert.equal(await page.locator('#wb-variants button[data-brand="toyota"]').count(), 1, 'Toyota should be a chip on tabs');
     assert.equal(await page.locator('#wb-variants button[data-brand="ford"]').count(), 1, 'Ford should be a chip on tabs');
-    // 32 brands less the three measured ones, which are chips, not options.
+    assert.equal(await page.locator('#wb-variants button[data-brand="cadillac"]').count(), 1, 'Cadillac should be a chip on tabs');
+    // 32 brands less the four measured ones, which are chips, not options.
     const optCount = await page.locator('#wb-brand option:not([value=""])').count();
-    assert.ok(optCount >= 29, `a cutout card offers every other brand in the select, got ${optCount}`);
+    assert.ok(optCount >= 28, `a cutout card offers every other brand in the select, got ${optCount}`);
   });
 
   test('Toyota is a second measured brand on the tabbed bar', async () => {
@@ -871,6 +872,150 @@ test.describe('Ford lands every measured number on the same pattern', () => {
     assert.equal(r.leadBottom, '42px', "the pattern's lead spacing beats the theme's .lead margin in either order");
     assert.equal(r.leadSize, '21px');
     assert.equal(r.btnBg, 'rgb(37, 122, 167)', "the button wears the site's own --cta-background-color");
+    assert.deepEqual(r.headings, ['H2']);
+    await host.close();
+  });
+});
+
+// cadillacdemo1's tabbed bar, measured 2026-09-14: Chevrolet's dress on a black
+// band. The band is the platform's own bg-main on the wrap (a word, not CSS),
+// so the theme turns the text white and the button into a white outline; the
+// heading wears heading-lg the same way. Each number here is the live one.
+test.describe('Cadillac lands every measured number: a band, a heading class, the Chevrolet row in white', () => {
+  const cadGeometry = (page) =>
+    page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      const w = d.defaultView;
+      const cs = (el, p, pseudo) => w.getComputedStyle(el, pseudo || null).getPropertyValue(p);
+      const wrap = d.querySelector('[data-cargo="tabs"]');
+      const tabs = [...d.querySelectorAll('.cargo-tabs [role="tab"]')];
+      const [a, b] = tabs.map((t) => t.getBoundingClientRect());
+      const pane = d.querySelector('.cargo-pane:not([hidden])');
+      const title = d.querySelector('.cargo-title');
+      const btn = d.querySelector('.cargo-more .btn');
+      const name = pane.querySelector('.cargo-name');
+      return {
+        wrapClass: wrap.className,
+        bandBg: cs(wrap, 'background-color'),
+        bandPad: cs(wrap, 'padding-top'),
+        bandPadX: cs(wrap, 'padding-left'),
+        text: cs(wrap, 'color'),
+        titleClass: title.className,
+        titleFont: cs(title, 'font-family'),
+        titleSize: cs(title, 'font-size'),
+        titleTracking: cs(title, 'letter-spacing'),
+        titleCase: cs(title, 'text-transform'),
+        titleToRow: +(d.querySelector('.cargo-tabs').getBoundingClientRect().top - title.getBoundingClientRect().bottom).toFixed(1),
+        tabH: +a.height.toFixed(1),
+        gap: +(b.left - a.right).toFixed(1),
+        tabColor: cs(tabs[1], 'color'),
+        divider: cs(tabs[1], 'content', '::before') + ' ' + cs(tabs[1], 'color', '::before'),
+        line: cs(tabs[0], 'background-color', '::after') + ' ' + cs(tabs[0], 'bottom', '::after'),
+        rowToPane: +(pane.getBoundingClientRect().top - d.querySelector('.cargo-tabs').getBoundingClientRect().bottom).toFixed(1),
+        nameColor: cs(name, 'color'),
+        nameCase: cs(name, 'text-transform'),
+        nameWeight: cs(name, 'font-weight'),
+        moreGap: +(d.querySelector('.cargo-more').getBoundingClientRect().top - pane.getBoundingClientRect().bottom).toFixed(1),
+        btn: {
+          fg: cs(btn, 'color'),
+          bg: cs(btn, 'background-color'),
+          border: cs(btn, 'border-top-color'),
+          radius: cs(btn, 'border-top-left-radius'),
+          pad: cs(btn, 'padding'),
+          size: cs(btn, 'font-size'),
+          text: btn.textContent.trim(),
+        },
+      };
+    });
+
+  test('the band, the heading class and the row land at the live numbers', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'cadillac');
+    await page.click('.ui-widths button[data-w="1200"]');
+    await page.waitForTimeout(300);
+    const g = await cadGeometry(page);
+    assert.match(g.wrapClass, /\bbg-main\b/, "the wrap wears the platform's dark-band class");
+    assert.equal(g.bandBg, 'rgb(10, 10, 10)', "the band's own colour beats bg-main's in either order");
+    assert.ok(Math.abs(parseFloat(g.bandPad) - 100) < 0.5, `100px over the band, got ${g.bandPad}`);
+    assert.equal(g.bandPadX, '0px', 'a band pads over and under only');
+    assert.equal(g.text, 'rgb(255, 255, 255)', 'bg-main turns the text white');
+    assert.match(g.titleClass, /\bheading-lg\b/);
+    assert.match(g.titleFont, /Cadillac Gothic Wide/);
+    assert.equal(g.titleSize, '32px');
+    assert.ok(Math.abs(parseFloat(g.titleTracking) - 4.8) < 0.1, `0.15em of tracking on a 32px heading, got ${g.titleTracking}`);
+    assert.equal(g.titleCase, 'uppercase');
+    assert.ok(Math.abs(g.titleToRow - 13) < 0.6, `13px from the heading to the tabs, got ${g.titleToRow}`);
+    assert.ok(Math.abs(g.tabH - 46) < 1.5, `the live tab is 46px tall, got ${g.tabH}`);
+    assert.ok(Math.abs(g.gap - 32) < 1, `32px between tabs, got ${g.gap}`);
+    assert.equal(g.tabColor, 'rgb(255, 255, 255)');
+    assert.equal(g.divider, '"|" rgb(255, 255, 255)');
+    assert.equal(g.line, 'rgb(221, 221, 221) 0px', 'a #ddd line flush with the bottom of the picked tab');
+    assert.ok(Math.abs(g.rowToPane - 20) < 0.6, `20px from the row to the cars, got ${g.rowToPane}`);
+    assert.equal(g.nameColor, 'rgb(255, 255, 255)');
+    assert.equal(g.nameCase, 'uppercase');
+    assert.equal(g.nameWeight, '400');
+    assert.ok(Math.abs(g.moreGap - 42) < 1, `42px over the button, got ${g.moreGap}`);
+    // The theme's own band button: white outline on nothing, 14px 32px, square.
+    assert.deepEqual(g.btn, { fg: 'rgb(255, 255, 255)', bg: 'rgba(0, 0, 0, 0)', border: 'rgb(255, 255, 255)', radius: '0px', pad: '14px 32px', size: '14px', text: 'Explore All New Inventory' });
+    assert.deepEqual(errors, []);
+  });
+
+  test('the paste: bg-main and heading-lg are words in the markup, the band values are values, no colour of the theme', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'cadillac');
+    await page.waitForTimeout(200);
+    const { css, html } = await copyParts(page);
+    assert.match(html, /^<div class="tabbed-bar-wrap bg-main" data-cargo="tabs" data-tabs>/);
+    assert.match(html, /<h2 class="heading-lg cargo-title">Explore The Cadillac Lineup<\/h2>/);
+    assert.doesNotMatch(html, /cargo-lead/, 'Cadillac has no lead paragraph');
+    for (const line of [
+      '--bar-bg: #0a0a0a;',
+      '--bar-pad: 7.14em;',
+      '--bar-pad-narrow: 2.5em;',
+      '--tab-line: #ddd;',
+      '--tab-gap: 1.78em;',
+      '--tab-pad: 0.56em 0.83em;',
+      '--tab-row-gap: 1.43em;',
+      '--title-gap: 0.41em;',
+      '--name-case: uppercase;',
+      '--cs-arrow-fg: rgba(255, 255, 255, 0.75);',
+    ]) {
+      assert.ok(css.includes(line), `${line} never reached the copied CSS`);
+    }
+    assert.doesNotMatch(css, /#282828|#171473|Cadillac Gothic/i, "the band's grey, the button blue and the font are the theme's");
+    assert.doesNotMatch(css, /\.bg-main|\.heading-lg|\.btn/, 'the snippet restyles a platform class');
+    assert.deepEqual(errors, []);
+  });
+
+  test('the paste lands on a hostile host wearing the theme layer as the page shows it', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'cadillac');
+    const parts = await copyParts(page);
+    const engine = await engineFiles();
+    const theme = await page.evaluate(() => globalThis.CARGO.BRANDS.cadillac.theme);
+    const host = await browser.newPage();
+    await host.setContent(hostHtml({ ...engine, css: parts.css, html: parts.html, js: parts.js, theme }), { waitUntil: 'load' });
+    const r = await host.evaluate(() => {
+      const cs = (sel, p, pseudo) => getComputedStyle(document.querySelector(sel), pseudo || null).getPropertyValue(p);
+      const tabs = [...document.querySelectorAll('.cargo-tabs [role="tab"]')].map((t) => t.getBoundingClientRect());
+      return {
+        band: cs('[data-cargo="tabs"]', 'background-color'),
+        pad: cs('[data-cargo="tabs"]', 'padding-top'),
+        text: cs('.cargo-title', 'color'),
+        titleSize: cs('.cargo-title', 'font-size'),
+        gap: +(tabs[1].left - tabs[0].right).toFixed(1),
+        btnBorder: cs('.cargo-more .btn', 'border-top-color'),
+        btnBg: cs('.cargo-more .btn', 'background-color'),
+        headings: [...document.querySelectorAll('h1,h2,h3')].map((e) => e.tagName),
+      };
+    });
+    assert.equal(r.band, 'rgb(10, 10, 10)');
+    assert.ok(Math.abs(parseFloat(r.pad) - 100) < 0.5, `100px over the band on the host, got ${r.pad}`);
+    assert.equal(r.text, 'rgb(255, 255, 255)');
+    assert.equal(r.titleSize, '32px');
+    assert.ok(Math.abs(r.gap - 32) < 1, `32px between tabs on the host, got ${r.gap}`);
+    assert.equal(r.btnBorder, 'rgb(255, 255, 255)', "the theme's band button, from the wrap's bg-main and nothing in the snippet");
+    assert.equal(r.btnBg, 'rgba(0, 0, 0, 0)');
     assert.deepEqual(r.headings, ['H2']);
     await host.close();
   });

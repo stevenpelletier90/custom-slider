@@ -647,6 +647,17 @@ ${VIDEO_DIALOG_CSS}`,
         '--title-gap': '0.19em',
         '--lead-gap': '2em',
         '--more-gap': '2.29em',
+        // The band. cadillacdemo1 (2026-09-14) draws its bar on a black band
+        // with white text and a white outline button - which on the platform
+        // is the wrapper wearing bg-main (the words' `wrapClass`), so the
+        // theme colours the text and swaps the button itself. The band's own
+        // colour applies only when the wrap IS a bg-main band, and defaults
+        // to what bg-main paints, the site's main colour; Cadillac's section
+        // overrides that to #0a0a0a. The padding is the band's, in the
+        // body's em, and follows the platform's tablet tier like the rest.
+        '--bar-bg': 'var(--main-color)',
+        '--bar-pad': '0.1px',
+        '--bar-pad-narrow': 'var(--bar-pad)',
       },
       hideDots: true,
       panes: ['Trucks', 'SUVs', 'Crossovers'],
@@ -666,6 +677,13 @@ ${VIDEO_DIALOG_CSS}`,
    is one point more, so the spacing here wins in either order. */
 .cargo-title:is(h2) { margin: 0 0 var(--title-gap); text-align: center; }
 .cargo-lead:is(p) { margin: 0 0 var(--lead-gap); text-align: center; }
+/* The band, only where the wrap wears the platform's bg-main: one class more
+   than .bg-main itself, so the colour here wins in either sheet order, and
+   its default is the colour bg-main would have painted. */
+%wrap%:is(.bg-main) { background-color: var(--bar-bg); }
+/* Over and under only: side to side, a band is as wide as the block it is
+   in, and the page's container already insets that. */
+%wrap% { padding-block: var(--bar-pad); }
 /* The row and the panes sit in one box, the panes and the button in a padded
    body inside it, so a border can wrap the row without padding it - Ford's
    cells run edge to edge. Both are no-ops until a value says otherwise. */
@@ -711,6 +729,7 @@ ${VIDEO_DIALOG_CSS}`,
 /* The platform's tablet tier. Ford's live bar drops its tabs to 12px and its
    box padding to 15px here; the defaults follow the wide values. */
 @media (max-width: 991.98px) {
+  %wrap% { padding-block: var(--bar-pad-narrow); }
   .cargo-tabs [role="tab"] { padding: var(--tab-pad-narrow); font-size: var(--tab-size-narrow); }
   .cargo-body { padding: var(--box-pad-narrow); }
 }

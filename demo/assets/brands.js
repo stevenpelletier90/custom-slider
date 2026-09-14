@@ -410,6 +410,100 @@
       ],
       demos: 3,
       note: 'The same counts as Chevrolet, on a black band with spaced capitals — same layout, different dress.',
+      // The variant: what cadillacdemo1 draws, as knob values, measured with
+      // Playwright at 1280/800/390 on 2026-09-14, the third tabbed bar of the
+      // day. Chevrolet's dress on a black band, the note above turned out to
+      // be exactly right - and the band is the one thing no knob had.
+      //
+      // The page is a 14px Cadillac Gothic body, white on a #0a0a0a section
+      // (the platform's bg-cta band, overridden by the section's own rule):
+      // - "Explore The Cadillac Lineup" in heading-lg (Cadillac Gothic Wide,
+      //   32px, 400, uppercase, 0.15em of tracking), 13px over the tabs;
+      // - three 18px tabs in the body font, white at full strength, 10px over
+      //   and under the label and 15px a side, 32px apart with a `|` at the
+      //   body size between them (hidden below 540 on the live page), a 2px
+      //   #ddd line under the picked one that grows from the centre on hover
+      //   and on pick over 0.15s, the same easing as Chevrolet's, and no rule
+      //   under the row; 20px from the row to the cars;
+      // - slides butt together, the cutout drawn at 85% (0.9 on hover, 0.1s
+      //   ease-in), the lightning badge baked into the electric cutouts;
+      // - the name 16px, 400, uppercase, white, 2px under the cutout;
+      // - arrows: the brand's own white chevron SVG, 22px wide at 0.75 opacity,
+      //   full on hover, in a 35px channel; a picked pane fades in over 0.15s;
+      // - "Explore All New Inventory" 42px under the bar, a white outline
+      //   button 14px 32px in the theme's btn-lg, which the theme draws that
+      //   way on any bg-main band.
+      // Kept on purpose: the engine's chevron and scroll physics, the divider
+      // at every width, the tabs at 18px on a phone (the live drops to 16px
+      // below 540), and the band padding at the platform's tablet tier
+      // (35px) below 768 too, where the live section leaves 30.
+      styles: {
+        looks: {
+          tile: {
+            '--name-color': '#fff',
+            '--name-case': 'uppercase',
+            '--name-size': '1.14em',
+            '--name-weight': '400',
+            '--name-leading': '1.4286',
+            '--name-gap': '0.13em',
+            '--plate-pad': '5.6% 7.5% 0',
+            '--img-hover-scale': '1.06',
+            '--img-hover-speed': '0.1s',
+            '--strip-pad-x': 'var(--cs-arrow-size)',
+          },
+        },
+        patterns: {
+          tabs: {
+            props: {
+              '--cs-gap': '0.1px',
+              '--cs-arrow-size': '2.5em',
+              '--cs-arrow-fg': 'rgba(255, 255, 255, 0.75)',
+              '--cs-arrow-fg-hover': '#fff',
+              '--cs-arrow-bg-hover': 'transparent',
+              '--tab-size': '1.29em',
+              '--tab-weight': '400',
+              '--tab-leading': '1.4286',
+              '--tab-dim': '1',
+              '--tab-line': '#ddd',
+              '--tab-line-grow': '0.15s',
+              '--tab-rule': 'transparent',
+              '--tab-divider': "'|'",
+              '--tab-divider-size': '0.78',
+              '--tab-gap': '1.78em',
+              // 10px over and under the label, 15px a side, in the 18px tab's
+              // em; the 2px line sits in the bottom 10 the way the live one
+              // does (bottom: 0 on a 10px-padded link).
+              '--tab-pad': '0.56em 0.83em',
+              '--tab-row-gap': '1.43em',
+              '--tab-fade': '0.15s',
+              '--title-gap': '0.41em',
+              '--more-gap': '3em',
+              '--bar-bg': '#0a0a0a',
+              '--bar-pad': '7.14em',
+              '--bar-pad-narrow': '2.5em',
+            },
+            panes: ['Electric', 'Crossovers/SUVs', 'Sedans'],
+            // bg-main makes the wrap the platform's dark band: white text and
+            // the white outline button come from the theme, not from here.
+            words: { title: 'Explore The Cadillac Lineup', titleClass: 'heading-lg', moreText: 'Explore All New Inventory', moreHref: '/searchnew.aspx', wrapClass: 'bg-main' },
+          },
+        },
+      },
+      // PREVIEW ONLY. Cadillac sites set Cadillac Gothic on the whole body
+      // (and Cadillac Gothic Wide on heading-lg, named in theme.css below),
+      // from a sheet DealerOn's CDN serves with Access-Control-Allow-Origin: *
+      // (checked 2026-09-14).
+      font: { family: 'Cadillac Gothic', css: 'https://cdn.dealeron.com/assets/fonts/cadillac-gothic/fonts.min.css' },
+      // PREVIEW ONLY: cadillacdemo1's four theme tokens and its own rules for
+      // the classes the snippet names. The snippet carries none.
+      theme: {
+        '--cta-background-color': '#171473',
+        '--cta-font-color': '#fff',
+        '--cta-hover-color': '#221dad',
+        '--main-color': '#282828',
+        css: '.heading-lg{font-family:"Cadillac Gothic Wide",sans-serif;font-size:32px;font-weight:400;line-height:1.1;text-transform:uppercase;letter-spacing:0.15em}.btn{font-weight:400;text-transform:uppercase;border-radius:0;transition:background-color 200ms linear,color 200ms linear,border-color 200ms linear}.btn-lg{padding:14px 32px;font-size:14px;line-height:1.3333}.btn-cta{color:#000;background-color:transparent;border-color:#000}.bg-main .btn-cta{color:#fff;background-color:transparent;border-color:#fff}.bg-main .btn-cta:hover,.bg-main .btn-cta:focus{color:#282828;background-color:#fff;border-color:#fff}',
+      },
+      source: 'cadillacdemo1.dealeron.com, 2026-09-14',
     },
     chevrolet: {
       label: 'Chevrolet',

@@ -1086,6 +1086,9 @@
   --title-gap: 0.19em;
   --lead-gap: 2em;
   --more-gap: 2.29em;
+  --bar-bg: var(--main-color);
+  --bar-pad: 0.1px;
+  --bar-pad-narrow: var(--bar-pad);
 }
 :where([data-cargo=tabs]) .cargo-title:is(h2) {
   margin: 0 0 var(--title-gap);
@@ -1094,6 +1097,12 @@
 :where([data-cargo=tabs]) .cargo-lead:is(p) {
   margin: 0 0 var(--lead-gap);
   text-align: center;
+}
+[data-cargo=tabs]:is(.bg-main) {
+  background-color: var(--bar-bg);
+}
+[data-cargo=tabs] {
+  padding-block: var(--bar-pad);
 }
 :where([data-cargo=tabs]) .cargo-box {
   border: var(--box-border);
@@ -1189,6 +1198,9 @@
   text-align: center;
 }
 @media (max-width: 991.98px) {
+  [data-cargo=tabs] {
+    padding-block: var(--bar-pad-narrow);
+  }
   :where([data-cargo=tabs]) .cargo-tabs [role=tab] {
     padding: var(--tab-pad-narrow);
     font-size: var(--tab-size-narrow);

@@ -1203,10 +1203,12 @@ test.describe('a brand preset swaps the vehicles, never the pattern', () => {
     const rosters = new Set([start.first]);
 
     for (const id of brands) {
-      // Chevrolet and Toyota are measured for the model bar (its look is
-      // `tile`), so they live on a chip; every other brand in this slice is
-      // roster-only and lives in the select.
-      if (id === 'chevrolet' || id === 'toyota') await page.click(`#wb-variants button[data-brand="${id}"]`);
+      // A brand measured for the model bar's card (Chevrolet, Toyota, Ford,
+      // Cadillac - the first eight alphabetically include Cadillac) lives on
+      // a chip; a roster-only brand lives in the select. Read off the strip
+      // rather than a list here, which went stale the day Cadillac was
+      // measured.
+      if (await page.locator(`#wb-variants button[data-brand="${id}"]`).count()) await page.click(`#wb-variants button[data-brand="${id}"]`);
       else await page.selectOption('#wb-brand', id);
       await page.waitForTimeout(450);
       const now = await cardState();

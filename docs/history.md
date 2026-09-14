@@ -123,6 +123,22 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   preview no longer sets a brand font on the body for it. Playwright's `goto` to the same path with
   a new hash is a same-document navigation: forty minutes went to a "stale" preview that was the
   browser never reloading, fixed by going through about:blank.
+- 2026-09-14, Cadillac tabbed bar (cadillacdemo1), the third of the day: Chevrolet's row in white on
+  a black band, exactly what the preset's note had guessed from the census. Two things no knob had,
+  and both turned out to be words rather than CSS: the band is the platform's own `bg-main` on the
+  wrap, which is what turns the text white and the `.btn-cta` into the white outline the theme draws
+  on a band - so `words` grew `wrapClass` and `titleClass` (the heading wears `heading-lg` there,
+  not `h1`), both held to class names by check-looks. The band's own colour is the one knob added
+  (`--bar-bg`, on `%wrap%:is(.bg-main)` so it beats `.bg-main` in either sheet order, defaulting to
+  `var(--main-color)`, which is what bg-main paints anyway, so an untouched band changes nothing)
+  with `--bar-pad`/`--bar-pad-narrow` as `padding-block` - the first cut was `padding` and the lint
+  gate caught `7.14em 0` being refused as a two-value length, which was the right refusal: a band is
+  as wide as its block and the page's container insets it. The lightning badge on the electric
+  cutouts is baked into the PNGs; the `.vehicleModelsItem` hover-dim rule in the site's CSS matches
+  nothing in its own markup (measured: every card stays at opacity 1), so neither became a knob.
+  Kept on purpose: the divider at every width (the live one is hidden-xxs, gone below 540), 18px
+  tabs on a phone (live: 16 below 540), and 35px of band padding below 768 where the live section
+  leaves 30.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until
