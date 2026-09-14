@@ -1062,48 +1062,92 @@
   --tab-divider: none;
   --tab-divider-color: currentcolor;
   --tab-gap: 0.25em;
-  --tab-pad: 0.6em;
+  --tab-pad: 0.6em 1.1em;
   --tab-divider-size: 1;
   --tab-fade: 0s;
   --tab-line-grow: 0s;
+  --tab-flex: 0 1 auto;
+  --tab-leading: 1.55;
+  --tab-case: none;
+  --tab-color: currentcolor;
+  --tab-bg: transparent;
+  --tab-selected-bg: transparent;
+  --tab-line-size: 2px;
+  --tab-line-inset: auto 0;
+  --tab-line-hover: var(--tab-line);
+  --tab-cell-rule: transparent;
+  --tab-cell-divider: transparent;
+  --tab-row-gap: 1em;
+  --tab-size-narrow: var(--tab-size);
+  --tab-pad-narrow: var(--tab-pad);
+  --box-border: none;
+  --box-pad: 0.1px;
+  --box-pad-narrow: var(--box-pad);
+  --title-gap: 0.19em;
+  --lead-gap: 2em;
+  --more-gap: 2.29em;
 }
-:where([data-cargo=tabs]) .cargo-title {
-  margin: 0 0 0.19em;
+:where([data-cargo=tabs]) .cargo-title:is(h2) {
+  margin: 0 0 var(--title-gap);
   text-align: center;
+}
+:where([data-cargo=tabs]) .cargo-lead:is(p) {
+  margin: 0 0 var(--lead-gap);
+  text-align: center;
+}
+:where([data-cargo=tabs]) .cargo-box {
+  border: var(--box-border);
+}
+:where([data-cargo=tabs]) .cargo-body {
+  padding: var(--box-pad);
 }
 :where([data-cargo=tabs]) .cargo-tabs {
   display: flex;
   flex-wrap: wrap;
   justify-content: center;
-  margin-block-end: 1em;
+  margin-block-end: var(--tab-row-gap);
   border-block-end: 1px solid var(--tab-rule);
 }
 :where([data-cargo=tabs]) .cargo-tabs [role=tab] {
   position: relative;
-  padding: var(--tab-pad) 1.1em;
+  flex: var(--tab-flex);
+  padding: var(--tab-pad);
+  margin-block-end: -1px;
   margin-inline: calc(var(--tab-gap) / 2);
   font: inherit;
   font-size: var(--tab-size);
   font-weight: var(--tab-weight);
-  line-height: 1.55;
-  color: inherit;
+  line-height: var(--tab-leading);
+  color: var(--tab-color);
+  text-transform: var(--tab-case);
   cursor: pointer;
-  background: none;
+  background: var(--tab-bg);
   border: 0;
-  border-block-end: 2px solid transparent;
+  border-block-end: 1px solid var(--tab-cell-rule);
   opacity: var(--tab-dim);
+}
+:where([data-cargo=tabs]) .cargo-tabs [role=tab] + [role=tab] {
+  box-shadow: inset 1px 0 var(--tab-cell-divider);
 }
 :where([data-cargo=tabs]) .cargo-tabs [role=tab][aria-selected=true] {
   color: var(--tab-selected);
+  background: var(--tab-selected-bg);
+  border-block-end-color: transparent;
   opacity: 1;
 }
 :where([data-cargo=tabs]) .cargo-tabs [role=tab]::after {
   position: absolute;
-  inset-block-end: -2px;
+  inset-block: var(--tab-line-inset);
   inset-inline-start: 50%;
   inline-size: 0;
-  block-size: 2px;
+  block-size: var(--tab-line-size);
   content: "";
+  background: var(--tab-line);
+}
+:where([data-cargo=tabs]) .cargo-tabs [role=tab]:hover::after {
+  background: var(--tab-line-hover);
+}
+:where([data-cargo=tabs]) .cargo-tabs [role=tab][aria-selected=true]::after {
   background: var(--tab-line);
 }
 :where([data-cargo=tabs]) .cargo-tabs [role=tab][aria-selected=true]::after,
@@ -1141,8 +1185,17 @@
   }
 }
 :where([data-cargo=tabs]) .cargo-more {
-  margin: 2.29em 0 0;
+  margin: var(--more-gap) 0 0;
   text-align: center;
+}
+@media (max-width: 991.98px) {
+  :where([data-cargo=tabs]) .cargo-tabs [role=tab] {
+    padding: var(--tab-pad-narrow);
+    font-size: var(--tab-size-narrow);
+  }
+  :where([data-cargo=tabs]) .cargo-body {
+    padding: var(--box-pad-narrow);
+  }
 }
 @media (max-width: 767.98px) {
   :where([data-cargo=tabs]) .cargo-tabs [role=tab] {

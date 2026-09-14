@@ -120,6 +120,10 @@
   // null is "Start from the default": every key a variant could have touched
   // goes back to the pattern's or look's own value, and only those - a knob the
   // designer set that no brand ever supplies is theirs to keep.
+  //
+  // The words around a tabbed bar, in state and in a brand's `words` block:
+  // the heading, the lead paragraph, the button's text and where it goes.
+  const WORDS = ['title', 'lead', 'moreText', 'moreHref'];
   const applyBrand = (id) => {
     const p = PATTERNS[state.pattern];
     const prev = BRANDS[state.brand]?.styles;
@@ -140,6 +144,7 @@
         else delete state.props[k];
       }
       if (s.patterns?.[state.pattern]?.panes) state.panes = null;
+      if (s.patterns?.[state.pattern]?.words) for (const k of WORDS) state[k] = null;
     };
     undo(prev);
     if (!b) {
@@ -163,6 +168,11 @@
     Object.assign(state.props, s.patterns?.[state.pattern]?.props ?? {});
     const panes = s.patterns?.[state.pattern]?.panes;
     if (panes && p.panes) state.panes = [...panes];
+    // The words around the bar, the same way: a brand's heading, lead and
+    // button (Ford's "Something for Everyone" over "Explore All New Models")
+    // land where the word fields edit them, and Default hands them back.
+    const words = s.patterns?.[state.pattern]?.words;
+    if (words && p.panes) for (const k of WORDS) state[k] = words[k] ?? null;
   };
 
   // The rail shows a short name; `label` stays the descriptive title used for
@@ -217,6 +227,7 @@
     state.content = null;
     state.panes = null;
     state.title = null;
+    state.lead = null;
     state.moreText = null;
     state.moreHref = null;
     state.label = null; // only renderLook overrides it — see the note there
@@ -371,7 +382,11 @@
     '.btn{display:inline-block;padding:6px 12px;font-size:14px;font-weight:400;line-height:1.42857143;text-align:center;white-space:nowrap;vertical-align:middle;cursor:pointer;text-decoration:none;border:1px solid transparent;border-radius:4px}' +
     '.btn-lg{padding:10px 16px;font-size:18px;line-height:1.3333333;border-radius:6px}' +
     '.btn-cta{color:var(--cta-font-color);background-color:var(--cta-background-color);border-color:var(--cta-background-color)}' +
-    '.btn-cta:hover,.btn-cta:focus{color:var(--cta-font-color);background-color:var(--cta-hover-color);border-color:var(--cta-hover-color)}';
+    '.btn-cta:hover,.btn-cta:focus{color:var(--cta-font-color);background-color:var(--cta-hover-color);border-color:var(--cta-hover-color)}' +
+    // The lead paragraph's classes and the phone-only span the tab names can
+    // carry, Bootstrap 3's own again (checked on forddemo1, 2026-09-14).
+    '.lead{margin:0 0 20px;font-size:16px;font-weight:300;line-height:1.4}@media(min-width:768px){.lead{font-size:21px}}' +
+    '.text-muted{color:#777}@media(max-width:767px){.hidden-xs{display:none!important}}';
 
   // The engine's own `.cs` defaults. A snippet restating one of these is a line
   // that changes nothing, and 48 such lines were being pasted across 15
@@ -627,7 +642,11 @@
     // Only the strips this pattern actually has. Naming both on every wrapper
     // pattern pasted two rules matching nothing on the lightbox and the card
     // grid, which have neither a tab strip nor a filter bar.
-    const strips = ['cargo-tabs', 'cargo-filterbar'].filter((c) => (p.css || '').includes(c));
+    // A tab row whose cells share the row (--tab-flex with a grow, Ford's
+    // `1 1 0%`) runs edge to edge and has nothing to line up with; padding it
+    // would only narrow the cells. Only a centred row takes the channel.
+    const filled = /^\s*[1-9]/.test(String(state.props['--tab-flex'] ?? ''));
+    const strips = ['cargo-tabs', 'cargo-filterbar'].filter((c) => (p.css || '').includes(c) && !(c === 'cargo-tabs' && filled));
     const stripSel = strips.map((c) => `${sel}-wrap .${c}`).join(', ');
     const gutter = [
       needsRootPad ? `${sel}${ROOT} { padding-inline: ${gw}; }` : '',
@@ -785,9 +804,19 @@
 
     // Body-style tabs: one carousel per pane, each over its own subset.
     if (p.panes) {
-      const names = state.panes ?? p.panes;
+      // A tab name may hold a phone-only part in square brackets - `SUVs [&
+      // Crossovers]` - which lands in the platform's own hidden-xs span, the
+      // way forddemo1 writes its tabs (four uppercase cells in a 360px box
+      // have room for "SUVs", not "SUVs & Crossovers"). The brackets are
+      // markup, so the id, the aria-label and the pane matching read the
+      // name without them.
+      const plain = (name) => String(name).replace(/[[\]]/g, '');
+      const label = (name) => escTab(name).replace(/\[([^\]]+)\]/g, '<span class="hidden-xs">$1</span>');
+      const names = (state.panes ?? p.panes).map(plain);
       const ids = names.map((name) => name.toLowerCase().replace(/\W+/g, '-'));
-      const tabs = names.map((name, i) => `    <button type="button" role="tab" id="tab-${ids[i]}" aria-controls="pane-${ids[i]}" aria-selected="${i === 0}">${escTab(name)}</button>`).join('\n');
+      const tabs = (state.panes ?? p.panes)
+        .map((name, i) => `    <button type="button" role="tab" id="tab-${ids[i]}" aria-controls="pane-${ids[i]}" aria-selected="${i === 0}">${label(name)}</button>`)
+        .join('\n');
       // Two ways to fill the panes, and which one is in force is decided by the
       // rows themselves rather than by a switch.
       //
@@ -818,15 +847,21 @@
       // in the snippet - a crawler and a reader with scripts off get both.
       // Either one left empty is left out.
       const title = (state.title ?? p.title ?? '').trim();
+      const lead = (state.lead ?? p.lead ?? '').trim();
       const moreText = (state.moreText ?? p.more?.text ?? '').trim();
       const moreHref = (state.moreHref ?? p.more?.href ?? '').trim();
       // The platform's own classes, so the site's theme sizes and colours them:
       // `h1` is the storefront's 36px heading size class (the live block puts
       // it on an h3), `btn btn-cta btn-lg` its themed button. Nothing about
       // either is in the copied CSS - see the note on .cargo-more.
-      const head = title ? `  <h2 class="h1 cargo-title">${escTab(title)}</h2>\n` : '';
+      // The lead wears `lead text-muted`, the platform's own paragraph
+      // classes (Bootstrap 3's, on every storefront) - forddemo1 writes
+      // exactly those under its heading - so the site sizes and greys it.
+      const head = (title ? `  <h2 class="h1 cargo-title">${escTab(title)}</h2>\n` : '') + (lead ? `  <p class="lead text-muted cargo-lead">${escTab(lead)}</p>\n` : '');
       const foot = moreText ? `\n  <p class="cargo-more"><a class="btn btn-cta btn-lg" href="${moreHref || '#'}">${escTab(moreText)}</a></p>` : '';
-      return `<div class="${cls}-wrap" data-cargo="tabs" data-tabs>\n${head}  <div class="cargo-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n${panes}${foot}\n</div>`;
+      // The row and the panes in one box, the panes and the button in a
+      // padded body inside it - see .cargo-box in the pattern's css.
+      return `<div class="${cls}-wrap" data-cargo="tabs" data-tabs>\n${head}  <div class="cargo-box">\n  <div class="cargo-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n  <div class="cargo-body">\n${panes}${foot}\n  </div>\n  </div>\n</div>`;
     }
 
     // Filter buttons above a gallery; the script rebuilds it per category.
@@ -1320,7 +1355,10 @@
       }
       if (link.getAttribute('href') !== f.css) link.href = f.css;
     } else link?.remove();
-    d.body.style.fontFamily = f ? `${f.family}, Arial, Helvetica, sans-serif` : '';
+    // A brand whose font is on its headings only (Ford's antenna over an
+    // Arial body) loads the sheet and leaves the body alone; its theme.css
+    // names the family on .h1, the way its site does.
+    d.body.style.fontFamily = f && !f.headings ? `${f.family}, Arial, Helvetica, sans-serif` : '';
     // The brand's THEME tokens, the same way: a measured brand may carry the
     // four --cta-*/--main-color values its sites define, so a snippet that
     // names var(--cta-background-color) draws that brand's blue here. The
@@ -1766,6 +1804,26 @@
     '--tab-divider-size': 'Divider size',
     '--tab-fade': 'Pane fade',
     '--tab-line-grow': 'Line grow time',
+    '--tab-flex': 'Tab width',
+    '--tab-leading': 'Tab line height',
+    '--tab-case': 'Tab text case',
+    '--tab-color': 'Tab text',
+    '--tab-bg': 'Tab background',
+    '--tab-selected-bg': 'Selected tab background',
+    '--tab-line-size': 'Line thickness',
+    '--tab-line-inset': 'Line position',
+    '--tab-line-hover': 'Hovered tab line',
+    '--tab-cell-rule': 'Rule under unselected tabs',
+    '--tab-cell-divider': 'Line between tabs',
+    '--tab-row-gap': 'Space under the tabs',
+    '--tab-size-narrow': 'Tab text size, tablet and phone',
+    '--tab-pad-narrow': 'Tab padding, tablet and phone',
+    '--box-border': 'Box border',
+    '--box-pad': 'Box padding',
+    '--box-pad-narrow': 'Box padding, tablet and phone',
+    '--title-gap': 'Space under the heading',
+    '--lead-gap': 'Space under the lead',
+    '--more-gap': 'Space over the button',
   };
   const knobLabel = (k) => KNOB_LABELS[k] ?? k.replace(/^--/, '').replace(/-/g, ' ');
 
@@ -2082,7 +2140,9 @@
       // The preview borrows the site's own typeface so the bar reads the way
       // it will on the page. Said plainly, because a designer who sees it
       // here will look for it in the code panel: it is not there, on purpose.
-      const font = b.font ? ` Shown in ${b.font.family}, the font ${b.label} sites already load — the preview borrows it; nothing about the font is in the copied code.` : '';
+      const font = b.font
+        ? ` ${b.font.headings ? 'Headings shown' : 'Shown'} in ${b.font.family}, the font ${b.label} sites already load — the preview borrows it; nothing about the font is in the copied code.`
+        : '';
       // The brand's own card style is offered, never applied - see the note
       // on pickBrand() above. Only worth saying when it differs from what is
       // already on screen. No "pick it below" any more - there is no picker
@@ -2289,7 +2349,10 @@
             state.panes = next.length === p.panes.length && next.every((n, j) => n === p.panes[j]) ? null : next;
             render();
           },
-          { placeholder: p.panes[i] ?? name },
+          {
+            placeholder: p.panes[i] ?? name,
+            note: 'The words on the tab. A part in square brackets - SUVs [& Crossovers] - shows only above phone width, in the platform’s own hidden-xs span, the way Ford’s bar shortens its tabs.',
+          },
         );
       });
       // The words around the bar. Stored only when they differ from the
@@ -2307,6 +2370,7 @@
           { placeholder: dflt, note },
         );
       wordKnob('Heading over the bar', 'title', p.title ?? '', 'The heading over the bar, an <h2>. Empty leaves it out.');
+      wordKnob('Lead under the heading', 'lead', p.lead ?? '', "A paragraph under the heading, in the platform's lead class - Ford's bar has one. Empty leaves it out.");
       wordKnob('Button under the bar', 'moreText', p.more?.text ?? '', 'The button under the bar. Empty leaves it out.');
       wordKnob('Button under the bar, link', 'moreHref', p.more?.href ?? '', 'Where the button goes - /searchnew.aspx for new inventory.');
     }
@@ -2808,7 +2872,7 @@
   // card style, with the wrong class name, and nothing on the page saying why.
   // Same shape as the content store, keyed by pattern for the same reason.
   const SKEY = 'cs-settings';
-  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'name', 'count', 'rows', 'panes', 'title', 'moreText', 'moreHref', 'dotsOver', 'dotsWere'];
+  const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'name', 'count', 'rows', 'panes', 'title', 'lead', 'moreText', 'moreHref', 'dotsOver', 'dotsWere'];
 
   // Same split as the slides: what is on screen is the session's, what is in
   // localStorage is what Keep was pressed on.
@@ -2987,7 +3051,7 @@
     if (PATTERNS[state.pattern].panes && Array.isArray(s.panes) && s.panes.length >= 1 && s.panes.length <= 8 && s.panes.every((n) => okStored(n) && n.trim())) state.panes = [...s.panes];
     // The words around the tabbed bar, same terms: only where the pattern has
     // tabs, only plain strings. An empty string is a kept choice (no heading).
-    if (PATTERNS[state.pattern].panes) for (const k of ['title', 'moreText', 'moreHref']) if (typeof s[k] === 'string' && okStored(s[k])) state[k] = s[k];
+    if (PATTERNS[state.pattern].panes) for (const k of ['title', 'lead', 'moreText', 'moreHref']) if (typeof s[k] === 'string' && okStored(s[k])) state[k] = s[k];
     if (Number.isInteger(s.count) && s.count >= 1 && s.count <= 16) state.count = s.count;
     // Clamped to the knob's own range, and only where stacking means anything:
     // a stored 2 must not survive onto a gallery, where the thumb strip counts

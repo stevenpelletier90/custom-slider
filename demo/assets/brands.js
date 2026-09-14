@@ -495,7 +495,10 @@
               '--tab-divider': "'|'",
               '--tab-divider-color': '#767676',
               '--tab-gap': '1.7em',
-              '--tab-pad': '0.75em',
+              // 0.75em above and below the label, plus the 2px line's own
+              // room under it (the line sits inside the padding since
+              // 2026-09-14): 13.5 + 2 = 15.5px of the 18px tab.
+              '--tab-pad': '0.75em 1.1em 0.86em',
               '--tab-divider-size': '0.78',
               '--tab-fade': '0.15s',
               // The line under a picked OR hovered tab (an ::after on the live
@@ -575,6 +578,115 @@
       ],
       demos: 3,
       note: 'Ford’s demo sites run three different counts; this is the most common of them. The other two match Acura and Chevrolet.',
+      // The variant: what forddemo1 draws, as knob values, measured with
+      // Playwright at 1280/800/390 on 2026-09-14 the same afternoon as the
+      // Chevrolet re-measure. The same tabbed pattern in a different dress -
+      // every difference was a value, none was structure.
+      //
+      // The page is a 14px Arial body:
+      // - "Something for Everyone" in the platform's h1 class (antennaRegular,
+      //   500), a lead paragraph under it in `lead text-muted` (21px, 300,
+      //   #777), 10px under the heading and 42px under the lead;
+      // - the row and the panes sit in a 1px #ccc box; the panes get 30px of
+      //   padding inside it (15px below 992);
+      // - four cells that share the row equally, 16px uppercase, 400, #000,
+      //   line-height 1.4286, 10px over and 15px under the label plus a 5px
+      //   line OVER the picked one in #2a8bbe (a literal in the site's CSS,
+      //   not a token); unpicked cells on #f0f0f0 with a 1px #ccc rule under
+      //   them and between them, the picked one white and rule-less; hover
+      //   draws no line; tabs go to 12px below 992;
+      // - slides butt together, the cutout is drawn at 85% (0.9 on hover,
+      //   0.1s ease-in) - the same 5.6% 7.5% 0 padding that lands Chevrolet's;
+      // - the name 15px, 700, #333, on a 21.4px line, pulled 3px up into the
+      //   cutout's transparent margin (-15px on the live p);
+      // - arrows only on a pane with more than five models: slick's own 35px
+      //   glyph in #6c6c6c at 0.75 opacity (#919191 on white), full strength
+      //   on hover, in a 35px channel each side of the cars;
+      // - a picked pane fades in over 0.15s (Bootstrap's .fade);
+      // - "Explore All New Models" 46px under the bar, in btn btn-cta btn-lg.
+      // Kept on purpose: the engine's bare chevron (the live glyph is slick's
+      // arrow), the engine's scroll physics (slick's 500ms slide), the theme's
+      // own btn-lg padding (the live page pads that one button 10px 25px 14px
+      // with a site-scoped rule the snippet must not copy), and the name's
+      // desktop gap at every width (the live bar drops the -15px below 992).
+      styles: {
+        looks: {
+          tile: {
+            '--name-color': '#333',
+            '--name-size': '1.07em',
+            '--name-weight': '700',
+            '--name-leading': '1.4286',
+            '--name-gap': '-0.2em',
+            '--plate-pad': '5.6% 7.5% 0',
+            '--img-hover-scale': '1.06',
+            '--img-hover-speed': '0.1s',
+            // The arrow channel is exactly the arrow's width on the live bar.
+            '--strip-pad-x': 'var(--cs-arrow-size)',
+          },
+        },
+        patterns: {
+          tabs: {
+            props: {
+              '--cs-gap': '0.1px',
+              '--cs-arrow-size': '2.5em',
+              '--cs-arrow-fg': '#919191',
+              '--cs-arrow-fg-hover': '#6c6c6c',
+              '--cs-arrow-bg-hover': 'transparent',
+              '--tab-flex': '1 1 0%',
+              '--tab-size': '1.14em',
+              '--tab-size-narrow': '0.86em',
+              '--tab-weight': '400',
+              '--tab-leading': '1.4286',
+              '--tab-case': 'uppercase',
+              '--tab-color': '#000',
+              '--tab-selected': '#000',
+              '--tab-dim': '1',
+              '--tab-bg': '#f0f0f0',
+              '--tab-selected-bg': '#fff',
+              '--tab-line': '#2a8bbe',
+              '--tab-line-hover': 'transparent',
+              // 5px over the picked tab, in the 16px tab's em, and room for it
+              // in the padding: 10 + 5 over the label, 15 under, 5 a side.
+              '--tab-line-size': '0.31em',
+              '--tab-line-inset': '0 auto',
+              '--tab-pad': '0.94em 0.31em',
+              // The same 15px over and under, in the 12px tab's em.
+              '--tab-pad-narrow': '1.25em 0.42em',
+              '--tab-gap': '0.1px',
+              '--tab-rule': 'transparent',
+              '--tab-cell-rule': '#ccc',
+              '--tab-cell-divider': '#ccc',
+              '--tab-row-gap': '0.1px',
+              '--tab-fade': '0.15s',
+              '--box-border': '1px solid #ccc',
+              '--box-pad': '2.14em',
+              '--box-pad-narrow': '1.07em',
+              '--title-gap': '0.28em',
+              '--more-gap': '3.29em',
+            },
+            // The live tabs shorten on a phone: the bracketed part is the
+            // platform's hidden-xs span (see htmlFor).
+            panes: ['SUVs [& Crossovers]', 'Trucks [& Vans]', '[All] Electric', 'Cars'],
+            words: { title: 'Something for Everyone', lead: 'See our full lineup of vehicles and find the one that best fits you.', moreText: 'Explore All New Models', moreHref: '/searchnew.aspx' },
+          },
+        },
+      },
+      // PREVIEW ONLY. Ford sites set antennaRegular on headings alone (the
+      // body stays Arial), from a stylesheet DealerOn's CDN serves with
+      // Access-Control-Allow-Origin: * (checked 2026-09-14). `headings` keeps
+      // it off the preview's body; theme.css below names it on .h1.
+      font: { family: 'antennaRegular', css: 'https://cdn.dealeron.com/assets/fonts/fordantenna/fonts.min.css', headings: true },
+      // PREVIEW ONLY: forddemo1's four theme tokens and its own rules for the
+      // classes the snippet names - headings in antenna at 500, buttons at
+      // 400 with a 5px radius and a 0.3s ease. The snippet carries none.
+      theme: {
+        '--cta-background-color': '#257aa7',
+        '--cta-font-color': '#fff',
+        '--cta-hover-color': '#196893',
+        '--main-color': '#1c394f',
+        css: '.h1{font-family:antennaRegular,Arial,Helvetica,sans-serif;font-weight:500}.btn{font-weight:400;border-radius:5px;transition:0.3s ease-in-out}',
+      },
+      source: 'forddemo1.dealeron.com, 2026-09-14',
     },
     gmc: {
       label: 'GMC',

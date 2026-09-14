@@ -98,6 +98,31 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   Chevrolet tabbed bar's paste is 39 lines / 436 B gzipped (was 56 lines / 1 020 B plus a 793 B
   script); the shared files carry 2.7 KB of pattern CSS and 1.3 KB of scripts gzipped; the engine is
   unchanged at 6 364 B. The axe audit's one finding is the same as before.
+- 2026-09-14, Ford tabbed bar (forddemo1): the second measured brand on the tabs pattern, and the
+  first test of "add the knob, never a second pattern". Its bar is the same shape as Chevrolet's -
+  heading, tabs, five cutouts, button - dressed as a row of cells that share the width on #f0f0f0,
+  the picked one white with a 5px line on TOP and none on hover, 1px #ccc rules between cells and
+  under the unpicked ones, the row and the panes in a 1px #ccc box with 30px inside it (15 below
+  992), a `lead text-muted` paragraph under the heading, tabs at 16px that drop to 12px below 992
+  and shorten on a phone through `hidden-xs` spans. Twenty knobs came out of it, each defaulting to
+  what the literal was so the untouched bar and Chevrolet's draw the same. Three things moved that
+  are worth knowing: `--tab-pad` is the whole padding shorthand now (the 1.1em side padding was a
+  literal), the picked tab's line sits inside the padding instead of over a reserved 2px border
+  (Chevrolet's preset carries the 2px as `0.86em` of bottom padding, row still 57px), and the
+  heading and lead rules are `.cargo-title:is(h2)` / `.cargo-lead:is(p)` because the platform's own
+  `.h1` and `.lead` margins tie a scoped class rule at (0,1,0) and which sheet the page emits last
+  is undocumented - measured in the frame: the heading wore the theme's 20px top margin until the
+  element name broke the tie. The tablet tier needed its own values (`--tab-size-narrow`,
+  `--tab-pad-narrow`, `--box-pad-narrow`, defaulting to the wide knob): the tab's padding is in its
+  own em, so a tab that shrinks there pulls its padding in, and the live row went from 53px to 40
+  instead of 47 until the narrow padding existed. A filled row takes no arrow channel on the strip
+  (`cssFor()` reads the grow off `--tab-flex`): padding the cells would only narrow them. Kept on
+  purpose, as with Chevrolet: the engine's chevron and scroll physics, the theme's own `btn-lg`
+  padding (the live page pads that one button with a site-scoped rule), and the desktop name gap at
+  every width. Ford's `font` is `headings: true` - antenna on the headings, Arial body - so the
+  preview no longer sets a brand font on the body for it. Playwright's `goto` to the same path with
+  a new hash is a same-document navigation: forty minutes went to a "stale" preview that was the
+  browser never reloading, fixed by going through about:blank.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

@@ -262,10 +262,22 @@ for (const [id, b] of brands) {
         continue;
       }
       for (const field of Object.keys(entry)) {
-        if (field !== 'props' && field !== 'panes') {
-          console.error(`  ${id}: styles.patterns.${pid}.${field} — a variant carries props and panes only, never structure`);
+        if (field !== 'props' && field !== 'panes' && field !== 'words') {
+          console.error(`  ${id}: styles.patterns.${pid}.${field} — a variant carries props, panes and words only, never structure`);
           bad++;
         }
+      }
+      // The words around a tabbed bar (2026-09-14, Ford): plain strings for
+      // the four word fields and nothing else - a tag in one would be markup.
+      for (const [k, v] of Object.entries(entry.words ?? {})) {
+        if (!['title', 'lead', 'moreText', 'moreHref'].includes(k) || typeof v !== 'string' || /[<>]/.test(v)) {
+          console.error(`  ${id}: styles.patterns.${pid}.words.${k} — words are title, lead, moreText and moreHref, each plain text`);
+          bad++;
+        }
+      }
+      if (entry.words && !PATTERN_PANES.has(pid)) {
+        console.error(`  ${id}: styles.patterns.${pid} sets words on a pattern with no tabs`);
+        bad++;
       }
       for (const k of Object.keys(entry.props ?? {})) {
         if (!(k in props) && !ENGINE_KEYS.has(k)) {
@@ -288,8 +300,11 @@ for (const [id, b] of brands) {
   if (b.font != null) {
     const okFamily = typeof b.font.family === 'string' && /^[A-Za-z][\w -]*$/.test(b.font.family.trim());
     const okCss = typeof b.font.css === 'string' && /^https:\/\/\S+\.css(\?\S*)?$/.test(b.font.css);
-    if (!okFamily || !okCss) {
-      console.error(`  ${id}: font needs { family: 'Name', css: 'https://…/x.css' } — the preview loads exactly that and nothing else`);
+    // `headings: true` (Ford) keeps the family off the preview's body: the
+    // sheet loads, and the brand's theme.css names the family on .h1.
+    const okKeys = Object.keys(b.font).every((k) => ['family', 'css', 'headings'].includes(k)) && (b.font.headings == null || b.font.headings === true);
+    if (!okFamily || !okCss || !okKeys) {
+      console.error(`  ${id}: font needs { family: 'Name', css: 'https://…/x.css' } and at most headings: true — the preview loads exactly that and nothing else`);
       bad++;
     }
   }

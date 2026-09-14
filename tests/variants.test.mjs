@@ -241,8 +241,10 @@ test.describe('a brand applies its values', () => {
     await pick(page, 'tabs');
     assert.equal(await page.locator('#wb-variants button[data-brand="chevrolet"]').count(), 1, 'Chevrolet should be a chip on tabs');
     assert.equal(await page.locator('#wb-variants button[data-brand="toyota"]').count(), 1, 'Toyota should be a chip on tabs');
+    assert.equal(await page.locator('#wb-variants button[data-brand="ford"]').count(), 1, 'Ford should be a chip on tabs');
+    // 32 brands less the three measured ones, which are chips, not options.
     const optCount = await page.locator('#wb-brand option:not([value=""])').count();
-    assert.ok(optCount >= 30, `a cutout card offers every other brand in the select, got ${optCount}`);
+    assert.ok(optCount >= 29, `a cutout card offers every other brand in the select, got ${optCount}`);
   });
 
   test('Toyota is a second measured brand on the tabbed bar', async () => {
@@ -428,7 +430,7 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     const { css, html } = await copyParts(page);
     for (const line of [
       '--tab-gap: 1.7em;',
-      '--tab-pad: 0.75em;',
+      '--tab-pad: 0.75em 1.1em 0.86em;',
       '--tab-divider-size: 0.78;',
       '--tab-fade: 0.15s;',
       '--cs-arrow-fg-hover: var(--cta-background-color);',
@@ -631,6 +633,244 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     assert.ok(Math.abs(r.gap - 31) < 1, `31px between tabs on the host, got ${r.gap}`);
     // Only the pattern's own heading: the slides carry names, never headings,
     // so the snippet adds exactly one level to the host page's outline.
+    assert.deepEqual(r.headings, ['H2']);
+    await host.close();
+  });
+});
+
+// forddemo1's tabbed bar, measured 2026-09-14 (the numbers are in brands.js):
+// the same pattern as Chevrolet's in a different dress, and every difference
+// had to become a value - a filled row of cells, a line on top, a box, a lead
+// paragraph, tabs that shorten on a phone. Each number here is the live one.
+test.describe('Ford lands every measured number on the same pattern', () => {
+  const fordGeometry = (page) =>
+    page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      const w = d.defaultView;
+      const cs = (el, p, pseudo) => w.getComputedStyle(el, pseudo || null).getPropertyValue(p);
+      const tabs = [...d.querySelectorAll('.cargo-tabs [role="tab"]')];
+      const r = tabs.map((t) => t.getBoundingClientRect());
+      const pane = d.querySelector('.cargo-pane:not([hidden])');
+      const img = pane.querySelector('.cargo-card img');
+      const name = pane.querySelector('.cargo-name');
+      const title = d.querySelector('.cargo-title');
+      const lead = d.querySelector('.cargo-lead');
+      const box = d.querySelector('.cargo-box');
+      return {
+        rowH: +r[0].height.toFixed(1),
+        widths: r.map((x) => +x.width.toFixed(0)),
+        seam: +(r[1].left - r[0].right).toFixed(1),
+        labels: tabs.map((t) => t.innerText.trim()),
+        tabCase: cs(tabs[0], 'text-transform'),
+        tabSize: cs(tabs[0], 'font-size'),
+        tabPad: cs(tabs[0], 'padding'),
+        selectedBg: cs(tabs[0], 'background-color'),
+        restBg: cs(tabs[1], 'background-color'),
+        selectedText: cs(tabs[0], 'color'),
+        cellRule: cs(tabs[1], 'border-bottom-color'),
+        selectedRule: cs(tabs[0], 'border-bottom-color'),
+        divider: cs(tabs[1], 'box-shadow'),
+        line: { top: cs(tabs[0], 'top', '::after'), h: cs(tabs[0], 'height', '::after'), w: parseFloat(cs(tabs[0], 'width', '::after')), bg: cs(tabs[0], 'background-color', '::after') },
+        restLineW: parseFloat(cs(tabs[1], 'width', '::after')),
+        boxBorder: cs(box, 'border-top-width') + ' ' + cs(box, 'border-top-color'),
+        bodyPad: cs(d.querySelector('.cargo-body'), 'padding-top'),
+        rowToBox: +(d.querySelector('.cargo-tabs').getBoundingClientRect().top - box.getBoundingClientRect().top).toFixed(1),
+        titleToLead: +(lead.getBoundingClientRect().top - title.getBoundingClientRect().bottom).toFixed(1),
+        leadToBox: +(box.getBoundingClientRect().top - lead.getBoundingClientRect().bottom).toFixed(1),
+        titleTop: cs(title, 'margin-top'),
+        leadSize: cs(lead, 'font-size'),
+        leadColor: cs(lead, 'color'),
+        leadText: lead.textContent.trim(),
+        titleFont: cs(title, 'font-family'),
+        nameGap: +(name.getBoundingClientRect().top - img.getBoundingClientRect().bottom).toFixed(1),
+        nameWeight: cs(name, 'font-weight'),
+        channel: cs(pane.querySelector('.cs'), 'padding-left'),
+        arrowFg: cs(pane.querySelector('.cs-arrow--prev'), 'color'),
+        moreGap: +(d.querySelector('.cargo-more').getBoundingClientRect().top - pane.getBoundingClientRect().bottom).toFixed(1),
+        btnText: d.querySelector('.cargo-more .btn').textContent.trim(),
+        btnRadius: cs(d.querySelector('.cargo-more .btn'), 'border-top-left-radius'),
+      };
+    });
+
+  test('the desktop bar: a filled row of cells with the line on top, in a padded box under a heading and a lead', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'ford');
+    await page.click('.ui-widths button[data-w="1200"]');
+    await page.waitForTimeout(300);
+    const g = await fordGeometry(page);
+    assert.ok(Math.abs(g.rowH - 53) < 1.5, `the live row is 53px tall, got ${g.rowH}`);
+    assert.ok(
+      g.widths.every((x) => Math.abs(x - g.widths[0]) <= 1),
+      `the cells share the row equally on the live bar, got ${g.widths}`,
+    );
+    assert.ok(Math.abs(g.seam) < 0.6, `cells butt together on the live bar, got a ${g.seam}px seam`);
+    assert.deepEqual(g.labels, ['SUVS & CROSSOVERS', 'TRUCKS & VANS', 'ALL ELECTRIC', 'CARS']);
+    assert.equal(g.tabCase, 'uppercase');
+    assert.ok(Math.abs(parseFloat(g.tabSize) - 16) < 0.2, `16px tabs on the live bar, got ${g.tabSize}`);
+    assert.equal(g.selectedBg, 'rgb(255, 255, 255)');
+    assert.equal(g.restBg, 'rgb(240, 240, 240)');
+    assert.equal(g.selectedText, 'rgb(0, 0, 0)');
+    assert.equal(g.cellRule, 'rgb(204, 204, 204)', 'a 1px #ccc rule under an unpicked cell');
+    assert.equal(g.selectedRule, 'rgba(0, 0, 0, 0)', 'no rule under the picked cell, so it joins the panel');
+    assert.match(g.divider, /rgb\(204, 204, 204\) 1px 0(px)? 0(px)? 0(px)? inset/, `a 1px #ccc line between cells, got ${g.divider}`);
+    assert.equal(g.line.top, '0px', 'the line sits on TOP of the picked tab');
+    assert.ok(Math.abs(parseFloat(g.line.h) - 5) < 0.2, `a 5px line, got ${g.line.h}`);
+    assert.ok(g.line.w > 200, 'the line spans the picked cell');
+    assert.equal(g.line.bg, 'rgb(42, 139, 190)');
+    assert.equal(g.restLineW, 0, 'no line on an unpicked cell');
+    assert.match(g.boxBorder, /^(1|0\.6\d+)px rgb\(204, 204, 204\)$/, `a 1px #ccc box, got ${g.boxBorder}`);
+    assert.ok(Math.abs(parseFloat(g.bodyPad) - 30) < 0.5, `30px inside the box, got ${g.bodyPad}`);
+    assert.ok(Math.abs(g.rowToBox) < 1.5, 'the row sits flush at the top of the box, unpadded');
+    assert.ok(Math.abs(g.titleToLead - 10) < 0.6, `10px under the heading, got ${g.titleToLead}`);
+    assert.ok(Math.abs(g.leadToBox - 42) < 0.6, `42px under the lead, got ${g.leadToBox}`);
+    assert.equal(g.titleTop, '0px', "the platform's .h1 top margin must lose to the pattern's own spacing");
+    assert.ok(Math.abs(parseFloat(g.leadSize) - 21) < 0.2, `the platform's lead is 21px, got ${g.leadSize}`);
+    assert.equal(g.leadColor, 'rgb(119, 119, 119)', "the platform's text-muted");
+    assert.equal(g.leadText, 'See our full lineup of vehicles and find the one that best fits you.');
+    assert.match(g.titleFont, /antennaRegular/, "Ford's heading font, on the heading only");
+    assert.ok(Math.abs(g.nameGap + 3) < 0.6, `the live name is pulled 3px up into the cutout, got ${g.nameGap}`);
+    assert.equal(g.nameWeight, '700');
+    assert.ok(Math.abs(parseFloat(g.channel) - 35) < 0.2, `a 35px arrow channel, got ${g.channel}`);
+    assert.equal(g.arrowFg, 'rgb(145, 145, 145)');
+    assert.ok(Math.abs(g.moreGap - 46) < 1, `46px over the button, got ${g.moreGap}`);
+    assert.equal(g.btnText, 'Explore All New Models');
+    assert.equal(g.btnRadius, '5px', "Ford's button shape from theme.css, never the snippet");
+    assert.deepEqual(errors, []);
+  });
+
+  test('hovering an unpicked cell draws no line; picking it moves the line and fades the pane', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'ford');
+    await page.click('.ui-widths button[data-w="1200"]');
+    await page.waitForTimeout(300);
+    const frame = page.frameLocator('#wb-stage');
+    await frame.locator('.cargo-tabs [role="tab"]').nth(1).hover();
+    await page.waitForTimeout(300);
+    const hov = await page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      const t = d.querySelectorAll('.cargo-tabs [role="tab"]')[1];
+      return { line: d.defaultView.getComputedStyle(t, '::after').backgroundColor, bg: d.defaultView.getComputedStyle(t).backgroundColor };
+    });
+    assert.equal(hov.line, 'rgba(0, 0, 0, 0)', 'the live bar draws no line on hover');
+    assert.equal(hov.bg, 'rgb(240, 240, 240)');
+    await frame.locator('.cargo-tabs [role="tab"]').nth(1).click();
+    await page.waitForTimeout(300);
+    const picked = await page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      const w = d.defaultView;
+      const [a, b] = d.querySelectorAll('.cargo-tabs [role="tab"]');
+      const pane = d.querySelector('.cargo-pane:not([hidden])');
+      return {
+        lineA: parseFloat(w.getComputedStyle(a, '::after').width),
+        lineB: w.getComputedStyle(b, '::after').backgroundColor,
+        bgA: w.getComputedStyle(a).backgroundColor,
+        bgB: w.getComputedStyle(b).backgroundColor,
+        fade: w.getComputedStyle(pane).animationDuration,
+      };
+    });
+    assert.equal(picked.lineA, 0);
+    assert.equal(picked.lineB, 'rgb(42, 139, 190)');
+    assert.equal(picked.bgA, 'rgb(240, 240, 240)');
+    assert.equal(picked.bgB, 'rgb(255, 255, 255)');
+    assert.equal(picked.fade, '0.15s');
+    await frame.locator('.cargo-tabs [role="tab"]').nth(0).click();
+    await page.waitForTimeout(200);
+    assert.deepEqual(errors, []);
+  });
+
+  test('on a phone the tabs shorten to their bracket-free words, drop to 12px and keep their 15px of padding', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'ford');
+    await page.click('.ui-widths button[data-w="390"]');
+    await page.waitForTimeout(400);
+    const g = await fordGeometry(page);
+    assert.deepEqual(g.labels, ['SUVS', 'TRUCKS', 'ELECTRIC', 'CARS'], 'the bracketed part is hidden-xs, gone below 768');
+    assert.ok(Math.abs(parseFloat(g.tabSize) - 12) < 0.2, `12px tabs below 992, got ${g.tabSize}`);
+    assert.ok(Math.abs(parseFloat(g.tabPad) - 15) < 0.3, `15px over the label at every width, got ${g.tabPad}`);
+    assert.ok(Math.abs(g.rowH - 47) < 1.5, `the live phone row is 47px tall, got ${g.rowH}`);
+    assert.ok(Math.abs(parseFloat(g.bodyPad) - 15) < 0.5, `15px inside the box below 992, got ${g.bodyPad}`);
+    assert.ok(Math.abs(parseFloat(g.leadSize) - 16) < 0.2, `the platform's lead is 16px on a phone, got ${g.leadSize}`);
+    await page.click('.ui-widths button[data-w="1200"]');
+    await page.waitForTimeout(200);
+    assert.deepEqual(errors, []);
+  });
+
+  test('the paste is values and markup: the words, the platform classes, no hex for the theme, no structure', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'ford');
+    await page.waitForTimeout(200);
+    const { css, html } = await copyParts(page);
+    for (const line of [
+      '--tab-flex: 1 1 0%;',
+      '--tab-line-inset: 0 auto;',
+      '--tab-line-size: 0.31em;',
+      '--tab-line-hover: transparent;',
+      '--tab-cell-rule: #ccc;',
+      '--tab-cell-divider: #ccc;',
+      '--box-border: 1px solid #ccc;',
+      '--box-pad: 2.14em;',
+      '--box-pad-narrow: 1.07em;',
+      '--tab-pad-narrow: 1.25em 0.42em;',
+      '--tab-size-narrow: 0.86em;',
+      '--title-gap: 0.28em;',
+      '--more-gap: 3.29em;',
+      '--name-gap: -0.2em;',
+    ]) {
+      assert.ok(css.includes(line), `${line} never reached the copied CSS`);
+    }
+    assert.match(html, /<h2 class="h1 cargo-title">Something for Everyone<\/h2>\n\s*<p class="lead text-muted cargo-lead">See our full lineup of vehicles and find the one that best fits you\.<\/p>/);
+    assert.match(
+      html,
+      /<button type="button" role="tab" id="tab-suvs-crossovers" aria-controls="pane-suvs-crossovers" aria-selected="true">SUVs <span class="hidden-xs">&amp; Crossovers<\/span><\/button>/,
+    );
+    assert.match(html, /<span class="hidden-xs">All<\/span> Electric<\/button>/);
+    assert.match(html, /<div class="cargo-box">\s*<div class="cargo-tabs"/);
+    assert.match(html, /<div class="cargo-body">\s*<div class="cargo-pane"/);
+    assert.match(html, /<a class="btn btn-cta btn-lg" href="\/searchnew\.aspx">Explore All New Models<\/a>/);
+    assert.doesNotMatch(css, /#257aa7/i, "Ford's button blue is the theme's to supply");
+    assert.doesNotMatch(css, /antenna/i, 'the font is the site’s');
+    assert.doesNotMatch(css, /\.cargo-(box|body|lead|tabs \[)/, 'structure lives in the shared file, not the paste');
+    // A filled row takes no arrow channel: padding the cells would only
+    // narrow them, and there is nothing beside them to line up with.
+    assert.doesNotMatch(css, /cargo-tabs \{ padding-inline/, 'the filled row was handed the arrow channel');
+    assert.deepEqual(errors, []);
+  });
+
+  test('the paste lands on a hostile host with the theme layer at the numbers the preview shows', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'ford');
+    const parts = await copyParts(page);
+    const engine = await engineFiles();
+    const theme = await page.evaluate(() => globalThis.CARGO.BRANDS.ford.theme);
+    const host = await browser.newPage();
+    await host.setContent(hostHtml({ ...engine, css: parts.css, html: parts.html, js: parts.js, theme }), { waitUntil: 'load' });
+    const r = await host.evaluate(() => {
+      const tabs = [...document.querySelectorAll('.cargo-tabs [role="tab"]')].map((t) => t.getBoundingClientRect());
+      const cs = (sel, p, pseudo) => getComputedStyle(document.querySelector(sel), pseudo || null).getPropertyValue(p);
+      return {
+        rowH: +tabs[0].height.toFixed(1),
+        equal: tabs.every((t) => Math.abs(t.width - tabs[0].width) <= 1),
+        lineTop: cs('[role="tab"][aria-selected="true"]', 'top', '::after'),
+        lineBg: cs('[role="tab"][aria-selected="true"]', 'background-color', '::after'),
+        box: cs('.cargo-box', 'border-top-color'),
+        pad: cs('.cargo-body', 'padding-top'),
+        titleTop: cs('.cargo-title', 'margin-top'),
+        leadBottom: cs('.cargo-lead', 'margin-bottom'),
+        leadSize: cs('.cargo-lead', 'font-size'),
+        btnBg: cs('.cargo-more .btn', 'background-color'),
+        headings: [...document.querySelectorAll('h1,h2,h3')].map((e) => e.tagName),
+      };
+    });
+    assert.ok(Math.abs(r.rowH - 53) < 1.5, `53px row on the host, got ${r.rowH}`);
+    assert.equal(r.equal, true);
+    assert.equal(r.lineTop, '0px');
+    assert.equal(r.lineBg, 'rgb(42, 139, 190)');
+    assert.equal(r.box, 'rgb(204, 204, 204)');
+    assert.ok(Math.abs(parseFloat(r.pad) - 30) < 0.5, `30px in the box on the host, got ${r.pad}`);
+    assert.equal(r.titleTop, '0px', "the pattern's heading spacing beats the theme's .h1 margin in either order");
+    assert.equal(r.leadBottom, '42px', "the pattern's lead spacing beats the theme's .lead margin in either order");
+    assert.equal(r.leadSize, '21px');
+    assert.equal(r.btnBg, 'rgb(37, 122, 167)', "the button wears the site's own --cta-background-color");
     assert.deepEqual(r.headings, ['H2']);
     await host.close();
   });

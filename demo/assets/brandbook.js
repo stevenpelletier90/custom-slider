@@ -28,6 +28,11 @@
 
   const styleEl = document.getElementById('gx-css');
   const css = [];
+  // The brands' own theme rules (theme.css) go in their own sheet: they are
+  // page scaffolding, and Ford's names a font-family, which the generated
+  // sheet must never carry (tests/brands.test.mjs holds that line).
+  const themeEl = document.getElementById('gx-theme');
+  const theme = [];
   const esc = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
   // Measured brands first, then the rest alphabetically by label.
@@ -63,7 +68,7 @@
     // the stage's own Arial, and nothing the generator emits. The copied
     // code stays font-free, since the site the snippet lands on already
     // loads the font.
-    const fontNote = b.font ? ` Shown in ${esc(b.font.family)}, which its sites already load; the copied code names no font.` : '';
+    const fontNote = b.font ? ` ${b.font.headings ? 'Headings shown' : 'Shown'} in ${esc(b.font.family)}, which its sites already load; the copied code names no font.` : '';
     sec.innerHTML = `<div class="gx-head"><img class="bb-logo" src="img/logo-${id}.png" width="116" height="100" alt="" loading="lazy"><div><h2>${esc(b.label)}</h2><p class="bb-note">${note}${fontNote}</p>${b.note ? `<p class="bb-note">${esc(b.note)}</p>` : ''}</div></div>`;
     if (b.font?.css) {
       const link = document.createElement('link');
@@ -92,7 +97,9 @@
       code.innerHTML = `<summary>Code</summary><div class="ui-code-bar"><h3>Copy, one part per CMS field</h3><span class="ui-content-acts"><button type="button" class="ui-btn" data-copy="css">Copy CSS</button><button type="button" class="ui-btn" data-copy="html">Copy HTML</button><button type="button" class="ui-btn" data-copy="js"${snip.js ? '' : ' hidden'}>Copy JS</button></span></div><pre class="g-code" tabindex="0"><code>${hl ? hl.snippet(whole) : esc(whole)}</code></pre>`;
       for (const btn of code.querySelectorAll('[data-copy]')) btn.addEventListener('click', () => copyText(btn, snip[btn.dataset.copy]));
       block.append(code);
-      if (b.font) stage.style.fontFamily = `${b.font.family}, Arial, Helvetica, sans-serif`;
+      // Not a font that is on the headings alone (Ford): theme.css below
+      // names that one on .h1, and the body stays the page's.
+      if (b.font && !b.font.headings) stage.style.fontFamily = `${b.font.family}, Arial, Helvetica, sans-serif`;
       // The brand's theme tokens (brands.js `theme`), page scaffolding the
       // same way: a value written as var(--cta-background-color) draws the
       // brand's own here. ui.css carries the demo's stand-in values.
@@ -101,7 +108,7 @@
       // stages: each selector gets the stage in front of it, so Chevrolet's
       // bold button does not restyle Toyota's stage further down.
       if (b.theme?.css) {
-        css.push(
+        theme.push(
           b.theme.css
             .split('}')
             .filter((r) => r.trim())
@@ -121,6 +128,7 @@
   }
 
   styleEl.textContent = css.join('\n\n');
+  if (themeEl) themeEl.textContent = theme.join('\n\n');
 
   for (const root of document.querySelectorAll('.bb-stage .cs')) {
     if (!root.dataset.csInit) new globalThis.CustomSlider(root);

@@ -128,6 +128,8 @@ export const themeCss = (theme = {}) =>
   '.btn-lg{padding:10px 16px;font-size:18px;line-height:1.3333333;border-radius:6px}' +
   '.btn-cta{color:var(--cta-font-color);background-color:var(--cta-background-color);border-color:var(--cta-background-color)}' +
   '.btn-cta:hover,.btn-cta:focus{color:var(--cta-font-color);background-color:var(--cta-hover-color);border-color:var(--cta-hover-color)}' +
+  '.lead{margin:0 0 20px;font-size:16px;font-weight:300;line-height:1.4}@media(min-width:768px){.lead{font-size:21px}}' +
+  '.text-muted{color:#777}@media(max-width:767px){.hidden-xs{display:none!important}}' +
   // A brand's own heading and button rules on top, as its site's theme has.
   (theme.css ?? '');
 

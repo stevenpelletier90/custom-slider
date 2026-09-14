@@ -305,7 +305,33 @@
     '--tab-divider-color':
       'Colour of that divider. <code>currentcolor</code> follows the tab text, faded by the dim value; Chevrolet draws its <code>|</code> in <code>#767676</code> with the tabs at full strength.',
     '--tab-gap': 'Space between one tab and the next, in the tab’s own em; the divider sits in the middle of it. Chevrolet leaves <code>1.7em</code>, 31px.',
-    '--tab-pad': 'Space above and below each tab label, in the tab’s own em. It sets the row’s height: Chevrolet’s <code>0.75em</code> makes a 57px row.',
+    '--tab-pad':
+      'The padding around each tab label, as a CSS shorthand in the tab’s own em. It sets the row’s height, and the line under or over a picked tab sits inside it: Chevrolet’s <code>0.75em 1.1em 0.86em</code> makes a 57px row with 2px of room for the line at the bottom; Ford’s <code>0.94em 0.31em</code> a 53px row with 5px of room at the top.',
+    '--tab-flex':
+      'How each tab is sized, as the CSS flex shorthand. <code>0 1 auto</code> is its own text’s width, centred in the row; <code>1 1 0%</code> shares the row equally, cells edge to edge, which is Ford’s bar. A filled row takes no arrow channel — it has nothing to line up with.',
+    '--tab-leading': 'The tab label’s line height, as a number. <code>1.55</code>; Ford runs the page’s <code>1.4286</code>.',
+    '--tab-case': 'Case of the tab labels. <code>none</code> shows them as typed; Ford sets <code>uppercase</code>.',
+    '--tab-color': 'Colour of an unselected tab’s text. <code>currentcolor</code> follows the page; Ford pins <code>#000</code> on a #333 page.',
+    '--tab-bg': 'Background of an unselected tab. <code>transparent</code> for a row of plain labels; Ford’s cells sit on <code>#f0f0f0</code>.',
+    '--tab-selected-bg': 'Background of the selected tab. Ford’s goes <code>#fff</code>, so the picked cell reads as part of the white panel under it.',
+    '--tab-line-size': 'Thickness of the line on a picked tab, in the tab’s own em. <code>2px</code>; Ford’s is 5px, <code>0.31em</code> of a 16px tab. Leave room for it in the padding.',
+    '--tab-line-inset': 'Where the line sits, as the <code>inset-block</code> pair. <code>auto 0</code> is flush with the bottom of the tab; <code>0 auto</code> with the top, which is Ford’s bar.',
+    '--tab-line-hover':
+      'What the line is on a tab that is only hovered. <code>var(--tab-line)</code> grows the same line on hover, which Chevrolet does; <code>transparent</code> draws none there, which Ford does.',
+    '--tab-cell-rule':
+      'A 1px rule under each UNSELECTED tab, drawn where the row’s rule would be — the picked tab shows none, so it joins the panel below. <code>transparent</code> for none; Ford’s cells rule in <code>#ccc</code>.',
+    '--tab-cell-divider': 'A 1px line between tabs, full height. <code>transparent</code> for none; Ford draws <code>#ccc</code>. For a glyph between centred tabs use the divider text instead.',
+    '--tab-row-gap': 'Space between the tab row and the panes. <code>1em</code>; inside a padded box (Ford) it is the box padding that spaces them, so <code>0.1px</code>.',
+    '--tab-size-narrow':
+      'Size of the tab labels below 992px, the platform’s tablet tier. <code>var(--tab-size)</code> keeps the wide size; Ford drops from 16px to 12px, <code>0.86em</code> of the body.',
+    '--tab-pad-narrow':
+      'The tab padding below 992px, in the tab’s em at that size. <code>var(--tab-pad)</code> keeps the wide value; Ford’s 10px over and 15px under the label stay put while the tab drops to 12px, which is <code>1.25em 0.42em</code> there.',
+    '--box-border': 'A border around the tab row and the panes together, as the CSS shorthand. <code>none</code>; Ford’s bar sits in <code>1px solid #ccc</code>.',
+    '--box-pad': 'Padding inside that box around the panes and the button (never the tab row). <code>0.1px</code> is none; Ford’s is 30px, <code>2.14em</code> of the body.',
+    '--box-pad-narrow': 'The same padding below 992px. <code>var(--box-pad)</code> keeps the wide value; Ford halves it to 15px, <code>1.07em</code>.',
+    '--title-gap': 'Space under the heading, in the heading’s own em (36px on the platform). <code>0.19em</code> over the tabs; Ford leaves 10px, <code>0.28em</code>, over its lead paragraph.',
+    '--lead-gap': 'Space under the lead paragraph, in its own em (21px on the platform, 16px on a phone). Ford’s <code>2em</code> is 42px.',
+    '--more-gap': 'Space between the bar and the button under it, in the body’s em. Chevrolet leaves <code>2.29em</code>, 32px; Ford <code>3.29em</code>, 46px.',
     '--tab-divider-size':
       'Size of the divider as a fraction of the tab text. <code>1</code> is the tab size; Chevrolet draws its <code>|</code> at the page’s body size, <code>0.78</code> of an 18px tab.',
     '--tab-fade':

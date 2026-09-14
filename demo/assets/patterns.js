@@ -578,7 +578,11 @@ ${VIDEO_DIALOG_CSS}`,
         // live bar is Bootstrap's 0.15s; 0s is the instant switch this
         // pattern always had).
         '--tab-gap': '0.25em',
-        '--tab-pad': '0.6em',
+        // The whole padding shorthand since 2026-09-14 (it was the block
+        // padding alone, over a 1.1em literal each side): Ford's cells run
+        // 5px a side, and the line over a picked Ford tab is padding too -
+        // see --tab-line-inset.
+        '--tab-pad': '0.6em 1.1em',
         // A fraction of the tab text, not a length: the divider's own em
         // would otherwise be its own size, and the offset that centres it
         // in the gap has to be in the TAB's em. 1 is the tab size.
@@ -588,6 +592,61 @@ ${VIDEO_DIALOG_CSS}`,
         // its centre (the live bar: 0.15s, ease-out). 0s is the instant
         // switch this pattern always had.
         '--tab-line-grow': '0s',
+        // forddemo1's bar, measured 2026-09-14 the afternoon after Chevrolet's:
+        // the same pattern in a different dress, and every difference below
+        // was a value once these existed. Cells that share the row equally on
+        // a grey ground, the picked one white with a 5px line on TOP and no
+        // line on hover, a 1px rule between cells and under the unpicked
+        // ones, the row and the panes inside one bordered box whose panes are
+        // padded, a lead paragraph under the heading. Defaults are what the
+        // literals were, so an untouched bar and Chevrolet's draw the same.
+        //
+        // How each cell is sized: `0 1 auto` is its own text's width, which
+        // is what centred tabs want; `1 1 0%` shares the row equally, which
+        // is what a row of cells wants (Ford). A filled row has nothing to
+        // line up with, so cssFor() leaves the arrow channel off the strip
+        // when the grow is non-zero.
+        '--tab-flex': '0 1 auto',
+        '--tab-leading': '1.55',
+        '--tab-case': 'none',
+        '--tab-color': 'currentcolor',
+        '--tab-bg': 'transparent',
+        '--tab-selected-bg': 'transparent',
+        // The line under (or over) a picked tab sits INSIDE the tab's padding
+        // box: `auto 0` is flush with the bottom, `0 auto` with the top. The
+        // padding is what makes room for it - Chevrolet's 2px under, Ford's
+        // 5px over - which is why --tab-pad became the whole shorthand.
+        '--tab-line-size': '2px',
+        '--tab-line-inset': 'auto 0',
+        // What the line is under a tab that is only hovered. Chevrolet grows
+        // the same line; Ford draws none, and says so with transparent.
+        '--tab-line-hover': 'var(--tab-line)',
+        // A 1px rule under each UNPICKED tab and a 1px rule between cells,
+        // drawn over the row's own rule so the two never stack. Ford's cells
+        // have both in #ccc; a centred row wants neither.
+        '--tab-cell-rule': 'transparent',
+        '--tab-cell-divider': 'transparent',
+        '--tab-row-gap': '1em',
+        // Below 992px, where the platform's 12-column grid drops to its tablet
+        // tier. Ford's tabs go from 16px to 12px there; the pattern's own
+        // follow --tab-size unless told otherwise.
+        '--tab-size-narrow': 'var(--tab-size)',
+        // The padding is in the tab's own em, so a tab that shrinks there
+        // would pull its padding in with it - Ford's stays 10px over and
+        // 15px under the label at every width, which in a 12px tab is more
+        // em, not less.
+        '--tab-pad-narrow': 'var(--tab-pad)',
+        // The box around the row and the panes (Ford: 1px #ccc), and the
+        // padding inside it around the panes and the button (Ford: 30px, 15px
+        // below 992). Zero and none by default: a bar with no box draws none.
+        '--box-border': 'none',
+        '--box-pad': '0.1px',
+        '--box-pad-narrow': 'var(--box-pad)',
+        // Space under the heading, under the lead paragraph and over the
+        // button, each in its own em (the heading's is 36px on the platform).
+        '--title-gap': '0.19em',
+        '--lead-gap': '2em',
+        '--more-gap': '2.29em',
       },
       hideDots: true,
       panes: ['Trucks', 'SUVs', 'Crossovers'],
@@ -596,18 +655,42 @@ ${VIDEO_DIALOG_CSS}`,
       // a section under the page's h1 is an h2, and copying the site's level
       // would ship a heading outline that skips a level.
       title: 'View Our Lineup',
+      // A paragraph under the heading, in the platform's own lead class
+      // (Ford: "See our full lineup of vehicles…"). Empty by default, so a
+      // bar that never had one ships none.
+      lead: '',
       more: { text: 'Explore All New Inventory', href: '/searchnew.aspx' },
-      css: `.cargo-title { margin: 0 0 0.19em; text-align: center; }
-.cargo-tabs { display: flex; flex-wrap: wrap; justify-content: center; margin-block-end: 1em; border-block-end: 1px solid var(--tab-rule); }
-.cargo-tabs [role="tab"] { position: relative; padding: var(--tab-pad) 1.1em; margin-inline: calc(var(--tab-gap) / 2); font: inherit; font-size: var(--tab-size); font-weight: var(--tab-weight); line-height: 1.55; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: var(--tab-dim); }
-.cargo-tabs [role="tab"][aria-selected="true"] { color: var(--tab-selected); opacity: 1; }
-/* The line under the selected tab is a box over the tab's (transparent) 2px
-   border, not the border itself, so it can grow out from the centre the way
-   the live bar's does. Zero wide on an unselected tab, so nothing shows. */
-.cargo-tabs [role="tab"]::after { position: absolute; inset-block-end: -2px; inset-inline-start: 50%; inline-size: 0; block-size: 2px; content: ""; background: var(--tab-line); }
+      css: `/* :is(h2) and :is(p) for one reason: the platform's own .h1 and .lead rules
+   set margins at (0,1,0), which is exactly what a scoped .cargo- rule weighs,
+   and which of the two the page emits last is undocumented. The element name
+   is one point more, so the spacing here wins in either order. */
+.cargo-title:is(h2) { margin: 0 0 var(--title-gap); text-align: center; }
+.cargo-lead:is(p) { margin: 0 0 var(--lead-gap); text-align: center; }
+/* The row and the panes sit in one box, the panes and the button in a padded
+   body inside it, so a border can wrap the row without padding it - Ford's
+   cells run edge to edge. Both are no-ops until a value says otherwise. */
+.cargo-box { border: var(--box-border); }
+.cargo-body { padding: var(--box-pad); }
+.cargo-tabs { display: flex; flex-wrap: wrap; justify-content: center; margin-block-end: var(--tab-row-gap); border-block-end: 1px solid var(--tab-rule); }
+/* Each tab overlaps the row's rule by the 1px of its own bottom border, so a
+   cell rule (Ford) draws where the row rule would and the two never stack;
+   the picked tab's border goes transparent and the row rule shows through. */
+.cargo-tabs [role="tab"] { position: relative; flex: var(--tab-flex); padding: var(--tab-pad); margin-block-end: -1px; margin-inline: calc(var(--tab-gap) / 2); font: inherit; font-size: var(--tab-size); font-weight: var(--tab-weight); line-height: var(--tab-leading); color: var(--tab-color); text-transform: var(--tab-case); cursor: pointer; background: var(--tab-bg); border: 0; border-block-end: 1px solid var(--tab-cell-rule); opacity: var(--tab-dim); }
+/* A rule between cells, drawn inside the tab that follows so it costs no
+   width - a real border would move every centred tab by a pixel. */
+.cargo-tabs [role="tab"] + [role="tab"] { box-shadow: inset 1px 0 var(--tab-cell-divider); }
+.cargo-tabs [role="tab"][aria-selected="true"] { color: var(--tab-selected); background: var(--tab-selected-bg); border-block-end-color: transparent; opacity: 1; }
+/* The line under the selected tab is a box inside the tab's padding, not a
+   border, so it can grow out from the centre the way the live bar's does.
+   Zero wide on an unselected tab, so nothing shows. */
+.cargo-tabs [role="tab"]::after { position: absolute; inset-block: var(--tab-line-inset); inset-inline-start: 50%; inline-size: 0; block-size: var(--tab-line-size); content: ""; background: var(--tab-line); }
 /* Selected, or under the pointer: the live rule pairs li.active a::after
    with li a:hover::after, so the line grows out on hover and shrinks back
-   on leave, and a click keeps it. */
+   on leave, and a click keeps it. Hover has its own colour so a bar can
+   draw no line there at all (Ford); the picked tab's is restated after it,
+   so hovering the picked tab never dims its line. */
+.cargo-tabs [role="tab"]:hover::after { background: var(--tab-line-hover); }
+.cargo-tabs [role="tab"][aria-selected="true"]::after { background: var(--tab-line); }
 .cargo-tabs [role="tab"][aria-selected="true"]::after, .cargo-tabs [role="tab"]:hover::after { inset-inline-start: 0; inline-size: 100%; }
 @media (prefers-reduced-motion: no-preference) { .cargo-tabs [role="tab"]::after { transition: inline-size var(--tab-line-grow) cubic-bezier(0.215, 0.61, 0.355, 1), inset-inline-start var(--tab-line-grow) cubic-bezier(0.215, 0.61, 0.355, 1); } }
 /* The divider sits on the tab that FOLLOWS it, centred in the space before
@@ -624,7 +707,13 @@ ${VIDEO_DIALOG_CSS}`,
    button its btn-cta classes, so the site's own theme sizes and colours
    both - nothing here may name a size, a weight or a colour, or the
    snippet would override the theme it lands in. */
-.cargo-more { margin: 2.29em 0 0; text-align: center; }
+.cargo-more { margin: var(--more-gap) 0 0; text-align: center; }
+/* The platform's tablet tier. Ford's live bar drops its tabs to 12px and its
+   box padding to 15px here; the defaults follow the wide values. */
+@media (max-width: 991.98px) {
+  .cargo-tabs [role="tab"] { padding: var(--tab-pad-narrow); font-size: var(--tab-size-narrow); }
+  .cargo-body { padding: var(--box-pad-narrow); }
+}
 /* Three tabs need 272px at the default padding, and a 320px phone leaves 236 -
    so Chevrolet's own three body styles wrapped onto two rows at the narrowest
    size anyone browses at. The padding gives way, not the type: 99px of that

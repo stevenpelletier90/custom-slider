@@ -87,11 +87,17 @@ categorical: compare aspects, say what will happen, stay silent when they agree.
 because `modelsFor()` swaps the roster under a brand preset or edited content.
 
 **A brand variant is knob values, never a CSS block and never markup.** `brands.js` entries may
-carry `styles` (card values by look, pattern values by pattern, tab names), measured on the OEM's
-live demo and cited in `source`. A measurement copies knob values only — never markup, script, units
-or a CSS block; a demo's `18px` lands as `1.125em` of the site body, and no gate catches a copied
-`px`, so this is a rule to read. `applyBrand()` writes them where the panel edits them,
-`defaultFor()` resets a knob to the brand and "Start from the default" to the pattern,
+carry `styles` (card values by look, pattern values by pattern, tab names, and since 2026-09-14 the
+`words` around a tabbed bar: heading, lead, button text and link), measured on the OEM's live demo
+and cited in `source`. A tab name may hold a phone-only part in square brackets
+(`SUVs [& Crossovers]`), which `htmlFor()` wraps in the platform's own `hidden-xs` span — markup the
+platform already styles, not CSS of ours. Ford's bar (forddemo1) is the second measured tabbed bar
+and the proof of the rule: a filled row of cells, a line on top, a bordered box and a lead paragraph
+all became knobs on the same pattern (`--tab-flex`, `--tab-line-inset`, `--box-*`, `--*-narrow` for
+the platform's 992px tier), never a second pattern. A measurement copies knob values only — never
+markup, script, units or a CSS block; a demo's `18px` lands as `1.125em` of the site body, and no
+gate catches a copied `px`, so this is a rule to read. `applyBrand()` writes them where the panel
+edits them, `defaultFor()` resets a knob to the brand and "Start from the default" to the pattern,
 `renderPattern(id, cls, { brand })` draws them on `brands.html` and as the brand control above the
 stage (measured brands as chips, the rest in an Other brand list; no Brand list in the settings
 panel). `check-looks.mjs` fails on a key that is not an existing knob. A value in a pattern's CSS is

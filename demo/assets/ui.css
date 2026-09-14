@@ -2298,6 +2298,31 @@ code {
   border-color: var(--cta-hover-color);
 }
 
+/* The lead paragraph's classes and the phone-only span a tab name can carry,
+   Bootstrap 3's own again. */
+.gx-stage .lead {
+  margin: 0 0 20px;
+  font-size: 16px;
+  font-weight: 300;
+  line-height: 1.4;
+}
+
+@media (width >= 768px) {
+  .gx-stage .lead {
+    font-size: 21px;
+  }
+}
+
+.gx-stage .text-muted {
+  color: #777;
+}
+
+@media (width <= 767px) {
+  .gx-stage .hidden-xs {
+    display: none !important;
+  }
+}
+
 /* The white card is scaffolding for looks that assume a light page. A look that
    paints its own strip supplies that itself, so the frame just doubles up. */
 .gx-stage--bare {

@@ -117,19 +117,33 @@ test('a brand with a font is shown in it; the generated CSS never names one', as
   const got = await page.evaluate(() => {
     const chevy = document.querySelector('#b-chevrolet .bb-stage [role="tab"]');
     const other = document.querySelector('#b-acura .bb-stage .cargo-name');
+    // Ford's font is on its headings alone (`headings: true`): the heading
+    // wears it through theme.css, the tabs stay in the page's Arial.
+    const fordHead = document.querySelector('#b-ford .bb-stage .cargo-title');
+    const fordTab = document.querySelector('#b-ford .bb-stage [role="tab"]');
     return {
       chevy: getComputedStyle(chevy).fontFamily,
       other: getComputedStyle(other).fontFamily,
+      fordHead: getComputedStyle(fordHead).fontFamily,
+      fordTab: getComputedStyle(fordTab).fontFamily,
       link: !!document.querySelector('link[href="https://cdn.dealeron.com/assets/fonts/chevy-sans/fonts.min.css"]'),
+      fordLink: !!document.querySelector('link[href="https://cdn.dealeron.com/assets/fonts/fordantenna/fonts.min.css"]'),
       note: document.querySelector('#b-chevrolet .bb-note')?.textContent,
+      fordNote: document.querySelector('#b-ford .bb-note')?.textContent,
       css: document.getElementById('gx-css').textContent,
+      theme: document.getElementById('gx-theme').textContent,
     };
   });
   assert.match(got.chevy, /^ChevySans/);
   assert.match(got.other, /^Arial/, 'a brand without a font keeps the stage font');
+  assert.match(got.fordHead, /^antennaRegular/);
+  assert.match(got.fordTab, /^Arial/, "Ford's font is on the headings only");
   assert.equal(got.link, true);
+  assert.equal(got.fordLink, true);
   assert.match(got.note, /Shown in ChevySans/);
-  assert.doesNotMatch(got.css, /font-family|ChevySans|@import/i, 'the font is page scaffolding, never generated CSS');
+  assert.match(got.fordNote, /Headings shown in antennaRegular/);
+  assert.doesNotMatch(got.css, /font-family|ChevySans|antenna|@import/i, 'the font is page scaffolding, never generated CSS');
+  assert.match(got.theme, /#b-ford \.bb-stage \.h1 \{font-family:antennaRegular/, "the brand's theme rules live in the scaffolding sheet, scoped to its stage");
 });
 
 test('a roster-only brand shows its own cars on the model bar', async () => {
