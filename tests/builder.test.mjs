@@ -43,13 +43,21 @@ test.describe('the three copy buttons', () => {
     for (const id of await patternIds(page)) {
       await pick(page, id);
       const box = await page.evaluate(() => document.getElementById('wb-code').textContent);
-      const hasScript = await page.evaluate(() => !!globalThis.CARGO.PATTERNS[location.hash.slice(1) || 'modelbar'].script);
       const p = await copyParts(page);
 
       assert.doesNotMatch(p.css, /<\/?(style|script)\b/i, `${id}: the CSS part carries a tag`);
       assert.match(p.css.trimStart(), /^\./, `${id}: the CSS part does not start with a selector`);
       assert.match(p.html.trimStart(), /^</, `${id}: the HTML part is not markup`);
-      assert.equal(p.jsHidden, !hasScript, `${id}: the script button does not match whether the pattern has one`);
+      // No script part since 2026-09-14: pattern scripts ship in the engine
+      // file, so a page has nothing to paste into Body Section Bottom.
+      assert.equal(p.jsHidden, true, `${id}: offers a script to paste`);
+      assert.equal(p.js, '', `${id}: ships a script part`);
+      // Nor any structure: a rule on a cargo- descendant is the shared file's.
+      // The two per-slider rules that legitimately name one - the gutter on a
+      // tab strip or filter bar, and the stacked-rows column - are taken out
+      // before looking.
+      const perSlider = p.css.replace(/\.cargo-(?:tabs|filterbar) \{ padding-inline: [^}]*\}/g, '').replace(/\.cargo-col \{[^}]*\}/g, '');
+      assert.doesNotMatch(perSlider, /\.cargo-[\w-]+\s*[,{]/, `${id}: pastes pattern structure that lives in the shared stylesheet`);
 
       const rebuilt = `<style>\n${p.css}\n</style>\n\n${p.html}${p.js ? `\n\n<script>\n${p.js}\n</script>` : ''}`;
       assert.equal(rebuilt, box, `${id}: the three parts do not reassemble into the box`);
@@ -366,20 +374,22 @@ test.describe('the pasted block on a hostile host page', () => {
   // F024: the Tall photos marker queried .cs-dots the moment it ran, so pasted
   // at body bottom it found nothing and never wrote its counters - and that
   // marker is the pattern's only visible page indicator.
-  test('a pattern script works with the engine loaded before it and after it', async () => {
+  // Since 2026-09-14 the pattern scripts ride in the engine file itself, after
+  // the engine and each behind the same readiness guard, so the only order a
+  // page can have is the right one - and a page that pastes nothing but the
+  // markup and the values still gets the marker wired.
+  test('a pattern script runs from the shared engine file with nothing pasted', async () => {
     await pick(page, 'models');
     const p = await copyParts(page);
-    assert.equal(p.jsHidden, false, 'Tall photos no longer ships a script');
-    for (const order of ['engine first', 'script first']) {
-      const body = order === 'engine first' ? `<script>${engine.engineJs}<\/script><script>${p.js}<\/script>` : `<script>${p.js}<\/script><script>${engine.engineJs}<\/script>`;
-      await host.setContent(
-        `<!doctype html><html><head><meta charset="utf-8"><style>html{font-size:10px}body{margin:0;font-family:Arial,sans-serif}#box{inline-size:1170px}</style><style>${engine.engineCss}</style><style>${p.css}</style></head><body><div id="box">${p.html}</div>${body}</body></html>`,
-        { waitUntil: 'load' },
-      );
-      await host.waitForTimeout(250);
-      const count = await host.evaluate(() => document.querySelector('#box .cs-dots')?.style.getPropertyValue('--bar-count') ?? '');
-      assert.notEqual(count, '', `${order}: the marker never got its counters`);
-    }
+    assert.equal(p.js, '', 'Tall photos still ships a script to paste');
+    assert.match(engine.engineJs, /\/\*! patterns \*\//, 'the engine file carries no pattern section');
+    await host.setContent(hostHtml({ ...engine, css: p.css, html: p.html }), { waitUntil: 'load' });
+    await host.waitForTimeout(250);
+    const count = await host.evaluate(() => document.querySelector('#box .cs-dots')?.style.getPropertyValue('--bar-count') ?? '');
+    assert.notEqual(count, '', 'the marker never got its counters from the shared script');
+    // And the structure came from the shared stylesheet: the bar is drawn.
+    const bar = await host.evaluate(() => getComputedStyle(document.querySelector('#box .cs-dots'), '::before').content);
+    assert.equal(bar, '""', 'the marker bar is not drawn - the shared pattern CSS did not reach the host');
   });
 });
 

@@ -87,6 +87,17 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   specced in `docs/specs/2026-09-14-shared-pattern-structure-design.md` and not started; measured
   for it: chevroletdemo1 serves its whole theme as 287 KB of inline `<style>` in a 469 KB page, so
   Style Only CSS is paid for on every page view and never cached.
+- 2026-09-14, shared pattern structure shipped (Steven's four answers are in the spec). The first
+  run left every wrap without its `data-cargo` attribute: a `sed` over the four wrap lines matched
+  only the lightbox's, so the shared rules matched nothing, the tabs drew in the UA button font and
+  six tests failed the same way - the fix was three `Edit`s, and the lesson is the standing one
+  about `sed` and template literals. The preview frame and the two catalogue pages build markup
+  after the deferred engine file has already run its pattern pass, which is why the pass is
+  published as `CustomSlider.wirePatterns()` and called once per build there; eval'ing the pattern
+  source as before would have wired every tab twice against the shipped copy. Measured after: the
+  Chevrolet tabbed bar's paste is 39 lines / 436 B gzipped (was 56 lines / 1 020 B plus a 793 B
+  script); the shared files carry 2.7 KB of pattern CSS and 1.3 KB of scripts gzipped; the engine is
+  unchanged at 6 364 B. The axe audit's one finding is the same as before.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

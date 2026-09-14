@@ -18,7 +18,7 @@ decision are `docs/backlog.md`; the dated evidence behind the rules here is `doc
 ## Commands
 
 ```bash
-npm run build          # src → dist via esbuild (bundle+minify JS, minify CSS), then appends the generated card styles to the CSS
+npm run build          # src → dist via esbuild (bundle+minify JS, minify CSS), then appends the generated card styles to the CSS and the pattern structure + scripts to both
 npm run size           # build + gzip budget gate — FAILS at ≥ 6656 B total
 npm run validate       # stylelint (files + generated) + eslint + prettier --check + check:looks  (fast; run before committing)
 npm run test           # @playwright/test browser checks (`npx playwright test --list` for the count), starts its own server on 8137 (reuses one already running)
@@ -56,6 +56,21 @@ engine stylesheet behind a `/*! cards */` marker. One file, because every site l
 is load-bearing: `npm run size` splits on it to weigh the ENGINE alone. The builder emits
 shared-class markup with only the properties that differ from the look's defaults and offers no
 inlined copy of the card styles — an inlined copy can never be fixed.
+
+**Pattern structure and pattern scripts are SHARED too, never pasted** (spec
+`2026-09-14-shared-pattern-structure-design.md`). `scripts/build-patterns.mjs` appends every
+pattern's CSS and the six pattern scripts to both `dist` files behind a `/*! patterns */` marker,
+from the same `PATTERNS` the builder draws with; `npm run size` splits both files on it and weighs
+the engine alone. `htmlFor()` names the pattern on its outermost element, `data-cargo="<id>"` (the
+wrap where there is one, else the root), and every shared rule is `:where([data-cargo])`-scoped: a
+root rule at (0,1,0), a descendant one class more, a pattern's own prop defaults at (0,0,0). The
+engine's rules tie and lose on source order inside the one file; a designer's rule under their
+slider's name is one class higher and wins in any order — the sanctioned per-site override. A
+snippet is values and markup only: `cssFor()` emits pattern-own props as deltas against those
+defaults and no `.cargo-` rule but the gutter and the stacked-rows column; there is no JS part. The
+pattern scripts publish `CustomSlider.wirePatterns()` for markup added after load; the preview frame
+and the two catalogue pages call it once per build, a dealer page never does. A change to
+`patterns.js` is an upload, exactly like a change under `src/`.
 
 **Every card is a rail entry; there is no card-style picker.** All seven looks emit different
 element trees, so a control that swaps markup is not a style control. The seven looks are seven rail

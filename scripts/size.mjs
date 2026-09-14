@@ -31,14 +31,24 @@ const BUDGET = 6656;
 // those are carousel engines with no card library in them. Counting the cards
 // against it would keep the number and quietly change the question it answers.
 // scripts/build-cards.mjs writes the marker this splits on.
+//
+// Since 2026-09-14 both files carry a THIRD section behind `/*! patterns */`
+// (scripts/build-patterns.mjs): every pattern's structural CSS, and the six
+// pattern scripts. Same rule - pattern wiring is not engine, so it is weighed
+// beside the budget, not against it.
 const cssAll = readFileSync('dist/custom-slider.min.css', 'utf8');
-const cut = cssAll.indexOf('/*! cards */');
-const engineCss = cut === -1 ? cssAll : cssAll.slice(0, cut);
-const cardsCss = cut === -1 ? '' : cssAll.slice(cut);
+const jsAll = readFileSync('dist/custom-slider.min.js', 'utf8');
+const split = (text, mark) => {
+  const at = text.indexOf(mark);
+  return at === -1 ? [text, ''] : [text.slice(0, at), text.slice(at)];
+};
+const [cssNoPatterns, patternsCss] = split(cssAll, '/*! patterns */');
+const [engineCss, cardsCss] = split(cssNoPatterns, '/*! cards */');
+const [engineJs, patternsJs] = split(jsAll, '/*! patterns */');
 
 let total = 0;
 for (const [name, buf] of [
-  ['dist/custom-slider.min.js', readFileSync('dist/custom-slider.min.js')],
+  ['dist/custom-slider.min.js (engine)', Buffer.from(engineJs)],
   ['dist/custom-slider.min.css (engine)', Buffer.from(engineCss)],
 ]) {
   const gz = gzipSync(buf, { level: 9 }).length;
@@ -48,12 +58,10 @@ for (const [name, buf] of [
 console.log(`total: ${total} B gzip (budget ${BUDGET})`);
 
 // Reported so the real transfer size is never a surprise, but outside the gate.
-if (cardsCss) {
-  const cards = gzipSync(Buffer.from(cardsCss), { level: 9 }).length;
-  const whole = gzipSync(Buffer.from(cssAll), { level: 9 }).length;
-  console.log(`  card styles in the same file: ${cards} B gzip`);
-  console.log(`  what a site actually downloads: ${whole} B CSS + ${gzipSync(readFileSync('dist/custom-slider.min.js'), { level: 9 }).length} B JS`);
-}
+const gz = (text) => gzipSync(Buffer.from(text), { level: 9 }).length;
+if (cardsCss) console.log(`  card styles in the same file: ${gz(cardsCss)} B gzip`);
+if (patternsCss || patternsJs) console.log(`  pattern structure in the same files: ${gz(patternsCss)} B CSS + ${gz(patternsJs)} B JS gzip`);
+console.log(`  what a site actually downloads: ${gz(cssAll)} B CSS + ${gz(jsAll)} B JS`);
 
 if (total >= BUDGET) {
   console.error(`FAIL: at or over the ${BUDGET} B gzip budget`);

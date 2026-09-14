@@ -94,7 +94,9 @@ test('every measured stage shows its code, closed, and it is byte for byte the b
     assert.ok(b.code && b.code.startsWith('<style>'), `${b.pattern}: no code shown`);
   }
   const tabs = boxes.find((b) => b.pattern === 'tabs');
-  assert.ok(tabs.buttons.includes('js'), 'the tabbed bar has a script and the box should offer it');
+  // No script button anywhere: pattern scripts ship in the engine file since
+  // 2026-09-14, so there is nothing to paste into Body Section Bottom.
+  assert.ok(!tabs.buttons.includes('js'), 'the box offers a script to paste, and there is none to paste');
   // The builder, same pattern, same brand: its code box text is what its
   // three copy buttons assemble, so this is the copy buttons by proxy.
   const ctx = await browser.newContext({ viewport: { width: 1500, height: 900 } });

@@ -38,11 +38,6 @@
     return BRANDS[a].label.localeCompare(BRANDS[b].label);
   });
 
-  // Every pid actually rendered onto the page, filled in as the grid is
-  // built, so the script pass below can run only those patterns' scripts
-  // instead of every pattern's whether it appears here or not.
-  const rendered = new Set();
-
   for (const id of ids) {
     const b = BRANDS[id];
     const measured = patternsOf(id);
@@ -77,7 +72,6 @@
       document.head.append(link);
     }
     for (const pid of measured.length ? measured : ['modelbar']) {
-      rendered.add(pid);
       const cls = `bb-${id}-${pid}`;
       const r = renderPattern(pid, cls, { brand: id });
       css.push(r.css);
@@ -131,18 +125,10 @@
   for (const root of document.querySelectorAll('.bb-stage .cs')) {
     if (!root.dataset.csInit) new globalThis.CustomSlider(root);
   }
-  const scripts = new Set();
-  for (const pid of rendered) {
-    const p = PATTERNS[pid];
-    if (p.script) scripts.add(p.script);
-  }
-  for (const s of scripts) {
-    try {
-      new Function(s)();
-    } catch (e) {
-      console.error('pattern script failed on the brands page', e);
-    }
-  }
+  // The pattern scripts ship in the engine file since 2026-09-14 and ran
+  // once when it loaded, before these stages existed; one more pass wires
+  // what was just built. The same code a dealer page runs, not a copy.
+  globalThis.CustomSlider?.wirePatterns?.();
 
   // A tile's href — and a shared deep link — carries the bare brand id
   // (#toyota), never the section's own id="b-toyota"; the "b-" is purely to

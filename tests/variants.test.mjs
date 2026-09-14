@@ -572,7 +572,7 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     let { html, css } = await copyParts(page);
     assert.match(html, /<h2 class="h1 cargo-title">Our Lineup<\/h2>/);
     assert.doesNotMatch(html, /cargo-more/, 'an empty button text still ships a button');
-    assert.match(css, /\.cargo-title \{/, 'the heading rule did not ship');
+    assert.doesNotMatch(css, /\.cargo-title \{/, 'the heading rule is structure and lives in the shared file, not the paste');
     await setField(page, 'Heading over the bar', '');
     ({ html } = await copyParts(page));
     assert.doesNotMatch(html, /cargo-title/, 'an empty heading still ships an h2');

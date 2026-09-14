@@ -682,3 +682,154 @@
     run();
   }
 })();
+/*! patterns */
+(function () {
+  var wire = function () {
+    try {
+      document.querySelectorAll('[data-video-dialog]').forEach((root) => {
+        const dlg = root.querySelector('.cargo-vdlg');
+        const title = dlg.querySelector('.cargo-vdlg-title');
+        const media = dlg.querySelector('.cargo-vdlg-media');
+        const empty = media.innerHTML;
+        root.querySelectorAll('[data-video]').forEach((poster) => {
+          poster.addEventListener('click', () => {
+            title.textContent = poster.dataset.video;
+            dlg.setAttribute('aria-label', poster.dataset.video);
+            const src = poster.dataset.videoSrc;
+            if (!src) media.innerHTML = empty;
+            else if (/youtube|youtu\.be|vimeo/.test(src)) media.innerHTML = '<iframe src="' + src + '" title="' + poster.dataset.video + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+            else media.innerHTML = '<video src="' + src + '" controls playsinline></video>';
+            dlg.showModal();
+          });
+        });
+        // Covers the Close button, the Escape key and a click on the backdrop with
+        // one listener, because all three end in the same event.
+        dlg.addEventListener('close', () => { media.innerHTML = empty; });
+      });
+    } catch (e) {
+      console.error('custom-slider: the video pattern script failed', e);
+    }
+    try {
+      document.querySelectorAll('[data-tabs]').forEach((wrap, w) => {
+        const tabs = [...wrap.querySelectorAll('[role="tab"]')];
+        const panes = [...wrap.querySelectorAll('[role="tabpanel"]')];
+        // Re-id per widget, and find panes within this wrapper rather than by
+        // getElementById. The markup ships fixed ids, so two of these on one page
+        // would otherwise share them and each tab would drive the other's panes.
+        tabs.forEach((t, i) => {
+          const tid = 'cargo-tab-' + w + '-' + i;
+          const pid = 'cargo-pane-' + w + '-' + i;
+          t.id = tid;
+          panes[i].id = pid;
+          t.setAttribute('aria-controls', pid);
+          panes[i].setAttribute('aria-labelledby', tid);
+        });
+        // picked marks a pane the reader switched to, which is what the fade in
+        // the CSS keys on - the pane the page loads with is shown without it, so
+        // nothing fades on load.
+        const show = (i, picked) => tabs.forEach((t, j) => {
+          t.setAttribute('aria-selected', String(i === j));
+          t.tabIndex = i === j ? 0 : -1;
+          panes[j].hidden = i !== j;
+          if (picked && i === j) panes[j].setAttribute('data-in', '');
+        });
+        tabs.forEach((t, i) => t.addEventListener('click', () => show(i, true)));
+        wrap.addEventListener('keydown', (e) => {
+          const i = tabs.indexOf(e.target);
+          if (i < 0) return;
+          const to = e.key === 'ArrowRight' ? i + 1 : e.key === 'ArrowLeft' ? i - 1 : e.key === 'Home' ? 0 : e.key === 'End' ? tabs.length - 1 : -1;
+          if (to < 0) return;
+          e.preventDefault();
+          const n = (to + tabs.length) % tabs.length;
+          show(n, true);
+          tabs[n].focus();
+        });
+        show(0);
+      });
+    } catch (e) {
+      console.error('custom-slider: the tabs pattern script failed', e);
+    }
+    try {
+      document.querySelectorAll('[data-bar]').forEach((root) => {
+        const sync = () => {
+          const bar = root.querySelector('.cs-dots');
+          if (!bar) return;
+          const dots = [...bar.children];
+          bar.style.setProperty('--bar-count', dots.length || 1);
+          bar.style.setProperty('--bar-index', Math.max(0, dots.findIndex((d) => d.classList.contains('cs-dot--current'))));
+        };
+        // Watch the carousel, not the dot row: the dots are built by the engine and
+        // may not exist yet, whatever order the two scripts loaded in. The same
+        // observer catches the class flipping on a page change and the children
+        // being rebuilt when a breakpoint changes the page count.
+        new MutationObserver(sync).observe(root, { subtree: true, childList: true, attributes: true, attributeFilter: ['class'] });
+        sync();
+      });
+    } catch (e) {
+      console.error('custom-slider: the models pattern script failed', e);
+    }
+    try {
+      document.querySelectorAll('[data-filter-gallery]').forEach((wrap) => {
+        const root = wrap.querySelector('.cs');
+        const all = [...root.querySelectorAll('.cs-slide')].map((s) => s.cloneNode(true));
+        wrap.querySelectorAll('[data-filter]').forEach((btn) => {
+          btn.addEventListener('click', () => {
+            const tag = btn.dataset.filter;
+            wrap.querySelectorAll('[data-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
+            if (root._cs) root._cs.destroy();
+            // Re-query AFTER destroy(). destroy() puts the root's original markup
+            // back, so any element captured before it is now detached and writing
+            // to it changes nothing you can see.
+            const track = root.querySelector('.cs-track');
+            track.replaceChildren(...all.filter((s) => !tag || s.querySelector('[data-tag]').dataset.tag === tag).map((s) => s.cloneNode(true)));
+            new CustomSlider(root);
+          });
+        });
+      });
+    } catch (e) {
+      console.error('custom-slider: the gallery-filter pattern script failed', e);
+    }
+    try {
+      document.querySelectorAll('[data-video-dialog]').forEach((root) => {
+        const dlg = root.querySelector('.cargo-vdlg');
+        const title = dlg.querySelector('.cargo-vdlg-title');
+        const media = dlg.querySelector('.cargo-vdlg-media');
+        const empty = media.innerHTML;
+        root.querySelectorAll('[data-video]').forEach((poster) => {
+          poster.addEventListener('click', () => {
+            title.textContent = poster.dataset.video;
+            dlg.setAttribute('aria-label', poster.dataset.video);
+            const src = poster.dataset.videoSrc;
+            if (!src) media.innerHTML = empty;
+            else if (/youtube|youtu\.be|vimeo/.test(src)) media.innerHTML = '<iframe src="' + src + '" title="' + poster.dataset.video + '" allow="accelerometer; autoplay; clipboard-write; encrypted-media; picture-in-picture" allowfullscreen></iframe>';
+            else media.innerHTML = '<video src="' + src + '" controls playsinline></video>';
+            dlg.showModal();
+          });
+        });
+        // Covers the Close button, the Escape key and a click on the backdrop with
+        // one listener, because all three end in the same event.
+        dlg.addEventListener('close', () => { media.innerHTML = empty; });
+      });
+    } catch (e) {
+      console.error('custom-slider: the media-gallery pattern script failed', e);
+    }
+    try {
+      document.querySelectorAll('[data-lightbox]').forEach((wrap) => {
+        const dlg = wrap.querySelector('dialog');
+        const root = dlg.querySelector('.cs');
+        wrap.querySelector('[data-lb-open]').addEventListener('click', () => {
+          dlg.showModal();
+          // Init AFTER the dialog is visible: a slider measured while display:none
+          // has no width, so every slide would come out the same wrong size.
+          if (!root._cs) new CustomSlider(root);
+        });
+        dlg.querySelector('[data-lb-close]').addEventListener('click', () => dlg.close());
+      });
+    } catch (e) {
+      console.error('custom-slider: the lightbox pattern script failed', e);
+    }
+  };
+  if (window.CustomSlider) window.CustomSlider.wirePatterns = wire;
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
+  else wire();
+})();

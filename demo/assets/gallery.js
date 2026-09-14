@@ -109,14 +109,8 @@
     if (!root.dataset.csInit) live.push(new globalThis.CustomSlider(root));
   }
 
-  // The few patterns that need page script get it here too, once each.
-  const scripts = new Set();
-  for (const p of Object.values(PATTERNS)) if (p.script) scripts.add(p.script);
-  for (const s of scripts) {
-    try {
-      new Function(s)();
-    } catch (e) {
-      console.error('pattern script failed on the index', e);
-    }
-  }
+  // The pattern scripts ship in the engine file since 2026-09-14 and ran
+  // once when it loaded, before these stages existed; one more pass wires
+  // what was just built. The same code a dealer page runs, not a copy.
+  globalThis.CustomSlider?.wirePatterns?.();
 })();

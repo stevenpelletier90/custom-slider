@@ -46,6 +46,10 @@
       'CustomSlider.autoInit(scope)',
       'Starts every <code>[data-cs]</code> inside <code>scope</code> that is not already running and has not opted out. The engine calls this itself once the page HTML has loaded; you only call it for markup you added later.',
     ],
+    [
+      'CustomSlider.wirePatterns()',
+      'Runs every pattern script again over the whole page - the tab rows, filter bars, lightboxes and video posters that ship in this file. It runs once by itself when the page has loaded; call it only for pattern markup your own script added afterwards, once per batch, never for markup that is already wired.',
+    ],
     ['next()', 'Move forward by whatever the arrows are set to move — a page, one card, or a set number.'],
     ['prev()', 'Move back by the same amount.'],
     ['goTo(n, { behavior })', 'Jump to slide index <code>n</code>. <code>behavior</code> overrides the scroll behaviour for this call.'],
@@ -421,7 +425,8 @@
         <p><strong>Link the two engine files. That is the only route.</strong> There is no paste-the-engine option: a pasted copy is frozen at the build it was taken from, so a fix reaches every linked page and silently misses every pasted one, with nothing anywhere saying which sites are on which. The Build page says the same, and the full instructions — the CMS fields, what the minifier does to your CSS, replacement codes and cache-busting — are in <a href="https://github.com/stevenpelletier90/custom-slider/blob/master/docs/cms-implementation.md">cms-implementation.md</a>.</p>
         ${list([
           'The two engine files are linked with a <code>&lt;link&gt;</code> and a <code>&lt;script&gt;</code> in the <strong>Head Section</strong> tab — the one that takes HTML verbatim, not “Style Only, Head Section”, which takes raw CSS and would swallow a tag. They live at <code>/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/</code>, one copy per site. The <code>&lt;script&gt;</code> may sit in <strong>Body Section, Bottom</strong> instead if you prefer it there; the <code>&lt;link&gt;</code> may not.',
-          "Your slider's own CSS goes in <strong>Style Only</strong>, the markup in a <strong>Custom HTML</strong> block, and a pattern's script in <strong>Body Section, Bottom</strong>. The Build page has a Copy button per field, because the three cannot go in as one paste.",
+          "Your slider's own CSS goes in <strong>Style Only</strong> and the markup in a <strong>Custom HTML</strong> block. The Build page has a Copy button per field, because the two cannot go in as one paste. There is no script to paste: a pattern's script rides in <code>custom-slider.min.js</code>, and so does its structure - the tab row, the filter bar, the lightbox, the photo captions - in <code>custom-slider.min.css</code>. What you paste is the values you set and the markup, nothing else.",
+          "<strong>To change how a pattern is built on one site</strong>, write one rule in Style Only under your slider's own name - <code>.my-bar-wrap .cargo-tabs [role=\"tab\"] { padding: 1em 2em; }</code> - naming only the property you change. Your rule is one class more specific than the shared file's, so it wins whatever order the platform emits the two in. Never copy the shared file's rules wholesale into Style Only: they stop taking fixes the day you do.",
           "<strong>Every slider on a page needs its own name.</strong> The name is a class on the root — <code>my-slider</code> — and it is what the CSS hangs off. Paste two sliders sharing a name and the second block's rules win for both, silently: a pair of model bars measured the first taking the second's gap, its slides going 208.6px to 180.6px. The Build page keeps that field next to its copy buttons.",
           'Style Only takes <strong>raw CSS</strong> — no <code>&lt;style&gt;</code> tags and no comments. A tag pasted into it is read as part of the first selector, so that rule is dropped and the settings it carried go with it, silently.',
           'Both engine files are shared — add them once per site, not once per slider. Several sliders on one page is fine and expected.',

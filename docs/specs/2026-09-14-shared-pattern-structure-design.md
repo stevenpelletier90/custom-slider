@@ -87,6 +87,30 @@ Concretely:
    upload, and README's "if `git log src/` has anything after the upload date, re-upload" rule
    widens to `patterns.js`.
 
+## Decisions, 2026-09-14 (Steven)
+
+1. **Scripts append to `custom-slider.min.js`** behind `/*! patterns */`, each in its own
+   `try/catch` after the engine's own start-up, published as `CustomSlider.wirePatterns()` for
+   markup added after load. One file makes the engine-then-patterns order a fact, keeps the head
+   tags at two (a copied tag someone has to edit ships wrong), keeps one version per site, and
+   isolates a throwing pattern script from the engine. `npm run size` splits the JS on the marker
+   the way it already split the CSS, so the budget still weighs the engine alone.
+2. **The readable pair carries the section too.**
+3. **Structure is edited in the shared files only.** Global by construction: the shared folder is
+   the one surface designers cannot touch, Style Only and Custom HTML blocks are theirs, and the
+   builder offers values, never structure. The escape hatch is the cascade: shared rules sit at the
+   lowest specificity that beats the engine, so a designer's one-property rule under their slider's
+   name wins in any order, and the Reference says that is the form — never a wholesale copy of the
+   shared rules, which would stop taking fixes.
+4. **A `patterns.js` change is an upload,** the same rule as `src/`.
+
+Shipped the same day: `scripts/build-patterns.mjs`, `data-cargo` on every pattern's outermost
+element, `cssFor()` down to values plus the gutter and rows rules, no JS part, the preview frame and
+catalogue pages re-wired through `wirePatterns()`. Measured after: the Chevrolet tabbed bar's paste
+is 39 lines / 436 B gzipped of values (was 56 lines / 1 020 B of CSS plus 793 B of script); the
+shared files gained 2.7 KB gzipped of pattern CSS and 1.3 KB of scripts, weighed beside the engine's
+unchanged 6 364 B.
+
 ## Verification the plan must carry
 
 - `lint-generated-css.mjs` lints the shared pattern section the way it lints the card section.

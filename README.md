@@ -200,6 +200,28 @@ layout and physics, so on a page with no stylesheet linked at all a block render
 vertical list with static arrows, whatever the column classes say. Measured, not assumed: track
 `display: block`, `overflow-x: visible`, `scroll-snap-type: none`, slide `flex-basis: auto`.
 
+### Pattern structure comes with it too
+
+Since 2026-09-14 both shared files carry a third section behind a `/*! patterns */` marker
+(`scripts/build-patterns.mjs`, run by `npm run build`): every pattern's structural CSS — the tab
+row, the filter bar, the lightbox, the photo captions — and the six pattern scripts, each in its own
+`try/catch` after the engine's own start-up. A pasted snippet is therefore **values and markup and
+nothing else**: the Chevrolet tabbed bar went from 56 lines of CSS plus a script to 39 lines of
+values, and a site pays for the structure once, cached, instead of on every page view — the platform
+serves Style Only inline in every page.
+
+The markup names its pattern on its outermost element, `data-cargo="tabs"`, and every shared rule
+hangs off that attribute at the lowest specificity that still beats the engine: `:where()` around
+the attribute, so a root rule is (0,1,0) and a descendant rule one class more. The engine's own
+rules tie and lose on source order, which is fixed because the section is appended after them in the
+same file. **A rule under your slider's own name is one class higher and wins in any order** — that
+is how a pattern is restyled on one site, one property at a time, and the only way. Copying the
+shared rules into Style Only freezes them at that day's build.
+
+Which means the shared files are the one place a pattern's structure is edited, and only whoever
+uploads them edits it. The upload rule below widens accordingly: a change under `src/` **or to
+`demo/assets/patterns.js`** puts the hosted files a build behind.
+
 ### The engine is linked, never pasted
 
 A page gets the engine from the two `<link>`/`<script>` tags and no other way. There is no
@@ -246,6 +268,11 @@ Methods: `goTo(n)`, `next()`, `prev()`, `pause()`, `play()`, `destroy()`,
 (`window.CustomSlider`) or imported as an ES module. Instance is at `element._cs`. Events (bubble
 from the root): `cs:change` `{index, page, slidesInView}`, `cs:autoplay-start`, `cs:autoplay-stop`,
 `cs:destroy`.
+
+`CustomSlider.wirePatterns()` is set by the pattern section of `custom-slider.min.js` (not by the
+engine, so it is absent from the ES module): it runs every pattern script again over the whole
+document. It runs once by itself on load; call it only for pattern markup added afterwards, once per
+batch — a tab row wired twice answers a key twice.
 
 ## Accessibility behavior (by design — don't "fix" these)
 
@@ -351,8 +378,9 @@ anywhere at that path.
 
 **⚠ `src/` has changed since that upload, so the hosted files are a build behind.** Deliberately not
 restating which bytes: any commit touching `src/` puts the folder out of date, and a byte count
-written here goes stale the same day. **The rule, not the number: if `git log src/` has anything
-after the upload date above, re-upload.** Then update that date.
+written here goes stale the same day. **The rule, not the number: if
+`git log src/ demo/assets/patterns.js` has anything after the upload date above, re-upload.** Then
+update that date.
 
 **Do not expect `custom-slider.min.css` to match `dist/` byte for byte even when it is current** —
 the platform re-minifies CSS it is given: `:after` becomes `::after`, `.5s` becomes `500ms`, `.5`
@@ -372,12 +400,14 @@ unitless number from a percentage is invalid, the declaration is dropped and the
 content width. So `okValue()` refusing a bare `0` is no longer an inference about what the minifier
 might do; the minifier has now been observed doing it.
 
-`npm run build` writes four files to `dist/`: `custom-slider.css` and `custom-slider.js` are the
-**readable** engine, for anyone opening the file to see what it does; `custom-slider.min.css` and
-`custom-slider.min.js` are the same code minified, and **the `.min` pair is what every page links**
-— the demo, the copy panel's tags and the snippet at the top of this file all name it. The readable
-pair goes up beside it so the folder holds both; no page should link it. The other two documents
-defer to this section; do not restate a status in them.
+`npm run build` writes four files to `dist/`, each in three sections — the engine, then the card
+styles behind `/*! cards */` (CSS only), then the pattern structure and scripts behind
+`/*! patterns */`: `custom-slider.css` and `custom-slider.js` are the **readable** engine, for
+anyone opening the file to see what it does; `custom-slider.min.css` and `custom-slider.min.js` are
+the same code minified, and **the `.min` pair is what every page links** — the demo, the copy
+panel's tags and the snippet at the top of this file all name it. The readable pair goes up beside
+it so the folder holds both; no page should link it. The other two documents defer to this section;
+do not restate a status in them.
 
 **Uploading (do not skip the cache step).** The files are served with
 `cache-control: max-age=1814400` — 21 days — from behind Fastly. Overwriting a file does not shorten
@@ -427,8 +457,14 @@ there are two supported routes, and which one depends on what changed:
   block directly. Copy an existing `<li class="cs-slide">…</li>` and change it. Nothing else has to
   move.
 - **Settings** (how many across, how many rows, gap, arrow colours, a different pattern): rebuild it
-  in the builder and re-paste all three parts — CSS, HTML and script. Re-pasting only the CSS leaves
-  markup that no longer matches it.
+  in the builder and re-paste both parts — CSS and HTML. Re-pasting only the CSS leaves markup that
+  no longer matches it.
+
+**A slider pasted before 2026-09-14 carries a script in Body Section, Bottom.** Since then a
+pattern's script ships inside `custom-slider.min.js` and its structure inside
+`custom-slider.min.css`, so when the shared files are re-uploaded that pasted script must come out,
+or the tabs are wired twice and a keyboard press moves two tabs. The pasted structure rules can stay
+(they say what the shared file says) or go; the values must stay.
 
 Either way **the class name must not change**. `.my-slider` is what the Style Only rules hook onto;
 rename it and every setting silently stops applying. Give a second slider on the same page a

@@ -19,8 +19,8 @@
   const { LOOKS, BRANDS, perViewFor, pane } = globalThis.CARGO;
   // The patterns and their example rosters live in assets/patterns.js, loaded
   // just before this file; the few helpers the generator shares with them
-  // (escTab, the photo CSS, the video dialog markup, clamp) come the same way.
-  const { PATTERNS, VEHICLES, PHOTOS, MODELS, SERVICES, LOGOS, PLACES, PHOTO_CAPTION_CSS, PHOTO_LINK_CSS, VIDEO_DIALOG_HTML, escTab, clamp } = globalThis.CARGO;
+  // (escTab, the video dialog markup, clamp) come the same way.
+  const { PATTERNS, VEHICLES, PHOTOS, MODELS, SERVICES, LOGOS, PLACES, VIDEO_DIALOG_HTML, escTab, clamp } = globalThis.CARGO;
 
   // The platform's Bootstrap 3 grid, measured in its CSS bundle. Not the
   // estate's 461 / 539 / 599 / 990 / 1440 - several of those were an
@@ -460,7 +460,14 @@
   // typed zero may only keep its unit where the answer is that the zero will be
   // dropped, and a second copy of this expression would drift from the one
   // cssFor() actually filters with.
-  const cssDefaults = () => (shared() ? { ...ENGINE_DEFAULTS, ...SHARED_DEFAULTS, ...LOOKS[state.look].settings } : { ...ENGINE_DEFAULTS });
+  // A pattern's own props (--tab-*, never --cs-*/--cargo-*) are defaulted in
+  // the shared stylesheet too, at (0,0,0) on the pattern's data-cargo
+  // attribute (scripts/build-patterns.mjs), so a value equal to its default
+  // is a line that changes nothing and is dropped like an engine default.
+  // Engine-keyed props a pattern sets (--cs-gap: 0.1px) are still measured
+  // against the ENGINE's value, because that is what the shared file says.
+  const patternOwnDefaults = () => Object.fromEntries(Object.entries(PATTERNS[state.pattern].props ?? {}).filter(([k]) => !k.startsWith('--cs-') && !k.startsWith('--cargo-')));
+  const cssDefaults = () => (shared() ? { ...ENGINE_DEFAULTS, ...SHARED_DEFAULTS, ...LOOKS[state.look].settings, ...patternOwnDefaults() } : { ...ENGINE_DEFAULTS, ...patternOwnDefaults() });
 
   function cssFor(sel, preview) {
     const p = PATTERNS[state.pattern];
@@ -567,15 +574,18 @@
     // The caption rule ships only once a slide has a caption. Every photo
     // pattern would otherwise paste a figcaption rule matching nothing, the
     // same dead line the tab and filter-bar rules are already filtered for.
-    const photoRows = (p.css || '').includes('cargo-photo') ? modelsFor(p) : [];
-    const captionCss = [photoRows.some((m) => m.caption) ? PHOTO_CAPTION_CSS : '', photoRows.some((m) => m.href) ? PHOTO_LINK_CSS : ''].filter(Boolean).join('\n');
+    // A pattern's own CSS does not ship in the snippet either, since
+    // 2026-09-14: scripts/build-patterns.mjs puts every pattern's structure
+    // (and the photo caption and link rules) in the shared stylesheet, hung
+    // off the data-cargo attribute htmlFor() writes, so a fix reaches every
+    // site that links the file. What is left here is the dealer's: the
+    // values above, the ladder, and the two per-slider rules below.
     // The column a stacked slide wraps its cards in. Emitted from the Rows
     // setting rather than carried by one pattern, so the rule and the markup
     // that needs it can never be out of step - the two-row grid used to ship
     // the rule unconditionally and the markup only when `pairUp` was set.
     const rowsCss = state.rows > 1 && rowsApply() ? `.cargo-col { display: grid; grid-template-rows: repeat(${state.rows}, auto); gap: var(--cs-gap); }` : '';
-    const patternCss = [p.css || '', captionCss, rowsCss].filter(Boolean).join('\n');
-    const body = [state.look && !shared() ? scope(LOOKS[state.look].css) : '', patternCss ? scope(patternCss) : ''].filter(Boolean).join('\n');
+    const body = [state.look && !shared() ? scope(LOOKS[state.look].css) : '', rowsCss ? scope(rowsCss) : ''].filter(Boolean).join('\n');
     // Arrows either sit in a gutter beside the content or float over it. Last
     // in the sheet so it beats the padding-inline a card look sets for itself -
     // which is exactly why it has to READ the look's value rather than restate
@@ -747,9 +757,16 @@
     // the first one. An eager image inside a hidden pane is fetched anyway,
     // where a lazy one waits until the pane is shown, so eager there is
     // strictly worse than what it replaced.
+    // data-cargo names the pattern on its outermost element - the wrap where
+    // there is one (the four structural patterns put it there themselves),
+    // else the carousel root - and the shared stylesheet's pattern section
+    // hangs every structural rule off it (scripts/build-patterns.mjs). The
+    // snippet ships no structure of its own any more; this attribute is how
+    // the linked file finds what to draw.
+    const cargo = hasWrap() ? '' : ` data-cargo="${state.pattern}"`;
     const carousel = (list, label, pad = '', onScreen = true) =>
       [
-        `${pad}<div class="${cls}${libCls} cs" data-cs${attrs} aria-label="${label}">`,
+        `${pad}<div class="${cls}${libCls} cs" data-cs${cargo}${attrs} aria-label="${label}">`,
         `${pad}  <${tag} class="cs-track">`,
         // Indent the card's own lines to match, so what you paste is not a
         // wall of markup starting at column zero inside a nested list item.
@@ -809,7 +826,7 @@
       // either is in the copied CSS - see the note on .cargo-more.
       const head = title ? `  <h2 class="h1 cargo-title">${escTab(title)}</h2>\n` : '';
       const foot = moreText ? `\n  <p class="cargo-more"><a class="btn btn-cta btn-lg" href="${moreHref || '#'}">${escTab(moreText)}</a></p>` : '';
-      return `<div class="${cls}-wrap" data-tabs>\n${head}  <div class="cargo-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n${panes}${foot}\n</div>`;
+      return `<div class="${cls}-wrap" data-cargo="tabs" data-tabs>\n${head}  <div class="cargo-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n${panes}${foot}\n</div>`;
     }
 
     // Filter buttons above a gallery; the script rebuilds it per category.
@@ -817,7 +834,7 @@
       const bar = p.filters
         .map((f) => `    <button type="button" data-filter="${f}" aria-pressed="${f === '' ? 'true' : 'false'}">${f === '' ? 'All' : f[0].toUpperCase() + f.slice(1)}</button>`)
         .join('\n');
-      return `<div class="${cls}-wrap" data-filter-gallery>\n  <div class="cargo-filterbar" role="group" aria-label="Filter photos">\n${bar}\n  </div>\n${carousel(items, state.label ?? p.label, '  ')}\n</div>`;
+      return `<div class="${cls}-wrap" data-cargo="${state.pattern}" data-filter-gallery>\n  <div class="cargo-filterbar" role="group" aria-label="Filter photos">\n${bar}\n  </div>\n${carousel(items, state.label ?? p.label, '  ')}\n</div>`;
     }
 
     // A thumbnail that opens the gallery in a dialog.
@@ -828,7 +845,7 @@
       // it. Its alt text comes along too, rather than being hardcoded empty.
       const m = source[0];
       return [
-        `<div class="${cls}-wrap" data-lightbox>`,
+        `<div class="${cls}-wrap" data-cargo="lightbox" data-lightbox>`,
         `  <button type="button" class="cargo-lb-open" data-lb-open>`,
         `    <img src="${m.img}" width="68" height="44" alt="${m.alt ?? ''}" loading="eager" decoding="async">`,
         `    <span>View all ${items.length} photos</span>`,
@@ -861,7 +878,7 @@
             `  </div>`,
           ].join('\n');
         });
-      return `<div class="${cls}-wrap">\n${cards.join('\n')}\n</div>`;
+      return `<div class="${cls}-wrap" data-cargo="${state.pattern}">\n${cards.join('\n')}\n</div>`;
     }
 
     return carousel(items, state.label ?? p.label);
@@ -900,16 +917,10 @@
   // that only knew about src= left that one pointing at the demo folder.
   const toCms = (html) => html.replace(/(src|srcset)="img\/([^"]+)"/g, (_, attr, rel) => `${attr}="${globalThis.CARGO.CMS?.[rel] ?? `#MISCPATH#${rel.split('/').pop()}`}"`);
 
-  // Every pattern script goes out behind a readiness guard, so where it is
-  // pasted stops mattering. Body Section Bottom runs during parsing, while the
-  // engine's <script defer> has not executed yet - so a script that looked for
-  // markup the engine builds found nothing and never ran again. DOMContentLoaded
-  // ordering alone does not save it either: an inline script in the body
-  // registers its listener BEFORE a deferred script gets to register its own,
-  // so it would still go first. The guard fixes the "markup not parsed yet"
-  // half; the engine half is fixed in the scripts themselves, which observe
-  // the carousel rather than querying what the engine has yet to build.
-  const guarded = (src) => `(function go() {\n  if (document.readyState === 'loading') return document.addEventListener('DOMContentLoaded', go);\n${src.replace(/^/gm, '  ')}\n})();`;
+  // The pattern scripts used to go out here behind a readiness guard, pasted
+  // into Body Section Bottom. Since 2026-09-14 they ship in the engine file
+  // itself (scripts/build-patterns.mjs wraps each the same way), so the
+  // snippet has no script part and nothing here builds one.
 
   /* ---- render ----------------------------------------------------------- */
 
@@ -992,7 +1003,9 @@
       loadPattern(id);
       if (brand) applyBrand(brand);
       const p = PATTERNS[id];
-      return { name: state.name, css: cssFor(`.${state.name}`), html: toCms(htmlFor(state.name)), js: p.script ? guarded(p.script) : '' };
+      // `js` is always empty since 2026-09-14: the pattern scripts ship in
+      // the linked engine file. Kept in the shape so a caller reads one thing.
+      return { name: state.name, css: cssFor(`.${state.name}`), html: toCms(htmlFor(state.name)), js: '', pattern: p.label };
     },
     // The brands that carry values for a pattern or for its card, in the
     // order brands.js lists them. Read off the data, never a list of ids.
@@ -1356,17 +1369,13 @@
     // page instead of by the snippet.
     // The SAME string runs here and is printed in the code panel, so what you
     // copy is what you just watched work.
-    const p = PATTERNS[state.pattern];
-    if (p.script) {
-      try {
-        // Run it IN the frame, so its document.querySelectorAll sees the slider
-        // and nothing else - which is how the same script behaves once it is
-        // pasted into a dealer page. It used to run against this whole page.
-        swin().eval(p.script);
-      } catch (e) {
-        console.error(`${state.pattern}: page script failed`, e);
-      }
-    }
+    // The pattern scripts run from the linked dist/custom-slider.min.js since
+    // 2026-09-14 (scripts/build-patterns.mjs appends them behind the
+    // /*! patterns */ marker), the same file the frame links - so what you
+    // watch work is the shipped code, not a copy. They ran once when the
+    // frame loaded, over an empty stage; this render just replaced every
+    // element in it, so the pass is asked to run again over the new markup.
+    swin().CustomSlider.wirePatterns?.();
     wireOverlay();
     fitFrameHeight();
     checkFit();
@@ -1533,14 +1542,18 @@
     // the button and the box cannot hand over different text.
     state.cssText = cssFor(`.${state.name}`);
     state.htmlText = toCms(htmlFor(state.name));
-    state.scriptText = p.script ? guarded(p.script) : '';
+    // No script part since 2026-09-14: a pattern's script ships in the linked
+    // engine file (scripts/build-patterns.mjs). A site that pasted one before
+    // then removes it when the shared files are re-uploaded, or the tabs are
+    // wired twice - README, "Changing a slider that is already live".
+    state.scriptText = '';
     // Left alone while it is being typed into; see the wiring below.
     const nameEl = $('wb-name');
     if (nameEl && document.activeElement !== nameEl) nameEl.value = state.name;
     state.codeText = `<style>\n${state.cssText}\n</style>\n\n${state.htmlText}${state.scriptText ? `\n\n<script>\n${state.scriptText}\n</script>` : ''}`;
     const css = state.cssText;
     const html = state.htmlText;
-    $('wb-copy-js').hidden = !p.script;
+    $('wb-copy-js').hidden = true;
 
     // Say what is in the box and where each part goes, counted off the snippet
     // itself so it can never name a part that is not there.

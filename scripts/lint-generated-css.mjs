@@ -17,6 +17,7 @@
 
 import { readFileSync } from 'node:fs';
 import stylelint from 'stylelint';
+import { patternsCss } from './build-patterns.mjs';
 
 // The demo assets are classic scripts hanging off globalThis (ES modules are
 // blocked over file://, and the demo has to open by double-click). Evaluate
@@ -72,7 +73,14 @@ if (drift) {
 // reparsing the display name.
 const variantPairs = Object.keys(PATTERNS).flatMap((id) => variantsOf(id).map((bid) => ({ id, bid, r: renderPattern(id, 'demo', { brand: bid }) })));
 const variantSheets = variantPairs.map(({ id, bid, r }) => [`pattern “${id}” × ${bid}`, r]);
+// The shared pattern section too (scripts/build-patterns.mjs): since
+// 2026-09-14 that is where every pattern's structure ships, so it goes
+// through the same rules as the snippets - built here from the same PATTERNS
+// rather than read back out of dist, so the lint cannot pass on a stale
+// build.
+const sharedPatterns = patternsCss(sandbox.CARGO);
 const sheets = [
+  ['shared pattern section', sharedPatterns],
   ...Object.keys(PATTERNS).map((id) => [`pattern “${id}”`, renderPattern(id, 'demo').css]),
   ...variantSheets.map(([name, r]) => [name, r.css]),
   ...Object.keys(LOOKS).map((id) => [`look “${id}”`, renderLook(id, 'demo').css]),
@@ -151,8 +159,10 @@ for (const [what, map] of [
 for (const [name, css] of sheets) {
   for (const [, prop, val] of css.matchAll(ZERO_LENGTH)) zeroLength(name, prop, val);
   // Style Only takes no comments either. cssFor strips them, so a hit here
-  // means a new route into the sheet that bypasses the scoping pass.
-  for (const c of css.match(/\/\*[\s\S]*?\*\//g) || []) {
+  // means a new route into the sheet that bypasses the scoping pass. The
+  // shared section is a linked file, not a paste, and its section headers
+  // are for whoever reads dist/custom-slider.css; the minifier drops them.
+  for (const c of name === 'shared pattern section' ? [] : css.match(/\/\*[\s\S]*?\*\//g) || []) {
     problems++;
     console.error(`  ${name} [comment-in-generated-css] ${JSON.stringify(c.slice(0, 60))} - Style Only takes raw CSS with no comments`);
   }
@@ -182,10 +192,21 @@ for (const { id, bid, r } of variantPairs) {
   const look = PATTERNS[id].look;
   const entries = [...Object.entries(b.styles?.patterns?.[id]?.props ?? {}), ...(look ? Object.entries(b.styles?.looks?.[look] ?? {}) : [])];
   for (const [key, val] of entries) {
-    // The same three sources cssDefaults() merges in workbench.js, in the
-    // same order: a look that restates an engine value wins over the engine,
-    // and --cargo-font has no engine entry to fall back on at all.
-    const dflt = look && key in LOOKS[look].settings ? LOOKS[look].settings[key] : key in ENGINE_DEFAULTS ? ENGINE_DEFAULTS[key] : key === '--cargo-font' ? '1em' : undefined;
+    // The same sources cssDefaults() merges in workbench.js, in the same
+    // order: a pattern's own prop (never --cs-*) is defaulted in the shared
+    // pattern section, a look that restates an engine value wins over the
+    // engine, and --cargo-font has no engine entry to fall back on at all.
+    const own = PATTERNS[id].props ?? {};
+    const dflt =
+      key in own && !key.startsWith('--cs-') && !key.startsWith('--cargo-')
+        ? own[key]
+        : look && key in LOOKS[look].settings
+          ? LOOKS[look].settings[key]
+          : key in ENGINE_DEFAULTS
+            ? ENGINE_DEFAULTS[key]
+            : key === '--cargo-font'
+              ? '1em'
+              : undefined;
     if (String(val) === String(dflt)) continue;
     if (!r.css.includes(`${key}: ${val};`)) {
       problems++;

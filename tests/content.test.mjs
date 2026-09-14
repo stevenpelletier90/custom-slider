@@ -126,15 +126,15 @@ test.describe('the demo describes what it is actually showing', () => {
     const bare = await copyParts(page);
     assert.doesNotMatch(bare.html, /<figure|figcaption/, 'an empty caption still ships a figure');
     assert.match(bare.html, /<span class="cargo-photo">/, 'the uncaptioned slide stopped being the markup that shipped before');
-    // And the rule goes with it: five patterns would otherwise paste a
-    // figcaption rule matching nothing.
+    // The caption rule is structure, and structure ships in the shared
+    // stylesheet since 2026-09-14 - never in the snippet, captioned or not.
     assert.doesNotMatch(bare.css, /figcaption/, 'an uncaptioned pattern still ships the caption rule');
 
     await captionBox(page).fill('Courtesy vehicles while you wait');
     await page.waitForTimeout(250);
     const done = await copyParts(page);
     assert.match(done.html, /<figure class="cargo-photo">[\s\S]*?<figcaption>Courtesy vehicles while you wait<\/figcaption>/, 'the caption never reached the markup');
-    assert.match(done.css, /\.cargo-photo figcaption \{/, 'the caption rule is missing from the copied CSS');
+    assert.doesNotMatch(done.css, /figcaption/, 'the caption rule is pasted structure; it lives in the shared file');
   });
 
   test('the caption carries its own size and leading, and the figure its own margin', async () => {
@@ -249,8 +249,14 @@ test.describe('the demo describes what it is actually showing', () => {
     const done = await copyParts(page);
     assert.match(done.html, /<a href="\/new-inventory\/index\.htm"><img/, 'the link never reached the markup');
     // An inline <a> would take the host page's leading, the same trap the
-    // caption and the tab strip are guarded against.
-    assert.match(done.css, /\.cargo-photo a \{ display: block; \}/, 'the linked photo ships no display rule');
+    // caption and the tab strip are guarded against - and the rule that
+    // prevents it is structure, in the shared stylesheet, not in the paste.
+    assert.doesNotMatch(done.css, /\.cargo-photo a \{/, 'the linked-photo rule is pasted structure; it lives in the shared file');
+    const drawn = await page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      return d.defaultView.getComputedStyle(d.querySelector('.cargo-photo a')).display;
+    });
+    assert.equal(drawn, 'block', 'the shared stylesheet did not reach the linked photo');
   });
 
   // F017: 68 of the 76 OEM homepages surveyed run a hero whose anatomy is a
