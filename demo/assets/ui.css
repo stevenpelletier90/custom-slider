@@ -2131,6 +2131,14 @@ code {
 /* One of these per pattern a brand section shows — a heading and the same
    "open in the builder" link the pattern gets on patterns.html, above the
    live stage. */
+
+/* Wider than the patterns page (78rem): a section here holds two or more
+   live stages in a row of chrome, and 1440px gives the stage room either side
+   of a desktop-width bar. */
+.bb-doc {
+  max-inline-size: 90rem;
+}
+
 .bb-block {
   margin-block-start: 1rem;
 }
