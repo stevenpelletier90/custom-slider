@@ -121,7 +121,8 @@ the window and the preview is a 750/970/1170px box. The copied CSS ships the rea
 **Lengths are `em`, never `rem` — enforced.** Bootstrap 3 storefronts set
 `html { font-size: 10px }`, so `rem` ships at 62.5%. Card CSS sizes off
 `font-size: var(--cargo-font, 1em)` on the root; generated controls carry `font: inherit`.
-`unit-disallowed-list` in `.stylelintrc.generated.json` fails the build on a `rem`.
+`unit-disallowed-list` fails the build on a `rem` in `src/**/*.css` (an override in
+`.stylelintrc.json`) and in the generated card CSS (`.stylelintrc.generated.json`).
 
 **The preview frame simulates Bootstrap 3 with TWO rules:** `html { font-size: 10px }` and
 `* { box-sizing: border-box }` (plus `*:before, *:after`). The card CSS is written for border-box.
@@ -163,6 +164,9 @@ verification.
 `.claude/settings.json` registers a PostToolUse hook (`scripts/claude-format-hook.js`, exec form, so
 no shell is involved) that auto-fixes each file Claude edits inside this repo and leaves files in
 the other working directories alone. It never blocks; `npm run validate` is the real gate.
+
+`.github/workflows/validate.yml` runs `validate`, `size` and `test` on every push and pull request
+(Chromium only). After a push, watch that run until it is green.
 
 ## Architecture
 
@@ -248,11 +252,11 @@ snippets sharing a name share rules and the second paste wins. Auto-numbering a 
 
 **Classic `rgba()` and `em` in everything the copy panel emits**, enforced by `.stylelintrc*.json`
 (`color-function-notation: legacy`, `alpha-value-notation: number`,
-`color-function-alias-notation: with-alpha` in both; the `rem` ban, `unit-disallowed-list`, only in
-`.stylelintrc.generated.json`, because the demo's own `ui.css` uses `rem` and is never pasted — a
-`rem` in `src/` is caught by nothing but review). `stylelint-config-standard` defaults to `"modern"`
-and the format hook would rewrite `rgba()` back — point the rule at the platform's form rather than
-skipping it.
+`color-function-alias-notation: with-alpha` in both; the `rem` ban, `unit-disallowed-list`, in
+`.stylelintrc.generated.json` and, since 2026-09-14, as an `overrides` entry for `src/**/*.css` in
+`.stylelintrc.json` — never on `demo/`, because the demo's own `ui.css` uses `rem` and is never
+pasted). `stylelint-config-standard` defaults to `"modern"` and the format hook would rewrite
+`rgba()` back — point the rule at the platform's form rather than skipping it.
 
 **A control must show what the slider is actually using.** A knob lies by a value set in pattern CSS
 instead of props, a switch for something that does not exist, a click on the selected option
