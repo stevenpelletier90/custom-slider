@@ -450,6 +450,15 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     assert.equal(rest.bg, 'rgb(0, 109, 199)');
     assert.match(rest.duration, /^0\.15s/, `the line grows over 0.15s, got ${rest.duration}`);
     assert.match(rest.easing, /cubic-bezier\(0\.215, 0\.61, 0\.355, 1\)/);
+    // Hover first: the live rule is `li.active a::after, li a:hover::after`,
+    // so the pointer alone grows the line and leaving shrinks it back.
+    await page.frameLocator('#wb-stage').locator('.cargo-tabs [role="tab"]').nth(1).hover();
+    await page.waitForTimeout(350);
+    const hovered = await lineOf(1);
+    assert.ok(Math.abs(hovered.width - hovered.tab) < 0.5, `hovering an unselected tab should grow its line to full width, got ${hovered.width} of ${hovered.tab}`);
+    await page.mouse.move(5, 5);
+    await page.waitForTimeout(350);
+    assert.equal((await lineOf(1)).width, 0, 'leaving an unselected tab should shrink its line away');
     await page.frameLocator('#wb-stage').locator('.cargo-tabs [role="tab"]').nth(1).click();
     await page.waitForTimeout(40);
     const mid = await lineOf(1);

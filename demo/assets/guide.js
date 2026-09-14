@@ -294,7 +294,7 @@
       'Colour of the selected tab’s label. <code>currentcolor</code> keeps the page’s text colour; with the line left at <code>currentcolor</code> it follows this, which is how Toyota draws its red tab.',
     '--tab-line': 'Colour of the 2px line under the selected tab. <code>currentcolor</code> uses the text colour; a hex pins it to a brand colour.',
     '--tab-line-grow':
-      'How long that line takes to grow out from the centre of a newly picked tab. <code>0s</code> switches at once; Chevrolet’s grows over <code>0.15s</code>. Never plays for a reader who asked for reduced motion.',
+      'How long that line takes to grow out from the centre of a tab that is picked or hovered, and to shrink back when the pointer leaves. <code>0s</code> switches at once; Chevrolet’s grows over <code>0.15s</code>. Never plays for a reader who asked for reduced motion.',
     '--tab-rule': 'Colour of the 1px rule under the whole tab row. <code>transparent</code> removes it.',
     '--tab-divider': "Text drawn between tabs, in quotes — <code>'|'</code> for the Chevrolet bar. <code>none</code> draws nothing.",
     '--tab-divider-color':

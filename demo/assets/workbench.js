@@ -650,7 +650,10 @@ ${VIDEO_DIALOG_CSS}`,
    border, not the border itself, so it can grow out from the centre the way
    the live bar's does. Zero wide on an unselected tab, so nothing shows. */
 .cargo-tabs [role="tab"]::after { position: absolute; inset-block-end: -2px; inset-inline-start: 50%; inline-size: 0; block-size: 2px; content: ""; background: var(--tab-line); }
-.cargo-tabs [role="tab"][aria-selected="true"]::after { inset-inline-start: 0; inline-size: 100%; }
+/* Selected, or under the pointer: the live rule pairs li.active a::after
+   with li a:hover::after, so the line grows out on hover and shrinks back
+   on leave, and a click keeps it. */
+.cargo-tabs [role="tab"][aria-selected="true"]::after, .cargo-tabs [role="tab"]:hover::after { inset-inline-start: 0; inline-size: 100%; }
 @media (prefers-reduced-motion: no-preference) { .cargo-tabs [role="tab"]::after { transition: inline-size var(--tab-line-grow) cubic-bezier(0.215, 0.61, 0.355, 1), inset-inline-start var(--tab-line-grow) cubic-bezier(0.215, 0.61, 0.355, 1); } }
 /* The divider sits on the tab that FOLLOWS it, centred in the space before
    it and outside its own box, so it never widens the hit target. none draws

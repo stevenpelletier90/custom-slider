@@ -50,7 +50,9 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   selected, width and left over 0.15s `cubic-bezier(0.215, 0.61, 0.355, 1)`), so it grows out from
   the centre on a switch; ours was a border colour flipping. The line is now a box over the tab's
   transparent 2px border with `--tab-line-grow` (0s by default), under reduced-motion:
-  no-preference.
+  no-preference. Steven then saw it on hover, not just on a click: the live rule is
+  `li.active a::after, li a:hover::after`, so the pointer alone grows the line and leaving shrinks
+  it back; ours has the hover half too.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

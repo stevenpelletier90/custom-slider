@@ -492,8 +492,10 @@
               '--tab-pad': '0.75em',
               '--tab-divider-size': '0.78',
               '--tab-fade': '0.15s',
-              // The line under a picked tab (an ::after on the live link) grows
-              // from the centre over 0.15s, cubic-bezier(0.215, 0.61, 0.355, 1).
+              // The line under a picked OR hovered tab (an ::after on the live
+              // link: `li.active a::after, li a:hover::after`) grows from the
+              // centre over 0.15s, cubic-bezier(0.215, 0.61, 0.355, 1), and
+              // shrinks back when the pointer leaves an unselected tab.
               '--tab-line-grow': '0.15s',
               '--more-bg': '#006dc7',
             },
