@@ -18,7 +18,8 @@ verification in a real browser on representative sites.
 Prompted by the 2026-08-11 Creative Solutions sync: "here is a link to a bunch we might need to
 start cataloguing and organizing ones that are the same both for diff OEMs etc."
 
-**Shareable versions** (both in [docs/catalog/](../catalog/)):
+**Shareable versions** (the repo copies that lived in `docs/catalog/` are gone; the artifact links
+remain):
 
 - **[Model Bar Library](https://claude.ai/code/artifact/72367577-3336-4f58-abc1-5b0beb64ac08)** —
   screenshots of every distinct model bar, captured live at 1280px, each with its breakpoint ladder

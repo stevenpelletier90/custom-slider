@@ -19,15 +19,17 @@ also hands you all four `dist/` files themselves, to upload — the engine is li
 
 ## Quick start (CMS / classic script)
 
-    <link rel="stylesheet" href="custom-slider.min.css">
-    <script src="custom-slider.min.js" defer></script>
+```html
+<link rel="stylesheet" href="custom-slider.min.css">
+<script src="custom-slider.min.js" defer></script>
 
-    <div class="cs my-slider cs-sm-2 cs-md-3" data-cs aria-label="Featured vehicles">
-      <ul class="cs-track">
-        <li class="cs-slide">…</li>
-        <li class="cs-slide">…</li>
-      </ul>
-    </div>
+<div class="cs my-slider cs-sm-2 cs-md-3" data-cs aria-label="Featured vehicles">
+  <ul class="cs-track">
+    <li class="cs-slide">…</li>
+    <li class="cs-slide">…</li>
+  </ul>
+</div>
+```
 
 Every `[data-cs]` element initializes automatically. Slides-per-view is CSS, not a JS option: the
 `cs-xs-N` / `cs-sm-N` / `cs-md-N` / `cs-lg-N` classes ship in the stylesheet for N of 1–8, on
@@ -43,8 +45,10 @@ which you do not control, decides which wins.
 
 ## Quick start (ES module)
 
-    import { CustomSlider } from './src/custom-slider.js';
-    const slider = new CustomSlider(document.querySelector('.my-slider'), { autoplay: 4000 });
+```js
+import { CustomSlider } from './src/custom-slider.js';
+const slider = new CustomSlider(document.querySelector('.my-slider'), { autoplay: 4000 });
+```
 
 JS options override data attributes, which override defaults.
 
@@ -336,7 +340,9 @@ replacement codes, per-OEM theming, and the ladder for each brand's model bar.
 
 **As of 2026-09-08 all four files are on FTP.** The folder is
 
-    /assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/
+```text
+/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/
+```
 
 Measured that day, cache-busted against `www.karlchevrolet.com`: all four answered 200,
 `last-modified` 2026-09-08 14:01 GMT, and three of them were byte-identical to `dist/` as it then
@@ -434,10 +440,12 @@ so they are safe in slide text and headings. They do **not** resolve in the Styl
 
 ## Development
 
-    npm install
-    npm run build   # src → dist (esbuild)
-    npm run size    # build + gzip budget gate (fails at or over 6656 B / 6.5 KB total)
-    npm run serve   # http://127.0.0.1:8137 (for Lighthouse)
+```bash
+npm install
+npm run build   # src → dist (esbuild)
+npm run size    # build + gzip budget gate (fails at or over 6656 B / 6.5 KB total)
+npm run serve   # http://127.0.0.1:8137 (for Lighthouse)
+```
 
 `src/` is the canonical, readable code; `dist/` is the checked-in CMS build. Rebuild and re-commit
 `dist/` whenever `src/` changes.
