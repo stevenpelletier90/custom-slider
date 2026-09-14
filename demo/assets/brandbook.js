@@ -45,7 +45,20 @@
     const note = measured.length
       ? `Measured on ${esc(b.source ?? '')}.`
       : `${esc(b.label)}'s vehicles and how many across, from its demo sites. Values not measured yet.${b.models ? '' : ` ${esc(b.label)} has no cutout roster of its own, so the cars below are the default ones — the count and the layout are ${esc(b.label)}'s, the vehicles are not.`}`;
-    sec.innerHTML = `<div class="gx-head"><img class="bb-logo" src="img/logo-${id}.png" width="116" height="100" alt="" loading="lazy"><div><h2>${esc(b.label)}</h2><p class="bb-note">${note}</p>${b.note ? `<p class="bb-note">${esc(b.note)}</p>` : ''}</div></div>`;
+    // A brand that names the font its sites load (brands.js `font`) is shown
+    // in it: the stylesheet is linked once per brand and the family goes on
+    // each of its stages as an inline style - page scaffolding, the same as
+    // the stage's own Arial, and nothing the generator emits. The copied
+    // code stays font-free, since the site the snippet lands on already
+    // loads the font.
+    const fontNote = b.font ? ` Shown in ${esc(b.font.family)}, which its sites already load; the copied code names no font.` : '';
+    sec.innerHTML = `<div class="gx-head"><img class="bb-logo" src="img/logo-${id}.png" width="116" height="100" alt="" loading="lazy"><div><h2>${esc(b.label)}</h2><p class="bb-note">${note}${fontNote}</p>${b.note ? `<p class="bb-note">${esc(b.note)}</p>` : ''}</div></div>`;
+    if (b.font?.css) {
+      const link = document.createElement('link');
+      link.rel = 'stylesheet';
+      link.href = b.font.css;
+      document.head.append(link);
+    }
     for (const pid of measured.length ? measured : ['modelbar']) {
       rendered.add(pid);
       const cls = `bb-${id}-${pid}`;
@@ -54,7 +67,9 @@
       const block = document.createElement('div');
       block.className = 'bb-block';
       block.innerHTML = `<div class="bb-block-head"><h3>${esc(SHORT?.[pid] ?? PATTERNS[pid].label)}</h3><a class="ui-btn" href="index.html#${pid}?brand=${id}">Open in the builder</a></div><div class="gx-stage bb-stage" data-pattern="${pid}"></div>`;
-      block.querySelector('.bb-stage').innerHTML = r.html;
+      const stage = block.querySelector('.bb-stage');
+      stage.innerHTML = r.html;
+      if (b.font) stage.style.fontFamily = `${b.font.family}, Arial, Helvetica, sans-serif`;
       sec.append(block);
     }
     grid.append(sec);

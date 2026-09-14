@@ -401,15 +401,21 @@
       v.clear.addEventListener('click', () => this.commit(null, ''));
       v.sw.addEventListener('click', () => (v.pop.hidden ? this.open(config.swatches) : this.close()));
       // The spectrum and the opacity are one value, so either moving commits
-      // both. rawValue is what the change goes through, which is what keeps a
-      // whole drag on the fast path: workbench.js restyles the frame's
-      // stylesheet and never rebuilds the stage.
-      const fromPicker = () => {
+      // both. Every `input` during a drag goes out with `last: false` - the
+      // pane hands that flag to workbench.js, which restyles the frame's
+      // stylesheet at once and holds the code panel back until the drag
+      // pauses. Rewriting the highlighted code box was ~10 ms plus a paint
+      // per spectrum event, so a drag ran at a few frames a second while the
+      // stylesheet edit itself cost under a millisecond. `change` (release, or
+      // the OS picker closing) sends the final value with `last: true`.
+      const fromPicker = (last) => () => {
         const c = parse(v.native.value);
-        if (c) this.commit({ ...c, a: parseFloat(v.alpha.value) });
+        if (c) this.commit({ ...c, a: parseFloat(v.alpha.value) }, '', last);
       };
-      v.native.addEventListener('input', fromPicker);
-      v.alpha.addEventListener('input', fromPicker);
+      v.native.addEventListener('input', fromPicker(false));
+      v.alpha.addEventListener('input', fromPicker(false));
+      v.native.addEventListener('change', fromPicker(true));
+      v.alpha.addEventListener('change', fromPicker(true));
       v.list.addEventListener('click', (e) => {
         const b = e.target.closest('button[data-colour]');
         if (!b) return;
@@ -435,9 +441,11 @@
 
     // A value equal to the one already stored emits no change, so a typed
     // `RGB(0 0 0/.5)` or a second click on the same swatch would sit in the box
-    // unanswered. Redraw either way.
-    commit(colour, raw = '') {
-      this.value.rawValue = colour ? format(colour) : raw;
+    // unanswered. Redraw either way. `last` is Tweakpane's own flag for the
+    // end of a series (a released slider, a closed picker); everything but a
+    // mid-drag spectrum event is final.
+    commit(colour, raw = '', last = true) {
+      this.value.setRawValue(colour ? format(colour) : raw, { forceEmit: false, last });
       this.view.show(this.value.rawValue);
     }
 

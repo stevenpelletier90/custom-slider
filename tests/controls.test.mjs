@@ -1176,7 +1176,13 @@ test.describe('a brand preset swaps the vehicles, never the pattern', () => {
       const slide = d?.querySelector('.cs-slide');
       return {
         look: [...(root?.classList ?? [])].filter((c) => c.startsWith('cargo-')),
-        shape: [...(slide?.querySelector('a')?.children ?? [])].map((e) => e.className || e.tagName.toLowerCase()),
+        // The elements the LOOK draws, in order. Sub text, badge and button
+        // are content rows in the slide editor that the markup drops when
+        // blank - a measured brand's roster ships no sub line, because its
+        // live bar has none - so they are content here, not shape. A look
+        // swap still fails above on the root's class and here on the order
+        // of what is left.
+        shape: [...(slide?.querySelector('a')?.children ?? [])].map((e) => e.className || e.tagName.toLowerCase()).filter((c) => !/^cargo-(sub|badge|cta)$/.test(c)),
         // The slide's whole markup, not its text or a .cargo-name lookup. This
         // file is serial and an earlier test may leave the model bar on any
         // card style - including image-only ones, where a text probe reads ""

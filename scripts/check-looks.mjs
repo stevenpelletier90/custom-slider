@@ -277,6 +277,20 @@ for (const [id, b] of brands) {
       }
     }
   }
+  // A brand's `font` (2026-09-14) is PREVIEW scaffolding: the family the
+  // brand's sites load and the https stylesheet that serves it. It is read by
+  // the frame and the Brands page and never by cssFor(), so the one thing to
+  // hold is its shape - a family and an absolute https URL - and that no knob
+  // smuggles a font in (a font-family is not a knob on any look or pattern,
+  // and the key checks above already refuse one).
+  if (b.font != null) {
+    const okFamily = typeof b.font.family === 'string' && /^[A-Za-z][\w -]*$/.test(b.font.family.trim());
+    const okCss = typeof b.font.css === 'string' && /^https:\/\/\S+\.css(\?\S*)?$/.test(b.font.css);
+    if (!okFamily || !okCss) {
+      console.error(`  ${id}: font needs { family: 'Name', css: 'https://…/x.css' } — the preview loads exactly that and nothing else`);
+      bad++;
+    }
+  }
   if (b.ladder === null) continue;
   if (!Array.isArray(b.ladder) || !b.ladder.length || b.ladder[0][0] !== 0) {
     console.error(`  ${id}: ladder must start at 0 or be null when nothing is recorded`);

@@ -42,11 +42,14 @@ const tabStyles = (page) =>
     return {
       size: w.getComputedStyle(sel).fontSize,
       bodySize: w.getComputedStyle(d.body).fontSize,
+      weight: w.getComputedStyle(sel).fontWeight,
       dim: w.getComputedStyle(other).opacity,
       line: w.getComputedStyle(sel).borderBottomColor,
       colour: w.getComputedStyle(sel).color,
       rule: w.getComputedStyle(list).borderBottomColor,
       divider: w.getComputedStyle(other, '::before').content,
+      dividerColour: w.getComputedStyle(other, '::before').color,
+      gap: w.getComputedStyle(d.querySelector('.cs')).getPropertyValue('--cs-gap').trim(),
     };
   });
 
@@ -62,19 +65,22 @@ const cardNameStyle = (page) =>
   });
 
 test.describe('the tab row has knobs', () => {
-  test('the six tab knobs show what the untouched tabs pattern is drawing', async () => {
+  test('the eight tab knobs show what the untouched tabs pattern is drawing', async () => {
     await pick(page, 'tabs');
     assert.equal(await knob(page, 'Tab text size'), '1em');
+    assert.equal(await knob(page, 'Tab text weight'), '600');
     assert.equal(await knob(page, 'Dim unselected tabs'), '0.65');
     assert.equal(await knob(page, 'Selected tab text'), 'currentcolor');
     assert.equal(await knob(page, 'Selected tab line'), 'currentcolor');
     assert.equal(await knob(page, 'Rule under the tabs'), '#e2e5ea');
     assert.equal(await knob(page, 'Between tabs'), 'none');
+    assert.equal(await knob(page, 'Divider colour'), 'currentcolor');
     const s = await tabStyles(page);
     // Same picture as before the knobs existed: 1em inherits the frame's body
-    // size (whatever it is - never hardcoded), 0.65 dim, line in the text
+    // size (whatever it is - never hardcoded), 600, 0.65 dim, line in the text
     // colour, the #e2e5ea rule, no divider.
     assert.equal(s.size, s.bodySize);
+    assert.equal(s.weight, '600');
     assert.equal(s.dim, '0.65');
     assert.equal(s.line, s.colour);
     assert.equal(s.rule, 'rgb(226, 229, 234)');
@@ -143,12 +149,19 @@ test.describe('a brand applies its values', () => {
     await pick(page, 'tabs');
     await selectBrand(page, 'chevrolet');
     const s = await tabStyles(page);
-    assert.equal(parseFloat(s.size), parseFloat(s.bodySize) * 1.125, '--tab-size: 1.125em should be 1.125x the body it inherits from');
+    // 18px on the site's 14px body (measured 2026-09-14), as 1.29em of the
+    // body the tabs inherit from - within a hundredth of a pixel of it.
+    assert.ok(Math.abs(parseFloat(s.size) - parseFloat(s.bodySize) * 1.29) < 0.05, `--tab-size: 1.29em should be 1.29x the body, got ${s.size} of ${s.bodySize}`);
+    assert.equal(s.weight, '700', 'the live bar wraps each label in <b>');
     assert.equal(s.line, 'rgb(0, 109, 199)');
     assert.equal(s.dim, '1');
     assert.equal(s.rule, 'rgba(0, 0, 0, 0)');
     assert.equal(s.divider, '"|"');
+    assert.equal(s.dividerColour, 'rgb(118, 118, 118)', "the site's own grey, not the tab text at full strength");
+    assert.equal(s.gap, '0.1px', 'the live slides butt together');
     assert.equal(await knob(page, 'Selected tab line'), '#006dc7');
+    assert.equal(await knob(page, 'Tab text weight'), '700');
+    assert.equal(await knob(page, 'Divider colour'), '#767676');
     assert.equal(await knob(page, 'Name case'), 'capitalize');
     // The look half of the brand's values (--name-color/--name-case) has to
     // land on the carousel root, not the tabs wrap: an own declaration on the
@@ -161,6 +174,8 @@ test.describe('a brand applies its values', () => {
     assert.deepEqual(tabs, ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial']);
     const { css } = await copyParts(page);
     assert.match(css, /--tab-line: #006dc7;/);
+    assert.match(css, /--tab-weight: 700;/);
+    assert.match(css, /--tab-divider-color: #767676;/);
     assert.match(css, /--name-case: capitalize;/);
     assert.deepEqual(errors, []);
   });
@@ -403,5 +418,85 @@ test.describe('the variant strip above the stage', () => {
       return Object.keys(BRANDS).every((b) => patternsOf(b).every((p) => variantsOf(p).includes(b))) && Object.keys(PATTERNS).every((p) => variantsOf(p).every((b) => patternsOf(b).includes(p)));
     });
     assert.equal(ok, true);
+  });
+});
+
+// A measured brand may name the typeface its sites load (brands.js `font`).
+// The preview wears it so the bar is judged in the font it will have on the
+// page; the copied code never names it, because the page already loads it and
+// the snippet is not the place to load it twice. Spec addendum 2026-09-14.
+test.describe('a brand font reaches the preview and never the code', () => {
+  const frameFont = (page) =>
+    page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      return {
+        body: d.defaultView.getComputedStyle(d.body).fontFamily,
+        tab: d.defaultView.getComputedStyle(d.querySelector('.cargo-tabs [role="tab"]')).fontFamily,
+        link: d.getElementById('wb-live-font')?.getAttribute('href') ?? null,
+      };
+    });
+
+  test('Chevrolet shows in ChevySans, Default goes back to the frame font, the snippet is font-free', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'chevrolet');
+    const on = await frameFont(page);
+    assert.match(on.body, /^ChevySans/);
+    assert.match(on.tab, /^ChevySans/, 'the tab labels inherit the brand font');
+    assert.equal(on.link, 'https://cdn.dealeron.com/assets/fonts/chevy-sans/fonts.min.css');
+    const { css, html, js } = await copyParts(page);
+    for (const [what, text] of Object.entries({ css, html, js })) {
+      assert.doesNotMatch(text, /ChevySans|font-family|@import|fonts\.min\.css/i, `${what} must not carry the preview font`);
+    }
+    const note = await page.evaluate(() => document.querySelector('#wb-variants .wb-brand-note')?.textContent ?? '');
+    assert.match(note, /Shown in ChevySans/, 'the strip says the font is borrowed');
+    await selectBrand(page, '');
+    const off = await frameFont(page);
+    assert.match(off.body, /^Arial/);
+    assert.equal(off.link, null, 'no brand, no font stylesheet in the frame');
+    assert.deepEqual(errors, []);
+  });
+});
+
+// A spectrum drag used to cost ~9 ms of script plus a paint per event - the
+// highlighted code box was rewritten and the parent page laid out for every
+// pointer move - so the picker crawled. Mid-drag events (Tweakpane's
+// `last: false`) now restyle the frame at once and settle the rest once the
+// drag pauses; a final commit still publishes synchronously.
+test.describe('a colour drag restyles the frame now and the code panel when it pauses', () => {
+  test('input events reach the preview at once and the panel catches up', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, '');
+    const row = rowByLabel(page, 'Rule under the tabs');
+    await row.locator('.tp-colv_sw').click();
+    const r = await page.evaluate(() => {
+      const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === 'Rule under the tabs');
+      const native = row.querySelector('input[type="color"]');
+      const d = globalThis.CARGO.sdoc();
+      const rule = () => d.defaultView.getComputedStyle(d.querySelector('.cargo-tabs')).borderBottomColor;
+      const code = () => document.getElementById('wb-code').textContent;
+      const out = [];
+      for (const hex of ['#ff0000', '#00ff00', '#0000ff']) {
+        native.value = hex;
+        native.dispatchEvent(new Event('input', { bubbles: true }));
+        out.push({ hex, frame: rule(), panelHasIt: code().includes(hex) });
+      }
+      return out;
+    });
+    assert.equal(r[0].frame, 'rgb(255, 0, 0)', 'the frame follows the first input synchronously');
+    assert.equal(r[2].frame, 'rgb(0, 0, 255)', 'and the last');
+    assert.equal(r[2].panelHasIt, false, 'the code panel is not rewritten mid-drag');
+    await page.waitForFunction(() => document.getElementById('wb-code').textContent.includes('#0000ff'), null, { timeout: 2000 });
+    // A release commits synchronously: the panel is right before the next read.
+    const final = await page.evaluate(() => {
+      const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === 'Rule under the tabs');
+      const native = row.querySelector('input[type="color"]');
+      native.value = '#123456';
+      native.dispatchEvent(new Event('change', { bubbles: true }));
+      return document.getElementById('wb-code').textContent.includes('#123456');
+    });
+    assert.equal(final, true);
+    const { css } = await copyParts(page);
+    assert.match(css, /--tab-rule: #123456;/);
+    assert.deepEqual(errors, []);
   });
 });

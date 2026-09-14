@@ -585,6 +585,10 @@ ${VIDEO_DIALOG_CSS}`,
         // a brand variant had nothing to set. Defaults are what the literals
         // were, so an untouched pattern draws the same row.
         '--tab-size': '1em',
+        // 600 was a literal in the css until 2026-09-14; the live Chevrolet
+        // bar wraps each label in <b>, which is 700, and the two weights are
+        // different files of ChevySans.
+        '--tab-weight': '600',
         '--tab-dim': '0.65',
         // The selected tab's text colour. currentcolor keeps the inherited
         // colour, which is what the untouched pattern drew before this knob
@@ -596,15 +600,20 @@ ${VIDEO_DIALOG_CSS}`,
         // A string, single-quoted: okStored() refuses a value holding a double
         // quote, so '"|"' would survive the session and vanish on reload.
         '--tab-divider': 'none',
+        // The divider's own colour. currentcolor at --tab-dim opacity is what
+        // it always drew; Chevrolet's live bar draws its `|` in a grey of its
+        // own (#767676) with the tabs at full strength, which no other knob
+        // could say.
+        '--tab-divider-color': 'currentcolor',
       },
       hideDots: true,
       panes: ['Trucks', 'SUVs', 'Crossovers'],
       css: `.cargo-tabs { display: flex; flex-wrap: wrap; gap: 0.25em; justify-content: center; margin-block-end: 1em; border-block-end: 1px solid var(--tab-rule); }
-.cargo-tabs [role="tab"] { padding: 0.6em 1.1em; font: inherit; font-size: var(--tab-size); font-weight: 600; line-height: 1.55; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: var(--tab-dim); }
+.cargo-tabs [role="tab"] { padding: 0.6em 1.1em; font: inherit; font-size: var(--tab-size); font-weight: var(--tab-weight); line-height: 1.55; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: var(--tab-dim); }
 .cargo-tabs [role="tab"][aria-selected="true"] { color: var(--tab-selected); border-block-end-color: var(--tab-line); opacity: 1; }
 /* The divider sits on the tab that FOLLOWS it, outside its own box, so it
    never widens the hit target. none draws nothing. */
-.cargo-tabs [role="tab"] + [role="tab"]::before { position: absolute; inset-inline-start: -0.125em; color: currentcolor; content: var(--tab-divider); opacity: var(--tab-dim); transform: translateX(-50%); }
+.cargo-tabs [role="tab"] + [role="tab"]::before { position: absolute; inset-inline-start: -0.125em; color: var(--tab-divider-color); content: var(--tab-divider); opacity: var(--tab-dim); transform: translateX(-50%); }
 .cargo-tabs [role="tab"] + [role="tab"] { position: relative; }
 .cargo-pane[hidden] { display: none; }
 /* Three tabs need 272px at the default padding, and a 320px phone leaves 236 -
@@ -2113,12 +2122,27 @@ ${PHOTO_CSS}
     d.addEventListener('load', fitFrameHeight, true);
   }
 
-  function restyle() {
+  // `live` is a mid-drag colour event (the pane's `last: false`): the frame's
+  // stylesheet is replaced at once, which is what the eye follows, and the
+  // rest waits until the drag has paused. The rest was the whole cost:
+  // publish() rewrites the highlighted code box (~10 ms plus a paint), and
+  // fitFrameHeight() ends in a parent-page layout read (~5 ms - profiled as
+  // getBoundingClientRect, the only thing left once the panel was deferred)
+  // for a height a colour cannot change. A final commit (`last: true`, or any
+  // other knob) does both synchronously, so a test or a copy button that
+  // reads the panel straight after a typed value still sees it.
+  let publishLater = 0;
+  function restyle(live) {
     const el = styleEl();
     if (!el) return;
     el.textContent = cssFor('.wb-live');
-    fitFrameHeight();
-    publish();
+    clearTimeout(publishLater);
+    const settle = () => {
+      fitFrameHeight();
+      publish();
+    };
+    if (live) publishLater = setTimeout(settle, 120);
+    else settle();
   }
 
   // Full bleed or Bootstrap's container, written onto the frame's own <html>.
@@ -2127,6 +2151,34 @@ ${PHOTO_CSS}
   // first paint can land either side of the first width being chosen.
   function fillFrame() {
     sdoc()?.documentElement.toggleAttribute('data-fill', frameW === 0);
+  }
+
+  // The picked brand's own typeface, on the FRAME'S body and nowhere else.
+  // A measured brand may name the font its sites load (`font` in brands.js:
+  // family plus the stylesheet URL DealerOn's CDN serves it from), and the
+  // preview borrows it so the bar reads the way it will on the page - tab
+  // labels wrap where they will wrap, a name fits where it will fit. It is
+  // demo scaffolding, like the frame's Bootstrap rules: it never goes
+  // through cssFor(), so the copied CSS carries no font-family and no @import,
+  // which is right - the site already loads the font, and a snippet that
+  // named it would ship a second copy. The stylesheet <link> is added on
+  // demand and removed with the brand, so a brand without a font leaves the
+  // frame exactly as it was.
+  function previewFont() {
+    const d = sdoc();
+    if (!d) return;
+    const f = BRANDS[state.brand]?.font;
+    let link = d.getElementById('wb-live-font');
+    if (f?.css) {
+      if (!link) {
+        link = d.createElement('link');
+        link.id = 'wb-live-font';
+        link.rel = 'stylesheet';
+        d.head.append(link);
+      }
+      if (link.getAttribute('href') !== f.css) link.href = f.css;
+    } else link?.remove();
+    d.body.style.fontFamily = f ? `${f.family}, Arial, Helvetica, sans-serif` : '';
   }
 
   function render() {
@@ -2138,6 +2190,7 @@ ${PHOTO_CSS}
       return;
     }
     fillFrame();
+    previewFont();
     live.forEach((s) => s.destroy());
     live = [];
     styleEl().textContent = cssFor('.wb-live');
@@ -2533,11 +2586,13 @@ ${PHOTO_CSS}
     '--pill-fg': 'Pill text',
     '--mark-size': 'Wordmark size',
     '--tab-size': 'Tab text size',
+    '--tab-weight': 'Tab text weight',
     '--tab-dim': 'Dim unselected tabs',
     '--tab-selected': 'Selected tab text',
     '--tab-line': 'Selected tab line',
     '--tab-rule': 'Rule under the tabs',
     '--tab-divider': 'Between tabs',
+    '--tab-divider-color': 'Divider colour',
   };
   const knobLabel = (k) => KNOB_LABELS[k] ?? k.replace(/^--/, '').replace(/-/g, ' ');
 
@@ -2708,9 +2763,11 @@ ${PHOTO_CSS}
       parent,
       label,
       store[key] ?? '',
-      (v) => {
+      (v, last) => {
         setProp(store, key, v);
-        restyle();
+        // last === false is a spectrum drag in progress: restyle the frame
+        // now, publish the code panel when it pauses. See restyle().
+        restyle(last === false);
       },
       { placeholder: String(brandValue(key, store) ?? knobDefault(key) ?? ''), note: knobNote(key) },
     );
@@ -2849,6 +2906,10 @@ ${PHOTO_CSS}
       // "Measured on" once, and a brand with nothing in `applied` has
       // nothing that note would be claiming credit for.
       const measured = applied.length ? ` Also sets ${applied.join(' and ')}. Measured on ${b.source}.` : '';
+      // The preview borrows the site's own typeface so the bar reads the way
+      // it will on the page. Said plainly, because a designer who sees it
+      // here will look for it in the code panel: it is not there, on purpose.
+      const font = b.font ? ` Shown in ${b.font.family}, the font ${b.label} sites already load — the preview borrows it; nothing about the font is in the copied code.` : '';
       // The brand's own card style is offered, never applied - see the note
       // on pickBrand() above. Only worth saying when it differs from what is
       // already on screen. No "pick it below" any more - there is no picker
@@ -2856,8 +2917,8 @@ ${PHOTO_CSS}
       const suggest = b.look && b.look !== state.look ? ` ${b.label} ran the ${LOOKS[b.look].label.toLowerCase()} card — it is a rail entry of its own.` : '';
       return (
         b.ladder
-          ? `${counts} cards across, on a phone / from 768px / from 992px / from 1200px. ${b.note ?? ''}${suggest}${measured}`
-          : `The ${b.label} demo sites we surveyed showed no clear pattern of how many across, so this leaves the count alone. ${b.note ?? ''}${suggest}${measured}`
+          ? `${counts} cards across, on a phone / from 768px / from 992px / from 1200px. ${b.note ?? ''}${suggest}${measured}${font}`
+          : `The ${b.label} demo sites we surveyed showed no clear pattern of how many across, so this leaves the count alone. ${b.note ?? ''}${suggest}${measured}${font}`
       ).trim();
     };
     const style = p.look ? pane.folder('The card') : null;

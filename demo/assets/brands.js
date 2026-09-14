@@ -423,22 +423,53 @@
       demos: 3,
       note: 'Since Nov 2025 the official bar is the tabbed version; the plain slick look was deprecated and its sites migrated.',
       // The variant: what chevroletdemo1 draws, as knob values. Measured with
-      // Playwright against the demo's own tabs pattern on 2026-09-09 - every
-      // difference was a value, none was structure, which is what lets this be
-      // a preset rather than a second pattern. The blue is the site's link
-      // colour; on a real Chevy site a designer swaps it for the theme's.
+      // Playwright against the demo's own tabs pattern on 2026-09-09 and
+      // again, more closely, on 2026-09-14 - every difference was a value,
+      // none was structure, which is what lets this be a preset rather than a
+      // second pattern. The blue is the site's link colour; on a real Chevy
+      // site a designer swaps it for the theme's.
+      //
+      // The 2026-09-14 pass, at 1280/800/390 with the site's own computed
+      // styles (the raw numbers are in that commit):
+      // - tab label 18px on a 14px body = 1.29em (the first pass wrote
+      //   1.125em, which is 18 over a 16px body the site does not have),
+      //   wrapped in <b> so 700, colour #222, no dimming, 16px under 480;
+      // - divider `|` is its own list item in #767676 at the body size;
+      // - no rule under the row, 2px #006dc7 under the selected tab;
+      // - slides butt together (no gap) and the cutout is drawn at 85%
+      //   (transform: scale(.85), 0.9 on hover) - as padding that is 7.5% a
+      //   side and 5.6% on top, bottom 0, which lands the car and the name
+      //   within a pixel of the live bar;
+      // - name 16px = 1.14em, 600, #333, capitalised;
+      // - arrows (shown on a pane with more than five models) #666.
       styles: {
         looks: {
-          tile: { '--name-case': 'capitalize', '--name-color': '#333' },
+          tile: { '--name-case': 'capitalize', '--name-color': '#333', '--name-size': '1.14em', '--plate-pad': '5.6% 7.5% 0', '--img-hover-scale': '1.06' },
         },
         patterns: {
           tabs: {
-            props: { '--tab-size': '1.125em', '--tab-dim': '1', '--tab-line': '#006dc7', '--tab-rule': 'transparent', '--tab-divider': "'|'" },
+            props: {
+              '--cs-gap': '0.1px',
+              '--cs-arrow-fg': '#666',
+              '--tab-size': '1.29em',
+              '--tab-weight': '700',
+              '--tab-dim': '1',
+              '--tab-line': '#006dc7',
+              '--tab-rule': 'transparent',
+              '--tab-divider': "'|'",
+              '--tab-divider-color': '#767676',
+            },
             panes: ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial'],
           },
         },
       },
-      source: 'chevroletdemo1.dealeron.com, 2026-09-09',
+      // PREVIEW ONLY. The typeface Chevrolet sites load, from the stylesheet
+      // DealerOn's CDN serves it from (Access-Control-Allow-Origin: *, checked
+      // 2026-09-14). The builder's frame and the Brands page borrow it so the
+      // bar is judged in the font it will wear; it never reaches cssFor(), so
+      // the copied code names no font - the site already has it.
+      font: { family: 'ChevySans', css: 'https://cdn.dealeron.com/assets/fonts/chevy-sans/fonts.min.css' },
+      source: 'chevroletdemo1.dealeron.com, 2026-09-14',
     },
     chrysler: {
       label: 'Chrysler',
@@ -674,15 +705,24 @@
       // --tab-selected + the untouched --tab-line: currentcolor reproduce.
       // The rule under the tabs measured border-bottom-width: 0px, which
       // reads as transparent regardless of its border-bottom-color.
+      // --tab-weight 400 read off the same tabs on 2026-09-14, when the knob
+      // was added (the labels are plain <a>s at the body weight, unlike
+      // Chevrolet's <b>). The rest of Toyota's values are still the
+      // 2026-09-10 pass; a closer re-measure like Chevrolet's is its own task.
       styles: {
         looks: { tile: { '--name-color': '#333' } },
         patterns: {
           tabs: {
-            props: { '--tab-dim': '1', '--tab-selected': '#bb162b', '--tab-rule': 'transparent', '--tab-divider': "'|'" },
+            props: { '--tab-weight': '400', '--tab-dim': '1', '--tab-selected': '#bb162b', '--tab-rule': 'transparent', '--tab-divider': "'|'" },
             panes: ['Popular', 'Cars & Minivan', 'Trucks', 'Crossovers & SUVs', 'Electrified'],
           },
         },
       },
+      // PREVIEW ONLY, as for Chevrolet. toyotademo1's body is ToyotaType-Book
+      // and its bold is synthesised - the CDN sheet defines each cut as its
+      // own family at weight normal - so the preview using font-weight on the
+      // Book face is exactly what the site does.
+      font: { family: 'ToyotaType-Book', css: 'https://cdn.dealeron.com/assets/fonts/ToyotaType/fonts.min.css' },
       source: 'toyotademo1.dealeron.com, 2026-09-10',
     },
     volkswagen: {
@@ -749,6 +789,11 @@
   // and the workbench falls back to the Chevrolet roster.
   for (const [id, b] of Object.entries(BRANDS)) {
     const list = roster(id, b.label);
+    // "In stock now" is demo filler under every name. A MEASURED brand's
+    // rows carry what its live bar shows, and neither measured bar shows a
+    // line under the name - with it, the Chevrolet card ran 17px taller than
+    // chevroletdemo1's. A designer who wants a sub line types one in step 1.
+    if (list && b.styles) for (const m of list) m.sub = '';
     if (list) b.models = list;
   }
 

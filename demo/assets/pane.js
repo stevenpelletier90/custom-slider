@@ -67,7 +67,11 @@
   // which is what a pane user expects and what keeps a colour drag cheap.
   const bind = (parent, label, obj, opts, on) => {
     const b = parent.addBinding(obj, 'v', { label, ...opts });
-    b.on('change', (ev) => on(ev.value));
+    // ev.last is Tweakpane's "end of a series" flag: true for every commit
+    // except a mid-drag spectrum event from the colour plugin, which sends
+    // false so the workbench can restyle the frame now and redraw the code
+    // panel once the drag pauses.
+    b.on('change', (ev) => on(ev.value, ev.last));
     // Tweakpane draws the label as a <div class="tp-lblv_l">, not a <label
     // for>, so nothing connects it to the field: the panel's own rows used to
     // wrap both in one <label> and every input had a name from it. Without

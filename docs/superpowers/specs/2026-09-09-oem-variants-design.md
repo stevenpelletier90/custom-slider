@@ -210,9 +210,39 @@ that is the trigger to revisit this spec, not to add a CSS block.
 
 Not in scope:
 
-- Font family. It inherits from the site, which is correct.
+- Font family. It inherits from the site, which is correct. (Addendum
+  2026-09-14, below: the PREVIEW may borrow it; the copied code still never
+  names it.)
 - A variant that swaps the pattern or the look.
 - Reading a live site's theme colours. The builder cannot see the page it is
   pasted into; the OEM value is a starting point the designer overrides.
 - A capture script under `scripts/`. The spike's inline Playwright is enough
   for one brand at a time; add tooling when the count justifies it.
+
+## Addendum 2026-09-14: the preview wears the brand's font
+
+Steven: a designer should be able to look at the Chevrolet bar in the builder
+and know it will look right on the page, and the font is most of that - but
+nothing about the font may reach the copied code.
+
+A measured brand may carry `font: { family, css }` beside `styles`: the family
+its sites load and the stylesheet DealerOn's CDN serves it from
+(`cdn.dealeron.com/assets/fonts/…/fonts.min.css`, `Access-Control-Allow-Origin:
+*`, so the demo on GitHub Pages can load it). `previewFont()` in
+`workbench.js` links that sheet into the FRAME's head and sets the frame
+body's `font-family` when the brand is picked, and removes both on Default;
+`brandbook.js` does the same on the brand's stages. Neither touches
+`cssFor()`, so the copied CSS carries no `font-family` and no `@import` - the
+page the snippet lands on already loads the font, and a snippet that named it
+would ship a second copy. `check-looks.mjs` holds the shape (a family and an
+https `.css` URL); `tests/variants.test.mjs` and `tests/brands.test.mjs` hold
+that the preview wears it and the code does not. The strip's note says it in
+words: "Shown in ChevySans … nothing about the font is in the copied code."
+
+The same pass re-measured Chevrolet at 1280/800/390 and corrected the first
+spike: the tab label is 18px on a 14px body (`1.29em`, not `1.125em`), bold
+via `<b>` (new `--tab-weight` knob, default `600`), the divider is its own
+grey (`--tab-divider-color`, default `currentcolor`), the slides butt
+together, and the cutout is drawn at 85% with a 16px name. A measured brand's
+roster rows also drop the demo's "In stock now" sub line, which neither live
+bar shows.

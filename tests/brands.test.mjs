@@ -72,6 +72,25 @@ test('a measured brand has one live stage per pattern it is measured for', async
   assert.equal(line, 'rgb(0, 109, 199)', 'the tabbed stage should draw Chevrolet values');
 });
 
+test('a brand with a font is shown in it; the generated CSS never names one', async () => {
+  const got = await page.evaluate(() => {
+    const chevy = document.querySelector('#b-chevrolet .bb-stage [role="tab"]');
+    const other = document.querySelector('#b-acura .bb-stage .cargo-name');
+    return {
+      chevy: getComputedStyle(chevy).fontFamily,
+      other: getComputedStyle(other).fontFamily,
+      link: !!document.querySelector('link[href="https://cdn.dealeron.com/assets/fonts/chevy-sans/fonts.min.css"]'),
+      note: document.querySelector('#b-chevrolet .bb-note')?.textContent,
+      css: document.getElementById('gx-css').textContent,
+    };
+  });
+  assert.match(got.chevy, /^ChevySans/);
+  assert.match(got.other, /^Arial/, 'a brand without a font keeps the stage font');
+  assert.equal(got.link, true);
+  assert.match(got.note, /Shown in ChevySans/);
+  assert.doesNotMatch(got.css, /font-family|ChevySans|@import/i, 'the font is page scaffolding, never generated CSS');
+});
+
 test('a roster-only brand shows its own cars on the model bar', async () => {
   const kia = await page.evaluate(() => {
     const s = document.querySelector('#b-kia .bb-stage');
