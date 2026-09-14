@@ -27,6 +27,20 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   every difference was a value, which moved the tab row's five values out of hardcoded CSS into
   props (F039). 2026-09-10: the Brand list left the settings panel (spec
   `2026-09-10-brands-page-design.md`).
+- 2026-09-14 Chevrolet hero: measured chevroletdemo1's homepage carousel at 1280/800/390 (Bootstrap
+  `carousel-fade` at 5000 ms, 3.2:1 at every width from 1920×600 and 768×240 art, square corners, a
+  38px `#d6d6d6` chevron on nothing, 13px dots 10px up the picture). The hero's 21/9, 4/3 and 8px
+  were literals in its CSS, so they became `--hero-aspect`, `--hero-aspect-phone` and
+  `--hero-radius`. Kept on purpose: the engine's solid dot discs (the platform's are hollow rings),
+  a real pause button (the platform's is 16×6 px with `tabindex="-1"`), dots on phones (the platform
+  hides them under 768). "Dots over the image" became a fact read off the values, because a brand
+  preset or a hand-typed 0.1px collapsed the strip without the `z-index` the switch alone shipped,
+  and the dots drew under the track. The first screenshot of Chevrolet on the hero showed a blurry
+  320×240 cutout stretched to 3.2:1 and eight dots: the brand's roster and model-bar ladder had
+  always been applied to every pattern, though the strip's own comment said they belong on a cutout
+  card only — `takesCutouts()` now gates the roster, the count and the ladder as well as the strip.
+  The live arrow is a chevron in a thin circle (bootstrap-icons `arrow-left-circle`), which the
+  engine's one glyph cannot draw, so the hero gained `--hero-arrow-ring`.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until
