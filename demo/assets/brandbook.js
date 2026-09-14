@@ -1,7 +1,7 @@
 // The Brands page: the library browsed by OEM. Built by the same generator as
 // the builder and the patterns page (renderPattern), so a Chevrolet bar here
 // is the Chevrolet bar the builder hands over. Spec:
-// docs/superpowers/specs/2026-09-10-brands-page-design.md
+// docs/specs/2026-09-10-brands-page-design.md
 
 (() => {
   const { PATTERNS, BRANDS, SHORT, renderPattern, patternsOf } = globalThis.CARGO;

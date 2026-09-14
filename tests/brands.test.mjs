@@ -1,5 +1,5 @@
 // The Brands page: browse the library by OEM. Spec:
-// docs/superpowers/specs/2026-09-10-brands-page-design.md
+// docs/specs/2026-09-10-brands-page-design.md
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
 import { ORIGIN } from './helpers.mjs';

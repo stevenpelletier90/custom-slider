@@ -4,7 +4,7 @@
 // LADDER (how many across at each breakpoint), and - since 2026-09-09, where a
 // brand has been measured - the VALUES that brand's live demo draws: a
 // `styles` block of knob values keyed by look and by pattern. See
-// docs/superpowers/specs/2026-09-09-oem-variants-design.md.
+// docs/specs/2026-09-09-oem-variants-design.md.
 //
 // What a preset never does is change MARKUP. It used to apply `look` as well,
 // and a look owns an element tree: picking Alfa Romeo on the model bar

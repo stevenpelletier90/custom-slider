@@ -1,5 +1,5 @@
 // OEM variants: a brand preset that carries values, and the knobs it needs.
-// Spec: docs/superpowers/specs/2026-09-09-oem-variants-design.md
+// Spec: docs/specs/2026-09-09-oem-variants-design.md
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
 import { openBuilder, pick, rowByLabel, copyParts, ORIGIN, hostHtml, engineFiles, readSlider, stageReady } from './helpers.mjs';

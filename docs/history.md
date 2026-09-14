@@ -1,0 +1,87 @@
+# History — dated evidence behind the standing rules
+
+Measured figures, finding IDs and the incidents that CLAUDE.md used to carry as rationale. The rules
+they anchor stay in `../CLAUDE.md`; the evidence lives here so it is out of the default context load
+but not lost. Moved out of CLAUDE.md on 2026-09-10, out of the git-ignored SDD ledger on 2026-09-14.
+
+rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
+
+- Sizes at the time: engine 6.2 KB gzip (JS 4.9 + CSS 1.4) against the 6656 B budget; the stylesheet
+  also carried 2 KB of card styles, so a site downloaded 8.2 KB.
+- Demo: the rail held 21 starting points. `patterns.html` used to carry a second "Every card style"
+  grid (gone — every card is a pattern). `looks.js`'s 7 components collapsed the census's 17 OEM
+  "skins", most of which differed only in values.
+- Install panel: building the file name back up from a kind (`custom-slider.${kind}`) once saved
+  minified bytes as `custom-slider.css` — why each button's `data-file` names the file.
+- 2026-09-08: the "Paste the card styles too" switch went (an inlined copy can never be fixed; it
+  was a no-op on most patterns). Two stylesheets only ever saved bytes on a site using no card
+  style, and there are none.
+- 2026-09-08 taxonomy end state: `pane.looks()`, the `lookpicker` blade and the `.tp-lookv` rules
+  removed. Nesting the picker inside a structural pattern had made a tabbed bar look as though it
+  owned a decision about cards.
+- 2026-09-08 third axis (`content`/`crop`); 2026-09-09 the brand control also appears wherever a
+  brand carries measured values. Crop-warning anchor: "a photo card on a cutout roster is wrong"
+  flagged `cards` + `vcard`, which is a 640×480 cutout in a 4/3 card — aspects agreeing, trimming
+  nothing.
+- 2026-09-09 brand variants: the spike measured chevroletdemo1 against the `tabs` pattern and found
+  every difference was a value, which moved the tab row's five values out of hardcoded CSS into
+  props (F039). 2026-09-10: the Brand list left the settings panel (spec
+  `2026-09-10-brands-page-design.md`).
+- Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
+  ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
+- Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until
+  `openOverlay()`.
+- Video: both video patterns shipped a placeholder div and a comment, so the address had to be typed
+  into the pasted markup by hand.
+- Looks/patterns collapse: a first pass dropped ten patterns along with the looks and they had to be
+  restored.
+- Code parity: with the frame at 750, editing "992 and up" changed nothing visible until the
+  `--cs-per-view` pin. The previous demo hand-wrote recipes beside the live examples and needed
+  `check-recipes.mjs` (deleted) to catch the drift.
+- `rem`: card names rendered 10px where the demo showed 16; the reserved dot row fell to 25px
+  against a 24px dot hit box.
+- Box model (fixed 2026-09-08): the frame simulated `html { font-size: 10px }` but not
+  `* { box-sizing: border-box }` (verified in `bootstrap@3.4.1` `dist/css/bootstrap.css` line 1069,
+  `*:before, *:after` on the next line). Measured at Desktop before the fix, seven patterns had
+  cards hanging out of their slides: `reviews` by 37px (out of the frame, cut by
+  `html{overflow:hidden}`), `stock` 30.78, `locations` 17.5; `cards`, `mixed` and `service` by
+  exactly their two 1px borders — why a bottom border was missing and reappeared on scroll.
+  `hostHtml()` lacked both rules too, so paste-parity compared two documents consistently wrong
+  together.
+- Fill (fixed 2026-09-08): Fill only widened the frame, the container rules held the slider at
+  1170px, so Fill and Desktop drew the same picture.
+- Generated-CSS lint: about 15 KB of card/pattern rules live in template literals.
+- `npm test` origin: the spec listed a test framework as a non-goal, which held while the engine was
+  the only thing shipping. Three findings — F003 (`--cs-gap: 0px` surviving the platform minifier as
+  unitless `0`), F022 (a cleared field emitting `--cs-gap: ;`), F028 (a typed `10`) — were the same
+  broken slider reached three ways; only the third was caught by a person. The suite ran ~50 s then;
+  `recipes` caught one recipe being wrong before it shipped. A 21-pattern sweep at every width took
+  minutes and was dropped. The `engine` checks were manual checklist steps before; the `install`
+  name/bytes check exists because the Download button once saved minified code under the readable
+  name.
+- Two entry points: the old split was `Slider` in source, `DLCarousel` on the page.
+- Engine linked: `docs/cms-no-hosting.md` and `scripts/paste.mjs` were the escape hatch written when
+  nothing was hosted; both deleted 2026-09-08 once the four files went up, and because the script
+  emitted code onto live dealer pages with no test.
+- Folders: `Advanced` and `Tab names` used to start closed, remembered in
+  `localStorage['cs-folders']` (gone — a stale entry would re-collapse a folder that no longer has a
+  toggle). Tweakpane's own click listener is registered first, which is why a same-element capture
+  listener cannot beat it.
+- 2026-09-02 readiness review: `.name.cs` measured with the sheets swapped — service cards went from
+  347.6px at three per view to 1070.8px at one. `:where()`: with the shared sheet first the
+  designer's colour won, with theirs first it was silently ignored; `weaken()` costs 26 B gzip in
+  the cards half; weakening the whole-selector rule reverted the tall tile's `--cs-arrow-bg` to the
+  engine's dark value (dark arrow on a dark strip); all seven card styles proved pixel-identical
+  across three widths before and after. Shared names: the first strip took the second's 3em gap. Six
+  knobs caught lying at once (F039–F077). The `if (!stage) return` TDZ trap was caught once by the
+  gate.
+- `scroll-behavior: auto` (2026-09-08): on a host with `* { scroll-behavior: smooth }` instant sat
+  at 0 after a frame and crawled to 590px over ~700ms; declaring `auto` restores per-call control
+  for 5 B gzip (instant lands in one frame, explicit smooth still animates).
+- `.cs-track::-webkit-scrollbar`: looks like 20 free bytes; `scrollbar-width` support is Chrome 121
+  / Firefox 64 / Safari 18.2 but `webview_android: false`.
+- Fade shipped 2026-08-18.
+- Byte-budget anchor: merging two duplicate rules once made the CSS bigger because it separated a
+  selector from its sibling.
+- `_commit()` optimistic UI: without it dots/tabs/status moved ~900 ms after a click, when the
+  scroll settled.
