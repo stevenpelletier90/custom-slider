@@ -159,7 +159,7 @@ test.describe('a brand applies its values', () => {
     assert.equal(s.divider, '"|"');
     assert.equal(s.dividerColour, 'rgb(118, 118, 118)', "the site's own grey, not the tab text at full strength");
     assert.equal(s.gap, '0.1px', 'the live slides butt together');
-    assert.equal(await knob(page, 'Selected tab line'), '#006dc7');
+    assert.equal(await knob(page, 'Selected tab line'), 'var(--cta-background-color)', "the live bar draws the line from the site's own button colour token");
     assert.equal(await knob(page, 'Tab text weight'), '700');
     assert.equal(await knob(page, 'Divider colour'), '#767676');
     assert.equal(await knob(page, 'Name case'), 'capitalize');
@@ -173,7 +173,7 @@ test.describe('a brand applies its values', () => {
     const tabs = await page.evaluate(() => [...globalThis.CARGO.sdoc().querySelectorAll('.cargo-tabs [role="tab"]')].map((t) => t.textContent.trim()));
     assert.deepEqual(tabs, ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial']);
     const { css } = await copyParts(page);
-    assert.match(css, /--tab-line: #006dc7;/);
+    assert.ok(css.includes('--tab-line: var(--cta-background-color);'), 'the tab line should name the theme token, never a hex');
     assert.match(css, /--tab-weight: 700;/);
     assert.match(css, /--tab-divider-color: #767676;/);
     assert.match(css, /--name-case: capitalize;/);
@@ -193,7 +193,7 @@ test.describe('a brand applies its values', () => {
     await pick(page, 'tabs');
     await selectBrand(page, 'chevrolet');
     const field = () => rowByLabel(page, 'Selected tab line').locator('input[type="text"]').first();
-    assert.equal(await field().getAttribute('placeholder'), '#006dc7');
+    assert.equal(await field().getAttribute('placeholder'), 'var(--cta-background-color)');
     await selectBrand(page, '');
     assert.equal(await field().getAttribute('placeholder'), 'currentcolor');
   });
@@ -318,8 +318,11 @@ test.describe('the patterns page shows the variants', () => {
     await selectBrand(page, 'chevrolet');
     const parts = await copyParts(page);
     const engine = await engineFiles();
+    // With the theme tokens a Chevrolet page defines; the line names the
+    // token, so on a page without it there would be no line to read.
+    const theme = await page.evaluate(() => globalThis.CARGO.BRANDS.chevrolet.theme);
     const host = await browser.newPage();
-    await host.setContent(hostHtml({ ...engine, css: parts.css, html: parts.html, js: parts.js }), { waitUntil: 'load' });
+    await host.setContent(hostHtml({ ...engine, css: parts.css, html: parts.html, js: parts.js, theme }), { waitUntil: 'load' });
     const hostLine = await host.evaluate(() => getComputedStyle(document.querySelector('[role="tab"][aria-selected="true"]'), '::after').backgroundColor);
     assert.equal(hostLine, 'rgb(0, 109, 199)');
     const slider = await readSlider(host);
@@ -360,11 +363,11 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
         title: d.querySelector('.cargo-title'),
         titleTag: d.querySelector('.cargo-title')?.tagName,
         titleSize: d.querySelector('.cargo-title') && w.getComputedStyle(d.querySelector('.cargo-title')).fontSize,
-        more: d.querySelector('.cargo-more .cargo-cta') && {
-          href: d.querySelector('.cargo-more .cargo-cta').getAttribute('href'),
-          text: d.querySelector('.cargo-more .cargo-cta').textContent.trim(),
-          bg: w.getComputedStyle(d.querySelector('.cargo-more .cargo-cta')).backgroundColor,
-          fg: w.getComputedStyle(d.querySelector('.cargo-more .cargo-cta')).color,
+        more: d.querySelector('.cargo-more .btn') && {
+          href: d.querySelector('.cargo-more .btn').getAttribute('href'),
+          text: d.querySelector('.cargo-more .btn').textContent.trim(),
+          bg: w.getComputedStyle(d.querySelector('.cargo-more .btn')).backgroundColor,
+          fg: w.getComputedStyle(d.querySelector('.cargo-more .btn')).color,
         },
         body: w.getComputedStyle(d.body).fontSize,
       };
@@ -408,8 +411,8 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
       '--tab-pad: 0.75em;',
       '--tab-divider-size: 0.78;',
       '--tab-fade: 0.15s;',
-      '--more-bg: #006dc7;',
-      '--cs-arrow-fg-hover: #006dc7;',
+      '--cs-arrow-fg-hover: var(--cta-background-color);',
+      '--tab-line: var(--cta-background-color);',
       '--cs-arrow-bg-hover: transparent;',
       '--name-gap: 0.14em;',
       '--name-leading: 1.1;',
@@ -417,8 +420,13 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     ]) {
       assert.ok(css.includes(line), `${line} never reached the copied CSS`);
     }
-    assert.match(html, /<h2 class="cargo-title">View Our Lineup<\/h2>/);
-    assert.match(html, /<p class="cargo-more"><a class="cargo-cta" href="\/searchnew\.aspx">Explore All New Inventory<\/a><\/p>/);
+    // The platform's classes, so the site's theme sizes and colours both -
+    // and not one hex for them in the copied CSS.
+    assert.match(html, /<h2 class="h1 cargo-title">View Our Lineup<\/h2>/);
+    assert.match(html, /<p class="cargo-more"><a class="btn btn-cta btn-lg" href="\/searchnew\.aspx">Explore All New Inventory<\/a><\/p>/);
+    assert.doesNotMatch(css, /#006dc7/i, "Chevrolet's blue is the theme's to supply; the snippet must name the token, not the hex");
+    assert.doesNotMatch(css, /cargo-title \{[^}]*(font-size|font-weight|color)/, 'the heading rule sizes or colours the heading over the theme');
+    assert.doesNotMatch(css, /\.btn/, 'the snippet restyles the platform button');
     assert.deepEqual(errors, []);
   });
 
@@ -542,7 +550,7 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     await setField(page, 'Heading over the bar', 'Our Lineup');
     await setField(page, 'Button under the bar', '');
     let { html, css } = await copyParts(page);
-    assert.match(html, /<h2 class="cargo-title">Our Lineup<\/h2>/);
+    assert.match(html, /<h2 class="h1 cargo-title">Our Lineup<\/h2>/);
     assert.doesNotMatch(html, /cargo-more/, 'an empty button text still ships a button');
     assert.match(css, /\.cargo-title \{/, 'the heading rule did not ship');
     await setField(page, 'Heading over the bar', '');
@@ -551,7 +559,7 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     await setField(page, 'Button under the bar', 'See them all');
     await setField(page, 'Button under the bar, link', '/searchused.aspx');
     ({ html } = await copyParts(page));
-    assert.match(html, /<a class="cargo-cta" href="\/searchused\.aspx">See them all<\/a>/);
+    assert.match(html, /<a class="btn btn-cta btn-lg" href="\/searchused\.aspx">See them all<\/a>/);
     // Kept: pressed Keep, reloaded, the typed words are still there and the
     // cleared heading is still cleared - an empty string is a choice, not a
     // missing value.
@@ -575,25 +583,31 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     await selectBrand(page, 'chevrolet');
     const parts = await copyParts(page);
     const engine = await engineFiles();
+    // The host carries the platform's theme layer with Chevrolet's tokens,
+    // exactly what a Chevrolet dealer page has: the heading and button take
+    // their size and colour from it, and from nothing in the snippet.
+    const theme = await page.evaluate(() => globalThis.CARGO.BRANDS.chevrolet.theme);
     const host = await browser.newPage();
-    await host.setContent(hostHtml({ ...engine, css: parts.css, html: parts.html, js: parts.js }), { waitUntil: 'load' });
+    await host.setContent(hostHtml({ ...engine, css: parts.css, html: parts.html, js: parts.js, theme }), { waitUntil: 'load' });
     const r = await host.evaluate(() => {
       const h = document.querySelector('.cargo-title');
-      const a = document.querySelector('.cargo-more .cargo-cta');
+      const a = document.querySelector('.cargo-more .btn');
       const tabs = [...document.querySelectorAll('.cargo-tabs [role="tab"]')].map((t) => t.getBoundingClientRect());
       return {
         h2: h.tagName,
         size: getComputedStyle(h).fontSize,
         btn: getComputedStyle(a).fontSize,
-        btnH: +a.getBoundingClientRect().height.toFixed(1),
+        btnBg: getComputedStyle(a).backgroundColor,
+        line: getComputedStyle(document.querySelector('[role="tab"][aria-selected="true"]'), '::after').backgroundColor,
         gap: +(tabs[1].left - tabs[0].right).toFixed(1),
         headings: [...document.querySelectorAll('h1,h2,h3')].map((e) => e.tagName),
       };
     });
     assert.equal(r.h2, 'H2');
-    assert.ok(Math.abs(parseFloat(r.size) - 36) < 0.1, `the live heading is 36px on a 14px page, got ${r.size}`);
-    assert.ok(Math.abs(parseFloat(r.btn) - 18) < 0.1, `the live button is 18px, got ${r.btn}`);
-    assert.ok(Math.abs(r.btnH - 44) < 1.5, `the live button is 44px tall, got ${r.btnH}`);
+    assert.ok(Math.abs(parseFloat(r.size) - 36) < 0.1, `the theme's h1 class is 36px, got ${r.size}`);
+    assert.ok(Math.abs(parseFloat(r.btn) - 18) < 0.1, `the theme's btn-lg is 18px, got ${r.btn}`);
+    assert.equal(r.btnBg, 'rgb(0, 109, 199)', "the button should wear the site's own --cta-background-color");
+    assert.equal(r.line, 'rgb(0, 109, 199)', 'the tab line should resolve the same token');
     assert.ok(Math.abs(r.gap - 31) < 1, `31px between tabs on the host, got ${r.gap}`);
     // Only the pattern's own heading: the slides carry names, never headings,
     // so the snippet adds exactly one level to the host page's outline.

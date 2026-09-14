@@ -625,14 +625,6 @@ ${VIDEO_DIALOG_CSS}`,
         // its centre (the live bar: 0.15s, ease-out). 0s is the instant
         // switch this pattern always had.
         '--tab-line-grow': '0s',
-        // The heading over the bar and the button under it - the platform's
-        // own block carries both, and a Chevrolet designer rebuilt them by
-        // hand every time. 36px on the 14px body, and the demo's navy on
-        // white (10.4:1) until a brand says otherwise.
-        '--title-size': '2.57em',
-        '--title-weight': '600',
-        '--more-bg': '#16324f',
-        '--more-fg': '#fff',
       },
       hideDots: true,
       panes: ['Trucks', 'SUVs', 'Crossovers'],
@@ -642,7 +634,7 @@ ${VIDEO_DIALOG_CSS}`,
       // would ship a heading outline that skips a level.
       title: 'View Our Lineup',
       more: { text: 'Explore All New Inventory', href: '/searchnew.aspx' },
-      css: `.cargo-title { margin: 0 0 0.19em; font-size: var(--title-size); font-weight: var(--title-weight); line-height: 1.1; text-align: center; }
+      css: `.cargo-title { margin: 0 0 0.19em; text-align: center; }
 .cargo-tabs { display: flex; flex-wrap: wrap; justify-content: center; margin-block-end: 1em; border-block-end: 1px solid var(--tab-rule); }
 .cargo-tabs [role="tab"] { position: relative; padding: var(--tab-pad) 1.1em; margin-inline: calc(var(--tab-gap) / 2); font: inherit; font-size: var(--tab-size); font-weight: var(--tab-weight); line-height: 1.55; color: inherit; cursor: pointer; background: none; border: 0; border-block-end: 2px solid transparent; opacity: var(--tab-dim); }
 .cargo-tabs [role="tab"][aria-selected="true"] { color: var(--tab-selected); opacity: 1; }
@@ -665,8 +657,11 @@ ${VIDEO_DIALOG_CSS}`,
    motion sees it at all. Opacity only, so nothing moves. */
 @media (prefers-reduced-motion: no-preference) { .cargo-pane[data-in] { animation: cargo-tab-fade var(--tab-fade) linear; } }
 @keyframes cargo-tab-fade { from { opacity: 0; } }
+/* Only placement. The heading wears the platform's h1 size class and the
+   button its btn-cta classes, so the site's own theme sizes and colours
+   both - nothing here may name a size, a weight or a colour, or the
+   snippet would override the theme it lands in. */
 .cargo-more { margin: 2.29em 0 0; text-align: center; }
-.cargo-more .cargo-cta { display: inline-block; padding: 0.44em 1.11em; font-size: 1.29em; font-weight: 700; line-height: 1.33; color: var(--more-fg); text-decoration: none; background: var(--more-bg); border: 2px solid var(--more-bg); border-radius: 0.44em; }
 /* Three tabs need 272px at the default padding, and a 320px phone leaves 236 -
    so Chevrolet's own three body styles wrapped onto two rows at the narrowest
    size anyone browses at. The padding gives way, not the type: 99px of that
@@ -1335,6 +1330,25 @@ ${PHOTO_CSS}
   // on every card class, which is the whole list.
   const SHARED_DEFAULTS = { '--cargo-font': '1em' };
 
+  // The platform's theme layer, as the preview frame stands it in. Every
+  // DealerOn page defines these four tokens on :root (read off the Chevrolet,
+  // Toyota, BMW and Ford demos on 2026-09-14), Bootstrap 3 gives it the .h1
+  // size class and .btn/.btn-lg, and the platform builds .btn-cta from the
+  // tokens. A snippet names the classes and the tokens and ships none of the
+  // values - so the frame has to carry stand-ins or the heading is a UA h2
+  // and the button a bare link. The values are the demo's own navy; a
+  // measured brand's `theme` (brands.js) overrides them in previewFont().
+  // Nothing here reaches cssFor(). tests/helpers.mjs hostHtml() carries the
+  // same rules, so paste parity is proven against the same theme layer.
+  const THEME_TOKENS = ['--cta-background-color', '--cta-font-color', '--cta-hover-color', '--main-color'];
+  const THEME_CSS =
+    ':root{--cta-background-color:#16324f;--cta-font-color:#fff;--cta-hover-color:#0e2438;--main-color:#262626}' +
+    '.h1{margin:20px 0 10px;font-size:36px;font-weight:500;line-height:1.1}' +
+    '.btn{display:inline-block;padding:6px 12px;font-size:14px;font-weight:400;line-height:1.42857143;text-align:center;white-space:nowrap;vertical-align:middle;cursor:pointer;text-decoration:none;border:1px solid transparent;border-radius:4px}' +
+    '.btn-lg{padding:10px 16px;font-size:18px;line-height:1.3333333;border-radius:6px}' +
+    '.btn-cta{color:var(--cta-font-color);background-color:var(--cta-background-color);border-color:var(--cta-background-color)}' +
+    '.btn-cta:hover,.btn-cta:focus{color:var(--cta-font-color);background-color:var(--cta-hover-color);border-color:var(--cta-hover-color)}';
+
   // The engine's own `.cs` defaults. A snippet restating one of these is a line
   // that changes nothing, and 48 such lines were being pasted across 15
   // patterns - `--cs-gap: 1em`, `--cs-arrow-bg`, `--cs-arrow-fg` and a
@@ -1765,8 +1779,12 @@ ${PHOTO_CSS}
       const title = (state.title ?? p.title ?? '').trim();
       const moreText = (state.moreText ?? p.more?.text ?? '').trim();
       const moreHref = (state.moreHref ?? p.more?.href ?? '').trim();
-      const head = title ? `  <h2 class="cargo-title">${escTab(title)}</h2>\n` : '';
-      const foot = moreText ? `\n  <p class="cargo-more"><a class="cargo-cta" href="${moreHref || '#'}">${escTab(moreText)}</a></p>` : '';
+      // The platform's own classes, so the site's theme sizes and colours them:
+      // `h1` is the storefront's 36px heading size class (the live block puts
+      // it on an h3), `btn btn-cta btn-lg` its themed button. Nothing about
+      // either is in the copied CSS - see the note on .cargo-more.
+      const head = title ? `  <h2 class="h1 cargo-title">${escTab(title)}</h2>\n` : '';
+      const foot = moreText ? `\n  <p class="cargo-more"><a class="btn btn-cta btn-lg" href="${moreHref || '#'}">${escTab(moreText)}</a></p>` : '';
       return `<div class="${cls}-wrap" data-tabs>\n${head}  <div class="cargo-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n${panes}${foot}\n</div>`;
     }
 
@@ -2035,6 +2053,15 @@ ${PHOTO_CSS}
     // `block-size: 100%` plus padding and a border, which only fits under
     // border-box. Reported twice as "the border doesn't show".
     '<style>html{overflow:hidden}html{font-size:10px}*,*::before,*::after{box-sizing:border-box}body{margin:0;font-family:Arial,Helvetica,sans-serif;font-size:14px;color:#10151c;background:#fff}.wb-sr{position:absolute;inline-size:1px;block-size:1px;padding:0;margin:-1px;overflow:hidden;clip-path:inset(50%)}' +
+    // The platform's THEME LAYER, the part every dealer page has and the
+    // snippet is written against: the four theme tokens (read off four OEM
+    // demos on 2026-09-14 - every one defines them), Bootstrap 3's .h1 size
+    // class and .btn/.btn-lg, and the platform's .btn-cta built from the
+    // tokens. Stand-in values only, the demo's navy; a measured brand's
+    // `theme` in brands.js overrides them (previewFont). Nothing here reaches
+    // the copied code - the snippet names the classes and the tokens, and
+    // the site fills them in.
+    THEME_CSS +
     // Bootstrap 3's own container, because the frame is now the SCREEN rather
     // than the box. That distinction is the whole reason this exists: a
     // .container is 750px BECAUSE the screen is 768, so a 750px-wide frame
@@ -2245,6 +2272,16 @@ ${PHOTO_CSS}
       if (link.getAttribute('href') !== f.css) link.href = f.css;
     } else link?.remove();
     d.body.style.fontFamily = f ? `${f.family}, Arial, Helvetica, sans-serif` : '';
+    // The brand's THEME tokens, the same way: a measured brand may carry the
+    // four --cta-*/--main-color values its sites define, so a snippet that
+    // names var(--cta-background-color) draws that brand's blue here. The
+    // frame's own stand-in values are in FRAME_DOC; Default hands back to
+    // them. Never reaches cssFor().
+    const t = BRANDS[state.brand]?.theme ?? {};
+    for (const k of THEME_TOKENS) {
+      if (t[k]) d.documentElement.style.setProperty(k, t[k]);
+      else d.documentElement.style.removeProperty(k);
+    }
   }
 
   function render() {
@@ -2667,10 +2704,6 @@ ${PHOTO_CSS}
     '--tab-divider-size': 'Divider size',
     '--tab-fade': 'Pane fade',
     '--tab-line-grow': 'Line grow time',
-    '--title-size': 'Heading size',
-    '--title-weight': 'Heading weight',
-    '--more-bg': 'Bottom button background',
-    '--more-fg': 'Bottom button text',
   };
   const knobLabel = (k) => KNOB_LABELS[k] ?? k.replace(/^--/, '').replace(/-/g, ' ');
 

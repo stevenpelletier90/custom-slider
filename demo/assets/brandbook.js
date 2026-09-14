@@ -70,6 +70,10 @@
       const stage = block.querySelector('.bb-stage');
       stage.innerHTML = r.html;
       if (b.font) stage.style.fontFamily = `${b.font.family}, Arial, Helvetica, sans-serif`;
+      // The brand's theme tokens (brands.js `theme`), page scaffolding the
+      // same way: a value written as var(--cta-background-color) draws the
+      // brand's own here. ui.css carries the demo's stand-in values.
+      for (const [k, v] of Object.entries(b.theme ?? {})) stage.style.setProperty(k, v);
       sec.append(block);
     }
     grid.append(sec);

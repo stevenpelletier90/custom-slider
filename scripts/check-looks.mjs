@@ -291,6 +291,19 @@ for (const [id, b] of brands) {
       bad++;
     }
   }
+  // A brand's `theme` (2026-09-14) is PREVIEW scaffolding too: the four
+  // tokens every DealerOn theme defines, as hexes, so the frame and the
+  // Brands page can resolve a knob written as var(--cta-background-color).
+  // Exactly those four keys, or a typo would sit there resolving nothing.
+  if (b.theme != null) {
+    const TOKENS = ['--cta-background-color', '--cta-font-color', '--cta-hover-color', '--main-color'];
+    for (const [k, v] of Object.entries(b.theme)) {
+      if (!TOKENS.includes(k) || !/^#[0-9a-f]{3,8}$/i.test(String(v))) {
+        console.error(`  ${id}: theme.${k} = ${v} — theme carries only ${TOKENS.join(', ')}, each a hex`);
+        bad++;
+      }
+    }
+  }
   if (b.ladder === null) continue;
   if (!Array.isArray(b.ladder) || !b.ladder.length || b.ladder[0][0] !== 0) {
     console.error(`  ${id}: ladder must start at 0 or be null when nothing is recorded`);

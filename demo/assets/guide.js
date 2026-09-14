@@ -292,7 +292,8 @@
     '--tab-dim': 'How faded an unselected tab is, 0 to 1. <code>1</code> shows every tab at full strength and leaves the line to mark the selected one.',
     '--tab-selected':
       'Colour of the selected tab’s label. <code>currentcolor</code> keeps the page’s text colour; with the line left at <code>currentcolor</code> it follows this, which is how Toyota draws its red tab.',
-    '--tab-line': 'Colour of the 2px line under the selected tab. <code>currentcolor</code> uses the text colour; a hex pins it to a brand colour.',
+    '--tab-line':
+      'Colour of the 2px line under the selected tab. <code>currentcolor</code> uses the text colour; <code>var(--cta-background-color)</code> takes the site’s own button colour, which every DealerOn theme defines and is what the live Chevrolet bar does; a hex pins it.',
     '--tab-line-grow':
       'How long that line takes to grow out from the centre of a tab that is picked or hovered, and to shrink back when the pointer leaves. <code>0s</code> switches at once; Chevrolet’s grows over <code>0.15s</code>. Never plays for a reader who asked for reduced motion.',
     '--tab-rule': 'Colour of the 1px rule under the whole tab row. <code>transparent</code> removes it.',
@@ -305,10 +306,6 @@
       'Size of the divider as a fraction of the tab text. <code>1</code> is the tab size; Chevrolet draws its <code>|</code> at the page’s body size, <code>0.78</code> of an 18px tab.',
     '--tab-fade':
       'How long a pane takes to fade in when a tab is picked. <code>0s</code> switches at once; Chevrolet fades over <code>0.15s</code>. Never plays for a reader who asked for reduced motion, and never on page load.',
-    '--title-size': 'Size of the heading over the bar, in em of the page text. <code>2.57em</code> is 36px on a 14px page, the platform’s own.',
-    '--title-weight': 'Weight of that heading.',
-    '--more-bg': 'Background of the button under the bar. Chevrolet uses its link blue, <code>#006dc7</code>; the platform’s own button class colour is the one to match on a real site.',
-    '--more-fg': 'Text colour of that button.',
   };
 
   // Built by walking LOOKS, so the table is the card styles that actually ship.

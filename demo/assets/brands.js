@@ -479,12 +479,18 @@
             props: {
               '--cs-gap': '0.1px',
               '--cs-arrow-fg': '#666',
-              '--cs-arrow-fg-hover': '#006dc7',
+              // The site's own button colour, not its hex: the live bar draws
+              // the arrow hover and the tab line from var(--cta-background-
+              // color), a token every DealerOn theme defines (checked on the
+              // Chevrolet, Toyota, BMW and Ford demos, 2026-09-14). Named the
+              // same way here, the preset is right on any Chevrolet site, and
+              // the builder's preview resolves it from `theme` below.
+              '--cs-arrow-fg-hover': 'var(--cta-background-color)',
               '--cs-arrow-bg-hover': 'transparent',
               '--tab-size': '1.29em',
               '--tab-weight': '700',
               '--tab-dim': '1',
-              '--tab-line': '#006dc7',
+              '--tab-line': 'var(--cta-background-color)',
               '--tab-rule': 'transparent',
               '--tab-divider': "'|'",
               '--tab-divider-color': '#767676',
@@ -497,7 +503,6 @@
               // centre over 0.15s, cubic-bezier(0.215, 0.61, 0.355, 1), and
               // shrinks back when the pointer leaves an unselected tab.
               '--tab-line-grow': '0.15s',
-              '--more-bg': '#006dc7',
             },
             panes: ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial'],
           },
@@ -509,6 +514,12 @@
       // bar is judged in the font it will wear; it never reaches cssFor(), so
       // the copied code names no font - the site already has it.
       font: { family: 'ChevySans', css: 'https://cdn.dealeron.com/assets/fonts/chevy-sans/fonts.min.css' },
+      // PREVIEW ONLY, like the font: the four theme tokens chevroletdemo1's
+      // :root defines (read 2026-09-14). The builder's frame and the Brands
+      // page set them so a value written as var(--cta-background-color)
+      // draws this blue here; on a real Chevrolet site the theme supplies
+      // them and the copied code carries none of these hexes.
+      theme: { '--cta-background-color': '#006dc7', '--cta-font-color': '#fff', '--cta-hover-color': '#0e4180', '--main-color': '#262626' },
       source: 'chevroletdemo1.dealeron.com, 2026-09-14',
     },
     chrysler: {

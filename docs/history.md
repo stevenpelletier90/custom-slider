@@ -53,6 +53,18 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   no-preference. Steven then saw it on hover, not just on a click: the live rule is
   `li.active a::after, li a:hover::after`, so the pointer alone grows the line and leaving shrinks
   it back; ours has the hover half too.
+- 2026-09-14, theme: Steven asked whether the heading and button would override a site's theme. They
+  would have: the snippet shipped `--more-bg: #006dc7`, the button's size and radius, the heading's
+  size and weight, and a literal `#006dc7` for the tab line and arrow hover. Read off the live
+  pages, every DealerOn theme defines four tokens on `:root` (`--cta-background-color`,
+  `--cta-font-color`, `--cta-hover-color`, `--main-color`; checked on the Chevrolet, Toyota, BMW and
+  Ford demos), and the live bar draws its tab line and arrow hover from
+  `var(--cta-background-color)` and its button from `.btn.btn-cta.btn-lg`. The snippet now names the
+  classes (`h2.h1.cargo-title`, `a.btn.btn-cta.btn-lg`) and the token, and ships no size, weight or
+  colour for either; the four `--title-*`/`--more-*` knobs went. The preview frame, the
+  Patterns/Brands stages and the tests' hostile host carry the theme layer as stand-ins (the demo's
+  navy, Chevrolet's `theme` in `brands.js` overriding it), marked preview-only like the font;
+  `check-looks` holds `theme` to those four keys as hexes.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

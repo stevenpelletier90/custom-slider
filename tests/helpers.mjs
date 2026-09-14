@@ -114,7 +114,22 @@ export const switchRow = (page, label) => {
 
 // A hostile host: Bootstrap 3 pins html to 10px on the storefronts, and the
 // body font is not the demo's. Everything the snippet needs it has to bring.
-export function hostHtml({ engineCss, engineJs, css = '', html = '', js = '', box = 1170, cssFirst = false }) {
+// The platform's theme layer, the part every dealer page has (the four theme
+// tokens on :root, Bootstrap 3's .h1 and .btn/.btn-lg, the platform's
+// .btn-cta built from the tokens). The tabbed bar's heading and button name
+// these classes and tokens and ship no values of their own, so the host has
+// to carry them or the paste is compared against a page no dealer has. Same
+// rules as THEME_CSS in workbench.js; `theme` overrides the token values (a
+// brand's own, from brands.js).
+export const themeCss = (theme = {}) =>
+  `:root{--cta-background-color:${theme['--cta-background-color'] ?? '#16324f'};--cta-font-color:${theme['--cta-font-color'] ?? '#fff'};--cta-hover-color:${theme['--cta-hover-color'] ?? '#0e2438'};--main-color:${theme['--main-color'] ?? '#262626'}}` +
+  '.h1{margin:20px 0 10px;font-size:36px;font-weight:500;line-height:1.1}' +
+  '.btn{display:inline-block;padding:6px 12px;font-size:14px;font-weight:400;line-height:1.42857143;text-align:center;white-space:nowrap;vertical-align:middle;cursor:pointer;text-decoration:none;border:1px solid transparent;border-radius:4px}' +
+  '.btn-lg{padding:10px 16px;font-size:18px;line-height:1.3333333;border-radius:6px}' +
+  '.btn-cta{color:var(--cta-font-color);background-color:var(--cta-background-color);border-color:var(--cta-background-color)}' +
+  '.btn-cta:hover,.btn-cta:focus{color:var(--cta-font-color);background-color:var(--cta-hover-color);border-color:var(--cta-hover-color)}';
+
+export function hostHtml({ engineCss, engineJs, css = '', html = '', js = '', box = 1170, cssFirst = false, theme = {} }) {
   const sheets = cssFirst ? `<style>${css}</style><style>${engineCss}</style>` : `<style>${engineCss}</style><style>${css}</style>`;
   return (
     `<!doctype html><html><head><meta charset="utf-8">` +
@@ -126,7 +141,7 @@ export function hostHtml({ engineCss, engineJs, css = '', html = '', js = '', bo
     // together and agreed with each other while both differed from a real
     // dealer page. A card with `block-size: 100%` plus padding and a border only
     // fits its slide under border-box.
-    `<style>html{font-size:10px}*,*::before,*::after{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;font-size:14px}#box{inline-size:${box}px}</style>` +
+    `<style>html{font-size:10px}*,*::before,*::after{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;font-size:14px}#box{inline-size:${box}px}${themeCss(theme)}</style>` +
     `${sheets}</head><body><div id="box">${html}</div>` +
     `<script>${engineJs}<\/script>${js ? `<script>${js}<\/script>` : ''}</body></html>`
   );
