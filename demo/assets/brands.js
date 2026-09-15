@@ -433,10 +433,12 @@
       // - "Explore All New Inventory" 42px under the bar, a white outline
       //   button 14px 32px in the theme's btn-lg, which the theme draws that
       //   way on any bg-main band.
-      // Kept on purpose: the engine's chevron and scroll physics, the divider
-      // at every width, the tabs at 18px on a phone (the live drops to 16px
-      // below 540), and the band padding at the platform's tablet tier
-      // (35px) below 768 too, where the live section leaves 30.
+      // Kept on purpose: the engine's chevron and scroll physics, the band
+      // padding at the platform's tablet tier (35px) below 768 too, where
+      // the live section leaves 30, and one car per view on a phone where
+      // the live bar squeezes two 138px cards under the tile's 150px floor.
+      // The band's black is NOT here: the live page's section rule paints
+      // it, and on a dealer page bg-main is whatever the theme says.
       styles: {
         looks: {
           tile: {
@@ -478,9 +480,17 @@
               '--tab-fade': '0.15s',
               '--title-gap': '0.41em',
               '--more-gap': '3em',
-              '--bar-bg': '#0a0a0a',
+              // No band colour: the wrap wears bg-main and the site paints it
+              // (cadillacdemo1's own section rule makes that #0a0a0a there;
+              // a dealer's theme decides on a dealer's page).
               '--bar-pad': '7.14em',
               '--bar-pad-narrow': '2.5em',
+              // Below 768: the live bar drops to 16px tabs (1.14em of the
+              // 14px body) and hides the `|`, measured at 390 on 2026-09-15.
+              // Its own switch is at 540; the platform's phone tier is the
+              // nearest one the pattern has.
+              '--tab-size-phone': '1.14em',
+              '--tab-divider-phone': 'none',
             },
             panes: ['Electric', 'Crossovers/SUVs', 'Sedans'],
             // bg-main makes the wrap the platform's dark band: white text and

@@ -108,6 +108,27 @@ test.describe('the settings come back with the slides once they are kept', () =>
     assert.doesNotMatch(r.code, /cs-xs-2\.5|cs-sm-99/, 'an out-of-range stored ladder value was restored');
   });
 
+  // A kept knob the pattern no longer ships must not come back: --bar-bg was
+  // removed from the tabbed bar on 2026-09-15 and a browser that had kept it
+  // still shipped `--bar-bg: #0a0a0a` in the snippet with no row in the panel
+  // to see or clear it. The engine's own --cs-* and the shared card-font knob
+  // still come back, because the panel adds those after the restore.
+  test('a kept pattern knob the pattern no longer ships stays out of the snippet', async () => {
+    await pick(page, 'tabs');
+    await page.evaluate(() => {
+      const all = JSON.parse(localStorage.getItem('cs-settings')) ?? { byPattern: {} };
+      all.byPattern.tabs = { props: { '--bar-bg': '#0a0a0a', '--tab-gap': '2em', '--cs-peek': '1em', '--cargo-font': '1.2em' } };
+      localStorage.setItem('cs-settings', JSON.stringify(all));
+    });
+    await page.reload({ waitUntil: 'load' });
+    await stageReady(page);
+    const code = await page.evaluate(() => document.getElementById('wb-code').textContent);
+    assert.doesNotMatch(code, /--bar-bg/, 'a knob the pattern no longer ships was restored from storage');
+    assert.match(code, /--tab-gap: 2em;/, 'a kept pattern knob was thrown away with the stale one');
+    assert.match(code, /--cs-peek: 1em;/, 'a kept engine knob the panel adds after the restore was thrown away');
+    assert.match(code, /--cargo-font: 1.2em;/, 'the kept card-font knob was thrown away');
+  });
+
   // A resize may change the PICTURE - what is drawn, and how big - and may
   // never change the DECISION. That was true when the only correction was a
   // scale, and it is still the point now that a window too narrow to be worth

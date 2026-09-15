@@ -139,6 +139,23 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   Kept on purpose: the divider at every width (the live one is hidden-xxs, gone below 540), 18px
   tabs on a phone (live: 16 below 540), and 35px of band padding below 768 where the live section
   leaves 30.
+- 2026-09-15, Cadillac, the day after: `--bar-bg` is gone. Steven: "the background color will come
+  from the website" - the wrap wears `bg-main` and the theme paints it, and a knob defaulting to
+  `var(--main-color)` on `%wrap%:is(.bg-main)` at (0,2,0) would have overridden any site whose theme
+  paints `bg-main` something else (cadillacdemo1's own section rule is exactly that: it turns the
+  platform's band #0a0a0a). The Reference already said a colour band is page furniture, not a slider
+  setting. The brands page showed the problem first: its `.gx-stage .bg-main` stand-in ties the
+  shared rule at (0,2,0) and won on order, so the band there was #282828 while the workbench drew
+  #0a0a0a. The two "kept on purpose" phone items reversed once Steven asked for "more mobile
+  friendly": at 390 the live bar draws 16px tabs and no `|`, ours drew 18px and a `|` dangling at
+  the start of the wrapped second row. Two phone-tier knobs on the pattern (`--tab-size-phone`,
+  `--tab-divider-phone`, at the platform's 768 tier - the live switch is at 540, not a platform
+  tier), defaulting to the tablet values so no other bar moves. Still kept: one car per view on a
+  phone (the live bar squeezes two 138px cards under the tile's 150px floor plus the 12px margin,
+  which is `perViewFor()`'s clamp doing its job) and 35px of band padding below 768. The preview's
+  `heading-lg` stand-in draws 32px at every width where the live theme drops to 28px on a phone;
+  preview only, and `check-looks` holds `theme.css` to plain class selectors, so a media query there
+  is a gate change, left alone.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

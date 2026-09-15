@@ -935,7 +935,9 @@ test.describe('Cadillac lands every measured number: a band, a heading class, th
     await page.waitForTimeout(300);
     const g = await cadGeometry(page);
     assert.match(g.wrapClass, /\bbg-main\b/, "the wrap wears the platform's dark-band class");
-    assert.equal(g.bandBg, 'rgb(10, 10, 10)', "the band's own colour beats bg-main's in either order");
+    // The theme's main colour, from bg-main alone: the preset ships no band
+    // colour (2026-09-15, "the background color will come from the website").
+    assert.equal(g.bandBg, 'rgb(40, 40, 40)', "the band is the site's bg-main, nothing in the snippet paints it");
     assert.ok(Math.abs(parseFloat(g.bandPad) - 100) < 0.5, `100px over the band, got ${g.bandPad}`);
     assert.equal(g.bandPadX, '0px', 'a band pads over and under only');
     assert.equal(g.text, 'rgb(255, 255, 255)', 'bg-main turns the text white');
@@ -969,9 +971,10 @@ test.describe('Cadillac lands every measured number: a band, a heading class, th
     assert.match(html, /<h2 class="heading-lg cargo-title">Explore The Cadillac Lineup<\/h2>/);
     assert.doesNotMatch(html, /cargo-lead/, 'Cadillac has no lead paragraph');
     for (const line of [
-      '--bar-bg: #0a0a0a;',
       '--bar-pad: 7.14em;',
       '--bar-pad-narrow: 2.5em;',
+      '--tab-size-phone: 1.14em;',
+      '--tab-divider-phone: none;',
       '--tab-line: #ddd;',
       '--tab-gap: 1.78em;',
       '--tab-pad: 0.56em 0.83em;',
@@ -982,7 +985,7 @@ test.describe('Cadillac lands every measured number: a band, a heading class, th
     ]) {
       assert.ok(css.includes(line), `${line} never reached the copied CSS`);
     }
-    assert.doesNotMatch(css, /#282828|#171473|Cadillac Gothic/i, "the band's grey, the button blue and the font are the theme's");
+    assert.doesNotMatch(css, /#282828|#171473|#0a0a0a|Cadillac Gothic|bar-bg|background-color/i, "the band's colour, the button blue and the font are the theme's");
     assert.doesNotMatch(css, /\.bg-main|\.heading-lg|\.btn/, 'the snippet restyles a platform class');
     assert.deepEqual(errors, []);
   });
@@ -1009,7 +1012,7 @@ test.describe('Cadillac lands every measured number: a band, a heading class, th
         headings: [...document.querySelectorAll('h1,h2,h3')].map((e) => e.tagName),
       };
     });
-    assert.equal(r.band, 'rgb(10, 10, 10)');
+    assert.equal(r.band, 'rgb(40, 40, 40)', "the host theme's bg-main paints the band");
     assert.ok(Math.abs(parseFloat(r.pad) - 100) < 0.5, `100px over the band on the host, got ${r.pad}`);
     assert.equal(r.text, 'rgb(255, 255, 255)');
     assert.equal(r.titleSize, '32px');
@@ -1017,6 +1020,30 @@ test.describe('Cadillac lands every measured number: a band, a heading class, th
     assert.equal(r.btnBorder, 'rgb(255, 255, 255)', "the theme's band button, from the wrap's bg-main and nothing in the snippet");
     assert.equal(r.btnBg, 'rgba(0, 0, 0, 0)');
     assert.deepEqual(r.headings, ['H2']);
+    await host.close();
+  });
+
+  // The phone tier (2026-09-15, "make it more mobile friendly"): at 390 the
+  // live bar draws 16px tabs and no `|` between them; ours drew 18px tabs
+  // with a `|` dangling at the start of the wrapped second row. Measured on
+  // the paste in a 390px host, where the media query is real.
+  test('on a phone the tabs drop to 16px and the divider goes, on the paste in a 390px host', async () => {
+    await pick(page, 'tabs');
+    await selectBrand(page, 'cadillac');
+    const parts = await copyParts(page);
+    const engine = await engineFiles();
+    const theme = await page.evaluate(() => globalThis.CARGO.BRANDS.cadillac.theme);
+    const host = await browser.newPage({ viewport: { width: 390, height: 844 } });
+    await host.setContent(hostHtml({ ...engine, css: parts.css, html: parts.html, js: parts.js, theme }), { waitUntil: 'load' });
+    const r = await host.evaluate(() => {
+      const tabs = [...document.querySelectorAll('.cargo-tabs [role="tab"]')];
+      const cs = (el, p, pseudo) => getComputedStyle(el, pseudo || null).getPropertyValue(p);
+      return { size: cs(tabs[1], 'font-size'), divider: cs(tabs[1], 'content', '::before'), band: cs(document.querySelector('[data-cargo="tabs"]'), 'background-color'), text: cs(tabs[1], 'color') };
+    });
+    assert.ok(Math.abs(parseFloat(r.size) - 16) < 0.1, `the live bar drops its tabs to 16px on a phone, got ${r.size}`);
+    assert.equal(r.divider, 'none', 'no divider on a phone, where the row wraps');
+    assert.equal(r.band, 'rgb(40, 40, 40)');
+    assert.equal(r.text, 'rgb(255, 255, 255)');
     await host.close();
   });
 });

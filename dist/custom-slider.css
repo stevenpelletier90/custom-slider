@@ -1086,9 +1086,10 @@
   --title-gap: 0.19em;
   --lead-gap: 2em;
   --more-gap: 2.29em;
-  --bar-bg: var(--main-color);
   --bar-pad: 0.1px;
   --bar-pad-narrow: var(--bar-pad);
+  --tab-size-phone: var(--tab-size-narrow);
+  --tab-divider-phone: var(--tab-divider);
 }
 :where([data-cargo=tabs]) .cargo-title:is(h2) {
   margin: 0 0 var(--title-gap);
@@ -1097,9 +1098,6 @@
 :where([data-cargo=tabs]) .cargo-lead:is(p) {
   margin: 0 0 var(--lead-gap);
   text-align: center;
-}
-[data-cargo=tabs]:is(.bg-main) {
-  background-color: var(--bar-bg);
 }
 [data-cargo=tabs] {
   padding-block: var(--bar-pad);
@@ -1212,6 +1210,10 @@
 @media (max-width: 767.98px) {
   :where([data-cargo=tabs]) .cargo-tabs [role=tab] {
     padding-inline: 0.5em;
+    font-size: var(--tab-size-phone);
+  }
+  :where([data-cargo=tabs]) .cargo-tabs [role=tab] + [role=tab]::before {
+    content: var(--tab-divider-phone);
   }
 }
 [data-cargo=models]:where(.cs) {

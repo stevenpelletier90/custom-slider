@@ -62,6 +62,72 @@ and those files may carry their own `<style>`.
 
 Full pass over the pattern/look library plus tests for what it claims.
 
+### The brand tracker — every replacement code, one row each
+
+Started 2026-09-15 (Steven: "get every single replacement code converted to this new slider … make
+sure to address all of them"). One row per brand preset in `brands.js`; the live column is the
+2026-08-18 census (`docs/research/2026-08-18-oem-demo-slider-census.md`, §4.1 tab groups, §4
+ladders, §7 roster). **Measured** means the preset carries `styles` read off the live demo with
+Playwright and cites it in `source`; **preset only** means roster and ladder from the census, no
+values. Tick a row by measuring it — the state is `brands.js`, this table is the checklist. Order of
+attack: the tabbed bars first (one pattern, 13 OEMs), then the plain bars (the tile look, 10 OEMs),
+then the nine with no bar at all, which are a decision rather than a measurement.
+
+| Brand      | Demos | Live homepage bar (census)                                  | Status                                                    |
+| ---------- | ----- | ----------------------------------------------------------- | --------------------------------------------------------- |
+| Cadillac   | 3     | 3 tabs, 5-up on a `bg-main` band                            | **Measured** 2026-09-14, phone tier and band 2026-09-15   |
+| Chevrolet  | 3     | 5 tabs, 5-up                                                | **Measured** 2026-09-14 — phone tier not yet (same `\|`?) |
+| Ford       | 3     | demo1: 4 tabs in a bordered box; demo2-3: plain 5-up        | **Measured** 2026-09-14 (demo1 only)                      |
+| Toyota     | 3     | demo1: 5 tabs; demo2-3: 4 tabs, 2-up                        | **Measured** 2026-09-10 (demo1 only)                      |
+| Genesis    | 3     | 3 tabs, 4-up                                                | preset only                                               |
+| Honda      | 3     | demo1: 4 tabs; demo2-3: plain 5-up                          | preset only                                               |
+| Hyundai    | 3     | demo1: 3 tabs + `rows: 2`; demo2: plain; demo3: 3 tabs      | preset only                                               |
+| Kia        | 3     | demo1: 3 tabs, centre-mode; demo2: 3 tabs; demo3: plain     | preset only                                               |
+| Lexus      | 3     | 4 tabs, 5-up; demo2 also quick-nav + gallery (`.galleryS`)  | preset only                                               |
+| Nissan     | 3     | demo2-3: 4 tabs, 5-up; demo1: none                          | preset only                                               |
+| Subaru     | 3     | 5 tabs, 5-up + `.corpcell-slider` card strip                | preset only                                               |
+| Volkswagen | 2     | 3 tabs, 4-up                                                | preset only                                               |
+| Volvo      | 2     | 3 tabs, 5-up                                                | preset only                                               |
+| Acura      | 3     | plain 5-up                                                  | preset only                                               |
+| Alfa Romeo | 1     | plain 6-up, 3:5 portraits (the `portrait` look)             | preset only                                               |
+| Audi       | 1     | plain 6-up                                                  | preset only                                               |
+| Buick      | 2     | plain 4-up                                                  | preset only                                               |
+| GMC        | 2     | plain 5-up                                                  | preset only                                               |
+| Jaguar     | 1     | plain 4-up                                                  | preset only                                               |
+| Land Rover | 3     | demo1, 3: plain 4-up; demo2: none                           | preset only                                               |
+| Lincoln    | 3     | plain 4-up                                                  | preset only                                               |
+| Mazda      | 2     | plain 3-up + `.filtering` (not a content slider)            | preset only                                               |
+| Mitsubishi | 3     | demo1-2: plain 5-up; demo3: none                            | preset only                                               |
+| BMW        | 3     | none — fade hero only                                       | decide: drop the preset, or keep as a roster              |
+| Chrysler   | 1     | none — fade hero only                                       | decide                                                    |
+| Dodge      | 1     | none — fade hero only                                       | decide                                                    |
+| Fiat       | 1     | none — fade hero only (roster is Chevrolet's, and says so)  | decide                                                    |
+| Infiniti   | 2     | none on the homepage; QX60 page has 8 tabbed card carousels | decide                                                    |
+| Jeep       | 2     | none — fade hero only                                       | decide                                                    |
+| MINI       | 3     | none; Countryman page has the one autoplaying card strip    | decide                                                    |
+| Porsche    | 3     | none — fade hero only                                       | decide                                                    |
+| RAM        | 2     | none — fade hero only                                       | decide                                                    |
+
+Inner-page replacement codes (census §9), none measured yet:
+
+| Code (as the census names it)                                    | Where                                         | Demo pattern     | Status       |
+| ---------------------------------------------------------------- | --------------------------------------------- | ---------------- | ------------ |
+| Certified-service tile carousel, 3-up, arrows + dots (GM shared) | buick / cadillac / chevrolet / gmc `/service` | `cards`          | not measured |
+| Tabbed feature-card carousels, 3-up under Bootstrap tabs         | infinitidemo1 QX60 page                       | `tabs`           | not measured |
+| Trim-card strip, 4-up, arrows only                               | kiademo1 Telluride                            | `cards`          | not measured |
+| Synced filterable gallery (fade + thumbs + `slickFilter`)        | kiademo1 Telluride                            | `gallery-filter` | not measured |
+| Mixed photo + video gallery                                      | kiademo1 Telluride                            | `media-gallery`  | not measured |
+| Centre-mode technology strip, 3-up, 160px centre padding         | nissandemo1 Rogue                             | `peek`           | not measured |
+| Autoplaying feature cards, 3-up                                  | minidemo1 Countryman                          | `cards`          | not measured |
+| Sitewide incentive chrome (fade banner + 3-up offer strip)       | subarudemo1, every inner page                 | `hero` + `cards` | not measured |
+| Service hero promo rotator, 2 slides                             | lexusdemo1 `/service.aspx`                    | `hero`           | not measured |
+
+What a measurement is (the rule that held on all four so far): knob values only, read off the live
+page at 1280/800/390 — never markup, script, units or a CSS block. What no knob can say becomes a
+knob; what needs structure is a new pattern. A brand's `words` carry the platform classes (Cadillac:
+`bg-main`, `heading-lg`) and the theme does the colouring — the band's colour is the site's, never a
+value (2026-09-15).
+
 ## 4. Patterns vs styles — decide it from evidence, not from vibes
 
 `docs/catalog/` is empty of any statement of what each pattern and each look is FOR, and that gap is
@@ -161,3 +227,38 @@ Also fixed on the way: `gallery.js` linked every card as `#modelbar/<id>`, dead 
 picker was filtered and meaningless once it went.
 
 **Still open** — item 2 (replacement codes) above, and the CMS half of item 1.
+
+## 5. Bootstrap 5 breakpoints
+
+Raised by Steven, 2026-09-15: "we need to move away from [Bootstrap 3 breakpoints] in favor of BS5
+media query breakpoints and match those, we are eventually switching the platform to bootstrap 5."
+
+Not started — it is a contract question before it is a find-and-replace. Inventory of where a
+Bootstrap 3 number lives today (grep for `767.98|991.98|min-width: 992|750|970|1170` and the
+`cs-{xs,sm,md,lg}` names):
+
+- **The column classes are the frozen HTML contract.** `scripts/build-cards.mjs` emits
+  `cs-xs-N / cs-sm-N / cs-md-N / cs-lg-N` at 0 / 768 / 992 / 1200 and README documents them. In
+  Bootstrap 5 those NAMES mean different widths: `sm` is 576, `md` 768, `lg` 992, `xl` 1200,
+  `xxl` 1400. Renaming is forbidden ("add freely; rename or repurpose nothing"), so the BS5 set is a
+  new ladder of classes alongside the old, or the old names keep their numbers and the README says
+  so. Decide this first; everything below follows it.
+- **Container widths.** `TIER_BOX` in `brands.js` (330 / 750 / 970 / 1170) drives `perViewFor()`'s
+  clamp; the preview frame in `workbench.js` reproduces the same three with `#wb-live-root` media
+  queries and the width buttons; `tests/helpers.mjs` boxes the hostile host at 1170. Bootstrap 5's
+  are 540 / 720 / 960 / 1140 / 1320 (five, and the phone tier gets a 540 box at 576+).
+- **Pattern and look media queries.** `patterns.js`: the tabbed bar's tablet tier at 991.98 and
+  phone tier at 767.98 (`--*-narrow`, `--*-phone`), the photo card's 4:3 phone crop, the models
+  card's 56px arrow at 992+, four 36px phone arrows; `looks.js` three phone rules; `workbench.js`
+  `cssFor()`'s gutter rule. The `.98` boundaries are already Bootstrap 5's own convention; the
+  numbers 768 / 992 / 1200 exist in both grids, so these survive. What changes is a possible 576
+  tier: Cadillac's live bar switches at 540, nearer BS5's `sm` than the 768 the phone knob sits on
+  today.
+- **Platform classes the previews stand in for.** `hidden-xs` (phone-only tab words, a BS3 class;
+  BS5 is `d-none d-sm-inline`), `.lead` at 768, in `workbench.js` and `tests/helpers.mjs`. A brand's
+  `words` that name a platform class would change with the platform — one more reason they are
+  words, not CSS.
+- **The `[minWidth, perView]` ladders in `brands.js`** are the OEMs' real slick configs, recorded
+  verbatim for the audit, and stay; `perViewFor()` reads them at whichever tiers the platform has.
+
+The census itself stays as is — it records what the demos ran in August 2026.

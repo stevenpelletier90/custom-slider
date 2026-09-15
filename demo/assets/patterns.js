@@ -650,14 +650,23 @@ ${VIDEO_DIALOG_CSS}`,
         // The band. cadillacdemo1 (2026-09-14) draws its bar on a black band
         // with white text and a white outline button - which on the platform
         // is the wrapper wearing bg-main (the words' `wrapClass`), so the
-        // theme colours the text and swaps the button itself. The band's own
-        // colour applies only when the wrap IS a bg-main band, and defaults
-        // to what bg-main paints, the site's main colour; Cadillac's section
-        // overrides that to #0a0a0a. The padding is the band's, in the
-        // body's em, and follows the platform's tablet tier like the rest.
-        '--bar-bg': 'var(--main-color)',
+        // theme colours the band, the text and the button itself. No knob
+        // for the band's colour: it is the site's (2026-09-15, Steven: "the
+        // background color will come from the website"), and a --bar-bg that
+        // shipped Cadillac's #0a0a0a fought the theme it landed in. The
+        // padding is the band's, in the body's em, and follows the
+        // platform's tablet tier like the rest.
         '--bar-pad': '0.1px',
         '--bar-pad-narrow': 'var(--bar-pad)',
+        // Below 768px, the platform's phone tier. cadillacdemo1 drops its tabs
+        // from 18px to 16px and hides the `|` between them (its own rule at
+        // 540, which is not a platform tier; 768 is the nearest one). The
+        // pattern's own follow the tablet values unless told otherwise, so a
+        // bar that never said anything about a phone draws what it always
+        // did. A divider on a wrapped row is a `|` dangling at the start of
+        // the second line, which is why the divider gets its own phone knob.
+        '--tab-size-phone': 'var(--tab-size-narrow)',
+        '--tab-divider-phone': 'var(--tab-divider)',
       },
       hideDots: true,
       panes: ['Trucks', 'SUVs', 'Crossovers'],
@@ -677,12 +686,9 @@ ${VIDEO_DIALOG_CSS}`,
    is one point more, so the spacing here wins in either order. */
 .cargo-title:is(h2) { margin: 0 0 var(--title-gap); text-align: center; }
 .cargo-lead:is(p) { margin: 0 0 var(--lead-gap); text-align: center; }
-/* The band, only where the wrap wears the platform's bg-main: one class more
-   than .bg-main itself, so the colour here wins in either sheet order, and
-   its default is the colour bg-main would have painted. */
-%wrap%:is(.bg-main) { background-color: var(--bar-bg); }
-/* Over and under only: side to side, a band is as wide as the block it is
-   in, and the page's container already insets that. */
+/* The band's colour is never set here: the wrap wears the platform's bg-main
+   and the theme paints it. Over and under only: side to side, a band is as
+   wide as the block it is in, and the page's container already insets that. */
 %wrap% { padding-block: var(--bar-pad); }
 /* The row and the panes sit in one box, the panes and the button in a padded
    body inside it, so a border can wrap the row without padding it - Ford's
@@ -740,7 +746,8 @@ ${VIDEO_DIALOG_CSS}`,
    54px - more than the 35 needed - while the label stays 15px and the tab stays
    43px tall, so nothing about readability or the tap target moves. */
 @media (max-width: 767.98px) {
-  .cargo-tabs [role="tab"] { padding-inline: 0.5em; }
+  .cargo-tabs [role="tab"] { padding-inline: 0.5em; font-size: var(--tab-size-phone); }
+  .cargo-tabs [role="tab"] + [role="tab"]::before { content: var(--tab-divider-phone); }
 }`,
       script: `document.querySelectorAll('[data-tabs]').forEach((wrap, w) => {
   const tabs = [...wrap.querySelectorAll('[role="tab"]')];

@@ -1844,9 +1844,10 @@
     '--title-gap': 'Space under the heading',
     '--lead-gap': 'Space under the lead',
     '--more-gap': 'Space over the button',
-    '--bar-bg': 'Band colour',
     '--bar-pad': 'Band padding',
     '--bar-pad-narrow': 'Band padding, tablet and phone',
+    '--tab-size-phone': 'Tab text size, phone',
+    '--tab-divider-phone': 'Divider between tabs, phone',
   };
   const knobLabel = (k) => KNOB_LABELS[k] ?? k.replace(/^--/, '').replace(/-/g, ' ');
 
@@ -3057,8 +3058,13 @@
         if (state.perView[k] != null && Number.isInteger(n) && n >= 1 && n <= 8) state.perView[k] = n;
       }
     }
+    // Only knobs the pattern still ships, or the engine's own --cs-* and the
+    // shared card-font knob (the panel adds --cs-peek and --cargo-font with ??=
+    // AFTER this runs, so they are not in state.props yet). A merge of the
+    // whole map let a kept `--bar-bg` outlive the knob (2026-09-15): the panel
+    // had no row for it and the snippet still shipped it.
     const props = cleanMap(s.props, PROP);
-    if (props) state.props = { ...state.props, ...props };
+    if (props) for (const [k, v] of Object.entries(props)) if (k in state.props || k.startsWith('--cs-') || k in SHARED_DEFAULTS) state.props[k] = v;
     // A look knob this look no longer has must not add a row to the panel or a
     // line to the snippet, so only the keys it still ships come back.
     const lookProps = cleanMap(s.lookProps, PROP);
