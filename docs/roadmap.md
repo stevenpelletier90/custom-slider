@@ -233,6 +233,21 @@ picker was filtered and meaningless once it went.
 Raised by Steven, 2026-09-15: "we need to move away from [Bootstrap 3 breakpoints] in favor of BS5
 media query breakpoints and match those, we are eventually switching the platform to bootstrap 5."
 
+### DONE 2026-09-15 — six tiers, two grids
+
+The contract question was decided the way the inventory below suggested: the four old column classes
+keep their names and numbers, and the two Bootstrap 5 tiers ship as `cs-576-N` and `cs-1400-N`,
+named by width so no class is a guess about which grid it came from. Every ladder is six rungs (the
+new two filled from their neighbours, so an untouched slider emits what it always did), the builder
+has six width buttons and a **Grid** select that draws the preview in either platform's container
+and clamps a preset against it, and `check-looks` clamps every preset against both. The tabbed bar's
+phone knobs moved from 768 to 576, where Cadillac's live bar actually switches.
+`tests/tiers.test.mjs` holds it; CLAUDE.md "Six tiers, two grids" has the rules.
+
+Still open from the inventory: the platform's `hidden-xs` class in a brand's tab words (Bootstrap 5
+spells it `d-none d-sm-inline`) — a word, so it changes with the platform, and there is no Bootstrap
+5 site to measure it on yet.
+
 Not started — it is a contract question before it is a find-and-replace. Inventory of where a
 Bootstrap 3 number lives today (grep for `767.98|991.98|min-width: 992|750|970|1170` and the
 `cs-{xs,sm,md,lg}` names):

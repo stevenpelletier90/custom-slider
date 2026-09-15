@@ -143,7 +143,8 @@ snippet in a hostile host page must match the preview to the pixel.
 the ONLY producers of CSS and markup; preview is `cssFor('.wb-live')`, copy panel
 `cssFor('.my-slider')`. The preview adds exactly one thing: a `--cs-per-view` pin for the pressed
 width button (`cssFor(sel, preview)`, appended after the media queries), because a media query asks
-the window and the preview is a 750/970/1170px box. The copied CSS ships the real ladder.
+the window and the preview is a box of the chosen grid's container width. The copied CSS ships the
+real ladder.
 
 **Lengths are `em`, never `rem` — enforced.** Bootstrap 3 storefronts set
 `html { font-size: 10px }`, so `rem` ships at 62.5%. Card CSS sizes off
@@ -160,6 +161,20 @@ slide on any pattern.
 rules give 750/970/1170 inside it. Fill drops the container (`html[data-fill] #wb-live-root`,
 (1,1,1) over the bare id's (1,0,0)) as well as widening the frame; widening alone draws the same
 picture as Desktop.
+
+**Six tiers, two grids (since 2026-09-15).** `BPS` in `workbench.js` is 576 / 768 / 992 / 1200 /
+1400: the platform's Bootstrap 3 three plus Bootstrap 5's two, because the platform is moving to
+Bootstrap 5 and the three shared numbers mean the same thing in both. The column classes keep the
+frozen `xs/sm/md/lg` names at the Bootstrap 3 numbers and add `cs-576-N` / `cs-1400-N`, named by
+width because Bootstrap 5's letters mean different numbers (`TIER_CLASS`). A four-rung ladder in
+`looks.js`, `patterns.js` or a brand preset is filled out by `fullLadder()` (576 from the phone
+rung, 1400 from the desktop's), and a rung equal to the one below emits no class, so an untouched
+slider ships exactly the classes it did. The **Grid** select beside the width buttons picks which
+container the preview draws in (`html[data-grid]` on the frame; Bootstrap 3 750/970/1170, Bootstrap
+5 540/720/960/1140/1320), is saved with the width, and is the `grid` that `perViewFor()` clamps a
+preset against; `check-looks` clamps every preset against both grids (`TIER_BOX` in `brands.js`).
+Pick the grid before the brand: the clamp runs when the preset is applied. `tests/tiers.test.mjs`
+holds all of it.
 
 **CSS in JS template literals is linted too.** `scripts/lint-generated-css.mjs` runs the real
 generator (`cssFor`) and stylelints its output, so what is checked is what ships.

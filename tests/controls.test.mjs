@@ -142,7 +142,7 @@ test.describe('a number field refuses what the engine cannot page', () => {
   // setting the property to 2.5 by hand makes the last page unreachable.
   test('a fractional count is not left showing in the field', async () => {
     await pick(page, 'modelbar');
-    const field = await setField(page, 'Phone · under 768', '2.5');
+    const field = await setField(page, 'Phone · under 576', '2.5');
     const shown = await field.inputValue();
     assert.ok(/^\d+$/.test(shown), `the field still shows "${shown}"`);
     const cls = await page.evaluate(() => /class="[^"]*cs-xs-(\d+)/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null);
@@ -759,7 +759,7 @@ test.describe('the last engine properties reach the panel', () => {
   // disagree in the first place.
   test('an out-of-range count is never left showing', async () => {
     await pick(page, 'modelbar');
-    const f = await setField(page, 'Phone · under 768', '9');
+    const f = await setField(page, 'Phone · under 576', '9');
     const shown = await f.inputValue();
     assert.ok(+shown >= 1 && +shown <= 8, `the field still shows "${shown}"`);
     const cls = await page.evaluate(() => /class="[^"]*cs-xs-(\d+)/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null);
@@ -1069,7 +1069,7 @@ test.describe('the arrow placement switch is not overruled by a breakpoint', () 
       // window - and an arrow cannot be measured as sitting "on" a 40px card.
       // The subject here is WHERE the arrow sits, not what it inherited, so the
       // count is set rather than assumed.
-      await setField(page, 'Phone · under 768', '2');
+      await setField(page, 'Phone · under 576', '2');
       await page.waitForTimeout(250);
       for (const outside of [true, false]) {
         const box = gut(page);

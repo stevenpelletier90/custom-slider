@@ -687,6 +687,18 @@ body {
   background: var(--signal);
 }
 
+/* The grid select beside the width buttons: the same type and rule as the
+   buttons, so the two page settings read as one control group. */
+.ui-select {
+  padding: 0.3rem 0.4rem;
+  font-family: var(--sans);
+  font-size: 0.74rem;
+  color: var(--ink);
+  background: var(--surface);
+  border: 1px solid var(--rule);
+  border-radius: 6px;
+}
+
 /* ---- the signature: a spec readout under the stage ---------------------- */
 
 .ui-spec {

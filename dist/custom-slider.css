@@ -300,6 +300,32 @@
 .cs-xs-8 {
   --cs-per-view: 8;
 }
+@media (min-width: 576px) {
+  .cs-576-1 {
+    --cs-per-view: 1;
+  }
+  .cs-576-2 {
+    --cs-per-view: 2;
+  }
+  .cs-576-3 {
+    --cs-per-view: 3;
+  }
+  .cs-576-4 {
+    --cs-per-view: 4;
+  }
+  .cs-576-5 {
+    --cs-per-view: 5;
+  }
+  .cs-576-6 {
+    --cs-per-view: 6;
+  }
+  .cs-576-7 {
+    --cs-per-view: 7;
+  }
+  .cs-576-8 {
+    --cs-per-view: 8;
+  }
+}
 @media (min-width: 768px) {
   .cs-sm-1 {
     --cs-per-view: 1;
@@ -375,6 +401,32 @@
     --cs-per-view: 7;
   }
   .cs-lg-8 {
+    --cs-per-view: 8;
+  }
+}
+@media (min-width: 1400px) {
+  .cs-1400-1 {
+    --cs-per-view: 1;
+  }
+  .cs-1400-2 {
+    --cs-per-view: 2;
+  }
+  .cs-1400-3 {
+    --cs-per-view: 3;
+  }
+  .cs-1400-4 {
+    --cs-per-view: 4;
+  }
+  .cs-1400-5 {
+    --cs-per-view: 5;
+  }
+  .cs-1400-6 {
+    --cs-per-view: 6;
+  }
+  .cs-1400-7 {
+    --cs-per-view: 7;
+  }
+  .cs-1400-8 {
     --cs-per-view: 8;
   }
 }
@@ -1211,6 +1263,10 @@
 @media (max-width: 767.98px) {
   :where([data-cargo=tabs]) .cargo-tabs [role=tab] {
     padding-inline: 0.5em;
+  }
+}
+@media (max-width: 575.98px) {
+  :where([data-cargo=tabs]) .cargo-tabs [role=tab] {
     font-size: var(--tab-size-phone);
   }
   :where([data-cargo=tabs]) .cargo-tabs [role=tab] + [role=tab]::before {

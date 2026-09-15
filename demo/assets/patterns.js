@@ -658,13 +658,15 @@ ${VIDEO_DIALOG_CSS}`,
         // platform's tablet tier like the rest.
         '--bar-pad': '0.1px',
         '--bar-pad-narrow': 'var(--bar-pad)',
-        // Below 768px, the platform's phone tier. cadillacdemo1 drops its tabs
-        // from 18px to 16px and hides the `|` between them (its own rule at
-        // 540, which is not a platform tier; 768 is the nearest one). The
-        // pattern's own follow the tablet values unless told otherwise, so a
-        // bar that never said anything about a phone draws what it always
-        // did. A divider on a wrapped row is a `|` dangling at the start of
-        // the second line, which is why the divider gets its own phone knob.
+        // Below 576px, Bootstrap 5's phone tier (a Bootstrap 3 site has no
+        // rule there, and one is harmless: it is a narrower phone). Sat at 768
+        // for one day; cadillacdemo1 drops its tabs from 18px to 16px and
+        // hides the `|` between them at 540, and 576 is the tier that means
+        // that. The pattern's own follow the tablet values unless told
+        // otherwise, so a bar that never said anything about a phone draws
+        // what it always did. A divider on a wrapped row is a `|` dangling at
+        // the start of the second line, which is why the divider gets its own
+        // phone knob.
         '--tab-size-phone': 'var(--tab-size-narrow)',
         '--tab-divider-phone': 'var(--tab-divider)',
       },
@@ -746,7 +748,12 @@ ${VIDEO_DIALOG_CSS}`,
    54px - more than the 35 needed - while the label stays 15px and the tab stays
    43px tall, so nothing about readability or the tap target moves. */
 @media (max-width: 767.98px) {
-  .cargo-tabs [role="tab"] { padding-inline: 0.5em; font-size: var(--tab-size-phone); }
+  .cargo-tabs [role="tab"] { padding-inline: 0.5em; }
+}
+/* Bootstrap 5's phone tier. Cadillac's live bar switches at 540; 576 is the
+   tier that means that, and a Bootstrap 3 page simply has a finer phone rule. */
+@media (max-width: 575.98px) {
+  .cargo-tabs [role="tab"] { font-size: var(--tab-size-phone); }
   .cargo-tabs [role="tab"] + [role="tab"]::before { content: var(--tab-divider-phone); }
 }`,
       script: `document.querySelectorAll('[data-tabs]').forEach((wrap, w) => {

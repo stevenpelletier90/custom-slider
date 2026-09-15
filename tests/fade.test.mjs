@@ -21,7 +21,7 @@ test.beforeAll(async ({ browser }) => {
 test.describe('a fading hero is one across before the script runs', () => {
   test('authoring it three across shifts nothing on init', async () => {
     await pick(page, 'hero');
-    for (const label of ['Phone · under 768', 'Tablet · 768+', 'Laptop · 992+', 'Desktop · 1200+']) {
+    for (const label of ['Phone · under 576', 'Wide phone · 576+', 'Tablet · 768+', 'Laptop · 992+', 'Desktop · 1200+', 'Wide · 1400+']) {
       const f = rowByLabel(page, label).locator('input').first();
       if (await f.count()) {
         await f.fill('3');

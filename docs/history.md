@@ -177,6 +177,22 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   claim. The audit's last finding, the lead paragraph in the platform's `text-muted` (#777 on white,
   4.47:1, Ford's live class), was Steven's call: "it shouldn't keep text-muted", so the lead wears
   `lead` alone and takes the body colour.
+- 2026-09-15, Bootstrap 5 tiers (Steven: "we need to move away from [Bootstrap 3 breakpoints] in
+  favor of BS5 media query breakpoints"). The three numbers the platform uses today (768 / 992
+  / 1200) are Bootstrap 5's too, under different letters; what Bootstrap 5 adds is 576 and 1400, and
+  what it changes is the container (720 / 960 / 1140, plus 540 and 1320). The contract decided the
+  shape: `cs-sm-N` means 768 on every site that has it and cannot be renamed, and Bootstrap 5's `sm`
+  means 576, so the two new tiers are `cs-576-N` and `cs-1400-N` - named by width, because a second
+  alphabet on the same element would make every class a guess about which grid it came from. Every
+  ladder is six rungs (`fullLadder()` fills 576 from the phone rung and 1400 from the desktop rung;
+  a rung equal to the one below emits no class, so 205 tests that pin
+  `cs-xs-2 cs-sm-3 cs-md-4 cs-lg-5` passed untouched), the builder has six width buttons and a Grid
+  select that draws the frame in either container and clamps a preset against it (`html[data-grid]`;
+  saved with the width), and check-looks clamps every preset against both grids. Cadillac's preset
+  now reads its real ladder at 576 - two across on a wide phone where the day before it was one at
+  every phone width - and the tabbed bar's phone knobs moved from 768 to 576, which is where its
+  live bar switches (540). Two tests named the old "Phone · under 768" label and were the only
+  failures.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

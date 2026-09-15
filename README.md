@@ -33,9 +33,12 @@ also hands you all four `dist/` files themselves, to upload — the engine is li
 
 Every `[data-cs]` element initializes automatically. Slides-per-view is CSS, not a JS option: the
 `cs-xs-N` / `cs-sm-N` / `cs-md-N` / `cs-lg-N` classes ship in the stylesheet for N of 1–8, on
-Bootstrap 3's tiers — **768 / 992 / 1200**, the grid the storefronts actually run. There is no 576.
-One class per tier where the count changes; the engine's own default is one across, so `cs-xs-1` is
-never needed.
+Bootstrap 3's tiers — **768 / 992 / 1200**, the grid the storefronts run today — and since
+2026-09-15 `cs-576-N` and `cs-1400-N` on Bootstrap 5's two extra tiers, **576 / 1400**, named by
+their width because Bootstrap 5's letters mean different numbers (its `sm` is 576; ours is 768 and
+frozen). The three shared numbers mean the same thing in both grids, so one set of classes serves a
+site before and after the platform moves. One class per tier where the count changes; the engine's
+own default is one across, so `cs-xs-1` is never needed.
 
 Setting `--cs-per-view` by hand in a media query does the same thing and is what the classes are
 made of, but on a DealerOn page your CSS goes in the **Style Only** field as raw CSS — no `<style>`
@@ -178,8 +181,9 @@ half too, so a slider is mostly just its markup:
 
 Looks: `cargo-tile`, `cargo-vcard`, `cargo-wordmark`, `cargo-split`, `cargo-portrait`, `cargo-logo`,
 `cargo-location`. Columns: `cs-xs-N` / `cs-sm-N` / `cs-md-N` / `cs-lg-N` for N of 1–8, on Bootstrap
-3's tiers. Anything you change from a look's defaults goes in a short `<style>` block beside the
-markup — the builder writes only the differences.
+3's tiers, plus `cs-576-N` / `cs-1400-N` on Bootstrap 5's two extra tiers. Anything you change from
+a look's defaults goes in a short `<style>` block beside the markup — the builder writes only the
+differences.
 
 The card half is **generated** from the same look definitions the builder draws with
 (`scripts/build-cards.mjs` appends it behind a `/*! cards */` marker), so the file and the preview

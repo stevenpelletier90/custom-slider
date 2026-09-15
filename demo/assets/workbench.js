@@ -22,19 +22,56 @@
   // (escTab, the video dialog markup, clamp) come the same way.
   const { PATTERNS, VEHICLES, PHOTOS, MODELS, SERVICES, LOGOS, PLACES, VIDEO_DIALOG_HTML, escTab, clamp } = globalThis.CARGO;
 
-  // The platform's Bootstrap 3 grid, measured in its CSS bundle. Not the
-  // estate's 461 / 539 / 599 / 990 / 1440 - several of those were an
-  // off-by-one, and none line up with the page the slider sits in.
-  const BPS = [768, 992, 1200];
+  // The tiers a media query asks about. 768 / 992 / 1200 are the platform's
+  // Bootstrap 3 grid, measured in its CSS bundle (not the estate's 461 / 539 /
+  // 599 / 990 / 1440 - several of those were an off-by-one, and none line up
+  // with the page the slider sits in). 576 and 1400 are Bootstrap 5's two
+  // extra tiers, added 2026-09-15 because the platform is moving to it and
+  // Cadillac's live bar switches at 540 - which is a 576 rule, not a 768 one.
+  // The three shared numbers mean the same thing in both grids; only the
+  // letters differ, and the column classes keep ours (see build-cards.mjs).
+  const BPS = [576, 768, 992, 1200, 1400];
+  // The column class each tier emits: xs / sm / md / lg are the frozen
+  // Bootstrap 3 names, the two Bootstrap 5 tiers are named by their width.
+  const TIER_CLASS = { base: 'xs', 576: '576', 768: 'sm', 992: 'md', 1200: 'lg', 1400: '1400' };
   // One vocabulary for the tiers. The panel used to say "phone / 768px and up"
   // while the preview's width buttons said "Phone / Tablet / Laptop / Desktop",
   // so the two halves of the same screen named the same tier differently and
   // neither said these were screen widths. Both read from here now.
-  const TIER_LABEL = { base: 'Phone · under 768', 768: 'Tablet · 768+', 992: 'Laptop · 992+', 1200: 'Desktop · 1200+' };
-  // The width buttons are the same four tiers by their SCREEN width, which is
-  // what a media query asks. Derived from TIER_LABEL rather than typed out
-  // again, so a renamed tier cannot end up called two things on one page.
-  const SCREEN = { 390: TIER_LABEL.base, 768: TIER_LABEL[768], 992: TIER_LABEL[992], 1200: TIER_LABEL[1200] };
+  const TIER_LABEL = { base: 'Phone · under 576', 576: 'Wide phone · 576+', 768: 'Tablet · 768+', 992: 'Laptop · 992+', 1200: 'Desktop · 1200+', 1400: 'Wide · 1400+' };
+  // The width buttons are the same tiers by their SCREEN width, which is what
+  // a media query asks. Derived from TIER_LABEL rather than typed out again,
+  // so a renamed tier cannot end up called two things on one page.
+  const SCREEN = { 390: TIER_LABEL.base, 576: TIER_LABEL[576], 768: TIER_LABEL[768], 992: TIER_LABEL[992], 1200: TIER_LABEL[1200], 1400: TIER_LABEL[1400] };
+  // A ladder written for the four Bootstrap 3 tiers, filled out to six: the
+  // 576 rung is the phone's and the 1400 rung is the desktop's unless a
+  // pattern, look or preset says otherwise, and a rung equal to the one below
+  // emits no class, so an untouched slider ships exactly what it did before.
+  const fullLadder = (pv) => ({ ...pv, 576: pv[576] ?? pv.base, 1400: pv[1400] ?? pv[1200] });
+  // Which platform grid the preview's container follows: 'bs3' (the
+  // storefronts today) or 'bs5' (where the platform is going). A page
+  // setting like the width - it says which site is being designed for, not
+  // anything about the slider - so it is saved beside the width and applied
+  // to the frame's <html> as data-grid. Read before anything renders.
+  let grid = 'bs3';
+  // The container a screen of width w gets under the current grid, for the
+  // fit gauge and the tooltips. Bootstrap 3 is fluid with 15px a side under
+  // 768 and has no tier above 1200; Bootstrap 5 is fluid with 12px under 576.
+  const CONTAINER_W = {
+    bs3: [
+      [1200, 1170],
+      [992, 970],
+      [768, 750],
+    ],
+    bs5: [
+      [1400, 1320],
+      [1200, 1140],
+      [992, 960],
+      [768, 720],
+      [576, 540],
+    ],
+  };
+  const containerAt = (w) => CONTAINER_W[grid].find(([min]) => w >= min)?.[1] ?? w - (grid === 'bs5' ? 24 : 30);
   // Just the name - "Desktop", not "Desktop · 1200+". A sentence about which
   // screen you are looking at reads worse with the breakpoint in the middle of
   // it, and the breakpoint is already on the button's tooltip.
@@ -151,7 +188,7 @@
     };
     undo(prev);
     if (!b) {
-      state.perView = { ...(p.perView ?? LOOKS[state.look]?.perView) };
+      state.perView = fullLadder(p.perView ?? LOOKS[state.look]?.perView);
       state.count = p.models.length;
       return;
     }
@@ -161,7 +198,7 @@
     // styles.patterns.<that pattern>, and there is no look to read a minCard
     // or a perView off. Fall back to the pattern's own minCard/perView, the
     // same fallback minCard() uses elsewhere in this file.
-    state.perView = b.ladder ? perViewFor(b.ladder, LOOKS[state.look]?.minCard ?? p.minCard ?? 200, gapPx(), state.look) : { ...(p.perView ?? LOOKS[state.look]?.perView) };
+    state.perView = b.ladder ? perViewFor(b.ladder, LOOKS[state.look]?.minCard ?? p.minCard ?? 200, gapPx(), state.look, grid) : fullLadder(p.perView ?? LOOKS[state.look]?.perView);
     const s = b.styles;
     if (!s) return;
     for (const [k, v] of Object.entries(s.looks?.[state.look] ?? {})) {
@@ -211,7 +248,7 @@
     state.pattern = id;
     state.brand = null;
     state.look = p.look ?? null;
-    state.perView = { ...(p.perView ?? LOOKS[p.look].perView) };
+    state.perView = fullLadder(p.perView ?? LOOKS[p.look].perView);
     state.props = { ...p.props };
     state.data = { ...p.data };
     state.hideDots = !!p.hideDots;
@@ -723,7 +760,7 @@
     // two-thirds of the rungs repeated the tier below because a min-width rule
     // already carries upward. Only `cargo-<look>` still depends on the shared
     // stylesheet being linked, so only that one stays behind the toggle.
-    const tiers = [['xs', 'base'], ...BPS.map((bp, i) => [['sm', 'md', 'lg'][i], bp])];
+    const tiers = ['base', ...BPS].map((k) => [TIER_CLASS[k], k]);
     // A rung is worth a class only where the count changes: cs-sm-2 already
     // applies at 992 and at 1200. The tier below the first one is the engine's
     // own --cs-per-view: 1.
@@ -1088,7 +1125,7 @@
       loadPattern('modelbar');
       const look = LOOKS[id];
       applyLook(id);
-      state.perView = { ...look.perView };
+      state.perView = fullLadder(look.perView);
       state.gutter = true;
       // Every look used to be drawn on the model bar's roster, which is
       // landscape 320px vehicle cutouts - so a card built for a 3:5 portrait
@@ -1183,6 +1220,16 @@
     '@media(min-width:768px){#wb-live-root{inline-size:750px}}' +
     '@media(min-width:992px){#wb-live-root{inline-size:970px}}' +
     '@media(min-width:1200px){#wb-live-root{inline-size:1170px}}' +
+    // Bootstrap 5's container, when the grid toggle says so (html[data-grid]
+    // on the frame, set by fillFrame): five tiers, each a little narrower.
+    // (1,1,1) with the attribute, over the bare id's (1,0,0) above, so these
+    // win at every tier; the Fill rule below is the same weight and later, so
+    // Fill still wins over both.
+    '@media(min-width:576px){html[data-grid="bs5"] #wb-live-root{inline-size:540px}}' +
+    '@media(min-width:768px){html[data-grid="bs5"] #wb-live-root{inline-size:720px}}' +
+    '@media(min-width:992px){html[data-grid="bs5"] #wb-live-root{inline-size:960px}}' +
+    '@media(min-width:1200px){html[data-grid="bs5"] #wb-live-root{inline-size:1140px}}' +
+    '@media(min-width:1400px){html[data-grid="bs5"] #wb-live-root{inline-size:1320px}}' +
     // Fill means FILL. The button's own tooltip has always said "use all the
     // width this page has", but Fill only widened the frame - and the container
     // rules above then held the slider at 1170px anyway, so on any window wide
@@ -1353,7 +1400,12 @@
   // repeats it because the frame document is written asynchronously and the
   // first paint can land either side of the first width being chosen.
   function fillFrame() {
-    sdoc()?.documentElement.toggleAttribute('data-fill', frameW === 0);
+    const html = sdoc()?.documentElement;
+    if (!html) return;
+    html.toggleAttribute('data-fill', frameW === 0);
+    // The grid rides on the same element for the same reason: the frame
+    // document is written asynchronously, and both callers repeat this.
+    html.setAttribute('data-grid', grid);
   }
 
   // The picked brand's own typeface, on the FRAME'S body and nowhere else.
@@ -1754,7 +1806,7 @@
     // layout that is fine in production.
     // A chosen width IS the container being simulated, so judge the card
     // against that. Only "fill" has to guess from the window.
-    const tier = frameW || (innerWidth >= 1200 ? 1170 : innerWidth >= 992 ? 970 : innerWidth >= 768 ? 750 : innerWidth - 30);
+    const tier = frameW || containerAt(innerWidth);
     const frame = Math.round(sroot().getBoundingClientRect().width);
     const capped = frame < tier - 2;
     const would = capped ? Math.round((w * tier) / frame) : w;
@@ -1852,8 +1904,8 @@
     '--more-gap': 'Space over the button',
     '--bar-pad': 'Band padding',
     '--bar-pad-narrow': 'Band padding, tablet and phone',
-    '--tab-size-phone': 'Tab text size, phone',
-    '--tab-divider-phone': 'Divider between tabs, phone',
+    '--tab-size-phone': 'Tab text size, under 576',
+    '--tab-divider-phone': 'Divider between tabs, under 576',
   };
   const knobLabel = (k) => KNOB_LABELS[k] ?? k.replace(/^--/, '').replace(/-/g, ' ');
 
@@ -2153,7 +2205,7 @@
       // Plain words: "ladder" and "the census" are how this was written down
       // while it was being researched, and neither is defined anywhere a
       // designer would look.
-      const counts = ['base', 768, 992, 1200].map((k) => state.perView[k]).join(' / ');
+      const counts = ['base', ...BPS].map((k) => state.perView[k]).join(' / ');
       // What the preset actually touched beyond the roster and the ladder,
       // in the same words the knobs use - so the note never claims a value
       // it did not set.
@@ -2934,6 +2986,7 @@
     if (drop) delete kept.byPattern[state.pattern];
     else if (readSettings().byPattern[state.pattern]) kept.byPattern[state.pattern] = readSettings().byPattern[state.pattern];
     if (readSettings().frame != null) kept.frame = readSettings().frame;
+    if (readSettings().grid != null) kept.grid = readSettings().grid;
     try {
       localStorage.setItem(SKEY, JSON.stringify(kept));
     } catch {
@@ -3054,7 +3107,7 @@
     // class on markup that does not have it.
     if (PATTERNS[state.pattern].look && LOOKS[s.look] && s.look !== state.look) {
       applyLook(s.look);
-      state.perView = { ...LOOKS[s.look].perView };
+      state.perView = fullLadder(LOOKS[s.look].perView);
     }
     if (isMap(s.perView)) {
       for (const k of ['base', ...BPS]) {
@@ -3319,7 +3372,7 @@
   // diagram of a slider: the type is unreadable, a 2px border is a hairline,
   // and a card that is 4px short of fitting looks fine. Under it, the preview
   // steps down a tier rather than carrying on shrinking.
-  const TIERS = [1200, 992, 768, 390];
+  const TIERS = [1400, 1200, 992, 768, 576, 390];
   const FLOOR = 0.5;
 
   // The largest tier at or below the chosen one that the stage can show at the
@@ -3386,10 +3439,10 @@
     // Bootstrap 3's own container for each screen. The button width is the
     // SCREEN, because that is what a media query asks; the slider gets the
     // narrower container inside it, and saying both is the honest label.
-    const CONTAINER = { 390: 'the full width', 768: '750px', 992: '970px', 1200: '1170px' };
     for (const b of widthBtns()) {
       const w = +b.dataset.w;
-      b.title = w ? `${SCREEN[w]} screen — a ${w}px window, where the slider gets ${CONTAINER[w]}` : 'Use all the width this page has';
+      const box = w < 576 || (grid === 'bs3' && w < 768) ? 'the full width' : `${containerAt(w)}px`;
+      b.title = w ? `${SCREEN[w]} screen — a ${w}px window, where the slider gets ${box} (${grid === 'bs5' ? 'Bootstrap 5' : 'Bootstrap 3'})` : 'Use all the width this page has';
     }
   }
 
@@ -3636,6 +3689,28 @@
     // the four finds no button. `keep: false` because the value came FROM
     // storage - re-saving it would be a write nobody asked for.
     const seat = widthBtns().find((b) => +b.dataset.w === readSettings().frame);
+    // The grid, restored the same way and before the first showFrame() so the
+    // frame's container is right on the first paint. Only the two values the
+    // select offers; anything else stored is Bootstrap 3.
+    const gridSel = $('ui-grid');
+    if (gridSel) {
+      if (readSettings().grid === 'bs5') grid = 'bs5';
+      gridSel.value = grid;
+      gridSel.addEventListener('change', () => {
+        grid = gridSel.value === 'bs5' ? 'bs5' : 'bs3';
+        readSettings().grid = grid;
+        flushSettings();
+        fitWidths();
+        // A different container is a different per-view and a different fit,
+        // so this is a render, not a resize.
+        fillFrame();
+        render();
+        requestAnimationFrame(() => {
+          fitFrameHeight();
+          checkFit();
+        });
+      });
+    }
     // showFrame() either way: with nothing stored the chosen width is the
     // Desktop the markup ships pressed, and a window too narrow for it has to
     // step down on the first paint rather than on the first resize.

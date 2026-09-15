@@ -38,7 +38,18 @@
   // is fluid with 15px of padding each side, so a 360px phone hands the
   // slider 330px. 360 is the SCREEN, and mixing a screen width into a table
   // of container widths credited every phone with 30px it does not have.
-  const TIER_BOX = { base: 330, 768: 750, 992: 970, 1200: 1170 };
+  //
+  // Two grids since 2026-09-15: the platform runs Bootstrap 3 today and is
+  // moving to Bootstrap 5, whose .container is a little narrower at every
+  // tier (720 / 960 / 1140) and has two tiers of its own, 576 (540px) and
+  // 1400 (1320px). The builder's grid toggle picks one; presets are checked
+  // against both. Bootstrap 3 has no rule at 576 or 1400, so there the box is
+  // what the tier below gives (fluid at 576, 1170 at 1400). Bootstrap 5's
+  // container pads 12px a side, not 15, so a 360px phone hands it 336.
+  const TIER_BOX = {
+    bs3: { base: 330, 576: 546, 768: 750, 992: 970, 1200: 1170, 1400: 1170 },
+    bs5: { base: 336, 576: 540, 768: 720, 992: 960, 1200: 1140, 1400: 1320 },
+  };
 
   // The vehicles each brand actually shows, from the cutouts in demo/img/oem.
   // [folder, [[file, width, height, name], ...]] - real intrinsic sizes,
@@ -1052,9 +1063,11 @@
   // far smaller problem than one that arrives already cramped.
   const MARGIN = 12;
 
-  function perViewFor(ladder, minCard, gapPx = 8, look = 'tile') {
+  // `grid` is which platform container the clamp is judged against (see
+  // TIER_BOX); the ladder itself is read at the same screen widths either way.
+  function perViewFor(ladder, minCard, gapPx = 8, look = 'tile', grid = 'bs3') {
     const out = {};
-    for (const [tier, box] of Object.entries(TIER_BOX)) {
+    for (const [tier, box] of Object.entries(TIER_BOX[grid] ?? TIER_BOX.bs3)) {
       const w = tier === 'base' ? 390 : +tier;
       const usable = box - (CHROME[look] ?? 0);
       let n = perAt(ladder, w);

@@ -100,7 +100,7 @@
     '<b>Page vs slide</b> — arrows move a whole page (all the cards on screen) by default. <code>data-cs-step="slide"</code> moves one card at a time.',
     '<b>Rewind</b> — what happens at the last card: the slider scrolls back to the first. There are no cloned slides, so it is a scroll back, not an endless loop.',
     "<b>Reduced motion</b> — a setting in the visitor's own operating system. When it is on, nothing rotates and moves happen instantly rather than sliding.",
-    "<b>768 / 992 / 1200</b> — the widths the platform's grid changes at. It is Bootstrap 3, which has no 576 breakpoint, so match these three and the strip flips where the page flips.",
+    "<b>768 / 992 / 1200</b> — the widths the platform's grid changes at, in Bootstrap 3 today and in Bootstrap 5 when the platform moves; match these and the strip flips where the page flips. <b>576</b> and <b>1400</b> are Bootstrap 5's two extra tiers, there for a bar that needs a wide-phone or a very-wide rung of its own.",
   ];
 
   const LIMITS = [
@@ -333,9 +333,9 @@
     '--lead-gap': 'Space under the lead paragraph, in its own em (21px on the platform, 16px on a phone). Ford’s <code>2em</code> is 42px.',
     '--more-gap': 'Space between the bar and the button under it, in the body’s em. Chevrolet leaves <code>2.29em</code>, 32px; Ford <code>3.29em</code>, 46px.',
     '--tab-size-phone':
-      'Size of the tab labels below 768px, the platform’s phone tier. <code>var(--tab-size-narrow)</code> keeps the tablet size; Cadillac drops its 18px tabs to 16px there, <code>1.14em</code> of the body.',
+      'Size of the tab labels below 576px, Bootstrap 5’s phone tier (Cadillac’s live bar switches at 540). <code>var(--tab-size-narrow)</code> keeps the tablet size; Cadillac drops its 18px tabs to 16px there, <code>1.14em</code> of the body.',
     '--tab-divider-phone':
-      'The divider text below 768px. <code>var(--tab-divider)</code> keeps it; <code>none</code> drops it, which Cadillac does — on a phone the tabs wrap, and a divider on a wrapped row dangles at the start of the second line.',
+      'The divider text below 576px. <code>var(--tab-divider)</code> keeps it; <code>none</code> drops it, which Cadillac does — on a phone the tabs wrap, and a divider on a wrapped row dangles at the start of the second line.',
     '--bar-pad':
       'Padding over and under everything in the band, in the body’s em (side to side, the page’s container insets it). <code>0.1px</code> is none; Cadillac’s section leaves 100px, <code>7.14em</code>.',
     '--bar-pad-narrow': 'The same padding below 992px. <code>var(--bar-pad)</code> keeps the wide value; Cadillac drops to 35px, <code>2.5em</code>.',
@@ -414,9 +414,11 @@
             ['cargo-logo', 'Logo panel — a grid of brand logos.'],
             ['cargo-location', 'Location card — address and hours.'],
             ['cs-xs-N', 'Cards across on a phone. N is 1 to 8.'],
+            ['cs-576-N', 'Cards across from 576px up — Bootstrap 5’s wide-phone tier, named by width because Bootstrap 5’s “sm” means 576 and ours means 768.'],
             ['cs-sm-N', 'Cards across from 768px up.'],
             ['cs-md-N', 'Cards across from 992px up.'],
             ['cs-lg-N', 'Cards across from 1200px up.'],
+            ['cs-1400-N', 'Cards across from 1400px up — Bootstrap 5’s widest tier.'],
           ],
         )}
         <p class="g-sub">To change something about a card style, set the property from the table below on your own slider — you do not need to copy the whole style. The builder writes only what you
@@ -464,7 +466,7 @@
           'Style Only takes <strong>raw CSS</strong> — no <code>&lt;style&gt;</code> tags and no comments. A tag pasted into it is read as part of the first selector, so that rule is dropped and the settings it carried go with it, silently.',
           'Both engine files are shared — add them once per site, not once per slider. Several sliders on one page is fine and expected.',
           "Images, worked through. Every example photo the builder gives you is already a platform path and needs nothing uploading — a library photo copies out as <code>/static/industry-automotive/…</code> and a vehicle cutout as <code>/assets/stock/…</code>. Paste those exactly as they come; they resolve on any dealer domain. It is only when you replace one with <em>your own</em> upload that you write <code>#MISCPATH#</code>: upload <code>hero.jpg</code> to the site, then reference it as <code>#MISCPATH#hero.jpg</code>, and the platform expands that to the dealer's own uploads folder — <code>/uploads/&lt;dealer&gt;/hero.jpg</code> or wherever that site keeps them, which differs per dealer. Never type that folder yourself.",
-          'The platform is Bootstrap 3. Its grid breaks at <strong>768 / 992 / 1200</strong> — there is no 576. Match those so the strip flips where the page flips.',
+          'The platform is Bootstrap 3 today and is moving to Bootstrap 5. Both grids break at <strong>768 / 992 / 1200</strong>; Bootstrap 5 adds <strong>576</strong> and <strong>1400</strong>, and its container is a little narrower at every tier. The builder’s Grid select previews either. Match those widths so the strip flips where the page flips.',
         ])}
       </section>
 

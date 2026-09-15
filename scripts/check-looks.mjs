@@ -357,17 +357,20 @@ for (const [id, b] of brands) {
   }
   // Both gaps in use across the patterns: the model bar's 8px and the two-row
   // grid's 16px. A preset has to hold at whichever it is dropped into.
-  for (const gap of [8, 16]) {
-    const pv = perViewFor(b.ladder, LOOKS[b.look].minCard, gap, b.look);
-    for (const [tier, n] of Object.entries(pv)) {
-      const box = sandbox.CARGO.TIER_BOX[tier] - (sandbox.CARGO.CHROME[b.look] ?? 0);
-      const card = (box - (n - 1) * gap) / n;
-      if (n > 1 && card < LOOKS[b.look].minCard + sandbox.CARGO.MARGIN) {
-        console.error(`  ${id}: ${n} across at ${tier} with a ${gap}px gap is a ${Math.round(card)}px card, under ${b.look}'s ${LOOKS[b.look].minCard}px`);
-        bad++;
+  // And both grids: Bootstrap 3's container today, Bootstrap 5's narrower one
+  // when the platform moves, each with its own clamp.
+  for (const grid of Object.keys(sandbox.CARGO.TIER_BOX))
+    for (const gap of [8, 16]) {
+      const pv = perViewFor(b.ladder, LOOKS[b.look].minCard, gap, b.look, grid);
+      for (const [tier, n] of Object.entries(pv)) {
+        const box = sandbox.CARGO.TIER_BOX[grid][tier] - (sandbox.CARGO.CHROME[b.look] ?? 0);
+        const card = (box - (n - 1) * gap) / n;
+        if (n > 1 && card < LOOKS[b.look].minCard + sandbox.CARGO.MARGIN) {
+          console.error(`  ${id}: ${n} across at ${tier} (${grid}) with a ${gap}px gap is a ${Math.round(card)}px card, under ${b.look}'s ${LOOKS[b.look].minCard}px`);
+          bad++;
+        }
       }
     }
-  }
 }
 
 // A roster records each cutout's REAL intrinsic size, because that pair becomes

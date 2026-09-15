@@ -40,14 +40,23 @@ for (const f of ['looks.js', 'brands.js']) {
 }
 const { LOOKS } = sandbox.CARGO;
 
-// The platform's Bootstrap 3 tiers, and the xs ceiling that pairs with them.
+// The tiers. xs / sm / md / lg are the platform's Bootstrap 3 grid (0 / 768 /
+// 992 / 1200) and are a frozen part of the markup contract, so they keep their
+// names and their numbers. Bootstrap 5, which the platform is moving to, has
+// the same three numbers under DIFFERENT letters (its sm is 576, md 768, lg
+// 992, xl 1200) plus two tiers we lacked: 576 and 1400. Those two are named by
+// their width (cs-576-N, cs-1400-N) on purpose - `sm` already means 768 here,
+// and a second alphabet on the same element would make every class a guess
+// about which grid it came from (2026-09-15, Steven: match Bootstrap 5).
 // .98 because max-width:767px and min-width:768px leave a dead zone at any
 // fractional viewport width — the same reason Bootstrap 4 and 5 use it.
 const TIERS = [
   ['xs', null],
+  ['576', 576],
   ['sm', 768],
   ['md', 992],
   ['lg', 1200],
+  ['1400', 1400],
 ];
 const MAX_COLS = 8;
 
