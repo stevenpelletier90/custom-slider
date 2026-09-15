@@ -60,7 +60,7 @@
       this.current = 0;
       this._target = null;
       this._pointerDown = false;
-      this._addedRootAttrs = [];
+      this._rootAttrs = /* @__PURE__ */ new Map();
       if (this.opts.gallery) this._setRootAttr("data-cs-gallery", "");
       if (this.opts.fade) this._setRootAttr("data-cs-fade-on", "");
       this._prm = matchMedia("(prefers-reduced-motion: reduce)");
@@ -91,6 +91,7 @@
       const dl = {};
       for (const k in d) if (k.length > 7 && k.startsWith("csLabel")) dl[k[7].toLowerCase() + k.slice(8)] = d[k];
       const opts = { ...DEFAULTS, ...data, ...js, labels: { ...DEFAULTS.labels, ...dl, ...js.labels || {} } };
+      if (opts.step !== "page" && opts.step !== "slide") opts.step = Number.isInteger(+opts.step) && +opts.step > 0 ? +opts.step : "page";
       if (opts.gallery && opts.autoplay) {
         console.warn("[custom-slider] autoplay is ignored in gallery mode", this.root);
         opts.autoplay = 0;
@@ -106,8 +107,12 @@
       return opts;
     }
     /* ---- ARIA setup ------------------------------------------------------- */
+    // Remembers what the attribute WAS the first time the engine touches it, so
+    // destroy() can put it back. Names alone were kept before, so an authored
+    // role="group" or aria-roledescription the engine overwrote came back as
+    // the engine's value (2026-09-15 review).
     _setRootAttr(name, value) {
-      if (!this.root.hasAttribute(name)) this._addedRootAttrs.push(name);
+      if (!this._rootAttrs.has(name)) this._rootAttrs.set(name, this.root.getAttribute(name));
       this.root.setAttribute(name, value);
     }
     _setupAria() {
@@ -440,7 +445,7 @@
     }
     _updateUI() {
       const fits = this._stops().length <= 1;
-      if (fits && !this._addedRootAttrs.includes("data-cs-fits")) this._addedRootAttrs.push("data-cs-fits");
+      if (!this._rootAttrs.has("data-cs-fits")) this._rootAttrs.set("data-cs-fits", this.root.getAttribute("data-cs-fits"));
       this.root.toggleAttribute("data-cs-fits", fits);
       if (this.prevBtn) this.prevBtn.hidden = this.nextBtn.hidden = fits;
       if (this.dots) this.dots.hidden = fits;
@@ -668,7 +673,7 @@
       this._ro?.disconnect();
       this._io?.disconnect();
       this.root.innerHTML = this._snapshot;
-      for (const a of this._addedRootAttrs) this.root.removeAttribute(a);
+      for (const [a, v] of this._rootAttrs) v === null ? this.root.removeAttribute(a) : this.root.setAttribute(a, v);
       delete this.root._cs;
     }
   };

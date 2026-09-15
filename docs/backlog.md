@@ -6,6 +6,34 @@ are when they were found; check the code before acting on one, some may since ha
 overtaken. Work that IS agreed sits in `roadmap.md`; the rules themselves are in `../CLAUDE.md` and
 `../README.md`.
 
+Pruned 2026-09-15 after an outside review re-found four of these: the size boundary (`>=` since the
+raise), `data-cs-fits` on destroy and `data-cs-gallery="false"` were fixed and are gone from here;
+the IntersectionObserver "threshold does nothing" item was measured on all three engines and was
+never a bug (a single 0.25 threshold reports nothing at 0.1, and its entry's `isIntersecting` is
+false below the crossing). `docs/history.md` has the dates.
+
+## 2026-09-15 — first Firefox/WebKit run of the engine contract
+
+- Firefox gives every scroll container its own tab stop, focusable children or not, so on Firefox
+  the track is one extra Tab press between the dots and the cards (the engine sets `tabIndex = 0` on
+  the track only when nothing inside is focusable, and never `-1`). Chromium and WebKit do not.
+  `tests/engine.test.mjs` tolerates the stop; taking it away would be `track.tabIndex = -1` when the
+  track holds focusable content, a frozen-contract addition that needs a keyboard-user decision (the
+  stop is also how a Firefox user arrow-scrolls the strip without a card).
+- Safari's plain Tab skips links; the tab-order test presses Option+Tab there. Not an engine matter,
+  recorded so the next person does not chase it.
+
+## 2026-09-15 — what the repaired a11y audit found
+
+- The tabbed bar's lead paragraph wears the platform's `lead text-muted` (Ford's live class,
+  measured 2026-09-14), and Bootstrap 3's `text-muted` is `#777` on white, 4.47:1 against the 4.5:1
+  AA floor. The audit reports it on `brands.html`, where the preview's stand-in draws that colour.
+  The colour is the platform's and the class is what forddemo1 ships; dropping `text-muted` from the
+  snippet would make the lead the body colour on every site. Steven's call: copy the platform's
+  class (and its contrast) or not. The other two findings of the same run (the tall tile's current
+  dot at 1.43:1 on its own strip, and every brand's model bar announced as "Our models" on
+  `brands.html`) were fixed the same day.
+
 ## Manual QA still open (needs a person)
 
 - MANUAL QA remaining (needs Steven/humans, spec §11): live NVDA/VoiceOver pass (status-region
@@ -14,8 +42,6 @@ overtaken. Work that IS agreed sits in `roadmap.md`; the rules themselves are in
 
 ## Minor findings for final review triage
 
-- size.mjs gates `total > 5120` but constraint says "< 5120 bytes" — exactly-5120 passes; one-byte,
-  plan-mandated boundary quirk (scripts/size.mjs:~L11).
 - slider.css: .cs-arrow uses physical `top`/translateY while siblings use logical inset-*
   (consistency nit, plan-mandated).
 - slider.css: some sizes hardcoded (dot hit box 24px, pause 36px, thumb radius 4px) vs exposed
@@ -46,15 +72,6 @@ ENGINE / PLATFORM (cited to MDN + BCD via Context7):
   TENSION: the obvious CSS fix (declare `scroll-behavior: auto` on `.cs-track`) brushes against the
   standing "never set scroll-behavior on the track" rule, which exists for the `smooth` case. The JS
   fix (pass 'instant') needs its support floor verified first.
-- IntersectionObserver `{ threshold: 0.25 }` (:657-662) gates on `isIntersecting`, which is true for
-  ANY overlap — so the threshold does nothing. Either honour it (`intersectionRatio >= 0.25`) or
-  drop it (~20 B, identical behaviour).
-- `data-cs-gallery` has presence-vs-value disagreement: CSS `.cs[data-cs-gallery]` matches on
-  presence, JS treats `="false"` as off. An author writing `data-cs-gallery="false"` gets
-  thumb-strip space reserved with no thumb strip. Fade avoids this by keying CSS off the engine-only
-  `data-cs-fade-on`.
-- `data-cs-fits` is set with toggleAttribute, bypassing `_setRootAttr`, so it is not in
-  `_addedRootAttrs` and survives `destroy()` on the root.
 - `role="list"` is re-applied in JS at init, but `list-style: none` applies at first paint — so
   Safari/VoiceOver loses list semantics in the pre-JS window and permanently if the script fails.
   Putting `role="list"` in the documented markup is an addition (allowed) and would let the JS go.

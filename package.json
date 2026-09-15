@@ -16,7 +16,8 @@
     "check:looks": "node scripts/check-looks.mjs",
     "check:vendor": "node scripts/build-vendor.mjs --check",
     "lint:css:generated": "node scripts/lint-generated-css.mjs",
-    "test": "playwright test",
+    "test": "playwright test --project=chromium",
+    "test:browsers": "playwright test --project=firefox --project=webkit",
     "test:ui": "playwright test --ui",
     "a11y": "node scripts/a11y.mjs",
     "validate": "npm run lint:css && npm run lint:css:generated && npm run lint:js && npm run format:check && npm run check:looks && npm run check:vendor"

@@ -25,6 +25,15 @@ import { gzipSync } from 'node:zlib';
 
 const BUDGET = 6656;
 
+// A second, looser guard on what a site ACTUALLY downloads: both files whole,
+// engine + cards + patterns. The engine budget above cannot see the other two
+// sections, and since 2026-09-14 every pattern's CSS and script ships in the
+// same files, so forty more patterns would have gone out under a green
+// "engine: 6.3 KB" (2026-09-15 review). 16 KiB is the two files at 11.75 KB
+// on the day this was added with room for roughly a third more; raise it the
+// way BUDGET is raised, here and with the reason.
+const DOWNLOAD_GUARD = 16384;
+
 // The stylesheet ships the engine AND the card styles in one file, so a site
 // links one CSS and one JS. The budget still weighs the ENGINE alone: it exists
 // to show this is smaller than Embla's 6.7 KB core and Splide's 15.8 KB, and
@@ -61,9 +70,14 @@ console.log(`total: ${total} B gzip (budget ${BUDGET})`);
 const gz = (text) => gzipSync(Buffer.from(text), { level: 9 }).length;
 if (cardsCss) console.log(`  card styles in the same file: ${gz(cardsCss)} B gzip`);
 if (patternsCss || patternsJs) console.log(`  pattern structure in the same files: ${gz(patternsCss)} B CSS + ${gz(patternsJs)} B JS gzip`);
-console.log(`  what a site actually downloads: ${gz(cssAll)} B CSS + ${gz(jsAll)} B JS`);
+const download = gz(cssAll) + gz(jsAll);
+console.log(`  what a site actually downloads: ${gz(cssAll)} B CSS + ${gz(jsAll)} B JS = ${download} B (guard ${DOWNLOAD_GUARD})`);
 
 if (total >= BUDGET) {
   console.error(`FAIL: at or over the ${BUDGET} B gzip budget`);
+  process.exit(1);
+}
+if (download >= DOWNLOAD_GUARD) {
+  console.error(`FAIL: the two files a site downloads are at or over ${DOWNLOAD_GUARD} B gzip together`);
   process.exit(1);
 }

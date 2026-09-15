@@ -1043,9 +1043,14 @@
     // `brand` draws the pattern in that brand's measured values - the
     // patterns page shows one stage per variant, and the generated-CSS lint
     // walks the same list, so a variant that pastes badly fails validate.
-    renderPattern(id, cls, { brand = null } = {}) {
+    // `label` names the slider on a page that draws MANY of the same pattern:
+    // brands.html had every brand's model bar announced as "Our models", and
+    // axe (landmark-unique) is right that a page of identical region names
+    // is a page a screen-reader user cannot navigate. A dealer page has one.
+    renderPattern(id, cls, { brand = null, label = null } = {}) {
       loadPattern(id);
       if (brand) applyBrand(brand);
+      if (label) state.label = label;
       return { css: cssFor(`.${cls}`), html: htmlFor(cls) };
     },
     // The three parts the builder's copy buttons hand over, for the same

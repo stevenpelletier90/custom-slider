@@ -21,8 +21,23 @@ jobs:
       - run: npm run validate
       # Rebuilds dist and fails at the gzip budget in scripts/size.mjs.
       - run: npm run size
-      # playwright.config.mjs has no `projects`, so the runner uses Chromium
-      # only; installing the other browsers would be minutes for nothing.
+      # The whole suite runs on the chromium project only (`npm test`); the
+      # engine's contract file runs on the other two engines in the job below.
       - run: npx playwright install --with-deps chromium
       # Starts its own server on 8137 (webServer in playwright.config.mjs).
       - run: npm test
+  # tests/engine.test.mjs on Firefox and WebKit: the engine's own contract on
+  # authored markup, where the Safari and Firefox decisions in the source
+  # (scrollend fallback, role="list", scroll-behavior) actually run. Its own job
+  # so the browser installs happen beside the Chromium run, not after it.
+  browsers:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps firefox webkit
+      - run: npm run test:browsers

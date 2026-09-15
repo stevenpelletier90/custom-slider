@@ -23,6 +23,17 @@ export default defineConfig({
     trace: 'on-first-retry',
     screenshot: 'only-on-failure',
   },
+  // The whole suite on Chromium (`npm test`), and the ENGINE's contract file
+  // alone on Firefox and WebKit as well (`npm run test:browsers`). The engine
+  // carries a dozen Safari- and Firefox-specific decisions - scrollend
+  // fallback, role="list" for WebKit, scroll-snap-stop, scroll-behavior - and
+  // until 2026-09-15 nothing ran on either. The builder files stay Chromium:
+  // they test the workbench, not the engine, and would triple a 90s suite.
+  projects: [
+    { name: 'chromium', use: { browserName: 'chromium' } },
+    { name: 'firefox', use: { browserName: 'firefox' }, testMatch: '**/engine.test.mjs' },
+    { name: 'webkit', use: { browserName: 'webkit' }, testMatch: '**/engine.test.mjs' },
+  ],
   webServer: {
     command: 'npm run serve',
     url: 'http://127.0.0.1:8137/demo/index.html',

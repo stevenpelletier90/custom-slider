@@ -156,6 +156,25 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   `heading-lg` stand-in draws 32px at every width where the live theme drops to 28px on a phone;
   preview only, and `check-looks` holds `theme.css` to plain class selectors, so a media query there
   is a gate change, left alone.
+- 2026-09-15, an outside review (eight findings, pasted by Steven) and the hardening pass it earned.
+  Held: the constructor's `step` bypassed the data-attribute normalisation and `_stops()` loops
+  `i += n`, so `{ step: 0 }` hung the page (checked on the merged options now, 65 B); `destroy()`
+  kept only the NAMES of root attributes it added, so an authored `role="group"` came back as the
+  engine's `region` (a Map of original values now, and the test compares values); `scripts/a11y.mjs`
+  still clicked the look picker deleted on 09-08 and had exited non-zero for a week with nobody
+  seeing it, because it is not in CI (walks the rail and brands.html now); `data-cs-gallery="false"`
+  reserved the thumb strip (the `:not()` the fade pin uses, NOT the engine-set marker the review
+  proposed - the space must exist before JS runs or every gallery shifts at init); the size gate
+  weighed the engine alone while every pattern ships in the same files (a second guard on the two
+  files whole, 16 KiB); four backlog entries were already fixed. Rejected after measuring: the
+  IntersectionObserver "threshold does nothing" claim, in the backlog since 08-31 and repeated by
+  the review. A probe on Chromium, Firefox and WebKit shows a single 0.25 threshold reports nothing
+  at 0.1 and its entry's `isIntersecting` is false below the crossing, so the original line was
+  right; a test now holds it. Added: the engine contract file runs on Firefox and WebKit
+  (`npm run test:browsers`, its own CI job), which found on its first run that Firefox tabs to the
+  track (backlog) and that Playwright's WebKit never tabs into a link. Every new test was run
+  against the previous `dist` first; the observer test passing there is what exposed the wrong
+  claim.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

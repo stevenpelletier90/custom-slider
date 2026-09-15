@@ -269,6 +269,11 @@ Methods: `goTo(n)`, `next()`, `prev()`, `pause()`, `play()`, `destroy()`,
 from the root): `cs:change` `{index, page, slidesInView}`, `cs:autoplay-start`, `cs:autoplay-stop`,
 `cs:destroy`.
 
+`destroy()` puts the root's attributes back to what they were before init and restores the authored
+markup from a snapshot taken at init. The snapshot is a rebuild, not a mutation: the slides come
+back as new nodes, so listeners or state a page script attached to the original slide elements do
+not survive it. Re-attach after `cs:destroy` if you need them.
+
 `CustomSlider.wirePatterns()` is set by the pattern section of `custom-slider.min.js` (not by the
 engine, so it is absent from the ES module): it runs every pattern script again over the whole
 document. It runs once by itself on load; call it only for pattern markup added afterwards, once per

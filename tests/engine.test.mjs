@@ -92,10 +92,13 @@ test.describe('keyboard', () => {
   // README checklist 3. The order is the reading order of the controls, and
   // the cards come last: a keyboard user tabs past the controls into content,
   // never the other way round.
-  test('tab order runs pause, prev, next, dots, then the cards', async ({ page }) => {
+  test('tab order runs pause, prev, next, dots, then the cards', async ({ page, browserName }) => {
     await page.setContent(build(8, 4, 'data-cs-autoplay="4000"'), { waitUntil: 'load' });
     await page.waitForTimeout(400);
-    await page.locator('body').press('Tab');
+    // Safari's Tab skips links by default; Option+Tab is its "every item"
+    // key, and the cards are links. The order under test is the same.
+    const TAB = browserName === 'webkit' ? 'Alt+Tab' : 'Tab';
+    await page.locator('body').press(TAB);
 
     const seen = [];
     for (let i = 0; i < 12; i++) {
@@ -117,13 +120,23 @@ test.describe('keyboard', () => {
       // Runs of dots and runs of cards collapse to one entry; the named
       // controls cannot, because each has its own label.
       if (seen.at(-1) !== here) seen.push(here);
-      await page.keyboard.press('Tab');
+      await page.keyboard.press(TAB);
     }
 
-    const controls = seen.filter((s) => s !== 'card');
+    // Firefox gives every scroll container a tab stop of its own, focusable
+    // children or not, so the track shows up between the dots and the cards
+    // there (first seen 2026-09-15, the day the file ran on Firefox). That is
+    // the browser's stop, not the engine's; the ORDER of the engine's controls
+    // is what this test holds. Whether the engine should take that stop away
+    // is in docs/backlog.md.
+    const controls = seen.filter((s) => s !== 'card' && s !== 'cs-track');
+    assert.deepEqual(controls, ['cs-pause', 'cs-arrow--prev', 'cs-arrow--next', 'cs-dot'], `tab order is ${seen.join(' -> ')}, not pause -> prev -> next -> dots -> cards`);
+    // Playwright's WebKit never tabs into a link, Option+Tab included (there
+    // is no macOS behind it), so the half about the cards can only be held on
+    // the other two engines.
+    if (browserName === 'webkit') return;
     const firstCard = seen.indexOf('card');
     assert.ok(firstCard > 0, `the cards are not reachable by Tab: saw ${seen.join(' -> ')}`);
-    assert.deepEqual(controls, ['cs-pause', 'cs-arrow--prev', 'cs-arrow--next', 'cs-dot'], `tab order is ${seen.join(' -> ')}, not pause -> prev -> next -> dots -> cards`);
     assert.ok(
       seen.slice(firstCard).every((s) => s === 'card'),
       `a control comes after the first card: ${seen.join(' -> ')}`,
@@ -187,22 +200,194 @@ test.describe('the contract, in the last window before it froze', () => {
     assert.ok(classes.includes('cs-slide--current'), 'the current slide is not marked at all');
   });
 
-  // destroy() restores the snapshot and removes the root attributes it added.
-  // data-cs-fits was written with toggleAttribute outside _setRootAttr, so it
-  // was never registered and survived - left on the dealer's element, still
-  // suppressing the controls of whatever was built there next.
-  test('destroy leaves the root exactly as it was found', async ({ page }) => {
-    await page.setContent(build(8, 8), { waitUntil: 'load' });
+  // destroy() restores the snapshot and puts every root attribute back to what
+  // it was. data-cs-fits was written with toggleAttribute outside _setRootAttr,
+  // so it was never registered and survived - left on the dealer's element,
+  // still suppressing the controls of whatever was built there next. And until
+  // 2026-09-15 only NAMES were kept: an authored role="group" the engine
+  // overwrote with role="region" stayed "region" after destroy, and this test
+  // compared names, so it passed. Values now, on markup that has its own.
+  test('destroy leaves the root exactly as it was found, values included', async ({ page }) => {
+    await page.setContent(build(8, 8, 'role="group" aria-roledescription="showcase"'), { waitUntil: 'load' });
     await page.waitForTimeout(400);
     const result = await page.evaluate(() => {
       const el = document.querySelector('.cs');
-      const before = [...el.attributes].map((a) => a.name).sort();
-      const fitsWasSet = el.hasAttribute('data-cs-fits');
+      const attrs = () => Object.fromEntries([...el.attributes].map((a) => [a.name, a.value]).sort());
+      const during = attrs();
       el._cs.destroy();
-      return { before, fitsWasSet, after: [...el.attributes].map((a) => a.name).sort() };
+      return { during, after: attrs(), html: el.innerHTML };
     });
-    assert.equal(result.fitsWasSet, true, 'the fixture never reached the fits state, so this proves nothing');
-    assert.deepEqual(result.after, ['aria-label', 'class', 'data-cs'], `destroy left ${result.after.join(', ')} behind`);
+    assert.equal(result.during.role, 'region', 'the fixture never had its role overwritten, so this proves nothing');
+    assert.equal(result.during['aria-roledescription'], 'carousel');
+    assert.equal(result.during['data-cs-fits'], '', 'the fixture never reached the fits state, so this proves nothing');
+    assert.deepEqual(result.after, { 'aria-label': 'Models', 'aria-roledescription': 'showcase', class: 'cs', 'data-cs': '', role: 'group' });
+    assert.doesNotMatch(result.html, /cs-arrow|cs-dots|cs-status/, 'the generated controls survived destroy');
+  });
+
+  // The constructor's `step` came through unchecked while the data attribute
+  // was normalised, and _stops() loops `i += n`: `{ step: 0 }` hung the page,
+  // `{ step: 1.5 }` produced slides[1.5]. Each input here either hangs the old
+  // engine (this test times out) or reaches _stops() as something it cannot
+  // step by. The valid ones prove the check lets real values through.
+  test('a step the engine cannot walk by is a page, whichever way it arrives', async ({ page }) => {
+    await page.setContent(build(9, 3, 'data-cs-init="manual"'), { waitUntil: 'load' });
+    const seen = await page.evaluate(() => {
+      const src = document.querySelector('.cs');
+      const out = {};
+      for (const [name, step] of [
+        ['zero', 0],
+        ['negative', -1],
+        ['decimal', 1.5],
+        ['nan', NaN],
+        ['infinity', Infinity],
+        ['junk', 'twelve'],
+        ['numeric string', '2'],
+        ['two', 2],
+        ['slide', 'slide'],
+        ['page', 'page'],
+      ]) {
+        const el = src.cloneNode(true);
+        document.body.append(el);
+        const cs = new window.CustomSlider(el, { step });
+        out[name] = { step: cs.opts.step, stops: cs._stops() };
+        cs.destroy();
+        el.remove();
+      }
+      return out;
+    });
+    for (const bad of ['zero', 'negative', 'decimal', 'nan', 'infinity', 'junk']) {
+      assert.equal(seen[bad].step, 'page', `${bad} was not turned into a page step`);
+      assert.deepEqual(seen[bad].stops, [0, 3, 6], `${bad} did not step by pages`);
+    }
+    assert.deepEqual(seen['numeric string'].stops, [0, 2, 4, 6], 'a numeric string is the number it spells');
+    assert.deepEqual(seen.two.stops, [0, 2, 4, 6]);
+    assert.deepEqual(seen.slide.stops, [0, 1, 2, 3, 4, 5, 6]);
+    assert.deepEqual(seen.page.stops, [0, 3, 6]);
+  });
+
+  // The observer fires at the 0.25 crossing AND whenever intersecting flips,
+  // and isIntersecting is true at one pixel - so autoplay resumed on a sliver.
+  // A tenth visible must keep it suspended; half visible must run it.
+  test('autoplay waits for a quarter of the strip, not the first pixel', async ({ page }) => {
+    await page.setContent(
+      hostHtml({ ...engine, css: '.cs{--cs-per-view:4}', html: `<div style="height:3000px"></div>${slider(8, 'data-cs-autoplay="300"')}<div style="height:3000px"></div>`, box: 1170 }),
+      { waitUntil: 'load' },
+    );
+    await page.waitForTimeout(300);
+    const show = (fraction) =>
+      page.evaluate(async (f) => {
+        const el = document.querySelector('.cs');
+        const top = el.getBoundingClientRect().top + scrollY;
+        // The strip's top edge enters from the bottom of the window: f of its
+        // height is inside when the window bottom sits at top + f * height.
+        scrollTo(0, Math.round(top + f * el.offsetHeight - innerHeight));
+        await new Promise((r) => setTimeout(r, 350));
+        // `rotating` is the intent (the button, focus); off-screen is a HOLD on
+        // top of it, so the hold is what is read.
+        return { visible: (innerHeight - el.getBoundingClientRect().top) / el.offsetHeight, held: el._cs._suspended.has('offscreen') };
+      }, fraction);
+    const offscreen = await show(0);
+    assert.equal(offscreen.held, true, 'a strip below the fold was not held');
+    const sliver = await show(0.1);
+    assert.ok(sliver.visible < 0.2, `the fixture showed ${sliver.visible} of the strip, not a tenth`);
+    assert.equal(sliver.held, true, 'a tenth of the strip released the hold');
+    const half = await show(0.5);
+    assert.ok(half.visible > 0.3, `the fixture showed ${half.visible} of the strip, not half`);
+    assert.equal(half.held, false, 'half the strip in view did not release the hold');
+  });
+
+  // data-cs-gallery="false" means not a gallery to the JS, but the CSS reserved
+  // the thumb strip's space on the attribute's presence - an empty band under
+  // the track. The rule keys off presence on purpose (the space must exist
+  // before JS runs, or every gallery shifts at init), so "false" is excluded
+  // by name, the way the fade pin already does.
+  test('data-cs-gallery="false" reserves no thumb strip', async ({ page }) => {
+    const pad = async (attrs) => {
+      await page.setContent(build(8, 4, attrs), { waitUntil: 'load' });
+      await page.waitForTimeout(300);
+      return page.evaluate(() => ({ pad: parseFloat(getComputedStyle(document.querySelector('.cs')).paddingBottom), thumbs: document.querySelectorAll('.cs-thumb').length }));
+    };
+    const plain = await pad('');
+    const off = await pad('data-cs-gallery="false"');
+    const on = await pad('data-cs-gallery');
+    assert.ok(on.thumbs > 0 && on.pad > plain.pad, 'the fixture gallery reserved nothing, so this proves nothing');
+    assert.equal(off.thumbs, 0, 'gallery="false" still built thumbs');
+    assert.equal(off.pad, plain.pad, `gallery="false" reserved ${off.pad - plain.pad}px of strip it never draws`);
+  });
+
+  // No rewind: the arrows stop at the ends instead of wrapping, and say so.
+  test('without rewind the last stop disables next and the first disables prev', async ({ page }) => {
+    await page.setContent(build(8, 4, 'data-cs-rewind="false"'), { waitUntil: 'load' });
+    await page.waitForTimeout(300);
+    const state = () =>
+      page.evaluate(() => {
+        const off = (b) => b.disabled || b.getAttribute('aria-disabled') === 'true';
+        return { current: document.querySelector('.cs')._cs.current, prev: off(document.querySelector('.cs-arrow--prev')), next: off(document.querySelector('.cs-arrow--next')) };
+      });
+    assert.deepEqual(await state(), { current: 0, prev: true, next: false });
+    await page.evaluate(() => document.querySelector('.cs')._cs.next());
+    // Wait for the commit (scrollend, or the scroll fallback), not a guess at
+    // how long a smooth scroll takes: Firefox's took longer than 700ms.
+    await page.waitForFunction(() => document.querySelector('.cs')._cs.current === 4, null, { timeout: 5000 });
+    await page.waitForTimeout(200);
+    assert.deepEqual(await state(), { current: 4, prev: false, next: true }, 'the last page did not disable next');
+    await page.evaluate(() => document.querySelector('.cs')._cs.next());
+    await page.waitForTimeout(1200);
+    assert.equal((await state()).current, 4, 'next past the end moved, or wrapped');
+  });
+
+  // Gallery: a thumb activates its slide, and every other slide is inert - the
+  // one place inert is allowed, because a gallery is 1-up and no count is
+  // corrupted by it.
+  test('a gallery thumb shows its slide and inerts the rest', async ({ page }) => {
+    await page.setContent(build(5, 1, 'data-cs-gallery'), { waitUntil: 'load' });
+    await page.waitForTimeout(400);
+    await page.locator('.cs-thumb').nth(3).click();
+    await page.waitForTimeout(700);
+    const r = await page.evaluate(() => ({
+      current: document.querySelector('.cs')._cs.current,
+      inert: [...document.querySelectorAll('.cs-slide')].map((s) => s.inert),
+      selected: [...document.querySelectorAll('.cs-thumb')].map((t) => t.getAttribute('aria-selected')),
+    }));
+    assert.equal(r.current, 3);
+    assert.deepEqual(r.inert, [true, true, true, false, true], 'the shown slide is inert, or a hidden one is not');
+    assert.deepEqual(r.selected, ['false', 'false', 'false', 'true', 'false']);
+  });
+
+  // Mouse drag scrolls the track; the click that ends a real drag is eaten so
+  // a card link does not fire under a released pointer.
+  test('dragging the track with a mouse moves it', async ({ page }) => {
+    await page.setContent(build(12, 4), { waitUntil: 'load' });
+    await page.waitForTimeout(300);
+    const box = await page.locator('.cs-track').boundingBox();
+    const x = box.x + box.width / 2;
+    const y = box.y + box.height / 2;
+    await page.mouse.move(x, y);
+    await page.mouse.down();
+    for (let i = 1; i <= 10; i++) await page.mouse.move(x - i * 30, y);
+    await page.mouse.up();
+    await page.waitForTimeout(700);
+    const left = await page.evaluate(() => document.querySelector('.cs-track').scrollLeft);
+    assert.ok(left > 100, `a 300px drag moved the track ${left}px`);
+  });
+
+  // --cs-per-view is CSS, so a resize can make a strip fit or stop fitting at
+  // any moment; the engine re-measures and the fits state follows.
+  test('a resize that makes every slide fit takes the controls away, and back', async ({ page }) => {
+    // The host's box follows the window here (a fixed 1170px box would keep
+    // the root the same size across the viewport change, and it is the root's
+    // resize the engine observes - a real page's container moves with the
+    // window at every breakpoint a per-view query sits on).
+    await page.setContent(hostHtml({ ...engine, css: '#box{inline-size:auto}.cs{--cs-per-view:2}@media(min-width:1000px){.cs{--cs-per-view:4}}', html: slider(4), box: 1170 }), { waitUntil: 'load' });
+    const fits = () => page.evaluate(() => document.querySelector('.cs').hasAttribute('data-cs-fits'));
+    await page.waitForTimeout(300);
+    assert.equal(await fits(), true, 'four slides four across did not fit');
+    await page.setViewportSize({ width: 800, height: 700 });
+    await page.waitForTimeout(500);
+    assert.equal(await fits(), false, 'four slides two across still claimed to fit after the resize');
+    await page.setViewportSize({ width: 1280, height: 720 });
+    await page.waitForTimeout(500);
+    assert.equal(await fits(), true, 'the controls did not go away again');
   });
 
   // scrollTo({behavior:'auto'}) defers to the element's CSS scroll-behavior, so

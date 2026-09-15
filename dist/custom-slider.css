@@ -21,7 +21,7 @@
   position: relative;
   padding-bottom: var(--cs-controls-space);
 }
-.cs[data-cs-gallery] {
+.cs[data-cs-gallery]:not([data-cs-gallery=false]) {
   --cs-controls-space: calc(var(--cs-thumb-h) + 1em);
 }
 .cs[data-cs-fade]:not([data-cs-fade=false]) {
@@ -733,6 +733,7 @@
 }
 .cargo-portrait {
   --strip-bg: #14161b;
+  --cs-dot-current: #fff;
   --card-fg: #fff;
   --cta-bg: #fff;
   --cta-fg: #14161b;

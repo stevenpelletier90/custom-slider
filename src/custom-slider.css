@@ -54,7 +54,12 @@
   padding-bottom: var(--cs-controls-space);
 }
 
-.cs[data-cs-gallery] {
+/* Presence, not an engine-set marker, on purpose: the thumb strip's space has
+   to be reserved BEFORE JS runs or every gallery shifts at init. The :not()
+   is what the fade rule below does too - data-cs-gallery="false" means not a
+   gallery, and reserving the strip for it left an empty band under the track
+   (2026-09-15 review; backlog). */
+.cs[data-cs-gallery]:not([data-cs-gallery="false"]) {
   --cs-controls-space: calc(var(--cs-thumb-h) + 1em);
 }
 

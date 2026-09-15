@@ -21,7 +21,9 @@ decision are `docs/backlog.md`; the dated evidence behind the rules here is `doc
 npm run build          # src → dist via esbuild (bundle+minify JS, minify CSS), then appends the generated card styles to the CSS and the pattern structure + scripts to both
 npm run size           # build + gzip budget gate — FAILS at ≥ 6656 B total
 npm run validate       # stylelint (files + generated) + eslint + prettier --check + check:looks  (fast; run before committing)
-npm run test           # @playwright/test browser checks (`npx playwright test --list` for the count), starts its own server on 8137 (reuses one already running)
+npm run test           # @playwright/test browser checks on Chromium (`npx playwright test --list` for the count), starts its own server on 8137 (reuses one already running)
+npm run test:browsers  # tests/engine.test.mjs on Firefox and WebKit (npx playwright install firefox webkit once)
+npm run a11y           # axe over every pattern and page state; needs `npm run serve` up; not a gate, run it after rail or demo-page changes
 npm run check:looks    # asserts the demo data holds: 17 old skins -> 7 components, 32 brand presets, no cramped preset
 npm run lint:css:generated # stylelints the CSS the copy panel ships (the card/pattern rules that live in JS template literals)
 npm run lint:css:fix   # stylelint --fix on src/**/*.css and demo/assets/*.css
@@ -191,7 +193,11 @@ no shell is involved) that auto-fixes each file Claude edits inside this repo an
 the other working directories alone. It never blocks; `npm run validate` is the real gate.
 
 `.github/workflows/validate.yml` runs `validate`, `size` and `test` on every push and pull request
-(Chromium only). After a push, watch that run until it is green.
+(Chromium), and a second job runs `test:browsers` — `tests/engine.test.mjs` alone on Firefox and
+WebKit, the engine's contract where its Safari and Firefox decisions actually execute. After a push,
+watch both until green. `npm run a11y` (axe over every pattern, the brands page, both themes, both
+dialogs; needs `npm run serve`) is a deliberate run, not a gate; it drifted for a week when the look
+picker it clicked was deleted, so run it after any change to the rail or the demo pages.
 
 ## Architecture
 

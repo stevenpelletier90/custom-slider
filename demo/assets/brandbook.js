@@ -78,7 +78,9 @@
     }
     for (const pid of measured.length ? measured : ['modelbar']) {
       const cls = `bb-${id}-${pid}`;
-      const r = renderPattern(pid, cls, { brand: id });
+      // Named per brand: this page draws the same pattern for every brand,
+      // and a page of regions all called "Our models" fails landmark-unique.
+      const r = renderPattern(pid, cls, { brand: id, label: `${b.label} ${(SHORT?.[pid] ?? PATTERNS[pid].label).toLowerCase()}` });
       css.push(r.css);
       const block = document.createElement('div');
       block.className = 'bb-block';

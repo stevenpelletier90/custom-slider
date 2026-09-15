@@ -315,6 +315,10 @@ const LOOKS = {
     absorbs: ['tall-tile'],
     settings: {
       '--strip-bg': '#14161b',
+      // The engine's default current dot is #333, drawn for a white page; on
+      // this strip it was 1.43:1, invisible. Found by the repaired a11y audit
+      // (2026-09-15); the arrows below had already been given their white.
+      '--cs-dot-current': '#fff',
       '--card-fg': '#fff',
       '--cta-bg': '#fff',
       '--cta-fg': '#14161b',

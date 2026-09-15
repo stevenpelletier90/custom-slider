@@ -7,8 +7,8 @@
 // mechanical class (names, roles, contrast, duplicate ids, orphaned controls)
 // over far more states than anyone clicks through by hand.
 //
-// The point is the STATES. The builder is one page in 17 patterns x 7 looks x 2
-// themes; auditing demo/index.html once checks the model bar in light mode and
+// The point is the STATES. The builder is one page in 21 patterns x 2 themes,
+// plus the brands page; auditing demo/index.html once checks the model bar in light mode and
 // nothing else. The first run of this found 26 violations, 23 of them contrast
 // in the card CSS the copy panel ships to dealers - none of which appear on a
 // plain page load.
@@ -210,22 +210,22 @@ for (const id of patterns) {
   await audit(`builder #${id}`);
 }
 
-// Every card look, drawn on the model bar the way the look picker draws it.
-await page.locator('#wb-nav button[data-go="modelbar"]').click();
-await page.waitForTimeout(500);
-// .tp-lookv is the picker blade in the pane (demo/assets/tp-plugins.js). A
-// selector that matches nothing here would leave this loop auditing zero looks
-// and the run would still finish green, which is worse than not looking at all.
-const looks = await page.locator('.tp-lookv button').count();
-if (looks < 7) {
-  console.error(`a11y: the card-style picker matched ${looks} buttons, not the seven looks — the selector is stale.`);
+// The seven card looks used to be audited here through the pane's look picker.
+// The picker was deleted on 2026-09-08 (every card is a rail entry now, see
+// CLAUDE.md), so the loop above already draws each of them, and this script
+// spent a week exiting non-zero on a selector that matched nothing - which
+// nobody saw, because it is not in CI (2026-09-15 review). The guard is the
+// same idea, pointed at what exists: the loop must have found the rail.
+if (patterns.length < 21) {
+  console.error(`a11y: the rail listed ${patterns.length} patterns, not the 21 it ships — CARGO.PATTERNS is stale or missing.`);
   process.exitCode = 1;
 }
-for (let i = 0; i < looks; i++) {
-  await page.locator('.tp-lookv button').nth(i).click();
-  await page.waitForTimeout(500);
-  await audit(`look ${i}`);
-}
+
+// The measured brands, each a different set of colours on the tabbed bar and
+// the tile. brands.html draws every preset in one page.
+await go('/demo/brands.html');
+await audit('/demo/brands.html');
+await go('/demo/index.html');
 
 // The dark palette is a second set of colours axe has not seen yet.
 await page.locator('#ui-theme').click();
@@ -269,4 +269,4 @@ if (findings.length) {
   console.error(`\na11y: ${findings.length} violation(s) over ${states} states.`);
   process.exit(1);
 }
-console.log(`a11y: clean over ${states} states (${patterns.length} patterns, ${looks} looks, both themes, both dialogs).`);
+console.log(`a11y: clean over ${states} states (${patterns.length} patterns, the brands page, both themes, both dialogs).`);

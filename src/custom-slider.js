@@ -70,7 +70,7 @@ export class CustomSlider {
     this.current = 0;
     this._target = null; // pending goTo destination (rapid clicks)
     this._pointerDown = false;
-    this._addedRootAttrs = [];
+    this._rootAttrs = new Map(); // name -> value before init (null: absent), for destroy()
     // CSS reserves the thumb-strip space via [data-cs-gallery] — mirror the JS
     // option onto the attribute so manual construction lays out correctly.
     if (this.opts.gallery) this._setRootAttr('data-cs-gallery', '');
@@ -126,6 +126,12 @@ export class CustomSlider {
     const dl = {};
     for (const k in d) if (k.length > 7 && k.startsWith('csLabel')) dl[k[7].toLowerCase() + k.slice(8)] = d[k];
     const opts = { ...DEFAULTS, ...data, ...js, labels: { ...DEFAULTS.labels, ...dl, ...(js.labels || {}) } };
+    // step is 'page', 'slide' or a positive whole number, checked on the MERGED
+    // options: the data-attribute line above normalises its own route, and the
+    // constructor's `step` came through untouched, so `{ step: 0 }` looped
+    // _stops() forever and `{ step: 1.5 }` indexed slides[1.5]. Anything else
+    // is a page (2026-09-15 review).
+    if (opts.step !== 'page' && opts.step !== 'slide') opts.step = Number.isInteger(+opts.step) && +opts.step > 0 ? +opts.step : 'page';
     if (opts.gallery && opts.autoplay) {
       console.warn('[custom-slider] autoplay is ignored in gallery mode', this.root);
       opts.autoplay = 0;
@@ -143,8 +149,12 @@ export class CustomSlider {
 
   /* ---- ARIA setup ------------------------------------------------------- */
 
+  // Remembers what the attribute WAS the first time the engine touches it, so
+  // destroy() can put it back. Names alone were kept before, so an authored
+  // role="group" or aria-roledescription the engine overwrote came back as
+  // the engine's value (2026-09-15 review).
   _setRootAttr(name, value) {
-    if (!this.root.hasAttribute(name)) this._addedRootAttrs.push(name);
+    if (!this._rootAttrs.has(name)) this._rootAttrs.set(name, this.root.getAttribute(name));
     this.root.setAttribute(name, value);
   }
 
@@ -576,11 +586,11 @@ export class CustomSlider {
     // than at build time because --cs-per-view is CSS, so a resize across a
     // breakpoint can make a strip fit (or stop fitting) at any moment.
     const fits = this._stops().length <= 1;
-    // Registered, not just toggled: destroy() removes only what it finds in
-    // _addedRootAttrs, and this was the one root attribute written outside
+    // Registered, not just toggled: destroy() restores only what it finds in
+    // _rootAttrs, and this was the one root attribute written outside
     // _setRootAttr - so a destroyed slider left data-cs-fits behind on the
     // dealer's element, still hiding the controls of whatever was built next.
-    if (fits && !this._addedRootAttrs.includes('data-cs-fits')) this._addedRootAttrs.push('data-cs-fits');
+    if (!this._rootAttrs.has('data-cs-fits')) this._rootAttrs.set('data-cs-fits', this.root.getAttribute('data-cs-fits'));
     this.root.toggleAttribute('data-cs-fits', fits);
     if (this.prevBtn) this.prevBtn.hidden = this.nextBtn.hidden = fits;
     if (this.dots) this.dots.hidden = fits;
@@ -698,6 +708,11 @@ export class CustomSlider {
     );
     this._io = new IntersectionObserver(
       ([e]) => {
+        // isIntersecting here is NOT "any pixel": with a single 0.25 threshold
+        // the observer only reports at that crossing, and the entry's
+        // isIntersecting is false on the way below it. Measured on Chromium,
+        // Firefox and WebKit on 2026-09-15 after two reviews called this a bug
+        // (nothing fires at 0.1 in any of them); tests/engine.test.mjs holds it.
         e.isIntersecting ? this._unsuspend('offscreen') : this._suspend('offscreen');
       },
       { threshold: 0.25 },
@@ -872,8 +887,11 @@ export class CustomSlider {
     cancelAnimationFrame(this._raf);
     this._ro?.disconnect();
     this._io?.disconnect();
+    // The snapshot is a rebuild, not a mutation: the authored descendants come
+    // back as new nodes (README, destroy()). The root itself is the dealer's
+    // element, so each attribute goes back to what it was, or away.
     this.root.innerHTML = this._snapshot;
-    for (const a of this._addedRootAttrs) this.root.removeAttribute(a);
+    for (const [a, v] of this._rootAttrs) v === null ? this.root.removeAttribute(a) : this.root.setAttribute(a, v);
     delete this.root._cs;
   }
 }
