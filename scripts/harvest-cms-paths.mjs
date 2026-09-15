@@ -12,6 +12,16 @@
 // whose bytes are identical. A file that matches nothing is reported as
 // unmatched rather than guessed at - an almost-right cutout path is worse than
 // an honest gap, because it 404s silently on a live page.
+//
+// A FULL RE-RUN IS CURRENTLY LOSSY - check the diff before committing it
+// (2026-09-15). Re-running this to pick up 25 new pairs dropped 33 that a
+// direct fetch then proved were still byte-identical: every brand logo plus
+// eight cutouts. The run makes ~2000 requests, so the likeliest cause is the
+// far end throttling, and a transient miss is indistinguishable here from a
+// genuine one. Until that is separated, treat a regeneration that REMOVES pairs
+// as suspect and merge additively instead. A dropped pair is not a cosmetic
+// loss: the copy panel stops rewriting that image to its platform path, so a
+// pasted snippet ships a demo-relative URL that 404s on a dealer page.
 
 import { createHash } from 'node:crypto';
 import { readdir, readFile, writeFile, stat, unlink } from 'node:fs/promises';
@@ -167,6 +177,38 @@ const LIBRARY = {
   'vehicle-5.png': '/assets/stock/ColorMatched_01/Transparent/640/cc_2026HYS02_01_640/cc_2026HYS021969953_01_640_NET.png',
   'vehicle-6.png': '/assets/stock/ColorMatched_01/Transparent/640/cc_2026SUS31_01_640/cc_2026SUS312046183_01_640_RV1.png',
 
+  // Subaru and Honda model bars, added 2026-09-15 with the presets that use
+  // them. These come from /static/brand-<make>/, not /assets/stock/: the
+  // two makes ship their own model-bar art rather than ChromeData renders,
+  // which is also why their sizes are 350x185 and 300x140 and not the 320x240
+  // the ColorMatched set uses. Root-relative and dealer-id free, so a pasted
+  // snippet still needs nothing uploaded.
+  'oem/subaru/uncharted.png': '/static/brand-subaru/homepage/model-bar/2026/uncharted-2026.png',
+  'oem/subaru/crosstrek.png': '/static/brand-subaru/homepage/model-bar/2026/crosstrek-2026.png',
+  'oem/subaru/forester.png': '/static/brand-subaru/homepage/model-bar/2026/forester-2026.png',
+  'oem/subaru/outback.png': '/static/brand-subaru/homepage/model-bar/2026/outback-2026.png',
+  'oem/subaru/ascent.png': '/static/brand-subaru/homepage/model-bar/2027/ascent-2027.png',
+  'oem/subaru/solterra.png': '/static/brand-subaru/homepage/model-bar/2026/solterra-2026.png',
+  'oem/subaru/trailseeker.png': '/static/brand-subaru/homepage/model-bar/2026/trailseeker-2026.png',
+  'oem/subaru/impreza.png': '/static/brand-subaru/homepage/model-bar/2026/impreza-2026.png',
+  'oem/subaru/brz.png': '/static/brand-subaru/homepage/model-bar/2027/brz-2027.png',
+  'oem/subaru/wrx.png': '/static/brand-subaru/homepage/model-bar/2026/wrx-2026.png',
+  'oem/subaru/crosstrek-hybrid.png': '/static/brand-subaru/homepage/model-bar/2026/crosstrek-hybrid-2026.png',
+  'oem/subaru/forester-hybrid.png': '/static/brand-subaru/homepage/model-bar/2026/forester-hybrid-2026.png',
+  'oem/subaru/crosstrek-wilderness.png': '/static/brand-subaru/homepage/model-bar/2026/crosstrek-wilderness-2026.png',
+  'oem/subaru/forester-wilderness.png': '/static/brand-subaru/homepage/model-bar/2026/forester-wilderness-2026.png',
+  'oem/subaru/outback-wilderness.png': '/static/brand-subaru/homepage/model-bar/2026/outback-wilderness-2026.png',
+
+  'oem/honda/accord.png': '/static/brand-honda/Homepage/model-bar/2026/sm/accord.png',
+  'oem/honda/civic.png': '/static/brand-honda/Homepage/model-bar/2026/sm/civic.png',
+  'oem/honda/cr-v.png': '/static/brand-honda/Homepage/model-bar/2026/sm/crv.png',
+  'oem/honda/cr-v-hybrid.png': '/static/brand-honda/Homepage/model-bar/2026/sm/crv-hybrid.png',
+  'oem/honda/hr-v.png': '/static/brand-honda/Homepage/model-bar/2026/sm/hrv.png',
+  'oem/honda/passport.png': '/static/brand-honda/Homepage/model-bar/2026/sm/passport.png',
+  'oem/honda/pilot.png': '/static/brand-honda/Homepage/model-bar/2026/sm/pilot.png',
+  'oem/honda/prologue.png': '/static/brand-honda/Homepage/model-bar/2026/sm/prologue.png',
+  'oem/honda/odyssey.png': '/static/brand-honda/Homepage/model-bar/2026/sm/odyssey.png',
+  'oem/honda/ridgeline.png': '/static/brand-honda/Homepage/model-bar/2026/sm/ridgeline.png',
   // The mixed-size example. These have to be genuinely different shapes,
   // because the card under each one prints its real source dimensions and says
   // what the crop threw away - so the numbers are the lesson, not decoration.

@@ -119,9 +119,6 @@ globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
     'oem/gmc/sierra-hd.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2025GMT20_01_320/cc_2025GMT201983905_01_320_GNT.png',
     'oem/gmc/terrain.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2025GMS28_01_320/cc_2025GMS282051209_01_320_GAL.png',
     'oem/gmc/yukon.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026GMS03_01_320/cc_2026GMS032076764_01_320_GBA.png',
-    'oem/honda/passport.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026HOS01_01_320/cc_2026HOS012019833_01_320_GA.png',
-    'oem/honda/pilot.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026HOS03_01_320/cc_2026HOS032055197_01_320_GY.png',
-    'oem/honda/prologue.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026HOS09_01_320/cc_2026HOS092040254_01_320_GY.png',
     'oem/hyundai/elantra.png': '/static/brand-hyundai/Homepage/model-bar/2025/elantra-profile.png',
     'oem/hyundai/ioniq-5.png': '/static/brand-hyundai/Homepage/model-bar/2025/ioniq-5-profile.png',
     'oem/hyundai/kona.png': '/static/brand-hyundai/Homepage/model-bar/2026/kona-profile.png',
@@ -176,8 +173,6 @@ globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
     'oem/nissan/z.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2027NIC20_01_320/cc_2027NIC202070981_01_320_RCB.png',
     'oem/porsche/911.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026PRC01_01_320/cc_2026PRC012027359_01_320_1H.png',
     'oem/porsche/cayenne.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026PRS04_01_320/cc_2026PRS042013187_01_320_2Y.png',
-    'oem/subaru/ascent.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026SUS32_01_320/cc_2026SUS322082280_01_320_MGM.png',
-    'oem/subaru/outback.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026SUS31_01_320/cc_2026SUS312046183_01_320_RV1.png',
     'oem/toyota/corolla.jpg': '/static/brand-toyota/Homepage/model-bar/2026/picture-based/2026-corolla.jpg',
     'oem/toyota/4runner.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/4runner.png',
     'oem/toyota/camry.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/camry.png',
@@ -206,5 +201,37 @@ globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
     'vehicle-4.png': '/assets/stock/ColorMatched_01/Transparent/640/cc_2026FOS10_01_640/cc_2026FOS102066682_01_640_UM.png',
     'vehicle-5.png': '/assets/stock/ColorMatched_01/Transparent/640/cc_2026HYS02_01_640/cc_2026HYS021969953_01_640_NET.png',
     'vehicle-6.png': '/assets/stock/ColorMatched_01/Transparent/640/cc_2026SUS31_01_640/cc_2026SUS312046183_01_640_RV1.png',
+
+    // Subaru and Honda model bars, added 2026-09-15 with the presets that
+    // use them. These come from /static/brand-<make>/ rather than
+    // /assets/stock/: both makes ship their own model-bar art instead of
+    // ChromeData renders, which is also why they are 350x185 and 300x140
+    // and not the ColorMatched set’s 320x240. Each proved by SHA-1 off an
+    // unrelated dealer domain, the same test the harvest applies.
+    'oem/subaru/uncharted.png': '/static/brand-subaru/homepage/model-bar/2026/uncharted-2026.png',
+    'oem/subaru/crosstrek.png': '/static/brand-subaru/homepage/model-bar/2026/crosstrek-2026.png',
+    'oem/subaru/forester.png': '/static/brand-subaru/homepage/model-bar/2026/forester-2026.png',
+    'oem/subaru/outback.png': '/static/brand-subaru/homepage/model-bar/2026/outback-2026.png',
+    'oem/subaru/ascent.png': '/static/brand-subaru/homepage/model-bar/2027/ascent-2027.png',
+    'oem/subaru/solterra.png': '/static/brand-subaru/homepage/model-bar/2026/solterra-2026.png',
+    'oem/subaru/trailseeker.png': '/static/brand-subaru/homepage/model-bar/2026/trailseeker-2026.png',
+    'oem/subaru/impreza.png': '/static/brand-subaru/homepage/model-bar/2026/impreza-2026.png',
+    'oem/subaru/brz.png': '/static/brand-subaru/homepage/model-bar/2027/brz-2027.png',
+    'oem/subaru/wrx.png': '/static/brand-subaru/homepage/model-bar/2026/wrx-2026.png',
+    'oem/subaru/crosstrek-hybrid.png': '/static/brand-subaru/homepage/model-bar/2026/crosstrek-hybrid-2026.png',
+    'oem/subaru/forester-hybrid.png': '/static/brand-subaru/homepage/model-bar/2026/forester-hybrid-2026.png',
+    'oem/subaru/crosstrek-wilderness.png': '/static/brand-subaru/homepage/model-bar/2026/crosstrek-wilderness-2026.png',
+    'oem/subaru/forester-wilderness.png': '/static/brand-subaru/homepage/model-bar/2026/forester-wilderness-2026.png',
+    'oem/subaru/outback-wilderness.png': '/static/brand-subaru/homepage/model-bar/2026/outback-wilderness-2026.png',
+    'oem/honda/accord.png': '/static/brand-honda/Homepage/model-bar/2026/sm/accord.png',
+    'oem/honda/civic.png': '/static/brand-honda/Homepage/model-bar/2026/sm/civic.png',
+    'oem/honda/cr-v.png': '/static/brand-honda/Homepage/model-bar/2026/sm/crv.png',
+    'oem/honda/cr-v-hybrid.png': '/static/brand-honda/Homepage/model-bar/2026/sm/crv-hybrid.png',
+    'oem/honda/hr-v.png': '/static/brand-honda/Homepage/model-bar/2026/sm/hrv.png',
+    'oem/honda/passport.png': '/static/brand-honda/Homepage/model-bar/2026/sm/passport.png',
+    'oem/honda/pilot.png': '/static/brand-honda/Homepage/model-bar/2026/sm/pilot.png',
+    'oem/honda/prologue.png': '/static/brand-honda/Homepage/model-bar/2026/sm/prologue.png',
+    'oem/honda/odyssey.png': '/static/brand-honda/Homepage/model-bar/2026/sm/odyssey.png',
+    'oem/honda/ridgeline.png': '/static/brand-honda/Homepage/model-bar/2026/sm/ridgeline.png',
   },
 });
