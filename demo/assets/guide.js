@@ -326,6 +326,8 @@
       'Size of the tab labels below 992px, the platform’s tablet tier. <code>var(--tab-size)</code> keeps the wide size; Ford drops from 16px to 12px, <code>0.86em</code> of the body.',
     '--tab-pad-narrow':
       'The tab padding below 992px, in the tab’s em at that size. <code>var(--tab-pad)</code> keeps the wide value; Ford’s 10px over and 15px under the label stay put while the tab drops to 12px, which is <code>1.25em 0.42em</code> there.',
+    '--tab-gap-narrow':
+      'The space between tabs below 992px, in the tab’s em at that size. <code>var(--tab-gap)</code> keeps the wide value; Kia’s row collapses from 31.75px to 13.64px there, <code>0.76em</code>, because that is where the platform’s <code>hidden-xs</code> drops the divider between the labels.',
     '--box-border': 'A border around the tab row and the panes together, as the CSS shorthand. <code>none</code>; Ford’s bar sits in <code>1px solid #ccc</code>.',
     '--box-pad': 'Padding inside that box around the panes and the button (never the tab row). <code>0.1px</code> is none; Ford’s is 30px, <code>2.14em</code> of the body.',
     '--box-pad-narrow': 'The same padding below 992px. <code>var(--box-pad)</code> keeps the wide value; Ford halves it to 15px, <code>1.07em</code>.',

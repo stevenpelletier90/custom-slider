@@ -663,6 +663,13 @@ ${VIDEO_DIALOG_CSS}`,
         // 15px under the label at every width, which in a 12px tab is more
         // em, not less.
         '--tab-pad-narrow': 'var(--tab-pad)',
+        // The gap needed the same tier, and did not have it until kiademo1 was
+        // measured (2026-09-15): Kia's row is 31.75px of gap at 992 and up, and
+        // 13.64px from 767 down, because `hidden-xs` drops the divider li at
+        // 768 rather than at our 576. Without a narrow form our bar drew the
+        // full desktop gap across the whole 576-991 band. Follows --tab-gap
+        // unless told otherwise, exactly like the two above.
+        '--tab-gap-narrow': 'var(--tab-gap)',
         // The box around the row and the panes (Ford: 1px #ccc), and the
         // padding inside it around the panes and the button (Ford: 30px, 15px
         // below 992). Zero and none by default: a bar with no box draws none.
@@ -830,7 +837,8 @@ ${VIDEO_DIALOG_CSS}`,
    box padding to 15px here; the defaults follow the wide values. */
 @media (max-width: 991.98px) {
   %wrap% { padding-block: var(--bar-pad-narrow); }
-  .cargo-tabs [role="tab"] { padding: var(--tab-pad-narrow); font-size: calc(var(--tab-size-narrow) * var(--tab-fit, 1)); }
+  .cargo-tabs [role="tab"] { padding: var(--tab-pad-narrow); margin-inline: calc(var(--tab-gap-narrow) / 2); font-size: calc(var(--tab-size-narrow) * var(--tab-fit, 1)); }
+  .cargo-tabs [role="tab"] + [role="tab"]::before { inset-inline-start: calc(var(--tab-gap-narrow) / -2 / var(--tab-divider-size)); }
   .cargo-body { padding: var(--box-pad-narrow); }
 }
 /* Three tabs need 272px at the default padding, and a 320px phone leaves 236 -

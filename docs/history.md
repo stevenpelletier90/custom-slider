@@ -578,3 +578,64 @@ button. FA 4.7 is EOL since 2016 and a move to FA6 renames the family. It alread
 in the same centred cell, and the accessible name survives because it is on the button, not the
 glyph. `document.fonts.check()` is useless for detecting this: it answers true for families that do
 not exist, so the probe measures the glyph against a fallback instead.
+
+## 2026-09-15 — GMC, Honda and Kia measured; 7 of 49 codes now have a replacement
+
+Three more bars measured with Playwright at 1280/800/390, each verified by a second agent that
+re-read the computed styles independently. Every one of the three came back with something the first
+pass had wrong, which is the point of the second pass.
+
+**Honda's body is not one size.** poppins-regular is 14px at 992 and up and **13px from 991 down**,
+and the first measurement converted every em against the 14. The live name holds 15px at every
+width, so below 992 ours renders 13.9px where the live bar holds 15. Shipped as measured and
+recorded as a DEPARTURE: our type scales with the host it is pasted into, theirs is pinned to a size
+its own page stopped using. `hondademo2` is not the host the Salesforce article cites — it names
+`hondademo4` — but the two run the same ten-slide bar on the same ladder, so it is the same code.
+
+**Kia needed a knob that did not exist.** Its row is 31.75px of gap at 992 and up and 13.64px from
+767 down, because the platform's `hidden-xs` drops the divider `li` at 768 while our phone tier
+is 576. There was a `-narrow` convention already (`--tab-size-narrow`, `--tab-pad-narrow`) and no
+`--tab-gap-narrow`, so our bar drew the full desktop gap across the whole 576–991 band. Added,
+defaulting to `var(--tab-gap)` like its two siblings, so no existing bar moved. Kia's ladder was
+also wrong in `brands.js` — its real slick config is 3 across and 1 below 768, not the census's
+2/3/5.
+
+**GMC's white name had no ground under it.** `gmcdemo1` is white-on-dark because `body.homepage` is
+`#161616` — **the whole page**, with no band element at all. A preset that shipped
+`--name-color: #fff` and nothing else would be white on white on any light dealer theme. So the
+strip carries its own `--strip-bg: #161616` and the pair travels together (18.1:1). Two consequences
+followed, and both were caught by the audit rather than by reading:
+
+- The `modelbar` pattern's own arrow is `#262626` on a transparent background — **1.2:1** on that
+  strip — and `#1a5fb4` focus is 2.88:1. Both needed the dark-ground treatment.
+- **A flat `#fff` does not work as an override.** `#fff` IS `ENGINE_DEFAULTS['--cs-arrow-fg']`, so
+  `cssFor()` drops it as a no-op line and the pattern's `#262626` wins. The audit read 1.2:1 twice
+  before this was understood. Cadillac's `rgba(255, 255, 255, 0.75)` works precisely because it is
+  not the default.
+- **The override belongs to the LOOK, not to a pattern.** GMC is offered on two patterns (`modelbar`
+  and `tabs`, because a look's values apply to both), and putting the arrow colour under
+  `patterns.modelbar.props` left the tabbed bar still drawing 1.2:1 arrows. The dark ground and the
+  light controls live together in `styles.looks.tile`, the same arrangement the `portrait` look
+  uses.
+
+**None of the three copies its OEM's arrow.** All three live bars use slick's 35px glyph; our engine
+default is 44px, and a brand that sets `--cs-arrow-size` opts out of the looks' responsive ladder
+entirely (measured yesterday: `tabs × ford` renders 25×25 at every width). The measurement is the
+floor, so they inherit the ladder.
+
+**A third tabbed bar collided with the other two.** Each pane's carousel is a landmark named for its
+tab, which is right on a page showing one bar and wrong on the brands catalogue, which draws every
+measured bar at once: two brands with an "Electric" or a "Trucks" tab produced two regions with the
+same name (axe `landmark-unique`, and genuinely ambiguous to navigate). `htmlFor()` now qualifies a
+pane's label with `state.label` — the brand-qualified name `brandbook.js` already passed for the
+outer region — where one is set. **A copied snippet sets no label and is byte-for-byte unchanged.**
+
+**Four tests were named after Kia and failed for the work getting done.** `brands.test.mjs` twice,
+`variants.test.mjs` once and a `>= 28` option count all hard-coded either the id `kia` or a total
+that assumed four measured brands. Each now reads the roster-only example and the counts off
+`BRANDS`/`patternsOf` instead, and says so. A fifth, `layout.test.mjs`'s phone-padding check,
+asserted the tab gap was under `0.3em` a side — true only while every measured bar used the
+pattern's 0.25em. It now compares each bar against **its own** desktop gap, which is what "the
+desktop gap came back" actually means.
+
+Ledger: **7 of 49 in scope**, up from 4.

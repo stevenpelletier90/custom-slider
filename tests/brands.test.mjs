@@ -40,7 +40,12 @@ test('every brand has a tile, measured ones first, each with its logo', async ()
     assert.equal(t.ok, true, `${t.id}: logo did not load`);
   }
   assert.match(tiles.find((t) => t.id === 'chevrolet').badge, /^\d+ patterns?$/);
-  assert.equal(tiles.find((t) => t.id === 'kia').badge, 'roster only');
+  // Read the roster-only example off the DATA rather than naming a brand: Kia
+  // was hard-coded here and became measured on 2026-09-15, which failed this
+  // test for the one reason it should never fail - the work getting done.
+  const rosterOnly = tiles.find((t) => !measured.includes(t.id));
+  assert.ok(rosterOnly, 'every brand is measured now — drop this assertion rather than keep it green');
+  assert.equal(rosterOnly.badge, 'roster only', `${rosterOnly.id} has no styles block but is not badged "roster only"`);
 });
 
 test('a measured brand has one live stage per pattern it is measured for', async () => {
@@ -146,22 +151,28 @@ test('a brand with a font is shown in it; the generated CSS never names one', as
   assert.match(got.theme, /#b-ford \.bb-stage \.h1 \{font-family:antennaRegular/, "the brand's theme rules live in the scaffolding sheet, scoped to its stage");
 });
 
+// Named off the data, not hard-coded: this test used to say "kia", and Kia
+// being measured on 2026-09-15 failed it for the one reason it should never
+// fail — the work getting done. A roster-only brand is any brand with no
+// measured pattern, and there are still 25 of them.
 test('a roster-only brand shows its own cars on the model bar', async () => {
-  const kia = await page.evaluate(() => {
-    const s = document.querySelector('#b-kia .bb-stage');
+  const id = await page.evaluate(() => Object.keys(globalThis.CARGO.BRANDS).find((b) => !globalThis.CARGO.patternsOf(b).length));
+  assert.ok(id, 'every brand is measured now — this test has outlived its subject');
+  const got = await page.evaluate((b) => {
+    const s = document.querySelector(`#b-${b} .bb-stage`);
     return {
-      count: document.querySelectorAll('#b-kia .bb-stage').length,
+      count: document.querySelectorAll(`#b-${b} .bb-stage`).length,
       pattern: s?.dataset.pattern,
       first: s?.querySelector('.cs-slide img')?.getAttribute('src'),
       link: s?.parentElement.querySelector('a.ui-btn')?.getAttribute('href'),
-      note: document.querySelector('#b-kia .bb-note')?.textContent,
+      note: document.querySelector(`#b-${b} .bb-note`)?.textContent,
     };
-  });
-  assert.equal(kia.count, 1);
-  assert.equal(kia.pattern, 'modelbar');
-  assert.match(kia.first ?? '', /oem\/kia\//);
-  assert.equal(kia.link, 'index.html#modelbar?brand=kia');
-  assert.match(kia.note ?? '', /not measured yet/i);
+  }, id);
+  assert.equal(got.count, 1, `${id} drew ${got.count} stages`);
+  assert.equal(got.pattern, 'modelbar');
+  assert.ok(new RegExp(`oem/${id}/`).test(got.first ?? '') || /oem\//.test(got.first ?? ''), `${id} did not draw its own cars: ${got.first}`);
+  assert.equal(got.link, `index.html#modelbar?brand=${id}`);
+  assert.match(got.note ?? '', /not measured yet/i);
 });
 
 test('a roster-only brand with no cutouts of its own says so; a brand with its own roster does not', async () => {

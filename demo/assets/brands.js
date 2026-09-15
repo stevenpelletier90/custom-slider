@@ -859,6 +859,75 @@
         [768, 5],
       ],
       demos: 2,
+      // What gmcdemo1 draws, measured with Playwright at 1280/800/390 on
+      // 2026-09-15. It is the example the Salesforce article gives for
+      // `gmc-model-bar` - which that article types as Tabs, though the live
+      // page has no tab row at all and draws a single plain bar of six models.
+      // Worth raising with whoever owns the code; measured as what is there.
+      //
+      // The page is a 16px stratumGMC body - note the 16, not the 14 Ford and
+      // Chevrolet sit on, which changes every em below:
+      // - six cutouts on a white strip, slides butting together, the art drawn
+      //   at scale(0.95) and going to full size over 0.1s on hover;
+      // - the name under the car in the platform's `.larger` (19.2px), 400, in
+      //   white on the strip's own dark band, on a 27.43px line, hard against
+      //   the picture (`.vehicleName { margin-top: 0 }`);
+      // - slick's own 35px arrows in a 35px channel each side.
+      styles: {
+        looks: {
+          tile: {
+            // DEPARTURE, and the one that matters here. gmcdemo1's name is
+            // white because the WHOLE PAGE is dark - body.homepage is #161616
+            // and there is no band element at all. A preset cannot ship a white
+            // name and assume the page: dropped onto a light dealer theme it is
+            // white on white, invisible, which is the same mistake as copying
+            // an OEM's arrow grey. So the strip carries its own ground, and the
+            // pair travels together to any theme (#fff on #161616 = 18.1:1).
+            // A dealer whose page is already dark can set --strip-bg to
+            // transparent and get the live arrangement back.
+            '--strip-bg': '#161616',
+            // The light controls live HERE, beside the dark ground that makes
+            // them necessary, and not in a pattern's props - GMC is offered on
+            // two patterns (modelbar and tabs, because a look's values apply to
+            // both), and putting them under modelbar alone left the tabbed bar
+            // drawing #262626 arrows at 1.2:1. Same arrangement the portrait
+            // look uses for the same reason.
+            // NOT a flat #fff: that is ENGINE_DEFAULTS['--cs-arrow-fg'], so
+            // cssFor() drops it as a no-op and the pattern's own colour wins.
+            '--cs-arrow-fg': 'rgba(255, 255, 255, 0.9)',
+            '--cs-focus': '#4a90e2',
+            '--name-color': '#fff',
+            '--name-size': '1.2em',
+            '--name-weight': '400',
+            '--name-leading': '1.4286',
+            '--name-gap': '0.1px',
+            // The live scale(0.95) expressed as padding on a border-box image.
+            // 1.875%, not 1.88%: the card is 4:3, so the vertical is the
+            // horizontal x 0.75 exactly (4.0125px of a 214px card).
+            '--plate-pad': '1.875% 2.5%',
+            '--img-hover-scale': '1.0526',
+            '--img-hover-speed': '0.1s',
+          },
+        },
+        patterns: {
+          modelbar: {
+            props: {
+              '--cs-gap': '0.1px',
+            },
+          },
+        },
+      },
+      // PREVIEW ONLY: gmcdemo1's own font and theme tokens. The snippet carries
+      // neither - a dealer page brings its own.
+      font: { family: 'stratumGMC', css: 'https://cdn.dealeron.com/assets/fonts/stratum-gmc/fonts.min.css', headings: true },
+      theme: {
+        '--cta-background-color': '#c00',
+        '--cta-font-color': '#fff',
+        '--cta-hover-color': '#c00',
+        '--main-color': '#000',
+        css: '.btn{font-weight:400;text-transform:uppercase;border-radius:0;transition:background-color 200ms linear,color 200ms linear,border-color 200ms linear}.btn-lg{padding:10px 30px;font-size:16px}.heading-lg{font-size:42px;font-weight:800;line-height:1.1;text-transform:uppercase}',
+      },
+      source: 'gmcdemo1.dealeron.com, 2026-09-15',
     },
     genesis: {
       label: 'Genesis',
@@ -881,6 +950,55 @@
         [992, 5],
       ],
       demos: 3,
+      // What hondademo2 draws, measured with Playwright at 1280/800/390 on
+      // 2026-09-15. hondademo2 is not the host the Salesforce article cites -
+      // it names hondademo4 - but the two run the same ten-slide bar on the
+      // same 5@768:3,460:2 ladder, so this is the `honda-model-bar-slick` code.
+      //
+      // The body is poppins-regular, and it is NOT one size: 14px at 992 and
+      // up, 13px from 991 down. Every em below is against the 14. The live
+      // name holds 15px at every width, so below 992 ours renders 13.9px where
+      // the live bar holds 15 - a DEPARTURE, and the better behaviour: our type
+      // scales with the host it is pasted into, theirs is pinned to a size the
+      // page stopped using.
+      // - ten cutouts, slides butting, the art at scale(0.95) going to full
+      //   size over 0.1s on hover;
+      // - the name 15px/400 #333 on a 21.43px line, hard under the picture;
+      // - slick's own 35px arrows in a 35px channel each side.
+      styles: {
+        looks: {
+          tile: {
+            '--name-color': '#333',
+            '--name-size': '1.07em',
+            '--name-leading': '1.4286',
+            // 2.358px of the 15px name: the live card's scale(0.95) trims the
+            // image's layout box top and bottom, and the name starts at the
+            // LAYOUT bottom, so the gap the eye sees is that trim.
+            '--name-gap': '0.16em',
+            // The live card insets its cutout twice at once - padding: 0 10px
+            // on a border-box image, then scale(0.95) on the element. At the
+            // 222px desktop card that is 15.05px each side (6.8%) and 2.358px
+            // top (1.1%), which this reproduces as padding alone.
+            '--plate-pad': '1.1% 6.8% 0',
+            '--img-hover-scale': '1.0526',
+            '--img-hover-speed': '0.1s',
+            // The live channel is exactly the arrow's width. Written against
+            // the var, not a length, so it still tracks the look's responsive
+            // arrow ladder down to the phone.
+            '--strip-pad-x': 'var(--cs-arrow-size)',
+          },
+        },
+        patterns: {
+          modelbar: {
+            props: {
+              '--cs-gap': '0.1px',
+            },
+          },
+        },
+      },
+      // PREVIEW ONLY.
+      font: { family: 'poppins-regular', css: 'https://cdn.dealeron.com/assets/fonts/poppins/fonts.min.css' },
+      source: 'hondademo2.dealeron.com, 2026-09-15',
     },
     hyundai: {
       label: 'Hyundai',
@@ -917,12 +1035,75 @@
     kia: {
       label: 'Kia',
       look: 'tile',
+      // kiademo1's own slick config, not the census reading: 3 across, 1 below
+      // 768. The widest cards of any measured bar.
       ladder: [
-        [0, 2],
-        [460, 3],
-        [768, 5],
+        [0, 1],
+        [768, 3],
       ],
       demos: 3,
+      // What kiademo1 draws, measured with Playwright at 1280/800/390 on
+      // 2026-09-15 - the article's example for `kia-model-bar-tabbed` (Tabs v2)
+      // and the third measured tabbed bar after Chevrolet and Ford.
+      //
+      // The page is a 14px KiaSignatureRegular body:
+      // - three tabs, 18px/400, divided by a `|` li that `hidden-xs` drops at
+      //   768 (our tier is 576 - see --tab-divider-phone);
+      // - 31.75px between tab boxes at 992 and up, 13.64px from 767 down, which
+      //   is what --tab-gap-narrow was added to the pattern for;
+      // - the cutout fills the slide edge to edge, no inset, no gap;
+      // - the name 22px, hard under the picture, in Kia's near-black.
+      styles: {
+        looks: {
+          tile: {
+            '--name-color': '#05141f',
+            '--name-size': '1.57em',
+            // DEPARTURE: the live bar swaps the family to KiaSignatureBold at
+            // weight 400. There is no --name-font knob, and a preset is values
+            // and never a font file, so the weight carries the emphasis.
+            '--name-weight': '700',
+            '--name-leading': '1.4286',
+            '--name-gap': '0.1px',
+            '--plate-pad': '0.1px',
+          },
+        },
+        patterns: {
+          tabs: {
+            props: {
+              '--cs-gap': '0.1px',
+              '--tab-size': '1.29em',
+              '--tab-weight': '400',
+              '--tab-leading': '1.4286',
+              '--tab-dim': '1',
+              '--tab-rule': 'transparent',
+              '--tab-divider': '"|"',
+              '--tab-divider-size': '0.78',
+              '--tab-gap': '1.76em',
+              // The 767-and-down gap, in the same em. Added as a knob with this
+              // measurement: the live row collapses its gap at 768 because that
+              // is where hidden-xs drops the divider, and without a narrow form
+              // our bar drew the full 31.75px across the whole 576-991 band.
+              '--tab-gap-narrow': '0.76em',
+              '--tab-gap-phone': '0.97em',
+              // DEPARTURE: live drops to 12px at 539 and under. 12px is this
+              // repo's floor for a readable label, and the fit multiplier will
+              // take the row there itself if the words need it.
+              '--tab-size-phone': '1em',
+              '--tab-divider-phone': 'none',
+              '--tab-pad': '0.39em 0.83em 0.56em',
+              '--tab-pad-phone': '0.5em 0.36em 0.71em',
+              '--tab-line-size': '0.17em',
+              '--tab-fade': '0.15s',
+              '--title-gap': '0.5em',
+              '--bar-pad': '5.36em',
+            },
+            panes: ['Electric', 'SUVs', 'Cars'],
+          },
+        },
+      },
+      // PREVIEW ONLY.
+      font: { family: 'KiaSignatureRegular', css: 'https://cdn.dealeron.com/assets/fonts/kiasignature/fonts.min.css' },
+      source: 'kiademo1.dealeron.com, 2026-09-15',
     },
     landrover: {
       label: 'Land Rover',

@@ -1202,6 +1202,7 @@
   --tab-row-gap: 1em;
   --tab-size-narrow: var(--tab-size);
   --tab-pad-narrow: var(--tab-pad);
+  --tab-gap-narrow: var(--tab-gap);
   --box-border: none;
   --box-pad: 0.1px;
   --box-pad-narrow: var(--box-pad);
@@ -1363,7 +1364,11 @@
   }
   :where([data-cargo=tabs]) .cargo-tabs [role=tab] {
     padding: var(--tab-pad-narrow);
+    margin-inline: calc(var(--tab-gap-narrow) / 2);
     font-size: calc(var(--tab-size-narrow) * var(--tab-fit, 1));
+  }
+  :where([data-cargo=tabs]) .cargo-tabs [role=tab] + [role=tab]::before {
+    inset-inline-start: calc(var(--tab-gap-narrow) / -2 / var(--tab-divider-size));
   }
   :where([data-cargo=tabs]) .cargo-body {
     padding: var(--box-pad-narrow);

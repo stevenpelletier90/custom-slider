@@ -907,7 +907,17 @@
           // sequence of labelled carousel regions (each .cs carries the tab's
           // name as its aria-label), not panels pointing at controls that are
           // not there. The script adds the tab semantics with the interface.
-          return `  <div class="cargo-pane">\n${carousel(sub, escTab(name), '  ', i === 0)}\n  </div>`;
+          // Each pane's carousel is a landmark, and its name is the tab's. On a
+          // page showing ONE bar that is right. On the brands catalogue, which
+          // draws every measured bar at once, two brands with an "Electric" or
+          // a "Trucks" tab produced two regions with the same name - axe's
+          // landmark-unique, and genuinely ambiguous to move between by name.
+          // state.label is the brand-qualified name brandbook.js already passes
+          // ("GMC tabbed bar"); where it is set, the pane says which bar it
+          // belongs to. A copied snippet sets no label and is unchanged
+          // (2026-09-15).
+          const paneLabel = state.label ? `${escTab(name)} — ${escTab(state.label)}` : escTab(name);
+          return `  <div class="cargo-pane">\n${carousel(sub, paneLabel, '  ', i === 0)}\n  </div>`;
         })
         .join('\n');
       // The heading over the bar and the button under it are authored HTML

@@ -243,9 +243,16 @@ test.describe('a brand applies its values', () => {
     assert.equal(await page.locator('#wb-variants button[data-brand="toyota"]').count(), 1, 'Toyota should be a chip on tabs');
     assert.equal(await page.locator('#wb-variants button[data-brand="ford"]').count(), 1, 'Ford should be a chip on tabs');
     assert.equal(await page.locator('#wb-variants button[data-brand="cadillac"]').count(), 1, 'Cadillac should be a chip on tabs');
-    // 32 brands less the four measured ones, which are chips, not options.
+    // Every brand that is NOT a measured chip is an option in the select.
+    // Counted off the data rather than written down: this said ">= 28" for "32
+    // less the four measured", and measuring three more on 2026-09-15 failed it
+    // for the work getting done.
+    const { brands, chips } = await page.evaluate(() => ({
+      brands: Object.keys(globalThis.CARGO.BRANDS).length,
+      chips: Object.keys(globalThis.CARGO.BRANDS).filter((b) => globalThis.CARGO.patternsOf(b).length).length,
+    }));
     const optCount = await page.locator('#wb-brand option:not([value=""])').count();
-    assert.ok(optCount >= 28, `a cutout card offers every other brand in the select, got ${optCount}`);
+    assert.equal(optCount, brands - chips, `a cutout card offers every other brand in the select: ${brands} brands less ${chips} measured chips should be ${brands - chips}, got ${optCount}`);
   });
 
   test('Toyota is a second measured brand on the tabbed bar', async () => {
@@ -1162,10 +1169,15 @@ test.describe('the variant strip above the stage', () => {
 
   test('no chip is pressed when a roster-only brand is picked from the select', async () => {
     await pick(page, 'modelbar');
-    await selectBrand(page, 'kia');
+    // Named off the data: this said 'kia', and Kia became a measured chip on
+    // 2026-09-15, so the test failed for the work getting done rather than for
+    // a regression.
+    const id = await page.evaluate(() => Object.keys(globalThis.CARGO.BRANDS).find((b) => !globalThis.CARGO.patternsOf(b).length));
+    assert.ok(id, 'every brand is measured now — this test has outlived its subject');
+    await selectBrand(page, id);
     const pressedCount = (await chips(page)).filter(([, p]) => p === 'true').length;
     assert.equal(pressedCount, 0, `chips: ${JSON.stringify(await chips(page))}`);
-    assert.equal(await page.locator('#wb-brand').inputValue(), 'kia');
+    assert.equal(await page.locator('#wb-brand').inputValue(), id);
   });
 
   test('patternsOf mirrors variantsOf', async () => {

@@ -567,17 +567,35 @@ test('a tab row shrinks to fit the phone rather than scrolling off it', async ({
 // out — that regression is what made the tabs look untouched on a phone.
 test('the phone tier keeps the squeezed side padding, not the desktop value', async ({ browser }) => {
   const { ctx, page, errors } = await at(browser, 'brands.html', 320);
+  // Read each bar's OWN desktop gap to compare against, rather than an absolute
+  // fraction of the label. The margin assertion was `<= 0.3em` a side, which
+  // held only while every measured bar happened to use the pattern's 0.25em:
+  // Kia's phone gap is a genuinely measured 13.64px, and it failed a test whose
+  // real subject is whether the DESKTOP value came back (2026-09-15).
   const pads = await page.evaluate(() =>
     [...document.querySelectorAll('[data-cargo="tabs"] [role="tab"]:first-child')].map((t) => {
       const cs = getComputedStyle(t);
-      return { padX: parseFloat(cs.paddingLeft), px: parseFloat(cs.fontSize), marginX: parseFloat(cs.marginLeft) };
+      const root = t.closest('[data-cargo]');
+      const em = parseFloat(cs.fontSize);
+      const gapEm = (name) => {
+        const v = getComputedStyle(root).getPropertyValue(name).trim();
+        return v.endsWith('em') ? parseFloat(v) : NaN;
+      };
+      return { padX: parseFloat(cs.paddingLeft), px: em, marginX: parseFloat(cs.marginLeft), deskGapEm: gapEm('--tab-gap'), phoneGapEm: gapEm('--tab-gap-phone') };
     }),
   );
   for (const p of pads) {
     // 0.5em a side is the squeeze; anything near the 1.1em default means the
     // shorthand in the phone rule overrode it again.
     assert.ok(p.padX <= p.px * 0.75, `a phone tab pads ${p.padX}px against a ${p.px}px label — the desktop padding came back`);
-    assert.ok(p.marginX <= p.px * 0.3, `a phone tab is spaced ${p.marginX}px a side at ${p.px}px — the desktop gap came back`);
+    if (Number.isFinite(p.deskGapEm) && Number.isFinite(p.phoneGapEm)) {
+      // Equal is fine: the pattern's own default is 0.25em at both tiers, and a
+      // bar that never widened its gap has nothing to squeeze back out. What
+      // must not happen is the phone gap being LARGER than the desktop one.
+      assert.ok(p.phoneGapEm <= p.deskGapEm, `a phone tab is spaced ${p.phoneGapEm}em a side against a desktop ${p.deskGapEm}em — the desktop gap came back`);
+    } else {
+      assert.ok(p.marginX <= p.px * 0.3, `a phone tab is spaced ${p.marginX}px a side at ${p.px}px — the desktop gap came back`);
+    }
   }
   assert.deepEqual(errors, []);
   await ctx.close();
