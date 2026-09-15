@@ -700,7 +700,21 @@ ${VIDEO_DIALOG_CSS}`,
         // back up to the body size on a phone (the row scrolls now, so they no
         // longer have to be crushed to fit four across), and 15px over and
         // under the label is less em in a 14px tab than in a 12px one.
-        '--tab-pad-phone': 'var(--tab-pad-narrow)',
+        // NOT var(--tab-pad-narrow), which is what it was for a few hours on
+        // 2026-09-15 and was a regression: the 768 rule below squeezes the side
+        // padding to 0.5em so three tabs fit a 320 screen, and a phone rule
+        // setting the whole `padding` shorthand after it handed that padding
+        // straight back at the width that needed it most. The block half is the
+        // pattern's own default; the inline half is the squeeze, here rather
+        // than in a rule so the knob still shows what the tab is using.
+        '--tab-pad-phone': '0.6em 0.5em',
+        // The space between tabs is measured in the TAB's em, so a bar with
+        // generous desktop spacing spends it all over again on a phone -
+        // Chevrolet's 0.85em is 15px a side, 153px of a 320 screen across five
+        // tabs, more than half the row given to gaps. A phone tier of its own,
+        // tight by default, because no measured bar has ever wanted otherwise
+        // at this width.
+        '--tab-gap-phone': '0.25em',
         // No --title-gap-phone or --tab-row-gap-phone, and that is a measured
         // no rather than an oversight (2026-09-15, all four measured bars at
         // 320): the heading gap is already 10-13px there and the row gap 14-20,
@@ -779,7 +793,7 @@ ${VIDEO_DIALOG_CSS}`,
    Each tab overlaps the row's rule by the 1px of its own bottom border, so a
    cell rule (Ford) draws where the row rule would and the two never stack;
    the picked tab's border goes transparent and the row rule shows through. */
-.cargo-tabs [role="tab"] { position: relative; flex: var(--tab-flex); padding: var(--tab-pad); margin-block-end: -1px; margin-inline: calc(var(--tab-gap) / 2); font: inherit; font-size: var(--tab-size); font-weight: var(--tab-weight); line-height: var(--tab-leading); color: var(--tab-color); text-transform: var(--tab-case); cursor: pointer; background: var(--tab-bg); border: 0; border-block-end: 1px solid var(--tab-cell-rule); opacity: var(--tab-dim); }
+.cargo-tabs [role="tab"] { position: relative; flex: var(--tab-flex); padding: var(--tab-pad); margin-block-end: -1px; margin-inline: calc(var(--tab-gap) / 2); font: inherit; font-size: calc(var(--tab-size) * var(--tab-fit, 1)); font-weight: var(--tab-weight); line-height: var(--tab-leading); color: var(--tab-color); text-transform: var(--tab-case); cursor: pointer; background: var(--tab-bg); border: 0; border-block-end: 1px solid var(--tab-cell-rule); opacity: var(--tab-dim); }
 /* A rule between cells, drawn inside the tab that follows so it costs no
    width - a real border would move every centred tab by a pixel. */
 .cargo-tabs [role="tab"] + [role="tab"] { box-shadow: inset 1px 0 var(--tab-cell-divider); }
@@ -816,7 +830,7 @@ ${VIDEO_DIALOG_CSS}`,
    box padding to 15px here; the defaults follow the wide values. */
 @media (max-width: 991.98px) {
   %wrap% { padding-block: var(--bar-pad-narrow); }
-  .cargo-tabs [role="tab"] { padding: var(--tab-pad-narrow); font-size: var(--tab-size-narrow); }
+  .cargo-tabs [role="tab"] { padding: var(--tab-pad-narrow); font-size: calc(var(--tab-size-narrow) * var(--tab-fit, 1)); }
   .cargo-body { padding: var(--box-pad-narrow); }
 }
 /* Three tabs need 272px at the default padding, and a 320px phone leaves 236 -
@@ -831,7 +845,8 @@ ${VIDEO_DIALOG_CSS}`,
 /* Bootstrap 5's phone tier. Cadillac's live bar switches at 540; 576 is the
    tier that means that, and a Bootstrap 3 page simply has a finer phone rule. */
 @media (max-width: 575.98px) {
-  .cargo-tabs [role="tab"] { padding: var(--tab-pad-phone); font-size: var(--tab-size-phone); }
+  .cargo-tabs [role="tab"] { padding: var(--tab-pad-phone); margin-inline: calc(var(--tab-gap-phone) / 2); font-size: calc(var(--tab-size-phone) * var(--tab-fit, 1)); }
+  .cargo-tabs [role="tab"] + [role="tab"]::before { inset-inline-start: calc(var(--tab-gap-phone) / -2 / var(--tab-divider-size)); }
   .cargo-tabs [role="tab"] + [role="tab"]::before { content: var(--tab-divider-phone); }
 }`,
       script: `document.querySelectorAll('[data-tabs]').forEach((wrap, w) => {
@@ -864,8 +879,49 @@ ${VIDEO_DIALOG_CSS}`,
     const to = t.getBoundingClientRect().left - row.getBoundingClientRect().left + row.scrollLeft - (row.clientWidth - t.offsetWidth) / 2;
     row.scrollTo({ left: Math.max(0, to), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
   };
+  // Shrink the type to fit before the row gives up and scrolls. Everything
+  // across a tab is measured in its own em - the padding, the gap, the divider
+  // - so one multiplier on the font size takes the whole row in proportionally,
+  // which is why this converges in a pass or two. 12px is the floor: below that
+  // a tab label stops being readable and the tap target goes with it, and the
+  // row scrolls instead. A bar that already fits never gets the property at all.
+  const FLOOR = 12;
+  const fit = () => {
+    row.style.removeProperty('--tab-fit');
+    const px = parseFloat(getComputedStyle(tabs[0]).fontSize) || 16;
+    for (let i = 0; i < 5 && row.scrollWidth > row.clientWidth; i++) {
+      const cur = parseFloat(row.style.getPropertyValue('--tab-fit')) || 1;
+      // clientWidth - 1, not clientWidth: scrollWidth is an integer rounding of
+      // fractional content, so aiming exactly at the box left 2-3px behind and
+      // the row scrolled by a distance nobody can see but every cue reacts to.
+      const next = Math.max(FLOOR / px, cur * ((row.clientWidth - 2) / row.scrollWidth));
+      if (next >= cur) break;
+      row.style.setProperty('--tab-fit', next);
+    }
+  };
+  // fit() resizes the tabs, which wakes the ResizeObserver below, which would
+  // call fit() again. The flag breaks that loop; one frame later the row has
+  // settled and the next real change is heard.
+  let busy = false;
+  const sync = () => {
+    if (busy) return;
+    busy = true;
+    fit();
+    edges();
+    requestAnimationFrame(() => {
+      busy = false;
+    });
+  };
   row.addEventListener('scroll', edges, { passive: true });
-  addEventListener('resize', edges);
+  // A ResizeObserver on the ROW and on every TAB. The row alone is not enough
+  // and was the first attempt: a ResizeObserver reports an element's own box,
+  // and the row is the full width either way - what changes when a web font
+  // lands, a brand preset repaints the bar after it was wired or the settings
+  // panel changes the tab size is the CONTENT width, which only the tabs feel.
+  // A bar overflowing by 8px kept no data-more at all for exactly that reason.
+  const ro = new ResizeObserver(sync);
+  ro.observe(row);
+  tabs.forEach((t) => ro.observe(t));
   // picked marks a pane the reader switched to, which is what the fade in
   // the CSS keys on - the pane the page loads with is shown without it, so
   // nothing fades on load.
@@ -895,7 +951,7 @@ ${VIDEO_DIALOG_CSS}`,
     tabs[n].focus();
   });
   show(0);
-  edges();
+  sync();
 });`,
     },
 

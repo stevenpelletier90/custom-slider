@@ -336,7 +336,9 @@
       'Size of the tab labels below 576px, Bootstrap 5’s phone tier (Cadillac’s live bar switches at 540). <code>var(--tab-size-narrow)</code> keeps the tablet size; Cadillac drops its 18px tabs to 16px there, <code>1.14em</code> of the body.',
     '--tab-divider-phone': 'The divider text below 576px. <code>var(--tab-divider)</code> keeps it; <code>none</code> drops it, which Cadillac does — its own phone bar has none.',
     '--tab-pad-phone':
-      'The tab padding below 576px, in the tab’s em at that size. <code>var(--tab-pad-narrow)</code> keeps the tablet value; Ford’s cells go back up to 14px on a phone, so its 15px over and under and 5px a side are <code>1.07em 0.36em</code> there.',
+      'The tab padding below 576px, in the tab’s em at that size. <code>0.6em 0.5em</code> — the side half is squeezed on purpose, because a phone row spends its width on padding before it spends it on words. Ford’s cells go back up to 14px on a phone, so its 15px over and under and 5px a side are <code>1.07em 0.36em</code> there.',
+    '--tab-gap-phone':
+      'Space between tabs below 576px, in the tab’s em. <code>0.25em</code>, tight on purpose: measured in the tab’s own em, a generous desktop gap costs the same share again on a phone — Chevrolet’s <code>0.85em</code> is 15px a side, 153px of a 320px screen across five tabs.',
     '--bar-pad':
       'Padding over and under everything in the band, in the body’s em (side to side, the page’s container insets it). <code>0.1px</code> is none; Cadillac’s section leaves 100px, <code>7.14em</code>.',
     '--bar-pad-narrow': 'The same padding below 992px. <code>var(--bar-pad)</code> keeps the wide value; Cadillac drops to 35px, <code>2.5em</code>.',

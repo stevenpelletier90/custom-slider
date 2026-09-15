@@ -761,8 +761,49 @@
           const to = t.getBoundingClientRect().left - row.getBoundingClientRect().left + row.scrollLeft - (row.clientWidth - t.offsetWidth) / 2;
           row.scrollTo({ left: Math.max(0, to), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
         };
+        // Shrink the type to fit before the row gives up and scrolls. Everything
+        // across a tab is measured in its own em - the padding, the gap, the divider
+        // - so one multiplier on the font size takes the whole row in proportionally,
+        // which is why this converges in a pass or two. 12px is the floor: below that
+        // a tab label stops being readable and the tap target goes with it, and the
+        // row scrolls instead. A bar that already fits never gets the property at all.
+        const FLOOR = 12;
+        const fit = () => {
+          row.style.removeProperty('--tab-fit');
+          const px = parseFloat(getComputedStyle(tabs[0]).fontSize) || 16;
+          for (let i = 0; i < 5 && row.scrollWidth > row.clientWidth; i++) {
+            const cur = parseFloat(row.style.getPropertyValue('--tab-fit')) || 1;
+            // clientWidth - 1, not clientWidth: scrollWidth is an integer rounding of
+            // fractional content, so aiming exactly at the box left 2-3px behind and
+            // the row scrolled by a distance nobody can see but every cue reacts to.
+            const next = Math.max(FLOOR / px, cur * ((row.clientWidth - 2) / row.scrollWidth));
+            if (next >= cur) break;
+            row.style.setProperty('--tab-fit', next);
+          }
+        };
+        // fit() resizes the tabs, which wakes the ResizeObserver below, which would
+        // call fit() again. The flag breaks that loop; one frame later the row has
+        // settled and the next real change is heard.
+        let busy = false;
+        const sync = () => {
+          if (busy) return;
+          busy = true;
+          fit();
+          edges();
+          requestAnimationFrame(() => {
+            busy = false;
+          });
+        };
         row.addEventListener('scroll', edges, { passive: true });
-        addEventListener('resize', edges);
+        // A ResizeObserver on the ROW and on every TAB. The row alone is not enough
+        // and was the first attempt: a ResizeObserver reports an element's own box,
+        // and the row is the full width either way - what changes when a web font
+        // lands, a brand preset repaints the bar after it was wired or the settings
+        // panel changes the tab size is the CONTENT width, which only the tabs feel.
+        // A bar overflowing by 8px kept no data-more at all for exactly that reason.
+        const ro = new ResizeObserver(sync);
+        ro.observe(row);
+        tabs.forEach((t) => ro.observe(t));
         // picked marks a pane the reader switched to, which is what the fade in
         // the CSS keys on - the pane the page loads with is shown without it, so
         // nothing fades on load.
@@ -792,7 +833,7 @@
           tabs[n].focus();
         });
         show(0);
-        edges();
+        sync();
       });
     } catch (e) {
       console.error('custom-slider: the tabs pattern script failed', e);

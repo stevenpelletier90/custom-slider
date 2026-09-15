@@ -1204,7 +1204,8 @@
   --bar-pad-narrow: var(--bar-pad);
   --tab-size-phone: var(--tab-size-narrow);
   --tab-divider-phone: var(--tab-divider);
-  --tab-pad-phone: var(--tab-pad-narrow);
+  --tab-pad-phone: 0.6em 0.5em;
+  --tab-gap-phone: 0.25em;
 }
 :where([data-cargo=tabs]) .cargo-title:is(h2) {
   margin: 0 0 var(--title-gap);
@@ -1275,7 +1276,7 @@
   margin-block-end: -1px;
   margin-inline: calc(var(--tab-gap) / 2);
   font: inherit;
-  font-size: var(--tab-size);
+  font-size: calc(var(--tab-size) * var(--tab-fit, 1));
   font-weight: var(--tab-weight);
   line-height: var(--tab-leading);
   color: var(--tab-color);
@@ -1354,7 +1355,7 @@
   }
   :where([data-cargo=tabs]) .cargo-tabs [role=tab] {
     padding: var(--tab-pad-narrow);
-    font-size: var(--tab-size-narrow);
+    font-size: calc(var(--tab-size-narrow) * var(--tab-fit, 1));
   }
   :where([data-cargo=tabs]) .cargo-body {
     padding: var(--box-pad-narrow);
@@ -1368,7 +1369,11 @@
 @media (max-width: 575.98px) {
   :where([data-cargo=tabs]) .cargo-tabs [role=tab] {
     padding: var(--tab-pad-phone);
-    font-size: var(--tab-size-phone);
+    margin-inline: calc(var(--tab-gap-phone) / 2);
+    font-size: calc(var(--tab-size-phone) * var(--tab-fit, 1));
+  }
+  :where([data-cargo=tabs]) .cargo-tabs [role=tab] + [role=tab]::before {
+    inset-inline-start: calc(var(--tab-gap-phone) / -2 / var(--tab-divider-size));
   }
   :where([data-cargo=tabs]) .cargo-tabs [role=tab] + [role=tab]::before {
     content: var(--tab-divider-phone);

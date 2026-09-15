@@ -517,6 +517,72 @@ test('no tab row wraps, at any width', async ({ browser }) => {
   assert.deepEqual(bad, [], bad.join(' | '));
 });
 
+// "It looks like you never decreased the size of the text or spacing to fit
+// within the mobile viewport and there's overflow" (Steven, 2026-09-15). Two
+// things were true. The phone tier had handed the tabs their full desktop
+// padding back — the 768 rule squeezes the sides to 0.5em so three tabs fit a
+// 320 screen, and a 576 rule setting the whole `padding` shorthand after it
+// undid exactly that. And nothing shrank: a bar wider than the phone simply
+// scrolled, so Chevrolet showed two and a half of its five tabs.
+//
+// Now the row shrinks to fit before it scrolls, down to a 12px floor, and the
+// two bars whose WORDS could not fit at any readable size carry phone-short
+// names in the platform's hidden-xs span — the same mechanism that always made
+// Ford's bar the one that fitted.
+test('a tab row shrinks to fit the phone rather than scrolling off it', async ({ browser }) => {
+  const bad = [];
+  for (const width of [320, 360, 390, 430]) {
+    const { ctx, page, errors } = await at(browser, 'brands.html', width);
+    const rows = await page.evaluate(() =>
+      [...document.querySelectorAll('[data-cargo="tabs"] [role="tablist"]')].map((row, i) => {
+        const tabs = [...row.querySelectorAll('[role="tab"]')];
+        return {
+          i,
+          labels: tabs.map((t) => t.innerText.trim()).join('|'),
+          px: parseFloat(getComputedStyle(tabs[0]).fontSize),
+          over: row.scrollWidth - row.clientWidth,
+          lines: new Set(tabs.map((t) => Math.round(t.getBoundingClientRect().top))).size,
+          tapH: Math.round(tabs[0].getBoundingClientRect().height),
+        };
+      }),
+    );
+    assert.ok(rows.length, `no tab rows on brands.html at ${width}`);
+    for (const r of rows) {
+      if (r.lines !== 1) bad.push(`${width}px bar ${r.i}: ${r.lines} lines`);
+      // The floor is the whole point of having one: below 12px a tab label
+      // stops being readable, so the row is allowed to scroll instead. Anything
+      // ABOVE the floor that still overflows means the shrink did not run.
+      if (r.over > 2 && r.px > 12.01) bad.push(`${width}px bar ${r.i}: overflows by ${r.over} at ${r.px}px, which is above the 12px floor — it should have shrunk further (${r.labels})`);
+      if (r.px < 11.99) bad.push(`${width}px bar ${r.i}: shrank to ${r.px}px, past the floor (${r.labels})`);
+      // WCAG 2.5.8 wants 24px; the floor must not take the tap target under it.
+      if (r.tapH < 24) bad.push(`${width}px bar ${r.i}: tab is ${r.tapH}px tall`);
+    }
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  }
+  assert.deepEqual(bad, [], bad.join(' | '));
+});
+
+// The phone tier must not hand back the side padding the tablet tier squeezed
+// out — that regression is what made the tabs look untouched on a phone.
+test('the phone tier keeps the squeezed side padding, not the desktop value', async ({ browser }) => {
+  const { ctx, page, errors } = await at(browser, 'brands.html', 320);
+  const pads = await page.evaluate(() =>
+    [...document.querySelectorAll('[data-cargo="tabs"] [role="tab"]:first-child')].map((t) => {
+      const cs = getComputedStyle(t);
+      return { padX: parseFloat(cs.paddingLeft), px: parseFloat(cs.fontSize), marginX: parseFloat(cs.marginLeft) };
+    }),
+  );
+  for (const p of pads) {
+    // 0.5em a side is the squeeze; anything near the 1.1em default means the
+    // shorthand in the phone rule overrode it again.
+    assert.ok(p.padX <= p.px * 0.75, `a phone tab pads ${p.padX}px against a ${p.px}px label — the desktop padding came back`);
+    assert.ok(p.marginX <= p.px * 0.3, `a phone tab is spaced ${p.marginX}px a side at ${p.px}px — the desktop gap came back`);
+  }
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});
+
 // Every card strip drops its arrows to 36px under 768 and 32px under 576, so
 // the reserved channel each side gives the card its width back: 151px of a
 // 320 screen became 175 on the six strips that had no phone rule at all.

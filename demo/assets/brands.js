@@ -503,7 +503,14 @@
               '--tab-size-phone': '1.14em',
               '--tab-divider-phone': 'none',
             },
-            panes: ['Electric', 'Crossovers/SUVs', 'Sedans'],
+            // Phone-short names, in the platform's own hidden-xs span (the
+            // [bracket] convention htmlFor() reads, and the reason Ford's bar
+            // is the one that fits a 390 screen at its measured size). The
+            // WIDE label is unchanged - what is in brackets is only dropped
+            // below 768. Type alone could not close this gap: five of these
+            // labels need 5px at 320 to sit on one line, so the words are
+            // what had to give (2026-09-15, Steven: fit within the viewport).
+            panes: ['Electric', '[Crossovers/]SUVs', 'Sedans'],
             // bg-main makes the wrap the platform's dark band: white text and
             // the white outline button come from the theme, not from here.
             words: { title: 'Explore The Cadillac Lineup', titleClass: 'heading-lg', moreText: 'Explore All New Inventory', moreHref: '/searchnew.aspx', wrapClass: 'bg-main' },
@@ -622,7 +629,14 @@
               // shrinks back when the pointer leaves an unselected tab.
               '--tab-line-grow': '0.15s',
             },
-            panes: ['Trucks', 'Electric', 'Crossovers/SUVs', 'Performance', 'Commercial'],
+            // Phone-short names, in the platform's own hidden-xs span (the
+            // [bracket] convention htmlFor() reads, and the reason Ford's bar
+            // is the one that fits a 390 screen at its measured size). The
+            // WIDE label is unchanged - what is in brackets is only dropped
+            // below 768. Type alone could not close this gap: five of these
+            // labels need 5px at 320 to sit on one line, so the words are
+            // what had to give (2026-09-15, Steven: fit within the viewport).
+            panes: ['Trucks', 'Electric', '[Crossovers/]SUVs', 'Perf[ormance]', 'Comm[ercial]'],
           },
         },
       },
@@ -776,6 +790,12 @@
               // live 15px over and under and 5px a side measured in THAT em.
               '--tab-size-phone': '1em',
               '--tab-pad-phone': '1.07em 0.36em',
+              // Ford's row is butted cells, not spaced tabs - `--tab-gap` is
+              // 0.1px by measurement - so it takes the pattern's tighter phone
+              // gap back out. Without this the phone tier gave its four cells
+              // gaps they have never had, which pushed a row that fitted 248px
+              // exactly to 258 and started it scrolling.
+              '--tab-gap-phone': '0.1px',
               '--tab-gap': '0.1px',
               '--tab-rule': 'transparent',
               '--tab-cell-rule': '#ccc',
@@ -1013,7 +1033,14 @@
         patterns: {
           tabs: {
             props: { '--tab-weight': '400', '--tab-dim': '1', '--tab-selected': '#bb162b', '--tab-rule': 'transparent', '--tab-divider': "'|'" },
-            panes: ['Popular', 'Cars & Minivan', 'Trucks', 'Crossovers & SUVs', 'Electrified'],
+            // Phone-short names, in the platform's own hidden-xs span (the
+            // [bracket] convention htmlFor() reads, and the reason Ford's bar
+            // is the one that fits a 390 screen at its measured size). The
+            // WIDE label is unchanged - what is in brackets is only dropped
+            // below 768. Type alone could not close this gap: five of these
+            // labels need 5px at 320 to sit on one line, so the words are
+            // what had to give (2026-09-15, Steven: fit within the viewport).
+            panes: ['Popular', 'Cars[ & Minivan]', 'Trucks', '[Crossovers & ]SUVs', 'Electrified'],
           },
         },
       },

@@ -149,6 +149,19 @@ JS. The upgrade costs nothing to look at: measured frame by frame from first pai
 one height (CLS 0.0004), because the deferred script lands before the first render.
 `tests/builder.test.mjs` holds both halves — the fallback and the no-flash.
 
+**The tab row shrinks to fit before it scrolls** (2026-09-15, Steven: "decrease the size of the text
+or spacing to fit within the mobile viewport"). Everything across a tab is measured in its own em —
+padding, gap, divider — so one multiplier, `--tab-fit`, takes the whole row in proportionally, and
+the script converges on it in a pass or two against `clientWidth - 2` (aiming at the box exactly
+leaves 2–3px behind, because `scrollWidth` rounds). **12px is the floor**: below it a label stops
+being readable, and the row scrolls instead. Two things it is not allowed to paper over: a phone
+rule setting the whole `padding` shorthand undoes the 768 tier's `padding-inline: 0.5em` squeeze —
+that regression is what made the tabs look untouched on a phone — and type alone cannot save a bar
+whose WORDS are too long (five Chevrolet labels needed 5px at 320). Those get phone-short names
+through the `[bracket]` / `hidden-xs` convention, which is why Ford's bar always fitted. The
+`ResizeObserver` watches the row **and every tab**: it reports an element's own box, the row is full
+width either way, and only the tabs feel a font landing or a preset repainting.
+
 **The tab row never wraps, at any width** (2026-09-15). `.cargo-tabs` is `nowrap` +
 `overflow-x: auto`, because the divider glyph hangs off the tab that FOLLOWS it, so every wrapped
 row started with a `|` dangling in the margin — and Chevrolet's five body styles wrapped at 992 as

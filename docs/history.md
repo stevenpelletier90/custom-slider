@@ -348,6 +348,48 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
     rail's scroll shield on a real iOS/Android in-app browser. The NVDA/VoiceOver pass is noted
     there as the thing that also settles the gallery's two-live-regions question, which no further
     static review can answer.
+- 2026-09-15, the tabs still did not fit a phone (Steven: "it looks like you never decreased the
+  size of the text or spacing to fit within the mobile viewport or window and there's overflow").
+  Two separate faults, one of them mine from the phone pass that morning:
+  - **The phone tier handed the desktop padding back.** The 768 rule squeezes the tab's side padding
+    to `0.5em` so three tabs fit a 320 screen. The 576 rule added that morning set the whole
+    `padding` shorthand from `--tab-pad-phone`, which defaulted to `var(--tab-pad-narrow)` — so
+    below 576, at the width that needed the squeeze most, the tabs got their full 1.1em back.
+    Measured at 320: 19.87px of side padding on an 18px label. `--tab-pad-phone` is now a literal
+    `0.6em 0.5em`, the squeeze included.
+  - **Nothing shrank.** A row wider than the phone simply scrolled, so Chevrolet showed two and a
+    half of five tabs and read as clipped rather than scrollable. Measured before anything changed,
+    at 320 in a 250px row: Chevrolet needed 842px, of which 153 was gaps and 199 padding.
+  - Spacing first, and it was most of it: `--tab-gap-phone` (0.25em, tight by default, because
+    `--tab-gap` is in the TAB's em so a generous desktop gap costs the same share again on a phone)
+    took Chevrolet from 842 to 602. Ford took the tighter default straight back out with
+    `--tab-gap-phone: 0.1px` — its measured design is butted cells, and the pattern default gave its
+    four cells gaps they have never had, pushing a row that fitted 248px exactly to 258.
+  - Then `--tab-fit`, a multiplier on the tab font that the script converges on. Everything across a
+    tab is in its own em, so one number takes the row in proportionally. It aims at
+    `clientWidth - 2`, not `clientWidth`: `scrollWidth` is an integer rounding of fractional
+    content, and aiming at the box exactly left 2-3px over, which is invisible but flips every cue
+    that keys on overflow. Floor 12px.
+  - The floor is where the honest part is: type alone could not save two bars. At 320 Chevrolet's
+    five labels needed **5px** to sit on one line, Toyota's **6px**; at 390, 7.6 and 8.6. Those are
+    not font sizes, they are a statement that the WORDS are too long. So the three bars with long
+    names got phone-short forms through the `[bracket]` / `hidden-xs` convention that was already in
+    the builder and is exactly why Ford's bar was always the one that fitted — `[Crossovers/]SUVs`,
+    `Perf[ormance]`, `Comm[ercial]`, `Cars[ & Minivan]`, `[Crossovers & ]SUVs`. The wide label is
+    untouched; only the bracketed part drops below 768.
+  - Result, measured at 320 / 360 / 390 / 430 on all four measured bars: 15 of the 16 combinations
+    now sit on one line with nothing cut off. The one that does not is Toyota at 320, 15px over at
+    the 12px floor — five labels including "Electrified" in a 250px container. Every tab stays at
+    least 34px tall, over the 24px WCAG 2.5.8 floor.
+  - A ResizeObserver on the row alone was the first attempt at keeping `data-more` honest and did
+    nothing: it reports an element's own box, and the row is the full width either way. What changes
+    when a font lands or a brand preset repaints the bar after wiring is the CONTENT width, which
+    only the tabs feel — a bar overflowing by 8px carried no `data-more` at all because `edges()`
+    had run before the preset's values did. It observes the row and every tab now, through a
+    `sync()` that guards against the loop `fit()` would otherwise start by resizing what the
+    observer watches.
+  - "Perf" and "Comm" are abbreviations chosen here, not measured off chevroletdemo1: they are the
+    bracket positions in `brands.js` and are one edit each if different words read better.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until
