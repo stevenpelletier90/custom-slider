@@ -7,7 +7,7 @@
 // one shipping none, one shipping the collapse already.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, switchRow } from './helpers.mjs';
+import { openBuilder, pick, switchRow, hostHtml, engineFiles } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -65,6 +65,47 @@ test.describe('the dot row is taken away and given back unchanged', () => {
       }
     });
   }
+});
+
+// Windows High Contrast forces every background to the canvas colour. A dot is
+// nothing but a background, so both system themes painted the whole row in the
+// page colour and the slider lost its only position indicator - invisible, and
+// invisible in a way scripts/a11y.mjs structurally cannot catch, because it
+// reads computed style outside forced-colors emulation. Hence a test and not an
+// audit rule (2026-09-15).
+test.describe('the dots survive Windows High Contrast', () => {
+  test.use({ forcedColors: 'active' });
+
+  test('a dot and the current dot are painted, and are not the same colour', async ({ page }) => {
+    const { engineCss, engineJs } = await engineFiles();
+    await page.setContent(
+      hostHtml({
+        engineCss,
+        engineJs,
+        css: '.cs{--cs-per-view:1}',
+        html: `<div class="cs" data-cs aria-label="HCM"><div class="cs-track">${[1, 2, 3].map((n) => `<div class="cs-slide"><p>Slide ${n}</p></div>`).join('')}</div></div>`,
+        box: 1170,
+      }),
+      { waitUntil: 'load' },
+    );
+    await page.waitForTimeout(400);
+
+    const seen = await page.evaluate(() => {
+      const dot = document.querySelector('.cs-dot:not(.cs-dot--current)');
+      const cur = document.querySelector('.cs-dot--current');
+      if (!dot || !cur) return { error: 'no dot row' };
+      const bg = (el) => getComputedStyle(el, '::after').backgroundColor;
+      return { dot: bg(dot), current: bg(cur), canvas: getComputedStyle(document.body).backgroundColor };
+    });
+
+    assert.ok(!seen.error, seen.error);
+    // The exact system colours differ per theme, so assert the RELATIONSHIPS
+    // that have to hold rather than a value: a dot is not the page, and the
+    // current dot is not an ordinary one.
+    assert.notEqual(seen.dot, seen.canvas, 'a dot is painted in the canvas colour — the row is invisible in High Contrast');
+    assert.notEqual(seen.current, seen.canvas, 'the current dot is painted in the canvas colour');
+    assert.notEqual(seen.dot, seen.current, 'the current dot is indistinguishable from the rest in High Contrast');
+  });
 });
 
 test.describe('nothing threw', () => {

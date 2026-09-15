@@ -110,7 +110,7 @@ const LOOKS = {
     },
     css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
 %root% .cs-track { padding-block-end: var(--strip-pad-end); }
-@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; padding-inline: 0; } }
+@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
 @media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
 @media (max-width: 380px) { %root% { --cs-per-view: 1; } }
 .cargo-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
@@ -333,6 +333,17 @@ const LOOKS = {
       '--cs-arrow-fg': '#fff',
       '--cs-arrow-bg': 'rgba(255, 255, 255, 0.14)',
       '--cs-arrow-bg-hover': 'rgba(255, 255, 255, 0.26)',
+      // Third control on this strip to need its own colour, and the one both
+      // earlier rounds missed: the dots went white at 1.43:1 and the arrows at
+      // 1.20:1, but nothing measures the FOCUS ring, so #1a5fb4 sat at 2.88:1
+      // on #14161b the whole time. The prev arrow is flush at
+      // inset-inline-start: 0 and the ring has outline-offset: 2px, so it
+      // straddles the strip AND the page behind it - it has to clear 3:1 on
+      // both. #4a90e2 is the only candidate that does (5.50 on the strip, 3.29
+      // on the page); #5b9bf3 is 2.83 on the page and #fff is 1.00.
+      // portrait is the only look with a dark --strip-bg, so this is one line
+      // in one place, not a sweep. Measured 2026-09-15.
+      '--cs-focus': '#4a90e2',
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1.5em; background: var(--strip-bg); }
 %root% .cs-track { padding-block-end: 1.5em; }

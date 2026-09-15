@@ -490,3 +490,91 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   selector from its sibling.
 - `_commit()` optimistic UI: without it dots/tabs/status moved ~900 ms after a click, when the
   scroll settled.
+
+## 2026-09-15 — the control-visibility pass: five findings, four of them shipped for months
+
+Triggered by Steven asking whether the arrows "can be different and more accessible" while looking
+at gmcdemo1, hondademo2 and kiademo1. What the OEM bars do turned out to matter less than what ours
+had quietly taken on from them.
+
+**Ford's arrow was a 1.4.11 failure on its own band.** `brands.js` set `--cs-arrow-fg: #919191`,
+copied verbatim off forddemo1. That is **3.15:1 on pure white** — over the 3:1 line by 0.15 — and
+**2.77:1 on `#f0f0f0`**, which is the exact grey Ford's own unpicked tab cells use. So the measured
+value passed on a background the bar never sits on and failed on the one it does. It was also a
+downgrade we chose: the `tabs` pattern's own default is `#262626` on transparent, **15.13:1**. Now
+`#767676` — 4.54:1 on white, 3.99 on `#f0f0f0`, 3.91 on `#eee` — the lightest grey clearing 3:1 down
+to `#ddd`. Ford's measured `#6c6c6c` hover is untouched, so the resting→hover step survives at
+4.54→5.25. **A measured value is the floor, not the ceiling, and contrast is the clearest case of
+it: copying an OEM's grey is copying their accessibility bug.**
+
+**The audit could not see the thing that was wrong.** `scripts/a11y.mjs` measures the arrow, the
+pause button, both dots and the selected thumb — and had never measured the **focus ring**, which is
+why `portrait`'s `#1a5fb4` sat at **2.88:1** on its `#14161b` strip through two earlier rounds of
+colour fixes _on that same strip_. `controlContrast()` now measures it, against both the strip and
+the page behind it, because `outline-offset: 2px` on an arrow flush at `inset-inline-start: 0` puts
+the ring across both. It also gained a **warn band**: 3–4.5 is reported and does not fail. Ford at
+3.15 had walked under the gate by 0.15, and a value that close to the line is a measurement to look
+at, not a pass to bank.
+
+Three places needed a ring of their own, all dark grounds: `portrait`, Cadillac's `bg-main` band and
+the lightbox. All three take `#4a90e2` — 5.50 / 4.48 / 5.74 on those grounds and still 3.29 on
+white. The engine default stays `#1a5fb4`, which is 6.29:1 on white: **optimise the common case in
+the engine and override the exceptions, rather than weakening the default to cover a dark band.**
+
+**A `--cs-*` knob cannot be overridden from an ancestor.** Writing `--cs-focus` on `.cargo-lb` did
+nothing at all — the audit still read `#1a5fb4` — while Cadillac's identical override worked. The
+engine declares `--cs-focus` inside its own `.cs { }` block, and **a property set ON an element
+beats the same property INHERITED from an ancestor, whatever the ancestor's specificity.** A brand's
+props land on `.cs` directly, which is why those work. The lightbox rule is now `.cargo-lb .cs`. Any
+future override from a wrapper has the same trap.
+
+**The tile look's phone rule carried a line that never fired and would have been a bug if it had.**
+`@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; padding-inline: 0 } }`. The
+arrow-size half works (44→36→32, measured). The `padding-inline: 0` never did: the generated snippet
+emits `.name.cs { padding-inline: var(--strip-pad-x, …) }` at (0,2,0) and the look's rule is
+(0,1,0), with media queries adding no specificity. Forced on, it puts the prev arrow **directly over
+the model name at both 390 and 320** — against CLAUDE.md's own "an arrow overlays media but never
+text". So the line was **deleted, not strengthened**: the rendering was right and the source was the
+lie. `tests/layout.test.mjs` now holds it, judging only cards at rest inside the track (a card
+mid-scroll slides under the arrow by design — the first cut of that test failed `split` and
+`service` for doing the right thing).
+
+**The same specificity fact has a second consequence, unfixed and deliberate.** A measured brand
+that sets `--cs-arrow-size` lands at (0,2,0) with no media query and therefore **opts out of the
+phone shrink entirely**. Measured across all eight pattern×brand pairs: a plain paste goes 44→36→32,
+while `tabs × ford` renders **25×25 at 1280, 700 and 390 alike**. This is why the three brands
+measured today do NOT copy their OEM's 35px arrow: the engine's responsive ladder is better than the
+measurement, and 35px is below our own 44px default anyway. Ford's own `2.5em` is left as measured —
+changing it moves geometry Steven approved — and is written down here instead.
+
+**The dots were invisible in Windows High Contrast.** `.cs-dot::after` is nothing but a background,
+and HCM forces every background to the canvas colour, so in both system themes the whole row
+vanished and the slider lost its only position indicator. `ButtonText` / `Highlight` under
+`@media (forced-colors: active)`, **+42 B gzip**. `scripts/a11y.mjs` structurally cannot catch this
+— it reads computed style outside forced-colors emulation — so it is a test (`tests/dots.test.mjs`,
+`test.use({ forcedColors: 'active' })`), asserting the relationships (a dot is not the canvas, the
+current dot is not an ordinary dot) rather than values that differ per theme. The arrows and pause
+button need nothing: their glyph is a `currentColor` SVG, which HCM forces to `ButtonText` and
+leaves legible. A `ButtonBorder` pill outline was measured at +33 B and refused.
+
+**Disabled arrows went 0.35 → 0.5 opacity.** On the nine patterns setting
+`--cs-arrow-bg: transparent` the glyph is the whole control, and 0.35 composited it to `rgb(179)` =
+**2.10:1**; 0.5 gives `rgb(147)` = 3.09:1. SC 1.4.11 exempts inactive components so this is not a
+compliance fix — it is the state a `rewind: false` keyboard user parks on at either end, and esbuild
+writes `.5` for `.35`, so it cost **−1 B**.
+
+Engine after the pass: **6555 B of 6656** (+41 net, all of it the forced-colors block). Every fix
+above was broken deliberately and confirmed to go red before it landed.
+
+**Not per-brand icon sets.** Steven asked whether the themes' Font Awesome could be used. It is
+there — the family `FontAwesome` (FA4; the FA5/6 family names are absent) is declared on **14 of 14
+reachable DealerOn storefronts** sampled across nine OEM themes, each already drawing 22–43 FA
+icons. It still does not belong in the engine: the engine is LINKED and shared, our chevron is
+inline SVG with no dependency, and a webfont glyph is exactly slick's failure mode — `font-size: 0`,
+`color: transparent`, glyph in `::before`, so a font that does not arrive leaves an invisible
+button. FA 4.7 is EOL since 2016 and a move to FA6 renames the family. It already works as a
+**per-site override** with no engine change, verified against `dist`: hide the `svg`, draw a
+`::before` with the glyph — `.cs-arrow` is `display: grid; place-items: center`, so the pseudo lands
+in the same centred cell, and the accessible name survives because it is on the button, not the
+glyph. `document.fonts.check()` is useless for detecting this: it answers true for families that do
+not exist, so the probe measures the glyph against a fallback instead.

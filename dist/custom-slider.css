@@ -101,7 +101,7 @@
 }
 .cs-arrow[aria-disabled=true] {
   cursor: default;
-  opacity: 0.35;
+  opacity: 0.5;
 }
 .cs-pause {
   position: absolute;
@@ -145,6 +145,14 @@
 }
 .cs-dot--current::after {
   background: var(--cs-dot-current);
+}
+@media (forced-colors: active) {
+  .cs-dot::after {
+    background: ButtonText;
+  }
+  .cs-dot--current::after {
+    background: Highlight;
+  }
 }
 .cs-arrow,
 .cs-pause,
@@ -467,7 +475,6 @@
 @media (max-width: 767.98px) {
   .cargo-tile {
     --cs-arrow-size: 36px;
-    padding-inline: 0;
   }
 }
 @media (max-width: 575.98px) {
@@ -824,6 +831,7 @@
   --cs-arrow-fg: #fff;
   --cs-arrow-bg: rgba(255, 255, 255, 0.14);
   --cs-arrow-bg-hover: rgba(255, 255, 255, 0.26);
+  --cs-focus: #4a90e2;
   font-size: var(--cargo-font, 1em);
 }
 .cargo-portrait {
@@ -1807,6 +1815,9 @@
   background: #111;
   border: 0;
   border-radius: 12px;
+}
+:where([data-cargo=lightbox]) .cargo-lb .cs {
+  --cs-focus: #4a90e2;
 }
 :where([data-cargo=lightbox]) .cargo-lb[open] {
   display: flex;

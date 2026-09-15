@@ -237,10 +237,16 @@
   inset-inline-end: 0;
 }
 
-/* rewind:false parks the end arrows on aria-disabled (still focusable) */
+/* rewind:false parks the end arrows on aria-disabled (still focusable).
+   0.5, not 0.35: on the nine patterns that set --cs-arrow-bg: transparent the
+   glyph is the whole component, and 0.35 composited it to rgb(179) = 2.10:1,
+   where 0.5 gives rgb(147) = 3.09:1. SC 1.4.11 exempts inactive components so
+   this is not a compliance fix - it is the state a rewind:false keyboard user
+   parks on at either end, and esbuild writes `.5` for `.35`, so it costs -1 B.
+   Measured 2026-09-15. */
 .cs-arrow[aria-disabled="true"] {
   cursor: default;
-  opacity: 0.35;
+  opacity: 0.5;
 }
 
 .cs-pause {
@@ -291,6 +297,23 @@
 
 .cs-dot--current::after {
   background: var(--cs-dot-current);
+}
+
+/* Windows High Contrast forces every background to the canvas colour, and a dot
+   is nothing BUT a background - so in both system themes the whole dot row went
+   invisible and the slider lost its only position indicator. The system keywords
+   are the fix rather than our own colours, because forced-colors overrides those
+   too. Measured invisible in both themes on 2026-09-15; +42 B gzip.
+   The arrows and the pause button do NOT need this: their glyph is a currentColor
+   SVG, which HCM forces to ButtonText and leaves legible either way. */
+@media (forced-colors: active) {
+  .cs-dot::after {
+    background: ButtonText;
+  }
+
+  .cs-dot--current::after {
+    background: Highlight;
+  }
 }
 
 /* ---- hover / motion ---------------------------------------------------- */

@@ -473,6 +473,14 @@
               '--cs-arrow-fg': 'rgba(255, 255, 255, 0.75)',
               '--cs-arrow-fg-hover': '#fff',
               '--cs-arrow-bg-hover': 'transparent',
+              // The bar sits on Cadillac's own bg-main band (--main-color
+              // #282828 below), and the engine's #1a5fb4 focus ring is 2.34:1
+              // there. Same value and same reason as the portrait look:
+              // #4a90e2 is 4.48:1 on #282828 and still 3.29:1 on white, so it
+              // holds wherever the band's colour is overridden by the site's
+              // theme. Found by the a11y audit once it learned to measure the
+              // focus ring at all (2026-09-15).
+              '--cs-focus': '#4a90e2',
               '--tab-size': '1.29em',
               '--tab-weight': '400',
               '--tab-leading': '1.4286',
@@ -758,7 +766,17 @@
             props: {
               '--cs-gap': '0.1px',
               '--cs-arrow-size': '2.5em',
-              '--cs-arrow-fg': '#919191',
+              // DEPARTURE from the live bar, 2026-09-15. forddemo1 draws its
+              // resting arrow #919191, which is 3.15:1 on pure white - over
+              // 1.4.11's 3:1 by 0.15 - and 2.77:1 on #f0f0f0, which is the very
+              // grey its own unpicked tab cells use. So the measured value
+              // fails on the band it actually sits on, and it is a downgrade
+              // from the tabs pattern's own 15.13:1 default that we took on by
+              // copying. #767676 is the lightest grey that clears 3:1 against
+              // every band down to #ddd: 4.54:1 on white, 3.99 on #f0f0f0,
+              // 3.91 on #eee. The measured #6c6c6c hover is untouched, so the
+              // resting -> hover step survives at 4.54 -> 5.25.
+              '--cs-arrow-fg': '#767676',
               '--cs-arrow-fg-hover': '#6c6c6c',
               '--cs-arrow-bg-hover': 'transparent',
               '--tab-flex': '1 1 0%',

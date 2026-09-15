@@ -351,6 +351,17 @@ test.describe('the contract, in the last window before it froze', () => {
     await page.evaluate(() => document.querySelector('.cs')._cs.next());
     await page.waitForTimeout(1200);
     assert.equal((await state()).current, 4, 'next past the end moved, or wrapped');
+
+    // The disabled state has to stay VISIBLE, not just be announced. On the
+    // nine patterns that set --cs-arrow-bg: transparent the glyph is the whole
+    // control, and the old 0.35 composited it to 2.10:1. 0.5 gives 3.09:1.
+    // Read it settled: mid-transition this reads 0.994 (2026-09-15).
+    const settled = await page.evaluate(() => {
+      const n = document.querySelector('.cs-arrow--next');
+      n.style.transition = 'none';
+      return getComputedStyle(n).opacity;
+    });
+    assert.equal(settled, '0.5', `a disabled arrow faded to ${settled}; under ~0.5 the glyph drops below 3:1 where the arrow has no background`);
   });
 
   // Gallery: a thumb activates its slide, and every other slide is inert - the

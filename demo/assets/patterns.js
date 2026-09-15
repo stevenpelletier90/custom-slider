@@ -1215,6 +1215,19 @@ ${VIDEO_DIALOG_CSS}`,
    load-bearing line: a flex item's default min-size is its content, so without
    it the track refuses to shrink and the cap above it does nothing. */
 .cargo-lb { inline-size: min(94vw, 1100px); max-block-size: min(92dvh, 900px); padding: 0; background: #111; border: 0; border-radius: 12px; }
+/* The focus ring, on the CAROUSEL and not on the dialog. The engine's #1a5fb4
+   is drawn for a white page and lands at exactly 3.00:1 on this #111 dialog -
+   on the line with nothing spare - and a lightbox is the one place a keyboard
+   user can see nothing else, so the ring is the whole affordance. #4a90e2 is
+   5.74:1 here and still 3.29:1 on white.
+   It has to be set on .cs itself: the engine declares --cs-focus inside its own
+   .cs block, and a property set ON an element always beats the same property
+   INHERITED from an ancestor, whatever the ancestor's specificity. So putting
+   --cs-focus on .cargo-lb silently did nothing - the audit still read #1a5fb4 -
+   while Cadillac's identical override worked, because a brand's props land on
+   .cs directly. Any future --cs-* override from a wrapper has the same trap
+   (2026-09-15). */
+.cargo-lb .cs { --cs-focus: #4a90e2; }
 /* [open], and it is not decoration. A closed <dialog> is hidden by the UA rule
    dialog:not([open]) { display: none }, which is (0,1,1) - so a bare
    .name-wrap .cargo-lb { display: flex } at (0,2,0) OUTRANKS it and every

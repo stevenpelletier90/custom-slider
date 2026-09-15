@@ -40,6 +40,7 @@ const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
 
 const seen = new Set();
 const findings = [];
+const warnings = [];
 let states = 0;
 
 // The generated controls, checked against what is actually painted behind them.
@@ -53,8 +54,20 @@ let states = 0;
 // three layers, and judging the glyph against only the nearest one is how a
 // first pass at this reported fifteen white-on-white failures that were all fine.
 function controlContrast() {
+  // getComputedStyle hands back rgb()/rgba() for real properties, but a custom
+  // property comes back as AUTHORED - `--cs-focus: #4a90e2` is the literal
+  // string. Digit-scraping that reads #4a90e2 as rgb(4, 90, 2), which is how a
+  // first cut of the focus-ring check reported a navy ring as near-black and
+  // failed three states that were fine. Handle hex before falling back.
   const parse = (c) => {
-    const m = (c.match(/[0-9.]+/g) || [0, 0, 0]).map(Number);
+    const s = String(c).trim();
+    const hex = /^#([0-9a-f]{3}|[0-9a-f]{6})$/i.exec(s);
+    if (hex) {
+      const h = hex[1].length === 3 ? [...hex[1]].map((x) => x + x).join('') : hex[1];
+      return { r: parseInt(h.slice(0, 2), 16), g: parseInt(h.slice(2, 4), 16), b: parseInt(h.slice(4, 6), 16), a: 1 };
+    }
+    if (/^transparent$/i.test(s)) return { r: 0, g: 0, b: 0, a: 0 };
+    const m = (s.match(/[0-9.]+/g) || [0, 0, 0]).map(Number);
     return { r: m[0], g: m[1], b: m[2], a: m.length > 3 ? m[3] : 1 };
   };
   const over = (f, b) => ({ r: f.a * f.r + (1 - f.a) * b.r, g: f.a * f.g + (1 - f.a) * b.g, b: f.a * f.b + (1 - f.a) * b.b, a: 1 });
@@ -90,9 +103,15 @@ function controlContrast() {
   const out = [];
   for (const root of document.querySelectorAll('.cs')) {
     const label = root.getAttribute('aria-label') || '(unlabelled)';
+    // Under 3 fails. Between 3 and 4.5 is reported but does not fail: Ford's
+    // measured #919191 landed at 3.15 on white and walked under this gate by
+    // 0.15, while being 2.77 on the tinted band its own tabs draw. A value that
+    // close to the line is a measurement to look at, not a pass to bank
+    // (2026-09-15).
     const add = (what, fg, behind) => {
       const r = ratio(fg, behind);
       if (r < 3) out.push({ label, what, fg: rgb(fg), behind: rgb(behind), ratio: r });
+      else if (r < 4.5) out.push({ label, what, fg: rgb(fg), behind: rgb(behind), ratio: r, warn: true });
     };
     for (const [sel, what] of [
       ['.cs-arrow', 'arrow'],
@@ -113,6 +132,25 @@ function controlContrast() {
     }
     const thumb = root.querySelector('.cs-thumb[aria-selected="true"]');
     if (shown(thumb)) add('selected thumb outline', parse(getComputedStyle(thumb).borderTopColor), ground(thumb));
+
+    // The focus ring, which this audit had never measured - which is exactly
+    // why the portrait look's #1a5fb4 survived two rounds of colour fixes on
+    // that same dark strip at 2.88:1. It is drawn OUTSIDE the control
+    // (outline-offset: 2px) and the prev arrow sits flush at
+    // inset-inline-start: 0, so the ring straddles the strip and whatever is
+    // behind it: measure against both grounds and keep the worse. Read off
+    // :focus-visible rather than by focusing, so the audit stays read-only and
+    // does not scroll the page it is measuring.
+    const ring = root.querySelector('.cs-arrow, .cs-dot, .cs-thumb');
+    if (shown(ring)) {
+      const rs = getComputedStyle(ring);
+      const col = parse(rs.getPropertyValue('--cs-focus') || rs.outlineColor);
+      if (col.a > 0) {
+        add('focus ring', col, ground(ring));
+        const outer = root.parentElement ? ground(root) : { r: 255, g: 255, b: 255, a: 1 };
+        add('focus ring (page behind the strip)', col, outer);
+      }
+    }
   }
   return out;
 }
@@ -173,6 +211,13 @@ async function audit(where) {
     const key = `control|${c.what}|${c.fg}|${c.behind}`;
     if (seen.has(key)) continue;
     seen.add(key);
+    // A warn is printed once and never counted, so it cannot turn the gate red
+    // on its own. It exists so a value sitting a tenth over the line gets said
+    // out loud instead of banked as a pass.
+    if (c.warn) {
+      warnings.push(`  ${c.what} in “${c.label}” at ${where}: ${c.fg} on ${c.behind} = ${c.ratio}:1 — over 3:1, under 4.5:1`);
+      continue;
+    }
     findings.push({
       impact: 'serious',
       id: 'control-contrast',
@@ -282,6 +327,10 @@ for (const f of findings) {
   if (f.contrast) console.error(`    ${f.contrast}`);
 }
 
+if (warnings.length) {
+  console.warn(`\na11y: ${warnings.length} control(s) between 3:1 and 4.5:1 — passing, but close enough to read again:`);
+  for (const w of warnings) console.warn(w);
+}
 if (findings.length) {
   console.error(`\na11y: ${findings.length} violation(s) over ${states} states.`);
   process.exit(1);

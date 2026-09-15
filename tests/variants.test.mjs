@@ -734,7 +734,32 @@ test.describe('Ford lands every measured number on the same pattern', () => {
     assert.ok(Math.abs(g.nameGap + 3) < 0.6, `the live name is pulled 3px up into the cutout, got ${g.nameGap}`);
     assert.equal(g.nameWeight, '700');
     assert.ok(Math.abs(parseFloat(g.channel) - 35) < 0.2, `a 35px arrow channel, got ${g.channel}`);
-    assert.equal(g.arrowFg, 'rgb(145, 145, 145)');
+    // DEPARTURE, 2026-09-15: forddemo1 draws #919191, which composites to
+    // 3.15:1 on white and 2.77:1 on the #f0f0f0 its own unpicked cells use - a
+    // 1.4.11 failure on the band the bar actually sits on, and a downgrade from
+    // the tabs pattern's 15.13:1 default that we took on by copying. #767676 is
+    // the lightest grey clearing 3:1 down to #ddd.
+    assert.equal(g.arrowFg, 'rgb(118, 118, 118)');
+    // Assert the RATIO, not just the hex, so a future re-measure cannot quietly
+    // put a failing grey back: the number is what matters, the value is how it
+    // happens to be spelled today.
+    const ratio = (fg, bg) => {
+      const lum = (c) => {
+        const t = (v) => ((v /= 255), v <= 0.03928 ? v / 12.92 : ((v + 0.055) / 1.055) ** 2.4);
+        return 0.2126 * t(c[0]) + 0.7152 * t(c[1]) + 0.0722 * t(c[2]);
+      };
+      const [x, y] = [lum(fg), lum(bg)].sort((a, b) => b - a);
+      return (x + 0.05) / (y + 0.05);
+    };
+    const fg = g.arrowFg.match(/\d+/g).map(Number);
+    for (const [name, ground] of [
+      ['white', [255, 255, 255]],
+      ["Ford's own #f0f0f0 cells", [240, 240, 240]],
+      ['#ddd', [221, 221, 221]],
+    ]) {
+      const r = ratio(fg, ground);
+      assert.ok(r >= 3, `Ford's resting arrow is ${r.toFixed(2)}:1 on ${name}, under the 3:1 SC 1.4.11 needs for a non-text control`);
+    }
     assert.ok(Math.abs(g.moreGap - 46) < 1, `46px over the button, got ${g.moreGap}`);
     assert.equal(g.btnText, 'Explore All New Models');
     assert.equal(g.btnRadius, '5px', "Ford's button shape from theme.css, never the snippet");

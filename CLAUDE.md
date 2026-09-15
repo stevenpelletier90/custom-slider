@@ -427,6 +427,22 @@ re-proposing them):
   the whole page.
 - Keep `.cs-track::-webkit-scrollbar` alongside `scrollbar-width: none`: Android WebView has no
   `scrollbar-width` support, and in-app browsers are real dealer traffic.
+- Never set a `--cs-*` knob on a WRAPPER and expect it to reach the slider. The engine declares
+  every one of them inside its own `.cs { }` block, and a property set ON an element beats the same
+  property INHERITED from an ancestor at any specificity. `--cs-focus` on `.cargo-lb` was silently
+  dead while Cadillac's identical override worked, because a brand's props land on `.cs` itself.
+  Scope to `.cs`, or to the element (2026-09-15).
+- Never copy an OEM's contrast. A measured value is the FLOOR (Steven's standing rule) and colour is
+  the sharpest case: Ford's measured `#919191` arrow was 3.15:1 on white and 2.77:1 on the `#f0f0f0`
+  its own tab cells draw — a 1.4.11 failure, taken on by copying, against the pattern's own 15.13:1
+  default. Measure the ratio against the band the control actually sits on, not against white.
+
+**A card look owns the responsive arrow ladder, and a brand that sets `--cs-arrow-size` leaves it.**
+The looks shrink the arrow 44 → 36 at 767 → 32 at 575 from the shared card sheet at (0,1,0); a
+brand's props reach the snippet at (0,2,0) with no media query and win at every width. Measured
+2026-09-15: a plain paste goes 44/36/32 while `tabs × ford` renders 25×25 at 1280, 700 and 390
+alike. So set `--cs-arrow-size` in a preset only when the measurement genuinely needs it — an OEM's
+35px slick arrow is smaller than our 44px default and is not worth the ladder.
 
 **v1 scope limits:** LTR only, no infinite loop (rewind or stop), `gallery` + `autoplay` unsupported
 (autoplay ignored with a console warning), `gallery` + `fade` unsupported (fade ignored with a

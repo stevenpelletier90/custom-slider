@@ -607,3 +607,47 @@ test('every card strip shrinks its arrows on a phone', async ({ browser }) => {
   assert.deepEqual(errors, []);
   await ctx.close();
 });
+
+// An arrow overlays media but never text (CLAUDE.md, "Two rules for pattern
+// CSS"), and a card look reserves a channel for it precisely so it cannot land
+// on the name. The tile look carried `padding-inline: 0` in its phone rule for
+// months, which would have taken that channel away below 768 - it never fired,
+// because the generated snippet's own gutter rule is (0,2,0) against the look's
+// (0,1,0). Measured on 2026-09-15: with the zero forced on, the prev arrow
+// overlapped the model name at both 390 and 320. So the line was deleted rather
+// than strengthened, and this holds the reason.
+test('no arrow lands on a card name at phone widths', async ({ browser }) => {
+  for (const width of [390, 320]) {
+    const { ctx, page, errors } = await at(browser, 'patterns.html', width);
+    const hits = await page.evaluate(() => {
+      const bad = [];
+      const overlaps = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
+      for (const root of document.querySelectorAll('.cs')) {
+        const host = root.closest('[data-cargo]');
+        const arrows = [...root.querySelectorAll('.cs-arrow')].filter((a) => !a.hidden && a.offsetParent);
+        const track = root.querySelector('.cs-track');
+        if (!arrows.length || !track) continue;
+        const t = track.getBoundingClientRect();
+        for (const name of root.querySelectorAll('.cargo-name')) {
+          const n = name.getBoundingClientRect();
+          if (!n.width) continue;
+          // Only cards at REST inside the viewport. A card mid-scroll slides
+          // under the arrow by design - the arrow overlays the strip - so
+          // judging those would fail every pattern for doing the right thing.
+          const slide = name.closest('.cs-slide');
+          const s = slide && slide.getBoundingClientRect();
+          if (!s || s.left < t.left - 1 || s.right > t.right + 1) continue;
+          for (const arrow of arrows) {
+            if (overlaps(n, arrow.getBoundingClientRect())) {
+              bad.push(`${host ? host.dataset.cargo : '(no data-cargo)'}: ${arrow.className.includes('prev') ? 'prev' : 'next'} arrow on “${name.textContent.trim().slice(0, 20)}”`);
+            }
+          }
+        }
+      }
+      return [...new Set(bad)];
+    });
+    assert.deepEqual(hits, [], `at ${width} an arrow is drawn over a card name: ${hits.join('; ')}`);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  }
+});
