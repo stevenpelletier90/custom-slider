@@ -139,6 +139,17 @@ the preview. An arrow overlays media but never text: a text card reserves
 `padding-inline: calc(var(--cs-arrow-size) + 0.4em)`. Both are held by the paste-parity test: each
 snippet in a hostile host page must match the preview to the pixel.
 
+**The tab row never wraps, at any width** (2026-09-15). `.cargo-tabs` is `nowrap` +
+`overflow-x: auto`, because the divider glyph hangs off the tab that FOLLOWS it, so every wrapped
+row started with a `|` dangling in the margin — and Chevrolet's five body styles wrapped at 992 as
+well as on a phone, which is why this is not a media query. `data-more`, set by the pattern script
+only while the row actually overflows, is what turns on the left alignment, the `flex: 0 0 auto` and
+the edge fade; a row that fits scrolls nowhere and stays centred, so no desktop bar moved. No
+`scroll-snap` on it: the snap area is the tab's border box, so snapping scrolled its `--tab-gap`
+margin off and left every bar resting 14–15px in. `tests/layout.test.mjs` holds all of it at six
+widths, and those 320px checks drive the catalogue pages directly because the builder's narrowest
+frame button is 390.
+
 **Code parity is structural, not policed.** `cssFor(sel)` and `htmlFor(cls)` in `workbench.js` are
 the ONLY producers of CSS and markup; preview is `cssFor('.wb-live')`, copy panel
 `cssFor('.my-slider')`. The preview adds exactly one thing: a `--cs-per-view` pin for the pressed

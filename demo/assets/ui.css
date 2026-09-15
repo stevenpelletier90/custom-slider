@@ -2040,6 +2040,13 @@ code {
    the tile, so it wraps instead of ellipsising - Chevro…, Alfa Ro…, Land R…,
    Mitsubi… and Volksw… were unreadable. */
 .bb-tile {
+  /* And the badge drops under the name rather than out of the tile. At 320 the
+     rail is two 144px columns, and logo + gap + badge + padding is 134 of that
+     before the name has any - so the name held its min-content width and pushed
+     the badge 30px past the page's right edge, which is the whole of the
+     sideways scroll brands.html had there (2026-09-15). Wrapping is not
+     shrinking: the badge still never squeezes, it just takes its own line. */
+  flex-wrap: wrap;
   align-items: center;
 }
 

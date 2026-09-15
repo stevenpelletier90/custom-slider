@@ -729,15 +729,36 @@
           t.setAttribute('aria-controls', pid);
           panes[i].setAttribute('aria-labelledby', tid);
         });
+        // The row scrolls sideways rather than wrapping, at every width. data-more
+        // says which way there is more to see and is absent while the row fits, which
+        // is what the CSS keys its left alignment and its edge fade on.
+        const row = wrap.querySelector('[role="tablist"]');
+        const edges = () => {
+          const max = row.scrollWidth - row.clientWidth;
+          if (max < 2) row.removeAttribute('data-more');
+          else row.setAttribute('data-more', row.scrollLeft < 2 ? 'end' : row.scrollLeft > max - 2 ? 'start' : 'both');
+        };
+        // Strip-local math, never scrollIntoView(): the row sits inside the page, and
+        // scrollIntoView() would scroll the PAGE to it as well.
+        const reveal = (t) => {
+          if (row.scrollWidth - row.clientWidth < 2) return;
+          const to = t.getBoundingClientRect().left - row.getBoundingClientRect().left + row.scrollLeft - (row.clientWidth - t.offsetWidth) / 2;
+          row.scrollTo({ left: Math.max(0, to), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+        };
+        row.addEventListener('scroll', edges, { passive: true });
+        addEventListener('resize', edges);
         // picked marks a pane the reader switched to, which is what the fade in
         // the CSS keys on - the pane the page loads with is shown without it, so
         // nothing fades on load.
-        const show = (i, picked) => tabs.forEach((t, j) => {
-          t.setAttribute('aria-selected', String(i === j));
-          t.tabIndex = i === j ? 0 : -1;
-          panes[j].hidden = i !== j;
-          if (picked && i === j) panes[j].setAttribute('data-in', '');
-        });
+        const show = (i, picked) => {
+          tabs.forEach((t, j) => {
+            t.setAttribute('aria-selected', String(i === j));
+            t.tabIndex = i === j ? 0 : -1;
+            panes[j].hidden = i !== j;
+            if (picked && i === j) panes[j].setAttribute('data-in', '');
+          });
+          if (picked) reveal(tabs[i]);
+        };
         tabs.forEach((t, i) => t.addEventListener('click', () => show(i, true)));
         wrap.addEventListener('keydown', (e) => {
           const i = tabs.indexOf(e.target);
@@ -750,6 +771,7 @@
           tabs[n].focus();
         });
         show(0);
+        edges();
       });
     } catch (e) {
       console.error('custom-slider: the tabs pattern script failed', e);

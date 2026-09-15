@@ -10,7 +10,7 @@
 // these tests are what says so.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, patternIds } from './helpers.mjs';
+import { openBuilder, pick, patternIds, ORIGIN } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -420,4 +420,124 @@ test('Fill drops the container and uses the whole width', async ({ browser }) =>
   await page.waitForTimeout(500);
   assert.equal((await read()).root, 1170, 'the container did not come back when Fill was turned off');
   assert.deepEqual(errors, []);
+});
+
+// ---------------------------------------------------------------------------
+// The 320px standing check (2026-09-15). The workbench's narrowest button is
+// 390, so none of the tests above can see the width the phone pass was about:
+// 320 is the narrowest screen anyone browses at, and it is where the tabbed
+// bar wrapped to four rows, where the arrows ate a third of the card, and
+// where brands.html scrolled sideways. These drive the catalogue pages at a
+// real 320 viewport instead, because that is the only place the number exists.
+const at = async (browser, path, width) => {
+  const ctx = await browser.newContext({ viewport: { width, height: 1000 } });
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  await page.goto(`${ORIGIN}/demo/${path}`, { waitUntil: 'networkidle' });
+  await page.waitForTimeout(600);
+  return { ctx, page, errors };
+};
+
+// brands.html scrolled sideways by 30px at 320: the brand tile's badge held
+// its width, the name held its min-content width, and the badge went out the
+// side of the tile. A page that scrolls sideways on a phone is a bug wherever
+// it comes from, so this asks the document, not the tile.
+for (const path of ['brands.html', 'patterns.html', 'reference.html']) {
+  test(`${path} does not scroll sideways at 320`, async ({ browser }) => {
+    const { ctx, page, errors } = await at(browser, path, 320);
+    const found = await page.evaluate(() => {
+      const doc = document.documentElement;
+      const over = doc.scrollWidth - doc.clientWidth;
+      const past = [];
+      if (over > 0)
+        for (const el of document.querySelectorAll('body *')) {
+          const b = el.getBoundingClientRect();
+          if (!b.width && !b.height) continue;
+          if (b.right <= innerWidth + 0.5) continue;
+          // Anything inside a deliberate horizontal scroller (the tab row, the
+          // engine's own track) is allowed to be wider than the screen - that
+          // is what a scroller is for. Only content that pushes the PAGE counts.
+          let inScroller = false;
+          for (let a = el.parentElement; a; a = a.parentElement) {
+            const ov = getComputedStyle(a).overflowX;
+            if (ov === 'auto' || ov === 'scroll' || ov === 'hidden') {
+              inScroller = true;
+              break;
+            }
+          }
+          if (!inScroller) past.push(`<${el.tagName.toLowerCase()} class="${(el.className || '').toString().split(' ')[0]}"> reaches ${Math.round(b.right)}`);
+        }
+      return { over, past: past.slice(0, 6) };
+    });
+    assert.equal(found.over, 0, `${path} scrolls sideways by ${found.over}px at 320: ${found.past.join(' | ')}`);
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  });
+}
+
+// The tab row wrapped: three tabs onto two rows at 320, five onto two at 600
+// and 700. A wrapped row puts the divider glyph — which hangs off the tab that
+// FOLLOWS it — dangling at the start of every new row, and Chevrolet's five
+// body styles took more height than the car under them. The row does not wrap
+// at any width now; it scrolls, and only when it has to.
+test('no tab row wraps, at any width', async ({ browser }) => {
+  const bad = [];
+  for (const width of [320, 390, 600, 700, 992, 1400]) {
+    const { ctx, page, errors } = await at(browser, 'brands.html', width);
+    const rows = await page.evaluate(() =>
+      [...document.querySelectorAll('[data-cargo="tabs"] [role="tablist"]')].map((row, i) => {
+        const tabs = [...row.querySelectorAll('[role="tab"]')];
+        return {
+          i,
+          lines: new Set(tabs.map((t) => Math.round(t.getBoundingClientRect().top))).size,
+          overflow: row.scrollWidth - row.clientWidth,
+          more: row.getAttribute('data-more'),
+          justify: getComputedStyle(row).justifyContent,
+          scrollLeft: Math.round(row.scrollLeft),
+        };
+      }),
+    );
+    assert.ok(rows.length, `no tab rows found on brands.html at ${width}`);
+    for (const r of rows) {
+      if (r.lines !== 1) bad.push(`${width}px bar ${r.i}: tabs sit on ${r.lines} lines`);
+      // data-more is the script's report of the same fact the layout shows, and
+      // the fade and the left alignment both hang off it. Out of step either
+      // way and the row either fades an edge with nothing past it or centres a
+      // scroller, which puts its own first tab out of reach.
+      const overflows = r.overflow > 1;
+      if (overflows && !r.more) bad.push(`${width}px bar ${r.i}: overflows by ${r.overflow} with no data-more`);
+      if (!overflows && r.more) bad.push(`${width}px bar ${r.i}: data-more="${r.more}" on a row that fits`);
+      if (overflows && r.justify !== 'flex-start') bad.push(`${width}px bar ${r.i}: a scrolling row is ${r.justify}, so its first tab is unreachable`);
+      if (r.scrollLeft !== 0) bad.push(`${width}px bar ${r.i}: rests at scrollLeft ${r.scrollLeft}, not 0`);
+    }
+    assert.deepEqual(errors, []);
+    await ctx.close();
+  }
+  assert.deepEqual(bad, [], bad.join(' | '));
+});
+
+// Every card strip drops its arrows to 36px under 768 and 32px under 576, so
+// the reserved channel each side gives the card its width back: 151px of a
+// 320 screen became 175 on the six strips that had no phone rule at all.
+test('every card strip shrinks its arrows on a phone', async ({ browser }) => {
+  const { ctx, page, errors } = await at(browser, 'patterns.html', 320);
+  const found = await page.evaluate(() => {
+    const out = {};
+    for (const root of document.querySelectorAll('.cs')) {
+      const host = root.closest('[data-cargo]');
+      if (!host || out[host.dataset.cargo]) continue;
+      // A card strip reserves a channel for its arrows; a full-bleed pattern
+      // (the hero, the galleries, the lightbox) overlays them on the picture
+      // and gets nothing back by shrinking them, so it is not asked to.
+      if (parseFloat(getComputedStyle(root).paddingInlineStart) < 1) continue;
+      out[host.dataset.cargo] = getComputedStyle(root).getPropertyValue('--cs-arrow-size').trim();
+    }
+    return out;
+  });
+  const big = Object.entries(found).filter(([, v]) => parseFloat(v) > 32);
+  assert.deepEqual(big, [], `at 320 these card strips still reserve a channel for a large arrow: ${big.map(([k, v]) => `${k}=${v}`).join(', ')}`);
+  assert.ok(Object.keys(found).length >= 10, `only ${Object.keys(found).length} card strips found — the selector stopped matching`);
+  assert.deepEqual(errors, []);
+  await ctx.close();
 });

@@ -193,6 +193,52 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   every phone width - and the tabbed bar's phone knobs moved from 768 to 576, which is where its
   live bar switches (540). Two tests named the old "Phone · under 768" label and were the only
   failures.
+- 2026-09-15, the phone pass. Screenshots of the four measured tabbed bars and the model bar at 320
+  and 390 on `brands.html`, then Playwright measurements of every pattern at 320 / 390 / 600 / 700 /
+  992 / 1200. Deliberate departures from every live bar we measured, recorded here because the rule
+  is that measured values are the floor, not the ceiling:
+  - **The tab row never wraps.** It was `flex-wrap: wrap`, and the divider glyph hangs off the tab
+    that FOLLOWS it, so every wrapped row started with a `|` dangling in the margin. Measured before
+    the change: Chevrolet's five body styles sat on 5 lines at 320, 4 at 390 and **2 at 600, 700 and
+    992** - so this was never only a phone bug, which is why the fix is not in a media query. The
+    row is now `nowrap` + `overflow-x: auto` at every width; a row that fits scrolls nowhere and
+    stays centred, so no desktop bar moved. `data-more` (set by the pattern script) is what turns on
+    the left alignment, the `flex: 0 0 auto` and the edge fade, and it is set only while the row
+    actually overflows - centring a scroller that overflows puts its own first tab out of reach, and
+    fading an edge with nothing past it is a lie. Chevrolet's bar lost 57px of height at 600
+    and 700.
+  - **No scroll-snap on the tab row.** Tried first, reverted the same hour: the snap area is the
+    tab's border box, so the browser scrolled its `--tab-gap` margin off and every bar rested
+    14-15px in with the start fade lit. A tab is not a slide.
+  - **The fade is unprefixed `mask-image` only.** A browser without it drops the declaration and the
+    cut-off tab is still the cue, so it does not earn the `-webkit-` copy `::-webkit-scrollbar` does
+    (`property-no-vendor-prefix` would have needed an exception for a decoration).
+  - **Every card strip shrinks its arrows on a phone**: 36px under 768 (five looks and `models` had
+    no phone rule at all) and 32px under 576. The arrow channel is
+    `calc(var(--cs-arrow-size) + 0.4em)` a side, so at 320 the slide went **151px → 175px** on the
+    six strips that had none, and 167 → 175 on the four that had the 768 rule. Full-bleed patterns
+    (hero, the galleries, the lightbox, peek, video) overlay their arrows on the picture and get no
+    width back, so they keep 44px rather than trade tap target for nothing.
+  - **Ford's cells go back up to the body size on a phone** (`--tab-size-phone: 1em`,
+    `--tab-pad-phone: 1.07em 0.36em`). forddemo1 keeps them at 12px all the way down and crushes
+    four across a 320 screen at 70px each; the row scrolls now, so they no longer have to fit. The
+    knob is new and Ford is its only user.
+  - **No `--title-gap-phone` or `--tab-row-gap-phone`**, which the plan asked for. Measured at 320
+    on all four bars the heading gap is already 10-13px and the row gap 14-20; what makes the bar
+    tall on a phone is the platform's own heading class wrapping "View Our Lineup" onto two 32px
+    lines, which is the theme's. A knob nothing would be set to is a panel row that teaches nobody
+    anything.
+  - **`brands.html` scrolled sideways 30px at 320**: the brand tile is a flex row and its badge is
+    `flex: none`, so once the logo, gap, badge and padding took 134 of a 144px tile the name held
+    its min-content width and pushed the badge out the side. `.bb-tile { flex-wrap: wrap }` -
+    wrapping is not shrinking, the badge still never squeezes.
+  - Still open: `demo/index.html` scrolls sideways 52px at 320. `.ui-widths` is a 339px inline-flex
+    segmented control of six width buttons; the workbench is a desktop tool and its narrowest frame
+    button is 390, so nothing there can even show 320. Not fixed, not in the phone pass's scope.
+  - The three new checks in `tests/layout.test.mjs` drive the catalogue pages at a real 320 viewport
+    rather than the builder frame, for the same reason: the builder cannot go below 390. Each was
+    run against the code before it - the sideways check failed on brands at 30px, the wrap check on
+    nine bar/width pairs, the arrow check on eight strips at 36px.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

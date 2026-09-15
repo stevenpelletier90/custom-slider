@@ -12,6 +12,25 @@ the IntersectionObserver "threshold does nothing" item was measured on all three
 never a bug (a single 0.25 threshold reports nothing at 0.1, and its entry's `isIntersecting` is
 false below the crossing). `docs/history.md` has the dates.
 
+## 2026-09-15 — the phone pass, two decided noes
+
+- **Peek on phones: measured no** (Steven, 2026-09-15). The phone pass proposed a phone-tier
+  `--cs-peek` default per card strip so a strip reads as scrollable. It is the bug this repo already
+  removed once: `--cs-peek` has one value at every width, and the old `%root% { --cs-peek: 1.5em }`
+  under 768 left 1.5em on phones while the Peek field read `0px` — a knob that lies, which is what
+  `tests/controls.test.mjs` exists to catch. Measured at 320 after the arrow change, a card strip
+  slide is 175px inside a 250px container with a 37.6px arrow channel showing each side; a 1.5em
+  sliver each side takes the card to 127px (−27%) to say what the two visible arrows already say.
+  The honest phone-only route if this ever comes back is a `--cs-peek-phone` prop on the pattern,
+  the same shape as `--tab-size-phone` / `--tab-pad-phone`, with the pattern sheet overriding
+  `.cs-track`'s `padding-inline` and `scroll-padding-inline` under 576 — a new knob row on about
+  twelve patterns. Not the media-query override.
+- **`demo/index.html` scrolls sideways 52px at 320.** `.ui-widths` is an `inline-flex` segmented
+  control of six width buttons measuring 339px; page chrome, not the engine or a pattern. Left alone
+  because the workbench is a desktop authoring tool whose own narrowest frame button is 390, so it
+  cannot even show the width it overflows at. The fix is one phone-tier rule shrinking the button
+  padding, or letting the group wrap.
+
 ## 2026-09-15 — first Firefox/WebKit run of the engine contract
 
 - Firefox gives every scroll container its own tab stop, focusable children or not, so on Firefox

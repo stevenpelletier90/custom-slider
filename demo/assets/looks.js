@@ -111,6 +111,7 @@ const LOOKS = {
     css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
 %root% .cs-track { padding-block-end: var(--strip-pad-end); }
 @media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; padding-inline: 0; } }
+@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
 @media (max-width: 380px) { %root% { --cs-per-view: 1; } }
 .cargo-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .cargo-media { position: relative; display: block; overflow: hidden; }
@@ -174,6 +175,7 @@ const LOOKS = {
     css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
 %root% .cs-track { padding-block-end: var(--strip-pad-end); }
 @media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
 .cargo-card { position: relative; display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: var(--card-bg); border: var(--card-border); border-radius: var(--card-radius); box-shadow: var(--card-shadow); }
 .cargo-media { position: relative; display: block; overflow: hidden; }
 .cargo-badge { position: absolute; inset-block-start: 0.6em; inset-inline-start: 0.6em; padding: 0.25em 0.7em; font-size: 0.75em; font-weight: 700; line-height: 1.4; color: var(--badge-fg); background: var(--badge-bg); border-radius: 999px; }
@@ -221,6 +223,8 @@ const LOOKS = {
     },
     css: `%root% { padding-block-start: var(--strip-pad); background: var(--strip-bg); }
 %root% .cs-track { padding-block-end: var(--strip-pad-end); }
+@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
 .cargo-card { display: block; color: var(--name-color); text-align: center; text-decoration: none; }
 .cargo-mark { display: block; margin-block-end: 0.6em; font-size: var(--mark-size); font-style: italic; font-weight: 700; line-height: 1.2; letter-spacing: 0.06em; }
 .cargo-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.25s ease; }
@@ -266,7 +270,9 @@ const LOOKS = {
       '--pill-fg': '#222',
       '--card-shadow': 'none',
     },
-    css: `.cargo-card { display: flex; overflow: hidden; color: var(--card-fg); text-decoration: none; background: var(--card-bg); border-radius: 8px; box-shadow: var(--card-shadow); }
+    css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
+.cargo-card { display: flex; overflow: hidden; color: var(--card-fg); text-decoration: none; background: var(--card-bg); border-radius: 8px; box-shadow: var(--card-shadow); }
 .cargo-card img { flex: 0 0 50%; inline-size: 50%; aspect-ratio: 1; object-fit: cover; }
 .cargo-copy { display: flex; flex-direction: column; gap: 0.5em; align-items: flex-start; min-inline-size: 0; padding: 28px; }
 .cargo-sub { font-size: 0.85em; color: #d9d9d9; }
@@ -330,6 +336,8 @@ const LOOKS = {
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1.5em; background: var(--strip-bg); }
 %root% .cs-track { padding-block-end: 1.5em; }
+@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
 .cargo-card { display: block; color: var(--card-fg); text-align: center; text-decoration: none; }
 .cargo-name { min-block-size: 2.6em; margin: 0 0 0.5em; font-size: 1.25em; font-weight: 700; line-height: 1.3; color: var(--card-fg); text-align: start; text-transform: uppercase; letter-spacing: 0.08em; }
 .cargo-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); object-fit: cover; }
@@ -375,6 +383,8 @@ const LOOKS = {
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1em; background: var(--strip-bg); }
 %root% .cs-track { padding-block-end: 1.5em; }
+@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
 @media (max-width: 460px) { %root% { --cs-per-view: 1; padding-block-start: 1em; padding-inline: 0.5em; } %root% .cs-track { padding-block-end: 1em; } }
 .cargo-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1em; color: var(--card-fg); background: var(--card-bg); border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 10px; transition: background 0.2s; }
 .cargo-card img { inline-size: 75%; block-size: auto; object-fit: contain; }`,
@@ -413,6 +423,8 @@ const LOOKS = {
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1em; background: var(--strip-bg); }
 %root% .cs-track { padding-block-end: 1.5em; }
+@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
 .cargo-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.25em; text-align: center; text-decoration: none; background: var(--card-bg); border-radius: 10px; box-shadow: var(--card-shadow); }
 /* Full width and cropped, not 55% and contained: that sizing was for a
    transparent cutout floating on the card, and a storefront photograph wants

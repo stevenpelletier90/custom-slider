@@ -767,6 +767,15 @@
               '--tab-pad': '0.94em 0.31em',
               // The same 15px over and under, in the 12px tab's em.
               '--tab-pad-narrow': '1.25em 0.42em',
+              // DEPARTURE from the live bar, 2026-09-15. forddemo1 keeps its
+              // cells at 12px all the way down and crushes four of them across
+              // a 320px screen - 70px each, a label under the platform's own
+              // smallest type and a cell too narrow to aim at. The row scrolls
+              // under 576 now, so the cells no longer have to fit four across:
+              // the phone tier puts them back at the body's 14px, with the
+              // live 15px over and under and 5px a side measured in THAT em.
+              '--tab-size-phone': '1em',
+              '--tab-pad-phone': '1.07em 0.36em',
               '--tab-gap': '0.1px',
               '--tab-rule': 'transparent',
               '--tab-cell-rule': '#ccc',

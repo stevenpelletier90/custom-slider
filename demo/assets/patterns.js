@@ -669,6 +669,18 @@ ${VIDEO_DIALOG_CSS}`,
         // phone knob.
         '--tab-size-phone': 'var(--tab-size-narrow)',
         '--tab-divider-phone': 'var(--tab-divider)',
+        // The tablet padding is measured against a tablet tab. Ford's cells go
+        // back up to the body size on a phone (the row scrolls now, so they no
+        // longer have to be crushed to fit four across), and 15px over and
+        // under the label is less em in a 14px tab than in a 12px one.
+        '--tab-pad-phone': 'var(--tab-pad-narrow)',
+        // No --title-gap-phone or --tab-row-gap-phone, and that is a measured
+        // no rather than an oversight (2026-09-15, all four measured bars at
+        // 320): the heading gap is already 10-13px there and the row gap 14-20,
+        // and what makes the bar tall on a phone is the platform's own heading
+        // class wrapping "View Our Lineup" onto two 32px lines - the theme's to
+        // set, not ours. A knob nothing would ever be set to is a panel row
+        // that teaches nobody anything.
       },
       hideDots: true,
       panes: ['Trucks', 'SUVs', 'Crossovers'],
@@ -697,8 +709,38 @@ ${VIDEO_DIALOG_CSS}`,
    cells run edge to edge. Both are no-ops until a value says otherwise. */
 .cargo-box { border: var(--box-border); }
 .cargo-body { padding: var(--box-pad); }
-.cargo-tabs { display: flex; flex-wrap: wrap; justify-content: center; margin-block-end: var(--tab-row-gap); border-block-end: 1px solid var(--tab-rule); }
-/* Each tab overlaps the row's rule by the 1px of its own bottom border, so a
+/* One row that scrolls, never a wrapped one - the deliberate departure from
+   every live bar we measured (2026-09-15). Wrapping left a divider dangling at
+   the start of each new row (the divider hangs off the tab that FOLLOWS it, and
+   a wrap makes that tab first) and gave Chevrolet's five body styles more height
+   on a 320px screen than the car underneath. It is not a phone rule: the same
+   bar wrapped to two rows at 600 and 700 too, and a row that never wraps cannot
+   dangle anything at any width. A row that fits scrolls nowhere and stays
+   centred, so nothing about a desktop bar moves. */
+.cargo-tabs { display: flex; flex-wrap: nowrap; justify-content: center; margin-block-end: var(--tab-row-gap); overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none; border-block-end: 1px solid var(--tab-rule); }
+/* Android WebView has no scrollbar-width, and in-app browsers are real dealer
+   traffic - the same reason the engine keeps both on its track. */
+.cargo-tabs::-webkit-scrollbar { display: none; }
+/* Everything below keys on data-more, which the script sets only while the row
+   actually overflows. Centring a scroller that overflows puts its first tab out
+   of reach, and a cell that shares the row equally (Ford's 1 1 0%) would keep
+   shrinking instead of scrolling - but only once there is more than fits. */
+.cargo-tabs[data-more] { justify-content: flex-start; }
+.cargo-tabs[data-more] [role="tab"] { flex: 0 0 auto; }
+/* Which way there is more to see, so the fade never dims an edge with nothing
+   past it. Pure decoration, twice over: with no JS there is no attribute, and
+   on a browser with no unprefixed mask-image the declaration is dropped. Either
+   way the row still scrolls and the cut tab is still the cue - which is why
+   this does not earn the -webkit- copy ::-webkit-scrollbar does. LTR, like v1. */
+.cargo-tabs[data-more="end"] { mask-image: linear-gradient(90deg, #000 calc(100% - 2em), transparent); }
+.cargo-tabs[data-more="start"] { mask-image: linear-gradient(90deg, transparent, #000 2em); }
+.cargo-tabs[data-more="both"] { mask-image: linear-gradient(90deg, transparent, #000 2em, #000 calc(100% - 2em), transparent); }
+/* No scroll-snap, deliberately. A tab is not a slide: snapping pulled the first
+   tab flush against the edge (the snap area is its border box, so the browser
+   scrolled off its --tab-gap margin), leaving every bar 14-15px in at rest with
+   the start fade lit and nothing behind it.
+
+   Each tab overlaps the row's rule by the 1px of its own bottom border, so a
    cell rule (Ford) draws where the row rule would and the two never stack;
    the picked tab's border goes transparent and the row rule shows through. */
 .cargo-tabs [role="tab"] { position: relative; flex: var(--tab-flex); padding: var(--tab-pad); margin-block-end: -1px; margin-inline: calc(var(--tab-gap) / 2); font: inherit; font-size: var(--tab-size); font-weight: var(--tab-weight); line-height: var(--tab-leading); color: var(--tab-color); text-transform: var(--tab-case); cursor: pointer; background: var(--tab-bg); border: 0; border-block-end: 1px solid var(--tab-cell-rule); opacity: var(--tab-dim); }
@@ -753,7 +795,7 @@ ${VIDEO_DIALOG_CSS}`,
 /* Bootstrap 5's phone tier. Cadillac's live bar switches at 540; 576 is the
    tier that means that, and a Bootstrap 3 page simply has a finer phone rule. */
 @media (max-width: 575.98px) {
-  .cargo-tabs [role="tab"] { font-size: var(--tab-size-phone); }
+  .cargo-tabs [role="tab"] { padding: var(--tab-pad-phone); font-size: var(--tab-size-phone); }
   .cargo-tabs [role="tab"] + [role="tab"]::before { content: var(--tab-divider-phone); }
 }`,
       script: `document.querySelectorAll('[data-tabs]').forEach((wrap, w) => {
@@ -770,15 +812,36 @@ ${VIDEO_DIALOG_CSS}`,
     t.setAttribute('aria-controls', pid);
     panes[i].setAttribute('aria-labelledby', tid);
   });
+  // The row scrolls sideways rather than wrapping, at every width. data-more
+  // says which way there is more to see and is absent while the row fits, which
+  // is what the CSS keys its left alignment and its edge fade on.
+  const row = wrap.querySelector('[role="tablist"]');
+  const edges = () => {
+    const max = row.scrollWidth - row.clientWidth;
+    if (max < 2) row.removeAttribute('data-more');
+    else row.setAttribute('data-more', row.scrollLeft < 2 ? 'end' : row.scrollLeft > max - 2 ? 'start' : 'both');
+  };
+  // Strip-local math, never scrollIntoView(): the row sits inside the page, and
+  // scrollIntoView() would scroll the PAGE to it as well.
+  const reveal = (t) => {
+    if (row.scrollWidth - row.clientWidth < 2) return;
+    const to = t.getBoundingClientRect().left - row.getBoundingClientRect().left + row.scrollLeft - (row.clientWidth - t.offsetWidth) / 2;
+    row.scrollTo({ left: Math.max(0, to), behavior: matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+  };
+  row.addEventListener('scroll', edges, { passive: true });
+  addEventListener('resize', edges);
   // picked marks a pane the reader switched to, which is what the fade in
   // the CSS keys on - the pane the page loads with is shown without it, so
   // nothing fades on load.
-  const show = (i, picked) => tabs.forEach((t, j) => {
-    t.setAttribute('aria-selected', String(i === j));
-    t.tabIndex = i === j ? 0 : -1;
-    panes[j].hidden = i !== j;
-    if (picked && i === j) panes[j].setAttribute('data-in', '');
-  });
+  const show = (i, picked) => {
+    tabs.forEach((t, j) => {
+      t.setAttribute('aria-selected', String(i === j));
+      t.tabIndex = i === j ? 0 : -1;
+      panes[j].hidden = i !== j;
+      if (picked && i === j) panes[j].setAttribute('data-in', '');
+    });
+    if (picked) reveal(tabs[i]);
+  };
   tabs.forEach((t, i) => t.addEventListener('click', () => show(i, true)));
   wrap.addEventListener('keydown', (e) => {
     const i = tabs.indexOf(e.target);
@@ -791,6 +854,7 @@ ${VIDEO_DIALOG_CSS}`,
     tabs[n].focus();
   });
   show(0);
+  edges();
 });`,
     },
 
@@ -810,6 +874,8 @@ ${VIDEO_DIALOG_CSS}`,
       models: MODELS,
       css: `%root% { --cs-dot-fg: #949494; --cs-dot-current: #949494; }
 @media (min-width: 992px) { %root% { --cs-arrow-size: 56px; } }
+@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
 
 /* The dots become one solid bar. Every segment is still a real, labelled
    button; the marker is a ::before whose translate follows --bar-index and
@@ -861,6 +927,7 @@ ${VIDEO_DIALOG_CSS}`,
       minCard: 230,
       models: MIXED,
       css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
 .cargo-mix { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-mix img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 .cargo-mix .cargo-name { display: block; margin: 0.8em 0.9em 0.2em; font-size: 0.95em; line-height: 1.3; }
@@ -882,6 +949,7 @@ ${VIDEO_DIALOG_CSS}`,
       minCard: 250,
       models: SERVICES,
       css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
 .cargo-svc { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-media { display: block; overflow: hidden; }
 .cargo-svc img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.35s ease; }
@@ -909,6 +977,7 @@ ${VIDEO_DIALOG_CSS}`,
       minCard: 250,
       models: REVIEWS,
       css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
 .cargo-review { block-size: 100%; padding: 1.25em; margin: 0; line-height: 1.5; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-review figcaption { display: flex; gap: 0.7em; align-items: center; line-height: 1.35; }
 .cargo-avatar { display: grid; flex: none; place-items: center; inline-size: 40px; block-size: 40px; font-weight: 700; line-height: 1; color: #fff; background: var(--avatar-bg); border-radius: 50%; }
@@ -1104,6 +1173,7 @@ ${PHOTO_CSS}
         ['Start here', 'Copy the markup, add your <code>--cs-per-view</code> breakpoints, then restyle.'],
       ].map(([name, blurb]) => ({ name, blurb })),
       css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
 .cargo-stock { block-size: 100%; padding: 1.1em; background: #f0f2f5; border-radius: 8px; }
 .cargo-stock .cargo-name { display: block; margin: 0 0 0.35em; font-size: 1em; line-height: 1.3; }
 .cargo-stock .cargo-sub { display: block; margin: 0; font-size: 0.9em; line-height: 1.5; color: #5f6368; }

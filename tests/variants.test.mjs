@@ -781,18 +781,30 @@ test.describe('Ford lands every measured number on the same pattern', () => {
     assert.deepEqual(errors, []);
   });
 
-  test('on a phone the tabs shorten to their bracket-free words, drop to 12px and keep their 15px of padding', async () => {
+  // 2026-09-15: this used to pin 12px, which is what forddemo1 ships all the
+  // way down. It is a deliberate departure now, not a drift. The live bar keeps
+  // its cells at 12px because it has to fit four of them across a 320px screen
+  // at 70px each; our row scrolls under 576, so it does not have to, and the
+  // cells go back up to the body's 14px with the live 15px over and under and
+  // 5px a side measured in THAT em. Everything the live bar actually decides -
+  // the bracket-free labels, the 15px of padding, the 15px inside the box, the
+  // platform's 16px lead - is still pinned to the measurement.
+  test('on a phone the tabs shorten to their bracket-free words and go UP to the body size, keeping their 15px of padding', async () => {
     await pick(page, 'tabs');
     await selectBrand(page, 'ford');
     await page.click('.ui-widths button[data-w="390"]');
     await page.waitForTimeout(400);
     const g = await fordGeometry(page);
     assert.deepEqual(g.labels, ['SUVS', 'TRUCKS', 'ELECTRIC', 'CARS'], 'the bracketed part is hidden-xs, gone below 768');
-    assert.ok(Math.abs(parseFloat(g.tabSize) - 12) < 0.2, `12px tabs below 992, got ${g.tabSize}`);
+    assert.ok(Math.abs(parseFloat(g.tabSize) - 14) < 0.2, `the phone tier takes the 12px tablet cells back to the 14px body, got ${g.tabSize}`);
     assert.ok(Math.abs(parseFloat(g.tabPad) - 15) < 0.3, `15px over the label at every width, got ${g.tabPad}`);
-    assert.ok(Math.abs(g.rowH - 47) < 1.5, `the live phone row is 47px tall, got ${g.rowH}`);
     assert.ok(Math.abs(parseFloat(g.bodyPad) - 15) < 0.5, `15px inside the box below 992, got ${g.bodyPad}`);
     assert.ok(Math.abs(parseFloat(g.leadSize) - 16) < 0.2, `the platform's lead is 16px on a phone, got ${g.leadSize}`);
+    // And the cells are aimable: 12px across a 320 screen gave each one 70px.
+    assert.ok(
+      g.widths.every((x) => x >= 44),
+      `a phone cell is a tap target, got ${g.widths}`,
+    );
     await page.click('.ui-widths button[data-w="1200"]');
     await page.waitForTimeout(200);
     assert.deepEqual(errors, []);
