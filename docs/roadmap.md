@@ -277,3 +277,5 @@ Bootstrap 3 number lives today (grep for `767.98|991.98|min-width: 992|750|970|1
   verbatim for the audit, and stay; `perViewFor()` reads them at whichever tiers the platform has.
 
 The census itself stays as is — it records what the demos ran in August 2026.
+
+<!-- a11y gate probe: docs-only -->
