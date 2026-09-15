@@ -233,5 +233,19 @@ globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
     'oem/honda/prologue.png': '/static/brand-honda/Homepage/model-bar/2026/sm/prologue.png',
     'oem/honda/odyssey.png': '/static/brand-honda/Homepage/model-bar/2026/sm/odyssey.png',
     'oem/honda/ridgeline.png': '/static/brand-honda/Homepage/model-bar/2026/sm/ridgeline.png',
+
+    // The nine Chevrolet cutouts its live bar shows that our roster was
+    // missing, added 2026-09-15 so the Electric, Performance and Commercial
+    // tabs have something behind them. Each proved byte-identical from an
+    // unrelated dealer domain.
+    'chrome-silverado-ev.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026CHT92_01_320/cc_2026CHT922059832_01_320_GBA.png',
+    'chrome-silverado-2500hd.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026CHT30_01_320/cc_2026CHT301988560_01_320_GXD.png',
+    'chrome-silverado-3500hd.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026CHT47_01_320/cc_2026CHT472027541_01_320_GXP.png',
+    'chrome-bolt-ev.png': '/static/brand-chevrolet/homepage/model-bar/2026/bolt.png',
+    'chrome-equinox-ev.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026CHS16_01_320/cc_2026CHS162064736_01_320_GAZ.png',
+    'chrome-blazer-ev.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026CHS36_01_320/cc_2026CHS362060723_01_320_GXD.png',
+    'chrome-brightdrop.png': '/assets/stock/Expanded/Transparent/320/2026CHV36_320/2026CHV362018903_320_01.png',
+    'chrome-blazer.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026CHS09_01_320/cc_2026CHS092044906_01_320_GNT.png',
+    'chrome-corvette.png': '/assets/stock/Expanded/Transparent/320/2026CHC06_320/2026CHC062056336_320_01.png',
   },
 });

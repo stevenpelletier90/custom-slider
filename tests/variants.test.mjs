@@ -518,9 +518,25 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
   test('the arrows turn blue on hover, on nothing', async () => {
     await pick(page, 'tabs');
     await selectBrand(page, 'chevrolet');
-    // Only a pane with more models than fit draws arrows; the Chevrolet
-    // roster is eight across five, so the first pane has them.
-    const arrow = page.frameLocator('#wb-stage').locator('.cargo-pane:not([hidden]) .cs-arrow--next').first();
+    // Only a pane with more models than fit draws arrows. This used to hold by
+    // accident: the roster was sliced by STRIDE, so every pane got all eight
+    // models across five and the first one always had arrows. Since the panes
+    // group by their live tab (2026-09-15) the first pane is Trucks, which is
+    // exactly five, and the engine correctly hides arrows that have nowhere to
+    // go. So ask for a pane that genuinely overflows rather than assuming one.
+    const frame = page.frameLocator('#wb-stage');
+    const panes = await frame.locator('.cargo-pane').count();
+    let arrow = null;
+    for (let i = 0; i < panes; i++) {
+      await frame.locator('.cargo-tabs [role="tab"]').nth(i).click();
+      await page.waitForTimeout(250);
+      const candidate = frame.locator('.cargo-pane:not([hidden]) .cs-arrow--next').first();
+      if (await candidate.isVisible()) {
+        arrow = candidate;
+        break;
+      }
+    }
+    assert.ok(arrow, 'no Chevrolet pane overflows its view, so no arrow is drawn to hover');
     await arrow.hover();
     await page.waitForTimeout(400);
     const r = await page.evaluate(() => {

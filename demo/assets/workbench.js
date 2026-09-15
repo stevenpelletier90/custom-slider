@@ -860,8 +860,36 @@
       // name without them.
       const plain = (name) => String(name).replace(/[[\]]/g, '');
       const label = (name) => escTab(name).replace(/\[([^\]]+)\]/g, '<span class="hidden-xs">$1</span>');
-      const names = (state.panes ?? p.panes).map(plain);
-      const tabs = (state.panes ?? p.panes)
+      // Brackets out, because a pane name carries its phone-short form
+      // ("SUV[ / CUV / MPV]") and a tag names the tab in full.
+      const norm = (x) =>
+        String(x ?? '')
+          .replace(/[[\]]/g, '')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .toLowerCase();
+      // A model can belong to SEVERAL tabs, and on every bar measured so far it
+      // does: Subaru puts all fifteen in "All Vehicles" as well as in their fuel
+      // type, Chevrolet's Silverado EV is a Truck and an Electric, Honda's CR-V
+      // Hybrid is an SUV and an Electrified. So a tag is a LIST separated by
+      // "|", and a row shows in a pane if any of its tags names it (2026-09-15).
+      const tagged = source.some((m) => String(m.tab ?? '').trim());
+      const tagsOf = (m) =>
+        String(m.tab ?? '')
+          .split('|')
+          .map(norm)
+          .filter(Boolean);
+      // A tagged roster can leave a pane with nothing in it - our Chevrolet
+      // cutouts cover Trucks and Crossovers but not Performance or Commercial -
+      // and an empty pane is a dead control in the tab order, which is the one
+      // thing this week's tab work has been removing. So a pane the roster
+      // cannot fill is not drawn, AND ITS TAB GOES WITH IT: the row and the
+      // panes are built from this one list, because filtering only the panes
+      // left Chevrolet with a tab reading "Electric" over the crossovers
+      // (2026-09-15).
+      const kept = tagged ? (state.panes ?? p.panes).filter((n) => source.some((m) => !tagsOf(m).length || tagsOf(m).includes(norm(n)))) : (state.panes ?? p.panes);
+      const names = kept.map(plain);
+      const tabs = kept
         // A plain button, with no tab semantics on it (2026-09-15). role="tab",
         // the ids, aria-controls and aria-selected are all added by the script
         // at wire time, because until it runs there is no tab interface for
@@ -884,15 +912,10 @@
       // a tab in the panel carries its rows with it. A row left blank is shared
       // - it appears in every pane - which is what makes it possible to tag
       // three of eight rows and have the rest still show up.
-      const tagged = source.some((m) => String(m.tab ?? '').trim());
       const stride = Math.max(1, Math.ceil(source.length / names.length));
-      const norm = (x) =>
-        String(x ?? '')
-          .trim()
-          .toLowerCase();
       const panes = names
         .map((name, i) => {
-          const sub = stack(tagged ? draw(source.filter((m) => !norm(m.tab) || norm(m.tab) === norm(name))) : draw(take(state.count, i * stride)));
+          const sub = stack(tagged ? draw(source.filter((m) => !tagsOf(m).length || tagsOf(m).includes(norm(name)))) : draw(take(state.count, i * stride)));
           // No `hidden` in the AUTHORED markup, deliberately (2026-09-15): the
           // script hides every pane but the current one at wire time, so a
           // reader with scripts off gets all of them in sequence instead of one

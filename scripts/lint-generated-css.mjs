@@ -215,6 +215,52 @@ for (const { id, bid, r } of variantPairs) {
   }
 }
 
+// A tabbed bar must not lie about what is behind a tab.
+//
+// htmlFor() fills panes by STRIDE unless the roster types its rows. With the
+// pattern's generic Trucks / SUVs / Crossovers defaults that meant Honda's
+// "Trucks" tab opened on an Accord, and every pane held the same ten vehicles
+// rotated (2026-09-15, Steven: "are trucks tab working on that honda tabbed
+// model bar?"). Rosters carry their live tab membership now.
+//
+// Only ONE thing here can actually break, and it did: the tab ROW and the
+// PANES have to come from the same list. Dropping panes a tagged roster cannot
+// fill, while building the row from the unfiltered list, left Chevrolet with a
+// tab reading "Electric" over its crossovers. Everything else a first cut of
+// this check asserted - no empty pane, no model under a tab it is not tagged
+// for - is enforced by construction in htmlFor(), so asserting it here only
+// proved the checker could not fail. Both were broken deliberately to find that
+// out; neither went red, which is why they are not here.
+//
+// The stride FALLBACK is reported rather than failed. A brand with an untagged
+// roster offered on a tabbed pattern gets generic pane names over an arbitrary
+// slice, which is wrong for a dealer but is not something this script can fix:
+// GMC has no live tabbed bar to take groupings from, so the answer is a
+// decision, not a lint rule.
+{
+  const rosterSrc = readFileSync('demo/assets/brands.js', 'utf8');
+  const tagged = new Set();
+  for (const m of rosterSrc.matchAll(/^ {4}([a-z0-9]+): \[\n {6}'[a-z0-9]*',\n {6}\[([\s\S]*?)\n {6}\],/gm)) {
+    if (/\['[^']+', \d+, \d+, '[^']+', '[^']+'\]/.test(m[2])) tagged.add(m[1]);
+  }
+
+  const stride = [];
+  for (const bid of Object.keys(BRANDS)) {
+    for (const pid of Object.keys(PATTERNS)) {
+      if (!PATTERNS[pid].panes || !variantsOf(pid).includes(bid)) continue;
+      const { html } = renderPattern(pid, 'check', { brand: bid });
+      const labels = [...html.matchAll(/<button type="button">(.*?)<\/button>/g)];
+      const panes = html.split('cargo-pane').length - 1;
+      if (labels.length !== panes) {
+        console.error(`  ${bid} on “${pid}”: ${labels.length} tab(s) over ${panes} pane(s) — the row and the panes came from different lists`);
+        problems++;
+      }
+      if (!tagged.has(bid)) stride.push(`${bid}/${pid}`);
+    }
+  }
+  if (stride.length) console.warn(`  note: ${stride.length} tabbed variant(s) still slice the roster by stride, so their tab names describe nothing: ${stride.join(', ')}`);
+}
+
 if (problems) {
   console.error(`\nlint-generated-css: ${problems} problem(s) in the CSS the copy panel ships.`);
   process.exit(1);

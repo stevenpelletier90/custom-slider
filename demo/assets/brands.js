@@ -73,26 +73,26 @@
     cadillac: [
       'cadillac',
       [
-        ['ct5-v.png', 320, 240, 'CT5-V'],
-        ['escalade-esv.png', 320, 240, 'Escalade ESV'],
-        ['escalade-iq.png', 320, 240, 'Escalade IQ'],
-        ['escalade-iql.png', 320, 240, 'Escalade IQL'],
-        ['escalade.png', 320, 240, 'Escalade'],
+        ['ct5-v.png', 320, 240, 'CT5-V', 'Sedans'],
+        ['escalade-esv.png', 320, 240, 'Escalade ESV', 'Crossovers/SUVs'],
+        ['escalade-iq.png', 320, 240, 'Escalade IQ', 'Electric | Crossovers/SUVs'],
+        ['escalade-iql.png', 320, 240, 'Escalade IQL', 'Electric | Crossovers/SUVs'],
+        ['escalade.png', 320, 240, 'Escalade', 'Crossovers/SUVs'],
       ],
     ],
     honda: [
       'honda',
       [
-        ['accord.png', 300, 140, 'Accord'],
-        ['civic.png', 300, 140, 'Civic'],
-        ['cr-v.png', 300, 140, 'CR-V'],
-        ['cr-v-hybrid.png', 300, 140, 'CR-V Hybrid'],
-        ['hr-v.png', 300, 140, 'HR-V'],
-        ['passport.png', 300, 140, 'Passport'],
-        ['pilot.png', 300, 140, 'Pilot'],
-        ['prologue.png', 300, 140, 'Prologue'],
-        ['odyssey.png', 300, 140, 'Odyssey'],
-        ['ridgeline.png', 300, 140, 'Ridgeline'],
+        ['accord.png', 300, 140, 'Accord', 'Cars'],
+        ['civic.png', 300, 140, 'Civic', 'Cars'],
+        ['cr-v.png', 300, 140, 'CR-V', 'SUVs & Crossovers'],
+        ['cr-v-hybrid.png', 300, 140, 'CR-V Hybrid', 'SUVs & Crossovers | Electrified'],
+        ['hr-v.png', 300, 140, 'HR-V', 'SUVs & Crossovers'],
+        ['passport.png', 300, 140, 'Passport', 'SUVs & Crossovers'],
+        ['pilot.png', 300, 140, 'Pilot', 'SUVs & Crossovers'],
+        ['prologue.png', 300, 140, 'Prologue', 'SUVs & Crossovers | Electrified'],
+        ['odyssey.png', 300, 140, 'Odyssey', 'Minivan & Truck'],
+        ['ridgeline.png', 300, 140, 'Ridgeline', 'Minivan & Truck'],
       ],
     ],
     infiniti: ['infiniti', [['qx80.png', 320, 240, 'QX80']]],
@@ -121,21 +121,21 @@
     subaru: [
       'subaru',
       [
-        ['uncharted.png', 350, 185, 'Uncharted'],
-        ['crosstrek.png', 350, 185, 'Crosstrek'],
-        ['forester.png', 350, 185, 'Forester'],
-        ['outback.png', 350, 185, 'Outback'],
-        ['ascent.png', 350, 185, 'Ascent'],
-        ['solterra.png', 350, 185, 'Solterra'],
-        ['trailseeker.png', 350, 185, 'Trailseeker'],
-        ['impreza.png', 350, 185, 'Impreza'],
-        ['brz.png', 350, 185, 'BRZ'],
-        ['wrx.png', 350, 185, 'WRX'],
-        ['crosstrek-hybrid.png', 350, 185, 'Crosstrek Hybrid'],
-        ['forester-hybrid.png', 350, 185, 'Forester Hybrid'],
-        ['crosstrek-wilderness.png', 350, 185, 'Crosstrek Wilderness'],
-        ['forester-wilderness.png', 350, 185, 'Forester Wilderness'],
-        ['outback-wilderness.png', 350, 185, 'Outback Wilderness'],
+        ['uncharted.png', 350, 185, 'Uncharted', 'All Vehicles | Electric'],
+        ['crosstrek.png', 350, 185, 'Crosstrek', 'All Vehicles | Gas'],
+        ['forester.png', 350, 185, 'Forester', 'All Vehicles | Gas'],
+        ['outback.png', 350, 185, 'Outback', 'All Vehicles | Gas'],
+        ['ascent.png', 350, 185, 'Ascent', 'All Vehicles | Gas'],
+        ['solterra.png', 350, 185, 'Solterra', 'All Vehicles | Electric'],
+        ['trailseeker.png', 350, 185, 'Trailseeker', 'All Vehicles | Electric'],
+        ['impreza.png', 350, 185, 'Impreza', 'All Vehicles | Gas'],
+        ['brz.png', 350, 185, 'BRZ', 'All Vehicles | Gas'],
+        ['wrx.png', 350, 185, 'WRX', 'All Vehicles | Gas'],
+        ['crosstrek-hybrid.png', 350, 185, 'Crosstrek Hybrid', 'All Vehicles | Hybrid'],
+        ['forester-hybrid.png', 350, 185, 'Forester Hybrid', 'All Vehicles | Hybrid'],
+        ['crosstrek-wilderness.png', 350, 185, 'Crosstrek Wilderness', 'All Vehicles | Wilderness'],
+        ['forester-wilderness.png', 350, 185, 'Forester Wilderness', 'All Vehicles | Wilderness'],
+        ['outback-wilderness.png', 350, 185, 'Outback Wilderness', 'All Vehicles | Wilderness'],
       ],
     ],
     volkswagen: ['volkswagen', [['atlas.png', 320, 240, 'Atlas']]],
@@ -154,18 +154,18 @@
     kia: [
       'kia',
       [
-        ['k4.png', 320, 240, 'K4'],
-        ['k5.png', 320, 240, 'K5'],
-        ['seltos.png', 320, 240, 'Seltos'],
-        ['sportage.png', 320, 240, 'Sportage'],
-        ['sorento.png', 320, 240, 'Sorento'],
-        ['telluride.png', 320, 240, 'Telluride'],
-        ['sorento-hybrid.png', 320, 240, 'Sorento Hybrid'],
-        ['niro.png', 320, 240, 'Niro'],
-        ['ev6.png', 320, 240, 'EV6'],
-        ['ev9.png', 320, 240, 'EV9'],
-        ['niro-ev.png', 320, 240, 'Niro EV'],
-        ['niro-plug-in-hybrid.png', 320, 240, 'Niro Plug-In Hybrid'],
+        ['k4.png', 320, 240, 'K4', 'Sedan'],
+        ['k5.png', 320, 240, 'K5', 'Sedan'],
+        ['seltos.png', 320, 240, 'Seltos', 'SUV / CUV / MPV'],
+        ['sportage.png', 320, 240, 'Sportage', 'SUV / CUV / MPV'],
+        ['sorento.png', 320, 240, 'Sorento', 'SUV / CUV / MPV'],
+        ['telluride.png', 320, 240, 'Telluride', 'SUV / CUV / MPV'],
+        ['sorento-hybrid.png', 320, 240, 'Sorento Hybrid', 'Hybrid / Electric'],
+        ['niro.png', 320, 240, 'Niro', 'Hybrid / Electric'],
+        ['ev6.png', 320, 240, 'EV6', 'Hybrid / Electric'],
+        ['ev9.png', 320, 240, 'EV9', 'Hybrid / Electric'],
+        ['niro-ev.png', 320, 240, 'Niro EV', 'Hybrid / Electric'],
+        ['niro-plug-in-hybrid.png', 320, 240, 'Niro Plug-In Hybrid', 'Hybrid / Electric'],
       ],
     ],
     mini: [
@@ -256,12 +256,12 @@
     ford: [
       'ford',
       [
-        ['mustang.png', 320, 240, 'Mustang'],
-        ['mach-e.png', 320, 240, 'Mach-E'],
-        ['escape.png', 320, 240, 'Escape'],
-        ['explorer.png', 320, 240, 'Explorer'],
-        ['bronco.png', 320, 240, 'Bronco'],
-        ['f-150.png', 320, 240, 'F-150'],
+        ['mustang.png', 320, 240, 'Mustang', 'Cars'],
+        ['mach-e.png', 320, 240, 'Mach-E', 'SUVs & Crossovers | All Electric'],
+        ['escape.png', 320, 240, 'Escape', 'SUVs & Crossovers'],
+        ['explorer.png', 320, 240, 'Explorer', 'SUVs & Crossovers'],
+        ['bronco.png', 320, 240, 'Bronco', 'SUVs & Crossovers'],
+        ['f-150.png', 320, 240, 'F-150', 'Trucks & Vans'],
       ],
     ],
     hyundai: [
@@ -295,16 +295,16 @@
     toyota: [
       'toyota',
       [
-        ['rav4.png', 518, 220, 'RAV4'],
-        ['highlander.png', 518, 220, 'Highlander'],
-        ['4runner.png', 518, 220, '4Runner'],
-        ['corolla.png', 518, 220, 'Corolla'],
-        ['corolla-hatchback.png', 518, 220, 'Corolla Hatchback'],
-        ['camry.png', 518, 220, 'Camry'],
-        ['tacoma.png', 518, 220, 'Tacoma'],
-        ['tundra.png', 518, 220, 'Tundra'],
-        ['landcruiser.png', 518, 220, 'Land Cruiser'],
-        ['grand-highlander.png', 518, 220, 'Grand Highlander'],
+        ['rav4.png', 518, 220, 'RAV4', 'Popular | Electrified'],
+        ['highlander.png', 518, 220, 'Highlander', 'Popular | Crossovers & SUVs'],
+        ['4runner.png', 518, 220, '4Runner', 'Popular | Crossovers & SUVs'],
+        ['corolla.png', 518, 220, 'Corolla', 'Cars & Minivan'],
+        ['corolla-hatchback.png', 518, 220, 'Corolla Hatchback', 'Cars & Minivan'],
+        ['camry.png', 518, 220, 'Camry', 'Popular | Cars & Minivan'],
+        ['tacoma.png', 518, 220, 'Tacoma', 'Popular | Trucks'],
+        ['tundra.png', 518, 220, 'Tundra', 'Popular | Trucks'],
+        ['landcruiser.png', 518, 220, 'Land Cruiser', 'Crossovers & SUVs'],
+        ['grand-highlander.png', 518, 220, 'Grand Highlander', 'Crossovers & SUVs'],
       ],
     ],
     // The mb-*.png cutouts alfaromeodemo1 ships beside its tall portrait
@@ -325,14 +325,23 @@
     chevrolet: [
       '',
       [
-        ['chrome-silverado-1500.webp', 320, 240, 'Silverado 1500'],
-        ['chrome-colorado.webp', 320, 240, 'Colorado'],
-        ['chrome-tahoe.webp', 320, 240, 'Tahoe'],
-        ['chrome-suburban.webp', 320, 240, 'Suburban'],
-        ['chrome-traverse.webp', 320, 240, 'Traverse'],
-        ['chrome-trax.webp', 320, 240, 'Trax'],
-        ['chrome-equinox.webp', 320, 240, 'Equinox'],
-        ['chrome-trailblazer.webp', 320, 240, 'Trailblazer'],
+        ['chrome-silverado-1500.webp', 320, 240, 'Silverado 1500', 'Trucks'],
+        ['chrome-colorado.webp', 320, 240, 'Colorado', 'Trucks'],
+        ['chrome-tahoe.webp', 320, 240, 'Tahoe', 'Crossovers/SUVs'],
+        ['chrome-suburban.webp', 320, 240, 'Suburban', 'Crossovers/SUVs'],
+        ['chrome-traverse.webp', 320, 240, 'Traverse', 'Crossovers/SUVs'],
+        ['chrome-trax.webp', 320, 240, 'Trax', 'Crossovers/SUVs'],
+        ['chrome-equinox.webp', 320, 240, 'Equinox', 'Crossovers/SUVs'],
+        ['chrome-trailblazer.webp', 320, 240, 'Trailblazer', 'Crossovers/SUVs'],
+        ['chrome-silverado-ev.png', 320, 240, 'Silverado EV', 'Trucks | Electric'],
+        ['chrome-silverado-2500hd.png', 320, 240, 'Silverado 2500HD', 'Trucks'],
+        ['chrome-silverado-3500hd.png', 320, 240, 'Silverado 3500HD', 'Trucks'],
+        ['chrome-bolt-ev.png', 320, 240, 'Bolt EV', 'Electric'],
+        ['chrome-equinox-ev.png', 320, 240, 'Equinox EV', 'Electric | Crossovers/SUVs'],
+        ['chrome-blazer-ev.png', 320, 240, 'Blazer EV', 'Electric | Crossovers/SUVs'],
+        ['chrome-brightdrop.png', 320, 240, 'BrightDrop', 'Electric | Commercial'],
+        ['chrome-blazer.png', 320, 240, 'Blazer', 'Crossovers/SUVs'],
+        ['chrome-corvette.png', 320, 240, 'Corvette', 'Performance'],
       ],
     ],
     chrysler: [
@@ -369,11 +378,18 @@
     const entry = ROSTERS[id];
     if (!entry) return null;
     const [folder, items] = entry;
-    return items.map(([file, w, h, name]) => ({
+    // The fifth slot is the TABS this model belongs to, "|"-separated, and it
+    // is what stops a tabbed bar slicing its roster by stride - which is how
+    // Honda's "Trucks" tab opened on an Accord (2026-09-15). A model is
+    // routinely in more than one: Subaru lists all fifteen under "All Vehicles"
+    // as well as under their fuel type. A row left untagged shows in every pane,
+    // so a roster with no tags behaves exactly as it did.
+    return items.map(([file, w, h, name, tab]) => ({
       img: folder ? `img/oem/${folder}/${file}` : `img/${file}`,
       w,
       h,
       name,
+      tab,
       mark: label,
       alt: `${label} ${name}`,
       sub: 'In stock now',
@@ -1013,6 +1029,16 @@
             props: {
               '--cs-gap': '0.1px',
             },
+          },
+          // The roster is tagged with hondademo1's tab names - the example for
+          // `honda-model-bar-slick-tabbed` - so the tabbed variant names the
+          // same four. Without this it fell back to the pattern's generic
+          // Trucks / SUVs / Crossovers, which Honda has never had and which no
+          // tag matched, so every pane came out EMPTY. Only the pane names are
+          // claimed here; the bar's values are hondademo2's, which is why the
+          // ledger files this brand against the plain slick code.
+          tabs: {
+            panes: ['SUVs & Crossovers', 'Minivan & Truck', 'Cars', 'Electrified'],
           },
         },
       },
