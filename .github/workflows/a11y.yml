@@ -46,19 +46,25 @@ jobs:
       - run: npm ci
       - run: npx playwright install --with-deps chromium
       # The audit reads the demo over HTTP (it drives the real builder, iframe
-      # and all), so the static server has to be up first. Backgrounded, then
-      # polled — `npm run serve` never exits on its own.
-      - name: serve the demo
+      # and all), so the server has to be up. ONE step for both, for two reasons
+      # a first attempt got wrong: a background process does not survive the end
+      # of the step that started it, and `esbuild --servedir` stops the moment
+      # stdin closes ("stopped automatically because stdin was closed"), which
+      # is exactly what happens to a backgrounded job in a non-interactive
+      # shell. `tail -f /dev/null` holds stdin open without feeding it anything.
+      #
+      # dist/ is what demo/index.html loads, so this audits the COMMITTED bytes
+      # — which is the right thing to audit, since they are what a dealer page
+      # gets. validate.yml separately proves they match src/.
+      - name: axe over every pattern and state
         run: |
-          npm run serve &
+          tail -f /dev/null | npm run serve &
           for i in $(seq 1 30); do
-            curl -sf http://127.0.0.1:8137/demo/index.html > /dev/null && exit 0
+            curl -sf http://127.0.0.1:8137/demo/index.html > /dev/null && break
             sleep 1
           done
-          echo "::error::the demo server never came up on 8137"
-          exit 1
-      # dist/ is what demo/index.html loads, so an audit of an unbuilt checkout
-      # would be auditing the committed bytes. That is the right thing to audit —
-      # they are what a dealer page gets — and validate.yml separately proves
-      # they match src/.
-      - run: npm run a11y
+          curl -sf http://127.0.0.1:8137/demo/index.html > /dev/null || {
+            echo "::error::the demo server never came up on 8137"
+            exit 1
+          }
+          npm run a11y
