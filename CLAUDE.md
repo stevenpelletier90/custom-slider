@@ -15,6 +15,17 @@ Design rationale lives in `docs/specs/` (start with `2026-07-13-custom-slider-de
 agreed but not started is `docs/roadmap.md`; findings triaged as non-blocking and left for a
 decision are `docs/backlog.md`; the dated evidence behind the rules here is `docs/history.md`.
 
+**What this repo can actually replace is `docs/coverage.md`** — one row per replacement code, not
+per brand. The list of codes is not ours: it is the Salesforce Knowledge article "Model Bar
+Replacement Codes" (000001851), 49 codes in scope across 24 OEM sections — the article lists 56, but
+the seven GM multi-make combinations are work the team no longer does (2026-09-15) and are recorded
+at the foot of the ledger, counted nowhere. A brand is the wrong unit (GM ships ten; CDJR ships one
+code across four marques this repo holds as four presets), and ten of the 49 are not carousels at
+all — static grids and tabbed lists, where swapping in a slider is a design decision rather than a
+measurement. A row moves to **Replacement built** when a preset in `brands.js` gains a `styles`
+block and a `source`; the state is `brands.js` and that file is the readable view. Measure one, add
+its row.
+
 ## Commands
 
 ```bash

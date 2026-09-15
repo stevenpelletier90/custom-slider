@@ -456,6 +456,27 @@ for (const [rel, path] of Object.entries(CMS)) {
   }
 }
 
+// docs/coverage.md says what this repo can actually replace, one row per
+// replacement code. Its state is THIS file's data — a code counts as built when
+// a brand preset carries measured `styles` and a `source` naming the page and
+// date it came off. A ledger that has to be remembered is a ledger that drifts,
+// and the drift is invisible: the preset works, the tests pass, and the only
+// thing that is wrong is the document someone reads to decide what to do next.
+// So the two are tied together here, both ways.
+const ledger = readFileSync('docs/coverage.md', 'utf8');
+for (const [id, b] of brands) {
+  const measured = b.styles && typeof b.source === 'string' && b.source.trim();
+  const row = ledger.split('\n').find((l) => l.startsWith('|') && l.includes('Replacement built') && new RegExp('`brands\\.js` ' + id + '\\b').test(l));
+  if (measured && !row) {
+    console.error(`  coverage: ${id} carries measured styles and a source but has no "Replacement built" row in docs/coverage.md — add it, naming the code it draws`);
+    bad++;
+  }
+  if (!measured && row) {
+    console.error(`  coverage: docs/coverage.md claims ${id} is built, but its preset has no styles block with a source — one of the two is wrong`);
+    bad++;
+  }
+}
+
 if (bad) {
   console.error(`\ncheck-looks: ${bad} problem(s).`);
   process.exit(1);

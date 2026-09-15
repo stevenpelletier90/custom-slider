@@ -62,16 +62,26 @@ and those files may carry their own `<style>`.
 
 Full pass over the pattern/look library plus tests for what it claims.
 
-### The brand tracker — every replacement code, one row each
+### The brand tracker — superseded by `docs/coverage.md` (2026-09-15)
 
 Started 2026-09-15 (Steven: "get every single replacement code converted to this new slider … make
-sure to address all of them"). One row per brand preset in `brands.js`; the live column is the
-2026-08-18 census (`docs/research/2026-08-18-oem-demo-slider-census.md`, §4.1 tab groups, §4
-ladders, §7 roster). **Measured** means the preset carries `styles` read off the live demo with
-Playwright and cites it in `source`; **preset only** means roster and ladder from the census, no
-values. Tick a row by measuring it — the state is `brands.js`, this table is the checklist. Order of
-attack: the tabbed bars first (one pattern, 13 OEMs), then the plain bars (the tile look, 10 OEMs),
-then the nine with no bar at all, which are a decision rather than a measurement.
+sure to address all of them") as one row per brand preset in `brands.js`, with the live column taken
+from the 2026-08-18 census.
+
+**Both halves of that turned out to be wrong, and the table below is kept only as the record of
+it.** The authority on which codes exist is the Salesforce Knowledge article "Model Bar Replacement
+Codes" (000001851), which Steven supplied on 2026-09-15: it lists 56 codes, of which **49 are in
+scope** — not 33. (The seven GM multi-make combinations are work the team no longer does.) A brand
+is not the unit — GM ships ten in-scope codes and CDJR ships one code covering four marques this
+repo holds as four presets. And the census's live column had drifted: every example link has now
+been re-read in Chromium, which found three dead hosts, ten codes that are not carousels at all, and
+one article row that contradicts the page it points at.
+
+`docs/coverage.md` is the live ledger now: one row per code, with the status vocabulary, the
+evidence behind each row, and how it is kept true. Tick a row there by measuring it — the state is
+still `brands.js`.
+
+The table that follows is the 2026-08-18 census reading, superseded.
 
 | Brand      | Demos | Live homepage bar (census)                                  | Status                                                    |
 | ---------- | ----- | ----------------------------------------------------------- | --------------------------------------------------------- |
