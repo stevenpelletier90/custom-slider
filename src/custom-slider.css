@@ -461,3 +461,5 @@
     transform: none;
   }
 }
+
+/* a11y gate probe: a relevant change, reverted on the branch only */
