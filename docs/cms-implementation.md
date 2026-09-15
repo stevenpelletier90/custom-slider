@@ -15,14 +15,17 @@
 
 Two files, no dependencies, no build step on the site side:
 
-| File                    | Gzip   | What it does                                                                                                              |
-| ----------------------- | ------ | ------------------------------------------------------------------------------------------------------------------------- |
-| `custom-slider.min.css` | 3.3 KB | Layout, scroll-snap physics, control styling — **plus** the card styles and column classes (1.4 KB engine + 2.2 KB cards) |
-| `custom-slider.min.js`  | 4.9 KB | Wires controls, state, autoplay, fade, drag                                                                               |
+| File                    | What it does                                                                                                      |
+| ----------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `custom-slider.min.css` | Layout, scroll-snap physics, control styling — **plus** the card styles, the column classes and the pattern rules |
+| `custom-slider.min.js`  | Wires controls, state, autoplay, fade, drag — **plus** the six shared pattern scripts                             |
 
-A site downloads 8.2 KB for the pair, which is what the demo masthead prints. `npm run size` is the
-authority — these figures come from it and go stale; re-read them there rather than trusting this
-table.
+**No byte figure is written down here.** Run `npm run size` for the current pair, or read the demo
+masthead, which fetches both shipped files and gzips them in the browser. This table used to carry
+the numbers and they were 50% low inside six weeks: the same two files absorbed the card styles and
+then the shared pattern structure, and every document repeating a figure drifted silently while the
+gate that actually enforces one (6656 B gzip on the engine, a 16 KiB guard on the pair) kept
+passing.
 
 Both come from `dist/` in this repo — never from `src/`, which is ES modules and does not run as a
 classic script. `dist/` also holds `custom-slider.css` and `custom-slider.js`, the same build
@@ -53,11 +56,11 @@ control space, so nothing shifts when the JS lands (CLS 0).
 
 ### Load it only on pages that use it
 
-The two tags above are cheap (8.2 KB gzip for both files, cached after the first page), so on a page
-or template you **know** contains a slider, link them directly and be done. The question only gets
-interesting when the natural place to load the engine is a **sitewide include** — then most pages on
-the site have no slider and would pay for the files anyway. For that case, paste this once into the
-sitewide Body Section, Bottom (or the footer include) instead of the two tags:
+The two tags above are cheap (`npm run size` for the current pair; cached after the first page), so
+on a page or template you **know** contains a slider, link them directly and be done. The question
+only gets interesting when the natural place to load the engine is a **sitewide include** — then
+most pages on the site have no slider and would pay for the files anyway. For that case, paste this
+once into the sitewide Body Section, Bottom (or the footer include) instead of the two tags:
 
     <script>
       (function () {
@@ -96,14 +99,13 @@ before the styles land. That is a small layout shift the direct `<link>` + `defe
 has: its CSS arrives before first paint and reserves the control space, which is why CLS stays 0.
 
 So: **direct tags on pages and templates known to contain a slider** (CLS 0, no flash); **the
-conditional loader for the sitewide-include case**, where it turns "every page pays 8.2 KB" into
-"only slider pages pay, slightly later".
+conditional loader for the sitewide-include case**, where it turns "every page pays for both files"
+into "only slider pages pay, slightly later".
 
 ### What about autoplay and fade?
 
 There is nothing further to conditionally load. Autoplay and fade are not separate resources or
-plugins — both ship inside the same two files (4.9 KB JS + 3.3 KB CSS gzip, 8.2 KB combined), and
-both are gated at runtime:
+plugins — both ship inside the same two files, and both are gated at runtime:
 
 - Autoplay setup early-returns before creating any timer or observer when `data-cs-autoplay` is
   absent, so a page without it executes essentially none of the autoplay code.

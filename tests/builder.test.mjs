@@ -12,7 +12,7 @@
 // shipping. This is the fast one, for every commit.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
-import { openBuilder, pick, patternIds, copyParts, setField, setLength, hostHtml, engineFiles, readSlider } from './helpers.mjs';
+import { openBuilder, pick, patternIds, copyParts, setField, setLength, hostHtml, engineFiles, readSlider, ORIGIN } from './helpers.mjs';
 
 test.describe.configure({ mode: 'serial' });
 
@@ -447,6 +447,90 @@ test.describe('the builder survives its own inputs', () => {
 // The button's LINK box went into href="" raw while its TEXT went through
 // escTab, so a stray quote ended the attribute early and `javascript:` pasted
 // a script onto a dealer page (2026-09-15 review).
+// README promises that with JavaScript disabled the strips still scroll and all
+// content is visible, and tests/engine.test.mjs holds the engine to it. The
+// tabbed bar is the one pattern that could not keep it: the markup carried
+// `hidden` on every pane but the first, so a reader with scripts off got one
+// pane and a row of buttons that switched nothing — three quarters of the
+// lineup unreachable, with dead controls in the tab order (2026-09-15 review).
+//
+// The fix is the engine's own shape: the HTML carries every pane visible, the
+// script hides all but the current one and sets data-tabs-on, and the tab row
+// is not presented until that attribute exists.
+test.describe('the tabbed bar keeps the no-JS promise', () => {
+  test('scripts off shows every pane and no dead tab controls', async ({ browser }) => {
+    await pick(page, 'tabs');
+    await page.waitForTimeout(300);
+    const snip = await copyParts(page);
+    const markup = hostHtml({ ...engine, css: snip.css, html: snip.html, js: snip.js });
+
+    const look = async (javaScriptEnabled) => {
+      const c = await browser.newContext({ javaScriptEnabled, viewport: { width: 1200, height: 900 } });
+      const p = await c.newPage();
+      await p.setContent(markup, { waitUntil: 'load' });
+      await p.waitForTimeout(400);
+      const r = {
+        panesInDoc: await p.locator('.cargo-pane').count(),
+        panesVisible: await p.locator('.cargo-pane:visible').count(),
+        tabsVisible: await p.locator('[role="tab"]:visible').count(),
+        slidesVisible: await p.locator('.cs-slide:visible').count(),
+        headingVisible: await p.locator('.cargo-title:visible').count(),
+        buttonVisible: await p.locator('.cargo-more a:visible').count(),
+      };
+      await c.close();
+      return r;
+    };
+
+    const on = await look(true);
+    const off = await look(false);
+
+    assert.ok(on.panesInDoc >= 3, `the fixture has ${on.panesInDoc} panes, so this proves nothing`);
+    // Scripts on: one pane, a working tab row. Unchanged behaviour.
+    assert.equal(on.panesVisible, 1, `scripts on shows ${on.panesVisible} panes, not one`);
+    assert.equal(on.tabsVisible, on.panesInDoc, 'scripts on did not present the tab row');
+
+    // Scripts off: every pane, and NO tab row — a button that switches nothing
+    // is worse than no button, and it would sit in the tab order.
+    assert.equal(off.panesVisible, off.panesInDoc, `scripts off shows ${off.panesVisible} of ${off.panesInDoc} panes — the rest of the lineup is unreachable`);
+    assert.equal(off.tabsVisible, 0, `scripts off left ${off.tabsVisible} tab buttons that cannot switch anything`);
+    assert.ok(off.slidesVisible > on.slidesVisible, `scripts off reached ${off.slidesVisible} slides, no more than the ${on.slidesVisible} one pane holds`);
+    // The authored words are authored, so they survive either way.
+    assert.equal(off.headingVisible, 1, 'the heading vanished with scripts off');
+    assert.equal(off.buttonVisible, 1, 'the button under the bar vanished with scripts off');
+  });
+
+  // And the upgrade costs nothing to look at: the panes must be hidden by the
+  // time the page first paints, or a dealer page renders the bar at three times
+  // its height and collapses it. Measured frame by frame from the first.
+  test('the upgrade lands before first paint, so the bar never flashes open', async ({ browser }) => {
+    await pick(page, 'tabs');
+    await page.waitForTimeout(300);
+    const snip = await copyParts(page);
+    const c = await browser.newContext({ viewport: { width: 1200, height: 900 } });
+    const p = await c.newPage();
+    await p.addInitScript(() => {
+      window.__h = [];
+      const tick = () => {
+        const el = document.querySelector('[data-cargo="tabs"]');
+        if (el) window.__h.push(Math.round(el.getBoundingClientRect().height));
+        if (window.__h.length < 60) requestAnimationFrame(tick);
+      };
+      requestAnimationFrame(tick);
+    });
+    // A real navigation, not setContent: addInitScript only applies on one, so
+    // with setContent the sampler never runs and window.__h stays undefined.
+    await p.route(`${ORIGIN}/__tabs-flash`, (route) => route.fulfill({ contentType: 'text/html', body: hostHtml({ ...engine, css: snip.css, html: snip.html, js: snip.js }) }));
+    await p.goto(`${ORIGIN}/__tabs-flash`, { waitUntil: 'load' });
+    await p.waitForTimeout(900);
+    const heights = (await p.evaluate(() => window.__h)).filter(Boolean);
+    await c.close();
+    assert.ok(heights.length > 5, `only ${heights.length} frames sampled, so this proves nothing`);
+    const tall = Math.max(...heights);
+    const settled = heights[heights.length - 1];
+    assert.ok(tall <= settled * 1.25, `the bar painted at ${tall}px before settling at ${settled}px — the panes were open when the page first drew`);
+  });
+});
+
 test.describe('what a designer types cannot break the markup', () => {
   test('the button link is escaped, and only a real link scheme survives', async () => {
     await pick(page, 'tabs');

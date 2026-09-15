@@ -748,6 +748,15 @@ ${VIDEO_DIALOG_CSS}`,
 /* Android WebView has no scrollbar-width, and in-app browsers are real dealer
    traffic - the same reason the engine keeps both on its track. */
 .cargo-tabs::-webkit-scrollbar { display: none; }
+/* Progressive enhancement, the same shape the engine itself uses: the markup
+   carries every pane visible, and the script hides all but the current one and
+   sets data-tabs-on at wire time. Until it does, the tab row is not presented at
+   all - a row of buttons that switch nothing is worse than no row, and a
+   keyboard reader would tab through four of them. With scripts off the attribute
+   never arrives, so the reader gets all the panes in sequence under the heading
+   instead of one pane and four dead controls. (0,2,0), one over the row's own
+   rule, so it wins wherever the sheet lands. */
+%wrap%:not([data-tabs-on]) .cargo-tabs { display: none; }
 /* Everything below keys on data-more, which the script sets only while the row
    actually overflows. Centring a scroller that overflows puts its first tab out
    of reach, and a cell that shares the row equally (Ford's 1 1 0%) would keep
@@ -869,6 +878,11 @@ ${VIDEO_DIALOG_CSS}`,
     });
     if (picked) reveal(tabs[i]);
   };
+  // The marker the CSS waits for: from here the tab row is a control that
+  // works, so it may be presented. Set BEFORE show(0) so the row and the pane
+  // hiding arrive in the same frame rather than the row appearing over three
+  // open panes.
+  wrap.setAttribute('data-tabs-on', '');
   tabs.forEach((t, i) => t.addEventListener('click', () => show(i, true)));
   wrap.addEventListener('keydown', (e) => {
     const i = tabs.indexOf(e.target);

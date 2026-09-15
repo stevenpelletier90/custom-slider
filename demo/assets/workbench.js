@@ -888,7 +888,14 @@
       const panes = names
         .map((name, i) => {
           const sub = stack(tagged ? draw(source.filter((m) => !norm(m.tab) || norm(m.tab) === norm(name))) : draw(take(state.count, i * stride)));
-          return `  <div class="cargo-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}"${i === 0 ? '' : ' hidden'}>\n${carousel(sub, escTab(name), '  ', i === 0)}\n  </div>`;
+          // No `hidden` in the AUTHORED markup, deliberately (2026-09-15): the
+          // script hides every pane but the current one at wire time, so a
+          // reader with scripts off gets all of them in sequence instead of one
+          // pane and a row of buttons that do nothing. Same shape as the engine
+          // itself — the HTML carries the content, the script upgrades how it is
+          // presented. The tab row is hidden until the script says it works; see
+          // %wrap%:not([data-tabs-on]) in the pattern's CSS.
+          return `  <div class="cargo-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}">\n${carousel(sub, escTab(name), '  ', i === 0)}\n  </div>`;
         })
         .join('\n');
       // The heading over the bar and the button under it are authored HTML

@@ -1,10 +1,13 @@
 # Custom Slider
 
-Dependency-free scroll-snap slider/carousel. The engine is 6.2 KB gzip (JS 4.9 + CSS 1.4); the
-shipped stylesheet also carries 2 KB of card styles, so a site downloads 8.2 KB in total — the
-figure the demo masthead prints, from the same measurement. No build step required to use, themed
-entirely with CSS custom properties. Built to be maintained in-house: the whole engine is one
-commented file, `src/custom-slider.js`. `npm run size` is the authority on all of these.
+Dependency-free scroll-snap slider/carousel. **`npm run size` is the authority on every byte
+figure** and the only place one is written down: CI enforces a 6656 B gzip budget on the engine and
+a 16 KiB guard on what a site actually downloads, and the demo masthead fetches the two shipped
+files and gzips them in the browser, so its number cannot go stale either. Nothing else in this repo
+repeats a current size — a figure copied into prose was 50% low within six weeks, because the same
+two files grew the card styles and the shared pattern structure after it was written. No build step
+required to use, themed entirely with CSS custom properties. Built to be maintained in-house: the
+whole engine is one commented file, `src/custom-slider.js`.
 
 The browser owns the physics (touch, drag, momentum, snapping — CSS `scroll-snap`); the JS only
 wires controls, state, autoplay, and the gallery variant — plus the one physics gap browsers leave
@@ -165,9 +168,9 @@ for what is actually on the shared path today, and the rename map for moving a p
 ## Card styles come with the stylesheet
 
 `dist/custom-slider.min.css` is the engine **plus** a small library of card styling: the seven card
-looks and a set of column classes, about 2 KB gzip of the file. The engine itself styles no cards on
-purpose — `cs-*` is mechanism, `cargo-*` is content — but every site that links it gets the card
-half too, so a slider is mostly just its markup:
+looks and a set of column classes (`npm run size` prints the share). The engine itself styles no
+cards on purpose — `cs-*` is mechanism, `cargo-*` is content — but every site that links it gets the
+card half too, so a slider is mostly just its markup:
 
 ```html
 <link rel="stylesheet" href="/path/custom-slider.min.css" />
@@ -496,7 +499,8 @@ so they are safe in slide text and headings. They do **not** resolve in the Styl
 ```bash
 npm install
 npm run build   # src → dist (esbuild)
-npm run size    # build + gzip budget gate (fails at or over 6656 B / 6.5 KB total)
+npm run size    # build + gzip budget gate (fails at or over 6656 B for the engine) — and the
+                # authority on every byte figure; nothing else here repeats one
 npm run serve   # http://127.0.0.1:8137 (for Lighthouse)
 ```
 

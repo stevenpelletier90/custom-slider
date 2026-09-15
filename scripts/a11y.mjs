@@ -17,7 +17,11 @@
 //   npm run a11y -- --url ...    # audit somewhere else
 //
 // Kept out of `npm run validate` on purpose: it drives a real browser and needs
-// a server, so it is a deliberate run, not part of the pre-commit gate.
+// a server, so it stays out of the fast pre-commit command. It IS a gate, in its
+// own workflow (.github/workflows/a11y.yml) on any change to src/, dist/, demo/
+// or the build scripts. It was a "deliberate run" until 2026-09-15, and in that
+// arrangement it drifted for a week exiting non-zero on a selector that had been
+// deleted, which nobody saw.
 
 import { chromium } from 'playwright';
 import { readFileSync } from 'node:fs';

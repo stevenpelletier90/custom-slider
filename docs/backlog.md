@@ -12,10 +12,15 @@ the IntersectionObserver "threshold does nothing" item was measured on all three
 never a bug (a single 0.25 threshold reports nothing at 0.1, and its entry's `isIntersecting` is
 false below the crossing). `docs/history.md` has the dates.
 
-Pruned again 2026-09-15 after a third outside review. Gone: the gallery-thumbs `cloneNode` entry
-(the gallery has built a fresh `document.createElement('img')` since before that review — the
-finding was already stale when it was written down). The IntersectionObserver line above now has a
-measurement in BOTH directions behind it, not just the ascending one — see `docs/history.md`.
+Pruned again 2026-09-15 after a third outside review, and once more after its follow-up, which was
+right that a stale finding here becomes an instruction to the next review agent. Also gone: the
+copy-panel `<style>` entry — the panel has had three buttons for a while, each copying the form its
+destination field can hold (`wb-copy-css` hands over `state.cssText`, raw), and only the combined
+display box carries the tags, which is what makes the finished page readable. Gone: the
+gallery-thumbs `cloneNode` entry (the gallery has built a fresh `document.createElement('img')`
+since before that review — the finding was already stale when it was written down). The
+IntersectionObserver line above now has a measurement in BOTH directions behind it, not just the
+ascending one — see `docs/history.md`.
 
 ## 2026-09-15 — the phone pass, two decided noes
 
@@ -52,6 +57,16 @@ measurement in BOTH directions behind it, not just the ascending one — see `do
 - MANUAL QA remaining (needs Steven/humans, spec §11): live NVDA/VoiceOver pass (status-region
   wording + gallery announcements); Windows Firefox at 125-150% DPI; Tab-into-cards in stable
   Safari; one pre-26.2-iOS device (scrollend fallback).
+- The NVDA/VoiceOver pass is the one that also settles the gallery's two polite live regions below
+  (the status region plus the track, per APG). No amount of further static review can answer whether
+  they double-announce — a person has to listen to it.
+- `escUrl` through a real DealerOn styleCode round-trip (2026-09-15). The generated markup is proven
+  safe in `tests/builder.test.mjs`, but the platform's server-side processing has enough documented
+  weirdness that one actual paste / minify / save / reload cycle is worth doing before calling it
+  production-proven.
+- The thumb rail's `scroll-behavior: auto` shield on a real iOS Safari, Android WebView or in-app
+  browser (2026-09-15). The three automated engines cover the behaviour; that compatibility CSS
+  exists for environments none of them is.
 
 ## Minor findings for final review triage
 
@@ -102,9 +117,6 @@ BUILD (measured):
 
 DEMO (pre-existing, needs Steven's CMS knowledge):
 
-- The copy panel emits `<style>…</style>` around the CSS, but docs/cms-no-hosting.md and
-  docs/cms-implementation.md both state styleCode is RAW CSS and that pasting tags corrupts the
-  aggregated stylesheet. One of the two is wrong.
 - Three patterns (cards +21.5px, grid +42.8px, tabs +147.3px) grow taller in a host page with heavy
   typography — the repo's own "every card sets its own font-size and line-height" rule. Verified
   identical before/after the rename against a worktree of b08b990, so pre-existing, not a

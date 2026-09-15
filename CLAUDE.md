@@ -139,6 +139,16 @@ the preview. An arrow overlays media but never text: a text card reserves
 `padding-inline: calc(var(--cs-arrow-size) + 0.4em)`. Both are held by the paste-parity test: each
 snippet in a hostile host page must match the preview to the pixel.
 
+**The tabbed bar's panes are authored VISIBLE; the script hides them** (2026-09-15). `htmlFor()`
+emits no `hidden`, the tab script sets `data-tabs-on` on the wrap and hides all but the current pane
+at wire time, and `%wrap%:not([data-tabs-on]) .cargo-tabs` keeps the tab row out of the page until
+then. The old markup carried `hidden` on every pane but the first, so a reader with scripts off got
+one pane and a row of buttons that switched nothing — three quarters of the lineup unreachable, and
+dead controls in the tab order, against the README's own promise that all content is visible without
+JS. The upgrade costs nothing to look at: measured frame by frame from first paint, the bar draws at
+one height (CLS 0.0004), because the deferred script lands before the first render.
+`tests/builder.test.mjs` holds both halves — the fallback and the no-flash.
+
 **The tab row never wraps, at any width** (2026-09-15). `.cargo-tabs` is `nowrap` +
 `overflow-x: auto`, because the divider glyph hangs off the tab that FOLLOWS it, so every wrapped
 row started with a `|` dangling in the margin — and Chevrolet's five body styles wrapped at 992 as
@@ -227,10 +237,13 @@ the only step that looks at what is actually in the repo rather than at what CI 
 `.github/workflows/validate.yml` runs `validate`, `size` and `test` on every push and pull request
 (Chromium), and a second job runs `test:browsers` — `tests/engine.test.mjs` alone on Firefox and
 WebKit, the engine's contract where its Safari and Firefox decisions actually execute. After a push,
-watch both until green. `npm run a11y` (axe over every pattern, the brands page, the two catalogue
-pages at 390, both themes, both dialogs; needs `npm run serve`) is a deliberate run, not a gate; it
-drifted for a week when the look picker it clicked was deleted, so run it after any change to the
-rail or the demo pages.
+watch both until green. `.github/workflows/a11y.yml` is the third: `npm run a11y` (axe over every
+pattern, the brands page, the two catalogue pages at 390, both themes, both dialogs) on any change
+to `src/`, `dist/`, `demo/` or the build scripts. It became a gate on 2026-09-15 — as "a deliberate
+run" it drifted for a week exiting non-zero on a deleted selector, and a nightly job would report a
+contrast regression only after it had merged and deployed. It stays out of `npm run validate`, which
+is the fast local command: this one needs a browser and a server. Run it locally after any change to
+the rail or the demo pages rather than waiting for CI.
 
 ## Architecture
 

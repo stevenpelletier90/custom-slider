@@ -1,0 +1,64 @@
+# axe over every pattern and page state, as a gate rather than a good intention.
+#
+# Its own workflow, not a job in validate.yml, for two reasons. GitHub filters
+# paths per WORKFLOW, not per job, and this only needs to run when something it
+# can see has changed. And `npm run validate` is the fast local pre-commit gate —
+# this one drives a real browser and needs a server, so it stays out of that
+# command (scripts/a11y.mjs says so at the top) while still running in CI.
+#
+# Why a gate at all, when CLAUDE.md called it "a deliberate run": it kept finding
+# real defects that the 299-test suite does not look for — a #777 lead paragraph
+# under the AA floor, a current dot at 1.43:1 — and it spent a week silently
+# exiting non-zero on a deleted selector precisely because nothing ran it
+# (2026-09-15). A nightly job would report a contrast regression after it had
+# merged and deployed to Pages, which for a component whose accessibility
+# behaviour is a frozen contract is backwards. Add a `schedule:` trigger here if
+# a nightly belt-and-braces run is ever wanted too.
+name: a11y
+on:
+  push:
+    paths:
+      - 'src/**'
+      - 'dist/**'
+      - 'demo/**'
+      - 'scripts/a11y.mjs'
+      - 'scripts/build-*.mjs'
+      - '.github/workflows/a11y.yml'
+      - 'package.json'
+  pull_request:
+    paths:
+      - 'src/**'
+      - 'dist/**'
+      - 'demo/**'
+      - 'scripts/a11y.mjs'
+      - 'scripts/build-*.mjs'
+      - '.github/workflows/a11y.yml'
+      - 'package.json'
+jobs:
+  axe:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install --with-deps chromium
+      # The audit reads the demo over HTTP (it drives the real builder, iframe
+      # and all), so the static server has to be up first. Backgrounded, then
+      # polled — `npm run serve` never exits on its own.
+      - name: serve the demo
+        run: |
+          npm run serve &
+          for i in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8137/demo/index.html > /dev/null && exit 0
+            sleep 1
+          done
+          echo "::error::the demo server never came up on 8137"
+          exit 1
+      # dist/ is what demo/index.html loads, so an audit of an unbuilt checkout
+      # would be auditing the committed bytes. That is the right thing to audit —
+      # they are what a dealer page gets — and validate.yml separately proves
+      # they match src/.
+      - run: npm run a11y

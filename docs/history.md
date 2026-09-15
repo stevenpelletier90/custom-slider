@@ -304,6 +304,50 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
     `behavior: 'auto'` entry, rewritten as resolved rather than deleted because it is the record of
     why "never `scroll-behavior` on the track" means never `smooth`, not never `auto`.
   - Cost: the engine went 6424 → 6514 B gzip against the 6656 budget. No raise needed.
+- 2026-09-15, the third review's follow-up — it withdrew the IntersectionObserver finding (Blink
+  defines `IsIntersecting()` as `threshold_index_ > 0`, which is why the three-engine probe
+  disagrees with the spec text and MDN, and the both-directions test is the thing that matters) and
+  raised one the hardening pass had missed:
+  - **The size documentation was 50% low.** README said the engine was 6.2 KB and a site downloaded
+    8.2 KB; `docs/cms-implementation.md` carried a 3.3/4.9/8.2 table and repeated 8.2 KB in three
+    more places. Actual at the time: 6514 B engine, 12331 B for the pair. Not drift — the same two
+    files absorbed the generated card styles and then the shared pattern structure after those
+    numbers were written. Both documents now carry NO current figure at all and point at
+    `npm run size`, which is the gate, and at the demo masthead, which fetches both shipped files
+    and gzips them in the browser (`theme.js`) so its number cannot go stale either.
+    `docs/history.md` keeps its old numbers: that section says "Sizes at the time", which is what
+    history is for.
+  - **The a11y audit became a gate** (`.github/workflows/a11y.yml`), on any change to `src/`,
+    `dist/`, `demo/` or the build scripts. Its own workflow because GitHub filters paths per
+    workflow, not per job, and it stays out of `npm run validate`, which is the fast local command.
+    Nightly was considered and rejected: a contrast regression reported the morning after it merged
+    and deployed to Pages is backwards for a component whose accessibility behaviour is a frozen
+    contract. The audit had already earned this twice — the #777 lead paragraph at 4.47:1, and the
+    week it spent silently exiting non-zero on a selector that had been deleted.
+  - **The tabbed bar got a real no-JS fallback** rather than a written exception. The markup carried
+    `hidden` on every pane but the first, so with scripts off a reader got one pane of the lineup
+    and four buttons that switched nothing — dead controls, in the tab order, against the README's
+    own promise. Now: no `hidden` in the authored markup, the script sets `data-tabs-on` and hides
+    all but the current pane at wire time, and `%wrap%:not([data-tabs-on]) .cargo-tabs` withholds
+    the tab row until it exists. Measured on the real pasted snippet against a hostile host: scripts
+    on, 1 pane and 3 tabs and 8 slides; scripts off, 3 panes, 0 tabs, 24 slides, heading and button
+    intact. The obvious objection is the flash — all three panes rendering before the script
+    collapses them, on a component whose whole CLS story is that nothing shifts. Measured rather
+    than argued: sampled every animation frame from the first, the bar draws at ONE height (218px,
+    120 frames, CLS 0.0004), because the deferred script runs before first paint. A
+    `<noscript><style>` guard was considered as the zero-risk alternative and was not needed; it
+    would also have had to survive the platform's block editor, which is not a thing to bet on.
+  - **The copy-panel backlog entry was stale.** It said the panel emits `<style>…</style>` around
+    CSS that the platform's Style Only field takes raw. There have been three buttons for a while,
+    each copying the form its destination field can hold — `wb-copy-css` hands over `state.cssText`,
+    no tags — and only the combined display box carries them, so the finished page reads as a page.
+    The entry was a trap for the next review agent, which is the reviewer's own argument for
+    pruning.
+  - The two manual checks the hardening pass left unverified moved into the manual-QA list rather
+    than growing more code around them: `escUrl` through a real styleCode round-trip, and the thumb
+    rail's scroll shield on a real iOS/Android in-app browser. The NVDA/VoiceOver pass is noted
+    there as the thing that also settles the gallery's two-live-regions question, which no further
+    static review can answer.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

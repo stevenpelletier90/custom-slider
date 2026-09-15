@@ -1236,6 +1236,9 @@
 :where([data-cargo=tabs]) .cargo-tabs::-webkit-scrollbar {
   display: none;
 }
+[data-cargo=tabs]:not([data-tabs-on]) .cargo-tabs {
+  display: none;
+}
 :where([data-cargo=tabs]) .cargo-tabs[data-more] {
   justify-content: flex-start;
 }

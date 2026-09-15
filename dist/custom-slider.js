@@ -775,6 +775,11 @@
           });
           if (picked) reveal(tabs[i]);
         };
+        // The marker the CSS waits for: from here the tab row is a control that
+        // works, so it may be presented. Set BEFORE show(0) so the row and the pane
+        // hiding arrive in the same frame rather than the row appearing over three
+        // open panes.
+        wrap.setAttribute('data-tabs-on', '');
         tabs.forEach((t, i) => t.addEventListener('click', () => show(i, true)));
         wrap.addEventListener('keydown', (e) => {
           const i = tabs.indexOf(e.target);
