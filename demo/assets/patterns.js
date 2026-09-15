@@ -1219,5 +1219,19 @@ ${PHOTO_CSS}
   // file://, and this demo has always had to work when opened by double-click.
   // The rosters go out too: the builder keys them by name for a look that asks
   // to be drawn on a particular one (ROSTERS in workbench.js).
-  globalThis.CARGO = Object.assign(globalThis.CARGO || {}, { PATTERNS, VEHICLES, PHOTOS, MODELS, SERVICES, LOGOS, PLACES, PHOTO_CAPTION_CSS, PHOTO_LINK_CSS, VIDEO_DIALOG_HTML, escTab, escUrl, clamp });
+  globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
+    PATTERNS,
+    VEHICLES,
+    PHOTOS,
+    MODELS,
+    SERVICES,
+    LOGOS,
+    PLACES,
+    PHOTO_CAPTION_CSS,
+    PHOTO_LINK_CSS,
+    VIDEO_DIALOG_HTML,
+    escTab,
+    escUrl,
+    clamp,
+  });
 })();
