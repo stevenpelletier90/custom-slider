@@ -13,8 +13,14 @@
 // unmatched rather than guessed at - an almost-right cutout path is worse than
 // an honest gap, because it 404s silently on a live page.
 //
-// A FULL RE-RUN IS CURRENTLY LOSSY - check the diff before committing it
-// (2026-09-15). Re-running this to pick up 25 new pairs dropped 33 that a
+// A FULL RE-RUN IS CURRENTLY LOSSY, AND CAN LEAVE cms-paths.js EMPTY - check
+// the diff before committing it, and never start this from a pipeline whose
+// reader can close early. A run interrupted at the last step (`node ... | head`
+// is enough) has already truncated OUT to open it, so the file on disk is zero
+// bytes and every pasted snippet loses its platform path. Restore with
+// `git checkout -- demo/assets/cms-paths.js` (2026-09-15, seen).
+//
+// Lossy on its own terms too: re-running it to pick up 25 new pairs dropped 33 that a
 // direct fetch then proved were still byte-identical: every brand logo plus
 // eight cutouts. The run makes ~2000 requests, so the likeliest cause is the
 // far end throttling, and a transient miss is indistinguishable here from a
@@ -209,6 +215,91 @@ const LIBRARY = {
   'oem/honda/prologue.png': '/static/brand-honda/Homepage/model-bar/2026/sm/prologue.png',
   'oem/honda/odyssey.png': '/static/brand-honda/Homepage/model-bar/2026/sm/odyssey.png',
   'oem/honda/ridgeline.png': '/static/brand-honda/Homepage/model-bar/2026/sm/ridgeline.png',
+
+  // The four rosters taken up to their live bars on 2026-09-15. Cadillac and
+  // Ford moved off ChromeData onto their bars' own folders, which is what
+  // those bars serve and the only route that reaches every model; Kia keeps
+  // the mix its bar uses. Listed here so a re-run cannot lose them - the
+  // warning at the top of this file is about exactly that.
+
+  // Cadillac - brand-cadillac/homepage/model-bar/2026, all fourteen.
+  'oem/cadillac/vistiq.png': '/static/brand-cadillac/homepage/model-bar/2026/VISTIQ.png',
+  'oem/cadillac/lyriq.png': '/static/brand-cadillac/homepage/model-bar/2026/LYRIQ.png',
+  'oem/cadillac/optiq.png': '/static/brand-cadillac/homepage/model-bar/2026/OPTIQ.png',
+  'oem/cadillac/optiq-v.png': '/static/brand-cadillac/homepage/model-bar/2026/OPTIQ-V.png',
+  'oem/cadillac/escalade-iq.png': '/static/brand-cadillac/homepage/model-bar/2026/Escalade-IQ.png',
+  'oem/cadillac/escalade-iql.png': '/static/brand-cadillac/homepage/model-bar/2026/Escalade-IQL.png',
+  'oem/cadillac/escalade.png': '/static/brand-cadillac/homepage/model-bar/2026/Escalade.png',
+  'oem/cadillac/escalade-v.png': '/static/brand-cadillac/homepage/model-bar/2026/Escalade-V.png',
+  'oem/cadillac/escalade-esv.png': '/static/brand-cadillac/homepage/model-bar/2026/Escalade-ESV.png',
+  'oem/cadillac/xt4.png': '/static/brand-cadillac/homepage/model-bar/2026/XT-4.png',
+  'oem/cadillac/xt5.png': '/static/brand-cadillac/homepage/model-bar/2026/XT-5.png',
+  'oem/cadillac/xt6.png': '/static/brand-cadillac/homepage/model-bar/2026/XT-6.png',
+  'oem/cadillac/ct4.png': '/static/brand-cadillac/homepage/model-bar/2026/CT4.png',
+  'oem/cadillac/ct5.png': '/static/brand-cadillac/homepage/model-bar/2026/CT5.png',
+
+  // Ford - brand-ford/Homepage/model-bar, all twelve (Transit Connect is still on 2023).
+  'oem/ford/bronco-sport.png': '/static/brand-ford/Homepage/model-bar/2025/bronco-sport.png',
+  'oem/ford/bronco.png': '/static/brand-ford/Homepage/model-bar/2025/bronco.png',
+  'oem/ford/explorer.png': '/static/brand-ford/Homepage/model-bar/2025/explorer.png',
+  'oem/ford/expedition.png': '/static/brand-ford/Homepage/model-bar/2025/expedition.png',
+  'oem/ford/mustang-mach-e.png': '/static/brand-ford/Homepage/model-bar/2025/mach-e.png',
+  'oem/ford/maverick.png': '/static/brand-ford/Homepage/model-bar/2025/maverick.png',
+  'oem/ford/ranger.png': '/static/brand-ford/Homepage/model-bar/2025/ranger.png',
+  'oem/ford/transit-connect.png': '/static/brand-ford/Homepage/model-bar/2023/transit-connect-left.png',
+  'oem/ford/f-150.png': '/static/brand-ford/Homepage/model-bar/2025/f-150.png',
+  'oem/ford/super-duty.png': '/static/brand-ford/Homepage/model-bar/2025/super-duty.png',
+  'oem/ford/transit.png': '/static/brand-ford/Homepage/model-bar/2025/transit.png',
+  'oem/ford/mustang.png': '/static/brand-ford/Homepage/model-bar/2025/mustang.png',
+
+  // Kia - the mixed set kiademo2 draws: ChromeData where that bar uses it, brand-kia/Homepage/model-bar where it does not.
+  'oem/kia/k4.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026KIC21_01_320/cc_2026KIC212039153_01_320_SWP.png',
+  'oem/kia/k4-hatchback.png': '/static/brand-kia/Homepage/model-bar/2026/k4-hatchback.png',
+  'oem/kia/k5.png': '/static/brand-kia/Homepage/model-bar/2026/k5-profile-320.png',
+  'oem/kia/seltos.png': '/assets/stock/Expanded/Transparent/320/2026KIS08_320/2026KIS081978066_320_01.png',
+  'oem/kia/sportage.png': '/static/brand-kia/Homepage/model-bar/2026/sportage-profile-320.png',
+  'oem/kia/sorento.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026KIS02_01_320/cc_2026KIS022005133_01_320_RSL.png',
+  'oem/kia/carnival-mpv.png': '/static/brand-kia/Homepage/model-bar/2027/carnival.png',
+  'oem/kia/telluride.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2027KIS06_01_320/cc_2027KIS062056820_01_320_RSL.png',
+  'oem/kia/niro.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026KIS04_01_320/cc_2026KIS042043916_01_320_CR5.png',
+  'oem/kia/ev6.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2025KIS11_01_320/cc_2025KIS112053522_01_320_MLB.png',
+  'oem/kia/ev9.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026KIS14_01_320/cc_2026KIS141982086_01_320_RSL.png',
+  'oem/kia/niro-ev.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2025KIS07_01_320/cc_2025KIS072033080_01_320_SWP.png',
+  'oem/kia/niro-plug-in-hybrid.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2025KIS05_01_320/cc_2025KIS051989274_01_320_M4B.png',
+  'oem/kia/sorento-hybrid.png': '/assets/stock/ColorMatched_01/Transparent/320/cc_2026KIS09_01_320/cc_2026KIS092006874_01_320_CGE.png',
+  'oem/kia/sportage-hybrid.png': '/static/brand-kia/Homepage/model-bar/2027/sportage-hev.png',
+  'oem/kia/sportage-plug-in-hybrid.png': '/static/brand-kia/Homepage/model-bar/2027/sportage-phev.png',
+  'oem/kia/telluride-hybrid.png': '/static/brand-kia/Homepage/model-bar/2027/telluride-hybrid.png',
+  'oem/kia/carnival-mpv-hybrid.png': '/static/brand-kia/Homepage/model-bar/2027/carnival-hev.png',
+
+  // Toyota - brand-toyota/Homepage/model-bar/<year>/angular-left, all 27.
+  'oem/toyota/rav4.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/rav4.png',
+  'oem/toyota/highlander.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/highlander.png',
+  'oem/toyota/4runner.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/4runner.png',
+  'oem/toyota/tacoma.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/tacoma.png',
+  'oem/toyota/camry.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/camry.png',
+  'oem/toyota/tundra.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/tundra.png',
+  'oem/toyota/corolla.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/corolla.png',
+  'oem/toyota/corolla-hatchback.png': '/static/brand-toyota/Homepage/model-bar/2027/angular-left/corolla-hatchback.png',
+  'oem/toyota/mirai.png': '/static/brand-toyota/Homepage/model-bar/2024/angular-left/mirai.png',
+  'oem/toyota/gr86.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/gr86.png',
+  'oem/toyota/gr-supra.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/gr-supra.png',
+  'oem/toyota/sienna.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/sienna.png',
+  'oem/toyota/crown.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/toyota-crown.png',
+  'oem/toyota/gr-corolla.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/gr-corolla.png',
+  'oem/toyota/landcruiser.png': '/static/brand-toyota/Homepage/model-bar/2027/angular-left/landcruiser.png',
+  'oem/toyota/grand-highlander.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/grand-highlander.png',
+  'oem/toyota/crown-signia.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/toyota-crown-signia.png',
+  'oem/toyota/corolla-cross.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/corolla-cross.png',
+  'oem/toyota/sequoia.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/sequoia.png',
+  'oem/toyota/prius-plug-in-hybrid.png': '/static/brand-toyota/Homepage/model-bar/2027/angular-left/prius-plugin-hybrid.png',
+  'oem/toyota/prius.png': '/static/brand-toyota/Homepage/model-bar/2027/angular-left/prius.png',
+  'oem/toyota/corolla-hybrid.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/corolla-hybrid.png',
+  'oem/toyota/corolla-cross-hybrid.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/corolla-cross-hybrid.png',
+  'oem/toyota/c-hr.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/c-hr.png',
+  'oem/toyota/rav4-plug-in-hybrid.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/rav4-plugin-hybrid.png',
+  'oem/toyota/tundra-i-force-max.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/tundra-iforce-max.png',
+  'oem/toyota/bz.png': '/static/brand-toyota/Homepage/model-bar/2026/angular-left/bz.png',
   // The mixed-size example. These have to be genuinely different shapes,
   // because the card under each one prints its real source dimensions and says
   // what the crop threw away - so the numbers are the lesson, not decoration.

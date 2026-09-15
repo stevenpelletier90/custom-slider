@@ -223,14 +223,24 @@ for (const { id, bid, r } of variantPairs) {
 // rotated (2026-09-15, Steven: "are trucks tab working on that honda tabbed
 // model bar?"). Rosters carry their live tab membership now.
 //
-// Only ONE thing here can actually break, and it did: the tab ROW and the
-// PANES have to come from the same list. Dropping panes a tagged roster cannot
-// fill, while building the row from the unfiltered list, left Chevrolet with a
-// tab reading "Electric" over its crossovers. Everything else a first cut of
-// this check asserted - no empty pane, no model under a tab it is not tagged
-// for - is enforced by construction in htmlFor(), so asserting it here only
-// proved the checker could not fail. Both were broken deliberately to find that
-// out; neither went red, which is why they are not here.
+// TWO things here can actually break, and both did.
+//
+// One: the tab ROW and the PANES have to come from the same list. Dropping
+// panes a tagged roster cannot fill, while building the row from the unfiltered
+// list, left Chevrolet with a tab reading "Electric" over its crossovers.
+//
+// Two: a pane a preset DECLARES must still be there afterwards. That same
+// filter is silent - a pane name no row is tagged for is simply removed, and
+// the row then agrees with the panes because both come from the filtered list,
+// so the first check stays green while a tab disappears from the bar. Proved
+// 2026-09-15 by renaming one Toyota pane to "Hydrogen": the tab vanished and
+// every gate passed. It is the failure a roster edit invites - mistype a tag,
+// rename a tab, and a fifth of the lineup is unreachable with nothing said.
+//
+// Everything else a first cut of this check asserted - no empty pane, no model
+// under a tab it is not tagged for - is enforced by construction in htmlFor(),
+// so asserting it here only proved the checker could not fail. Both were broken
+// deliberately to find that out; neither went red, which is why they are gone.
 //
 // The stride FALLBACK is reported rather than failed. A brand with an untagged
 // roster offered on a tabbed pattern gets generic pane names over an arbitrary
@@ -253,6 +263,24 @@ for (const { id, bid, r } of variantPairs) {
       const panes = html.split('cargo-pane').length - 1;
       if (labels.length !== panes) {
         console.error(`  ${bid} on “${pid}”: ${labels.length} tab(s) over ${panes} pane(s) — the row and the panes came from different lists`);
+        problems++;
+      }
+      // Same normalising htmlFor() groups by: the phone-only part of a name is
+      // in brackets there and in a hidden-xs span here, and neither is a
+      // different tab.
+      const plain = (s) =>
+        String(s)
+          .replace(/<[^>]*>/g, '')
+          .replace(/&amp;/g, '&')
+          .replace(/[[\]]/g, '')
+          .replace(/\s+/g, ' ')
+          .trim()
+          .toLowerCase();
+      const declared = (BRANDS[bid].styles?.patterns?.[pid]?.panes ?? PATTERNS[pid].panes).map(plain);
+      const shown = labels.map((m) => plain(m[1]));
+      const lost = declared.filter((n) => !shown.includes(n));
+      if (lost.length) {
+        console.error(`  ${bid} on “${pid}”: ${lost.length} declared pane(s) never reached the tab row — ${lost.join(', ')} — no roster row is tagged for them, so the tab was dropped`);
         problems++;
       }
       if (!tagged.has(bid)) stride.push(`${bid}/${pid}`);

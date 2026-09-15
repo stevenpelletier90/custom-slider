@@ -70,14 +70,28 @@
         ['x5.png', 320, 240, 'X5'],
       ],
     ],
+    // All fourteen models cadillacdemo1's bar draws, in its own reading order,
+    // from the folder the bar itself reads (brand-cadillac/homepage/model-bar/
+    // 2026). Five ChromeData renders stood here until 2026-09-15 and only two
+    // panes had more than one card in them: "Sedans" held a CT5-V the live bar
+    // has never listed, and nine models were missing outright.
     cadillac: [
       'cadillac',
       [
-        ['ct5-v.png', 320, 240, 'CT5-V', 'Sedans'],
-        ['escalade-esv.png', 320, 240, 'Escalade ESV', 'Crossovers/SUVs'],
+        ['vistiq.png', 320, 240, 'VISTIQ', 'Electric | Crossovers/SUVs'],
+        ['lyriq.png', 320, 240, 'LYRIQ', 'Electric | Crossovers/SUVs'],
+        ['optiq.png', 320, 240, 'OPTIQ', 'Electric | Crossovers/SUVs'],
+        ['optiq-v.png', 320, 240, 'OPTIQ-V', 'Electric | Crossovers/SUVs'],
         ['escalade-iq.png', 320, 240, 'Escalade IQ', 'Electric | Crossovers/SUVs'],
         ['escalade-iql.png', 320, 240, 'Escalade IQL', 'Electric | Crossovers/SUVs'],
         ['escalade.png', 320, 240, 'Escalade', 'Crossovers/SUVs'],
+        ['escalade-v.png', 320, 240, 'Escalade-V', 'Crossovers/SUVs'],
+        ['escalade-esv.png', 320, 240, 'Escalade ESV', 'Crossovers/SUVs'],
+        ['xt4.png', 320, 240, 'XT4', 'Crossovers/SUVs'],
+        ['xt5.png', 320, 240, 'XT5', 'Crossovers/SUVs'],
+        ['xt6.png', 320, 240, 'XT6', 'Crossovers/SUVs'],
+        ['ct4.png', 320, 240, 'CT4', 'Sedans'],
+        ['ct5.png', 320, 240, 'CT5', 'Sedans'],
       ],
     ],
     honda: [
@@ -151,21 +165,39 @@
         ['canyon.png', 320, 240, 'Canyon'],
       ],
     ],
+    // kiademo2's bar, which is the one brand here that MIXES its sources: most
+    // tiles are ChromeData renders off /assets/stock/, six come out of
+    // brand-kia/Homepage/model-bar/. Both are kept exactly as that bar draws
+    // them. The five 640x480 rows are the platform's own bytes - that bar
+    // declares them 320x240, which is wrong but harmless, since 640x480 is the
+    // same 4:3 and the attributes here are MEASURED.
+    //
+    // Two tiles on that page are mislabelled in their attributes (the EV9
+    // render carries data-dotagging-item-model="EV6", and the Telluride Hybrid
+    // one an alt reading "Kia Sportage Plug-In Hybrid"), so the names below
+    // come from the visible <p class="vehicleName">, which is what a shopper
+    // reads.
     kia: [
       'kia',
       [
         ['k4.png', 320, 240, 'K4', 'Sedan'],
+        ['k4-hatchback.png', 320, 240, 'K4 Hatchback', 'Sedan'],
         ['k5.png', 320, 240, 'K5', 'Sedan'],
         ['seltos.png', 320, 240, 'Seltos', 'SUV / CUV / MPV'],
         ['sportage.png', 320, 240, 'Sportage', 'SUV / CUV / MPV'],
         ['sorento.png', 320, 240, 'Sorento', 'SUV / CUV / MPV'],
+        ['carnival-mpv.png', 640, 480, 'Carnival MPV', 'SUV / CUV / MPV'],
         ['telluride.png', 320, 240, 'Telluride', 'SUV / CUV / MPV'],
-        ['sorento-hybrid.png', 320, 240, 'Sorento Hybrid', 'Hybrid / Electric'],
         ['niro.png', 320, 240, 'Niro', 'Hybrid / Electric'],
         ['ev6.png', 320, 240, 'EV6', 'Hybrid / Electric'],
         ['ev9.png', 320, 240, 'EV9', 'Hybrid / Electric'],
         ['niro-ev.png', 320, 240, 'Niro EV', 'Hybrid / Electric'],
         ['niro-plug-in-hybrid.png', 320, 240, 'Niro Plug-In Hybrid', 'Hybrid / Electric'],
+        ['sorento-hybrid.png', 320, 240, 'Sorento Hybrid', 'Hybrid / Electric'],
+        ['sportage-hybrid.png', 640, 480, 'Sportage Hybrid', 'Hybrid / Electric'],
+        ['sportage-plug-in-hybrid.png', 640, 480, 'Sportage Plug-In Hybrid', 'Hybrid / Electric'],
+        ['telluride-hybrid.png', 640, 480, 'Telluride Hybrid', 'Hybrid / Electric'],
+        ['carnival-mpv-hybrid.png', 640, 480, 'Carnival MPV Hybrid', 'Hybrid / Electric'],
       ],
     ],
     mini: [
@@ -253,15 +285,27 @@
         ['corsair.png', 320, 240, 'Corsair'],
       ],
     ],
+    // forddemo1's own model-bar folder, 400x300 (brand-ford/Homepage/model-bar/
+    // 2025, and 2023 for the Transit Connect the bar still points at). Escape
+    // and Edge are NOT here: both are still in that page's source, commented
+    // out, and a model that is commented out is not on the bar. Six ChromeData
+    // renders stood here until 2026-09-15, which left "Trucks & Vans" holding
+    // one card of six and an Escape the bar does not draw.
     ford: [
       'ford',
       [
-        ['mustang.png', 320, 240, 'Mustang', 'Cars'],
-        ['mach-e.png', 320, 240, 'Mach-E', 'SUVs & Crossovers | All Electric'],
-        ['escape.png', 320, 240, 'Escape', 'SUVs & Crossovers'],
-        ['explorer.png', 320, 240, 'Explorer', 'SUVs & Crossovers'],
-        ['bronco.png', 320, 240, 'Bronco', 'SUVs & Crossovers'],
-        ['f-150.png', 320, 240, 'F-150', 'Trucks & Vans'],
+        ['bronco-sport.png', 400, 300, 'Bronco Sport', 'SUVs & Crossovers'],
+        ['bronco.png', 400, 300, 'Bronco', 'SUVs & Crossovers'],
+        ['explorer.png', 400, 300, 'Explorer', 'SUVs & Crossovers'],
+        ['expedition.png', 400, 300, 'Expedition', 'SUVs & Crossovers'],
+        ['mustang-mach-e.png', 400, 300, 'Mustang Mach-E', 'SUVs & Crossovers | All Electric'],
+        ['maverick.png', 400, 300, 'Maverick', 'Trucks & Vans'],
+        ['ranger.png', 400, 300, 'Ranger', 'Trucks & Vans'],
+        ['transit-connect.png', 400, 300, 'Transit Connect', 'Trucks & Vans'],
+        ['f-150.png', 400, 300, 'F-150', 'Trucks & Vans'],
+        ['super-duty.png', 400, 300, 'Super Duty', 'Trucks & Vans'],
+        ['transit.png', 400, 300, 'Transit', 'Trucks & Vans'],
+        ['mustang.png', 400, 300, 'Mustang', 'Cars'],
       ],
     ],
     hyundai: [
@@ -286,25 +330,55 @@
         ['mx-5-miata.png', 480, 209, 'MX-5 Miata'],
       ],
     ],
-    // Cutouts from the folder toyotademo1's own model bar reads
-    // (brand-toyota/Homepage/model-bar/2026/angular-left, 29 models at
-    // 518x220). The picture-based JPGs that were here until 2026-09-10 were the
-    // split card's photographs, and a brand roster is only ever drawn on a
-    // cutout card - so they were the wrong asset class on every card that
-    // could show them.
+    // Cutouts from the folders toyotademo1's own model bar reads
+    // (brand-toyota/Homepage/model-bar/<year>/angular-left, 518x220 - the year
+    // is per model, and the bar is on 2027 for the Corolla Hatchback, the Land
+    // Cruiser and both Priuses). The picture-based JPGs that were here until
+    // 2026-09-10 were the split card's photographs, and a brand roster is only
+    // ever drawn on a cutout card - so they were the wrong asset class on every
+    // card that could show them.
+    //
+    // All 27 models that bar draws. Ten stood here until 2026-09-15,
+    // which left "Cars & Minivan" showing three of nine and "Electrified" one
+    // of fourteen.
+    //
+    // ONE ROW PER MODEL, so where that bar draws the same name twice from two
+    // renders - Sequoia is sequoia.png under Crossovers and sequoia-hybrid.png
+    // under Electrified - the first one it reaches is the one kept. That is
+    // also why the flat list cannot reproduce every pane's order: the bar puts
+    // Sienna before Crown under Cars & Minivan and Crown before Sienna under
+    // Electrified, so no single order satisfies both. Membership is what a tab
+    // has to get right.
     toyota: [
       'toyota',
       [
         ['rav4.png', 518, 220, 'RAV4', 'Popular | Electrified'],
         ['highlander.png', 518, 220, 'Highlander', 'Popular | Crossovers & SUVs'],
         ['4runner.png', 518, 220, '4Runner', 'Popular | Crossovers & SUVs'],
+        ['tacoma.png', 518, 220, 'Tacoma', 'Popular | Trucks'],
+        ['camry.png', 518, 220, 'Camry', 'Popular | Cars & Minivan'],
+        ['tundra.png', 518, 220, 'Tundra', 'Popular | Trucks'],
         ['corolla.png', 518, 220, 'Corolla', 'Cars & Minivan'],
         ['corolla-hatchback.png', 518, 220, 'Corolla Hatchback', 'Cars & Minivan'],
-        ['camry.png', 518, 220, 'Camry', 'Popular | Cars & Minivan'],
-        ['tacoma.png', 518, 220, 'Tacoma', 'Popular | Trucks'],
-        ['tundra.png', 518, 220, 'Tundra', 'Popular | Trucks'],
+        ['mirai.png', 518, 220, 'Mirai', 'Cars & Minivan | Electrified'],
+        ['gr86.png', 518, 220, 'GR86', 'Cars & Minivan'],
+        ['gr-supra.png', 518, 220, 'GR Supra', 'Cars & Minivan'],
+        ['sienna.png', 518, 220, 'Sienna', 'Cars & Minivan | Electrified'],
+        ['crown.png', 518, 220, 'Crown', 'Cars & Minivan | Electrified'],
+        ['gr-corolla.png', 518, 220, 'GR Corolla', 'Cars & Minivan'],
         ['landcruiser.png', 518, 220, 'Land Cruiser', 'Crossovers & SUVs'],
         ['grand-highlander.png', 518, 220, 'Grand Highlander', 'Crossovers & SUVs'],
+        ['crown-signia.png', 518, 220, 'Crown Signia', 'Crossovers & SUVs | Electrified'],
+        ['corolla-cross.png', 518, 220, 'Corolla Cross', 'Crossovers & SUVs'],
+        ['sequoia.png', 518, 220, 'Sequoia', 'Crossovers & SUVs | Electrified'],
+        ['prius-plug-in-hybrid.png', 518, 220, 'Prius Plug-in Hybrid', 'Electrified'],
+        ['prius.png', 518, 220, 'Prius', 'Electrified'],
+        ['corolla-hybrid.png', 518, 220, 'Corolla Hybrid', 'Electrified'],
+        ['corolla-cross-hybrid.png', 518, 220, 'Corolla Cross Hybrid', 'Electrified'],
+        ['c-hr.png', 518, 220, 'C-HR', 'Electrified'],
+        ['rav4-plug-in-hybrid.png', 518, 220, 'RAV4 Plug-in Hybrid', 'Electrified'],
+        ['tundra-i-force-max.png', 518, 220, 'Tundra i-FORCE MAX', 'Electrified'],
+        ['bz.png', 518, 220, 'bZ', 'Electrified'],
       ],
     ],
     // The mb-*.png cutouts alfaromeodemo1 ships beside its tall portrait
