@@ -1190,6 +1190,71 @@
         [1200, 5],
       ],
       demos: 3,
+      // What subarudemo1 draws, measured with Playwright at 1280/800/390 on
+      // 2026-09-15. subarudemo2, which the article names for
+      // `subaru-model-bar-slick`, is the same bar to the slide - same five
+      // tabs, same 15/3/2/7/3 panes, same 127px height - so this covers both.
+      //
+      // The shape was checked BEFORE the values this time, which is the lesson
+      // Kia taught. It is our tabs pattern, with two things a preset cannot
+      // carry and which are recorded as DEPARTURES rather than smuggled in:
+      // - every tab has an ICON before its label (a car, a leaf, a bolt, a fuel
+      //   pump, a mountain). That is markup, and a brand variant is values
+      //   only. Ours ships the words alone.
+      // - the lead sits ABOVE the heading on the live page; htmlFor() puts it
+      //   under. Kept as a lead rather than dropped, because the sentence is
+      //   worth more than its position.
+      //
+      // The body is 14px poppins-regular at 992 and up and 13px below, and
+      // unlike Honda's and Kia's this bar's type follows it: the tab goes 17px
+      // to 14px and the name 18px to 14px. The tab has a narrow tier so it is
+      // carried exactly; --name-size has none, so ours holds the desktop ratio
+      // and renders ~16.7px below 992 against the live 14px.
+      styles: {
+        looks: {
+          tile: {
+            '--name-color': '#333',
+            '--name-size': '1.2857em',
+            '--name-weight': '500',
+            '--name-leading': '1.1',
+            // The live 5px under the picture, in the 18px name's own em.
+            '--name-gap': '0.278em',
+            // The live image pads 5px top and 15px a side on a 214px card, and
+            // nothing at the bottom. No transform on this one - Subaru's art is
+            // drawn at full size, unlike GMC's and Kia's scale().
+            '--plate-pad': '2.34% 7% 0',
+          },
+        },
+        patterns: {
+          tabs: {
+            props: {
+              '--cs-gap': '0.1px',
+              '--tab-size': '1.2143em',
+              // 14px of the 13px body below 992 - the platform's tablet tier.
+              '--tab-size-narrow': '1.0769em',
+              '--tab-weight': '400',
+              '--tab-color': '#222',
+              '--tab-selected': '#222',
+              '--tab-dim': '1',
+              '--tab-rule': 'transparent',
+              '--tab-divider': '"|"',
+              // 10px over and under, 15px a side, in the 17px tab's own em.
+              '--tab-pad': '0.588em 0.882em',
+              // 10px and 8px in the 14px tab's em at the narrow tier.
+              '--tab-pad-narrow': '0.714em 0.571em',
+              // 31.58px between tab boxes, in the tab's em; 30.77px below 992,
+              // which is more em at the smaller tab.
+              '--tab-gap': '1.858em',
+              '--tab-gap-narrow': '2.198em',
+            },
+            panes: ['All Vehicles', 'Hybrid', 'Electric', 'Gas', 'Wilderness'],
+            words: { title: 'Explore the Subaru Lineup', titleClass: 'heading-lg font-bold', lead: 'Subaru full lineup of hybrid, electric, gas, and Wilderness vehicles.' },
+          },
+        },
+      },
+      // PREVIEW ONLY.
+      font: { family: 'poppins-regular', css: 'https://cdn.dealeron.com/assets/fonts/poppins/fonts.min.css' },
+      source: 'subarudemo1.dealeron.com, 2026-09-15',
     },
     toyota: {
       label: 'Toyota',
