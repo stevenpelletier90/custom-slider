@@ -23,17 +23,6 @@ false below the crossing). `docs/history.md` has the dates.
 - Safari's plain Tab skips links; the tab-order test presses Option+Tab there. Not an engine matter,
   recorded so the next person does not chase it.
 
-## 2026-09-15 — what the repaired a11y audit found
-
-- The tabbed bar's lead paragraph wears the platform's `lead text-muted` (Ford's live class,
-  measured 2026-09-14), and Bootstrap 3's `text-muted` is `#777` on white, 4.47:1 against the 4.5:1
-  AA floor. The audit reports it on `brands.html`, where the preview's stand-in draws that colour.
-  The colour is the platform's and the class is what forddemo1 ships; dropping `text-muted` from the
-  snippet would make the lead the body colour on every site. Steven's call: copy the platform's
-  class (and its contrast) or not. The other two findings of the same run (the tall tile's current
-  dot at 1.43:1 on its own strip, and every brand's model bar announced as "Our models" on
-  `brands.html`) were fixed the same day.
-
 ## Manual QA still open (needs a person)
 
 - MANUAL QA remaining (needs Steven/humans, spec §11): live NVDA/VoiceOver pass (status-region

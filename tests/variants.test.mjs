@@ -726,7 +726,9 @@ test.describe('Ford lands every measured number on the same pattern', () => {
     assert.ok(Math.abs(g.leadToBox - 42) < 0.6, `42px under the lead, got ${g.leadToBox}`);
     assert.equal(g.titleTop, '0px', "the platform's .h1 top margin must lose to the pattern's own spacing");
     assert.ok(Math.abs(parseFloat(g.leadSize) - 21) < 0.2, `the platform's lead is 21px, got ${g.leadSize}`);
-    assert.equal(g.leadColor, 'rgb(119, 119, 119)', "the platform's text-muted");
+    // Not the platform's text-muted (#777, 4.47:1 on white, under AA): dropped
+    // 2026-09-15, so the lead is the body colour the page gives it.
+    assert.notEqual(g.leadColor, 'rgb(119, 119, 119)', 'the lead is still wearing text-muted');
     assert.equal(g.leadText, 'See our full lineup of vehicles and find the one that best fits you.');
     assert.match(g.titleFont, /antennaRegular/, "Ford's heading font, on the heading only");
     assert.ok(Math.abs(g.nameGap + 3) < 0.6, `the live name is pulled 3px up into the cutout, got ${g.nameGap}`);
@@ -819,7 +821,7 @@ test.describe('Ford lands every measured number on the same pattern', () => {
     ]) {
       assert.ok(css.includes(line), `${line} never reached the copied CSS`);
     }
-    assert.match(html, /<h2 class="h1 cargo-title">Something for Everyone<\/h2>\n\s*<p class="lead text-muted cargo-lead">See our full lineup of vehicles and find the one that best fits you\.<\/p>/);
+    assert.match(html, /<h2 class="h1 cargo-title">Something for Everyone<\/h2>\n\s*<p class="lead cargo-lead">See our full lineup of vehicles and find the one that best fits you\.<\/p>/);
     assert.match(
       html,
       /<button type="button" role="tab" id="tab-suvs-crossovers" aria-controls="pane-suvs-crossovers" aria-selected="true">SUVs <span class="hidden-xs">&amp; Crossovers<\/span><\/button>/,

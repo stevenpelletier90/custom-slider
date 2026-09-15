@@ -174,7 +174,9 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
   (`npm run test:browsers`, its own CI job), which found on its first run that Firefox tabs to the
   track (backlog) and that Playwright's WebKit never tabs into a link. Every new test was run
   against the previous `dist` first; the observer test passing there is what exposed the wrong
-  claim.
+  claim. The audit's last finding, the lead paragraph in the platform's `text-muted` (#777 on white,
+  4.47:1, Ford's live class), was Steven's call: "it shouldn't keep text-muted", so the lead wears
+  `lead` alone and takes the body colour.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

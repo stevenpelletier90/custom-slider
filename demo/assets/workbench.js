@@ -865,9 +865,11 @@
       // `h1` is the storefront's 36px heading size class (the live block puts
       // it on an h3), `btn btn-cta btn-lg` its themed button. Nothing about
       // either is in the copied CSS - see the note on .cargo-more.
-      // The lead wears `lead text-muted`, the platform's own paragraph
-      // classes (Bootstrap 3's, on every storefront) - forddemo1 writes
-      // exactly those under its heading - so the site sizes and greys it.
+      // The lead wears `lead`, the platform's own paragraph class (Bootstrap
+      // 3's, on every storefront), so the site sizes it. forddemo1 also
+      // writes `text-muted`, which is #777 on white, 4.47:1 - under the AA
+      // floor. Dropped 2026-09-15 (Steven: "it shouldn't keep text-muted"):
+      // the lead is the body colour, and a site that wants it grey says so.
       // Which platform heading class the h2 wears (h1 is the storefront's
       // 36px size class; cadillacdemo1's bar uses heading-lg), and which
       // classes the wrap wears (bg-main makes it the platform's dark band,
@@ -876,8 +878,7 @@
       const classes = (v, dflt) => (state[v] ?? p[v] ?? dflt).replace(/[^\w -]/g, '').trim();
       const titleClass = classes('titleClass', 'h1');
       const wrapClass = classes('wrapClass', '');
-      const head =
-        (title ? `  <h2 class="${titleClass ? `${titleClass} ` : ''}cargo-title">${escTab(title)}</h2>\n` : '') + (lead ? `  <p class="lead text-muted cargo-lead">${escTab(lead)}</p>\n` : '');
+      const head = (title ? `  <h2 class="${titleClass ? `${titleClass} ` : ''}cargo-title">${escTab(title)}</h2>\n` : '') + (lead ? `  <p class="lead cargo-lead">${escTab(lead)}</p>\n` : '');
       const foot = moreText ? `\n  <p class="cargo-more"><a class="btn btn-cta btn-lg" href="${moreHref || '#'}">${escTab(moreText)}</a></p>` : '';
       // The row and the panes in one box, the panes and the button in a
       // padded body inside it - see .cargo-box in the pattern's css.
