@@ -139,15 +139,22 @@ the preview. An arrow overlays media but never text: a text card reserves
 `padding-inline: calc(var(--cs-arrow-size) + 0.4em)`. Both are held by the paste-parity test: each
 snippet in a hostile host page must match the preview to the pixel.
 
-**The tabbed bar's panes are authored VISIBLE; the script hides them** (2026-09-15). `htmlFor()`
-emits no `hidden`, the tab script sets `data-tabs-on` on the wrap and hides all but the current pane
-at wire time, and `%wrap%:not([data-tabs-on]) .cargo-tabs` keeps the tab row out of the page until
-then. The old markup carried `hidden` on every pane but the first, so a reader with scripts off got
-one pane and a row of buttons that switched nothing — three quarters of the lineup unreachable, and
-dead controls in the tab order, against the README's own promise that all content is visible without
-JS. The upgrade costs nothing to look at: measured frame by frame from first paint, the bar draws at
-one height (CLS 0.0004), because the deferred script lands before the first render.
-`tests/builder.test.mjs` holds both halves — the fallback and the no-flash.
+**The tabbed bar is authored as PLAIN CONTENT; the script makes it a tab interface** (2026-09-15).
+`htmlFor()` emits no `role="tab"`, `role="tabpanel"`, `role="tablist"`, id, `aria-controls`,
+`aria-labelledby` or `aria-selected` — a tabpanel is part of a tab interface, and until the script
+runs there is none for those to describe. What ships is a row of plain `<button>`s and a sequence of
+`.cargo-pane` divs, each holding a carousel carrying the tab's name as its own `aria-label`, so a
+reader with scripts off gets named regions in sequence rather than panels pointing at controls that
+are not presented. The script finds the row by CLASS (`.cargo-tabs`, and `:scope > button` for the
+tabs, so the engine's arrow buttons inside each pane are never mistaken for tabs) and applies every
+tab semantic at once. It also emits no `hidden`, the tab script sets `data-tabs-on` on the wrap and
+hides all but the current pane at wire time, and `%wrap%:not([data-tabs-on]) .cargo-tabs` keeps the
+tab row out of the page until then. The old markup carried `hidden` on every pane but the first, so
+a reader with scripts off got one pane and a row of buttons that switched nothing — three quarters
+of the lineup unreachable, and dead controls in the tab order, against the README's own promise that
+all content is visible without JS. The upgrade costs nothing to look at: measured frame by frame
+from first paint, the bar draws at one height (CLS 0.0004), because the deferred script lands before
+the first render. `tests/builder.test.mjs` holds both halves — the fallback and the no-flash.
 
 **The tab row shrinks to fit before it scrolls** (2026-09-15, Steven: "decrease the size of the text
 or spacing to fit within the mobile viewport"). Everything across a tab is measured in its own em —
@@ -240,6 +247,15 @@ verification.
 `.claude/settings.json` registers a PostToolUse hook (`scripts/claude-format-hook.js`, exec form, so
 no shell is involved) that auto-fixes each file Claude edits inside this repo and leaves files in
 the other working directories alone. It never blocks; `npm run validate` is the real gate.
+
+**Accessibility is a required check, not a good intention.** `.github/workflows/a11y.yml` runs on
+every push and pull request with NO path filter, decides relevance itself, and always ends in one
+job, `a11y gate`, that resolves green or red. That shape is deliberate: a workflow filtered with
+`on.pull_request.paths` is SKIPPED for an irrelevant PR, and a required check that never runs sits
+Pending forever and wedges the merge it was meant to guard. `a11y gate` is the context to mark
+required in branch protection. The relevance list must include everything the audit can SEE, which
+is wider than it looks: the root `index.html` (a11y.mjs walks it by name), and `package-lock.json`
+(it pins the playwright and axe-core that produce the verdict) were both missing from the first cut.
 
 **CI checks that the committed `dist/` matches source** (`git diff --exit-code -- dist`, after the
 build). Without it a `src/` change with a forgotten rebuild passed everything: `npm run size`

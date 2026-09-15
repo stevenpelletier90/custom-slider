@@ -850,23 +850,31 @@ ${VIDEO_DIALOG_CSS}`,
   .cargo-tabs [role="tab"] + [role="tab"]::before { content: var(--tab-divider-phone); }
 }`,
       script: `document.querySelectorAll('[data-tabs]').forEach((wrap, w) => {
-  const tabs = [...wrap.querySelectorAll('[role="tab"]')];
-  const panes = [...wrap.querySelectorAll('[role="tabpanel"]')];
-  // Re-id per widget, and find panes within this wrapper rather than by
-  // getElementById. The markup ships fixed ids, so two of these on one page
-  // would otherwise share them and each tab would drive the other's panes.
+  // Found by CLASS, not by role: the authored markup carries no tab semantics
+  // at all any more, because until this runs there is no tab interface for them
+  // to describe. :scope > button keeps the row's own tabs apart from the arrow
+  // buttons the engine builds inside each pane.
+  const row = wrap.querySelector('.cargo-tabs');
+  const tabs = [...row.querySelectorAll(':scope > button')];
+  const panes = [...wrap.querySelectorAll('.cargo-pane')];
+  // Everything that makes this a tab interface is applied here, in one place,
+  // and only once the script is far enough along to honour it. The ids are
+  // issued per widget rather than authored, so two bars on one page cannot
+  // share them and have each tab drive the other's panes.
+  row.setAttribute('role', 'tablist');
   tabs.forEach((t, i) => {
     const tid = 'cargo-tab-' + w + '-' + i;
     const pid = 'cargo-pane-' + w + '-' + i;
     t.id = tid;
     panes[i].id = pid;
+    t.setAttribute('role', 'tab');
     t.setAttribute('aria-controls', pid);
+    panes[i].setAttribute('role', 'tabpanel');
     panes[i].setAttribute('aria-labelledby', tid);
   });
   // The row scrolls sideways rather than wrapping, at every width. data-more
   // says which way there is more to see and is absent while the row fits, which
   // is what the CSS keys its left alignment and its edge fade on.
-  const row = wrap.querySelector('[role="tablist"]');
   const edges = () => {
     const max = row.scrollWidth - row.clientWidth;
     if (max < 2) row.removeAttribute('data-more');

@@ -499,6 +499,64 @@ test.describe('the tabbed bar keeps the no-JS promise', () => {
     assert.equal(off.buttonVisible, 1, 'the button under the bar vanished with scripts off');
   });
 
+  // The visibility half of the promise was kept first; this is the semantic
+  // half (2026-09-15 review). The authored markup used to emit every pane as
+  // role="tabpanel" with aria-labelledby pointing at a tab button, while the
+  // tablist those tabs live in is not presented at all when JS never runs — so
+  // a screen-reader user with scripts off was told about panels belonging to a
+  // tab interface that does not exist, labelled by controls they cannot reach.
+  // Tab semantics are the script's now, applied with the interface itself.
+  test('scripts off leaves no tab semantics behind, and scripts on add all of them', async ({ browser }) => {
+    await pick(page, 'tabs');
+    await page.waitForTimeout(300);
+    const snip = await copyParts(page);
+    // The COPIED markup is the contract — it is what a dealer page ships.
+    assert.doesNotMatch(snip.html, /role="tab(list|panel)?"/, 'the pasted markup still authors tab semantics');
+    assert.doesNotMatch(snip.html, /aria-(labelledby|controls|selected)/, 'the pasted markup still authors tab aria wiring');
+
+    const read = async (javaScriptEnabled) => {
+      const c = await browser.newContext({ javaScriptEnabled, viewport: { width: 1200, height: 900 } });
+      const p = await c.newPage();
+      await p.setContent(hostHtml({ ...engine, css: snip.css, html: snip.html, js: snip.js }), { waitUntil: 'load' });
+      await p.waitForTimeout(400);
+      const r = await p.evaluate(() => {
+        const panes = [...document.querySelectorAll('.cargo-pane')];
+        const t = document.querySelector('[role="tab"]');
+        const pane = t && document.getElementById(t.getAttribute('aria-controls') || '');
+        return {
+          tablists: document.querySelectorAll('[role="tablist"]').length,
+          tabs: document.querySelectorAll('[role="tab"]').length,
+          tabpanels: document.querySelectorAll('[role="tabpanel"]').length,
+          panes: panes.length,
+          // Without the tab interface, each pane's content is still a named
+          // region of its own — that is what makes it readable in sequence.
+          namedRegions: panes.filter((x) => x.querySelector('.cs[aria-label]')).length,
+          danglingRefs: [...document.querySelectorAll('[aria-labelledby],[aria-controls]')].filter((el) => {
+            const id = el.getAttribute('aria-labelledby') || el.getAttribute('aria-controls');
+            return id && !document.getElementById(id);
+          }).length,
+          pairOk: !!(t && pane && pane.getAttribute('role') === 'tabpanel' && pane.getAttribute('aria-labelledby') === t.id),
+        };
+      });
+      await c.close();
+      return r;
+    };
+
+    const off = await read(false);
+    assert.equal(off.tablists, 0, 'scripts off still exposes a tablist');
+    assert.equal(off.tabs, 0, 'scripts off still exposes tabs');
+    assert.equal(off.tabpanels, 0, 'scripts off still exposes tabpanels with no tab interface around them');
+    assert.equal(off.namedRegions, off.panes, `only ${off.namedRegions} of ${off.panes} panes are a named region without JS`);
+    assert.equal(off.danglingRefs, 0, 'scripts off leaves an aria reference pointing at nothing');
+
+    const on = await read(true);
+    assert.equal(on.tablists, 1, 'scripts on did not build a tablist');
+    assert.equal(on.tabs, on.panes, `${on.tabs} tabs for ${on.panes} panes`);
+    assert.equal(on.tabpanels, on.panes, `${on.tabpanels} tabpanels for ${on.panes} panes`);
+    assert.equal(on.danglingRefs, 0, 'scripts on leaves an aria reference pointing at nothing');
+    assert.equal(on.pairOk, true, 'the first tab and the pane it controls do not point at each other');
+  });
+
   // And the upgrade costs nothing to look at: the panes must be hidden by the
   // time the page first paints, or a dealer page renders the bar at three times
   // its height and collapses it. Measured frame by frame from the first.

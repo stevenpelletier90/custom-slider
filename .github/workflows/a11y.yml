@@ -1,41 +1,77 @@
-# axe over every pattern and page state, as a gate rather than a good intention.
+# axe over every pattern and page state, shaped so it can be a REQUIRED check.
 #
-# Its own workflow, not a job in validate.yml, for two reasons. GitHub filters
-# paths per WORKFLOW, not per job, and this only needs to run when something it
-# can see has changed. And `npm run validate` is the fast local pre-commit gate —
-# this one drives a real browser and needs a server, so it stays out of that
-# command (scripts/a11y.mjs says so at the top) while still running in CI.
+# The structure is the point. A workflow filtered with `on.pull_request.paths`
+# is SKIPPED for an irrelevant PR, and a required check that never runs sits
+# Pending forever and blocks the merge it was meant to guard. So there are no
+# path filters here: the workflow runs on every PR and every push, decides
+# relevance itself, and always ends with one job — `a11y gate` — that resolves
+# success or failure either way. That job is the one to mark required.
 #
-# Why a gate at all, when CLAUDE.md called it "a deliberate run": it kept finding
-# real defects that the 299-test suite does not look for — a #777 lead paragraph
-# under the AA floor, a current dot at 1.43:1 — and it spent a week silently
-# exiting non-zero on a deleted selector precisely because nothing ran it
-# (2026-09-15). A nightly job would report a contrast regression after it had
+# It stays out of `npm run validate`, which is the fast local pre-commit
+# command: this drives a real browser and needs a server. scripts/a11y.mjs says
+# so at the top.
+#
+# Why gate it at all, when CLAUDE.md once called it "a deliberate run": it kept
+# finding real defects the 303-test suite does not look for — a #777 lead
+# paragraph under the AA floor, a current dot at 1.43:1 — and it spent a week
+# silently exiting non-zero on a deleted selector precisely because nothing ran
+# it (2026-09-15). A nightly job would report a contrast regression after it had
 # merged and deployed to Pages, which for a component whose accessibility
-# behaviour is a frozen contract is backwards. Add a `schedule:` trigger here if
-# a nightly belt-and-braces run is ever wanted too.
+# behaviour is a frozen contract is backwards.
 name: a11y
 on:
   push:
-    paths:
-      - 'src/**'
-      - 'dist/**'
-      - 'demo/**'
-      - 'scripts/a11y.mjs'
-      - 'scripts/build-*.mjs'
-      - '.github/workflows/a11y.yml'
-      - 'package.json'
   pull_request:
-    paths:
-      - 'src/**'
-      - 'dist/**'
-      - 'demo/**'
-      - 'scripts/a11y.mjs'
-      - 'scripts/build-*.mjs'
-      - '.github/workflows/a11y.yml'
-      - 'package.json'
+
 jobs:
+  # Relevance is decided HERE rather than by on.paths, so that the gate below
+  # always has something to resolve. Plain git, no third-party action.
+  changes:
+    runs-on: ubuntu-latest
+    outputs:
+      relevant: ${{ steps.check.outputs.relevant }}
+      why: ${{ steps.check.outputs.why }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - id: check
+        name: does this change anything the audit can see
+        run: |
+          set -euo pipefail
+          if [ "${{ github.event_name }}" = "pull_request" ]; then
+            git fetch --no-tags origin "${{ github.base_ref }}"
+            files=$(git diff --name-only "$(git merge-base HEAD "origin/${{ github.base_ref }}")" HEAD)
+          else
+            before="${{ github.event.before }}"
+            # A new branch, a force push or a first commit has no usable base —
+            # audit rather than guess.
+            if [ -z "$before" ] || [ "$before" = "0000000000000000000000000000000000000000" ] || ! git cat-file -e "$before^{commit}" 2>/dev/null; then
+              files="(no base — auditing everything)"
+            else
+              files=$(git diff --name-only "$before" "${{ github.sha }}")
+            fi
+          fi
+          echo "changed files:"
+          printf '%s\n' "$files" | sed 's/^/  /'
+          # Everything the audit actually reads. src/ and dist/ are the engine it
+          # loads; demo/ and the root index.html are the pages it walks (a11y.mjs
+          # audits /index.html by name, and it was missing from this list until
+          # 2026-09-15); the build scripts decide what lands in dist/; a11y.mjs is
+          # the audit; package.json and package-lock.json pin the playwright and
+          # axe-core it runs with, so a lockfile bump can change the verdict.
+          pattern='^(src/|dist/|demo/|index\.html$|scripts/a11y\.mjs$|scripts/build-.*\.mjs$|package\.json$|package-lock\.json$|\.github/workflows/a11y\.yml$)'
+          if [ "$files" = "(no base — auditing everything)" ] || printf '%s\n' "$files" | grep -Eq "$pattern"; then
+            echo "relevant=true" >> "$GITHUB_OUTPUT"
+            echo "why=changed files the audit can see" >> "$GITHUB_OUTPUT"
+          else
+            echo "relevant=false" >> "$GITHUB_OUTPUT"
+            echo "why=nothing the audit can see changed" >> "$GITHUB_OUTPUT"
+          fi
+
   axe:
+    needs: changes
+    if: needs.changes.outputs.relevant == 'true'
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
@@ -68,3 +104,32 @@ jobs:
             exit 1
           }
           npm run a11y
+
+  # THE REQUIRED CHECK. Always runs, always resolves: green when the audit
+  # passed or when nothing it can see changed, red when the audit failed or the
+  # relevance step itself broke. Nothing here is skippable, so it can never sit
+  # Pending and wedge a pull request.
+  gate:
+    name: a11y gate
+    needs: [changes, axe]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: resolve
+        run: |
+          set -euo pipefail
+          echo "relevance: ${{ needs.changes.result }} (${{ needs.changes.outputs.why }})"
+          echo "audit:     ${{ needs.axe.result }}"
+          if [ "${{ needs.changes.result }}" != "success" ]; then
+            echo "::error::could not work out whether this change affects the audit"
+            exit 1
+          fi
+          if [ "${{ needs.changes.outputs.relevant }}" != "true" ]; then
+            echo "No files the accessibility audit can see changed — nothing to run."
+            exit 0
+          fi
+          if [ "${{ needs.axe.result }}" != "success" ]; then
+            echo "::error::the accessibility audit did not pass"
+            exit 1
+          fi
+          echo "Accessibility audit passed."

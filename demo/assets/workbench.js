@@ -861,9 +861,14 @@
       const plain = (name) => String(name).replace(/[[\]]/g, '');
       const label = (name) => escTab(name).replace(/\[([^\]]+)\]/g, '<span class="hidden-xs">$1</span>');
       const names = (state.panes ?? p.panes).map(plain);
-      const ids = names.map((name) => name.toLowerCase().replace(/\W+/g, '-'));
       const tabs = (state.panes ?? p.panes)
-        .map((name, i) => `    <button type="button" role="tab" id="tab-${ids[i]}" aria-controls="pane-${ids[i]}" aria-selected="${i === 0}">${label(name)}</button>`)
+        // A plain button, with no tab semantics on it (2026-09-15). role="tab",
+        // the ids, aria-controls and aria-selected are all added by the script
+        // at wire time, because until it runs there is no tab interface for
+        // them to describe - the row is not even presented. The script owns the
+        // ids either way: it re-issues them per widget so two bars on one page
+        // do not share them.
+        .map((name) => `    <button type="button">${label(name)}</button>`)
         .join('\n');
       // Two ways to fill the panes, and which one is in force is decided by the
       // rows themselves rather than by a switch.
@@ -895,7 +900,14 @@
           // itself — the HTML carries the content, the script upgrades how it is
           // presented. The tab row is hidden until the script says it works; see
           // %wrap%:not([data-tabs-on]) in the pattern's CSS.
-          return `  <div class="cargo-pane" id="pane-${ids[i]}" role="tabpanel" aria-labelledby="tab-${ids[i]}">\n${carousel(sub, escTab(name), '  ', i === 0)}\n  </div>`;
+          // No role="tabpanel" and no aria-labelledby in the AUTHORED markup
+          // either: a tabpanel is part of a tab interface, and until the script
+          // runs there is no tab interface — the row is withheld and every pane
+          // is shown. Without JS a reader gets what the HTML says it is, a
+          // sequence of labelled carousel regions (each .cs carries the tab's
+          // name as its aria-label), not panels pointing at controls that are
+          // not there. The script adds the tab semantics with the interface.
+          return `  <div class="cargo-pane">\n${carousel(sub, escTab(name), '  ', i === 0)}\n  </div>`;
         })
         .join('\n');
       // The heading over the bar and the button under it are authored HTML
@@ -926,7 +938,7 @@
       const foot = moreText ? `\n  <p class="cargo-more"><a class="btn btn-cta btn-lg" href="${escUrl(moreHref)}">${escTab(moreText)}</a></p>` : '';
       // The row and the panes in one box, the panes and the button in a
       // padded body inside it - see .cargo-box in the pattern's css.
-      return `<div class="${cls}-wrap${wrapClass ? ` ${wrapClass}` : ''}" data-cargo="tabs" data-tabs>\n${head}  <div class="cargo-box">\n  <div class="cargo-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n  <div class="cargo-body">\n${panes}${foot}\n  </div>\n  </div>\n</div>`;
+      return `<div class="${cls}-wrap${wrapClass ? ` ${wrapClass}` : ''}" data-cargo="tabs" data-tabs>\n${head}  <div class="cargo-box">\n  <div class="cargo-tabs" aria-label="Body style">\n${tabs}\n  </div>\n  <div class="cargo-body">\n${panes}${foot}\n  </div>\n  </div>\n</div>`;
     }
 
     // Filter buttons above a gallery; the script rebuilds it per category.

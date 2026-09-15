@@ -390,6 +390,48 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
     observer watches.
   - "Perf" and "Comm" are abbreviations chosen here, not measured off chevroletdemo1: they are the
     bracket positions in `brands.js` and are one edit each if different words read better.
+- 2026-09-15, the final targeted pass before manual QA. Three bounded items, then the automated
+  hardening phase stops.
+  - **The a11y workflow ran but gated nothing.** `master` has branch protection (conversation
+    resolution on, force pushes and deletions off) and NO `required_status_checks`; there are no
+    rulesets either. So a failing audit reported red and blocked no merge. The workflow is now
+    shaped so it CAN be required, which was the real work: it runs on every push and pull request
+    with no path filter at all, decides relevance in a `changes` job from a plain `git diff` against
+    the merge base, runs the browser audit only when relevant, and always ends in `a11y gate`, which
+    resolves green (audit passed, or nothing it can see changed) or red. The trap this avoids is
+    documented by GitHub: a workflow filtered with `on.pull_request.paths` is SKIPPED for an
+    irrelevant PR, and a required check that never runs sits Pending forever and wedges the merge.
+    Two omissions in the relevance list were real: the root `index.html`, which `a11y.mjs` walks by
+    name (it even strips the meta refresh to audit it deterministically), and `package-lock.json`,
+    which pins the playwright and axe-core that produce the verdict.
+  - **The no-JS tab semantics.** The visual fallback was already right; the accessibility tree was
+    not. Authored panes still carried `role="tabpanel"` and `aria-labelledby` pointing at tab
+    buttons inside a tablist that is not presented when the script never runs — a reader with
+    scripts off was told about panels belonging to an interface that does not exist, labelled by
+    controls they cannot reach. The markup now authors a row of plain `<button>`s and plain
+    `.cargo-pane` divs; `role`, the ids, `aria-controls`, `aria-labelledby` and `aria-selected` are
+    all applied by the script with the interface itself. The content is still structurally
+    meaningful without it: each pane holds a carousel carrying the tab's name as its own
+    `aria-label`, so what a no-JS reader gets is named regions in sequence. The script finds the row
+    by class and its tabs with `:scope > button` — by role would have found nothing, and a bare
+    `button` query would have swept up the engine's arrow buttons inside every pane. Held by a test
+    that reads the accessibility STRUCTURE rather than counting visible elements: no tablist, no
+    tabs, no tabpanels and no dangling aria reference with scripts off; one tablist, a tab and a
+    tabpanel per pane and no dangling reference with them on. Two existing tests pinned the authored
+    ARIA and moved to asserting the LIVE wiring, which is a stronger claim — that the two elements
+    point at each other, not that two attributes were printed.
+  - **The 5 KB design target is marked historical.** `docs/specs/2026-07-13-custom-slider-design.md`
+    still required `< 5 KB gzip total`. The figure is left exactly as written, because it records
+    the decision taken that day; what was added is a note at the top saying the document is
+    historical, that the enforced budget has been raised since for documented correctness and
+    accessibility needs, and that `scripts/size.mjs` is the single source of truth. The line in its
+    Tooling section carries the same caveat inline. This is the fourth document in the chain and the
+    last one holding a stale number.
+  - Maintenance noted, NOT actioned here, so it does not contaminate the accessibility work:
+    `npm ci` reports three advisories (one moderate, two high) and package.json has only
+    devDependencies, so no vulnerable third-party code ships with the slider; and the Actions runner
+    warns that actions/checkout@v4 and actions/setup-node@v4 target Node 20. Both are toolchain
+    upkeep for their own pass.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

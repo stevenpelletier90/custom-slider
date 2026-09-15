@@ -834,10 +834,7 @@ test.describe('Ford lands every measured number on the same pattern', () => {
       assert.ok(css.includes(line), `${line} never reached the copied CSS`);
     }
     assert.match(html, /<h2 class="h1 cargo-title">Something for Everyone<\/h2>\n\s*<p class="lead cargo-lead">See our full lineup of vehicles and find the one that best fits you\.<\/p>/);
-    assert.match(
-      html,
-      /<button type="button" role="tab" id="tab-suvs-crossovers" aria-controls="pane-suvs-crossovers" aria-selected="true">SUVs <span class="hidden-xs">&amp; Crossovers<\/span><\/button>/,
-    );
+    assert.match(html, /<button type="button">SUVs <span class="hidden-xs">&amp; Crossovers<\/span><\/button>/);
     assert.match(html, /<span class="hidden-xs">All<\/span> Electric<\/button>/);
     assert.match(html, /<div class="cargo-box">\s*<div class="cargo-tabs"/);
     assert.match(html, /<div class="cargo-body">\s*<div class="cargo-pane"/);

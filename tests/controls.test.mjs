@@ -452,10 +452,30 @@ test.describe('a tab can be renamed', () => {
     await box.fill('Certified');
     await page.waitForTimeout(300);
     const { html } = await copyParts(page);
-    assert.match(html, /role="tab"[^>]*>Certified</, 'the tab still reads Trucks');
-    assert.match(html, /id="tab-certified"[^>]*aria-controls="pane-certified"/, 'the id did not follow the name');
-    assert.match(html, /id="pane-certified"[^>]*role="tabpanel"[^>]*aria-labelledby="tab-certified"/, 'the pane and the tab no longer point at each other');
+    assert.match(html, /<button type="button">Certified<\/button>/, 'the tab still reads Trucks');
     assert.doesNotMatch(html, /trucks/i, 'the old name survives somewhere in the markup');
+    // The ids and the aria wiring are the SCRIPT's since 2026-09-15 - the
+    // authored markup carries no tab semantics, because until the script runs
+    // there is no tab interface for them to describe. So the wiring is checked
+    // where it exists, in the rendered bar, which is a stronger assertion than
+    // the string match this used to do: it proves the two elements actually
+    // point at each other rather than that two attributes were printed.
+    const wired = await page.evaluate(() => {
+      const d = globalThis.CARGO.sdoc();
+      const t = d.querySelector('[role="tab"]');
+      const pane = t && d.getElementById(t.getAttribute('aria-controls'));
+      return {
+        name: t && t.textContent.trim(),
+        tabRole: t && t.getAttribute('role'),
+        tid: t && t.id,
+        paneRole: pane && pane.getAttribute('role'),
+        backRef: pane && pane.getAttribute('aria-labelledby'),
+      };
+    });
+    assert.equal(wired.name, 'Certified', 'the rendered tab still reads the old name');
+    assert.equal(wired.tabRole, 'tab', 'the script did not make the button a tab');
+    assert.equal(wired.paneRole, 'tabpanel', 'the pane it controls is not a tabpanel');
+    assert.equal(wired.backRef, wired.tid, 'the pane and the tab no longer point at each other');
   });
 
   test('clearing a tab name puts the original back', async () => {
@@ -463,7 +483,7 @@ test.describe('a tab can be renamed', () => {
     const box = rowByLabel(page, 'Tab 2').locator('input').first();
     await box.fill('');
     await page.waitForTimeout(300);
-    assert.match((await copyParts(page)).html, /role="tab"[^>]*>SUVs</, 'an empty box left the tab nameless');
+    assert.match((await copyParts(page)).html, /<button type="button">SUVs</, 'an empty box left the tab nameless');
   });
 
   test('a pattern with no tabs is not offered the section', async () => {

@@ -1,7 +1,17 @@
 # Custom Slider — Design
 
-**Date:** 2026-07-13 **Status:** Approved section-by-section in brainstorming; pending full-spec
-review **Owner:** Steven Pelletier
+**Date:** 2026-07-13 **Status:** HISTORICAL — the original design record, kept as written. Parts of
+it have been superseded by shipped work; where this document and the code disagree, the code and
+`../../CLAUDE.md` are current. **Owner:** Steven Pelletier
+
+> **The byte budget in §2 and §"Tooling" is the ORIGINAL target, not the enforced one.** This
+> document says `< 5 KB gzip total (JS + CSS)`. That figure is left exactly as it was written,
+> because it records the decision taken on 2026-07-13. The enforced budget has been raised since,
+> each time for a documented correctness or accessibility need, and the raise history lives in
+> `scripts/size.mjs` beside the number it enforces. **`npm run size` is the single source of truth
+> for the current limits** — the engine budget and the separate guard on what a site actually
+> downloads. No current byte figure is written down anywhere else in this repo, including here: one
+> copied into prose was 50% low within six weeks (2026-09-15).
 
 ## 1. Problem & goal
 
@@ -227,7 +237,9 @@ behavior and links the README verification checklist.
   arrow keys, focus never trapped/lost; autoplay stops on focus and never auto-restarts;
   reduced-motion emulation ⇒ no autoplay, instant jumps.
 - Screenshots at 375 / 768 / 1280.
-- `npm run size` prints min+gzip for JS+CSS and **fails > 5 KB total**.
+- `npm run size` prints min+gzip for JS+CSS and **fails > 5 KB total**. _(Historical: the gate still
+  exists and still fails, at a budget raised since this was written. See the note at the top of this
+  document; `scripts/size.mjs` carries the current number and the reason for each raise.)_
 - QA spot-checks (from verified research): Windows Firefox at 125–150 % DPI (bug 1959811 residue);
   Tab into cards in stable Safari (scroll-padding focus quirk, fixed only in Safari 27 beta — add
   `scroll-margin` on slides if needed); one pre-26.2-iOS device exercising the `scrollend` debounce
