@@ -876,27 +876,27 @@
       styles: {
         looks: {
           tile: {
-            // DEPARTURE, and the one that matters here. gmcdemo1's name is
-            // white because the WHOLE PAGE is dark - body.homepage is #161616
-            // and there is no band element at all. A preset cannot ship a white
-            // name and assume the page: dropped onto a light dealer theme it is
-            // white on white, invisible, which is the same mistake as copying
-            // an OEM's arrow grey. So the strip carries its own ground, and the
-            // pair travels together to any theme (#fff on #161616 = 18.1:1).
-            // A dealer whose page is already dark can set --strip-bg to
-            // transparent and get the live arrangement back.
-            '--strip-bg': '#161616',
-            // The light controls live HERE, beside the dark ground that makes
-            // them necessary, and not in a pattern's props - GMC is offered on
-            // two patterns (modelbar and tabs, because a look's values apply to
-            // both), and putting them under modelbar alone left the tabbed bar
-            // drawing #262626 arrows at 1.2:1. Same arrangement the portrait
-            // look uses for the same reason.
-            // NOT a flat #fff: that is ENGINE_DEFAULTS['--cs-arrow-fg'], so
-            // cssFor() drops it as a no-op and the pattern's own colour wins.
-            '--cs-arrow-fg': 'rgba(255, 255, 255, 0.9)',
-            '--cs-focus': '#4a90e2',
-            '--name-color': '#fff',
+            // NO BAND, AND NO COLOUR THAT ASSUMES ONE (Steven, 2026-09-15:
+            // "these shouldn't have dark backgrounds on them, there will be CSS
+            // applied in the website that can take care of that with a body
+            // class or section class like bg-main").
+            //
+            // gmcdemo1's name is white because the WHOLE PAGE is dark -
+            // body.homepage is #161616, with no band element at all. A first
+            // cut here shipped --strip-bg: #161616 so the white name had a
+            // ground to sit on. That is the mistake Cadillac's entry already
+            // records: the band's colour is the SITE'S, never a value of ours,
+            // and baking one paints a dark box on a page that did not ask for
+            // it. So the name inherits, and a dealer whose section is bg-main
+            // gets white text from their own theme - which is also why there is
+            // no --cs-arrow-fg or --cs-focus override here any more: with no
+            // band of ours, the pattern's #262626 arrow is on the page's own
+            // background and reads.
+            //
+            // GMC's measured pattern is modelbar, which has no wrap element, so
+            // it cannot carry a wrapClass the way Cadillac's tabbed bar does.
+            // If a GMC bar needs the dark band, that is the section's class on
+            // the dealer's page, not a knob here.
             '--name-size': '1.2em',
             '--name-weight': '400',
             '--name-leading': '1.4286',
@@ -1035,75 +1035,73 @@
     kia: {
       label: 'Kia',
       look: 'tile',
-      // kiademo1's own slick config, not the census reading: 3 across, 1 below
-      // 768. The widest cards of any measured bar.
       ladder: [
-        [0, 1],
-        [768, 3],
+        [0, 2],
+        [460, 3],
+        [768, 5],
       ],
       demos: 3,
-      // What kiademo1 draws, measured with Playwright at 1280/800/390 on
-      // 2026-09-15 - the article's example for `kia-model-bar-tabbed` (Tabs v2)
-      // and the third measured tabbed bar after Chevrolet and Ford.
+      // What kiademo2 draws, measured with Playwright at 1280/800/390 on
+      // 2026-09-15 - the article's example for `kia-model-bar` (Tabs).
       //
-      // The page is a 14px KiaSignatureRegular body:
-      // - three tabs, 18px/400, divided by a `|` li that `hidden-xs` drops at
-      //   768 (our tier is 576 - see --tab-divider-phone);
-      // - 31.75px between tab boxes at 992 and up, 13.64px from 767 down, which
-      //   is what --tab-gap-narrow was added to the pattern for;
-      // - the cutout fills the slide edge to edge, no inset, no gap;
-      // - the name 22px, hard under the picture, in Kia's near-black.
+      // MEASURED FROM THE OTHER DEMO, on purpose. The first pass here measured
+      // kiademo1 (`kia-model-bar-tabbed`, Tabs v2), which is CENTRE-MODE: one
+      // large focused card with small peeking neighbours either side, only the
+      // centre car named, over a photographic backdrop. That is structure, not
+      // values - our tabs pattern draws equal cards - so the preset reproduced
+      // three equal cards and called it Kia. Steven caught it by eye
+      // ("the middle one is bigger than the other two"). kiademo1's code now
+      // sits in docs/coverage.md as needing a pattern this repo does not have.
+      //
+      // kiademo2 is a 14px KiaSignatureRegular body at 992 and up and 13px
+      // below - the same drop Honda has, so the name's em differs by tier:
+      // - three tabs, 1em of the body, 400, #05141f, 7px over and under and
+      //   15px a side, 31.75px between the boxes;
+      // - five cutouts, drawn at scale(0.9) with no padding of their own;
+      // - the name 16px at EVERY width, 700, #05141f, hard under the picture
+      //   (margin-top: 0). Below 992 the body is 13px while the name stays 16,
+      //   so ours renders 14.9px there - the same DEPARTURE as Honda, and the
+      //   better behaviour: our type scales with the host, theirs does not.
       styles: {
         looks: {
           tile: {
             '--name-color': '#05141f',
-            '--name-size': '1.57em',
-            // DEPARTURE: the live bar swaps the family to KiaSignatureBold at
-            // weight 400. There is no --name-font knob, and a preset is values
-            // and never a font file, so the weight carries the emphasis.
+            '--name-size': '1.1429em',
             '--name-weight': '700',
             '--name-leading': '1.4286',
             '--name-gap': '0.1px',
-            '--plate-pad': '0.1px',
+            // The live scale(0.9) as padding on a border-box image: 5% a side,
+            // and 3.75% top and bottom because the card is 4:3 (5 x 0.75).
+            '--plate-pad': '3.75% 5%',
           },
         },
         patterns: {
           tabs: {
             props: {
               '--cs-gap': '0.1px',
-              '--tab-size': '1.29em',
+              '--tab-size': '1em',
               '--tab-weight': '400',
               '--tab-leading': '1.4286',
+              '--tab-color': '#05141f',
+              '--tab-selected': '#05141f',
               '--tab-dim': '1',
               '--tab-rule': 'transparent',
-              '--tab-divider': '"|"',
-              '--tab-divider-size': '0.78',
-              '--tab-gap': '1.76em',
-              // The 767-and-down gap, in the same em. Added as a knob with this
-              // measurement: the live row collapses its gap at 768 because that
-              // is where hidden-xs drops the divider, and without a narrow form
-              // our bar drew the full 31.75px across the whole 576-991 band.
-              '--tab-gap-narrow': '0.76em',
-              '--tab-gap-phone': '0.97em',
-              // DEPARTURE: live drops to 12px at 539 and under. 12px is this
-              // repo's floor for a readable label, and the fit multiplier will
-              // take the row there itself if the words need it.
-              '--tab-size-phone': '1em',
-              '--tab-divider-phone': 'none',
-              '--tab-pad': '0.39em 0.83em 0.56em',
-              '--tab-pad-phone': '0.5em 0.36em 0.71em',
-              '--tab-line-size': '0.17em',
-              '--tab-fade': '0.15s',
-              '--title-gap': '0.5em',
-              '--bar-pad': '5.36em',
+              // 7px over and under, 15px a side, in the tab's own 14px em.
+              '--tab-pad': '0.5em 1.071em',
+              // 31.75px between the tab boxes, same em.
+              '--tab-gap': '2.268em',
             },
-            panes: ['Electric', 'SUVs', 'Cars'],
+            // The live labels and the live order, read off the row rather than
+            // paraphrased. Bracketed parts are the platform's own hidden-xs
+            // span, so a phone gets Sedan / SUV / Hybrid instead of a row that
+            // has to shrink to fit three long names.
+            panes: ['Sedan', 'SUV[ / CUV / MPV]', 'Hybrid[ / Electric]'],
           },
         },
       },
       // PREVIEW ONLY.
       font: { family: 'KiaSignatureRegular', css: 'https://cdn.dealeron.com/assets/fonts/kiasignature/fonts.min.css' },
-      source: 'kiademo1.dealeron.com, 2026-09-15',
+      source: 'kiademo2.dealeron.com, 2026-09-15',
     },
     landrover: {
       label: 'Land Rover',
