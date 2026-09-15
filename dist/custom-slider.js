@@ -31,6 +31,11 @@
       gotoPage: "Go to slides {from}\u2013{to}",
       statusSingle: "Slide {n} of {total}",
       statusMulti: "Slides {from}\u2013{to} of {total}",
+      // The fallback name for a slide in a non-list track with no heading of its
+      // own. It was the one announced string built inline, so a site could
+      // translate its status region and still have every slide announce "1 of 6"
+      // in English (2026-09-15 review).
+      slidePosition: "{n} of {total}",
       thumbs: "Choose photo",
       photo: "Photo {n}"
     }
@@ -62,7 +67,9 @@
       this._pointerDown = false;
       this._rootAttrs = /* @__PURE__ */ new Map();
       if (this.opts.gallery) this._setRootAttr("data-cs-gallery", "");
+      else if (this.root.hasAttribute("data-cs-gallery")) this._setRootAttr("data-cs-gallery", "false");
       if (this.opts.fade) this._setRootAttr("data-cs-fade-on", "");
+      else if (this.root.hasAttribute("data-cs-fade")) this._setRootAttr("data-cs-fade", "false");
       this._prm = matchMedia("(prefers-reduced-motion: reduce)");
       this._ac = new AbortController();
       this._setupAria();
@@ -134,7 +141,7 @@
               h.id || (h.id = `${this.uid}-h-${i}`);
               s.setAttribute("aria-labelledby", h.id);
             } else {
-              s.setAttribute("aria-label", `${i + 1} of ${this.slides.length}`);
+              s.setAttribute("aria-label", fmt(this.opts.labels.slidePosition, { n: i + 1, total: this.slides.length }));
             }
           }
         });
@@ -266,6 +273,8 @@
     /* ---- navigation --------------------------------------------------------- */
     goTo(n, { behavior } = {}) {
       if (this._pointerDown) return;
+      n = Math.trunc(+n);
+      if (!Number.isFinite(n)) return;
       n = Math.max(0, Math.min(this.slides.length - 1, n));
       if (this.opts.fade) {
         const moved = n !== this.current;
@@ -449,6 +458,13 @@
       this.root.toggleAttribute("data-cs-fits", fits);
       if (this.prevBtn) this.prevBtn.hidden = this.nextBtn.hidden = fits;
       if (this.dots) this.dots.hidden = fits;
+      if (this.pauseBtn) {
+        this.pauseBtn.hidden = fits;
+        if (fits !== this._fits) {
+          this._fits = fits;
+          fits ? this._suspend("fits") : this._unsuspend("fits");
+        }
+      }
       this._updateDots();
       this._updateArrows();
       this._updateStatus();

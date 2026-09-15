@@ -200,30 +200,37 @@ them wipes the engine's `padding-bottom` dot-row reservation; `padding-block-sta
 `padding-inline` are fine).
 
 **`npm test` is a gate, not optional.** `@playwright/test`, workers, `retries: 0` (so the configured
-on-retry trace never fires — `npm run test:ui` is the way to step through a failure); about 90
-seconds. Every test names the finding it guards and was checked to fail against the code before it.
-One file per area (`npx playwright test --list` for the count; a number written here went stale
-within a week): `brands`, `builder` (copy-panel output, paste parity on a hostile host), `controls`
-(a knob shows what the slider actually uses), `content`, `engine` (the engine's contract on authored
-markup — no-JS, fits state, tab order, autoplay, reduced motion), `install` (saved name AND bytes;
-Copy hands over the file with no tag; the panel neither states a deployment status nor offers a
-paste route), `editor`, `dots`, `fade`, `settings`, `colour`, `labels`, `layout`, `length`, `pane`,
-`vendor`, `variants` (measured brand values reaching preview and copied CSS), `recipes` (every
-Reference restyle applied to a real pasted slider). It deliberately does NOT sweep all 21 patterns
-at every width — a gate nobody runs is not a gate. Run `validate` and `test` before committing, and
-the README "Verification checklist" browser sweep before shipping; a size check alone is not
+trace is `retain-on-failure`, since an on-retry one could never fire); about 90 seconds. Every test
+names the finding it guards and was checked to fail against the code before it. One file per area
+(`npx playwright test --list` for the count; a number written here went stale within a week):
+`brands`, `builder` (copy-panel output, paste parity on a hostile host), `controls` (a knob shows
+what the slider actually uses), `content`, `engine` (the engine's contract on authored markup —
+no-JS, fits state, tab order, autoplay, reduced motion), `install` (saved name AND bytes; Copy hands
+over the file with no tag; the panel neither states a deployment status nor offers a paste route),
+`editor`, `dots`, `fade`, `settings`, `colour`, `labels`, `layout`, `length`, `pane`, `vendor`,
+`variants` (measured brand values reaching preview and copied CSS), `recipes` (every Reference
+restyle applied to a real pasted slider). It deliberately does NOT sweep all 21 patterns at every
+width — a gate nobody runs is not a gate. Run `validate` and `test` before committing, and the
+README "Verification checklist" browser sweep before shipping; a size check alone is not
 verification.
 
 `.claude/settings.json` registers a PostToolUse hook (`scripts/claude-format-hook.js`, exec form, so
 no shell is involved) that auto-fixes each file Claude edits inside this repo and leaves files in
 the other working directories alone. It never blocks; `npm run validate` is the real gate.
 
+**CI checks that the committed `dist/` matches source** (`git diff --exit-code -- dist`, after the
+build). Without it a `src/` change with a forgotten rebuild passed everything: `npm run size`
+rebuilds `dist` on the runner and the tests then measure that fresh build, while the repo went on
+serving the stale committed bytes to every dealer page and to the demo (2026-09-15 review). It is
+the only step that looks at what is actually in the repo rather than at what CI just built.
+
 `.github/workflows/validate.yml` runs `validate`, `size` and `test` on every push and pull request
 (Chromium), and a second job runs `test:browsers` — `tests/engine.test.mjs` alone on Firefox and
 WebKit, the engine's contract where its Safari and Firefox decisions actually execute. After a push,
-watch both until green. `npm run a11y` (axe over every pattern, the brands page, both themes, both
-dialogs; needs `npm run serve`) is a deliberate run, not a gate; it drifted for a week when the look
-picker it clicked was deleted, so run it after any change to the rail or the demo pages.
+watch both until green. `npm run a11y` (axe over every pattern, the brands page, the two catalogue
+pages at 390, both themes, both dialogs; needs `npm run serve`) is a deliberate run, not a gate; it
+drifted for a week when the look picker it clicked was deleted, so run it after any change to the
+rail or the demo pages.
 
 ## Architecture
 
@@ -352,6 +359,14 @@ re-proposing them):
 - Never `scroll-snap-stop: always` — it blocks multi-slide flicks and hit a Firefox bug.
 - Never make the track the live region; the terse `.cs-status` region exists so multi-card moves
   don't announce every card.
+- Never "fix" the IntersectionObserver to read `intersectionRatio` instead of `e.isIntersecting`.
+  Three separate reviews have filed this on the reading that `isIntersecting` means "any pixel", so
+  a 0.25 threshold lets autoplay resume on a sliver. Browsers set `isIntersecting` from the
+  THRESHOLD INDEX: with a single 0.25 threshold it is false below that crossing. Probed directly on
+  Chromium, Firefox and WebKit (2026-09-15), walking a target 0 → 10% → 50% → 10% → 0 — every one
+  reports `{ ratio: 0.1, isIntersecting: false }` coming back DOWN through the threshold, and
+  reports nothing at all at 10% going up. `tests/engine.test.mjs` walks it in both directions now;
+  the ascending half alone proved nothing, because no callback fires there.
 - Never inject slide content. The engine generates controls only; headings, links and images come
   from the authored HTML (SEO + no-JS). Thumbs build a fresh `<img>` rather than cloning, so site
   ids/srcset don't leak.

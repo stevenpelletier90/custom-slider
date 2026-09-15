@@ -239,6 +239,71 @@ rationale. The rules they anchored stay in CLAUDE.md; the evidence lives here.
     rather than the builder frame, for the same reason: the builder cannot go below 390. Each was
     run against the code before it - the sideways check failed on brands at 30px, the wrap check on
     nine bar/width pairs, the arrow check on eight strips at 36px.
+- 2026-09-15, the third outside review (ten findings, pasted by Steven). Nine were real and are
+  fixed; one was not, and the measurement is the point of writing this down.
+  - **IntersectionObserver: NOT a bug, for the third time.** The reading is always the same — that
+    `isIntersecting` means "any pixel", so with `threshold: 0.25` autoplay resumes on a sliver and
+    the code should test `intersectionRatio >= 0.25`. Browsers do not implement it that way: the
+    entry's `isIntersecting` is set from the THRESHOLD INDEX, so with a single 0.25 threshold it is
+    false below that crossing. Probed directly on Chromium, Firefox and WebKit on 2026-09-15 with a
+    100px target in a 100px scrolling root, walked 0 → 10% → 50% → 10% → 0: every engine reports
+    `{ ratio: 0.1, isIntersecting: false }` on the way DOWN through 0.25, and reports nothing at all
+    at 10% on the way up. So the reviewer's diagnosis was wrong and their proposed fix
+    (`intersectionRatio >= 0.25`) is behaviourally identical to what is already there. The reviewer
+    was right about the TEST, though: it only ever walked the strip up, which is the half that
+    proves nothing — nothing fires at 10% ascending, so the assertion was passing on a callback that
+    never happened. `tests/engine.test.mjs` now walks it back down too, and the proof run confirms
+    it: patching the engine to the "any pixel" reading (`intersectionRatio > 0`) fails the new leg
+    with "scrolling back down to a tenth left autoplay running".
+  - **CI could pass on a stale committed `dist/`.** The real one. `dist/` is checked in and is what
+    every dealer page loads, but CI checked out, ran `npm run size` (which REBUILDS dist), and then
+    tested the fresh build — so a `src/` change with a forgotten rebuild passed every gate while the
+    repo still served the old bytes. One step, `git diff --exit-code -- dist`, after the build.
+  - **JS options did not beat data attributes in the CSS.** The documented precedence is JS > data
+    attribute > default, but `.cs[data-cs-gallery]:not([data-cs-gallery="false"])` and the fade
+    width rule read the AUTHORED attribute — they have to, because the thumb strip's space and the
+    one-up width must exist before any script runs. The constructor mirrored only the TRUE side, so
+    `new CustomSlider(el, { gallery: false })` on authored gallery markup built no gallery and left
+    35px of thumb strip reserved, and `{ fade: false }` on authored fade markup left the slides
+    pinned one-up at 1170 of a 1170 track. Both now write `="false"`, which is the off switch both
+    selectors already carried a `:not()` for, through `_setRootAttr` so `destroy()` restores.
+  - **`goTo()` had no API boundary.** `Math.min/max` clamps the ENDS, it does not validate:
+    `goTo(1.5)` reached `slides[1.5]` and `goTo(NaN)` `slides[NaN]`, both undefined, both throwing
+    on `.getBoundingClientRect()`. Now `Math.trunc` + `Number.isFinite`, the same treatment `step`
+    got earlier the same day.
+  - **The thumb rail had no scroll shield.** The track declares `scroll-behavior: auto` so a host
+    page's `* { scroll-behavior: smooth }` cannot hijack an instant move; `.cs-thumbs` did not, and
+    `_revealThumb()` calls `scrollBy()` with no `behavior`, which defers to the property — so the
+    same hostile host animated the rail, reduced-motion readers included.
+  - **Autoplay's pause button survived the fits state.** `fits` hid the arrows and the dots but not
+    `pauseBtn`, so a strip where everything already fits offered to stop a rotation that goes from
+    stop 0 to stop 0 forever, with the interval firing no-op `next()` calls behind it. Both now,
+    with `fits` as a suspension reason so a narrower window resumes it. Guarded on `pauseBtn` rather
+    than on `fits` alone: `_setupAutoplay()` returns before creating `this._suspended` when there is
+    no autoplay, so the first version of this threw during construction and `_cs` was never assigned
+    — caught by the destroy test, which is what a suite is for.
+  - **One announced string was not a label.** `${i + 1} of ${this.slides.length}`, built inline, on
+    a non-list track whose slides carry no heading — so a Spanish page could translate its status
+    region and still announce "1 of 6" on every slide. Now `labels.slidePosition`. The reason
+    `labels.test.mjs` never caught it is that its fixtures are `<ul>`, which takes the other branch.
+  - **The builder put a typed URL straight into `href`.** The button's TEXT went through `escTab`
+    and its LINK did not, so a stray quote ended the attribute early and `javascript:` in the Link
+    box pasted a script onto a dealer page. `escUrl` now strips whitespace (`java<TAB>script:` is
+    the classic way past a prefix check), refuses a protocol-relative `//host`, allows only
+    http/https/ tel/mailto when there is a scheme at all, and escapes what is left. Written without
+    `\u00NN` escapes on purpose: the format hook rewrites them into literal bytes, which put a real
+    NUL in `patterns.js` on the first attempt and made git call the file binary.
+  - **The trace setting was dead.** `retries: 0` with `trace: 'on-first-retry'` means there is never
+    a first retry. `retain-on-failure` keeps one for the run that actually failed.
+  - **The a11y audit only ever saw 1440.** Half the stylesheet now only exists below 768, so it also
+    runs the two catalogue pages at 390: 29 states became 31, and both are clean. Whether it becomes
+    a CI gate is Steven's call — CLAUDE.md makes "a deliberate run, not a gate" an explicit
+    decision.
+  - Backlog pruned again. Gone: the gallery-thumbs `cloneNode` entry (the gallery has built a fresh
+    `document.createElement('img')` for longer than that entry has existed) and the 2026-08-31
+    `behavior: 'auto'` entry, rewritten as resolved rather than deleted because it is the record of
+    why "never `scroll-behavior` on the track" means never `smooth`, not never `auto`.
+  - Cost: the engine went 6424 → 6514 B gzip against the 6656 budget. No raise needed.
 - Rows: "Two-row grid" was a rail entry that was the model bar with `pairUp: true` and a two-rung
   ladder, so "can I have two rows" meant leaving the chosen pattern and losing its settings.
 - Lightbox: the one pattern whose point is covering the page demonstrated itself inside a box until

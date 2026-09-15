@@ -91,19 +91,20 @@ Every string the carousel announces is settable from the markup, because the CMS
 markup and never a constructor call — a page built in the block editor has no other route to a
 Spanish carousel.
 
-| Attribute                     | Default                         | Where it is heard                  |
-| ----------------------------- | ------------------------------- | ---------------------------------- |
-| `data-cs-label-prev`          | `Previous slides`               | Previous arrow                     |
-| `data-cs-label-next`          | `Next slides`                   | Next arrow                         |
-| `data-cs-label-pause`         | `Stop automatic slide show`     | Pause button (autoplay only)       |
-| `data-cs-label-play`          | `Start automatic slide show`    | Same button once paused            |
-| `data-cs-label-dots`          | `Choose slide`                  | The dot group                      |
-| `data-cs-label-goto-slide`    | `Go to slide {n}`               | One dot, 1-up                      |
-| `data-cs-label-goto-page`     | `Go to slides {from}–{to}`      | One dot, multi-card                |
-| `data-cs-label-status-single` | `Slide {n} of {total}`          | The live status region, 1-up       |
-| `data-cs-label-status-multi`  | `Slides {from}–{to} of {total}` | The live status region, multi-card |
-| `data-cs-label-thumbs`        | `Choose photo`                  | The thumb strip (`gallery`)        |
-| `data-cs-label-photo`         | `Photo {n}`                     | One thumb (`gallery`)              |
+| Attribute                      | Default                         | Where it is heard                                                             |
+| ------------------------------ | ------------------------------- | ----------------------------------------------------------------------------- |
+| `data-cs-label-prev`           | `Previous slides`               | Previous arrow                                                                |
+| `data-cs-label-next`           | `Next slides`                   | Next arrow                                                                    |
+| `data-cs-label-pause`          | `Stop automatic slide show`     | Pause button (autoplay only)                                                  |
+| `data-cs-label-play`           | `Start automatic slide show`    | Same button once paused                                                       |
+| `data-cs-label-dots`           | `Choose slide`                  | The dot group                                                                 |
+| `data-cs-label-goto-slide`     | `Go to slide {n}`               | One dot, 1-up                                                                 |
+| `data-cs-label-goto-page`      | `Go to slides {from}–{to}`      | One dot, multi-card                                                           |
+| `data-cs-label-status-single`  | `Slide {n} of {total}`          | The live status region, 1-up                                                  |
+| `data-cs-label-status-multi`   | `Slides {from}–{to} of {total}` | The live status region, multi-card                                            |
+| `data-cs-label-thumbs`         | `Choose photo`                  | The thumb strip (`gallery`)                                                   |
+| `data-cs-label-photo`          | `Photo {n}`                     | One thumb (`gallery`)                                                         |
+| `data-cs-label-slide-position` | `{n} of {total}`                | A slide's own name, when the track is not a list and the slide has no heading |
 
 `{n}`, `{from}`, `{to}` and `{total}` are filled in; anything else is used verbatim. Set
 `data-cs-roledescription` too — a screen reader says the word "carousel" before any of these.
@@ -272,6 +273,13 @@ Methods: `goTo(n)`, `next()`, `prev()`, `pause()`, `play()`, `destroy()`,
 (`window.CustomSlider`) or imported as an ES module. Instance is at `element._cs`. Events (bubble
 from the root): `cs:change` `{index, page, slidesInView}`, `cs:autoplay-start`, `cs:autoplay-stop`,
 `cs:destroy`.
+
+`goTo(n)` takes a slide index: a finite whole number, clamped to the ends. A fraction truncates
+(`goTo(1.5)` is slide 1) and anything that is not a number — `NaN`, `Infinity`, a word, `undefined`
+— is a no-op rather than a throw. JS options beat data attributes for the CSS state too:
+constructing with `{ gallery: false }` or `{ fade: false }` over authored `data-cs-gallery` /
+`data-cs-fade` writes `="false"` onto the element, so the stylesheet stops reserving the thumb strip
+or pinning the slides one-up. `destroy()` puts the authored value back.
 
 `destroy()` puts the root's attributes back to what they were before init and restores the authored
 markup from a snapshot taken at init. The snapshot is a rebuild, not a mutation: the slides come

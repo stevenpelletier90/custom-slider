@@ -38,6 +38,11 @@ const DEFAULTS = {
     gotoPage: 'Go to slides {from}–{to}',
     statusSingle: 'Slide {n} of {total}',
     statusMulti: 'Slides {from}–{to} of {total}',
+    // The fallback name for a slide in a non-list track with no heading of its
+    // own. It was the one announced string built inline, so a site could
+    // translate its status region and still have every slide announce "1 of 6"
+    // in English (2026-09-15 review).
+    slidePosition: '{n} of {total}',
     thumbs: 'Choose photo',
     photo: 'Photo {n}',
   },
@@ -71,14 +76,26 @@ export class CustomSlider {
     this._target = null; // pending goTo destination (rapid clicks)
     this._pointerDown = false;
     this._rootAttrs = new Map(); // name -> value before init (null: absent), for destroy()
-    // CSS reserves the thumb-strip space via [data-cs-gallery] — mirror the JS
-    // option onto the attribute so manual construction lays out correctly.
+    // CSS reserves the thumb-strip space via [data-cs-gallery] and the one-up
+    // width via [data-cs-fade], both read off the AUTHORED attribute — so the
+    // documented precedence (JS option > data attribute) only holds if the
+    // final option state is mirrored back BOTH ways. Mirroring only the true
+    // side left `new CustomSlider(el, { gallery: false })` on authored
+    // data-cs-gallery markup with no gallery and the thumb strip's space still
+    // reserved, and the same shape with fade left the slides pinned one-up
+    // while the engine scrolled them normally (2026-09-15 review). "false" is
+    // the off switch both selectors already carry a :not() for, and
+    // _setRootAttr records the prior value, so destroy() puts it back.
     if (this.opts.gallery) this._setRootAttr('data-cs-gallery', '');
+    else if (this.root.hasAttribute('data-cs-gallery')) this._setRootAttr('data-cs-gallery', 'false');
     // Fade stacks the slides into one grid cell and JS owns which one is
-    // visible — so the stacking CSS must key off an attribute only the ENGINE
-    // sets, never the authored data-cs-fade. Keyed off the authored one, a
-    // no-JS visitor gets every slide at opacity 0 and the hero disappears.
+    // visible — so the STACKING CSS keys off data-cs-fade-on, an attribute only
+    // the engine sets. Keyed off the authored one, a no-JS visitor gets every
+    // slide at opacity 0 and the hero disappears. The authored attribute still
+    // needs the same correction as gallery above, because the width rule reads
+    // it directly.
     if (this.opts.fade) this._setRootAttr('data-cs-fade-on', '');
+    else if (this.root.hasAttribute('data-cs-fade')) this._setRootAttr('data-cs-fade', 'false');
     this._prm = matchMedia('(prefers-reduced-motion: reduce)');
     this._ac = new AbortController();
 
@@ -181,7 +198,7 @@ export class CustomSlider {
             h.id ||= `${this.uid}-h-${i}`;
             s.setAttribute('aria-labelledby', h.id);
           } else {
-            s.setAttribute('aria-label', `${i + 1} of ${this.slides.length}`);
+            s.setAttribute('aria-label', fmt(this.opts.labels.slidePosition, { n: i + 1, total: this.slides.length }));
           }
         }
       });
@@ -339,6 +356,13 @@ export class CustomSlider {
 
   goTo(n, { behavior } = {}) {
     if (this._pointerDown) return; // never fight an active drag
+    // A slide index is a finite whole number, checked at the API boundary the
+    // same way step is: Math.min/max passes 1.5, NaN and Infinity straight
+    // through, and slides[1.5] / slides[NaN] is undefined, so the line below
+    // used to throw on .getBoundingClientRect() (2026-09-15 review). Clamping
+    // is not validating - it only handles the ends.
+    n = Math.trunc(+n);
+    if (!Number.isFinite(n)) return;
     n = Math.max(0, Math.min(this.slides.length - 1, n));
     // Fade mode never scrolls, so scrollend never fires — commit inline.
     if (this.opts.fade) {
@@ -594,6 +618,24 @@ export class CustomSlider {
     this.root.toggleAttribute('data-cs-fits', fits);
     if (this.prevBtn) this.prevBtn.hidden = this.nextBtn.hidden = fits;
     if (this.dots) this.dots.hidden = fits;
+    // And the pause button, for the same reason: with one stop, next() goes
+    // from stop 0 to stop 0 forever, so "Stop automatic slide show" offers to
+    // stop something that is not happening. Suspending the timer as well means
+    // the interval is not firing no-op ticks either, and 'fits' is a suspension
+    // reason like the others, so widening back past the breakpoint resumes it.
+    // pauseBtn exists if and only if autoplay does, and _setupAutoplay() returns
+    // before creating this._suspended when it doesn't — so the whole block is
+    // guarded on it, not just the button. Inside: only on an actual change,
+    // because _syncRotation() clears and restarts the interval every time it
+    // runs and _updateUI() runs on every commit, so an unconditional call would
+    // restart the autoplay countdown on every scroll the reader makes.
+    if (this.pauseBtn) {
+      this.pauseBtn.hidden = fits;
+      if (fits !== this._fits) {
+        this._fits = fits;
+        fits ? this._suspend('fits') : this._unsuspend('fits');
+      }
+    }
     this._updateDots();
     this._updateArrows();
     this._updateStatus();

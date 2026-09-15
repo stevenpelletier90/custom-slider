@@ -20,7 +20,7 @@
   // The patterns and their example rosters live in assets/patterns.js, loaded
   // just before this file; the few helpers the generator shares with them
   // (escTab, the video dialog markup, clamp) come the same way.
-  const { PATTERNS, VEHICLES, PHOTOS, MODELS, SERVICES, LOGOS, PLACES, VIDEO_DIALOG_HTML, escTab, clamp } = globalThis.CARGO;
+  const { PATTERNS, VEHICLES, PHOTOS, MODELS, SERVICES, LOGOS, PLACES, VIDEO_DIALOG_HTML, escTab, escUrl, clamp } = globalThis.CARGO;
 
   // The tiers a media query asks about. 768 / 992 / 1200 are the platform's
   // Bootstrap 3 grid, measured in its CSS bundle (not the estate's 461 / 539 /
@@ -916,7 +916,7 @@
       const titleClass = classes('titleClass', 'h1');
       const wrapClass = classes('wrapClass', '');
       const head = (title ? `  <h2 class="${titleClass ? `${titleClass} ` : ''}cargo-title">${escTab(title)}</h2>\n` : '') + (lead ? `  <p class="lead cargo-lead">${escTab(lead)}</p>\n` : '');
-      const foot = moreText ? `\n  <p class="cargo-more"><a class="btn btn-cta btn-lg" href="${moreHref || '#'}">${escTab(moreText)}</a></p>` : '';
+      const foot = moreText ? `\n  <p class="cargo-more"><a class="btn btn-cta btn-lg" href="${escUrl(moreHref)}">${escTab(moreText)}</a></p>` : '';
       // The row and the panes in one box, the panes and the button in a
       // padded body inside it - see .cargo-box in the pattern's css.
       return `<div class="${cls}-wrap${wrapClass ? ` ${wrapClass}` : ''}" data-cargo="tabs" data-tabs>\n${head}  <div class="cargo-box">\n  <div class="cargo-tabs" role="tablist" aria-label="Body style">\n${tabs}\n  </div>\n  <div class="cargo-body">\n${panes}${foot}\n  </div>\n  </div>\n</div>`;

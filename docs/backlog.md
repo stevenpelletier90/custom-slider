@@ -12,6 +12,11 @@ the IntersectionObserver "threshold does nothing" item was measured on all three
 never a bug (a single 0.25 threshold reports nothing at 0.1, and its entry's `isIntersecting` is
 false below the crossing). `docs/history.md` has the dates.
 
+Pruned again 2026-09-15 after a third outside review. Gone: the gallery-thumbs `cloneNode` entry
+(the gallery has built a fresh `document.createElement('img')` since before that review — the
+finding was already stale when it was written down). The IntersectionObserver line above now has a
+measurement in BOTH directions behind it, not just the ascending one — see `docs/history.md`.
+
 ## 2026-09-15 — the phone pass, two decided noes
 
 - **Peek on phones: measured no** (Steven, 2026-09-15). The phone pass proposed a phone-tier
@@ -61,8 +66,6 @@ false below the crossing). `docs/history.md` has the dates.
   linger non-inert (edge case, demo unaffected).
 - Gallery: TWO polite live regions (status region + track per APG) may double-announce — validate in
   Task 7 screen-reader/status pass; consider suppressing status updates in gallery mode.
-- Gallery thumbs cloneNode carries id/srcset/sizes from source img — duplicate-id/bandwidth hazard
-  for consumers (spec'd behavior; document or strip in a later pass).
 
 ## 2026-08-31 — deep audit backlog (found during the Custom Slider rename, NOT actioned)
 
@@ -73,13 +76,12 @@ behaviour, the frozen a11y contract, or a documented "never do this".
 
 ENGINE / PLATFORM (cited to MDN + BCD via Context7):
 
-- `behavior: 'auto'` at custom-slider.js:350/:426 is NOT "instant" — it defers to the computed
-  `scroll-behavior` of the track. A host page shipping `* { scroll-behavior: smooth }` therefore
-  animates the reduced-motion branch, gallery tab activation, and the ResizeObserver re-align;
-  `t.scrollLeft = …` in _wireDrag (:471) is also a CSSOM scroll API and would lag the cursor.
-  TENSION: the obvious CSS fix (declare `scroll-behavior: auto` on `.cs-track`) brushes against the
-  standing "never set scroll-behavior on the track" rule, which exists for the `smooth` case. The JS
-  fix (pass 'instant') needs its support floor verified first.
+- RESOLVED (2026-09-08, extended 2026-09-15), kept as the record of why the rule reads the way it
+  does: `behavior: 'auto'` defers to the computed `scroll-behavior`, so a host page shipping
+  `* { scroll-behavior: smooth }` animated the reduced-motion branch. Both scrollers now declare
+  `scroll-behavior: auto` themselves - the track then, the thumb rail on 2026-09-15 - which is not
+  a brush against "never set scroll-behavior on the track": that rule forbids `smooth`, and `auto`
+  is what keeps the per-call decision in JS's hands. `tests/engine.test.mjs` holds both.
 - `role="list"` is re-applied in JS at init, but `list-style: none` applies at first paint — so
   Safari/VoiceOver loses list semantics in the pre-JS window and permanently if the script fails.
   Putting `role="list"` in the documented markup is an addition (allowed) and would let the JS go.

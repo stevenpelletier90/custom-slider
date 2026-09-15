@@ -21,6 +21,13 @@ jobs:
       - run: npm run validate
       # Rebuilds dist and fails at the gzip budget in scripts/size.mjs.
       - run: npm run size
+      # dist/ is CHECKED IN and is what demo/index.html and every dealer page
+      # load, so a src/ change with a forgotten rebuild used to pass everything:
+      # the step above rebuilds dist locally, the tests then measure the FRESH
+      # build, and the stale committed files sail through untouched. This is the
+      # only step that looks at what is actually in the repo (2026-09-15 review).
+      - name: dist/ matches source
+        run: git diff --exit-code -- dist || { echo "::error::dist/ is stale — run npm run build and commit dist/ with the source change"; exit 1; }
       # The whole suite runs on the chromium project only (`npm test`); the
       # engine's contract file runs on the other two engines in the job below.
       - run: npx playwright install --with-deps chromium

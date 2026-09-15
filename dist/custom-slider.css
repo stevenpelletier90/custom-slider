@@ -181,6 +181,7 @@
   justify-content: safe center;
   block-size: var(--cs-thumb-h);
   overflow-x: auto;
+  scroll-behavior: auto;
   scrollbar-width: none;
 }
 .cs-thumbs::-webkit-scrollbar {

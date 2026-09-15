@@ -225,6 +225,19 @@ if (patterns.length < 21) {
 // the tile. brands.html draws every preset in one page.
 await go('/demo/brands.html');
 await audit('/demo/brands.html');
+
+// And the same two catalogue pages at 390, because half this stylesheet only
+// exists below 768: phone arrow sizes, the scrolling tab row, Ford's phone
+// cells, the column ladder's two lowest rungs. Auditing 1440 alone said nothing
+// about any of them (2026-09-15 review). The catalogue pages rather than the
+// builder, because the builder's own narrowest frame button is 390 and its
+// chrome is a desktop tool's - the pattern markup is the same markup either way.
+await page.setViewportSize({ width: 390, height: 900 });
+for (const path of ['/demo/patterns.html', '/demo/brands.html']) {
+  await go(path);
+  await audit(`${path} at 390`);
+}
+await page.setViewportSize({ width: 1440, height: 1000 });
 await go('/demo/index.html');
 
 // The dark palette is a second set of colours axe has not seen yet.
@@ -269,4 +282,4 @@ if (findings.length) {
   console.error(`\na11y: ${findings.length} violation(s) over ${states} states.`);
   process.exit(1);
 }
-console.log(`a11y: clean over ${states} states (${patterns.length} patterns, the brands page, both themes, both dialogs).`);
+console.log(`a11y: clean over ${states} states (${patterns.length} patterns, the brands page, the two catalogue pages at 390, both themes, both dialogs).`);

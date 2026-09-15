@@ -442,6 +442,47 @@ test.describe('the builder survives its own inputs', () => {
   });
 });
 
+// The builder's whole job is to hand over paste-ready markup, so a value a
+// designer typed must not be able to break out of the attribute it lands in.
+// The button's LINK box went into href="" raw while its TEXT went through
+// escTab, so a stray quote ended the attribute early and `javascript:` pasted
+// a script onto a dealer page (2026-09-15 review).
+test.describe('what a designer types cannot break the markup', () => {
+  test('the button link is escaped, and only a real link scheme survives', async () => {
+    await pick(page, 'tabs');
+    const href = async (value) => {
+      await setField(page, 'Button under the bar, link', value);
+      const { html } = await copyParts(page);
+      return /<a class="btn btn-cta btn-lg" href="([^"]*)"/.exec(html)?.[1];
+    };
+
+    // The ordinary values, untouched: a platform path, a full URL, a phone and
+    // an in-page anchor are what these buttons actually point at.
+    assert.equal(await href('/searchnew.aspx'), '/searchnew.aspx');
+    assert.equal(await href('https://example.com/new?sort=price'), 'https://example.com/new?sort=price');
+    assert.equal(await href('searchnew.aspx'), 'searchnew.aspx');
+    assert.equal(await href('tel:+15555550123'), 'tel:+15555550123');
+    assert.equal(await href('#lineup'), '#lineup');
+    // An ampersand is a real character in a query string and has to survive as
+    // an entity rather than being dropped.
+    assert.equal(await href('/x.aspx?a=1&b=2'), '/x.aspx?a=1&amp;b=2');
+
+    // A quote cannot close the attribute and start a new one.
+    const quoted = await href('/x" onmouseover="alert(1)');
+    assert.ok(!quoted.includes('"'), `a raw quote reached the href: ${quoted}`);
+    // The tag ENDS at the href's closing quote - nothing the designer typed
+    // became a second attribute. Grepping the escaped text for onmouseover
+    // would be the wrong check: it is still in there, as &quot;-escaped
+    // characters inside the value, which is exactly what safe looks like.
+    assert.match((await copyParts(page)).html, /<a class="btn btn-cta btn-lg" href="[^"]*">[^<]*<\/a>/, 'something the designer typed escaped the href attribute');
+
+    // And a script URL is refused outright rather than escaped and shipped.
+    for (const bad of ['javascript:alert(1)', 'JaVaScRiPt:alert(1)', 'java\tscript:alert(1)', 'data:text/html,<script>alert(1)</script>', '//evil.example.com/new']) {
+      assert.equal(await href(bad), '#', `${JSON.stringify(bad)} reached the href`);
+    }
+  });
+});
+
 test.describe('nothing threw along the way', () => {
   test('no page errors in the builder or the host pages', () => {
     assert.deepEqual(errors, []);

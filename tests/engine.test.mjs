@@ -265,10 +265,19 @@ test.describe('the contract, in the last window before it froze', () => {
     assert.deepEqual(seen.page.stops, [0, 3, 6]);
   });
 
-  // The observer fires at the 0.25 crossing AND whenever intersecting flips,
-  // and isIntersecting is true at one pixel - so autoplay resumed on a sliver.
-  // A tenth visible must keep it suspended; half visible must run it.
-  test('autoplay waits for a quarter of the strip, not the first pixel', async ({ page }) => {
+  // Three reviews have now called `e.isIntersecting` with a 0.25 threshold a
+  // bug, on the reading that isIntersecting means "any pixel" and only
+  // intersectionRatio knows how much. It does not: browsers set isIntersecting
+  // from the THRESHOLD INDEX, so with a single 0.25 threshold it is false below
+  // that crossing. Measured on Chromium, Firefox and WebKit 2026-09-15 - at 10%
+  // every one of them reports `{ ratio: 0.1, isIntersecting: false }`.
+  //
+  // The first two passes of this test only ever walked the strip UP (0 -> 10%
+  // -> 50%), which is the half that proves nothing: nothing fires at 10% on the
+  // way up, so the assertion passed on a callback that never happened. The
+  // DOWNWARD leg is the one that crosses .25 with a real entry, and it is the
+  // only evidence that isIntersecting flips rather than staying true.
+  test('autoplay waits for a quarter of the strip, and lets go again on the way down', async ({ page }) => {
     await page.setContent(
       hostHtml({ ...engine, css: '.cs{--cs-per-view:4}', html: `<div style="height:3000px"></div>${slider(8, 'data-cs-autoplay="300"')}<div style="height:3000px"></div>`, box: 1170 }),
       { waitUntil: 'load' },
@@ -294,6 +303,14 @@ test.describe('the contract, in the last window before it froze', () => {
     const half = await show(0.5);
     assert.ok(half.visible > 0.3, `the fixture showed ${half.visible} of the strip, not half`);
     assert.equal(half.held, false, 'half the strip in view did not release the hold');
+    // Down across the same crossing, which is where a callback actually fires
+    // with a ratio of 0.1. If isIntersecting were "any pixel" this entry would
+    // say true and the hold would never come back.
+    const back = await show(0.1);
+    assert.ok(back.visible < 0.2, `the fixture showed ${back.visible} of the strip on the way down, not a tenth`);
+    assert.equal(back.held, true, 'scrolling back down to a tenth left autoplay running');
+    const gone = await show(0);
+    assert.equal(gone.held, true, 'a strip scrolled fully out of view left autoplay running');
   });
 
   // data-cs-gallery="false" means not a gallery to the JS, but the CSS reserved
@@ -433,5 +450,163 @@ test.describe('the contract, in the last window before it froze', () => {
     const used = new Set([...css.matchAll(/var\(\s*(--cs-[a-z0-9-]+)/g)].map((m) => m[1]));
     const undeclared = [...used].filter((p) => !declared.has(p)).sort();
     assert.deepEqual(undeclared, [], `used but never declared, so the Reference page cannot list it: ${undeclared.join(', ')}`);
+  });
+});
+
+// The boundary cases of the 2026-09-15 review, in one describe so they read as
+// what they are: the API's edges, not the engine's happy path.
+test.describe('the API boundary', () => {
+  // "JS options override data attributes, which override defaults" is the
+  // documented precedence, but the CSS reads the AUTHORED attribute — it has
+  // to, because the thumb strip's space and the one-up width must exist before
+  // any script runs. Mirroring only the TRUE side meant { gallery: false } on
+  // authored data-cs-gallery markup built no gallery while the CSS went on
+  // reserving the strip, and { fade: false } on authored data-cs-fade left the
+  // slides pinned one-up while the engine scrolled them normally.
+  test('a false JS option overrides an authored data attribute in the CSS too', async ({ page }) => {
+    const read = async (attrs, opts) => {
+      await page.setContent(hostHtml({ ...engine, css: '.cs{--cs-per-view:4}', html: `<div class="cs" aria-label="Models"${attrs}><ul class="cs-track">${slides(8)}</ul></div>`, box: 1170 }), {
+        waitUntil: 'load',
+      });
+      await page.waitForTimeout(250);
+      return page.evaluate((o) => {
+        const el = document.querySelector('.cs');
+        const cs = new CustomSlider(el, o);
+        return {
+          thumbs: el.querySelectorAll('.cs-thumb').length,
+          pad: parseFloat(getComputedStyle(el).paddingBottom),
+          slide: Math.round(el.querySelector('.cs-slide').getBoundingClientRect().width),
+          track: Math.round(el.querySelector('.cs-track').clientWidth),
+          gallery: cs.opts.gallery,
+          fade: cs.opts.fade,
+        };
+      }, opts);
+    };
+    const plain = await read('', {});
+    const galleryOff = await read(' data-cs-gallery', { gallery: false });
+    assert.equal(galleryOff.gallery, false, 'the JS option did not win in the JS');
+    assert.equal(galleryOff.thumbs, 0, 'gallery:false still built thumbs');
+    assert.equal(galleryOff.pad, plain.pad, `gallery:false reserved ${galleryOff.pad - plain.pad}px of thumb strip that is never drawn`);
+
+    const fadeOff = await read(' data-cs-fade', { fade: false });
+    assert.equal(fadeOff.fade, false, 'the JS option did not win in the JS');
+    assert.ok(fadeOff.slide < fadeOff.track * 0.5, `fade:false left the slides pinned one-up at ${fadeOff.slide} of a ${fadeOff.track} track`);
+    assert.equal(fadeOff.slide, plain.slide, 'fade:false did not draw the same strip as markup that never mentioned fade');
+  });
+
+  // goTo is public API and took whatever it was given: Math.min/max clamps the
+  // ENDS, it does not validate, so goTo(1.5) reached slides[1.5] and goTo(NaN)
+  // slides[NaN] — both undefined, and both threw on getBoundingClientRect().
+  // The same treatment step got: a slide index is a finite whole number.
+  test('goTo refuses an index that is not a whole number', async ({ page }) => {
+    await page.setContent(build(8, 4), { waitUntil: 'load' });
+    await page.waitForTimeout(300);
+    const r = await page.evaluate(() => {
+      const cs = document.querySelector('.cs')._cs;
+      const out = {};
+      for (const [name, n] of [
+        ['fraction', 1.5],
+        ['nan', NaN],
+        ['infinity', Infinity],
+        ['-infinity', -Infinity],
+        ['string', 'three'],
+        ['undefined', undefined],
+        ['null', null],
+        ['object', {}],
+        ['negative', -5],
+        ['past the end', 999],
+      ]) {
+        try {
+          cs.goTo(n, { behavior: 'auto' });
+          // _target is where goTo is TAKING it - current only moves at the commit
+          // (scrollend), which has not happened yet a line later.
+          out[name] = { threw: false, current: cs._target ?? cs.current };
+        } catch (e) {
+          out[name] = { threw: true, message: e.message };
+        }
+        cs.goTo(0, { behavior: 'auto' });
+      }
+      return out;
+    });
+    for (const [name, v] of Object.entries(r)) assert.equal(v.threw, false, `goTo(${name}) threw: ${v.message}`);
+    // A fraction truncates rather than being refused — goTo(1.5) is slide 1,
+    // the same way step takes a numeric string for the number it spells.
+    assert.equal(r.fraction.current, 1, 'goTo(1.5) did not truncate to slide 1');
+    // The ends still clamp, which is the behaviour that was always there.
+    assert.equal(r.negative.current, 0, 'goTo(-5) did not clamp to the first slide');
+    assert.equal(r['past the end'].current, 7, 'goTo(999) did not clamp to the last slide');
+    // null is 0 through Number(), so it lands on the first slide like -5 does.
+    // Anything that is not a number at all is a no-op, not a jump.
+    for (const name of ['nan', 'string', 'undefined', 'object']) assert.equal(r[name].current, 0, `goTo(${name}) moved the slider to ${r[name].current}`);
+  });
+
+  // fits already hid the arrows and the dots — controls that cannot do anything
+  // when there is one stop. The pause button was left offering to stop an
+  // autoplay that goes from stop 0 to stop 0 forever, with the interval firing
+  // no-op next() calls behind it.
+  test('a strip that fits hides the pause button and suspends the timer', async ({ page }) => {
+    await page.setContent(build(3, 4, 'data-cs-autoplay="300"'), { waitUntil: 'load' });
+    await page.waitForTimeout(400);
+    const fits = await page.evaluate(() => {
+      const el = document.querySelector('.cs');
+      return { stops: el._cs._stops().length, pause: document.querySelector('.cs-pause').hidden, held: el._cs._suspended.has('fits'), arrows: document.querySelector('.cs-arrow--next').hidden };
+    });
+    assert.equal(fits.stops, 1, 'the fixture does not fit, so this proves nothing');
+    assert.equal(fits.arrows, true, 'the arrows were not hidden, so fits never ran');
+    assert.equal(fits.pause, true, 'the pause button is still offered on a strip with one stop');
+    assert.equal(fits.held, true, 'the autoplay timer still runs on a strip with one stop');
+    // And it comes back: fits is re-evaluated on every _updateUI, because
+    // --cs-per-view is CSS and a narrower window makes the same strip stop
+    // fitting at any moment.
+    const narrow = await page.evaluate(async () => {
+      const el = document.querySelector('.cs');
+      el.style.setProperty('--cs-per-view', '1');
+      el._cs._measure();
+      el._cs._updateUI();
+      await new Promise((r) => setTimeout(r, 100));
+      return { pause: document.querySelector('.cs-pause').hidden, held: el._cs._suspended.has('fits') };
+    });
+    assert.equal(narrow.pause, false, 'the pause button did not come back when the strip stopped fitting');
+    assert.equal(narrow.held, false, 'the autoplay hold did not lift when the strip stopped fitting');
+  });
+
+  // Every announced string is settable from HTML — labels.test.mjs says so and
+  // checks the eleven keys it knew about. This one was built inline, so a
+  // Spanish page could translate its status region and still have every slide
+  // announce "1 of 6". It only appears on a non-list track whose slides carry
+  // no heading, which is why the <ul> fixtures elsewhere never reached it.
+  test('the slide-position fallback is a label like every other announced string', async ({ page }) => {
+    const html = (attrs = '') =>
+      hostHtml({
+        ...engine,
+        css: '.cs{--cs-per-view:4}',
+        html: `<div class="cs" data-cs aria-label="Modelos" ${attrs}><div class="cs-track">${Array.from({ length: 6 }, () => '<div class="cs-slide"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt=""></div>').join('')}</div></div>`,
+        box: 1170,
+      });
+    await page.setContent(html(), { waitUntil: 'load' });
+    await page.waitForTimeout(300);
+    const dflt = await page.evaluate(() => [...document.querySelectorAll('.cs-slide')].map((s) => s.getAttribute('aria-label')));
+    assert.deepEqual(dflt.slice(0, 2), ['1 of 6', '2 of 6'], 'the default wording changed');
+
+    await page.setContent(html('data-cs-label-slide-position="Diapositiva {n} de {total}"'), { waitUntil: 'load' });
+    await page.waitForTimeout(300);
+    const es = await page.evaluate(() => [...document.querySelectorAll('.cs-slide')].map((s) => s.getAttribute('aria-label')));
+    assert.deepEqual(es.slice(0, 2), ['Diapositiva 1 de 6', 'Diapositiva 2 de 6'], 'the slide position is not settable from HTML');
+  });
+
+  // The track carries scroll-behavior:auto so a host page's
+  // `* { scroll-behavior: smooth }` cannot hijack an instant move. The thumb
+  // rail is scrolled the same way — _revealThumb() calls scrollBy() with no
+  // behavior, which defers to the property — and had no shield, so the same
+  // host rule animated the rail, reduced-motion readers included.
+  test('a host page with global smooth scroll cannot hijack the thumb rail either', async ({ page }) => {
+    await page.setContent(build(8, 1, 'data-cs-gallery').replace('<head>', '<head><style>*{scroll-behavior:smooth}</style>'), { waitUntil: 'load' });
+    await page.waitForTimeout(350);
+    const r = await page.evaluate(() => ({
+      track: getComputedStyle(document.querySelector('.cs-track')).scrollBehavior,
+      thumbs: getComputedStyle(document.querySelector('.cs-thumbs')).scrollBehavior,
+    }));
+    assert.equal(r.track, 'auto', 'the host page won the track scroll-behavior');
+    assert.equal(r.thumbs, 'auto', 'the host page won the thumb rail scroll-behavior');
   });
 });

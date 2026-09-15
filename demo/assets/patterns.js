@@ -356,6 +356,33 @@
   // that return and is in the temporal dead zone for that generator.
   const escTab = (s) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/"/g, '&quot;');
 
+  // A URL a designer typed, on its way into an href the builder hands over as
+  // paste-ready markup. Escaping alone is not enough: a stray quote would end
+  // the attribute early, and `javascript:` in the Link box would paste a script
+  // onto a dealer page (2026-09-15 review). Everything the platform actually
+  // links to is a path, a full http(s) URL, a fragment, or tel:/mailto: — so
+  // that is the allowlist, and anything else falls back to "#" rather than
+  // shipping. A protocol-relative `//host` is refused too: it is a scheme in
+  // disguise. Whitespace is stripped first, because `java\tscript:` is the
+  // classic way past a naive prefix check.
+  const escUrl = (s) => {
+    // Whitespace goes first, and as a plain \s class rather than a control
+    // -character escape: `java<TAB>script:` is the classic way past a prefix
+    // check because a browser strips the tab before resolving the scheme.
+    // (Written this way on purpose - the formatter rewrites a \u00NN escape
+    // into the literal byte, which puts a real NUL in this file.)
+    const raw = String(s ?? '').replace(/\s+/g, '');
+    if (!raw) return '#';
+    // A protocol-relative //host is a scheme in disguise.
+    if (raw.startsWith('//')) return '#';
+    // Everything before the first / ? or # is the scheme, if there is one. A
+    // path, a fragment and a query have no colon there; javascript: and data:
+    // do, and are the whole point of the check.
+    const scheme = /^([a-z][a-z0-9+.-]*):/i.exec(raw.split(/[/?#]/)[0]);
+    if (scheme && !/^(?:https?|tel|mailto)$/i.test(scheme[1])) return '#';
+    return escTab(raw);
+  };
+
   const PATTERNS = {
     modelbar: {
       label: 'Model bar',
@@ -1192,5 +1219,5 @@ ${PHOTO_CSS}
   // file://, and this demo has always had to work when opened by double-click.
   // The rosters go out too: the builder keys them by name for a look that asks
   // to be drawn on a particular one (ROSTERS in workbench.js).
-  globalThis.CARGO = Object.assign(globalThis.CARGO || {}, { PATTERNS, VEHICLES, PHOTOS, MODELS, SERVICES, LOGOS, PLACES, PHOTO_CAPTION_CSS, PHOTO_LINK_CSS, VIDEO_DIALOG_HTML, escTab, clamp });
+  globalThis.CARGO = Object.assign(globalThis.CARGO || {}, { PATTERNS, VEHICLES, PHOTOS, MODELS, SERVICES, LOGOS, PLACES, PHOTO_CAPTION_CSS, PHOTO_LINK_CSS, VIDEO_DIALOG_HTML, escTab, escUrl, clamp });
 })();

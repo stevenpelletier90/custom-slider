@@ -347,6 +347,13 @@
   justify-content: safe center;
   block-size: var(--cs-thumb-h);
   overflow-x: auto;
+
+  /* The same shield the track carries, for the same reason: _revealThumb()
+     calls scrollBy() with no behavior, which defers to this property, so a
+     host page with `* { scroll-behavior: smooth }` would animate the rail —
+     including for a reader who asked for reduced motion (2026-09-15 review).
+     Declaring auto here keeps the per-call decision in JS's hands. */
+  scroll-behavior: auto;
   scrollbar-width: none;
 }
 
