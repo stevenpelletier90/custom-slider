@@ -134,14 +134,25 @@
    init and data-cs-dragging only while a drag is live. Both rules must reach
    every child: links carry their own pointer cursor, so a cursor set on the
    track alone never shows the hand over the cards themselves — and the cards
-   cover most of the strip. */
-.cs-track[data-cs-draggable],
-.cs-track[data-cs-draggable] * {
+   cover most of the strip.
+
+   Both are held off a strip that FITS. data-cs-fits is on the root whenever
+   there is one stop, which is when the engine also hides the arrows, the dots
+   and the pause button — there is nothing to drag TO, so an open hand promises
+   a scroll that cannot happen. Every tabbed bar whose pane holds no more cards
+   than fit across was offering it (2026-09-15, Steven: "for the tabbed model
+   bars that do not have any scroll they shouldn't be showing the drag hand").
+
+   Written as :not() on the cue rather than as a cursor:auto override, because
+   an override would have to reach every child too and would take the pointer
+   cursor off the card links along with it. */
+.cs:not([data-cs-fits]) .cs-track[data-cs-draggable],
+.cs:not([data-cs-fits]) .cs-track[data-cs-draggable] * {
   cursor: grab;
 }
 
-.cs-track[data-cs-dragging],
-.cs-track[data-cs-dragging] * {
+.cs:not([data-cs-fits]) .cs-track[data-cs-dragging],
+.cs:not([data-cs-fits]) .cs-track[data-cs-dragging] * {
   cursor: grabbing !important;
 }
 

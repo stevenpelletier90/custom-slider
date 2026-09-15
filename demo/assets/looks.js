@@ -80,7 +80,6 @@ const LOOKS = {
       '--name-tracking': 'normal',
       '--name-order': '0', // -1 puts the name ABOVE the vehicle
       '--img-filter': 'none',
-      '--img-aspect': 'auto',
       // Zoom on hover. 1 is off, and off is the default: a model bar sits above
       // the fold on most of these sites and a strip that grows under the cursor
       // is a decision to make deliberately, not one to inherit.
@@ -116,7 +115,7 @@ const LOOKS = {
 .cargo-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .cargo-media { position: relative; display: block; overflow: hidden; }
 .cargo-badge { position: absolute; inset-block-start: 0.6em; inset-inline-start: 0.6em; padding: 0.25em 0.7em; font-size: 0.75em; font-weight: 700; line-height: 1.4; color: var(--badge-fg); background: var(--badge-bg); border-radius: 999px; }
-.cargo-card img { box-sizing: border-box; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); padding: var(--plate-pad); object-fit: contain; background: var(--plate-bg); filter: var(--img-filter); transition: filter 0.2s, transform var(--img-hover-speed) ease; }
+.cargo-card img { box-sizing: border-box; inline-size: 100%; block-size: auto; padding: var(--plate-pad); object-fit: contain; background: var(--plate-bg); filter: var(--img-filter); transition: filter 0.2s, transform var(--img-hover-speed) ease; }
 .cargo-card:hover img { filter: none; transform: scale(var(--img-hover-scale)); }
 @media (prefers-reduced-motion: reduce) { .cargo-card:hover img { transform: none; } }
 .cargo-name { order: var(--name-order); margin: var(--name-gap) 0 0; font-size: var(--name-size); font-weight: var(--name-weight); line-height: var(--name-leading); color: var(--name-color); text-transform: var(--name-case); letter-spacing: var(--name-tracking); }

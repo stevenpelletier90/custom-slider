@@ -44,12 +44,12 @@
 .cs-track::-webkit-scrollbar {
   display: none;
 }
-.cs-track[data-cs-draggable],
-.cs-track[data-cs-draggable] * {
+.cs:not([data-cs-fits]) .cs-track[data-cs-draggable],
+.cs:not([data-cs-fits]) .cs-track[data-cs-draggable] * {
   cursor: grab;
 }
-.cs-track[data-cs-dragging],
-.cs-track[data-cs-dragging] * {
+.cs:not([data-cs-fits]) .cs-track[data-cs-dragging],
+.cs:not([data-cs-fits]) .cs-track[data-cs-dragging] * {
   cursor: grabbing !important;
 }
 .cs-slide {
@@ -451,7 +451,6 @@
   --name-tracking: normal;
   --name-order: 0;
   --img-filter: none;
-  --img-aspect: auto;
   --img-hover-scale: 1;
   --img-hover-speed: 0.25s;
   --name-gap: 0.4em;
@@ -516,7 +515,6 @@
   box-sizing: border-box;
   inline-size: 100%;
   block-size: auto;
-  aspect-ratio: var(--img-aspect);
   padding: var(--plate-pad);
   object-fit: contain;
   background: var(--plate-bg);

@@ -669,3 +669,48 @@ test('no arrow lands on a card name at phone widths', async ({ browser }) => {
     await ctx.close();
   }
 });
+
+// Switching a tab must not move the page under the reader. Steven, 2026-09-15:
+// "when I change tabs sometimes the button starts closer then shift down
+// because the image of one of the items loads in." It did, by 133px on the
+// Chevrolet Performance pane, and the cause was ours: every cutout carries
+// width and height, so the UA gives it `aspect-ratio: auto 320 / 240` and
+// reserves the box before the bytes arrive - and the tile look's
+// `aspect-ratio: var(--img-aspect)` with a value of `auto` OVERRODE that and
+// threw the attribute ratio away. An unloaded cutout then reserved nothing but
+// its own top padding. The declaration is gone from the look that does not crop.
+test('switching tabs does not move the content below the bar', async ({ browser }) => {
+  const ctx = await browser.newContext({ viewport: { width: 1280, height: 1000 } });
+  const page = await ctx.newPage();
+  const errors = [];
+  page.on('pageerror', (e) => errors.push(e.message));
+  // Hold the cutouts back so the reveal and the load are separable; without
+  // this the images are already cached and the shift cannot reproduce.
+  await page.route('**/img/oem/**', async (r) => {
+    await new Promise((res) => setTimeout(res, 700));
+    await r.continue();
+  });
+  await page.route('**/img/chrome-*', async (r) => {
+    await new Promise((res) => setTimeout(res, 700));
+    await r.continue();
+  });
+  // brands.html, and the Chevrolet bar specifically: it is the one with a pane
+  // (Performance, one car across five) whose image has never been fetched when
+  // the tab is first opened, which is the state the shift needs.
+  await page.goto(`${ORIGIN}/demo/brands.html`, { waitUntil: 'domcontentloaded' });
+  await page.waitForTimeout(2000);
+
+  const bars = page.locator('#b-chevrolet [data-cargo="tabs"]').first();
+  const tabs = await bars.locator('[role="tab"]').count();
+  const moved = [];
+  for (let i = 0; i < tabs; i++) {
+    await bars.locator('[role="tab"]').nth(i).click();
+    const before = await bars.evaluate((el) => Math.round(el.getBoundingClientRect().height));
+    await page.waitForTimeout(1600); // well past the 700ms hold
+    const after = await bars.evaluate((el) => Math.round(el.getBoundingClientRect().height));
+    if (Math.abs(after - before) > 2) moved.push(`tab ${i}: ${before} -> ${after}px`);
+  }
+  assert.deepEqual(moved, [], `the bar changed height after its images loaded, so everything under it jumped: ${moved.join('; ')}`);
+  assert.deepEqual(errors, []);
+  await ctx.close();
+});

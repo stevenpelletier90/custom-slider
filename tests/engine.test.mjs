@@ -86,6 +86,41 @@ test.describe('when every slide already fits', () => {
     assert.equal(after.fits, true, 'eight cards at eight across did not set data-cs-fits');
     assert.deepEqual(after.reachable, [], `a control that cannot move anything is still focusable: ${after.reachable.join(', ')}`);
   });
+
+  // An open hand promises a scroll. A strip with one stop has nowhere to drag
+  // to, and every tabbed bar whose pane held no more cards than fit across was
+  // offering it anyway (2026-09-15, Steven). The card LINK must keep its own
+  // pointer either way - that is the whole reason the cue rule reaches every
+  // child on a strip that does scroll.
+  test('a strip that fits offers no drag cursor, and its links keep the pointer', async ({ page }) => {
+    await page.setContent(build(8, 8), { waitUntil: 'load' });
+    await page.waitForTimeout(400);
+    const fitted = await page.evaluate(() => {
+      const t = document.querySelector('.cs-track');
+      const a = document.querySelector('.cs-slide a');
+      return {
+        fits: document.querySelector('.cs').hasAttribute('data-cs-fits'),
+        draggable: t.hasAttribute('data-cs-draggable'),
+        track: getComputedStyle(t).cursor,
+        link: a ? getComputedStyle(a).cursor : 'pointer',
+      };
+    });
+    assert.equal(fitted.fits, true, 'eight across eight is meant to fit');
+    assert.equal(fitted.draggable, true, 'the track stopped being drag-wired, so this proves nothing about the cursor');
+    assert.notEqual(fitted.track, 'grab', 'a strip with one stop still offers the open hand');
+    // Asserted as "not grab" rather than "is pointer": WebKit reports a link's
+    // default cursor as `auto` where Chromium resolves it to `pointer`, and the
+    // invariant is that our cue is not painted over the link, not what the UA
+    // calls the link's own default.
+    assert.notEqual(fitted.link, 'grab', 'a card link is wearing the drag cursor on a strip that cannot scroll');
+
+    // And the cue is still there when there IS somewhere to drag to.
+    await page.setContent(build(8, 4), { waitUntil: 'load' });
+    await page.waitForTimeout(400);
+    const scrolls = await page.evaluate(() => ({ fits: document.querySelector('.cs').hasAttribute('data-cs-fits'), track: getComputedStyle(document.querySelector('.cs-track')).cursor }));
+    assert.equal(scrolls.fits, false, 'eight across four is meant to scroll');
+    assert.equal(scrolls.track, 'grab', 'a scrollable strip stopped offering the open hand');
+  });
 });
 
 test.describe('keyboard', () => {
