@@ -27,12 +27,12 @@ jobs:
   # Relevance is decided HERE rather than by on.paths, so that the gate below
   # always has something to resolve. Plain git, no third-party action.
   changes:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     outputs:
       relevant: ${{ steps.check.outputs.relevant }}
       why: ${{ steps.check.outputs.why }}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
         with:
           fetch-depth: 0
       - id: check
@@ -72,10 +72,10 @@ jobs:
   axe:
     needs: changes
     if: needs.changes.outputs.relevant == 'true'
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm
@@ -113,7 +113,7 @@ jobs:
     name: a11y gate
     needs: [changes, axe]
     if: always()
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-26.04
     steps:
       - name: resolve
         run: |
