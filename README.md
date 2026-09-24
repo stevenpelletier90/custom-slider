@@ -18,7 +18,12 @@ screen-reader confusion.
 The demo page (`demo/index.html`) is a workbench: pick a pattern, set it up (how many across at each
 breakpoint, how many rows, brand preset, arrow colours, how many cards an arrow moves), and copy
 code generated from those same settings — so the snippet is always exactly the slider on screen. It
-also hands you all four `dist/` files themselves, to upload — the engine is linked, never pasted.
+also hands you all four `dist/` files themselves, to upload — the engine is linked, never pasted. It
+is live at **https://stevenpelletier90.github.io/custom-slider/demo/** (the bare `/custom-slider/`
+redirects there), the link shared with DealerOn developers. GitHub Pages serves `master` from the
+root with no build step, so a `src/` change is live only once `npm run build` has run and `dist/` is
+committed and pushed. The repo keeps the name `custom-slider` on purpose: the 2026-08-31 rename left
+it alone so this link survives. Never rename the repo.
 
 ## Quick start (CMS / classic script)
 

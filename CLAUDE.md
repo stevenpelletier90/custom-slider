@@ -214,6 +214,12 @@ rules give 750/970/1170 inside it. Fill drops the container (`html[data-fill] #w
 (1,1,1) over the bare id's (1,0,0)) as well as widening the frame; widening alone draws the same
 picture as Desktop.
 
+**The workbench preview scales to fit; it never clips** (Steven, 2026-09-04: "any smaller views will
+just properly preview it in the demo itself for any of the demo sizes"). The iframe keeps its true
+CSS width so media queries fire honestly, and `transform: scale(k)` fits it to the stage with a
+shown-at-nn% readout. Never clip, scroll or cap the frame. Below 50% (`FLOOR = 0.5` in
+`workbench.js`) `shownTier()` previews the next tier down.
+
 **Six tiers, two grids (since 2026-09-15).** `BPS` in `workbench.js` is 576 / 768 / 992 / 1200 /
 1400: the platform's Bootstrap 3 three plus Bootstrap 5's two, because the platform is moving to
 Bootstrap 5 and the three shared numbers mean the same thing in both. The column classes keep the
@@ -336,6 +342,9 @@ Dots stay per-page, and the final stop is always the end. `_measure()` reads `--
 computed style, `_pages()` derives page starts with the last clamped to the end, `_stops()` is what
 the arrows walk. Slides-per-view is CSS-only — no JS breakpoint option.
 
+**A slider auto-inited inside a `[hidden]` tab pane heals itself on reveal** through its
+ResizeObserver, so no slick-style `height:0` hack is needed (verified empirically).
+
 **Teardown.** Every listener registers with `{ signal: this._ac.signal }`; `destroy()` aborts,
 disconnects observers, restores `this._snapshot` and removes only `_addedRootAttrs`. Any new
 listener/observer/timer joins this scheme.
@@ -387,6 +396,12 @@ is why `tests/controls.test.mjs` exists.
 public methods and accessibility behaviors are a frozen contract — sites can't be edited when the
 engine changes (README "Swapping the engine later"). Add freely; rename or repurpose nothing.
 
+Where it came from: James Jin (senior web dev) required the HTML contract to be the stable API, all
+behaviour to ship via two centrally hosted files, and engines to be swappable behind it so dealer
+sites never need editing. It froze when the four files went on the shared path on 2026-09-08; the
+2026-08-31 rename was possible only because nothing was hosted yet. The repo is public by Steven's
+choice, so DealerOn colleagues can see it.
+
 **Byte budget: < 6656 B gzip for `dist` JS+CSS combined, enforced by `npm run size`.** A positioning
 target (beat Splide 15.8 KB / Embla core 6.7 KB); rationale and raise history live in
 `scripts/size.mjs`. Raise it only for a correctness or accessibility need and record why there. Gzip
@@ -432,10 +447,14 @@ re-proposing them):
   property INHERITED from an ancestor at any specificity. `--cs-focus` on `.cargo-lb` was silently
   dead while Cadillac's identical override worked, because a brand's props land on `.cs` itself.
   Scope to `.cs`, or to the element (2026-09-15).
-- Never copy an OEM's contrast. A measured value is the FLOOR (Steven's standing rule) and colour is
-  the sharpest case: Ford's measured `#919191` arrow was 3.15:1 on white and 2.77:1 on the `#f0f0f0`
-  its own tab cells draw — a 1.4.11 failure, taken on by copying, against the pattern's own 15.13:1
-  default. Measure the ratio against the band the control actually sits on, not against white.
+- Never copy an OEM's weaknesses. A measured value is the FLOOR, not the target (Steven's standing
+  rule, 2026-09-15): record the live values in `brands.js` as the audit trail, then look at phone
+  and tablet as a designer would and fix what is weak (wrapped tab rows, cramped cards, oversized
+  arrows) as pattern defaults or knobs, and say in the report which choices depart from the live
+  site and why. "The live site does it too" is no reason to leave it. Colour is the sharpest case:
+  Ford's measured `#919191` arrow was 3.15:1 on white and 2.77:1 on the `#f0f0f0` its own tab cells
+  draw — a 1.4.11 failure, taken on by copying, against the pattern's own 15.13:1 default. Measure
+  the ratio against the band the control actually sits on, not against white.
 
 **A card look owns the responsive arrow ladder, and a brand that sets `--cs-arrow-size` leaves it.**
 The looks shrink the arrow 44 → 36 at 767 → 32 at 575 from the shared card sheet at (0,1,0); a
@@ -460,3 +479,9 @@ console warning; fade is a 1-up stacked crossfade, see README `data-cs-fade`).
   the root) or read the instance at `element._cs`. The two video patterns carry their own `<dialog>`
   and handler inside the emitted snippet (`patterns.js`) — the reference example: wiring ships with
   the copied code, not the demo.
+- A request naming a demo site means one slider on it; confirm which before touching code ("the
+  Chevrolet demo" meant the tabbed model bar, and a hero built instead was reverted, 2026-09-14).
+  "Measure" means computed styles at rest, on hover, mid-transition and after a click, plus what
+  surrounds the widget (heading, button, gaps). Steven judges by watching the live page. Keep the
+  engine's a11y choices (solid dots, dots on phones, bare chevron, native scroll) unless he says
+  otherwise.
