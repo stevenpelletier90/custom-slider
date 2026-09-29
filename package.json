@@ -15,12 +15,13 @@
     "format:check": "npx prettier --check .",
     "check:looks": "node scripts/check-looks.mjs",
     "check:vendor": "node scripts/build-vendor.mjs --check",
+    "typecheck": "tsc -p jsconfig.json",
     "lint:css:generated": "node scripts/lint-generated-css.mjs",
     "test": "playwright test --project=chromium",
     "test:browsers": "playwright test --project=firefox --project=webkit",
     "test:ui": "playwright test --ui",
     "a11y": "node scripts/a11y.mjs",
-    "validate": "npm run lint:css && npm run lint:css:generated && npm run lint:js && npm run format:check && npm run check:looks && npm run check:vendor"
+    "validate": "npm run lint:css && npm run lint:css:generated && npm run lint:js && npm run format:check && npm run check:looks && npm run check:vendor && npm run typecheck"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
@@ -37,7 +38,8 @@
     "stylelint": "^17.14.1",
     "stylelint-config-recess-order": "^7.8.0",
     "stylelint-config-standard": "^40.0.0",
-    "tweakpane": "^4.0.5"
+    "tweakpane": "^4.0.5",
+    "typescript": "5.9.3"
   },
   "allowScripts": {
     "esbuild": false

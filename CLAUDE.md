@@ -31,7 +31,8 @@ its row.
 ```bash
 npm run build          # src → dist via esbuild (bundle+minify JS, minify CSS), then appends the generated card styles to the CSS and the pattern structure + scripts to both
 npm run size           # build + gzip budget gate — FAILS at ≥ 6656 B total
-npm run validate       # stylelint (files + generated) + eslint + prettier --check + check:looks  (fast; run before committing)
+npm run validate       # stylelint (files + generated) + eslint + prettier --check + check:looks + check:vendor + typecheck  (fast; run before committing)
+npm run typecheck      # tsc (pinned typescript devDependency) over jsconfig.json: src, demo, scripts AND tests, held at zero errors; types/globals.d.ts declares what the engine hangs on the page (el._cs, window.CustomSlider)
 npm run test           # @playwright/test browser checks on Chromium (`npx playwright test --list` for the count), starts its own server on 8137 (reuses one already running)
 npm run test:browsers  # tests/engine.test.mjs on Firefox and WebKit (npx playwright install firefox webkit once)
 npm run a11y           # axe over every pattern and page state; needs `npm run serve` up; not a gate, run it after rail or demo-page changes
