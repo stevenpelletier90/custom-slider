@@ -1,0 +1,13 @@
+{
+  "compilerOptions": {
+    "module": "nodenext",
+    "target": "es2023",
+    "checkJs": true,
+    "noEmit": true,
+    "skipLibCheck": true,
+    "maxNodeModuleJsDepth": 0,
+    "types": ["node"]
+  },
+  "typeAcquisition": { "enable": false },
+  "exclude": ["node_modules", ".claude", "dist", "demo/assets/vendor"]
+}
