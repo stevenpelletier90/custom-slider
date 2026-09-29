@@ -91,12 +91,12 @@ test.describe('values that must never reach the copied CSS', () => {
     page.evaluate(() => {
       const slide = globalThis.CARGO.sdoc().querySelector('.cs-slide');
       const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === 'Gap');
-      const n = row?.querySelector('.tp-lenv input')?.value ?? '';
+      const n = /** @type {HTMLInputElement | null} */ (row?.querySelector('.tp-lenv input'))?.value ?? '';
       return {
         width: +slide.getBoundingClientRect().width.toFixed(1),
         basis: getComputedStyle(slide).flexBasis,
         emitted: /--cs-gap:\s*([^;]*);/.exec(document.getElementById('wb-code').textContent)?.[1]?.trim() ?? null,
-        shown: n === '' ? '' : n + row.querySelector('.tp-lenv select').value,
+        shown: n === '' ? '' : n + /** @type {HTMLSelectElement} */ (row.querySelector('.tp-lenv select')).value,
       };
     });
 
@@ -149,7 +149,7 @@ test.describe('values that must never reach the copied CSS', () => {
     const missing = await page.evaluate(() =>
       [...document.querySelectorAll('#wb-settings .tp-lblv')]
         .filter((r) => {
-          const i = r.querySelector('input[type="text"]');
+          const i = /** @type {HTMLInputElement | null} */ (r.querySelector('input[type="text"]'));
           return i && !i.closest('.tp-txtv-num') && !i.placeholder;
         })
         .map((r) => r.querySelector('.tp-lblv_l')?.textContent.trim()),
@@ -208,7 +208,7 @@ test.describe('the slider name', () => {
 
   test('the name is offered where the copying happens', async () => {
     const inCode = await page.evaluate(() => document.querySelector('.ui-code').contains(document.querySelector('[data-name-field]')));
-    const warns = await page.evaluate(() => /overwrite|different name/i.test(document.querySelector('.ui-code').innerText));
+    const warns = await page.evaluate(() => /overwrite|different name/i.test(/** @type {HTMLElement} */ (document.querySelector('.ui-code')).innerText));
     assert.ok(inCode, 'the name field is not in the code panel');
     assert.ok(warns, 'nothing beside the copy buttons warns about a second slider');
   });
@@ -255,7 +255,7 @@ test.describe('the pasted block on a hostile host page', () => {
         const texts = [];
         for (let n = walk.nextNode(); n; n = walk.nextNode()) if (n.textContent.trim()) texts.push(n);
         const hits = [];
-        for (const a of document.querySelectorAll('.cs-arrow')) {
+        for (const a of /** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('.cs-arrow'))) {
           if (a.hidden) continue;
           const ar = a.getBoundingClientRect();
           for (const t of texts) {
@@ -385,7 +385,7 @@ test.describe('the pasted block on a hostile host page', () => {
     assert.match(engine.engineJs, /\/\*! patterns \*\//, 'the engine file carries no pattern section');
     await host.setContent(hostHtml({ ...engine, css: p.css, html: p.html }), { waitUntil: 'load' });
     await host.waitForTimeout(250);
-    const count = await host.evaluate(() => document.querySelector('#box .cs-dots')?.style.getPropertyValue('--bar-count') ?? '');
+    const count = await host.evaluate(() => /** @type {HTMLElement | null} */ (document.querySelector('#box .cs-dots'))?.style.getPropertyValue('--bar-count') ?? '');
     assert.notEqual(count, '', 'the marker never got its counters from the shared script');
     // And the structure came from the shared stylesheet: the bar is drawn.
     const bar = await host.evaluate(() => getComputedStyle(document.querySelector('#box .cs-dots'), '::before').content);

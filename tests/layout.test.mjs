@@ -24,7 +24,7 @@ const expanded = (page, title) =>
 const stageBox = (page) =>
   page.evaluate(() => {
     const wrap = document.querySelector('.wb-stage');
-    const frame = document.getElementById('wb-stage');
+    const frame = /** @type {HTMLIFrameElement} */ (document.getElementById('wb-stage'));
     const head = document.querySelector('.ui-head');
     const preview = document.querySelector('.ui-preview');
     const w = wrap.getBoundingClientRect();
@@ -240,10 +240,10 @@ test('the settings flow into columns, and no folder is split across one', async 
 // real ones. What changed is where it bites - at 1440 the stage is the whole
 // width now, so it is the laptop window that has to scale.
 test('a frame wider than its stage is scaled to fit, not clipped', async ({ browser }) => {
-  for (const [w, want, atMost] of [
+  for (const [w, want, atMost] of /** @type {[number, string, number][]} */ ([
     [1024, '1200', 80],
     [1024, '992', 90],
-  ]) {
+  ])) {
     const { page, errors } = await openBuilder(browser, w);
     await page.click(`.ui-widths button[data-w="${want}"]`);
     await page.waitForTimeout(400);
@@ -535,7 +535,7 @@ test('a tab row shrinks to fit the phone rather than scrolling off it', async ({
     const { ctx, page, errors } = await at(browser, 'brands.html', width);
     const rows = await page.evaluate(() =>
       [...document.querySelectorAll('[data-cargo="tabs"] [role="tablist"]')].map((row, i) => {
-        const tabs = [...row.querySelectorAll('[role="tab"]')];
+        const tabs = [.../** @type {NodeListOf<HTMLElement>} */ (row.querySelectorAll('[role="tab"]'))];
         return {
           i,
           labels: tabs.map((t) => t.innerText.trim()).join('|'),
@@ -609,7 +609,7 @@ test('every card strip shrinks its arrows on a phone', async ({ browser }) => {
   const found = await page.evaluate(() => {
     const out = {};
     for (const root of document.querySelectorAll('.cs')) {
-      const host = root.closest('[data-cargo]');
+      const host = /** @type {HTMLElement | null} */ (root.closest('[data-cargo]'));
       if (!host || out[host.dataset.cargo]) continue;
       // A card strip reserves a channel for its arrows; a full-bleed pattern
       // (the hero, the galleries, the lightbox) overlays them on the picture
@@ -641,8 +641,8 @@ test('no arrow lands on a card name at phone widths', async ({ browser }) => {
       const bad = [];
       const overlaps = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
       for (const root of document.querySelectorAll('.cs')) {
-        const host = root.closest('[data-cargo]');
-        const arrows = [...root.querySelectorAll('.cs-arrow')].filter((a) => !a.hidden && a.offsetParent);
+        const host = /** @type {HTMLElement | null} */ (root.closest('[data-cargo]'));
+        const arrows = [.../** @type {NodeListOf<HTMLButtonElement>} */ (root.querySelectorAll('.cs-arrow'))].filter((a) => !a.hidden && a.offsetParent);
         const track = root.querySelector('.cs-track');
         if (!arrows.length || !track) continue;
         const t = track.getBoundingClientRect();

@@ -85,7 +85,7 @@
       const block = document.createElement('div');
       block.className = 'bb-block';
       block.innerHTML = `<div class="bb-block-head"><h3>${esc(SHORT?.[pid] ?? PATTERNS[pid].label)}</h3><a class="ui-btn" href="index.html#${pid}?brand=${id}">Open in the builder</a></div><div class="gx-stage bb-stage" data-pattern="${pid}"></div>`;
-      const stage = block.querySelector('.bb-stage');
+      const stage = /** @type {HTMLElement} */ (block.querySelector('.bb-stage'));
       stage.innerHTML = r.html;
       // The code under the stage: the same three parts the builder copies,
       // from the same generator (renderSnippet), so a designer can take a
@@ -97,7 +97,7 @@
       const code = document.createElement('details');
       code.className = 'bb-code';
       code.innerHTML = `<summary>Code</summary><div class="ui-code-bar"><h3>Copy, one part per CMS field</h3><span class="ui-content-acts"><button type="button" class="ui-btn" data-copy="css">Copy CSS</button><button type="button" class="ui-btn" data-copy="html">Copy HTML</button><button type="button" class="ui-btn" data-copy="js"${snip.js ? '' : ' hidden'}>Copy JS</button></span></div><pre class="g-code" tabindex="0"><code>${hl ? hl.snippet(whole) : esc(whole)}</code></pre>`;
-      for (const btn of code.querySelectorAll('[data-copy]')) btn.addEventListener('click', () => copyText(btn, snip[btn.dataset.copy]));
+      for (const btn of /** @type {NodeListOf<HTMLButtonElement>} */ (code.querySelectorAll('[data-copy]'))) btn.addEventListener('click', () => copyText(btn, snip[btn.dataset.copy]));
       block.append(code);
       // Not a font that is on the headings alone (Ford): theme.css below
       // names that one on .h1, and the body stays the page's.
@@ -132,7 +132,7 @@
   styleEl.textContent = css.join('\n\n');
   if (themeEl) themeEl.textContent = theme.join('\n\n');
 
-  for (const root of document.querySelectorAll('.bb-stage .cs')) {
+  for (const root of /** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.bb-stage .cs'))) {
     if (!root.dataset.csInit) new globalThis.CustomSlider(root);
   }
   // The pattern scripts ship in the engine file since 2026-09-14 and ran

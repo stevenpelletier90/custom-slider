@@ -65,7 +65,9 @@ test.describe('when every slide already fits', () => {
     await page.waitForTimeout(400);
     const before = await page.evaluate(() => ({
       fits: document.querySelector('.cs').hasAttribute('data-cs-fits'),
-      reachable: [...document.querySelectorAll('.cs-arrow, .cs-dot, .cs-pause')].filter((c) => c.checkVisibility({ checkVisibilityCSS: true }) && c.tabIndex >= 0).length,
+      reachable: [.../** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('.cs-arrow, .cs-dot, .cs-pause'))].filter(
+        (c) => c.checkVisibility({ checkVisibilityCSS: true }) && c.tabIndex >= 0,
+      ).length,
     }));
     assert.equal(before.fits, false, 'eight cards at four across is not meant to fit');
     assert.ok(before.reachable > 0, 'a strip that does not fit offers no controls at all');
@@ -79,7 +81,7 @@ test.describe('when every slide already fits', () => {
       // dots by putting [hidden] on their CONTAINER, and a child of a
       // display:none parent still reports its own display, so reading the dot
       // itself says "inline-block" for something nobody can see or reach.
-      reachable: [...document.querySelectorAll('.cs-arrow, .cs-dot, .cs-pause')]
+      reachable: [.../** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('.cs-arrow, .cs-dot, .cs-pause'))]
         .filter((c) => c.checkVisibility({ checkVisibilityCSS: true }) && !c.disabled && c.tabIndex >= 0)
         .map((c) => c.className),
     }));
@@ -281,7 +283,7 @@ test.describe('the contract, in the last window before it froze', () => {
         ['slide', 'slide'],
         ['page', 'page'],
       ]) {
-        const el = src.cloneNode(true);
+        const el = /** @type {HTMLElement} */ (src.cloneNode(true));
         document.body.append(el);
         const cs = new window.CustomSlider(el, { step });
         out[name] = { step: cs.opts.step, stops: cs._stops() };
@@ -320,7 +322,7 @@ test.describe('the contract, in the last window before it froze', () => {
     await page.waitForTimeout(300);
     const show = (fraction) =>
       page.evaluate(async (f) => {
-        const el = document.querySelector('.cs');
+        const el = /** @type {HTMLElement} */ (document.querySelector('.cs'));
         const top = el.getBoundingClientRect().top + scrollY;
         // The strip's top edge enters from the bottom of the window: f of its
         // height is inside when the window bottom sits at top + f * height.
@@ -392,7 +394,7 @@ test.describe('the contract, in the last window before it froze', () => {
     // control, and the old 0.35 composited it to 2.10:1. 0.5 gives 3.09:1.
     // Read it settled: mid-transition this reads 0.994 (2026-09-15).
     const settled = await page.evaluate(() => {
-      const n = document.querySelector('.cs-arrow--next');
+      const n = /** @type {HTMLButtonElement} */ (document.querySelector('.cs-arrow--next'));
       n.style.transition = 'none';
       return getComputedStyle(n).opacity;
     });
@@ -409,7 +411,7 @@ test.describe('the contract, in the last window before it froze', () => {
     await page.waitForTimeout(700);
     const r = await page.evaluate(() => ({
       current: document.querySelector('.cs')._cs.current,
-      inert: [...document.querySelectorAll('.cs-slide')].map((s) => s.inert),
+      inert: [.../** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.cs-slide'))].map((s) => s.inert),
       selected: [...document.querySelectorAll('.cs-thumb')].map((t) => t.getAttribute('aria-selected')),
     }));
     assert.equal(r.current, 3);
@@ -461,10 +463,10 @@ test.describe('the contract, in the last window before it froze', () => {
   // instant must be instant, and an explicit smooth must still animate, because
   // a shield that also disabled smooth scrolling would be a worse bug.
   test('a host page with global smooth scroll cannot hijack an instant move', async ({ page }) => {
-    for (const [want, shouldBeInstant] of [
+    for (const [want, shouldBeInstant] of /** @type {[ScrollBehavior, boolean][]} */ ([
       ['auto', true],
       ['smooth', false],
-    ]) {
+    ])) {
       await page.setContent(build(8, 4).replace('<head>', '<head><style>*{scroll-behavior:smooth}</style>'), { waitUntil: 'load' });
       await page.waitForTimeout(350);
       const r = await page.evaluate(async (behavior) => {
@@ -517,7 +519,7 @@ test.describe('the API boundary', () => {
       await page.waitForTimeout(250);
       return page.evaluate((o) => {
         const el = document.querySelector('.cs');
-        const cs = new CustomSlider(el, o);
+        const cs = new window.CustomSlider(el, o);
         return {
           thumbs: el.querySelectorAll('.cs-thumb').length,
           pad: parseFloat(getComputedStyle(el).paddingBottom),
@@ -563,6 +565,7 @@ test.describe('the API boundary', () => {
         ['past the end', 999],
       ]) {
         try {
+          // @ts-expect-error: deliberately not a number - this test proves goTo refuses it
           cs.goTo(n, { behavior: 'auto' });
           // _target is where goTo is TAKING it - current only moves at the commit
           // (scrollend), which has not happened yet a line later.
@@ -595,7 +598,12 @@ test.describe('the API boundary', () => {
     await page.waitForTimeout(400);
     const fits = await page.evaluate(() => {
       const el = document.querySelector('.cs');
-      return { stops: el._cs._stops().length, pause: document.querySelector('.cs-pause').hidden, held: el._cs._suspended.has('fits'), arrows: document.querySelector('.cs-arrow--next').hidden };
+      return {
+        stops: el._cs._stops().length,
+        pause: /** @type {HTMLButtonElement} */ (document.querySelector('.cs-pause')).hidden,
+        held: el._cs._suspended.has('fits'),
+        arrows: /** @type {HTMLButtonElement} */ (document.querySelector('.cs-arrow--next')).hidden,
+      };
     });
     assert.equal(fits.stops, 1, 'the fixture does not fit, so this proves nothing');
     assert.equal(fits.arrows, true, 'the arrows were not hidden, so fits never ran');
@@ -605,12 +613,12 @@ test.describe('the API boundary', () => {
     // --cs-per-view is CSS and a narrower window makes the same strip stop
     // fitting at any moment.
     const narrow = await page.evaluate(async () => {
-      const el = document.querySelector('.cs');
+      const el = /** @type {HTMLElement} */ (document.querySelector('.cs'));
       el.style.setProperty('--cs-per-view', '1');
       el._cs._measure();
       el._cs._updateUI();
       await new Promise((r) => setTimeout(r, 100));
-      return { pause: document.querySelector('.cs-pause').hidden, held: el._cs._suspended.has('fits') };
+      return { pause: /** @type {HTMLButtonElement} */ (document.querySelector('.cs-pause')).hidden, held: el._cs._suspended.has('fits') };
     });
     assert.equal(narrow.pause, false, 'the pause button did not come back when the strip stopped fitting');
     assert.equal(narrow.held, false, 'the autoplay hold did not lift when the strip stopped fitting');

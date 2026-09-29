@@ -30,8 +30,8 @@ const knob = (page, label) =>
       const n = len.querySelector('input').value;
       return n === '' ? '' : n + len.querySelector('select').value;
     }
-    const el = row.querySelector('input, select');
-    return el ? (el.type === 'checkbox' ? String(el.checked) : el.value) : null;
+    const el = /** @type {HTMLInputElement | HTMLSelectElement | null} */ (row.querySelector('input, select'));
+    return el ? (el instanceof HTMLInputElement && el.type === 'checkbox' ? String(el.checked) : el.value) : null;
   }, label);
 
 const hasKnob = async (page, label) => (await knob(page, label)) !== null;
@@ -45,7 +45,9 @@ const hasKnob = async (page, label) => (await knob(page, label)) !== null;
 const colorKnob = (page, label) =>
   page.evaluate((l) => {
     const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === l);
-    return row ? (row.querySelector('input[type="text"]')?.value ?? null) : null;
+    if (!row) return null;
+    const field = /** @type {HTMLInputElement | null} */ (row.querySelector('input[type="text"]'));
+    return field?.value ?? null;
   }, label);
 
 test.describe('a knob shows what the slider is actually using', () => {
@@ -527,14 +529,18 @@ test.describe('every link on the Patterns page opens what it names', () => {
     await page.waitForTimeout(600);
     const cls = await page.evaluate(() => /cargo-(\w+)/.exec(document.getElementById('wb-code').textContent)?.[1]);
     assert.equal(cls, 'wordmark', `the link opened ${cls}, not the pattern it named`);
-    const showing = await page.evaluate(() => document.querySelector('#wb-nav button[aria-current="true"]')?.dataset.go);
+    const showing = await page.evaluate(() => /** @type {HTMLButtonElement | null} */ (document.querySelector('#wb-nav button[aria-current="true"]'))?.dataset.go);
     assert.equal(showing, 'wordmark', 'the rail does not mark the pattern the address names');
 
     // A stale two-segment link from a bookmark still opens the pattern it names
     // rather than falling back to the model bar.
     await page.goto(`${ORIGIN}/demo/index.html?f074b#portrait/tile`, { waitUntil: 'load' });
     await page.waitForTimeout(600);
-    assert.equal(await page.evaluate(() => document.querySelector('#wb-nav button[aria-current="true"]')?.dataset.go), 'portrait', 'an old two-part link no longer reaches the pattern it names');
+    assert.equal(
+      await page.evaluate(() => /** @type {HTMLButtonElement | null} */ (document.querySelector('#wb-nav button[aria-current="true"]'))?.dataset.go),
+      'portrait',
+      'an old two-part link no longer reaches the pattern it names',
+    );
 
     // Put the model bar back: this file is serial on one page.
     await page.goto(`${ORIGIN}/demo/index.html?f074c#modelbar`, { waitUntil: 'load' });
@@ -554,7 +560,7 @@ test.describe('the small things a designer trips over', () => {
       location.hash = '#service';
     });
     await page.waitForTimeout(500);
-    const showing = await page.evaluate(() => document.querySelector('#wb-nav button[aria-current="true"]')?.dataset.go);
+    const showing = await page.evaluate(() => /** @type {HTMLButtonElement | null} */ (document.querySelector('#wb-nav button[aria-current="true"]'))?.dataset.go);
     assert.equal(showing, 'service', 'the address says one pattern and the stage shows another');
   });
 
@@ -564,7 +570,7 @@ test.describe('the small things a designer trips over', () => {
       location.hash = '#not-a-pattern';
     });
     await page.waitForTimeout(400);
-    const showing = await page.evaluate(() => document.querySelector('#wb-nav button[aria-current="true"]')?.dataset.go);
+    const showing = await page.evaluate(() => /** @type {HTMLButtonElement | null} */ (document.querySelector('#wb-nav button[aria-current="true"]'))?.dataset.go);
     assert.equal(showing, 'modelbar', 'an unknown hash changed the pattern');
   });
 
@@ -574,7 +580,9 @@ test.describe('the small things a designer trips over', () => {
   // entry - so the same promise now has to be kept by the RAIL, which is a
   // stronger place for it: one list, every pattern, nothing nested.
   test('every rail entry says what it is before you click it', async () => {
-    const rail = await page.evaluate(() => [...document.querySelectorAll('#wb-nav button')].map((b) => ({ id: b.dataset.go, title: b.title, name: b.textContent.trim() })));
+    const rail = await page.evaluate(() =>
+      [.../** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('#wb-nav button'))].map((b) => ({ id: b.dataset.go, title: b.title, name: b.textContent.trim() })),
+    );
     const ids = await patternIds(page);
     assert.deepEqual(
       rail.map((r) => r.id),
@@ -815,10 +823,10 @@ test.describe('picking a colour does not rebuild the slider', () => {
     page.evaluate(
       ([l, vals]) => {
         const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === l);
-        const sw = row?.querySelector('.tp-colv_sw');
+        const sw = /** @type {HTMLButtonElement | null} */ (row?.querySelector('.tp-colv_sw'));
         const spectrum = row?.querySelector('input[type="color"]');
         const alpha = row?.querySelector('input[type="range"]');
-        const field = row?.querySelector('input[type="text"]');
+        const field = /** @type {HTMLInputElement | null} */ (row?.querySelector('input[type="text"]'));
         if (!sw || !spectrum || !alpha || !field) return { none: true };
         if (sw.getAttribute('aria-expanded') !== 'true') sw.click();
         // Count on the class the preview runs. The stage is a srcdoc frame that

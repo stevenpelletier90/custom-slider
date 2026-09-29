@@ -96,7 +96,7 @@ test.describe('the grid toggle', () => {
   test('the grid survives a reload, like the width', async () => {
     await page.reload({ waitUntil: 'load' });
     await stageReady(page);
-    assert.equal(await page.evaluate(() => document.getElementById('ui-grid').value), 'bs5');
+    assert.equal(await page.evaluate(() => /** @type {HTMLSelectElement} */ (document.getElementById('ui-grid')).value), 'bs5');
     assert.equal(await page.evaluate(() => globalThis.CARGO.sdoc().documentElement.dataset.grid), 'bs5');
     await page.selectOption('#ui-grid', 'bs3');
     await page.click('.ui-widths button[data-w="1200"]');

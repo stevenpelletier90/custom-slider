@@ -91,7 +91,7 @@ test.describe('every arrow recipe the Reference publishes still works', () => {
     const a = await arrow();
     assert.ok(Math.abs(a.h - a.trackH) <= 1, `the arrow is ${a.h}px against a ${a.trackH}px row of cards`);
     const overlapsDots = await host.evaluate(() => {
-      const d = document.querySelector('.cs-dots');
+      const d = /** @type {HTMLElement | null} */ (document.querySelector('.cs-dots'));
       const a2 = document.querySelector('.cs-arrow--prev');
       if (!d || !a2 || d.hidden) return false;
       const dr = d.getBoundingClientRect();

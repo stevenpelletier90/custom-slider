@@ -105,7 +105,7 @@
   // Init after every example is in the DOM, so each measures a real width. A
   // slider left uninitialised is a static row of cards that silently claims the
   // pattern does not scroll.
-  for (const root of document.querySelectorAll('.gx-stage .cs')) {
+  for (const root of /** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.gx-stage .cs'))) {
     if (!root.dataset.csInit) live.push(new globalThis.CustomSlider(root));
   }
 

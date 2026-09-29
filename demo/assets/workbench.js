@@ -1070,7 +1070,7 @@
   /* ---- render ----------------------------------------------------------- */
 
   const $ = (id) => document.getElementById(id);
-  const stage = $('wb-stage');
+  const stage = /** @type {HTMLIFrameElement} */ ($('wb-stage'));
   const codeEl = $('wb-code');
   const panel = $('wb-settings');
   let live = [];
@@ -1079,7 +1079,7 @@
   // which is the only way a max-width rule in the snippet can fire - a box
   // inside this page asks THIS window and always got the desktop answer.
   const sdoc = () => stage?.contentDocument;
-  const swin = () => stage?.contentWindow;
+  const swin = () => /** @type {Window & typeof globalThis} */ (stage?.contentWindow);
   const styleEl = () => sdoc()?.getElementById('wb-live-css');
   const sroot = () => sdoc()?.getElementById('wb-live-root');
 
@@ -1443,7 +1443,7 @@
       fitFrameHeight();
       publish();
     };
-    if (live) publishLater = setTimeout(settle, 120);
+    if (live) publishLater = window.setTimeout(settle, 120);
     else settle();
   }
 
@@ -1475,7 +1475,7 @@
     const d = sdoc();
     if (!d) return;
     const f = BRANDS[state.brand]?.font;
-    let link = d.getElementById('wb-live-font');
+    let link = /** @type {HTMLLinkElement | null} */ (d.getElementById('wb-live-font'));
     if (f?.css) {
       if (!link) {
         link = d.createElement('link');
@@ -1587,7 +1587,7 @@
     doc.addEventListener(
       'click',
       (e) => {
-        const btn = e.target.closest?.('[data-lb-open]');
+        const btn = /** @type {Element} */ (e.target).closest?.('[data-lb-open]');
         if (!btn) return;
         e.stopPropagation();
         e.preventDefault();
@@ -1630,7 +1630,7 @@
     const css = document.createElement('style');
     css.textContent = cssFor('.wb-live');
 
-    const wrap = src.cloneNode(true);
+    const wrap = /** @type {Element} */ (src.cloneNode(true));
     // REMOVED from the clone, not hidden. Hidden is what the Patterns page does,
     // because there the pattern's own script has bound a click to that button and
     // taking it away is a TypeError on load. Nothing is bound to this copy - the
@@ -1716,7 +1716,7 @@
     // wired twice - README, "Changing a slider that is already live".
     state.scriptText = '';
     // Left alone while it is being typed into; see the wiring below.
-    const nameEl = $('wb-name');
+    const nameEl = /** @type {HTMLInputElement} */ ($('wb-name'));
     if (nameEl && document.activeElement !== nameEl) nameEl.value = state.name;
     state.codeText = `<style>\n${state.cssText}\n</style>\n\n${state.htmlText}${state.scriptText ? `\n\n<script>\n${state.scriptText}\n</script>` : ''}`;
     const css = state.cssText;
@@ -2834,7 +2834,7 @@
         strip.append(note);
 
         if (selectHadFocus) select.focus();
-        else if (hadFocus) (strip.querySelector('button[aria-pressed="true"]') ?? strip.querySelector('button'))?.focus();
+        else if (hadFocus) /** @type {HTMLButtonElement | null} */ (strip.querySelector('button[aria-pressed="true"]') ?? strip.querySelector('button'))?.focus();
       }
     }
   }
@@ -3096,8 +3096,8 @@
   // Keep/Reset pair needs answered, and snapshot() already answers it.
   let markDirty = () => {};
   function wireKeepReset() {
-    const keep = $('wb-keep');
-    const reset = $('wb-reset');
+    const keep = /** @type {HTMLButtonElement} */ ($('wb-keep'));
+    const reset = /** @type {HTMLButtonElement} */ ($('wb-reset'));
     const flag = $('wb-dirty');
     if (!keep || !reset || !flag) return;
 
@@ -3312,19 +3312,22 @@
 
       for (const k of keys) {
         const f = FIELDS[k];
-        const input = document.createElement(f.type === 'textarea' ? 'textarea' : 'input');
-        if (f.type !== 'textarea') input.type = f.type;
+        // One of the two is built; `input` is whichever it was, for what both share.
+        const area = f.type === 'textarea' ? document.createElement('textarea') : null;
+        const box = area ? null : document.createElement('input');
+        const input = area ?? box;
+        if (box) box.type = f.type;
         const isText = f.type !== 'checkbox' && f.type !== 'number';
-        if (f.type === 'checkbox') input.checked = !!m[k];
+        if (f.type === 'checkbox') box.checked = !!m[k];
         else input.value = isText ? unesc(m[k] ?? '') : (m[k] ?? '');
         if (f.hint) input.placeholder = f.hint;
         // A range on the field gives the spinner its stops; the clamp below is
         // what actually holds, because typing past the max is still allowed.
-        if (f.min != null) input.min = f.min;
-        if (f.max != null) input.max = f.max;
+        if (box && f.min != null) box.min = f.min;
+        if (box && f.max != null) box.max = f.max;
         // Two rows cut a quote off mid-sentence and made the drag handle look
         // like the only way to read your own copy.
-        if (f.type === 'textarea') input.rows = 4;
+        if (area) area.rows = 4;
         // `input` covers the checkbox too — it fires on state change, so a
         // second `change` listener here would only double the work.
         input.addEventListener('input', () => {
@@ -3332,7 +3335,7 @@
           // so the note above the rows stops calling them the example.
           const adopting = !state.content;
           const r = adoptContent();
-          r[i][k] = f.type === 'checkbox' ? input.checked : f.type === 'number' ? (f.max == null ? Number(input.value) : clamp(input.value, f.min ?? 0, f.max)) : esc(input.value);
+          r[i][k] = f.type === 'checkbox' ? box.checked : f.type === 'number' ? (f.max == null ? Number(input.value) : clamp(input.value, f.min ?? 0, f.max)) : esc(input.value);
           saveContent();
           markDirty();
           if (adopting) {
@@ -3417,7 +3420,7 @@
   // Preview width. The column the stage sits in is not the width the slider
   // will have on a real page, so the default caps it at Bootstrap 3's 1170px
   // .container and you can step down through the other two tiers.
-  const widthBtns = () => [...document.querySelectorAll('.ui-widths button')];
+  const widthBtns = () => [.../** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('.ui-widths button'))];
 
   // The tiers, widest first, and the size below which a preview stops being
   // one. Half is the floor because a 1200px screen drawn 500px wide is a
@@ -3582,11 +3585,11 @@
   // one invalid selector and are dropped - taking the slider's --cs-gap,
   // arrow colours and per-view base with them, with nothing on screen to say
   // so. Each button copies the part its field can actually hold.
-  for (const [id, get] of [
+  for (const [id, get] of /** @type {[string, () => string][]} */ ([
     ['wb-copy-css', () => state.cssText],
     ['wb-copy-html', () => state.htmlText],
     ['wb-copy-js', () => state.scriptText],
-  ]) {
+  ])) {
     $(id).addEventListener('click', (e) => copyText(e.target, get()));
   }
 
@@ -3594,7 +3597,7 @@
   // the settings panel. render() refreshes it on a pattern change, but never
   // while it has focus - writing a cleaned value back mid-word fights the
   // caret, which is why the cleaned value lands on `change` instead.
-  const nameField = $('wb-name');
+  const nameField = /** @type {HTMLInputElement} */ ($('wb-name'));
   nameField.addEventListener('input', () => {
     state.name = toClass(nameField.value) || 'my-slider';
     render();
@@ -3648,7 +3651,7 @@
     setTimeout(() => URL.revokeObjectURL(a.href), 30000);
   };
 
-  for (const btn of document.querySelectorAll('[data-file]')) {
+  for (const btn of /** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('[data-file]'))) {
     // Twelve buttons in the install panel say "Download", "Copy" or "View", and
     // the filename that tells them apart is in a sibling <code> the button's own
     // name never reaches - so a screen reader's button list was those three
@@ -3690,7 +3693,7 @@
   $('wb-download-all').addEventListener('click', async (e) => {
     if (saving) return;
     saving = true;
-    const btn = e.currentTarget;
+    const btn = /** @type {HTMLButtonElement} */ (e.currentTarget);
     const label = btn.textContent;
     for (const [i, name] of DIST.entries()) {
       btn.textContent = `Saving ${i + 1} of ${DIST.length}…`;
@@ -3744,7 +3747,7 @@
     // The grid, restored the same way and before the first showFrame() so the
     // frame's container is right on the first paint. Only the two values the
     // select offers; anything else stored is Bootstrap 3.
-    const gridSel = $('ui-grid');
+    const gridSel = /** @type {HTMLSelectElement} */ ($('ui-grid'));
     if (gridSel) {
       if (readSettings().grid === 'bs5') grid = 'bs5';
       gridSel.value = grid;

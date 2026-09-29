@@ -67,7 +67,7 @@ test.describe('the files the install panel hands over', () => {
   });
 
   test('all four of the files that go in the shared folder are offered', async () => {
-    const offered = await page.evaluate(() => [...document.querySelectorAll('[data-act="download"]')].map((b) => b.dataset.file));
+    const offered = await page.evaluate(() => [.../** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('[data-act="download"]'))].map((b) => b.dataset.file));
     for (const name of DIST) assert.ok(offered.includes(name), `${name} has no Download in the install panel, so an upload taken from here leaves the folder short`);
   });
 
@@ -135,7 +135,7 @@ test.describe('the buttons the retag went through', () => {
   // unminified pair is the one worth opening, and it had neither button.
   test('all four files can be read and copied, not only the minified pair', async () => {
     for (const act of ['copy', 'view']) {
-      const offered = await page.evaluate((a) => [...document.querySelectorAll(`[data-act="${a}"]`)].map((b) => b.dataset.file), act);
+      const offered = await page.evaluate((a) => [.../** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll(`[data-act="${a}"]`))].map((b) => b.dataset.file), act);
       assert.deepEqual(offered.slice().sort(), DIST.slice().sort(), `${act} is offered for ${offered.join(', ')}`);
     }
   });

@@ -23,7 +23,7 @@ const knob = (page, label) =>
       const n = len.querySelector('input').value;
       return n === '' ? '' : n + len.querySelector('select').value;
     }
-    const el = row.querySelector('input[type="text"], input, select');
+    const el = /** @type {HTMLInputElement | HTMLSelectElement | null} */ (row.querySelector('input[type="text"], input, select'));
     return el ? el.value : null;
   }, label);
 
@@ -139,9 +139,9 @@ const selectBrand = async (page, id) => {
 // from looking at it, whichever of the two doors the brand came through.
 const currentBrand = (page) =>
   page.evaluate(() => {
-    const pressed = document.querySelector('#wb-variants button[aria-pressed="true"]');
+    const pressed = /** @type {HTMLButtonElement | null} */ (document.querySelector('#wb-variants button[aria-pressed="true"]'));
     if (pressed) return pressed.dataset.brand;
-    return document.getElementById('wb-brand')?.value ?? '';
+    return /** @type {HTMLSelectElement | null} */ (document.getElementById('wb-brand'))?.value ?? '';
   });
 
 test.describe('a brand applies its values', () => {
@@ -1134,7 +1134,8 @@ test.describe('kept settings bring the brand tab names back', () => {
 });
 
 test.describe('the variant strip above the stage', () => {
-  const chips = (page) => page.evaluate(() => [...document.querySelectorAll('#wb-variants button')].map((b) => [b.dataset.brand, b.getAttribute('aria-pressed')]));
+  const chips = (page) =>
+    page.evaluate(() => [.../** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('#wb-variants button'))].map((b) => [b.dataset.brand, b.getAttribute('aria-pressed')]));
 
   test('hidden where no brand has anything to give, shown with Default plus the brands on tabs', async () => {
     await pick(page, 'logostrip');
@@ -1254,7 +1255,7 @@ test.describe('a colour drag restyles the frame now and the code panel when it p
     await row.locator('.tp-colv_sw').click();
     const r = await page.evaluate(() => {
       const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === 'Rule under the tabs');
-      const native = row.querySelector('input[type="color"]');
+      const native = /** @type {HTMLInputElement} */ (row.querySelector('input[type="color"]'));
       const d = globalThis.CARGO.sdoc();
       const rule = () => d.defaultView.getComputedStyle(d.querySelector('.cargo-tabs')).borderBottomColor;
       const code = () => document.getElementById('wb-code').textContent;
@@ -1273,7 +1274,7 @@ test.describe('a colour drag restyles the frame now and the code panel when it p
     // A release commits synchronously: the panel is right before the next read.
     const final = await page.evaluate(() => {
       const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === 'Rule under the tabs');
-      const native = row.querySelector('input[type="color"]');
+      const native = /** @type {HTMLInputElement} */ (row.querySelector('input[type="color"]'));
       native.value = '#123456';
       native.dispatchEvent(new Event('change', { bubbles: true }));
       return document.getElementById('wb-code').textContent.includes('#123456');

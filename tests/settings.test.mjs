@@ -16,7 +16,7 @@ test.beforeAll(async ({ browser }) => {
 
 const shown = (page) =>
   page.evaluate(() => ({
-    name: document.querySelector('[data-name-field]').value,
+    name: /** @type {HTMLInputElement} */ (document.querySelector('[data-name-field]')).value,
     // The card the snippet ships, read off the code. It used to be read off the
     // style picker, which went on 2026-09-08 - the card is the pattern now, so
     // the class in the CSS is the only place the choice is stated.
@@ -25,7 +25,7 @@ const shown = (page) =>
     perView: [...document.querySelectorAll('#wb-settings .tp-lblv')]
       .filter((r) => /Phone|Tablet|Laptop|Desktop/.test(r.querySelector('.tp-lblv_l')?.textContent ?? ''))
       .map((r) => r.querySelector('input').value),
-    frame: document.querySelector('.ui-widths button[aria-pressed="true"]')?.dataset.w ?? null,
+    frame: /** @type {HTMLButtonElement | null} */ (document.querySelector('.ui-widths button[aria-pressed="true"]'))?.dataset.w ?? null,
   }));
 
 // Settings are a scratchpad until Keep is pressed. They used to write
@@ -95,7 +95,7 @@ test.describe('the settings come back with the slides once they are kept', () =>
     const r = await page.evaluate(() => ({
       stage: globalThis.CARGO.sdoc().documentElement.innerHTML.length,
       code: document.getElementById('wb-code').textContent,
-      name: document.querySelector('[data-name-field]').value,
+      name: /** @type {HTMLInputElement} */ (document.querySelector('[data-name-field]')).value,
       rows: document.querySelectorAll('#wb-content fieldset').length,
     }));
     assert.ok(r.stage > 100, 'a poisoned settings entry blanked the Build page');
@@ -155,7 +155,7 @@ test.describe('the settings come back with the slides once they are kept', () =>
       hidden: document.getElementById('spec-scale-item').hidden,
       label: document.getElementById('spec-scale-label').textContent,
       pct: document.getElementById('spec-scale').textContent,
-      disabled: [...document.querySelectorAll('.ui-widths button')].filter((b) => b.disabled).length,
+      disabled: [.../** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('.ui-widths button'))].filter((b) => b.disabled).length,
     }));
     assert.equal(scale.hidden, false, 'the readout says nothing about a preview showing a narrower screen than the one that is pressed');
     assert.match(scale.label, /Desktop needs a wider window/, `the readout does not name the width that will not fit: "${scale.label}"`);
@@ -198,8 +198,8 @@ test.describe('nothing is remembered across a reload unless it is kept', () => {
   const flags = (p) =>
     p.evaluate(() => ({
       dirty: !document.getElementById('wb-dirty').hidden,
-      keep: !document.getElementById('wb-keep').disabled,
-      reset: !document.getElementById('wb-reset').disabled,
+      keep: !(/** @type {HTMLButtonElement} */ (document.getElementById('wb-keep')).disabled),
+      reset: !(/** @type {HTMLButtonElement} */ (document.getElementById('wb-reset')).disabled),
       stored: !!JSON.parse(localStorage.getItem('cs-settings') || '{}')?.byPattern?.cards,
     }));
 

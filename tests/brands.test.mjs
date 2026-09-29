@@ -50,7 +50,7 @@ test('every brand has a tile, measured ones first, each with its logo', async ()
 
 test('a measured brand has one live stage per pattern it is measured for', async () => {
   const got = await page.evaluate(() =>
-    [...document.querySelectorAll('#b-chevrolet .bb-stage')].map((s) => {
+    [.../** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('#b-chevrolet .bb-stage'))].map((s) => {
       const root = s.querySelector('.cs');
       return {
         pattern: s.dataset.pattern,
@@ -86,9 +86,9 @@ test('a measured brand has one live stage per pattern it is measured for', async
 test('every measured stage shows its code, closed, and it is byte for byte the builder’s', async ({ browser }) => {
   const boxes = await page.evaluate(() =>
     [...document.querySelectorAll('#b-chevrolet .bb-block')].map((b) => ({
-      pattern: b.querySelector('.bb-stage').dataset.pattern,
-      open: b.querySelector('.bb-code')?.open,
-      buttons: [...(b.querySelectorAll('.bb-code [data-copy]') ?? [])].filter((x) => !x.hidden).map((x) => x.dataset.copy),
+      pattern: /** @type {HTMLElement} */ (b.querySelector('.bb-stage')).dataset.pattern,
+      open: /** @type {HTMLDetailsElement | null} */ (b.querySelector('.bb-code'))?.open,
+      buttons: [.../** @type {NodeListOf<HTMLButtonElement>} */ (b.querySelectorAll('.bb-code [data-copy]') ?? [])].filter((x) => !x.hidden).map((x) => x.dataset.copy),
       code: b.querySelector('.bb-code pre')?.textContent ?? null,
     })),
   );
@@ -159,7 +159,7 @@ test('a roster-only brand shows its own cars on the model bar', async () => {
   const id = await page.evaluate(() => Object.keys(globalThis.CARGO.BRANDS).find((b) => !globalThis.CARGO.patternsOf(b).length));
   assert.ok(id, 'every brand is measured now — this test has outlived its subject');
   const got = await page.evaluate((b) => {
-    const s = document.querySelector(`#b-${b} .bb-stage`);
+    const s = /** @type {HTMLElement | null} */ (document.querySelector(`#b-${b} .bb-stage`));
     return {
       count: document.querySelectorAll(`#b-${b} .bb-stage`).length,
       pattern: s?.dataset.pattern,

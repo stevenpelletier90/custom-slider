@@ -44,7 +44,7 @@ test('text, int, list and bool call back with the typed value', async () => {
     const l = row('L').querySelector('select');
     l.value = 'y';
     fire(l, 'change');
-    const b = row('B').querySelector('input[type=checkbox]');
+    const b = /** @type {HTMLInputElement} */ (row('B').querySelector('input[type=checkbox]'));
     b.checked = true;
     fire(b, 'change');
     await new Promise((r) => setTimeout(r, 50));

@@ -81,8 +81,10 @@
       this._commit();
       root._cs = this;
     }
+    /** @param {ParentNode} [scope] */
     static autoInit(scope = document) {
-      return [...scope.querySelectorAll("[data-cs]")].filter((el) => !el._cs && el.dataset.csInit !== "manual").map((el) => new _CustomSlider(el));
+      return [.../** @type {NodeListOf<HTMLElement>} */
+      scope.querySelectorAll("[data-cs]")].filter((el) => !el._cs && el.dataset.csInit !== "manual").map((el) => new _CustomSlider(el));
     }
     /* ---- options ---------------------------------------------------------- */
     _parseOptions(js) {
@@ -271,6 +273,10 @@
       return this._nearest(this._pages());
     }
     /* ---- navigation --------------------------------------------------------- */
+    /**
+     * @param {number} n slide index
+     * @param {{ behavior?: ScrollBehavior }} [options]
+     */
     goTo(n, { behavior } = {}) {
       if (this._pointerDown) return;
       n = Math.trunc(+n);
@@ -633,7 +639,10 @@
         "keydown",
         (e) => {
           const n = this.tabs.length;
-          let i = this.tabs.indexOf(e.target);
+          let i = this.tabs.indexOf(
+            /** @type {HTMLButtonElement} */
+            e.target
+          );
           if (i === -1) return;
           if (e.key === "ArrowRight") i = (i + 1) % n;
           else if (e.key === "ArrowLeft") i = (i - 1 + n) % n;
