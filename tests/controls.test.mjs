@@ -821,15 +821,21 @@ test.describe('picking a colour does not rebuild the slider', () => {
         const field = row?.querySelector('input[type="text"]');
         if (!sw || !spectrum || !alpha || !field) return { none: true };
         if (sw.getAttribute('aria-expanded') !== 'true') sw.click();
+        // Count on the class the preview runs. The stage is a srcdoc frame that
+        // loads its own copy of the engine, so wrapping this page's
+        // CustomSlider counted nothing: a drag that tore the stage down on every
+        // step still read 0 and 0 here.
+        const C = globalThis.CARGO.sdoc().defaultView.CustomSlider;
+        if (!C) return { none: true };
         let inits = 0,
           destroys = 0;
-        const AI = globalThis.CustomSlider.autoInit;
-        const D = globalThis.CustomSlider.prototype.destroy;
-        globalThis.CustomSlider.autoInit = function (...a) {
+        const AI = C.autoInit;
+        const D = C.prototype.destroy;
+        C.autoInit = function (...a) {
           inits++;
           return AI.apply(this, a);
         };
-        globalThis.CustomSlider.prototype.destroy = function (...a) {
+        C.prototype.destroy = function (...a) {
           destroys++;
           return D.apply(this, a);
         };
@@ -842,9 +848,9 @@ test.describe('picking a colour does not rebuild the slider', () => {
         // rgba() of whatever the row started at.
         move(alpha, '1');
         for (const v of vals) move(spectrum, v);
-        globalThis.CustomSlider.autoInit = AI;
-        globalThis.CustomSlider.prototype.destroy = D;
-        return { inits, destroys, sameNode: first === globalThis.CARGO.sdoc().querySelector('.cs-slide'), text: field.value };
+        C.autoInit = AI;
+        C.prototype.destroy = D;
+        return { framed: C !== globalThis.CustomSlider, inits, destroys, sameNode: first === globalThis.CARGO.sdoc().querySelector('.cs-slide'), text: field.value };
       },
       [label, values],
     );
@@ -855,6 +861,7 @@ test.describe('picking a colour does not rebuild the slider', () => {
     assert.ok(await hasKnob(page, ROW), 'no colour row to drag');
 
     const r = await drag(page, ROW, ['#112233', '#445566', '#778899', '#aabbcc', '#c8102e']);
+    assert.equal(r.framed, true, "the counters sat on this page's engine, not the preview's");
     assert.equal(r.destroys, 0, 'the stage was torn down mid-drag');
     assert.equal(r.inits, 0, 'the sliders were re-initialised mid-drag');
     assert.equal(r.sameNode, true, 'the first slide was replaced, so the stage was rebuilt');
