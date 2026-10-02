@@ -1306,6 +1306,7 @@
     '/script></body></html>';
 
   // Resolves when the frame has its engine. Everything that paints waits on it.
+  /** @type {Promise<void>} */
   let frameReady = new Promise((done) => {
     stage.addEventListener(
       'load',

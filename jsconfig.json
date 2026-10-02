@@ -3,6 +3,7 @@
     "module": "nodenext",
     "target": "es2023",
     "checkJs": true,
+    "strict": false,
     "noEmit": true,
     "skipLibCheck": true,
     "maxNodeModuleJsDepth": 0,
