@@ -108,7 +108,7 @@ the two values the picker can't represent:
 
 ## 3. Layout: folders in decision order, preview pinned
 
-```
+```text
 ┌ Patterns rail ┐ ┌──────── settings: one Pane ─────────┐ ┌── preview (sticky) ──┐
 │ Model bar     │ │ [Keep these settings] [Reset]        │ │ [390][750][970][1170] │
 │ Vehicle cards │ │ ▾ 1  Brand and card style            │ │                       │

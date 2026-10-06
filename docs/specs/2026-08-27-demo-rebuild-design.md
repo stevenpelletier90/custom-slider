@@ -23,7 +23,7 @@ why they are five thousand lines each.
 looks and 21 size ladders. The ladders are barely distinct — six of them are all "2 on a phone, 3 on
 a tablet, N on desktop", differing only in the final count or one breakpoint:
 
-```
+```text
 2 → 3 → 5 @ 460/768        2 → 3 → 4 @ 460/992
 2 → 3 → 4 @ 460/768        2 → 3 → 5 @ 460/992
 2 → 3 → 6 @ 460/768        2 → 3 → 6 @ 460/992

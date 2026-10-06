@@ -1,0 +1,13 @@
+// markdownlint-cli2 config — see https://github.com/DavidAnson/markdownlint-cli2
+{
+  "globs": ["**/*.md"],
+  "ignores": ["node_modules", ".superpowers", ".playwright-mcp"],
+  "config": {
+    "default": true,
+    "MD013": false,
+    "MD024": { "siblings_only": true },
+    "MD033": false,
+    "MD036": false,
+    "MD041": false,
+  },
+}

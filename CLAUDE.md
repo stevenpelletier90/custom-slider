@@ -262,9 +262,10 @@ width — a gate nobody runs is not a gate. Run `validate` and `test` before com
 README "Verification checklist" browser sweep before shipping; a size check alone is not
 verification.
 
-`.claude/settings.json` registers a PostToolUse hook (`scripts/claude-format-hook.js`, exec form, so
-no shell is involved) that auto-fixes each file Claude edits inside this repo and leaves files in
-the other working directories alone. It never blocks; `npm run validate` is the real gate.
+Files Claude edits are auto-fixed by the user-level PostToolUse hook
+(`~/.claude/hooks/format-on-edit.mjs`, shared by every repo), which runs whichever of stylelint,
+eslint, markdownlint-cli2 and prettier this repo has installed. This repo defines no hook of its
+own. It never blocks; `npm run validate` is the real gate.
 
 **Accessibility is a required check, not a good intention.** `.github/workflows/a11y.yml` runs on
 every push and pull request with NO path filter, decides relevance itself, and always ends in one

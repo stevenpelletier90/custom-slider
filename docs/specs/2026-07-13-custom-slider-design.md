@@ -59,7 +59,7 @@ grid, no video, no infinite loop), test framework.
 
 ## 4. Repo layout
 
-```
+```text
 custom-slider/
 ├─ src/
 │  ├─ custom-slider.js      # the whole engine — one ES module, heavily commented

@@ -5,7 +5,7 @@
 > the rename map. **Do not restate a status here, not even a "short version".** This block used to
 > carry one, and it was wrong within a week of being written — which is the same failure that once
 > had three documents giving three different answers. Go and read the README.
-
+>
 > **The engine is linked, never pasted.** There is no paste-the-engine route — a pasted copy can
 > never receive a fix, and nothing would tell you which sites were carrying which build. The
 > reasoning is in README, "The engine is linked, never pasted". The per-slider CSS the copy panel
@@ -48,8 +48,10 @@ re-uploading to every one — treat it as temporary.
 
 ### How a page loads them
 
-    <link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.css">
-    <script src="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.js" defer></script>
+```html
+<link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.css">
+<script src="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.js" defer></script>
+```
 
 `defer` matters: the engine auto-initializes on `DOMContentLoaded`, and the CSS already reserves the
 control space, so nothing shifts when the JS lands (CLS 0).
@@ -62,28 +64,30 @@ only gets interesting when the natural place to load the engine is a **sitewide 
 most pages on the site have no slider and would pay for the files anyway. For that case, paste this
 once into the sitewide Body Section, Bottom (or the footer include) instead of the two tags:
 
-    <script>
-      (function () {
-        var boot = function () {
-          if (!document.querySelector('.cs')) return;
-          var css = document.createElement('link');
-          css.rel = 'stylesheet';
-          css.href = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.css';
-          // PREPEND, never append: the engine stylesheet carries the default
-          // --cs-* values at the same specificity as your recipe CSS, so it
-          // must land BEFORE the page's Style Only CSS in the cascade.
-          // Appended at the end of <head> it silently overrides every recipe
-          // override (--cs-per-view snaps back to 1, peek to 0) — found live
-          // on the spelletier test site, 2026-08-20.
-          document.head.insertBefore(css, document.head.firstChild);
-          var js = document.createElement('script');
-          js.src = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.js';
-          document.head.appendChild(js);
-        };
-        if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
-        else boot();
-      })();
-    </script>
+```html
+<script>
+  (function () {
+    var boot = function () {
+      if (!document.querySelector('.cs')) return;
+      var css = document.createElement('link');
+      css.rel = 'stylesheet';
+      css.href = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.css';
+      // PREPEND, never append: the engine stylesheet carries the default
+      // --cs-* values at the same specificity as your recipe CSS, so it
+      // must land BEFORE the page's Style Only CSS in the cascade.
+      // Appended at the end of <head> it silently overrides every recipe
+      // override (--cs-per-view snaps back to 1, peek to 0) — found live
+      // on the spelletier test site, 2026-08-20.
+      document.head.insertBefore(css, document.head.firstChild);
+      var js = document.createElement('script');
+      js.src = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.js';
+      document.head.appendChild(js);
+    };
+    if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+    else boot();
+  })();
+</script>
+```
 
 It looks for a `.cs` on the page and injects the stylesheet and script only if it finds one. Pages
 with no slider load zero slider bytes.
@@ -120,12 +124,14 @@ loader is the whole story.
 
 Everything the engine needs, and nothing it generates for you:
 
-    <div class="cs my-strip" data-cs aria-label="Featured vehicles">
-      <ul class="cs-track">
-        <li class="cs-slide">…authored content…</li>
-        <li class="cs-slide">…authored content…</li>
-      </ul>
-    </div>
+```html
+<div class="cs my-strip" data-cs aria-label="Featured vehicles">
+  <ul class="cs-track">
+    <li class="cs-slide">…authored content…</li>
+    <li class="cs-slide">…authored content…</li>
+  </ul>
+</div>
+```
 
 Rules that are not negotiable:
 
@@ -241,13 +247,15 @@ live in this repo until 2026-08-27.
 
 Override custom properties in `styleCode`. Never edit the engine:
 
-    .my-strip.cs {
-      --cs-gap: 1em;
-      --cs-peek: 60px;
-      --cs-arrow-bg: rgba(11, 42, 74, 1);
-      --cs-arrow-fg: #fff;
-      --cs-dot-current: #0b2a4a;
-    }
+```css
+.my-strip.cs {
+  --cs-gap: 1em;
+  --cs-peek: 60px;
+  --cs-arrow-bg: rgba(11, 42, 74, 1);
+  --cs-arrow-fg: #fff;
+  --cs-dot-current: #0b2a4a;
+}
+```
 
 **`em`, never `rem`.** `rem` is locked to `<html>`, and Bootstrap 3 — what the storefronts run —
 sets `html { font-size: 10px }`, so a `1rem` gap written here ships at 62.5% of what it looked like.
