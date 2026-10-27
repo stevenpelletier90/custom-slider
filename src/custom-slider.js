@@ -818,7 +818,17 @@ export class CustomSlider {
     if (this.rotating === this._wasRotating) return;
     const first = this._wasRotating === null;
     this._wasRotating = this.rotating;
-    this.status.setAttribute('aria-live', this.rotating ? 'off' : 'polite');
+    // Quiet while rotating, as the W3C pattern says - but a pause hands over
+    // to a FRESH status, live before it is in the page, rather than switching
+    // the quiet one back on: VoiceOver never heard a status switched off and
+    // on again, and read nothing on Next on a paused hero (2026-10-27). Same
+    // class and text, so a visible counter carries on.
+    if (this.rotating) this.status.setAttribute('aria-live', 'off');
+    else if (!first) {
+      const s = /** @type {HTMLElement} */ (this.status.cloneNode(true));
+      s.setAttribute('aria-live', 'polite');
+      this.status.replaceWith((this.status = s));
+    }
     const L = this.opts.labels;
     this.pauseBtn.setAttribute('aria-label', this.rotating ? L.pause : L.play);
     this.pauseBtn.innerHTML = this.rotating ? ICONS.pause : ICONS.play;

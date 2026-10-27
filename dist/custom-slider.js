@@ -597,7 +597,15 @@
       if (this.rotating === this._wasRotating) return;
       const first = this._wasRotating === null;
       this._wasRotating = this.rotating;
-      this.status.setAttribute("aria-live", this.rotating ? "off" : "polite");
+      if (this.rotating) this.status.setAttribute("aria-live", "off");
+      else if (!first) {
+        const s = (
+          /** @type {HTMLElement} */
+          this.status.cloneNode(true)
+        );
+        s.setAttribute("aria-live", "polite");
+        this.status.replaceWith(this.status = s);
+      }
       const L = this.opts.labels;
       this.pauseBtn.setAttribute("aria-label", this.rotating ? L.pause : L.play);
       this.pauseBtn.innerHTML = this.rotating ? ICONS.pause : ICONS.play;

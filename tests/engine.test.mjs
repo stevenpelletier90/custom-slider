@@ -259,6 +259,44 @@ test.describe('autoplay', () => {
     await page.waitForFunction((from) => document.querySelector('.cs-track').scrollLeft !== from, held, { timeout: 3000 });
   });
 
+  // A paused autoplay slider still announces its slides in VoiceOver. The
+  // status is aria-live="off" while rotating, as the W3C carousel pattern
+  // says, and switching that same element to "polite" on pause left it
+  // unheard: on the demo's hero VoiceOver read nothing on Next once paused,
+  // where the never-switched cards strip read "Slides 4-6 of 6" (2026-10-27,
+  // tests/screen-reader.sr.mjs). Safari treats a changed aria-live on an
+  // existing element as unreliable, so a pause swaps in a fresh status that
+  // is live from birth - same class, same text, so a visible counter stays.
+  test('pausing hands the status to a fresh element that is live from birth', async ({ page }) => {
+    await page.setContent(build(8, 4, 'data-cs-autoplay="4000"'), { waitUntil: 'load' });
+    await page.waitForTimeout(300);
+    const status = () =>
+      page.evaluate(() => {
+        const all = document.querySelectorAll('.cs-status');
+        const w = /** @type {any} */ (window);
+        return { count: all.length, live: all[0].getAttribute('aria-live'), same: all[0] === w.firstStatus, cls: all[0].className, text: all[0].textContent };
+      });
+    await page.evaluate(() => {
+      const w = /** @type {any} */ (window);
+      w.firstStatus = document.querySelector('.cs-status');
+    });
+    assert.equal((await status()).live, 'off', 'a rotating slider should keep its status quiet');
+    await page.locator('.cs-arrow--next').focus();
+    await page.waitForTimeout(200);
+    const paused = await status();
+    assert.equal(paused.count, 1, 'a pause left two status regions behind');
+    assert.equal(paused.live, 'polite', 'a paused slider should announce');
+    assert.equal(paused.same, false, 'the pause switched aria-live on the element that had been quiet - VoiceOver does not hear that');
+    assert.equal(paused.cls, 'cs-status cs-sr-only', 'the fresh status lost its class, and with it any site styling');
+    await page.locator('.cs-arrow--next').press('Enter');
+    await page.waitForTimeout(800);
+    assert.match((await status()).text, /^Slides 5–8 of 8$/, 'the fresh status stopped following the slides');
+    await page.locator('.cs-pause').focus();
+    await page.locator('.cs-pause').press('Enter');
+    await page.waitForTimeout(200);
+    assert.equal((await status()).live, 'off', 'starting again should quiet the status');
+  });
+
   test('nothing rotates under prefers-reduced-motion', async ({ browser }) => {
     const ctx = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 1400, height: 900 } });
     const page = await ctx.newPage();
