@@ -4,19 +4,23 @@
 // on a desktop nobody is using, because the screen reader listens to the
 // whole machine.
 //
-// Playwright drives the page - focus, arrow keys - and the screen reader only
-// listens, so nothing here depends on NVDA's and VoiceOver's different keys,
-// or on Tab skipping links in WebKit. Every phrase lands in heard.json,
-// attached to the run.
+// Every key goes THROUGH the screen reader (screenReader.press). guidepup
+// records speech per command it sent, so the first version - Playwright
+// pressing keys, the reader only listening - recorded nothing at all on
+// either reader, and its "no clickable" check passed on silence. Playwright
+// only parks focus on a starting point; each step below must have heard
+// something before anything is asserted about it. Every phrase, with the
+// element that had focus, is written to heard.json in the run's artifacts.
 //
 // 2026-10-27 decided three things on NVDA's word (docs/history.md); they are
-// asserted here on NVDA, where they were heard. VoiceOver's first run is for
-// listening: recorded, not asserted. The thumbnail change runs three ways -
+// asserted on NVDA, where they were heard. VoiceOver is recorded, not
+// asserted, until it has been heard. The thumbnail change runs three ways -
 // as shipped, with the status region silenced, with the panels' live region
 // silenced - because it announced "Slide 2 of 6" and never the photo's name,
 // and because whether the gallery's two live regions double up is open.
 import { screenReaderTest as test } from '@guidepup/playwright';
 import assert from 'node:assert/strict';
+import { writeFileSync } from 'node:fs';
 
 // ?sr=status-off or ?sr=track-off silences one of the media gallery's two
 // polite live regions from the moment the engine creates it.
@@ -30,6 +34,9 @@ const SILENCE = () => {
 
 test('what a screen reader says about the demo patterns', async ({ page, screenReader }, testInfo) => {
   const nvda = process.platform === 'win32';
+  // WebKit's plain Tab skips links; Option+Tab is its every-item key, as in
+  // tests/engine.test.mjs. guidepup reads Alt as Option on macOS.
+  const TAB = nvda ? 'Tab' : 'Alt+Tab';
   const heard = [];
   await page.addInitScript(SILENCE);
 
@@ -39,34 +46,86 @@ test('what a screen reader says about the demo patterns', async ({ page, screenR
     await page.waitForTimeout(800);
     await screenReader.navigateToWebContent();
   };
-  const listen = async (what, act, ms = 2000) => {
+  // The element with focus, named the way the checks below look for it.
+  const focused = () =>
+    page.evaluate(() => {
+      const a = document.activeElement;
+      if (!a || a === document.body) return 'body';
+      const cs = a.closest('[data-cargo]');
+      const where = cs ? /** @type {HTMLElement} */ (cs).dataset.cargo : 'page';
+      const what = a.matches('.cs-dot--current')
+        ? 'current dot'
+        : a.matches('.cs-dot')
+          ? 'dot'
+          : a.matches('.cs-slide')
+            ? 'panel'
+            : a.closest('.cs-slide')
+              ? 'card'
+              : a.matches('.cs-thumb')
+                ? 'thumb'
+                : [...a.classList].find((c) => c.startsWith('cs-')) || a.tagName.toLowerCase();
+      return `${where} ${what}`;
+    });
+  const press = async (key, step, ms = 1500) => {
     await screenReader.clearSpokenPhraseLog();
-    await act();
+    await screenReader.press(key);
     await page.waitForTimeout(ms);
     const said = (await screenReader.spokenPhraseLog()).map((s) => s.replace(/\s+/g, ' ').trim()).filter(Boolean);
-    heard.push({ what, said });
-    console.log(`${what}: ${JSON.stringify(said)}`);
-    return said.join(' | ');
+    const at = await focused();
+    heard.push({ step, key, at, said });
+    console.log(`${step} | ${key} -> ${at}: ${JSON.stringify(said)}`);
   };
-  const focus = (sel) => () => page.focus(sel);
+  // Park focus on the last focusable element before a pattern - the Tab path a
+  // visitor takes into it - then Tab in through the screen reader.
+  const tabInto = async (cargo, presses) => {
+    await page.evaluate((cargo) => {
+      const root = document.querySelector(`[data-cargo="${cargo}"]`);
+      const all = [...document.querySelectorAll('a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])')].filter((e) => !e.closest('[inert]') && e.getClientRects().length);
+      const first = all.findIndex((e) => root.contains(e));
+      document.querySelectorAll('[data-sr-start]').forEach((e) => e.removeAttribute('data-sr-start'));
+      all[first - 1].setAttribute('data-sr-start', '');
+    }, cargo);
+    await page.focus('[data-sr-start]');
+    await page.waitForTimeout(500);
+    for (let i = 0; i < presses; i++) await press(TAB, `into ${cargo}`);
+  };
+  const saidAt = (at) =>
+    heard
+      .filter((h) => h.at === at)
+      .flatMap((h) => h.said)
+      .join(' | ');
 
-  await open();
-  const card = await listen('model bar: first card', focus('[data-cargo="modelbar"] .cs-slide a'));
-  const dot = await listen('cards: current dot', focus('[data-cargo="cards"] .cs-dot--current'));
-  await listen('cards: other dot', focus('[data-cargo="cards"] .cs-dot:not(.cs-dot--current)'));
-  const panel = await listen('media gallery: the photo showing', focus('[data-cargo="media-gallery"] .cs-slide:not([inert])'));
-  await listen('media gallery: its thumbnail', focus('[data-cargo="media-gallery"] .cs-thumb[aria-selected="true"]'));
-
-  for (const variant of ['', 'status-off', 'track-off']) {
-    await open(variant);
-    await page.focus('[data-cargo="media-gallery"] .cs-thumb[aria-selected="true"]');
-    await page.waitForTimeout(1000);
-    for (let i = 1; i <= 2; i++) await listen(`thumbnail change ${i}, ${variant || 'as shipped'}`, () => page.keyboard.press('ArrowRight'), 3000);
+  try {
+    await open();
+    await tabInto('modelbar', 3);
+    await tabInto('cards', 4);
+    await tabInto('media-gallery', 4);
+    for (const variant of ['', 'status-off', 'track-off']) {
+      await open(variant);
+      await page.focus('[data-cargo="media-gallery"] .cs-thumb[aria-selected="true"]');
+      await page.waitForTimeout(800);
+      for (let i = 1; i <= 2; i++) await press('ArrowRight', `thumbnail change ${i}, ${variant || 'as shipped'}`, 3000);
+    }
+  } finally {
+    const body = JSON.stringify({ reader: nvda ? 'NVDA' : 'VoiceOver', heard }, null, 2);
+    writeFileSync(testInfo.outputPath('heard.json'), body);
+    await testInfo.attach('heard.json', { body, contentType: 'application/json' });
   }
 
-  await testInfo.attach('heard.json', { body: JSON.stringify({ reader: nvda ? 'NVDA' : 'VoiceOver', heard }, null, 2), contentType: 'application/json' });
-
+  assert.ok(
+    heard.some((h) => h.said.length),
+    'the screen reader said nothing at all - no check below could mean anything',
+  );
   if (nvda) {
+    const card = saidAt('modelbar card');
+    const dot = saidAt('cards current dot');
+    const panel = saidAt('media-gallery panel');
+    for (const [what, s] of [
+      ['the first model-bar card', card],
+      ['the current dot', dot],
+      ['the gallery photo', panel],
+    ])
+      assert.ok(s, `NVDA said nothing when focus reached ${what}`);
     // The track carries no click listener (71880fa): NVDA said "list,
     // clickable, with 8 items" before every strip.
     assert.doesNotMatch(card, /clickable/i, `the strip is still "clickable": ${card}`);
