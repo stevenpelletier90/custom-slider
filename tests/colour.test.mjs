@@ -114,6 +114,41 @@ test('currentcolor stays a text field', async () => {
   );
 });
 
+// The column split (2026-10-27). The settings panel flows its folders through
+// CSS columns, and Chromium fragments even an absolutely positioned box across
+// them: a picker at the foot of a column split in two, and the rebalance moved
+// whole folders - Button background at 1440 took Behaviour from the third
+// column to the second. In the top layer a picker is outside the columns, so
+// opening one moves nothing. Rows are read in page coordinates, so a scroll
+// is not a move.
+test('opening any picker moves nothing in the panel', async () => {
+  // Shut whatever the tests above left open: a press outside every row.
+  await page.evaluate(() => document.body.dispatchEvent(new PointerEvent('pointerdown', { bubbles: true })));
+  const rows = () =>
+    page.evaluate(() =>
+      [...document.querySelectorAll('#wb-settings .tp-lblv')].map((r) => {
+        const b = r.getBoundingClientRect();
+        return `${Math.round(b.x)},${Math.round(b.y + scrollY)}`;
+      }),
+    );
+  const swatches = page.locator('#wb-settings .tp-colv_sw');
+  const n = await swatches.count();
+  assert.ok(n > 0, 'no colour rows on the model bar');
+  for (let i = 0; i < n; i++) {
+    const sw = swatches.nth(i);
+    await sw.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+    const before = await rows();
+    await sw.click();
+    await page.waitForTimeout(150);
+    const after = await rows();
+    const moved = before.filter((p, k) => p !== after[k]).length;
+    const label = await sw.evaluate((el) => el.closest('.tp-lblv').querySelector('.tp-lblv_l').textContent.trim());
+    assert.equal(moved, 0, `opening the "${label}" picker moved ${moved} row(s) of the panel`);
+    await sw.click();
+    await page.waitForTimeout(100);
+  }
+});
+
 test.describe('nothing threw', () => {
   test('no page errors', () => {
     assert.deepEqual(errors, []);
