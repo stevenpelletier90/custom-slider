@@ -35,6 +35,7 @@ npm run validate       # stylelint (files + generated) + eslint + markdownlint +
 npm run typecheck      # tsc (pinned typescript devDependency) over jsconfig.json: src, demo, scripts AND tests, held at zero errors; types/globals.d.ts declares what the engine hangs on the page (el._cs, window.CustomSlider)
 npm run test           # @playwright/test browser checks on Chromium (`npx playwright test --list` for the count), starts its own server on 8137 (reuses one already running)
 npm run test:browsers  # tests/engine.test.mjs on Firefox and WebKit (npx playwright install firefox webkit once)
+npm run test:sr        # tests/*.sr.mjs: what NVDA (Windows) or VoiceOver (macOS) says about the demo; drives a real screen reader on the whole desktop — run it from .github/workflows/screen-reader.yml (on demand), not on a desktop in use
 npm run a11y           # axe over every pattern and page state; needs `npm run serve` up; not a gate, run it after rail or demo-page changes
 npm run check:looks    # asserts the demo data holds: 17 old skins -> 7 components, 32 brand presets, no cramped preset
 npm run lint:css:generated # stylelints the CSS the copy panel ships (the card/pattern rules that live in JS template literals)

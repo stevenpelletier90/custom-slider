@@ -21,12 +21,15 @@
     "lint:css:generated": "node scripts/lint-generated-css.mjs",
     "test": "playwright test --project=chromium",
     "test:browsers": "playwright test --project=firefox --project=webkit",
+    "test:sr": "playwright test -c playwright.sr.config.mjs",
     "test:ui": "playwright test --ui",
     "a11y": "node scripts/a11y.mjs",
     "validate": "npm run lint:css && npm run lint:css:generated && npm run lint:js && npm run lint:md && npm run format:check && npm run check:looks && npm run check:vendor && npm run typecheck"
   },
   "devDependencies": {
     "@eslint/js": "^10.0.1",
+    "@guidepup/guidepup": "^0.38.0",
+    "@guidepup/playwright": "^0.21.0",
     "@playwright/test": "^1.63.0",
     "@tweakpane/core": "^2.0.5",
     "@types/node": "^26.6.4",

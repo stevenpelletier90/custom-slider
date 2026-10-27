@@ -1,0 +1,60 @@
+name: screen-reader
+
+# What NVDA and VoiceOver actually say about the demo's own patterns
+# (tests/screen-reader.sr.mjs). On demand only - Actions tab, "Run workflow",
+# or `gh workflow run screen-reader.yml` - never on push: it drives a real
+# screen reader on a hosted desktop, takes minutes, and is a listening tool
+# before it is a gate. The repo is public, so the Windows and macOS runners
+# cost nothing.
+#
+# Every phrase each reader spoke is in the run's artifacts (heard.json under
+# test-results/), passed or failed. NVDA holds the three decisions of
+# 2026-10-27; VoiceOver is recorded, not asserted, until it has been heard.
+#
+# @guidepup/setup is not a devDependency on purpose: it pulls in a screen
+# recorder whose install script downloads ffmpeg, and as a devDependency that
+# download would run in every validate and a11y job. Here it is fetched once,
+# with install scripts off - this run records no video.
+
+on:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  listen:
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - os: windows-latest
+            reader: nvda
+            browser: chromium
+          - os: macos-latest
+            reader: voiceover
+            browser: webkit
+    name: ${{ matrix.reader }} + ${{ matrix.browser }}
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 30
+    env:
+      npm_config_ignore_scripts: 'true'
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npx playwright install ${{ matrix.browser }}
+      # macOS: grants the permissions VoiceOver automation needs. Windows: a
+      # no-op, then `install` fetches the portable NVDA build guidepup drives.
+      - run: npx --yes @guidepup/setup@0.29.3 setup --ci
+      - run: npx --yes @guidepup/setup@0.29.3 install
+      - run: npm run test:sr
+      - if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: heard-${{ matrix.reader }}
+          path: test-results/
+          if-no-files-found: warn
