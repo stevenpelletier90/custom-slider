@@ -22,6 +22,15 @@ since before that review — the finding was already stale when it was written d
 IntersectionObserver line above now has a measurement in BOTH directions behind it, not just the
 ascending one — see `docs/history.md`.
 
+Pruned 2026-10-27, item by item with Steven. Fixed and gone, each with a check that fails without
+it: the restart-while-hovered gap, `demo/index.html` scrolling sideways at 320, `looks.js` replacing
+`CARGO`, `role="list"` in the authored markup, and the colour popover (`npm run a11y` never opened
+it; it also split across the settings columns, which nobody had filed). Stale and gone: "Generated
+SVGs lack trailing newline" (no `.svg` is tracked) and the gallery focus-guard entry (fixed before
+the rename; `tests/engine.test.mjs` holds it on all three engines now). The gallery's two live
+regions were listed twice and are one entry under Manual QA, where the listening pass settles them.
+The gallery `aria-roledescription` entry stays, reworded as the spec decision it is.
+
 ## 2026-09-15 — the phone pass, a decided no
 
 - **Peek on phones: measured no** (Steven, 2026-09-15). The phone pass proposed a phone-tier
@@ -52,9 +61,11 @@ ascending one — see `docs/history.md`.
 - MANUAL QA remaining (needs Steven/humans, spec §11): live NVDA/VoiceOver pass (status-region
   wording + gallery announcements); Windows Firefox at 125-150% DPI; Tab-into-cards in stable
   Safari; one pre-26.2-iOS device (scrollend fallback).
-- The NVDA/VoiceOver pass is the one that also settles the gallery's two polite live regions below
-  (the status region plus the track, per APG). No amount of further static review can answer whether
-  they double-announce — a person has to listen to it.
+- The NVDA/VoiceOver pass is the one that also settles the gallery's two polite live regions: the
+  track (per APG's tabbed carousel) and `.cs-status`. APG's own tabbed example has only the one
+  (checked 2026-08-31). No amount of further static review can answer whether they double-announce —
+  a person has to listen to it. If they do, the option on the table is suppressing `.cs-status`
+  updates in gallery mode.
 - `escUrl` through a real DealerOn styleCode round-trip (2026-09-15). The generated markup is proven
   safe in `tests/builder.test.mjs`, but the platform's server-side processing has enough documented
   weirdness that one actual paste / minify / save / reload cycle is worth doing before calling it
@@ -69,11 +80,6 @@ ascending one — see `docs/history.md`.
   (consistency nit, plan-mandated).
 - slider.css: some sizes hardcoded (dot hit box 24px, pause 36px, thumb radius 4px) vs exposed
   --cs-* knobs (plan-mandated).
-- Generated SVGs lack trailing newline (cosmetic).
-- Gallery: focus-guard skips re-inert until next _commit — off-screen panel with focus history can
-  linger non-inert (edge case, demo unaffected).
-- Gallery: TWO polite live regions (status region + track per APG) may double-announce — validate in
-  Task 7 screen-reader/status pass; consider suppressing status updates in gallery mode.
 
 ## 2026-09-04 — workbench panel, deferred by Steven
 
@@ -95,10 +101,10 @@ ENGINE / PLATFORM (cited to MDN + BCD via Context7):
   `scroll-behavior: auto` themselves - the track then, the thumb rail on 2026-09-15 - which is not a
   brush against "never set scroll-behavior on the track": that rule forbids `smooth`, and `auto` is
   what keeps the per-call decision in JS's hands. `tests/engine.test.mjs` holds both.
-- Gallery runs two competing polite live regions (track :714 + `.cs-status` :229). Already on this
-  backlog; now confirmed against APG, whose tabbed example has one.
 - Gallery tabpanels omit `aria-roledescription="slide"`, which APG's carousel-2-tablist example
-  sets.
+  sets. Not a defect: the design spec chose it (`specs/2026-07-13-custom-slider-design.md`, "Main
+  slides: `role="tabpanel"`, **no** `aria-roledescription="slide"`") without recording why, and the
+  engine marks it where it sets the role. Reopening it is a contract decision.
 - Current dot uses `aria-disabled`; MDN says `aria-current="true"` is the attribute for "current
   item in a set". NOTE: the `aria-disabled` choice is DOCUMENTED as deliberate in README and
   CLAUDE.md — changing it is a contract decision.

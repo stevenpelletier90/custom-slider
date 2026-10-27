@@ -451,6 +451,25 @@ test.describe('the contract, in the last window before it froze', () => {
     assert.deepEqual(r.selected, ['false', 'false', 'false', 'true', 'false']);
   });
 
+  // The backlog's focus-guard finding: a panel holding focus was skipped when
+  // the others went inert, and stayed exposed beside the shown one until a
+  // later commit. _updateGallery() now hands focus to the panel being shown
+  // and inerts the old one on the spot. Read straight after the move, before
+  // any scrollend - WebKit has not committed the new slide by then, and the
+  // panels have to be right anyway.
+  test('a gallery panel holding focus hands it on and goes inert at once', async ({ page }) => {
+    await page.setContent(build(5, 1, 'data-cs-gallery'), { waitUntil: 'load' });
+    await page.waitForTimeout(400);
+    await page.locator('.cs-slide').nth(0).locator('a').focus();
+    await page.evaluate(() => document.querySelector('.cs')._cs.goTo(2));
+    const r = await page.evaluate(() => {
+      const s = [.../** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.cs-slide'))];
+      return { inert: s.map((x) => x.inert), focus: s.findIndex((x) => x.contains(document.activeElement)) };
+    });
+    assert.deepEqual(r.inert, [true, true, false, true, true], 'the panel that held focus is still exposed beside the one shown');
+    assert.equal(r.focus, 2, 'focus did not follow the photo to the panel shown');
+  });
+
   // Mouse drag scrolls the track; the click that ends a real drag is eaten so
   // a card link does not fire under a released pointer.
   test('dragging the track with a mouse moves it', async ({ page }) => {
