@@ -298,10 +298,23 @@ await page.waitForTimeout(400);
 
 // Every colour picker on the model bar, one open at a time. A picker floats
 // over the rows under it, so what it covers and what sits beside it exist only
-// while it is open, and nothing here opened one: while it was absolute in the
-// panel, two pickers left four 20px rows inside the 24px spacing target-size
-// wants (2026-10-27). scrollIntoView centres the row because the masthead is
-// sticky and a row scrolled to the top is under it.
+// while it is open, and nothing here opened one: two pickers left four 20px
+// rows inside the 24px spacing target-size wants (2026-10-27). scrollIntoView
+// centres the row because the masthead is sticky and a row scrolled to the top
+// is under it.
+//
+// axe's target-size rule does not see a position: fixed box, and a top-layer
+// popover is one. With the picker in the top layer, axe called the rows it
+// covers "sufficient space from its closest neighbors" and passed the row half
+// under its edge - the same rows, at the same coordinates, it failed when the
+// picker was absolute. Taken out of the top layer but left fixed, axe still
+// passed them; as an absolute box at the same place it failed them again and
+// called the covered ones "fully obscured" (all measured 2026-10-27, after the
+// top layer had been committed as a fix on axe's word alone). So for the audit
+// the picker becomes that absolute box: moved into <main> (still inside the
+// landmark, or axe reports it as stray content) but outside the panel's
+// columns so it cannot split, at the position it was drawn at, above
+// everything as the top layer is. Put back as it was afterwards.
 await page.locator('#wb-nav button[data-go="modelbar"]').click();
 await page.waitForTimeout(500);
 const swatches = page.locator('#wb-settings .tp-colv_sw');
@@ -311,7 +324,30 @@ for (let i = 0, n = await swatches.count(); i < n; i++) {
   await sw.click();
   await page.waitForTimeout(300);
   const label = await sw.evaluate((el) => el.closest('.tp-lblv')?.querySelector('.tp-lblv_l')?.textContent.trim());
+  const lifted = await sw.evaluate((el) => {
+    const p = /** @type {HTMLElement | null} */ (el.parentElement.querySelector(':scope > .tp-colv_pop'));
+    if (!p?.matches(':popover-open')) return false;
+    const r = p.getBoundingClientRect();
+    p.hidePopover();
+    el.closest('main').append(p);
+    Object.assign(p.style, { position: 'absolute', top: '0px', left: '0px', zIndex: '2147483647' });
+    // Wherever (0, 0) lands is the offset to take off; then it is where it was.
+    const o = p.getBoundingClientRect();
+    Object.assign(p.style, { top: `${r.top - o.top}px`, left: `${r.left - o.left}px` });
+    const now = p.getBoundingClientRect();
+    return Math.abs(now.top - r.top) < 1 && Math.abs(now.left - r.left) < 1;
+  });
+  if (!lifted) {
+    console.error(`a11y: the “${label}” picker did not open into the top layer, or could not be put where it was drawn — the audit below would not be looking at it.`);
+    process.exitCode = 1;
+  }
   await audit(`colour picker “${label}” open`);
+  await sw.evaluate((el) => {
+    const p = /** @type {HTMLElement} */ (el.closest('main').querySelector(':scope > .tp-colv_pop'));
+    p.style.removeProperty('position');
+    p.style.removeProperty('z-index');
+    el.parentElement.append(p);
+  });
   await sw.click();
   await page.waitForTimeout(150);
 }

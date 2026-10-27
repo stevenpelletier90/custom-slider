@@ -25,11 +25,15 @@ ascending one — see `docs/history.md`.
 Pruned 2026-10-27, item by item with Steven. Fixed and gone, each with a check that fails without
 it: the restart-while-hovered gap, `demo/index.html` scrolling sideways at 320, `looks.js` replacing
 `CARGO`, `role="list"` in the authored markup, and the colour popover (`npm run a11y` never opened
-it; it also split across the settings columns, which nobody had filed). Stale and gone: "Generated
-SVGs lack trailing newline" (no `.svg` is tracked) and the gallery focus-guard entry (fixed before
-the rename; `tests/engine.test.mjs` holds it on all three engines now). The gallery's two live
-regions were listed twice and are one entry under Manual QA, where the listening pass settles them.
-The gallery `aria-roledescription` entry stays, reworded as the spec decision it is.
+it; it also split across the settings columns, which nobody had filed). The popover went in two
+steps: the top layer fixed the split, and its commit claimed the crowded rows fixed too, on axe's
+word alone — the picker had not moved, axe had stopped seeing it, because its target-size rule
+ignores a `position: fixed` box. The 24px rows fixed the crowding, and `scripts/a11y.mjs` now takes
+the picker out of the top layer so axe looks at what a person does. Stale and gone: "Generated SVGs
+lack trailing newline" (no `.svg` is tracked) and the gallery focus-guard entry (fixed before the
+rename; `tests/engine.test.mjs` holds it on all three engines now). The gallery's two live regions
+were listed twice and are one entry under Manual QA, where the listening pass settles them. The
+gallery `aria-roledescription` entry stays, reworded as the spec decision it is.
 
 ## 2026-09-15 — the phone pass, a decided no
 

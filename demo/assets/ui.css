@@ -356,6 +356,12 @@ body {
   --tp-monitor-foreground-color: var(--ink-soft);
   --tp-blade-value-width: 11rem;
   --tp-blade-horizontal-padding: 0.5rem;
+
+  /* 24, not the library's 20: WCAG 2.2's minimum target. Every Tweakpane
+     control and both plugin rows are sized from this one property. At 20 a
+     row passed only on the spacing exception, and an open colour picker took
+     that spacing away - axe failed the rows under and beside it (2026-10-27). */
+  --tp-container-unit-size: 24px;
 }
 
 /* ---- work area ----------------------------------------------------------
@@ -1025,16 +1031,20 @@ body {
 }
 
 /* In the top layer (popover="manual", opened by tp-plugins.js), under its row.
-   It was absolute over the rows below it, which went wrong twice (measured
-   2026-10-27). The settings panel flows its folders through CSS columns, and
-   Chromium fragments even an absolutely positioned box across them: a picker
-   opened at the foot of a column split in two, its swatches landing on the
-   next column's first folder, and the rebalance moved whole folders between
-   columns. And the rows it covered kept their 20px controls inside the 24px
-   spacing the picker's own controls need, which axe's target-size rule
-   fails. In the flow instead, it pushed the clicked swatch 414-511px away.
-   The top layer is outside the panel's layout, so none of that can happen;
-   ColourView.place() sets its width and position from the row.
+   It was absolute in the panel, which flows its folders through CSS columns,
+   and Chromium fragments even an absolutely positioned box across them: a
+   picker opened at the foot of a column split in two, its swatches landing on
+   the next column's first folder, and the rebalance moved whole folders
+   between columns (measured 2026-10-27). In the flow instead, it pushed the
+   clicked swatch 414-511px away. The top layer is outside the panel's layout,
+   so it cannot split or move anything; ColourView.place() sets its width and
+   position from the row.
+
+   It still opens over the rows below it, exactly where it always did: the top
+   layer moves nothing apart. What keeps the rows under and beside it clear of
+   its controls is the 24px unit size on #wb-settings. axe cannot see a fixed
+   box - it passed these rows only because the top layer hid the picker from
+   it - so scripts/a11y.mjs takes the picker out of the top layer to check.
 
    inset and margin undo the user-agent popover sheet, which centres a popover
    in the window; color undoes its CanvasText. */
