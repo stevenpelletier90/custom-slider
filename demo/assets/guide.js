@@ -194,7 +194,7 @@
   ];
 
   const MARKUP = `<div class="my-slider cs" data-cs aria-label="New vehicles">
-  <ul class="cs-track">
+  <ul class="cs-track" role="list">
     <li class="cs-slide">
       <!-- your content: headings, links, images -->
     </li>
@@ -397,7 +397,7 @@
         <pre class="g-code"><code>${globalThis.CARGO.hl.html(MARKUP)}</code></pre>
         ${list([
           'Root: <code>cs</code>, plus <code>data-cs</code> for auto-init, plus an <code>aria-label</code> or <code>aria-labelledby</code>.',
-          'Track: one <code>.cs-track</code> child — a <code>&lt;ul&gt;</code> for cards, a <code>&lt;div&gt;</code> for <code>data-cs-gallery</code>.',
+          'Track: one <code>.cs-track</code> child — a <code>&lt;ul role="list"&gt;</code> for cards, a <code>&lt;div&gt;</code> for <code>data-cs-gallery</code>. Keep the role: the slider styles the list without bullets, and Safari stops announcing an unbulleted list as one until the script puts it back.',
           'Slides: <code>.cs-slide</code> children.',
           'Images: always give <code>width</code> and <code>height</code>. First visible image eager, later ones <code>loading="lazy" decoding="async"</code>, and <code>sizes</code> set to one slide\'s rendered width.',
           'Anything missing fails loudly in the console at init rather than silently doing nothing.',

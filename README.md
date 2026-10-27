@@ -32,7 +32,7 @@ it alone so this link survives. Never rename the repo.
 <script src="custom-slider.min.js" defer></script>
 
 <div class="cs my-slider cs-sm-2 cs-md-3" data-cs aria-label="Featured vehicles">
-  <ul class="cs-track">
+  <ul class="cs-track" role="list">
     <li class="cs-slide">…</li>
     <li class="cs-slide">…</li>
   </ul>
@@ -71,7 +71,8 @@ JS options override data attributes, which override defaults.
   block's CSS wins for both: measured on a pair of model bars, the first strip took the second's 3em
   gap and its slides went from 208.6px to 180.6px, with nothing on the page saying so. The builder
   puts the field beside its copy buttons for this reason.
-- Track: one `.cs-track` child — `<ul>` for card carousels, `<div>` for `data-cs-gallery`.
+- Track: one `.cs-track` child — `<ul role="list">` for card carousels, `<div>` for
+  `data-cs-gallery`. The role is not redundant here: see Accessibility behavior.
 - Slides: `.cs-slide` children. All real content (headings, links, images) goes in the HTML — the
   engine never injects content, only controls.
 - Images: always `width`/`height`; first visible image eager (add `fetchpriority="high"` only if the
@@ -182,7 +183,7 @@ card half too, so a slider is mostly just its markup:
 <script src="/path/custom-slider.min.js" defer></script>
 
 <div class="cs cargo-tile cs-xs-2 cs-sm-3 cs-md-4 cs-lg-5" data-cs aria-label="Our models">
-  <ul class="cs-track">
+  <ul class="cs-track" role="list">
     …
   </ul>
 </div>
@@ -303,9 +304,11 @@ batch — a tab row wired twice answers a key twice.
 
 - Multi-card: ALL cards stay in the tab order and accessibility tree — no `inert`/`aria-hidden` on
   off-screen cards (hiding corrupts announced counts).
-- A `<ul>`/`<ol>` track gets `role="list"` re-applied at init. The library's own `list-style: none`
-  makes WebKit drop list semantics, which would silently kill the "N of 6" count announcements in
-  Safari/VoiceOver — don't remove it.
+- A `<ul>`/`<ol>` track carries `role="list"` in the markup, and gets it re-applied at init for
+  markup that does not. The library's own `list-style: none` makes WebKit drop list semantics, which
+  would silently kill the "N of 6" count announcements in Safari/VoiceOver — don't remove either. A
+  validator calls the attribute redundant; on a styled list it is not. In the markup it covers the
+  moment before the script runs, and a page where the script never loads.
 - Dots are one per PAGE of slides, plain buttons (not tabs); current dot is `aria-disabled`, still
   focusable.
 - When every slide already fits, the arrows and dots are hidden and the root gains `data-cs-fits` —

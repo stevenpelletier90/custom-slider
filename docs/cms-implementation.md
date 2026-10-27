@@ -126,7 +126,7 @@ Everything the engine needs, and nothing it generates for you:
 
 ```html
 <div class="cs my-strip" data-cs aria-label="Featured vehicles">
-  <ul class="cs-track">
+  <ul class="cs-track" role="list">
     <li class="cs-slide">…authored content…</li>
     <li class="cs-slide">…authored content…</li>
   </ul>

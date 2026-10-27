@@ -625,6 +625,39 @@ test.describe('what a designer types cannot break the markup', () => {
   });
 });
 
+test.describe('the copied markup is a list before any script runs', () => {
+  // The backlog's role="list" item (2026-08-31 audit). The engine's own
+  // list-style: none makes WebKit drop a <ul>'s list semantics, and the engine
+  // only puts role="list" back at init - so a pasted strip was no list to
+  // VoiceOver until the script ran, or ever, where it failed to load. Read off
+  // the snippet TEXT through DOMParser, which runs no engine: on the live DOM
+  // the engine's own role would hide a snippet that left it out.
+  test('every <ul> track in every pattern and brand variant carries role="list"', async ({ browser }) => {
+    const c = await browser.newContext();
+    const p = await c.newPage();
+    p.on('pageerror', (e) => errors.push(`patterns: ${e.message}`));
+    await p.goto(`${ORIGIN}/demo/patterns.html`, { waitUntil: 'load' });
+    const missing = await p.evaluate(() => {
+      const { PATTERNS, variantsOf, renderSnippet } = globalThis.CARGO;
+      const out = [];
+      let lists = 0;
+      for (const id of Object.keys(PATTERNS)) {
+        for (const brand of [null, ...variantsOf(id)]) {
+          const doc = new DOMParser().parseFromString(renderSnippet(id, { brand }).html, 'text/html');
+          for (const ul of doc.querySelectorAll('ul.cs-track')) {
+            lists++;
+            if (ul.getAttribute('role') !== 'list') out.push(brand ? `${id} × ${brand}` : id);
+          }
+        }
+      }
+      return { lists, out: [...new Set(out)] };
+    });
+    assert.ok(missing.lists > 0, 'no <ul> track found in any snippet - the check is reading the wrong thing');
+    assert.deepEqual(missing.out, [], `<ul class="cs-track"> without role="list" in: ${missing.out.join(', ')}`);
+    await c.close();
+  });
+});
+
 test.describe('nothing threw along the way', () => {
   test('no page errors in the builder or the host pages', () => {
     assert.deepEqual(errors, []);

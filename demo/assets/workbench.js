@@ -834,7 +834,12 @@
     const carousel = (list, label, pad = '', onScreen = true) =>
       [
         `${pad}<div class="${cls}${libCls} cs" data-cs${cargo}${attrs} aria-label="${label}">`,
-        `${pad}  <${tag} class="cs-track">`,
+        // role="list" on a <ul> is redundant to a validator and not to WebKit:
+        // the engine's list-style: none makes Safari drop the list, and the
+        // engine only puts the role back once its script has run. Written
+        // here, VoiceOver has its "list, N items" from first paint, and on a
+        // page where the script never loads.
+        `${pad}  <${tag} class="cs-track"${tag === 'ul' ? ' role="list"' : ''}>`,
         // Indent the card's own lines to match, so what you paste is not a
         // wall of markup starting at column zero inside a nested list item.
         ...list.map((h, i) => {

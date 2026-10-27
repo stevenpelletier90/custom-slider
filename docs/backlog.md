@@ -97,9 +97,6 @@ ENGINE / PLATFORM (cited to MDN + BCD via Context7):
   `scroll-behavior: auto` themselves - the track then, the thumb rail on 2026-09-15 - which is not a
   brush against "never set scroll-behavior on the track": that rule forbids `smooth`, and `auto` is
   what keeps the per-call decision in JS's hands. `tests/engine.test.mjs` holds both.
-- `role="list"` is re-applied in JS at init, but `list-style: none` applies at first paint — so
-  Safari/VoiceOver loses list semantics in the pre-JS window and permanently if the script fails.
-  Putting `role="list"` in the documented markup is an addition (allowed) and would let the JS go.
 - Gallery runs two competing polite live regions (track :714 + `.cs-status` :229). Already on this
   backlog; now confirmed against APG, whose tabbed example has one.
 - Gallery tabpanels omit `aria-roledescription="slide"`, which APG's carousel-2-tablist example
