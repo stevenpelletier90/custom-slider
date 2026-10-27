@@ -1024,27 +1024,29 @@ body {
   color: var(--ink);
 }
 
-/* Absolute, over the rows below it. The pane's containers clip while a folder
-   is folding and go back to `overflow: visible` once it is open (measured in
-   node_modules/tweakpane/dist/tweakpane.js: .tp-fldv.tp-fldv-expanded >
-   .tp-fldv_c), and .ui-panel sets no overflow of its own, so nothing on the
-   way up cuts this off.
+/* In the top layer (popover="manual", opened by tp-plugins.js), under its row.
+   It was absolute over the rows below it, which went wrong twice (measured
+   2026-10-27). The settings panel flows its folders through CSS columns, and
+   Chromium fragments even an absolutely positioned box across them: a picker
+   opened at the foot of a column split in two, its swatches landing on the
+   next column's first folder, and the rebalance moved whole folders between
+   columns. And the rows it covered kept their 20px controls inside the 24px
+   spacing the picker's own controls need, which axe's target-size rule
+   fails. In the flow instead, it pushed the clicked swatch 414-511px away.
+   The top layer is outside the panel's layout, so none of that can happen;
+   ColourView.place() sets its width and position from the row.
 
-   inset-block-start is stated rather than left to the static position: this is
-   an absolutely positioned child of a GRID container, so with no offset it is
-   placed against the grid's own box and not after the two columns it follows -
-   measured, the popover opened level with the row above its own. */
+   inset and margin undo the user-agent popover sheet, which centres a popover
+   in the window; color undoes its CanvasText. */
 .tp-colv_pop {
-  position: absolute;
-  inset-block-start: 100%;
-  inset-inline-start: 0;
-  z-index: 3;
+  position: fixed;
+  inset: auto;
   display: grid;
   gap: 0.35rem;
-  inline-size: 100%;
   min-inline-size: 11rem;
   padding: 0.6rem;
-  margin-block-start: 0.25rem;
+  margin: 0;
+  color: inherit;
   background: var(--surface);
   border: 1px solid var(--rule);
   border-radius: 8px;
@@ -1054,7 +1056,9 @@ body {
 /* `display: grid` above outranks the UA sheet's `[hidden] { display: none }`,
    so a closed popover has to be shut explicitly. Without this it was still
    laid out - invisible only because it had nothing painted over the row below
-   - and it swallowed the clicks meant for the next colour down. */
+   - and it swallowed the clicks meant for the next colour down. It outranks
+   the UA's `[popover]:not(:popover-open)` the same way, which is why the
+   control keeps `hidden` in step with the top layer. */
 .tp-colv_pop[hidden] {
   display: none;
 }

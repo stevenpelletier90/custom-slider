@@ -56,12 +56,12 @@ own. It never blocks; `npm run validate` is the real gate.
 (Chromium), and a second job runs `test:browsers` — `tests/engine.test.mjs` alone on Firefox and
 WebKit, the engine's contract where its Safari and Firefox decisions actually execute. After a push,
 watch both until green. `.github/workflows/a11y.yml` is the third: `npm run a11y` (axe over every
-pattern, the brands page, the two catalogue pages at 390, both themes, both dialogs) on any change
-to `src/`, `dist/`, `demo/` or the build scripts. It became a gate on 2026-09-15 — as "a deliberate
-run" it drifted for a week exiting non-zero on a deleted selector, and a nightly job would report a
-contrast regression only after it had merged and deployed. It stays out of `npm run validate`, which
-is the fast local command: this one needs a browser and a server. Run it locally after any change to
-the rail or the demo pages rather than waiting for CI.
+pattern, the brands page, the two catalogue pages at 390, both themes, every colour picker, both
+dialogs) on any change to `src/`, `dist/`, `demo/` or the build scripts. It became a gate on
+2026-09-15 — as "a deliberate run" it drifted for a week exiting non-zero on a deleted selector, and
+a nightly job would report a contrast regression only after it had merged and deployed. It stays out
+of `npm run validate`, which is the fast local command: this one needs a browser and a server. Run
+it locally after any change to the rail or the demo pages rather than waiting for CI.
 
 Path-specific rules live in `.claude/rules/` and load when Claude reads or edits a matching file.
 

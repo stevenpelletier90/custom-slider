@@ -319,6 +319,11 @@
       this.pop = doc.createElement('div');
       this.pop.classList.add(colCls('pop'));
       this.pop.hidden = true;
+      // Opened into the top layer, outside the panel's columns (see
+      // .tp-colv_pop in ui.css). Manual, not auto: this control already closes
+      // it on Escape and on a press outside the row, and an auto popover would
+      // also close every other open popover on the page.
+      this.pop.popover = 'manual';
       // The native input does the spectrum and nothing else. Making it the
       // WHOLE control is what the old row got wrong: it cannot hold an alpha,
       // it cannot hold `transparent`, and it cannot show a value it did not
@@ -381,6 +386,19 @@
       }
       this.caps[2].hidden = !list.length;
     }
+
+    // Under its row, in window coordinates, because the top layer is outside
+    // the panel's layout: the row's width, 4px below it, and above it instead
+    // when the window has no room below and does above.
+    place() {
+      const r = this.element.getBoundingClientRect();
+      const s = this.pop.style;
+      s.inlineSize = `${r.width}px`;
+      s.left = `${r.left}px`;
+      const h = this.pop.getBoundingClientRect().height;
+      const room = this.doc.documentElement.clientHeight;
+      s.top = `${r.bottom + 4 + h > room && r.top - 4 - h >= 0 ? r.top - 4 - h : r.bottom + 4}px`;
+    }
   }
 
   class ColourController {
@@ -436,6 +454,15 @@
         },
         { signal: this.ac.signal },
       );
+      // An open picker stays under its row while the page or the panel
+      // scrolls. Capture, because a scroll event does not bubble and the
+      // scroller may be any element on the way up.
+      const follow = () => {
+        if (!v.element.isConnected) return this.ac.abort();
+        if (!v.pop.hidden) v.place();
+      };
+      doc.defaultView.addEventListener('scroll', follow, { capture: true, passive: true, signal: this.ac.signal });
+      doc.defaultView.addEventListener('resize', follow, { signal: this.ac.signal });
       this.viewProps.handleDispose(() => this.ac.abort());
     }
 
@@ -454,12 +481,21 @@
       // ago is already offered here - no row has to be told, and nothing has to
       // be rebuilt to carry it.
       this.view.swatches(swatches?.() ?? []);
-      this.view.pop.hidden = false;
+      // `hidden` stays the state every handler here reads; the top layer rides
+      // along with it. Placed after it is shown, so its height is real.
+      const p = this.view.pop;
+      p.hidden = false;
+      if (!p.matches(':popover-open')) p.showPopover();
+      this.view.place();
       this.view.sw.setAttribute('aria-expanded', 'true');
     }
 
+    // Runs for every colour row on every press anywhere on the page, so it
+    // asks before hiding rather than hiding what is already shut.
     close(focus) {
-      this.view.pop.hidden = true;
+      const p = this.view.pop;
+      if (p.matches(':popover-open')) p.hidePopover();
+      p.hidden = true;
       this.view.sw.setAttribute('aria-expanded', 'false');
       // Only when the popover was dismissed from inside it: focus follows the
       // keyboard back to the control that opened it, and never jumps for a

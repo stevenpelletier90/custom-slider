@@ -296,6 +296,27 @@ await audit('dark theme');
 await page.locator('#ui-theme').click();
 await page.waitForTimeout(400);
 
+// Every colour picker on the model bar, one open at a time. A picker floats
+// over the rows under it, so what it covers and what sits beside it exist only
+// while it is open, and nothing here opened one: while it was absolute in the
+// panel, two pickers left four 20px rows inside the 24px spacing target-size
+// wants (2026-10-27). scrollIntoView centres the row because the masthead is
+// sticky and a row scrolled to the top is under it.
+await page.locator('#wb-nav button[data-go="modelbar"]').click();
+await page.waitForTimeout(500);
+const swatches = page.locator('#wb-settings .tp-colv_sw');
+for (let i = 0, n = await swatches.count(); i < n; i++) {
+  const sw = swatches.nth(i);
+  await sw.evaluate((el) => el.scrollIntoView({ block: 'center' }));
+  await sw.click();
+  await page.waitForTimeout(300);
+  const label = await sw.evaluate((el) => el.closest('.tp-lblv')?.querySelector('.tp-lblv_l')?.textContent.trim());
+  await audit(`colour picker “${label}” open`);
+  await sw.click();
+  await page.waitForTimeout(150);
+}
+await page.evaluate(() => window.scrollTo(0, 0));
+
 // States only a click reaches. A dialog's contents are not in the page until
 // it opens, so a load-time audit never sees either of these.
 await page.locator('#wb-nav button[data-go="media-gallery"]').click();
@@ -335,4 +356,4 @@ if (findings.length) {
   console.error(`\na11y: ${findings.length} violation(s) over ${states} states.`);
   process.exit(1);
 }
-console.log(`a11y: clean over ${states} states (${patterns.length} patterns, the brands page, the two catalogue pages at 390, both themes, both dialogs).`);
+console.log(`a11y: clean over ${states} states (${patterns.length} patterns, the brands page, the two catalogue pages at 390, both themes, every colour picker, both dialogs).`);

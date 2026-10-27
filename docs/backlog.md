@@ -77,8 +77,6 @@ ascending one — see `docs/history.md`.
 
 ## 2026-09-04 — workbench panel, deferred by Steven
 
-- `npm run a11y` never opens the colour popover, and Tweakpane's 20px rows fail axe `target-size`
-  (WCAG 2.2 AA) when the panel is scrolled. Demo only.
 - The spec row "unitless number → native number input"
   (`docs/specs/2026-09-04-workbench-controls-design.md`) was not built; those knobs stay text rows.
 
