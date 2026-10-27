@@ -32,6 +32,13 @@ const SILENCE = () => {
   new MutationObserver(off).observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ['aria-live'] });
 };
 
+// Every phrase, not guidepup's default "initial": that keeps only the first
+// thing said after each key, so on a thumbnail change NVDA's "Slide 2 of 6"
+// could not be told from "Slide 2 of 6" said BEFORE the photo's name rather
+// than instead of it (run 40540672054). Usage hints come along; nothing
+// below asserts against one.
+test.use({ screenReaderStartOptions: { capture: true } });
+
 test('what a screen reader says about the demo patterns', async ({ page, screenReader }, testInfo) => {
   const nvda = process.platform === 'win32';
   // WebKit's plain Tab skips links; Option+Tab is its every-item key, as in
@@ -62,7 +69,7 @@ test('what a screen reader says about the demo patterns', async ({ page, screenR
             : a.closest('.cs-slide')
               ? 'card'
               : a.matches('.cs-thumb')
-                ? 'thumb'
+                ? `thumb ${[...a.parentElement.children].indexOf(a) + 1}`
                 : [...a.classList].find((c) => c.startsWith('cs-')) || a.tagName.toLowerCase();
       return `${where} ${what}`;
     });
