@@ -71,7 +71,11 @@ test('what a screen reader says about the demo patterns', async ({ page, screenR
               : a.matches('.cs-thumb')
                 ? `thumb ${[...a.parentElement.children].indexOf(a) + 1}`
                 : [...a.classList].find((c) => c.startsWith('cs-')) || a.tagName.toLowerCase();
-      return `${where} ${what}`;
+      // Which photo the gallery shows, on every gallery step: under VoiceOver
+      // a Next press read only the button, and without this the log could not
+      // say whether the photo moved and went unannounced or never moved.
+      const g = /** @type {any} */ (cs)?._cs;
+      return `${where} ${what}${where === 'media-gallery' && g ? `, showing ${g.current + 1}` : ''}`;
     });
   const press = async (key, step, ms = 1500) => {
     await screenReader.clearSpokenPhraseLog();
@@ -98,7 +102,7 @@ test('what a screen reader says about the demo patterns', async ({ page, screenR
   };
   const saidAt = (at) =>
     heard
-      .filter((h) => h.at === at)
+      .filter((h) => h.at === at || h.at.startsWith(`${at},`))
       .flatMap((h) => h.said)
       .join(' | ');
 
