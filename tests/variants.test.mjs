@@ -478,15 +478,29 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
           tab: t.getBoundingClientRect().width,
           duration: cs.transitionDuration,
           easing: cs.transitionTimingFunction,
+          property: cs.transitionProperty,
           height: cs.height,
           bg: cs.backgroundColor,
         };
       }, i);
+    // "Grows from the centre over 0.15s" is four facts, asserted as such: at
+    // rest the line sits at 50% and zero wide, picked it sits at 0 and full
+    // width (below), and both of those properties transition over 0.15s on
+    // the live curve. It used to read the line 40ms after a click and expect
+    // it half grown - a race with the runner's speed that failed CI twice on
+    // 2026-10-27, once too early (left still 0 of a partial width) and once
+    // too late (already full). Pausing the transition races the same clock.
     const rest = await lineOf(1);
     assert.equal(rest.width, 0, 'an unselected tab shows a line');
+    assert.ok(Math.abs(rest.left - rest.tab / 2) < 0.5, `the line should rest at the centre of its tab, got ${rest.left} of ${rest.tab}`);
     assert.equal(rest.height, '2px');
     assert.equal(rest.bg, 'rgb(0, 109, 199)');
-    assert.match(rest.duration, /^0\.15s/, `the line grows over 0.15s, got ${rest.duration}`);
+    const props = rest.property.split(', ');
+    assert.ok(props.includes('inline-size') && props.includes('inset-inline-start'), `the line should transition its width and its start, got ${rest.property}`);
+    assert.ok(
+      rest.duration.split(', ').every((d) => d === '0.15s'),
+      `the line grows over 0.15s, got ${rest.duration}`,
+    );
     assert.match(rest.easing, /cubic-bezier\(0\.215, 0\.61, 0\.355, 1\)/);
     // Hover first: the live rule is `li.active a::after, li a:hover::after`,
     // so the pointer alone grows the line and leaving shrinks it back.
@@ -498,11 +512,7 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     await page.waitForTimeout(350);
     assert.equal((await lineOf(1)).width, 0, 'leaving an unselected tab should shrink its line away');
     await page.frameLocator('#wb-stage').locator('.cargo-tabs [role="tab"]').nth(1).click();
-    await page.waitForTimeout(40);
-    const mid = await lineOf(1);
-    assert.ok(mid.width > 0 && mid.width < mid.tab, `read mid-grow the line should be part way out, got ${mid.width} of ${mid.tab}`);
-    assert.ok(mid.left > 0 && mid.left < mid.tab / 2, `growing from the centre means left is moving in from 50%, got ${mid.left}`);
-    await page.waitForTimeout(300);
+    await page.waitForTimeout(350);
     const done = await lineOf(1);
     assert.ok(Math.abs(done.width - done.tab) < 0.5, 'the line should end the full tab width');
     assert.equal(done.left, 0);
