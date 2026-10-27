@@ -71,11 +71,13 @@ test('what a screen reader says about the demo patterns', async ({ page, screenR
               : a.matches('.cs-thumb')
                 ? `thumb ${[...a.parentElement.children].indexOf(a) + 1}`
                 : [...a.classList].find((c) => c.startsWith('cs-')) || a.tagName.toLowerCase();
-      // Which photo the gallery shows, on every gallery step: under VoiceOver
-      // a Next press read only the button, and without this the log could not
-      // say whether the photo moved and went unannounced or never moved.
+      // Which slide shows and whether the status region is live, on every
+      // slider step: under VoiceOver a Next press read only the button, and
+      // without these the log could not say whether the slide moved and went
+      // unannounced or never moved, nor whether the region had been switched.
       const g = /** @type {any} */ (cs)?._cs;
-      return `${where} ${what}${where === 'media-gallery' && g ? `, showing ${g.current + 1}` : ''}`;
+      const status = cs?.querySelector('.cs-status')?.getAttribute('aria-live');
+      return `${where} ${what}${g ? `, showing ${g.current + 1}, status ${status}` : ''}`;
     });
   const press = async (key, step, ms = 1500) => {
     await screenReader.clearSpokenPhraseLog();
@@ -125,6 +127,18 @@ test('what a screen reader says about the demo patterns', async ({ page, screenR
       await page.focus('[data-cargo="media-gallery"] .cs-arrow--next');
       await page.waitForTimeout(800);
       await press('Enter', `Next arrow, ${name}`, 3000);
+    }
+    // Next on a slider whose status region is never switched (the cards), and
+    // on the autoplay hero, whose status is "off" while it rotates and goes
+    // back to "polite" once focus inside stops it - the same switch VoiceOver
+    // stopped hearing in the gallery (2026-10-27). If the cards announce and
+    // the hero does not, every paused autoplay slider is silent on VoiceOver.
+    await open();
+    for (const cargo of ['cards', 'hero']) {
+      await page.focus(`[data-cargo="${cargo}"] .cs-arrow--next`);
+      await page.waitForTimeout(1000);
+      await press('Enter', `Next arrow, ${cargo}`, 3000);
+      await press('Enter', `Next arrow again, ${cargo}`, 3000);
     }
   } finally {
     const body = JSON.stringify({ reader: nvda ? 'NVDA' : 'VoiceOver', heard }, null, 2);
