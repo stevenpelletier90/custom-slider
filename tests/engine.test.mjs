@@ -160,13 +160,13 @@ test.describe('keyboard', () => {
       await page.keyboard.press(TAB);
     }
 
-    // Firefox gives every scroll container a tab stop of its own, focusable
-    // children or not, so the track shows up between the dots and the cards
-    // there (first seen 2026-09-15, the day the file ran on Firefox). That is
-    // the browser's stop, not the engine's; the ORDER of the engine's controls
-    // is what this test holds. Whether the engine should take that stop away
-    // is in docs/backlog.md.
-    const controls = seen.filter((s) => s !== 'card' && s !== 'cs-track');
+    // No stop on the track itself. Firefox gives every scroll container a tab
+    // stop of its own, focusable children or not (first seen 2026-09-15, the
+    // day this file ran on Firefox), and on the demo's model bar NVDA read all
+    // eight cards aloud there before the next Tab read the first one again
+    // (2026-10-27). With cards to Tab into, the engine takes that stop away.
+    assert.ok(!seen.includes('cs-track'), `the track is a tab stop of its own: ${seen.join(' -> ')}`);
+    const controls = seen.filter((s) => s !== 'card');
     assert.deepEqual(controls, ['cs-pause', 'cs-arrow--prev', 'cs-arrow--next', 'cs-dot'], `tab order is ${seen.join(' -> ')}, not pause -> prev -> next -> dots -> cards`);
     // Playwright's WebKit never tabs into a link, Option+Tab included (there
     // is no macOS behind it), so the half about the cards can only be held on

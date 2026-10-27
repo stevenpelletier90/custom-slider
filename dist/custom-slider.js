@@ -75,7 +75,7 @@
       this._setupAria();
       this._buildControls();
       if (this.opts.gallery) this._buildGallery();
-      if (!this.track.querySelector('a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])')) this.track.tabIndex = 0;
+      this.track.tabIndex = this.track.querySelector('a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])') ? -1 : 0;
       this._listen();
       this._setupAutoplay();
       this._commit();

@@ -110,7 +110,12 @@ export class CustomSlider {
     // way the gallery does it: there, every panel but the current one is inert,
     // so per-slide tabindex adds ONE stop, but card slides are never inert and
     // the same treatment would add a stop for every card in the strip.
-    if (!this.track.querySelector('a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])')) this.track.tabIndex = 0;
+    // Where the slides DO hold something focusable, the track is taken OUT of
+    // the order: Firefox gives every scroll container a stop of its own, and on
+    // the demo's model bar NVDA read all eight cards aloud there before the
+    // next Tab read the first again (2026-10-27). Arrow keys still scroll the
+    // strip from a focused card on all three engines, so nothing is lost.
+    this.track.tabIndex = this.track.querySelector('a[href],button,input,select,textarea,[tabindex]:not([tabindex="-1"])') ? -1 : 0;
     this._listen();
     this._setupAutoplay();
     this._commit();

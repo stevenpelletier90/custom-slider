@@ -304,6 +304,11 @@ batch — a tab row wired twice answers a key twice.
 
 - Multi-card: ALL cards stay in the tab order and accessibility tree — no `inert`/`aria-hidden` on
   off-screen cards (hiding corrupts announced counts).
+- The track is never a tab stop of its own when its slides hold something focusable: the engine sets
+  `tabindex="-1"` on it. Firefox otherwise gives every scroll container a stop, and NVDA read a
+  whole model bar aloud there before the next Tab reached the first card. Arrow keys still scroll
+  the strip from a focused card. Slides with nothing focusable (a review, a quote) get
+  `tabindex="0"` instead, so the strip stays reachable by keyboard.
 - A `<ul>`/`<ol>` track carries `role="list"` in the markup, and gets it re-applied at init for
   markup that does not. The library's own `list-style: none` makes WebKit drop list semantics, which
   would silently kill the "N of 6" count announcements in Safari/VoiceOver — don't remove either. A

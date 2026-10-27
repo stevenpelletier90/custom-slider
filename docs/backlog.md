@@ -53,12 +53,6 @@ pages moved, on any engine); the knobs entry beside it became a decided no.
 
 ## 2026-09-15 — first Firefox/WebKit run of the engine contract
 
-- Firefox gives every scroll container its own tab stop, focusable children or not, so on Firefox
-  the track is one extra Tab press between the dots and the cards (the engine sets `tabIndex = 0` on
-  the track only when nothing inside is focusable, and never `-1`). Chromium and WebKit do not.
-  `tests/engine.test.mjs` tolerates the stop; taking it away would be `track.tabIndex = -1` when the
-  track holds focusable content, a frozen-contract addition that needs a keyboard-user decision (the
-  stop is also how a Firefox user arrow-scrolls the strip without a card).
 - Safari's plain Tab skips links; the tab-order test presses Option+Tab there. Not an engine matter,
   recorded so the next person does not chase it.
 
