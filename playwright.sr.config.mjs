@@ -15,7 +15,9 @@ export default withGuidepup(
   defineConfig({
     testDir: 'tests',
     testMatch: '**/*.sr.mjs',
-    timeout: 300_000,
+    // Ten minutes: capturing every phrase makes VoiceOver wait out each one,
+    // and at five the run was cut off mid-key (run 40541595970).
+    timeout: 600_000,
     retries: 0,
     reporter: process.env.CI ? [['github'], ['list']] : 'list',
     use: { baseURL: 'http://127.0.0.1:8137', viewport: { width: 1366, height: 768 }, trace: 'retain-on-failure' },

@@ -107,11 +107,20 @@ test('what a screen reader says about the demo patterns', async ({ page, screenR
     await tabInto('modelbar', 3);
     await tabInto('cards', 4);
     await tabInto('media-gallery', 4);
-    for (const variant of ['', 'status-off', 'track-off']) {
+    // As shipped runs LAST: under VoiceOver it ran first twice and its arrow
+    // key never moved off thumbnail 1, while both silenced variants moved -
+    // last tells an order artefact from something in the shipped markup.
+    // Each variant also changes photo with the Next arrow, where focus stays
+    // on the arrow and only the live regions can say what changed.
+    for (const variant of ['status-off', 'track-off', '']) {
+      const name = variant || 'as shipped';
       await open(variant);
       await page.focus('[data-cargo="media-gallery"] .cs-thumb[aria-selected="true"]');
       await page.waitForTimeout(800);
-      for (let i = 1; i <= 2; i++) await press('ArrowRight', `thumbnail change ${i}, ${variant || 'as shipped'}`, 3000);
+      for (let i = 1; i <= 2; i++) await press('ArrowRight', `thumbnail change ${i}, ${name}`, 3000);
+      await page.focus('[data-cargo="media-gallery"] .cs-arrow--next');
+      await page.waitForTimeout(800);
+      await press('Enter', `Next arrow, ${name}`, 3000);
     }
   } finally {
     const body = JSON.stringify({ reader: nvda ? 'NVDA' : 'VoiceOver', heard }, null, 2);
