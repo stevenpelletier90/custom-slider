@@ -22,7 +22,7 @@ since before that review — the finding was already stale when it was written d
 IntersectionObserver line above now has a measurement in BOTH directions behind it, not just the
 ascending one — see `docs/history.md`.
 
-## 2026-09-15 — the phone pass, two decided noes
+## 2026-09-15 — the phone pass, a decided no
 
 - **Peek on phones: measured no** (Steven, 2026-09-15). The phone pass proposed a phone-tier
   `--cs-peek` default per card strip so a strip reads as scrollable. It is the bug this repo already
@@ -35,11 +35,6 @@ ascending one — see `docs/history.md`.
   the same shape as `--tab-size-phone` / `--tab-pad-phone`, with the pattern sheet overriding
   `.cs-track`'s `padding-inline` and `scroll-padding-inline` under 576 — a new knob row on about
   twelve patterns. Not the media-query override.
-- **`demo/index.html` scrolls sideways 52px at 320.** `.ui-widths` is an `inline-flex` segmented
-  control of six width buttons measuring 339px; page chrome, not the engine or a pattern. Left alone
-  because the workbench is a desktop authoring tool whose own narrowest frame button is 390, so it
-  cannot even show the width it overflows at. The fix is one phone-tier rule shrinking the button
-  padding, or letting the group wrap.
 
 ## 2026-09-15 — first Firefox/WebKit run of the engine contract
 

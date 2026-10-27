@@ -635,9 +635,13 @@ body {
 }
 
 /* No overflow:hidden here - it clipped the focus ring off the buttons inside,
-   leaving them with no visible focus at all. The ends are rounded instead. */
+   leaving them with no visible focus at all. The ends are rounded instead.
+   Wraps rather than shrinks: the seven buttons are 339px in one row, which
+   ran 13px past the card at 375 and scrolled the page 52px sideways at 320.
+   Nothing wraps at 768 and up, where the row is 365px in a far wider card. */
 .ui-widths {
   display: inline-flex;
+  flex-wrap: wrap;
   gap: 1px;
   border: 1px solid var(--rule);
   border-radius: 6px;

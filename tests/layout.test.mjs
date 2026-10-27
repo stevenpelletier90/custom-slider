@@ -442,8 +442,9 @@ const at = async (browser, path, width) => {
 // brands.html scrolled sideways by 30px at 320: the brand tile's badge held
 // its width, the name held its min-content width, and the badge went out the
 // side of the tile. A page that scrolls sideways on a phone is a bug wherever
-// it comes from, so this asks the document, not the tile.
-for (const path of ['brands.html', 'patterns.html', 'reference.html']) {
+// it comes from, so this asks the document, not the tile. index.html scrolled
+// 52px until the width buttons were allowed to wrap (2026-10-27).
+for (const path of ['index.html', 'brands.html', 'patterns.html', 'reference.html']) {
   test(`${path} does not scroll sideways at 320`, async ({ browser }) => {
     const { ctx, page, errors } = await at(browser, path, 320);
     const found = await page.evaluate(() => {
