@@ -482,4 +482,6 @@ const OLD_SKINS = [
 
 // Classic script, not an ES module, on purpose: modules are blocked over
 // file://, and this demo has always had to work when opened by double-click.
-globalThis.CARGO = { LOOKS, OLD_SKINS };
+// Added to CARGO like every other asset, so loading this file second never
+// wipes what an earlier script put there.
+globalThis.CARGO = Object.assign(globalThis.CARGO || {}, { LOOKS, OLD_SKINS });

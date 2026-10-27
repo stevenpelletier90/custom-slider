@@ -81,8 +81,6 @@ ascending one — see `docs/history.md`.
   (WCAG 2.2 AA) when the panel is scrolled. Demo only.
 - The spec row "unitless number → native number input"
   (`docs/specs/2026-09-04-workbench-controls-design.md`) was not built; those knobs stay text rows.
-- `looks.js` assigns a bare `globalThis.CARGO = { LOOKS, OLD_SKINS }` while every other asset uses
-  `Object.assign`, so later scripts depend on load order.
 
 ## 2026-08-31 — deep audit backlog (found during the Custom Slider rename, NOT actioned)
 

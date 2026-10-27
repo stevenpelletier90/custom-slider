@@ -9,7 +9,7 @@
 //
 // Run from `npm run validate`.
 
-import { readFileSync, existsSync } from 'node:fs';
+import { readFileSync, existsSync, readdirSync } from 'node:fs';
 
 // looks.js is a classic script (see the note at its foot), so it cannot be
 // imported. Evaluate it and read the global it sets.
@@ -473,6 +473,17 @@ for (const [id, b] of brands) {
   }
   if (!measured && row) {
     console.error(`  coverage: docs/coverage.md claims ${id} is built, but its preset has no styles block with a source — one of the two is wrong`);
+    bad++;
+  }
+}
+
+// Every demo asset ADDS to globalThis.CARGO; none may replace it. looks.js did
+// (`globalThis.CARGO = { LOOKS, OLD_SKINS }`) and lost nothing only because
+// every page and script happened to load it first. Top level only: vendor/ is
+// generated, and its `CARGO ?? (CARGO = {})` only fills an empty slot.
+for (const f of readdirSync('demo/assets').filter((n) => n.endsWith('.js'))) {
+  if (/globalThis\.CARGO\s*=\s*\{/.test(readFileSync(`demo/assets/${f}`, 'utf8'))) {
+    console.error(`  ${f}: replaces globalThis.CARGO outright — use Object.assign(globalThis.CARGO || {}, { … }), or loading it after another asset wipes what that one added`);
     bad++;
   }
 }
