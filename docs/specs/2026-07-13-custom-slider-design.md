@@ -174,7 +174,9 @@ the label).
   strip space reserved in CSS (no CLS).
 - Main slides: `role="tabpanel"`, **no** `aria-roledescription="slide"`, one logically visible;
   non-visible panels get JS-managed HTML `inert` (never on a panel containing focus), applied at the
-  same commit point. Wrapper `aria-live` toggling per APG.
+  same commit point. Wrapper `aria-live` toggling per APG. _Superseded 2026-10-27: the panels carry
+  `aria-roledescription="slide"`, as APG's tabbed example does — NVDA called them "property page"
+  without it. See `docs/history.md`._
 
 **Motion:** every programmatic scroll resolves `behavior` from `prefers-reduced-motion` at call
 time; reduced motion ⇒ instant jumps and no autoplay.

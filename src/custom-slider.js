@@ -832,7 +832,11 @@ export class CustomSlider {
       const img = s.querySelector('img');
       const name = (img && img.alt) || fmt(L.photo, { n: i + 1 });
       s.id ||= `${this.uid}-panel-${i}`;
-      s.setAttribute('role', 'tabpanel'); // NO aria-roledescription="slide" here
+      // Described as a slide, as the W3C tabbed-carousel example does: NVDA
+      // calls a bare tabpanel a "property page", which means nothing to a car
+      // shopper (heard 2026-10-27). The 2026-07-13 spec said no, unexplained.
+      s.setAttribute('role', 'tabpanel');
+      s.setAttribute('aria-roledescription', 'slide');
       s.setAttribute('aria-label', name);
       // A tabpanel holding no focusable content needs its own tab stop, or the
       // photo is unreachable by keyboard. It also displaces the anonymous stop

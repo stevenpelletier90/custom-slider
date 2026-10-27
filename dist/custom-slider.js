@@ -610,6 +610,7 @@
         const name = img && img.alt || fmt(L.photo, { n: i + 1 });
         s.id || (s.id = `${this.uid}-panel-${i}`);
         s.setAttribute("role", "tabpanel");
+        s.setAttribute("aria-roledescription", "slide");
         s.setAttribute("aria-label", name);
         s.tabIndex = 0;
         const b = this._btn("cs-thumb", name, "");

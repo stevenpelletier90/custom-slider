@@ -32,10 +32,25 @@ ignores a `position: fixed` box. The 24px rows fixed the crowding, and `scripts/
 the picker out of the top layer so axe looks at what a person does. Stale and gone: "Generated SVGs
 lack trailing newline" (no `.svg` is tracked) and the gallery focus-guard entry (fixed before the
 rename; `tests/engine.test.mjs` holds it on all three engines now). The gallery's two live regions
-were listed twice and are one entry under Manual QA, where the listening pass settles them. The
-gallery `aria-roledescription` entry stays, reworded as the spec decision it is. `.cs-arrow` places
-itself with `inset-block-start` like its siblings now (−1 B; not one of 184 arrows on the catalogue
-pages moved, on any engine); the knobs entry beside it became a decided no.
+were listed twice and are one entry under Manual QA, where the listening pass settles them.
+`.cs-arrow` places itself with `inset-block-start` like its siblings now (−1 B; not one of 184
+arrows on the catalogue pages moved, on any engine); the knobs entry beside it became a decided no.
+Later the same day NVDA settled the three contract entries — Firefox's track stop, the current dot's
+`aria-disabled`, the gallery panels' missing `"slide"` — and all three shipped; the evidence is in
+`docs/history.md`.
+
+## 2026-10-27 — heard on NVDA, not actioned
+
+NVDA 2026.2 driven by guidepup over the demo's own patterns (`docs/history.md` has the run).
+
+- NVDA says "**clickable**" before the model bar's list ("list, clickable, with 8 items") and before
+  a gallery panel ("clickable, …, slide"). Chrome reports an element as clickable when it has click
+  or mouse listeners, and the engine puts its drag listeners on the track; that this is the cause is
+  unverified. Harmless but noise on every strip.
+- Changing photos from the thumbnails announces only the status, "Slide 2 of 6", never the new
+  photo's name — the name is spoken only when the panel itself takes focus.
+- "slide" is spoken in English on every non-list track and every gallery panel; unlike "carousel" it
+  has no `data-cs-label-*` or option. A label would cost bytes and is a contract addition.
 
 ## 2026-09-15 — the phone pass, a decided no
 
@@ -63,9 +78,9 @@ pages moved, on any engine); the knobs entry beside it became a decided no.
   Safari; one pre-26.2-iOS device (scrollend fallback).
 - The NVDA/VoiceOver pass is the one that also settles the gallery's two polite live regions: the
   track (per APG's tabbed carousel) and `.cs-status`. APG's own tabbed example has only the one
-  (checked 2026-08-31). No amount of further static review can answer whether they double-announce —
-  a person has to listen to it. If they do, the option on the table is suppressing `.cs-status`
-  updates in gallery mode.
+  (checked 2026-08-31). Half answered 2026-10-27: NVDA 2026.2 in Chromium said "Slide 2 of 6" once
+  per thumbnail change, no double announcement. VoiceOver is still unheard. If it does double up,
+  the option on the table is suppressing `.cs-status` updates in gallery mode.
 - `escUrl` through a real DealerOn styleCode round-trip (2026-09-15). The generated markup is proven
   safe in `tests/builder.test.mjs`, but the platform's server-side processing has enough documented
   weirdness that one actual paste / minify / save / reload cycle is worth doing before calling it
@@ -103,10 +118,6 @@ ENGINE / PLATFORM (cited to MDN + BCD via Context7):
   `scroll-behavior: auto` themselves - the track then, the thumb rail on 2026-09-15 - which is not a
   brush against "never set scroll-behavior on the track": that rule forbids `smooth`, and `auto` is
   what keeps the per-call decision in JS's hands. `tests/engine.test.mjs` holds both.
-- Gallery tabpanels omit `aria-roledescription="slide"`, which APG's carousel-2-tablist example
-  sets. Not a defect: the design spec chose it (`specs/2026-07-13-custom-slider-design.md`, "Main
-  slides: `role="tabpanel"`, **no** `aria-roledescription="slide"`") without recording why, and the
-  engine marks it where it sets the role. Reopening it is a contract decision.
 
 BUILD (measured):
 

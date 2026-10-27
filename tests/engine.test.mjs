@@ -488,6 +488,18 @@ test.describe('the contract, in the last window before it froze', () => {
     assert.equal(r.focus, 2, 'focus did not follow the photo to the panel shown');
   });
 
+  // Gallery panels say "slide". NVDA 2026.2 read a gallery tabpanel as
+  // "property page" - its word for the role - on the demo's media gallery, and
+  // "slide" once the panel carried aria-roledescription="slide" from load
+  // (2026-10-27), which is what the W3C tabbed-carousel example sets. VoiceOver
+  // on iOS and TalkBack ignore roledescription, so phones hear what they did.
+  test('every gallery panel is a tabpanel described as a slide', async ({ page }) => {
+    await page.setContent(build(5, 1, 'data-cs-gallery'), { waitUntil: 'load' });
+    await page.waitForTimeout(400);
+    const panels = await page.evaluate(() => [...document.querySelectorAll('.cs-slide')].map((s) => `${s.getAttribute('role')}/${s.getAttribute('aria-roledescription')}`));
+    assert.deepEqual(panels, Array(5).fill('tabpanel/slide'), 'a gallery panel is announced by its bare role');
+  });
+
   // Mouse drag scrolls the track; the click that ends a real drag is eaten so
   // a card link does not fire under a released pointer.
   test('dragging the track with a mouse moves it', async ({ page }) => {

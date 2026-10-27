@@ -495,7 +495,7 @@
         <pre class="g-code"><code>${esc(COUNTER_MARKUP)}</code></pre>
         <p><strong>Every announced string works the same way</strong>, which is how a Spanish-language page gets a Spanish carousel &mdash; there is no script to write. <code>{n}</code>, <code>{from}</code>, <code>{to}</code> and <code>{total}</code> are filled in; everything else is used as typed.</p>
         ${table(['Attribute', 'Default', 'Where it is heard'], LABELS)}
-        <p class="g-sub">Set <code>data-cs-roledescription</code> as well &mdash; a screen reader says the word &ldquo;carousel&rdquo; before any of these, and it is the one string that is not a label. <code>data-cs-roledescription="carrusel"</code>, and an empty value drops it entirely.</p>
+        <p class="g-sub">Set <code>data-cs-roledescription</code> as well &mdash; a screen reader says the word &ldquo;carousel&rdquo; before any of these, and it is not a label. <code>data-cs-roledescription="carrusel"</code>, and an empty value drops it entirely. One word cannot be translated yet: slides on a track that is not a list, and gallery panels, are described as &ldquo;slide&rdquo;, in English.</p>
       </section>
 
       <section id="g-images"><h3>What size to upload</h3>

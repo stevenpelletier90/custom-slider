@@ -639,3 +639,38 @@ pattern's 0.25em. It now compares each bar against **its own** desktop gap, whic
 desktop gap came back" actually means.
 
 Ledger: **7 of 49 in scope**, up from 4.
+
+## 2026-10-27 — three accessibility decisions, heard on NVDA
+
+Three backlog entries changed the frozen accessibility contract, and each had been argued from
+documents. They were settled by listening instead: NVDA 2026.2 (portable, via `@guidepup/guidepup`
+0.38 and `@guidepup/setup` 0.29.3), Playwright's Chromium and Firefox, on `demo/patterns.html`'s own
+model bar, cards and media gallery. Each variant was applied as the page started, the way the engine
+would set it — NVDA builds its picture of a page on load and did not notice an
+`aria-roledescription` added afterwards. Before every key press NVDA reported the window title, and
+the run stopped if it was not the test page: an earlier run without that check sent Tab presses into
+other windows on the desktop. NVDA was removed afterwards, and a registry and folder snapshot
+matched the one taken before it was installed.
+
+| Question                 | Before                                                                                           | After                                                   |
+| ------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
+| Firefox's track stop     | "list, clickable, with 8 items", then all eight cards in full; the next Tab read the first again | no stop; Tab reaches the first card                     |
+| Current dot              | "Go to slides 1–3, button, unavailable"                                                          | "Go to slides 1–3, button, current"                     |
+| Both dot attributes      | —                                                                                                | "…button, unavailable, current" (rejected: clumsy)      |
+| Gallery panel            | "…, property page, …, graphic"                                                                   | "…, slide, …, graphic"                                  |
+| Gallery thumbnail change | "Slide 2 of 6", once                                                                             | unchanged — the two live regions did not double up here |
+
+Measured alongside, on all three engines: with the track at `tabindex="-1"`, arrow keys pressed on a
+focused card still scroll the strip, so the stop bought nothing.
+
+What the field ships for the current dot (published source, 2026-10-27): Swiper 14.3, Bootstrap
+5.3.8 and Flickity 3.0 use `aria-current`; Splide 4.1.4 and Slick 1.8.1 make the dots tabs with
+`aria-selected`; Glide 3.7.1 has no ARIA. The W3C carousel pattern says the current picker button
+has `aria-disabled="true"` — the source of the original choice, and the one departed from. Support
+per a11ysupport.io (results 4–8 years old): `aria-current="true"` is announced by JAWS, NVDA,
+VoiceOver and TalkBack, not Narrator or Orca; `aria-roledescription` by JAWS, NVDA, Narrator, Orca
+and VoiceOver on macOS, not VoiceOver on iOS or TalkBack — so phones hear the gallery as before.
+
+Shipped as three commits: the track stop (`tabindex="-1"` when the slides hold something focusable,
++4 B), the dot (`aria-current="true"`, +14 B), the gallery panels (`aria-roledescription="slide"`,
++7 B). Engine total 6565 → 6590 B.

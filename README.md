@@ -116,7 +116,9 @@ Spanish carousel.
 | `data-cs-label-slide-position` | `{n} of {total}`                | A slide's own name, when the track is not a list and the slide has no heading |
 
 `{n}`, `{from}`, `{to}` and `{total}` are filled in; anything else is used verbatim. Set
-`data-cs-roledescription` too — a screen reader says the word "carousel" before any of these.
+`data-cs-roledescription` too — a screen reader says the word "carousel" before any of these. One
+word is not a label yet: slides on a track that is not a list, and gallery panels, are described as
+"slide", in English.
 
 ```html
 <div
@@ -326,7 +328,8 @@ batch — a tab row wired twice answers a key twice.
   non-visible panels are `inert`. The visible panel takes `tabindex="0"`: it holds no focusable
   content, and without it Chrome puts an unnamed tab stop on the scrolling track instead (it does
   that for any scroll container with no focusable children). Gallery tab order is prev → next →
-  panel → selected thumb.
+  panel → selected thumb. Each panel is a `tabpanel` with `aria-roledescription="slide"`, as in the
+  W3C tabbed-carousel example: NVDA calls a bare tabpanel a "property page".
 - Autoplay: pause button first in tab order; hover pauses temporarily; focus or drag stops
   permanently (only the button restarts); never starts under `prefers-reduced-motion`, and turning
   that setting on mid-session stops a rotation already running; status announcements are off while
