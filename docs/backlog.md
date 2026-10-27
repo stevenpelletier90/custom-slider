@@ -107,9 +107,6 @@ ENGINE / PLATFORM (cited to MDN + BCD via Context7):
   sets. Not a defect: the design spec chose it (`specs/2026-07-13-custom-slider-design.md`, "Main
   slides: `role="tabpanel"`, **no** `aria-roledescription="slide"`") without recording why, and the
   engine marks it where it sets the role. Reopening it is a contract decision.
-- Current dot uses `aria-disabled`; MDN says `aria-current="true"` is the attribute for "current
-  item in a set". NOTE: the `aria-disabled` choice is DOCUMENTED as deliberate in README and
-  CLAUDE.md — changing it is a contract decision.
 
 BUILD (measured):
 

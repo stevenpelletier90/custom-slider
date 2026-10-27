@@ -14,7 +14,7 @@ let uidCounter = 0;
 
 const fmt = (tpl, vals) => tpl.replace(/\{(\w+)\}/g, (_, k) => vals[k]);
 
-// aria-disabled (not disabled): current/end controls stay focusable.
+// aria-disabled (not disabled): end arrows stay focusable.
 const setDisabled = (el, on) => {
   if (on) el.setAttribute('aria-disabled', 'true');
   else el.removeAttribute('aria-disabled');
@@ -711,9 +711,13 @@ export class CustomSlider {
   _updateDots() {
     if (!this.dots) return;
     const page = this._currentPage();
+    // aria-current, not aria-disabled: NVDA read the disabled dot as "button,
+    // unavailable", which sounds broken, and "current" is what it means
+    // (2026-10-27). The W3C carousel guide says aria-disabled; Swiper,
+    // Bootstrap and Flickity ship aria-current. The class is the style hook.
     [...this.dots.children].forEach((b, i) => {
       b.classList.toggle('cs-dot--current', i === page);
-      setDisabled(b, i === page);
+      i === page ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current');
     });
   }
 

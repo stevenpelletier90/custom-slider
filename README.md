@@ -314,8 +314,10 @@ batch — a tab row wired twice answers a key twice.
   would silently kill the "N of 6" count announcements in Safari/VoiceOver — don't remove either. A
   validator calls the attribute redundant; on a styled list it is not. In the markup it covers the
   moment before the script runs, and a page where the script never loads.
-- Dots are one per PAGE of slides, plain buttons (not tabs); current dot is `aria-disabled`, still
-  focusable.
+- Dots are one per PAGE of slides, plain buttons (not tabs); the current dot carries
+  `aria-current="true"` and stays an enabled, focusable button. Not `aria-disabled`, which it was
+  until 2026-10-27: NVDA reads that as "button, unavailable", which sounds broken, where
+  `aria-current` reads "button, current". Style the current dot with `.cs-dot--current`.
 - When every slide already fits, the arrows and dots are hidden and the root gains `data-cs-fits` —
   controls that cannot move anything must not be focusable, and a one-of-one dot group announces a
   choice that isn't one. It is re-evaluated on resize, because slides-per-view is CSS. Style on

@@ -181,6 +181,24 @@ test.describe('keyboard', () => {
   });
 });
 
+test.describe('dots', () => {
+  // The current dot says "current", not "unavailable". NVDA 2026.2 on the
+  // demo's cards pattern read aria-disabled as "Go to slides 1–3, button,
+  // unavailable", which sounds like a broken control; aria-current="true"
+  // reads "Go to slides 1–3, button, current" (2026-10-27). The W3C carousel
+  // guide words it as aria-disabled; Swiper, Bootstrap and Flickity all ship
+  // aria-current. Either way the dot stays an enabled, focusable button.
+  test('the current dot is marked current, not disabled, and the mark follows the page', async ({ page }) => {
+    await page.setContent(build(8, 4), { waitUntil: 'load' });
+    await page.waitForTimeout(400);
+    const dots = () => page.evaluate(() => [...document.querySelectorAll('.cs-dot')].map((d) => `current=${d.getAttribute('aria-current')} disabled=${d.getAttribute('aria-disabled')}`));
+    assert.deepEqual(await dots(), ['current=true disabled=null', 'current=null disabled=null'], 'the first page is not the one marked current');
+    await page.locator('.cs-dot').nth(1).click();
+    await page.waitForFunction(() => document.querySelector('.cs')._cs.current === 4, null, { timeout: 5000 });
+    assert.deepEqual(await dots(), ['current=null disabled=null', 'current=true disabled=null'], 'the mark did not move to the page now showing');
+  });
+});
+
 test.describe('autoplay', () => {
   // README checklist 4, the half a machine can answer. Drag is left to a
   // person; focus, hover, the button and reduced motion are not.

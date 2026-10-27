@@ -155,8 +155,9 @@ the label).
   clears the snap edge.
 - Dots: APG **Grouped** variant — `role="group" aria-label="Choose slide"` wrapping real
   `<button>`s; current dot `aria-disabled="true"` (stays focusable). **Not** tablist semantics.
-  **One dot per page**, not per slide (page = `slidesInView` slides; page count =
-  `ceil(count / slidesInView)`, last page clamps to the track end). Button names match the status
+  _Superseded 2026-10-27: the current dot carries `aria-current="true"` instead, heard on NVDA — see
+  `docs/history.md`._ **One dot per page**, not per slide (page = `slidesInView` slides; page count
+  = `ceil(count / slidesInView)`, last page clamps to the track end). Button names match the status
   wording: "Go to slides 4–6" (single-per-view: "Go to slide 4"). Dot count recomputes when
   `--cs-per-view` changes across a breakpoint (ResizeObserver).
 - Track itself not focusable (it has focusable children; buttons satisfy WCAG 2.1.1).

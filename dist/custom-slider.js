@@ -520,7 +520,7 @@
       const page = this._currentPage();
       [...this.dots.children].forEach((b, i) => {
         b.classList.toggle("cs-dot--current", i === page);
-        setDisabled(b, i === page);
+        i === page ? b.setAttribute("aria-current", "true") : b.removeAttribute("aria-current");
       });
     }
     _updateStatus() {

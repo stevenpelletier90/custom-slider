@@ -74,7 +74,7 @@
   const A11Y = [
     'Every card stays reachable by keyboard and by a screen reader, including the ones scrolled out of sight. Hiding them would make the announced count wrong — “3 of 6” when there are twelve.',
     'A <code>&lt;ul&gt;</code> track gets <code>role="list"</code> put back at init. The <code>list-style: none</code> the design needs makes WebKit drop list semantics, which silently kills the "N of 6" announcement in Safari with VoiceOver.',
-    'Dots are one per <strong>page</strong>, and are plain buttons rather than tabs. The current dot is <code>aria-disabled</code> but stays focusable.',
+    'Dots are one per <strong>page</strong>, and are plain buttons rather than tabs. The current dot carries <code>aria-current="true"</code>, so a screen reader says "current" rather than "unavailable"; style it with <code>.cs-dot--current</code>.',
     'When every slide already fits, the arrows and dots are hidden and the root gains <code>data-cs-fits</code>. Controls that cannot move anything must not be focusable, and a one-of-one dot group announces a choice that is not one.',
     'A screen reader is told the position in one short line ("Slides 4–6 of 12") from a hidden element of its own. If the track itself announced changes, moving three cards would read all three out.',
     'Nothing rotates under <code>prefers-reduced-motion</code>, and whether a move animates is decided per call, never left to CSS — Safari animates CSS-set scrolling even when the move is meant to be instant. The track does declare <code>scroll-behavior: auto</code>, which is the opposite thing: without it a site shipping a global <code>* { scroll-behavior: smooth }</code> captures every instant move the engine makes, reduced motion included.',
