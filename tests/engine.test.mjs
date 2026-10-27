@@ -500,8 +500,9 @@ test.describe('the contract, in the last window before it froze', () => {
     assert.deepEqual(panels, Array(5).fill('tabpanel/slide'), 'a gallery panel is announced by its bare role');
   });
 
-  // Mouse drag scrolls the track; the click that ends a real drag is eaten so
-  // a card link does not fire under a released pointer.
+  // Mouse drag scrolls the track. (What happens to the click at the end of
+  // the drag is the next test's: this comment used to promise it and nothing
+  // asserted it.)
   test('dragging the track with a mouse moves it', async ({ page }) => {
     await page.setContent(build(12, 4), { waitUntil: 'load' });
     await page.waitForTimeout(300);
@@ -515,6 +516,74 @@ test.describe('the contract, in the last window before it froze', () => {
     await page.waitForTimeout(700);
     const left = await page.evaluate(() => document.querySelector('.cs-track').scrollLeft);
     assert.ok(left > 100, `a 300px drag moved the track ${left}px`);
+  });
+
+  // The click that ends a real drag reaches nothing on the page. Past 10px the
+  // track holds the pointer, so the browser aims that click at the track, not
+  // the card under it - the card's link never sees it either way - and the
+  // engine stops it before any handler does: a site counting or delegating
+  // clicks from the document would otherwise take a drag for a click. A press
+  // that only wobbled is still a click on the card. Unheld until 2026-10-27,
+  // when the swallowing listener moved off the track (the next test says why).
+  // It counts at the document, because that is where a missing swallow shows:
+  // counting at the link passed with the swallow deleted.
+  test('the click that ends a real drag reaches no handler, and a wobbly press still clicks the card', async ({ page, browserName }) => {
+    await page.setContent(build(12, 4), { waitUntil: 'load' });
+    await page.waitForTimeout(300);
+    await page.evaluate(() => {
+      const w = /** @type {any} */ (window);
+      w.hits = { page: 0, card: 0 };
+      document.addEventListener('click', () => w.hits.page++);
+      document.querySelectorAll('.cs-slide a').forEach((a) =>
+        a.addEventListener('click', (e) => {
+          w.hits.card++;
+          e.preventDefault();
+        }),
+      );
+    });
+    // On a card link: the strip moves with the hand, so the same link is under
+    // the pointer when it is released.
+    const link = await page.locator('.cs-slide a').nth(1).boundingBox();
+    const x = link.x + link.width / 2;
+    const y = link.y + link.height / 2;
+    const gesture = async (steps) => {
+      await page.mouse.move(x, y);
+      await page.mouse.down();
+      for (const dx of steps) await page.mouse.move(x + dx, y);
+      await page.mouse.up();
+      await page.waitForTimeout(900);
+      return page.evaluate(() => {
+        const w = /** @type {any} */ (window);
+        const h = w.hits;
+        w.hits = { page: 0, card: 0 };
+        return h;
+      });
+    };
+    assert.deepEqual(await gesture([-30, -60, -90, -120, -150, -180]), { page: 0, card: 0 }, 'the click that ended a 180px drag reached a handler');
+    // Playwright's WebKit on Windows drops this click with the old track
+    // listener as it does here: a press that moved past the 4px drag threshold
+    // loses it. Recorded in docs/backlog.md; unverified on real Safari.
+    if (browserName !== 'webkit') assert.deepEqual(await gesture([3, 6]), { page: 1, card: 1 }, 'a press that wobbled 6px did not click the card');
+  });
+
+  // Chrome tells a screen reader an element is "clickable" when it carries a
+  // click, mousedown or mouseup listener - measured 2026-10-27, pointer events
+  // do not count - and NVDA then said "list, clickable, with 8 items" before
+  // every strip and "clickable" before every gallery photo. The drag's click
+  // swallow is the one such listener the engine had, and it listens on the
+  // window now. Chromium only: the listener list is DevTools protocol.
+  test('the track carries no listener that makes Chrome call it clickable', async ({ page, browserName }) => {
+    test.skip(browserName !== 'chromium', 'reads listeners through the DevTools protocol');
+    for (const attrs of ['', 'data-cs-gallery']) {
+      await page.setContent(build(5, 1, attrs), { waitUntil: 'load' });
+      await page.waitForTimeout(300);
+      const cdp = await page.context().newCDPSession(page);
+      const { result } = await cdp.send('Runtime.evaluate', { expression: 'document.querySelector(".cs-track")' });
+      const { listeners } = await cdp.send('DOMDebugger.getEventListeners', { objectId: result.objectId });
+      const clicky = listeners.map((l) => l.type).filter((t) => ['click', 'mousedown', 'mouseup'].includes(t));
+      assert.deepEqual(clicky, [], `the ${attrs || 'card'} track listens for ${clicky.join(', ')}`);
+      await cdp.detach();
+    }
   });
 
   // --cs-per-view is CSS, so a resize can make a strip fit or stop fitting at

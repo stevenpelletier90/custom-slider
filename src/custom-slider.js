@@ -578,10 +578,15 @@ export class CustomSlider {
     // Only a gesture that travelled past `far` counts: under it the strip
     // springs back to the slide it started on, so the user pressed a control
     // and wobbled, and that click has to reach the button.
-    t.addEventListener(
+    // On the window, not the track, and still in the capture phase so it runs
+    // before the card's own handlers. Chrome tells screen readers an element
+    // with a click listener is "clickable", and NVDA said "list, clickable"
+    // before every strip until it moved (2026-10-27). A drag past `far` has
+    // the pointer captured, so its click is retargeted to the track itself.
+    addEventListener(
       'click',
       (e) => {
-        if (far) {
+        if (far && t.contains(/** @type {Node} */ (e.target))) {
           far = false;
           e.preventDefault();
           e.stopPropagation();

@@ -43,10 +43,10 @@ Later the same day NVDA settled the three contract entries — Firefox's track s
 
 NVDA 2026.2 driven by guidepup over the demo's own patterns (`docs/history.md` has the run).
 
-- NVDA says "**clickable**" before the model bar's list ("list, clickable, with 8 items") and before
-  a gallery panel ("clickable, …, slide"). Chrome reports an element as clickable when it has click
-  or mouse listeners, and the engine puts its drag listeners on the track; that this is the cause is
-  unverified. Harmless but noise on every strip.
+- In Playwright's WebKit on Windows, a press that wobbles past the 4px drag threshold (6px measured)
+  loses its click: the card link never fires. Chromium and Firefox deliver it. Present with the drag
+  click-swallow on the track and with it on the window alike, so not caused by that move. Unverified
+  on real Safari; `tests/engine.test.mjs` holds the wobble on the other two engines only.
 - Changing photos from the thumbnails announces only the status, "Slide 2 of 6", never the new
   photo's name — the name is spoken only when the panel itself takes focus.
 - "slide" is spoken in English on every non-list track and every gallery panel; unlike "carousel" it

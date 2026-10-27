@@ -674,3 +674,14 @@ and VoiceOver on macOS, not VoiceOver on iOS or TalkBack — so phones hear the 
 Shipped as three commits: the track stop (`tabindex="-1"` when the slides hold something focusable,
 +4 B), the dot (`aria-current="true"`, +14 B), the gallery panels (`aria-roledescription="slide"`,
 +7 B). Engine total 6565 → 6590 B.
+
+The same run had NVDA say "clickable" before every strip ("list, clickable, with 8 items") and every
+gallery photo. Traced afterwards without a screen reader: Chrome hides a plain `<div>` from the
+accessibility tree unless it is clickable, and a `<div>` was promoted for a `click`, `mousedown` or
+`mouseup` listener and for no pointer event (`pointerdown`, `pointerup`, `pointermove`,
+`pointercancel`, `dragstart` all left it hidden). DevTools' listener list put exactly one of those
+on each track: the drag code's capture-phase `click` that swallows the click ending a real drag. It
+listens on the window now, filtered to its own track (+6 B). Its first test counted clicks at the
+card link and passed with the swallow deleted — past 10px the track holds the pointer, so the
+browser aims that click at the track and the link never sees it either way. Counted at the document,
+it fails without the swallow on all three engines and passes on the old engine too.

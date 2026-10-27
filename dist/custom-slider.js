@@ -429,10 +429,13 @@
       t.addEventListener("pointercancel", end, { signal: sig });
       addEventListener("pointerup", end, { signal: sig });
       t.addEventListener("dragstart", (e) => this._dragActive && e.preventDefault(), { signal: sig });
-      t.addEventListener(
+      addEventListener(
         "click",
         (e) => {
-          if (far) {
+          if (far && t.contains(
+            /** @type {Node} */
+            e.target
+          )) {
             far = false;
             e.preventDefault();
             e.stopPropagation();
