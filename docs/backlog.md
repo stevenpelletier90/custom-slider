@@ -75,8 +75,6 @@ ascending one — see `docs/history.md`.
 - slider.css: some sizes hardcoded (dot hit box 24px, pause 36px, thumb radius 4px) vs exposed
   --cs-* knobs (plan-mandated).
 - Generated SVGs lack trailing newline (cosmetic).
-- Task 7 sweep should add: restart-while-hovered assertion (click play with pointer over carousel →
-  label "Stop" but timer held until pointerleave) — coverage gap noted by Task 4 review.
 - Gallery: focus-guard skips re-inert until next _commit — off-screen panel with focus history can
   linger non-inert (edge case, demo unaffected).
 - Gallery: TWO polite live regions (status region + track per APG) may double-announce — validate in

@@ -522,8 +522,8 @@ npm run serve   # http://127.0.0.1:8137 (for Lighthouse)
 2. Demo page: Lighthouse accessibility = 100, performance ≈ 100, CLS = 0.
 3. Keyboard-only: **the tab order is asserted by `npm test`**. Still by hand: gallery tabs respond
    to Arrow/Home/End, and focus is never trapped or lost.
-4. Autoplay: **focus stopping it, the button restarting it, and reduced motion are asserted by
-   `npm test`**. Still by hand: pauses on hover, stops on drag.
+4. Autoplay: **focus stopping it, hover holding it, the button restarting it, and reduced motion are
+   asserted by `npm test`**. Still by hand: stops on drag.
 5. Screenshots at 375 / 768 / 1280 look right; slides-per-view matches the breakpoints.
 6. With JavaScript disabled the strips still scroll and all content is visible — **asserted by
    `npm test`** on authored markup.

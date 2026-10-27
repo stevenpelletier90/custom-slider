@@ -182,8 +182,8 @@ test.describe('keyboard', () => {
 });
 
 test.describe('autoplay', () => {
-  // README checklist 4, the half a machine can answer. Hover and drag are left
-  // to a person; focus, the button and reduced motion are not.
+  // README checklist 4, the half a machine can answer. Drag is left to a
+  // person; focus, hover, the button and reduced motion are not.
   test('focus stops it and the button starts it again', async ({ page }) => {
     await page.setContent(build(8, 4, 'data-cs-autoplay="300"'), { waitUntil: 'load' });
     await page.waitForTimeout(300);
@@ -207,6 +207,38 @@ test.describe('autoplay', () => {
     await page.waitForTimeout(250);
     assert.equal(await page.evaluate(() => document.querySelector('.cs')._cs.rotating), true, 'the pause button did not restart it');
     assert.match(await pause.getAttribute('aria-label'), /^Stop /, 'the running button still offers to start what is already running');
+  });
+
+  // The backlog's restart-while-hovered gap (Task 4 review). Play pressed with
+  // the mouse is pressed with the pointer over the slider, so the hover hold
+  // is still on: the button must say "Stop" - rotation is on again - while the
+  // strip stays put until the pointer leaves. A play() that cleared the holds
+  // would move the strip under the reader's pointer.
+  test('play pressed under the pointer waits for the pointer to leave', async ({ page }) => {
+    // Slides of a card's height. One line of text makes a slider so short that
+    // the centred next arrow lands on the pause button and takes the press.
+    await page.setContent(build(8, 4, 'data-cs-autoplay="300"', { css: '.cs{--cs-per-view:4}.cs-slide{block-size:200px}' }), { waitUntil: 'load' });
+    await page.waitForTimeout(300);
+    const pause = page.locator('.cs-pause');
+    // hover() and click() refuse a button something else covers. The hover
+    // hold starts here, and a tick already in flight is left to finish
+    // scrolling before anything is read.
+    await pause.hover();
+    await page.waitForTimeout(600);
+    await pause.click();
+    assert.match(await pause.getAttribute('aria-label'), /^Start /, 'the first press did not stop the rotation');
+    await pause.click();
+    assert.equal(await page.evaluate(() => document.querySelector('.cs')._cs.rotating), true, 'the second press did not restart it');
+    assert.match(await pause.getAttribute('aria-label'), /^Stop /, 'the running button still offers to start what is already running');
+
+    const scrolled = () => page.evaluate(() => document.querySelector('.cs-track').scrollLeft);
+    const held = await scrolled();
+    await page.waitForTimeout(1000);
+    assert.equal(await scrolled(), held, 'the strip moved while the pointer was still over it');
+
+    // Off the slider: #box is 1170px wide, so this point is beside it.
+    await page.mouse.move(1250, 20);
+    await page.waitForFunction((from) => document.querySelector('.cs-track').scrollLeft !== from, held, { timeout: 3000 });
   });
 
   test('nothing rotates under prefers-reduced-motion', async ({ browser }) => {
