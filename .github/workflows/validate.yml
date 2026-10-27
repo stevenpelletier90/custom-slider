@@ -9,6 +9,10 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-26.04
+    # 4-13 minutes when well. Without a ceiling a hung step waits out GitHub's
+    # six hours: on 2026-10-27 three runs sat 40+ minutes inside `playwright
+    # install --with-deps` with nothing failing. Thirty fails it loudly.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
@@ -39,6 +43,8 @@ jobs:
   # so the browser installs happen beside the Chromium run, not after it.
   browsers:
     runs-on: ubuntu-26.04
+    # About a minute when well; the hang above was this job's apt step.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7

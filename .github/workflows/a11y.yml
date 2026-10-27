@@ -73,6 +73,10 @@ jobs:
     needs: changes
     if: needs.changes.outputs.relevant == 'true'
     runs-on: ubuntu-26.04
+    # Installs browsers with apt like validate.yml's jobs, which hung 40+
+    # minutes there on 2026-10-27; a ceiling fails a hang instead of waiting
+    # out GitHub's six hours.
+    timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
       - uses: actions/setup-node@v7
