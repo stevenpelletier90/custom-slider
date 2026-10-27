@@ -43,6 +43,9 @@ const DEFAULTS = {
     // translate its status region and still have every slide announce "1 of 6"
     // in English (2026-09-15 review).
     slidePosition: '{n} of {total}',
+    // The role word for a slide on a non-list track and for a gallery panel -
+    // the last spoken string a site could not translate (2026-10-27).
+    slide: 'slide',
     thumbs: 'Choose photo',
     photo: 'Photo {n}',
   },
@@ -197,7 +200,7 @@ export class CustomSlider {
     } else {
       this.slides.forEach((s, i) => {
         s.setAttribute('role', 'group');
-        s.setAttribute('aria-roledescription', 'slide');
+        s.setAttribute('aria-roledescription', this.opts.labels.slide);
         if (!s.hasAttribute('aria-label') && !s.hasAttribute('aria-labelledby')) {
           const h = s.querySelector('h2,h3,h4,h5,h6');
           if (h) {
@@ -841,7 +844,7 @@ export class CustomSlider {
       // calls a bare tabpanel a "property page", which means nothing to a car
       // shopper (heard 2026-10-27). The 2026-07-13 spec said no, unexplained.
       s.setAttribute('role', 'tabpanel');
-      s.setAttribute('aria-roledescription', 'slide');
+      s.setAttribute('aria-roledescription', L.slide);
       s.setAttribute('aria-label', name);
       // A tabpanel holding no focusable content needs its own tab stop, or the
       // photo is unreachable by keyboard. It also displaces the anonymous stop

@@ -114,11 +114,10 @@ Spanish carousel.
 | `data-cs-label-thumbs`         | `Choose photo`                  | The thumb strip (`gallery`)                                                   |
 | `data-cs-label-photo`          | `Photo {n}`                     | One thumb (`gallery`)                                                         |
 | `data-cs-label-slide-position` | `{n} of {total}`                | A slide's own name, when the track is not a list and the slide has no heading |
+| `data-cs-label-slide`          | `slide`                         | The word for a slide on a track that is not a list, and for a `gallery` panel |
 
 `{n}`, `{from}`, `{to}` and `{total}` are filled in; anything else is used verbatim. Set
-`data-cs-roledescription` too — a screen reader says the word "carousel" before any of these. One
-word is not a label yet: slides on a track that is not a list, and gallery panels, are described as
-"slide", in English.
+`data-cs-roledescription` too — a screen reader says the word "carousel" before any of these.
 
 ```html
 <div
@@ -132,6 +131,7 @@ word is not a label yet: slides on a track that is not a list, and gallery panel
   data-cs-label-dots="Elegir diapositiva"
   data-cs-label-goto-slide="Ir a la diapositiva {n}"
   data-cs-label-status-single="Diapositiva {n} de {total}"
+  data-cs-label-slide="diapositiva"
 ></div>
 ```
 

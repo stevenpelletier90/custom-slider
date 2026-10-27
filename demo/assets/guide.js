@@ -191,6 +191,8 @@
     ['data-cs-label-status-multi', 'Slides {from}&ndash;{to} of {total}', 'The status line, several cards'],
     ['data-cs-label-thumbs', 'Choose photo', 'The thumbnail strip'],
     ['data-cs-label-photo', 'Photo {n}', 'One thumbnail'],
+    ['data-cs-label-slide-position', '{n} of {total}', 'A slide&rsquo;s own name, on a track that is not a list, when the slide has no heading'],
+    ['data-cs-label-slide', 'slide', 'The word for a slide on a track that is not a list, and for a gallery photo'],
   ];
 
   const MARKUP = `<div class="my-slider cs" data-cs aria-label="New vehicles">
@@ -495,7 +497,7 @@
         <pre class="g-code"><code>${esc(COUNTER_MARKUP)}</code></pre>
         <p><strong>Every announced string works the same way</strong>, which is how a Spanish-language page gets a Spanish carousel &mdash; there is no script to write. <code>{n}</code>, <code>{from}</code>, <code>{to}</code> and <code>{total}</code> are filled in; everything else is used as typed.</p>
         ${table(['Attribute', 'Default', 'Where it is heard'], LABELS)}
-        <p class="g-sub">Set <code>data-cs-roledescription</code> as well &mdash; a screen reader says the word &ldquo;carousel&rdquo; before any of these, and it is not a label. <code>data-cs-roledescription="carrusel"</code>, and an empty value drops it entirely. One word cannot be translated yet: slides on a track that is not a list, and gallery panels, are described as &ldquo;slide&rdquo;, in English.</p>
+        <p class="g-sub">Set <code>data-cs-roledescription</code> as well &mdash; a screen reader says the word &ldquo;carousel&rdquo; before any of these, and it is not a label. <code>data-cs-roledescription="carrusel"</code>, and an empty value drops it entirely.</p>
       </section>
 
       <section id="g-images"><h3>What size to upload</h3>

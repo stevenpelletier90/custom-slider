@@ -49,8 +49,6 @@ NVDA 2026.2 driven by guidepup over the demo's own patterns (`docs/history.md` h
   on real Safari; `tests/engine.test.mjs` holds the wobble on the other two engines only.
 - Changing photos from the thumbnails announces only the status, "Slide 2 of 6", never the new
   photo's name — the name is spoken only when the panel itself takes focus.
-- "slide" is spoken in English on every non-list track and every gallery panel; unlike "carousel" it
-  has no `data-cs-label-*` or option. A label would cost bytes and is a contract addition.
 
 ## 2026-09-15 — the phone pass, a decided no
 

@@ -36,6 +36,9 @@
       // translate its status region and still have every slide announce "1 of 6"
       // in English (2026-09-15 review).
       slidePosition: "{n} of {total}",
+      // The role word for a slide on a non-list track and for a gallery panel -
+      // the last spoken string a site could not translate (2026-10-27).
+      slide: "slide",
       thumbs: "Choose photo",
       photo: "Photo {n}"
     }
@@ -136,7 +139,7 @@
       } else {
         this.slides.forEach((s, i) => {
           s.setAttribute("role", "group");
-          s.setAttribute("aria-roledescription", "slide");
+          s.setAttribute("aria-roledescription", this.opts.labels.slide);
           if (!s.hasAttribute("aria-label") && !s.hasAttribute("aria-labelledby")) {
             const h = s.querySelector("h2,h3,h4,h5,h6");
             if (h) {
@@ -613,7 +616,7 @@
         const name = img && img.alt || fmt(L.photo, { n: i + 1 });
         s.id || (s.id = `${this.uid}-panel-${i}`);
         s.setAttribute("role", "tabpanel");
-        s.setAttribute("aria-roledescription", "slide");
+        s.setAttribute("aria-roledescription", L.slide);
         s.setAttribute("aria-label", name);
         s.tabIndex = 0;
         const b = this._btn("cs-thumb", name, "");

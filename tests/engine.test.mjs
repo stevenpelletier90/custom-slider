@@ -500,6 +500,27 @@ test.describe('the contract, in the last window before it froze', () => {
     assert.deepEqual(panels, Array(5).fill('tabpanel/slide'), 'a gallery panel is announced by its bare role');
   });
 
+  // "slide" was the one spoken word a site could not translate: "carousel"
+  // has data-cs-roledescription, every other string a data-cs-label-*. It is
+  // spoken on every slide of a non-list track and every gallery panel, so a
+  // Spanish page heard "diapositiva 1 de 6 … slide" (2026-10-27). Splide and
+  // Swiper both make it a string; here it is data-cs-label-slide.
+  test('data-cs-label-slide translates the word "slide" wherever the engine says it', async ({ page }) => {
+    const divs = (n) => Array.from({ length: n }, (_, i) => `<div class="cs-slide"><p>Review ${i + 1}</p></div>`).join('');
+    const said = () => page.evaluate(() => [...new Set([...document.querySelectorAll('.cs-slide')].map((s) => s.getAttribute('aria-roledescription')))]);
+    for (const [kind, html] of [
+      ['non-list track', `<div class="cs" data-cs aria-label="Reviews" LABEL><div class="cs-track">${divs(4)}</div></div>`],
+      ['gallery', slider(4, 'data-cs-gallery LABEL')],
+    ]) {
+      await page.setContent(hostHtml({ ...engine, css: '.cs{--cs-per-view:1}', html: html.replace('LABEL', 'data-cs-label-slide="diapositiva"'), box: 1170 }), { waitUntil: 'load' });
+      await page.waitForTimeout(300);
+      assert.deepEqual(await said(), ['diapositiva'], `the ${kind} did not take the label`);
+      await page.setContent(hostHtml({ ...engine, css: '.cs{--cs-per-view:1}', html: html.replace('LABEL', ''), box: 1170 }), { waitUntil: 'load' });
+      await page.waitForTimeout(300);
+      assert.deepEqual(await said(), ['slide'], `the ${kind} lost its default`);
+    }
+  });
+
   // Mouse drag scrolls the track. (What happens to the click at the end of
   // the drag is the next test's: this comment used to promise it and nothing
   // asserted it.)
