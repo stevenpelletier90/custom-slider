@@ -39,16 +39,25 @@ Later the same day NVDA settled the three contract entries — Firefox's track s
 `aria-disabled`, the gallery panels' missing `"slide"` — and all three shipped; the evidence is in
 `docs/history.md`.
 
-## 2026-10-27 — heard on NVDA, not actioned
+## 2026-10-27 — heard on NVDA and VoiceOver, not actioned
 
-NVDA 2026.2 driven by guidepup over the demo's own patterns (`docs/history.md` has the run).
+NVDA 2026.2 and VoiceOver, driven by guidepup over the demo's own patterns —
+`.github/workflows/screen-reader.yml` runs it on demand; `docs/history.md` has every result.
 
 - In Playwright's WebKit on Windows, a press that wobbles past the 4px drag threshold (6px measured)
   loses its click: the card link never fires. Chromium and Firefox deliver it. Present with the drag
   click-swallow on the track and with it on the window alike, so not caused by that move. Unverified
   on real Safari; `tests/engine.test.mjs` holds the wobble on the other two engines only.
-- Changing photos from the thumbnails announces only the status, "Slide 2 of 6", never the new
-  photo's name — the name is spoken only when the panel itself takes focus.
+- **A gallery's thumbnail change says the photo's name more than it needs to** — a decided no for
+  now (Steven, 2026-10-27, on bytes). NVDA reads the panels' live region (the name), then the status
+  ("Slide 2 of 6"), then the tab ("name, tab, selected, 2 of 6", which NVDA itself says twice); the
+  tab alone carries name and position. (The earlier entry here said the name was never spoken: that
+  was guidepup's default capture keeping only the first phrase after each key.) A trim was built and
+  heard: quieting only the panels' region while focus is in the thumbnails took NVDA to "Slide 2
+  of 6. name, tab, selected, 2 of 6" and changed nothing VoiceOver said, for +30 B — and quieting
+  the status as well broke VoiceOver on the arrows, which is how VoiceOver's deafness to a region
+  switched off and on was found, and with it the silent paused hero (fixed in 7d8a48c; see
+  `docs/history.md`). Dropped because the hero fix needed the bytes; reopen if the budget moves.
 
 ## 2026-09-15 — the phone pass, a decided no
 
@@ -71,14 +80,12 @@ NVDA 2026.2 driven by guidepup over the demo's own patterns (`docs/history.md` h
 
 ## Manual QA still open (needs a person)
 
-- MANUAL QA remaining (needs Steven/humans, spec §11): live NVDA/VoiceOver pass (status-region
-  wording + gallery announcements); Windows Firefox at 125-150% DPI; Tab-into-cards in stable
-  Safari; one pre-26.2-iOS device (scrollend fallback).
-- The NVDA/VoiceOver pass is the one that also settles the gallery's two polite live regions: the
-  track (per APG's tabbed carousel) and `.cs-status`. APG's own tabbed example has only the one
-  (checked 2026-08-31). Half answered 2026-10-27: NVDA 2026.2 in Chromium said "Slide 2 of 6" once
-  per thumbnail change, no double announcement. VoiceOver is still unheard. If it does double up,
-  the option on the table is suppressing `.cs-status` updates in gallery mode.
+- MANUAL QA remaining (needs Steven/humans, spec §11): Windows Firefox at 125-150% DPI;
+  Tab-into-cards in stable Safari; one pre-26.2-iOS device (scrollend fallback). The live
+  NVDA/VoiceOver pass is no longer manual: `.github/workflows/screen-reader.yml` runs both on hosted
+  runners on demand (2026-10-27). What it cannot hear yet is VoiceOver on iOS, TalkBack and JAWS.
+- The gallery's two polite live regions, the track (per APG's tabbed carousel) and `.cs-status`:
+  answered 2026-10-27 — they do double up on both readers (see the entry above, decided no for now).
 - `escUrl` through a real DealerOn styleCode round-trip (2026-09-15). The generated markup is proven
   safe in `tests/builder.test.mjs`, but the platform's server-side processing has enough documented
   weirdness that one actual paste / minify / save / reload cycle is worth doing before calling it

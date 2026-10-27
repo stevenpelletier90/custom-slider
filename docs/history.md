@@ -652,13 +652,13 @@ the run stopped if it was not the test page: an earlier run without that check s
 other windows on the desktop. NVDA was removed afterwards, and a registry and folder snapshot
 matched the one taken before it was installed.
 
-| Question                 | Before                                                                                           | After                                                   |
-| ------------------------ | ------------------------------------------------------------------------------------------------ | ------------------------------------------------------- |
-| Firefox's track stop     | "list, clickable, with 8 items", then all eight cards in full; the next Tab read the first again | no stop; Tab reaches the first card                     |
-| Current dot              | "Go to slides 1–3, button, unavailable"                                                          | "Go to slides 1–3, button, current"                     |
-| Both dot attributes      | —                                                                                                | "…button, unavailable, current" (rejected: clumsy)      |
-| Gallery panel            | "…, property page, …, graphic"                                                                   | "…, slide, …, graphic"                                  |
-| Gallery thumbnail change | "Slide 2 of 6", once                                                                             | unchanged — the two live regions did not double up here |
+| Question                 | Before                                                                                           | After                                              |
+| ------------------------ | ------------------------------------------------------------------------------------------------ | -------------------------------------------------- |
+| Firefox's track stop     | "list, clickable, with 8 items", then all eight cards in full; the next Tab read the first again | no stop; Tab reaches the first card                |
+| Current dot              | "Go to slides 1–3, button, unavailable"                                                          | "Go to slides 1–3, button, current"                |
+| Both dot attributes      | —                                                                                                | "…button, unavailable, current" (rejected: clumsy) |
+| Gallery panel            | "…, property page, …, graphic"                                                                   | "…, slide, …, graphic"                             |
+| Gallery thumbnail change | "Slide 2 of 6", once — **wrong, see the next section**                                           | unchanged                                          |
 
 Measured alongside, on all three engines: with the track at `tabindex="-1"`, arrow keys pressed on a
 focused card still scroll the strip, so the stop bought nothing.
@@ -685,3 +685,49 @@ listens on the window now, filtered to its own track (+6 B). Its first test coun
 card link and passed with the swallow deleted — past 10px the track holds the pointer, so the
 browser aims that click at the track and the link never sees it either way. Counted at the document,
 it fails without the swallow on all three engines and passes on the old engine too.
+
+## 2026-10-27 — the screen readers move to CI, and VoiceOver finds a silent hero
+
+The NVDA run above meant a screen reader on Steven's desktop, typing into whatever window was in
+front. `.github/workflows/screen-reader.yml` (on demand only) now runs `tests/screen-reader.sr.mjs`
+under NVDA with Chromium on `windows-latest` and VoiceOver with WebKit on `macos-latest`, via
+guidepup, and every phrase lands in `heard.json` in the run's artifacts. The repo is public, so the
+runners cost nothing. Its first runs taught three things about the harness, each of which had
+produced a confident wrong answer:
+
+- **guidepup records speech per command it sent.** Playwright pressing the keys while the reader
+  listened recorded nothing on either reader, and the "no clickable" check passed on silence. Keys
+  go through `screenReader.press` now, and nothing is asserted unless something was heard.
+- **Its default capture, `"initial"`, keeps the first phrase after each key.** That is where "Slide
+  2 of 6, once" in the table above came from: NVDA actually said the photo's name three times around
+  it. The test captures every phrase.
+- **VoiceOver's first thumbnail pass after the Tab steps loses its arrow key**, whichever variant
+  runs first. It is the harness, not the slider; the log says which slide shows at every step so it
+  can be told apart.
+
+Confirmed on VoiceOver, macOS: no "clickable" before a strip, the current dot "Go to slides 1–3
+current item button", a gallery photo "… slide".
+
+A gallery's thumbnail change, every phrase:
+
+| Reader    | As shipped                                                                 | Next arrow, as shipped                  |
+| --------- | -------------------------------------------------------------------------- | --------------------------------------- |
+| NVDA      | name · "Slide 2 of 6" · "name, tab, selected, 2 of 6" (twice — NVDA's own) | name · "Slide 4 of 6"                   |
+| VoiceOver | "name selected tab, 2 of 6" · "Slide 2 of 6" (once the arrow key landed)   | "Next slides button …" · "Slide 4 of 6" |
+
+The tab alone carries name and position, so a trim quieted both live regions while focus was in the
+thumbnails. On NVDA it was clean; on VoiceOver the Next arrow then read only the button though the
+photo moved to 4. Side by side on identical test code, `master` said "Slide 4 of 6" there. Once a
+live region had been switched off and on, VoiceOver no longer read it — what is reported for Safari
+(a widely cited answer: live regions "won't work if you add/change role and/or aria-live attributes
+of an existing element"; Roselli's 2026 support table marks VoiceOver/Safari polite as buggy).
+Quieting only the panels' region was clean on both, for +30 B, and was dropped on bytes (backlog).
+
+The W3C carousel pattern makes exactly that switch for autoplay: the region is `off` while rotating
+and `polite` otherwise — and its tabbed example even turns the region on when focus enters the tabs.
+The engine did the same with `.cs-status`, so the demo's hero, paused by focus, was heard by
+VoiceOver as nothing at all on Next while the slide moved to 2 and 3; the cards strip, never
+switched, read "Slides 4–6 of 6". NVDA read both. Fixed in 7d8a48c: a pause clones the status, sets
+`polite` on the clone before it is in the page, and swaps it in (same class and text, so a visible
+counter carries on). Heard after: VoiceOver "Slide 2 of 3", "Slide 3 of 3". +34 B; the engine is
+6636 B, 20 B under budget.
