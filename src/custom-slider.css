@@ -217,8 +217,10 @@
      So it is a knob rather than a decision baked in here. --cs-arrow-at is a
      fraction of the same height this already measures, so the dot row and any
      strip padding stay accounted for: 0.5 is the middle, lower numbers move it
-     up toward a card's picture. */
-  top: calc((100% - var(--cs-controls-space)) * var(--cs-arrow-at, 0.5));
+     up toward a card's picture.
+     inset-block-start, like its siblings; the translateY below has no
+     logical form and stays physical (v1 is horizontal LTR only). */
+  inset-block-start: calc((100% - var(--cs-controls-space)) * var(--cs-arrow-at, 0.5));
   z-index: 1;
   display: grid;
   place-items: center;

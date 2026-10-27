@@ -33,7 +33,9 @@ the picker out of the top layer so axe looks at what a person does. Stale and go
 lack trailing newline" (no `.svg` is tracked) and the gallery focus-guard entry (fixed before the
 rename; `tests/engine.test.mjs` holds it on all three engines now). The gallery's two live regions
 were listed twice and are one entry under Manual QA, where the listening pass settles them. The
-gallery `aria-roledescription` entry stays, reworded as the spec decision it is.
+gallery `aria-roledescription` entry stays, reworded as the spec decision it is. `.cs-arrow` places
+itself with `inset-block-start` like its siblings now (−1 B; not one of 184 arrows on the catalogue
+pages moved, on any engine); the knobs entry beside it became a decided no.
 
 ## 2026-09-15 — the phone pass, a decided no
 
@@ -80,10 +82,12 @@ gallery `aria-roledescription` entry stays, reworded as the spec decision it is.
 
 ## Minor findings for final review triage
 
-- slider.css: .cs-arrow uses physical `top`/translateY while siblings use logical inset-*
-  (consistency nit, plan-mandated).
-- slider.css: some sizes hardcoded (dot hit box 24px, pause 36px, thumb radius 4px) vs exposed
-  --cs-* knobs (plan-mandated).
+- **Knobs for the hardcoded sizes: decided no** (Steven, 2026-10-27). The dot's 24px hit box, the
+  36px pause button and the 4px thumb radius stay fixed in `custom-slider.css`. Measured: the three
+  as `--cs-pause-size`, `--cs-dot-hit` and `--cs-thumb-radius` cost 20 B of the 90 B left under the
+  budget, and every `--cs-*` property is frozen contract the day it ships, for a setting nobody has
+  asked for. `--cs-dot-hit` is the sharper no: the 24px is the WCAG 2.5.8 floor, and a knob would
+  let a slider go under it. Reopen one when a real slider needs it, never as a set.
 
 ## 2026-09-04 — workbench panel, deferred by Steven
 

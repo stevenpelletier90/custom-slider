@@ -80,7 +80,7 @@
 }
 .cs-arrow {
   position: absolute;
-  top: calc((100% - var(--cs-controls-space)) * var(--cs-arrow-at, 0.5));
+  inset-block-start: calc((100% - var(--cs-controls-space)) * var(--cs-arrow-at, 0.5));
   z-index: 1;
   display: grid;
   place-items: center;
