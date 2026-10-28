@@ -61,6 +61,11 @@ Kept on purpose:
 - [x] Residual grep: no `cs`-contract name left outside the kept list
 - [x] `npm run build`, `npm run size` (gate), `npm run validate`, `npm run test`, `npm run a11y`
 - [x] Browser check of the demo pages
-- [ ] Commit, push, CI green
-- [ ] Rename the GitHub repo, confirm Pages at the new URL, rename the local folder
+- [x] Commit, push, CI green (8cf45d7: validate, browsers, a11y gate, Pages build)
+- [x] Rename the GitHub repo and its homepage field; Pages answers at `/dealeron-slider/` with
+      `dist/` byte-identical, and `/custom-slider/` is a 404 as expected
+- [ ] Rename the local folder `~/Dev/custom-slider` → `~/Dev/dealeron-slider`
+- [ ] Steven: rename `custom-slider` → `dealeron-slider` in `~/.claude` (`settings.json` ×5,
+      `scripts/add-branch-rulesets.mjs`, `scripts/check-branch-protection.mjs`,
+      `hooks/tool-rules.mjs` comment) — auto mode refused Claude editing its own config
 - [ ] Steven: upload the four `dealeron-slider` files into `…/Apps/dealeronSlider/`
