@@ -73,9 +73,13 @@ jobs:
     needs: changes
     if: needs.changes.outputs.relevant == 'true'
     runs-on: ubuntu-26.04
-    # Installs browsers with apt like validate.yml's jobs, which hung 40+
-    # minutes there on 2026-10-27; a ceiling fails a hang instead of waiting
-    # out GitHub's six hours.
+    # Playwright's own image, the same tag as validate.yml's jobs (the why and
+    # the bump rule are there): no apt downloads, which hung 40+ minutes on
+    # 2026-10-27. The ceiling still fails any other hang instead of waiting out
+    # GitHub's six hours.
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-resolute
+      options: --user 1001
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
@@ -84,7 +88,6 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps chromium
       # The audit reads the demo over HTTP (it drives the real builder, iframe
       # and all), so the server has to be up. ONE step for both, for two reasons
       # a first attempt got wrong: a background process does not survive the end

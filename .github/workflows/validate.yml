@@ -9,6 +9,18 @@ on:
 jobs:
   validate:
     runs-on: ubuntu-26.04
+    # Playwright's own image: the browsers and every library they need are baked
+    # in, so no job downloads apt packages. On 2026-10-27 `playwright install
+    # --with-deps` pulled ~120 of them from GitHub's Ubuntu mirror at a crawl
+    # for an hour, and every run in that hour hung or took 5-9 minutes in that
+    # one step. resolute is Ubuntu 26.04, the runner's own release. --user 1001
+    # is the runner's uid, so the checkout stays writable (Playwright's CI
+    # docs). The tag is the @playwright/test version in package-lock.json: bump
+    # it here, in the job below and in a11y.yml with that package, or `npm test`
+    # fails with Playwright's "please update docker image" message.
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-resolute
+      options: --user 1001
     # 4-13 minutes when well. Without a ceiling a hung step waits out GitHub's
     # six hours: on 2026-10-27 three runs sat 40+ minutes inside `playwright
     # install --with-deps` with nothing failing. Thirty fails it loudly.
@@ -34,16 +46,19 @@ jobs:
         run: git diff --exit-code -- dist || { echo "::error::dist/ is stale — run npm run build and commit dist/ with the source change"; exit 1; }
       # The whole suite runs on the chromium project only (`npm test`); the
       # engine's contract file runs on the other two engines in the job below.
-      - run: npx playwright install --with-deps chromium
       # Starts its own server on 8137 (webServer in playwright.config.mjs).
       - run: npm test
   # tests/engine.test.mjs on Firefox and WebKit: the engine's own contract on
   # authored markup, where the Safari and Firefox decisions in the source
   # (scrollend fallback, role="list", scroll-behavior) actually run. Its own job
-  # so the browser installs happen beside the Chromium run, not after it.
+  # so it runs beside the Chromium run, not after it.
   browsers:
     runs-on: ubuntu-26.04
-    # About a minute when well; the hang above was this job's apt step.
+    # The same image as validate (see there); it carries Firefox and WebKit too.
+    container:
+      image: mcr.microsoft.com/playwright:v1.63.0-resolute
+      options: --user 1001
+    # About a minute when well; the 2026-10-27 hang was this job's apt step.
     timeout-minutes: 30
     steps:
       - uses: actions/checkout@v7
@@ -52,5 +67,4 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - run: npx playwright install --with-deps firefox webkit
       - run: npm run test:browsers
