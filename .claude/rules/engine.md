@@ -49,7 +49,8 @@ the arrows walk. Slides-per-view is CSS-only — no JS breakpoint option.
 ResizeObserver, so no slick-style `height:0` hack is needed (verified empirically).
 
 **Teardown.** Every listener registers with `{ signal: this._ac.signal }`; `destroy()` aborts,
-disconnects observers, restores `this._snapshot` and removes only `_addedRootAttrs`. Any new
+disconnects observers, restores `this._snapshot`, and resets every root attribute it set from
+`this._rootAttrs`, a Map of prior values (`null`: absent before init, so removed). Any new
 listener/observer/timer joins this scheme.
 
 ## Hard constraints

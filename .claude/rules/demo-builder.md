@@ -130,8 +130,7 @@ all content is visible without JS. The upgrade costs nothing to look at: measure
 from first paint, the bar draws at one height (CLS 0.0004), because the deferred script lands before
 the first render. `tests/builder.test.mjs` holds both halves — the fallback and the no-flash.
 
-**The tab row shrinks to fit before it scrolls** (2026-09-15, Steven: "decrease the size of the text
-or spacing to fit within the mobile viewport"). Everything across a tab is measured in its own em —
+**The tab row shrinks to fit before it scrolls.** Everything across a tab is measured in its own em —
 padding, gap, divider — so one multiplier, `--tab-fit`, takes the whole row in proportionally, and
 the script converges on it in a pass or two against `clientWidth - 2` (aiming at the box exactly
 leaves 2–3px behind, because `scrollWidth` rounds). **12px is the floor**: below it a label stops
@@ -177,8 +176,7 @@ rules give 750/970/1170 inside it. Fill drops the container (`html[data-fill] #w
 (1,1,1) over the bare id's (1,0,0)) as well as widening the frame; widening alone draws the same
 picture as Desktop.
 
-**The workbench preview scales to fit; it never clips** (Steven, 2026-09-04: "any smaller views will
-just properly preview it in the demo itself for any of the demo sizes"). The iframe keeps its true
+**The workbench preview scales to fit; it never clips.** The iframe keeps its true
 CSS width so media queries fire honestly, and `transform: scale(k)` fits it to the stage with a
 shown-at-nn% readout. Never clip, scroll or cap the frame. Below 50% (`FLOOR = 0.5` in
 `workbench.js`) `shownTier()` previews the next tier down.

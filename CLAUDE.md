@@ -47,24 +47,22 @@ npm run format         # prettier --write .
 npm run serve          # esbuild static server on http://127.0.0.1:8137 (for Lighthouse/demo)
 ```
 
-Run `validate` and `test` before committing, and the README "Verification checklist" browser sweep
-before shipping; a size check alone is not verification.
-
-Files Claude edits are auto-fixed by the user-level PostToolUse hook
-(`~/.claude/hooks/format-on-edit.mjs`, shared by every repo), which runs whichever of stylelint,
-eslint, markdownlint-cli2 and prettier this repo has installed. This repo defines no hook of its
-own. It never blocks; `npm run validate` is the real gate.
+Run `validate` and `test` before committing; the browser sweep is the README "Verification
+checklist".
 
 `.github/workflows/validate.yml` runs `validate`, `size` and `test` on every push and pull request
 (Chromium), and a second job runs `test:browsers` — `tests/engine.test.mjs` alone on Firefox and
-WebKit, the engine's contract where its Safari and Firefox decisions actually execute. After a push,
-watch both until green. `.github/workflows/a11y.yml` is the third: `npm run a11y` (axe over every
-pattern, the brands page, the two catalogue pages at 390, both themes, every colour picker, both
-dialogs) on any change to `src/`, `dist/`, `demo/` or the build scripts. It became a gate on
-2026-09-15 — as "a deliberate run" it drifted for a week exiting non-zero on a deleted selector, and
-a nightly job would report a contrast regression only after it had merged and deployed. It stays out
-of `npm run validate`, which is the fast local command: this one needs a browser and a server. Run
-it locally after any change to the rail or the demo pages rather than waiting for CI.
+WebKit, the engine's contract where its Safari and Firefox decisions actually execute.
+`.github/workflows/a11y.yml` is the third: `npm run a11y` (axe over every pattern, the brands page,
+the two catalogue pages at 390, both themes, every colour picker, both dialogs). It runs on every
+push and pull request with no path filter, decides relevance itself (`src/`, `dist/`, `demo/`, the
+root `index.html`, the build scripts, `scripts/a11y.mjs`, `package.json`, `package-lock.json` and
+the workflow file) and always ends in the `a11y gate` job; `.claude/rules/ci.md` has why. It became
+a gate on 2026-09-15 — as "a deliberate run" it drifted for a week exiting non-zero on a deleted
+selector, and a nightly job would report a contrast regression only after it had merged and
+deployed. It stays out of `npm run validate`, which is the fast local command: this one needs a
+browser and a server. Run it locally after any change to the rail or the demo pages rather than
+waiting for CI.
 
 Path-specific rules live in `.claude/rules/` and load when Claude reads or edits a matching file.
 
@@ -102,9 +100,7 @@ files. The repo is public by Steven's choice, so DealerOn colleagues can see it.
   the root) or read the instance at `element._dos`. The two video patterns carry their own
   `<dialog>` and handler inside the emitted snippet (`patterns.js`) — the reference example: wiring
   ships with the copied code, not the demo.
-- A request naming a demo site means one slider on it; confirm which before touching code ("the
-  Chevrolet demo" meant the tabbed model bar, and a hero built instead was reverted, 2026-09-14).
-  "Measure" means computed styles at rest, on hover, mid-transition and after a click, plus what
-  surrounds the widget (heading, button, gaps). Steven judges by watching the live page. Keep the
-  engine's a11y choices (solid dots, dots on phones, bare chevron, native scroll) unless he says
-  otherwise.
+- A request naming a demo site means one slider on it; confirm which before touching code. "Measure"
+  means computed styles at rest, on hover, mid-transition and after a click, plus what surrounds the
+  widget (heading, button, gaps). Keep the engine's a11y choices (solid dots, dots on phones, bare
+  chevron, native scroll) unless Steven says otherwise.
