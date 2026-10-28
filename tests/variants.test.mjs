@@ -49,7 +49,7 @@ const tabStyles = (page) =>
       rule: w.getComputedStyle(list).borderBottomColor,
       divider: w.getComputedStyle(other, '::before').content,
       dividerColour: w.getComputedStyle(other, '::before').color,
-      gap: w.getComputedStyle(d.querySelector('.cs')).getPropertyValue('--cs-gap').trim(),
+      gap: w.getComputedStyle(d.querySelector('.dos')).getPropertyValue('--dos-gap').trim(),
     };
   });
 
@@ -290,7 +290,7 @@ test.describe('the patterns page shows the variants', () => {
     const errs = [];
     p.on('pageerror', (e) => errs.push(e.message));
     await p.goto(`${ORIGIN}/demo/patterns.html`, { waitUntil: 'load' });
-    await p.waitForSelector('#p-tabs .cs-slide');
+    await p.waitForSelector('#p-tabs .dos-slide');
     const found = await p.evaluate(() => ({
       nested: document.querySelectorAll('.gx-card--variant, #p-tabs-chevrolet').length,
       cards: document.querySelectorAll('.gx-card').length,
@@ -316,7 +316,7 @@ test.describe('the patterns page shows the variants', () => {
     const p = await ctx.newPage();
     await p.goto(`${ORIGIN}/demo/index.html#tabs?brand=chevrolet`, { waitUntil: 'load' });
     await p.waitForSelector('#wb-stage');
-    await p.frameLocator('#wb-stage').locator('.cs-slide').first().waitFor({ state: 'attached', timeout: 15000 });
+    await p.frameLocator('#wb-stage').locator('.dos-slide').first().waitFor({ state: 'attached', timeout: 15000 });
     const brand = await currentBrand(p);
     assert.equal(brand, 'chevrolet');
     assert.equal((await tabStyles(p)).line, 'rgb(0, 109, 199)');
@@ -356,7 +356,7 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
       const pane = d.querySelector('.cargo-pane:not([hidden])');
       const img = pane.querySelector('.cargo-card img');
       const name = pane.querySelector('.cargo-name');
-      const arrow = pane.querySelector('.cs-arrow--prev');
+      const arrow = pane.querySelector('.dos-arrow--prev');
       return {
         gap: +(b.left - a.right).toFixed(1),
         rowH: +a.height.toFixed(1),
@@ -441,9 +441,9 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
       '--tab-pad: 0.75em 1.1em 0.86em;',
       '--tab-divider-size: 0.78;',
       '--tab-fade: 0.15s;',
-      '--cs-arrow-fg-hover: var(--cta-background-color);',
+      '--dos-arrow-fg-hover: var(--cta-background-color);',
       '--tab-line: var(--cta-background-color);',
-      '--cs-arrow-bg-hover: transparent;',
+      '--dos-arrow-bg-hover: transparent;',
       '--name-gap: 0.14em;',
       '--name-leading: 1.1;',
       '--img-hover-speed: 0.1s;',
@@ -540,7 +540,7 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     for (let i = 0; i < panes; i++) {
       await frame.locator('.cargo-tabs [role="tab"]').nth(i).click();
       await page.waitForTimeout(250);
-      const candidate = frame.locator('.cargo-pane:not([hidden]) .cs-arrow--next').first();
+      const candidate = frame.locator('.cargo-pane:not([hidden]) .dos-arrow--next').first();
       if (await candidate.isVisible()) {
         arrow = candidate;
         break;
@@ -550,7 +550,7 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     await arrow.hover();
     await page.waitForTimeout(400);
     const r = await page.evaluate(() => {
-      const a = globalThis.CARGO.sdoc().querySelector('.cargo-pane:not([hidden]) .cs-arrow--next');
+      const a = globalThis.CARGO.sdoc().querySelector('.cargo-pane:not([hidden]) .dos-arrow--next');
       const cs = a.ownerDocument.defaultView.getComputedStyle(a);
       return { fg: cs.color, bg: cs.backgroundColor };
     });
@@ -586,7 +586,7 @@ test.describe('the tabbed bar moves and spaces like the live one', () => {
     const p2 = await ctx.newPage();
     await p2.goto(`${ORIGIN}/demo/index.html#tabs?brand=chevrolet`, { waitUntil: 'load' });
     await p2.waitForSelector('#wb-stage');
-    await p2.frameLocator('#wb-stage').locator('.cs-slide').first().waitFor({ state: 'attached', timeout: 15000 });
+    await p2.frameLocator('#wb-stage').locator('.dos-slide').first().waitFor({ state: 'attached', timeout: 15000 });
     await p2.waitForTimeout(500);
     await p2.frameLocator('#wb-stage').locator('.cargo-tabs [role="tab"]').nth(1).click();
     const rm = await p2.evaluate(() => {
@@ -718,8 +718,8 @@ test.describe('Ford lands every measured number on the same pattern', () => {
         titleFont: cs(title, 'font-family'),
         nameGap: +(name.getBoundingClientRect().top - img.getBoundingClientRect().bottom).toFixed(1),
         nameWeight: cs(name, 'font-weight'),
-        channel: cs(pane.querySelector('.cs'), 'padding-left'),
-        arrowFg: cs(pane.querySelector('.cs-arrow--prev'), 'color'),
+        channel: cs(pane.querySelector('.dos'), 'padding-left'),
+        arrowFg: cs(pane.querySelector('.dos-arrow--prev'), 'color'),
         moreGap: +(d.querySelector('.cargo-more').getBoundingClientRect().top - pane.getBoundingClientRect().bottom).toFixed(1),
         btnText: d.querySelector('.cargo-more .btn').textContent.trim(),
         btnRadius: cs(d.querySelector('.cargo-more .btn'), 'border-top-left-radius'),
@@ -1050,7 +1050,7 @@ test.describe('Cadillac lands every measured number: a band, a heading class, th
       '--tab-row-gap: 1.43em;',
       '--title-gap: 0.41em;',
       '--name-case: uppercase;',
-      '--cs-arrow-fg: rgba(255, 255, 255, 0.75);',
+      '--dos-arrow-fg: rgba(255, 255, 255, 0.75);',
     ]) {
       assert.ok(css.includes(line), `${line} never reached the copied CSS`);
     }

@@ -26,19 +26,19 @@ test.beforeAll(async ({ browser }) => {
 // Renders the snippet with one recipe appended, exactly as a designer would
 // paste it: their own CSS after the engine's, in Style Only.
 const withRecipe = async (css) => {
-  await host.setContent(hostHtml({ ...engine, css: `${snippet.css}\n${css.replace(/my-slider/g, snippet.css.match(/^\.([\w-]+)\.cs/m)?.[1] ?? 'my-slider')}`, html: snippet.html, js: snippet.js }), {
+  await host.setContent(hostHtml({ ...engine, css: `${snippet.css}\n${css.replace(/my-slider/g, snippet.css.match(/^\.([\w-]+)\.dos/m)?.[1] ?? 'my-slider')}`, html: snippet.html, js: snippet.js }), {
     waitUntil: 'load',
   });
   await host.waitForTimeout(250);
 };
 
-const arrow = (sel = '.cs-arrow--prev') =>
+const arrow = (sel = '.dos-arrow--prev') =>
   host.evaluate((s) => {
     const a = document.querySelector(s);
     if (!a) return null;
     const r = a.getBoundingClientRect();
     const cs = getComputedStyle(a);
-    const track = document.querySelector('.cs-track').getBoundingClientRect();
+    const track = document.querySelector('.dos-track').getBoundingClientRect();
     return {
       w: +r.width.toFixed(1),
       h: +r.height.toFixed(1),
@@ -91,8 +91,8 @@ test.describe('every arrow recipe the Reference publishes still works', () => {
     const a = await arrow();
     assert.ok(Math.abs(a.h - a.trackH) <= 1, `the arrow is ${a.h}px against a ${a.trackH}px row of cards`);
     const overlapsDots = await host.evaluate(() => {
-      const d = /** @type {HTMLElement | null} */ (document.querySelector('.cs-dots'));
-      const a2 = document.querySelector('.cs-arrow--prev');
+      const d = /** @type {HTMLElement | null} */ (document.querySelector('.dos-dots'));
+      const a2 = document.querySelector('.dos-arrow--prev');
       if (!d || !a2 || d.hidden) return false;
       const dr = d.getBoundingClientRect();
       const ar = a2.getBoundingClientRect();
@@ -114,19 +114,19 @@ test.describe('every arrow recipe the Reference publishes still works', () => {
     const a = await arrow();
     assert.equal(a.svg, 'none', 'the built-in chevron is still drawn');
     assert.match(a.glyph, /‹/, `the replacement glyph is not there (${a.glyph})`);
-    const next = await arrow('.cs-arrow--next');
+    const next = await arrow('.dos-arrow--next');
     assert.match(next.glyph, /›/, `the next arrow got the wrong glyph (${next.glyph})`);
   });
 });
 
 // F098: a visible "3 / 12" counter is the hidden status region unhidden, which
 // is a recipe rather than a feature - but only if all five declarations that
-// .cs-sr-only sets are actually undone. Leave clip-path in and the text takes
+// .dos-sr-only sets are actually undone. Leave clip-path in and the text takes
 // up space while being clipped to nothing, which reads as the recipe failing.
 test.describe('the visible counter recipe the Reference publishes', () => {
   const counter = () =>
     host.evaluate(() => {
-      const s = document.querySelector('.cs-status');
+      const s = document.querySelector('.dos-status');
       if (!s) return null;
       const r = s.getBoundingClientRect();
       const cs = getComputedStyle(s);
@@ -150,8 +150,8 @@ test.describe('the visible counter recipe the Reference publishes', () => {
   // are checked together on the same pasted slider.
   test('the attribute re-words it, and it keeps counting after a move', async () => {
     const css = await page.evaluate(() => globalThis.CARGO.guide.COUNTER_CSS);
-    const named = snippet.css.match(/^\.([\w-]+)\.cs/m)?.[1] ?? 'my-slider';
-    const html = snippet.html.replace('<div', '<div data-cs-label-status-single="{n} / {total}" data-cs-label-status-multi="{from}\u2013{to} / {total}"');
+    const named = snippet.css.match(/^\.([\w-]+)\.dos/m)?.[1] ?? 'my-slider';
+    const html = snippet.html.replace('<div', '<div data-dos-label-status-single="{n} / {total}" data-dos-label-status-multi="{from}\u2013{to} / {total}"');
     await host.setContent(hostHtml({ ...engine, css: `${snippet.css}\n${css.replace(/my-slider/g, named)}`, html, js: snippet.js }), { waitUntil: 'load' });
     await host.waitForTimeout(250);
 
@@ -159,7 +159,7 @@ test.describe('the visible counter recipe the Reference publishes', () => {
     assert.doesNotMatch(first, /Slide/i, `the wording attribute was ignored (${first})`);
     assert.match(first, /^\s*1( ?[\u2013-] ?\d)? \/ \d+\s*$/, `unexpected counter text (${first})`);
 
-    await host.click('.cs-arrow--next');
+    await host.click('.dos-arrow--next');
     await host.waitForTimeout(700);
     const second = (await counter()).text;
     assert.notEqual(second, first, 'the counter did not move with the slider');
@@ -185,8 +185,8 @@ test.describe('where the arrows sit', () => {
   const centreOffset = (page, sel) =>
     page.evaluate((s) => {
       const root = document.querySelector(s);
-      const slide = root.querySelector('.cs-slide');
-      const arrow = root.querySelector('.cs-arrow--prev');
+      const slide = root.querySelector('.dos-slide');
+      const arrow = root.querySelector('.dos-arrow--prev');
       const a = arrow.getBoundingClientRect();
       const b = slide.getBoundingClientRect();
       if (!a.height) return null;
@@ -194,15 +194,15 @@ test.describe('where the arrows sit', () => {
     }, sel);
 
   const slider = (style = '') =>
-    `<div class="cs" data-cs aria-label="T" style="--cs-per-view:1${style}"><ul class="cs-track">` +
-    [1, 2, 3].map(() => '<li class="cs-slide"><div style="height:300px"></div></li>').join('') +
+    `<div class="dos" data-dos aria-label="T" style="--dos-per-view:1${style}"><ul class="dos-track">` +
+    [1, 2, 3].map(() => '<li class="dos-slide"><div style="height:300px"></div></li>').join('') +
     '</ul></div>';
 
   test('a slider that sets nothing is centred on the card', async () => {
     const engine = await engineFiles();
     await host.setContent(hostHtml({ ...engine, html: slider() }), { waitUntil: 'load' });
     await host.waitForTimeout(200);
-    const off = await centreOffset(host, '#box .cs');
+    const off = await centreOffset(host, '#box .dos');
     assert.ok(off !== null, 'no arrow to measure');
     assert.ok(Math.abs(off) <= 1, `the default moved: ${off}px off the card's centre`);
   });
@@ -210,12 +210,12 @@ test.describe('where the arrows sit', () => {
   // The whole point of the knob: a slider whose cards are a picture over text
   // can lift the arrows to the picture without the engine knowing what a
   // picture is.
-  test('--cs-arrow-at moves them, and 0.5 is exactly the old behaviour', async () => {
+  test('--dos-arrow-at moves them, and 0.5 is exactly the old behaviour', async () => {
     const engine = await engineFiles();
     const at = async (v) => {
-      await host.setContent(hostHtml({ ...engine, html: slider(v == null ? '' : `;--cs-arrow-at:${v}`) }), { waitUntil: 'load' });
+      await host.setContent(hostHtml({ ...engine, html: slider(v == null ? '' : `;--dos-arrow-at:${v}`) }), { waitUntil: 'load' });
       await host.waitForTimeout(200);
-      return centreOffset(host, '#box .cs');
+      return centreOffset(host, '#box .dos');
     };
     const none = await at(null);
     const half = await at('0.5');
@@ -230,8 +230,8 @@ test.describe('where the arrows sit', () => {
     const set = await page.evaluate(() => {
       const { LOOKS, PATTERNS } = globalThis.CARGO;
       const hits = [];
-      for (const [id, l] of Object.entries(LOOKS)) if (l.settings?.['--cs-arrow-at'] || /--cs-arrow-at/.test(l.css ?? '')) hits.push(`look ${id}`);
-      for (const [id, p] of Object.entries(PATTERNS)) if (p.props?.['--cs-arrow-at'] || /--cs-arrow-at/.test(p.css ?? '')) hits.push(`pattern ${id}`);
+      for (const [id, l] of Object.entries(LOOKS)) if (l.settings?.['--dos-arrow-at'] || /--dos-arrow-at/.test(l.css ?? '')) hits.push(`look ${id}`);
+      for (const [id, p] of Object.entries(PATTERNS)) if (p.props?.['--dos-arrow-at'] || /--dos-arrow-at/.test(p.css ?? '')) hits.push(`pattern ${id}`);
       return hits;
     });
     assert.deepEqual(set, [], 'a card style still sets the arrow fraction');

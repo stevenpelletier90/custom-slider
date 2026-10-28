@@ -132,13 +132,13 @@
   styleEl.textContent = css.join('\n\n');
   if (themeEl) themeEl.textContent = theme.join('\n\n');
 
-  for (const root of /** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.bb-stage .cs'))) {
-    if (!root.dataset.csInit) new globalThis.CustomSlider(root);
+  for (const root of /** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.bb-stage .dos'))) {
+    if (!root.dataset.dosInit) new globalThis.DealerOnSlider(root);
   }
   // The pattern scripts ship in the engine file since 2026-09-14 and ran
   // once when it loaded, before these stages existed; one more pass wires
   // what was just built. The same code a dealer page runs, not a copy.
-  globalThis.CustomSlider?.wirePatterns?.();
+  globalThis.DealerOnSlider?.wirePatterns?.();
 
   // A tile's href — and a shared deep link — carries the bare brand id
   // (#toyota), never the section's own id="b-toyota"; the "b-" is purely to

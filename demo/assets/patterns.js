@@ -315,9 +315,9 @@
   // No zero length in a custom property, ever: write 0.1px. The platform's
   // styleCode minifier strips the unit off any zero, and a unitless 0 makes
   // every calc() that reads the variable invalid - the slide basis
-  // `calc((100% - (per-view - 1) * var(--cs-gap)) / per-view)` falls to auto
+  // `calc((100% - (per-view - 1) * var(--dos-gap)) / per-view)` falls to auto
   // and the cards collapse to their content width, in Chromium and WebKit
-  // alike. Same reason `--cs-controls-space` is 0.1px (bfe446c).
+  // alike. Same reason `--dos-controls-space` is 0.1px (bfe446c).
   // scripts/lint-generated-css.mjs fails the build on a new one.
   // LOGOS and PLACES live up here, above PATTERNS, because the Logo strip and
   // Locations rail entries consume them. Declared after it they are in the
@@ -389,8 +389,8 @@
       blurb: 'A strip of vehicle cutouts, arrows only, one card per step. The most requested thing on the platform.',
       look: 'tile',
       models: cutouts,
-      data: { 'data-cs-step': 'slide' },
-      props: { '--cs-gap': '0.5em', '--cs-controls-space': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      data: { 'data-dos-step': 'slide' },
+      props: { '--dos-gap': '0.5em', '--dos-controls-space': '0.1px', '--dos-arrow-bg': 'transparent', '--dos-arrow-fg': '#262626' },
       hideDots: true,
     },
     // EVERY CARD IS A RAIL ENTRY, and there is no card-style picker anywhere
@@ -413,8 +413,8 @@
       blurb: "The model's wordmark set above the vehicle — the one slot the cutout tile has no room for. A strip like the model bar, one card per step.",
       look: 'wordmark',
       models: cutouts,
-      data: { 'data-cs-step': 'slide' },
-      props: { '--cs-gap': '0.5em', '--cs-controls-space': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      data: { 'data-dos-step': 'slide' },
+      props: { '--dos-gap': '0.5em', '--dos-controls-space': '0.1px', '--dos-arrow-bg': 'transparent', '--dos-arrow-fg': '#262626' },
       hideDots: true,
     },
     cards: {
@@ -423,7 +423,7 @@
       look: 'vcard',
       models: VEHICLES,
       data: {},
-      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      props: { '--dos-gap': '1em', '--dos-arrow-bg': 'transparent', '--dos-arrow-fg': '#262626' },
     },
     // The roster is the look's own `demoModels`, not the model bar's cutouts.
     // A 3:5 card drawn on landscape cutouts is a car floating in dead space,
@@ -436,7 +436,7 @@
       look: 'portrait',
       models: MODELS,
       data: {},
-      props: { '--cs-gap': '1em' },
+      props: { '--dos-gap': '1em' },
     },
     split: {
       label: 'Split photo cards',
@@ -444,7 +444,7 @@
       look: 'split',
       models: SERVICES,
       data: {},
-      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      props: { '--dos-gap': '1em', '--dos-arrow-bg': 'transparent', '--dos-arrow-fg': '#262626' },
     },
     logostrip: {
       label: 'Logo strip',
@@ -452,7 +452,7 @@
       look: 'logo',
       models: LOGOS,
       data: {},
-      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      props: { '--dos-gap': '1em', '--dos-arrow-bg': 'transparent', '--dos-arrow-fg': '#262626' },
     },
     locations: {
       label: 'Locations',
@@ -460,14 +460,14 @@
       look: 'location',
       models: PLACES,
       data: {},
-      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      props: { '--dos-gap': '1em', '--dos-arrow-bg': 'transparent', '--dos-arrow-fg': '#262626' },
     },
     hero: {
       gutter: false,
       label: 'Hero banner',
       blurb: 'Full width, one at a time, crossfading on a timer. Autoplay adds the pause button and never starts under reduced motion.',
-      data: { 'data-cs-fade': '', 'data-cs-autoplay': '5000' },
-      props: { '--cs-gap': '0.1px', '--cs-controls-space': '2em', '--cs-dot-current': '#16324f' },
+      data: { 'data-dos-fade': '', 'data-dos-autoplay': '5000' },
+      props: { '--dos-gap': '0.1px', '--dos-controls-space': '2em', '--dos-dot-current': '#16324f' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       models: captioned(PHOTOS.slice(0, 3)).map((m) => ({ ...m, href: '', phone: '' })),
@@ -481,8 +481,8 @@
       label: 'Photo gallery',
       blurb:
         'For walking a shopper through one vehicle’s photos — the pictures on a VDP, or a gallery on a custom page. The thumbnails underneath are generated from the slides and behave like real tabs, with arrow keys.',
-      data: { 'data-cs-gallery': '' },
-      props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      data: { 'data-dos-gallery': '' },
+      props: { '--dos-gap': '0.1px', '--dos-arrow-bg': 'transparent', '--dos-arrow-fg': '#262626' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
@@ -500,13 +500,13 @@
     peek: {
       gutter: false,
       label: 'Peek at the next slide',
-      blurb: 'A sliver of the neighbours stays visible so it always reads as "there is more this way". One property — --cs-peek. Zero turns it off.',
+      blurb: 'A sliver of the neighbours stays visible so it always reads as "there is more this way". One property — --dos-peek. Zero turns it off.',
       data: {},
-      props: { '--cs-gap': '1em', '--cs-peek': '3em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
+      props: { '--dos-gap': '1em', '--dos-peek': '3em', '--dos-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--dos-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 2, 1200: 2 },
       minCard: 240,
       models: captioned(PHOTOS),
-      // The phone override this used to carry - `%root% { --cs-peek: 1.5em }`
+      // The phone override this used to carry - `%root% { --dos-peek: 1.5em }`
       // under 768 - set the value somewhere the Peek knob could not see it, so
       // turning Peek off left 1.5em on phones while the field read 0px. Same
       // shape as the controls-space bug on Tall photos. One owner instead: the
@@ -522,7 +522,7 @@
       blurb:
         'For customer video testimonials, or a walkaround of a vehicle. Each poster opens the video in a dialog rather than playing inline, so nothing starts moving while someone is reading the page.',
       data: { 'data-video-dialog': '' },
-      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
+      props: { '--dos-gap': '1em', '--dos-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--dos-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 2, 1200: 3 },
       minCard: 260,
       videoDialog: true,
@@ -538,7 +538,7 @@
       // whatever band it is dropped into, so the card has to take the
       // surrounding text colour the way every non-button card already does.
       css: `.cargo-video { position: relative; display: block; inline-size: 100%; padding: 0; overflow: hidden; font: inherit; color: inherit; text-align: start; cursor: pointer; background: none; border: 0; border-radius: 8px; }
-.cargo-video:focus-visible { outline: 3px solid var(--cs-focus); outline-offset: 2px; }
+.cargo-video:focus-visible { outline: 3px solid var(--dos-focus); outline-offset: 2px; }
 .cargo-video img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; }
 .cargo-play { position: absolute; inset-block-start: 42%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 56px; block-size: 56px; color: #16324f; background: rgba(255, 255, 255, 0.92); border-radius: 50%; transform: translate(-50%, -50%); }
 .cargo-name { display: block; margin: 0.6em 0 0; font-size: 1em; font-weight: 700; line-height: 1.3; }
@@ -564,12 +564,12 @@ ${VIDEO_DIALOG_CSS}`,
       // bar and the two-row grid, and adding the key to the roster itself would
       // offer a field those two draw nothing from.
       models: cutouts.map((m) => ({ ...m, tab: '' })),
-      data: { 'data-cs-step': 'slide' },
+      data: { 'data-dos-step': 'slide' },
       props: {
-        '--cs-gap': '0.5em',
-        '--cs-controls-space': '0.1px',
-        '--cs-arrow-bg': 'transparent',
-        '--cs-arrow-fg': '#262626',
+        '--dos-gap': '0.5em',
+        '--dos-controls-space': '0.1px',
+        '--dos-arrow-bg': 'transparent',
+        '--dos-arrow-fg': '#262626',
         // The tab row's own values. They were literals in the css below until
         // 2026-09-09, which meant no control showed them - the F039 shape - and
         // a brand variant had nothing to set. Defaults are what the literals
@@ -976,31 +976,31 @@ ${VIDEO_DIALOG_CSS}`,
       label: 'Model cards — tall photos',
       blurb:
         'Portrait photography instead of cutouts, and the dot row restyled into a solid bar with a marker that slides along it. The marker is page script watching the engine’s own state — the segments underneath are still real "go to page" buttons.',
-      data: { 'data-cs-rewind': 'false', 'data-bar': '' },
-      // --cs-controls-space belongs HERE and not in the pattern's css, which is
+      data: { 'data-dos-rewind': 'false', 'data-bar': '' },
+      // --dos-controls-space belongs HERE and not in the pattern's css, which is
       // where it used to sit: the "Room for the dots" knob reads props, so it
       // showed the engine's 2.5em while the strip resolved this 3em, and the
       // copied CSS shipped both values in sequence with no edit at all.
-      props: { '--cs-gap': '1em', '--cs-controls-space': '3em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
+      props: { '--dos-gap': '1em', '--dos-controls-space': '3em', '--dos-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--dos-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 4, 1200: 4 },
       minCard: 190,
       models: MODELS,
-      css: `%root% { --cs-dot-fg: #949494; --cs-dot-current: #949494; }
-@media (min-width: 992px) { %root% { --cs-arrow-size: 56px; } }
-@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
-@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
+      css: `%root% { --dos-dot-fg: #949494; --dos-dot-current: #949494; }
+@media (min-width: 992px) { %root% { --dos-arrow-size: 56px; } }
+@media (max-width: 767.98px) { %root% { --dos-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --dos-arrow-size: 32px; } }
 
 /* The dots become one solid bar. Every segment is still a real, labelled
    button; the marker is a ::before whose translate follows --bar-index and
    --bar-count, set by the script below. #949494 is 3.03:1 on white, because
    the segments ARE the control and their extent has to meet WCAG 1.4.11. */
-%root% .cs-dots { inset-inline: 25%; gap: 0; }
-%root% .cs-dots::before { position: absolute; inset-block-start: calc(50% - 2px); inset-inline-start: 0; inline-size: calc(100% / var(--bar-count, 1)); block-size: 4px; pointer-events: none; content: ""; background: #262626; border-radius: 2px; translate: calc(var(--bar-index, 0) * 100%); }
-@media (prefers-reduced-motion: no-preference) { %root% .cs-dots::before { transition: translate 0.35s ease; } }
-%root% .cs-dot { flex: 1 1 auto; }
-%root% .cs-dot::after { inline-size: 100%; block-size: 4px; border-radius: 0; }
-%root% .cs-dot:first-child::after { border-start-start-radius: 2px; border-end-start-radius: 2px; }
-%root% .cs-dot:last-child::after { border-start-end-radius: 2px; border-end-end-radius: 2px; }
+%root% .dos-dots { inset-inline: 25%; gap: 0; }
+%root% .dos-dots::before { position: absolute; inset-block-start: calc(50% - 2px); inset-inline-start: 0; inline-size: calc(100% / var(--bar-count, 1)); block-size: 4px; pointer-events: none; content: ""; background: #262626; border-radius: 2px; translate: calc(var(--bar-index, 0) * 100%); }
+@media (prefers-reduced-motion: no-preference) { %root% .dos-dots::before { transition: translate 0.35s ease; } }
+%root% .dos-dot { flex: 1 1 auto; }
+%root% .dos-dot::after { inline-size: 100%; block-size: 4px; border-radius: 0; }
+%root% .dos-dot:first-child::after { border-start-start-radius: 2px; border-end-start-radius: 2px; }
+%root% .dos-dot:last-child::after { border-start-end-radius: 2px; border-end-end-radius: 2px; }
 
 .cargo-model { position: relative; display: block; overflow: hidden; color: #fff; text-decoration: none; border-radius: 10px; }
 .cargo-model img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 3 / 5; object-fit: cover; transition: transform 0.35s ease; }
@@ -1016,11 +1016,11 @@ ${VIDEO_DIALOG_CSS}`,
       // engine knows the bar exists.
       script: `document.querySelectorAll('[data-bar]').forEach((root) => {
   const sync = () => {
-    const bar = root.querySelector('.cs-dots');
+    const bar = root.querySelector('.dos-dots');
     if (!bar) return;
     const dots = [...bar.children];
     bar.style.setProperty('--bar-count', dots.length || 1);
-    bar.style.setProperty('--bar-index', Math.max(0, dots.findIndex((d) => d.classList.contains('cs-dot--current'))));
+    bar.style.setProperty('--bar-index', Math.max(0, dots.findIndex((d) => d.classList.contains('dos-dot--current'))));
   };
   // Watch the carousel, not the dot row: the dots are built by the engine and
   // may not exist yet, whatever order the two scripts loaded in. The same
@@ -1035,12 +1035,12 @@ ${VIDEO_DIALOG_CSS}`,
       gutter: true,
       label: 'Mixed image sizes',
       blurb: 'Six source files at six different aspect ratios, all cropped to one shape by the CSS. Dealers upload whatever they have — aspect-ratio plus object-fit is what keeps the row even.',
-      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
+      props: { '--dos-gap': '1em', '--dos-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--dos-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 230,
       models: MIXED,
-      css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
-@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
+      css: `@media (max-width: 767.98px) { %root% { --dos-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --dos-arrow-size: 32px; } }
 .cargo-mix { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-mix img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 4 / 3; object-fit: cover; }
 .cargo-mix .cargo-name { display: block; margin: 0.8em 0.9em 0.2em; font-size: 0.95em; line-height: 1.3; }
@@ -1056,13 +1056,13 @@ ${VIDEO_DIALOG_CSS}`,
       gutter: true,
       label: 'Service cards',
       blurb: 'Photo, heading, a paragraph and a read-more affordance. One card per arrow click, because the copy is long enough that a full-page jump loses your place.',
-      data: { 'data-cs-step': 'slide' },
-      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
+      data: { 'data-dos-step': 'slide' },
+      props: { '--dos-gap': '1em', '--dos-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--dos-arrow-fg': '#fff' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 250,
       models: SERVICES,
-      css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
-@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
+      css: `@media (max-width: 767.98px) { %root% { --dos-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --dos-arrow-size: 32px; } }
 .cargo-svc { display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-media { display: block; overflow: hidden; }
 .cargo-svc img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 9; object-fit: cover; transition: transform 0.35s ease; }
@@ -1085,12 +1085,12 @@ ${VIDEO_DIALOG_CSS}`,
       gutter: true,
       label: 'Customer reviews',
       blurb: 'For customer reviews on a homepage or an About page. Star ratings are announced as “Rated 5 out of 5” rather than read out one star at a time.',
-      props: { '--cs-gap': '1em', '--cs-arrow-bg': 'transparent', '--cs-arrow-fg': '#262626' },
+      props: { '--dos-gap': '1em', '--dos-arrow-bg': 'transparent', '--dos-arrow-fg': '#262626' },
       perView: { base: 1, 768: 2, 992: 3, 1200: 3 },
       minCard: 250,
       models: REVIEWS,
-      css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
-@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
+      css: `@media (max-width: 767.98px) { %root% { --dos-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --dos-arrow-size: 32px; } }
 .cargo-review { block-size: 100%; padding: 1.25em; margin: 0; line-height: 1.5; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-review figcaption { display: flex; gap: 0.7em; align-items: center; line-height: 1.35; }
 .cargo-avatar { display: grid; flex: none; place-items: center; inline-size: 40px; block-size: 40px; font-weight: 700; line-height: 1; color: #fff; background: var(--avatar-bg); border-radius: 50%; }
@@ -1122,8 +1122,8 @@ ${VIDEO_DIALOG_CSS}`,
       label: 'Filterable gallery',
       blurb:
         'A gallery whose slides carry a category. Filtering rebuilds the slider over the matching slides rather than hiding the rest — hiding leaves them in the thumb strip and in the announced "3 of 6".',
-      data: { 'data-cs-gallery': '' },
-      props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
+      data: { 'data-dos-gallery': '' },
+      props: { '--dos-gap': '0.1px', '--dos-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--dos-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
@@ -1146,19 +1146,19 @@ ${PHOTO_CSS}
 .cargo-photo img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }`,
       slides: (models) => models.map((m) => photo(m, ` data-tag="${m.tag}"`)),
       script: `document.querySelectorAll('[data-filter-gallery]').forEach((wrap) => {
-  const root = wrap.querySelector('.cs');
-  const all = [...root.querySelectorAll('.cs-slide')].map((s) => s.cloneNode(true));
+  const root = wrap.querySelector('.dos');
+  const all = [...root.querySelectorAll('.dos-slide')].map((s) => s.cloneNode(true));
   wrap.querySelectorAll('[data-filter]').forEach((btn) => {
     btn.addEventListener('click', () => {
       const tag = btn.dataset.filter;
       wrap.querySelectorAll('[data-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-      if (root._cs) root._cs.destroy();
+      if (root._dos) root._dos.destroy();
       // Re-query AFTER destroy(). destroy() puts the root's original markup
       // back, so any element captured before it is now detached and writing
       // to it changes nothing you can see.
-      const track = root.querySelector('.cs-track');
+      const track = root.querySelector('.dos-track');
       track.replaceChildren(...all.filter((s) => !tag || s.querySelector('[data-tag]').dataset.tag === tag).map((s) => s.cloneNode(true)));
-      new CustomSlider(root);
+      new DealerOnSlider(root);
     });
   });
 });`,
@@ -1168,8 +1168,8 @@ ${PHOTO_CSS}
       gutter: false,
       label: 'Gallery with photos and video',
       blurb: 'A gallery where some slides are video posters. The poster is a real button that opens a dialog — video never plays inline, and the thumb strip treats it like any other slide.',
-      data: { 'data-cs-gallery': '', 'data-video-dialog': '' },
-      props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
+      data: { 'data-dos-gallery': '', 'data-video-dialog': '' },
+      props: { '--dos-gap': '0.1px', '--dos-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--dos-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       track: 'div',
@@ -1178,7 +1178,7 @@ ${PHOTO_CSS}
       css: `.cargo-photo { display: block; }
 .cargo-photo img, .cargo-mv img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: 16 / 10; object-fit: cover; border-radius: 8px; }
 .cargo-mv { position: relative; display: block; inline-size: 100%; padding: 0; font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
-.cargo-mv:focus-visible { outline: 3px solid var(--cs-focus); outline-offset: 2px; }
+.cargo-mv:focus-visible { outline: 3px solid var(--dos-focus); outline-offset: 2px; }
 .cargo-mv-play { position: absolute; inset-block-start: 50%; inset-inline-start: 50%; display: grid; place-items: center; inline-size: 64px; block-size: 64px; font-size: 1.3em; color: #16324f; background: rgba(255, 255, 255, 0.92); border-radius: 50%; transform: translate(-50%, -50%); }
 ${VIDEO_DIALOG_CSS}`,
       slides: (models) =>
@@ -1199,9 +1199,9 @@ ${VIDEO_DIALOG_CSS}`,
       gutter: false,
       label: 'Fullscreen gallery in a dialog',
       blurb:
-        'A thumbnail that opens the full gallery in a native dialog. Built with data-cs-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure. Press the thumbnail: the gallery opens over this whole page, the way it will over a dealer page. The Patterns page shows it open too, because a closed button is not an example of a gallery.',
-      data: { 'data-cs-gallery': '', 'data-cs-init': 'manual' },
-      props: { '--cs-gap': '0.1px', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
+        'A thumbnail that opens the full gallery in a native dialog. Built with data-dos-init="manual" so it initialises only once the dialog is open — a slider measured while hidden has no width to measure. Press the thumbnail: the gallery opens over this whole page, the way it will over a dealer page. The Patterns page shows it open too, because a closed button is not an example of a gallery.',
+      data: { 'data-dos-gallery': '', 'data-dos-init': 'manual' },
+      props: { '--dos-gap': '0.1px', '--dos-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--dos-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 240,
       // There was a frameMin: 620 here, propping the preview frame up to a
@@ -1213,7 +1213,7 @@ ${VIDEO_DIALOG_CSS}`,
       models: captioned(PHOTOS),
       css: `.cargo-lb-open { display: inline-flex; gap: 0.7em; align-items: center; padding: 0.6em 1em; font: inherit; font-weight: 600; line-height: 1.55; color: inherit; cursor: pointer; background: #fff; border: 1px solid #e2e5ea; border-radius: 10px; }
 .cargo-lb-open img { inline-size: 68px; block-size: 44px; object-fit: cover; border-radius: 5px; }
-%root% { --cs-dot-current: #fff; --cs-dot-fg: #9aa3ad; }
+%root% { --dos-dot-current: #fff; --dos-dot-fg: #9aa3ad; }
 /* A lightbox that scrolls is not a lightbox. The dialog was sized on its width
    alone, so on any viewport shorter than head + photo + thumb strip its own
    content overflowed and the UA gave it a scrollbar - measured in the preview
@@ -1228,14 +1228,14 @@ ${VIDEO_DIALOG_CSS}`,
    on the line with nothing spare - and a lightbox is the one place a keyboard
    user can see nothing else, so the ring is the whole affordance. #4a90e2 is
    5.74:1 here and still 3.29:1 on white.
-   It has to be set on .cs itself: the engine declares --cs-focus inside its own
-   .cs block, and a property set ON an element always beats the same property
+   It has to be set on .dos itself: the engine declares --dos-focus inside its own
+   .dos block, and a property set ON an element always beats the same property
    INHERITED from an ancestor, whatever the ancestor's specificity. So putting
-   --cs-focus on .cargo-lb silently did nothing - the audit still read #1a5fb4 -
+   --dos-focus on .cargo-lb silently did nothing - the audit still read #1a5fb4 -
    while Cadillac's identical override worked, because a brand's props land on
-   .cs directly. Any future --cs-* override from a wrapper has the same trap
+   .dos directly. Any future --dos-* override from a wrapper has the same trap
    (2026-09-15). */
-.cargo-lb .cs { --cs-focus: #4a90e2; }
+.cargo-lb .dos { --dos-focus: #4a90e2; }
 /* [open], and it is not decoration. A closed <dialog> is hidden by the UA rule
    dialog:not([open]) { display: none }, which is (0,1,1) - so a bare
    .name-wrap .cargo-lb { display: flex } at (0,2,0) OUTRANKS it and every
@@ -1244,7 +1244,7 @@ ${VIDEO_DIALOG_CSS}`,
    and a 1100x162 dark panel spilled out of it. Naming the state costs nothing
    and cannot come back. */
 .cargo-lb[open] { display: flex; flex-direction: column; }
-.cargo-lb .cs { min-block-size: 0; }
+.cargo-lb .dos { min-block-size: 0; }
 .cargo-lb .cargo-photo img { max-block-size: 70dvh; }
 .cargo-lb::backdrop { background: rgba(0, 0, 0, 0.8); }
 .cargo-lb-head { display: flex; align-items: center; justify-content: space-between; padding: 0.6em 0.9em; font-size: 0.9em; line-height: 1.55; color: #fff; }
@@ -1254,12 +1254,12 @@ ${PHOTO_CSS}
       slides: (models) => models.map((m) => photo(m)),
       script: `document.querySelectorAll('[data-lightbox]').forEach((wrap) => {
   const dlg = wrap.querySelector('dialog');
-  const root = dlg.querySelector('.cs');
+  const root = dlg.querySelector('.dos');
   wrap.querySelector('[data-lb-open]').addEventListener('click', () => {
     dlg.showModal();
     // Init AFTER the dialog is visible: a slider measured while display:none
     // has no width, so every slide would come out the same wrong size.
-    if (!root._cs) new CustomSlider(root);
+    if (!root._dos) new DealerOnSlider(root);
   });
   dlg.querySelector('[data-lb-close]').addEventListener('click', () => dlg.close());
 });`,
@@ -1270,7 +1270,7 @@ ${PHOTO_CSS}
       label: 'Vehicle cards with a mini gallery',
       blurb:
         'The SRP pattern: a grid of cards, each holding its own small slider of that vehicle’s photos. Many instances on one page is fine — each is independent, and none of them is the page’s main carousel.',
-      props: { '--cs-gap': '0.1px', '--cs-controls-space': '0.1px', '--cs-arrow-size': '32px', '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--cs-arrow-fg': '#fff' },
+      props: { '--dos-gap': '0.1px', '--dos-controls-space': '0.1px', '--dos-arrow-size': '32px', '--dos-arrow-bg': 'rgba(0, 0, 0, 0.55)', '--dos-arrow-fg': '#fff' },
       perView: { base: 1, 768: 1, 992: 1, 1200: 1 },
       minCard: 200,
       models: VEHICLES,
@@ -1294,12 +1294,12 @@ ${PHOTO_CSS}
       minCard: 200,
       models: [
         ['Default controls', 'Arrows overlay the content edges; dots sit in space the CSS reserved before JS ran.'],
-        ['One knob per look', 'Every other example here is <code>--cs-*</code> custom properties and plain site CSS.'],
+        ['One knob per look', 'Every other example here is <code>--dos-*</code> custom properties and plain site CSS.'],
         ['Works without JS', 'The track is a native scroll-snap container — turn JavaScript off and it still swipes.'],
-        ['Start here', 'Copy the markup, add your <code>--cs-per-view</code> breakpoints, then restyle.'],
+        ['Start here', 'Copy the markup, add your <code>--dos-per-view</code> breakpoints, then restyle.'],
       ].map(([name, blurb]) => ({ name, blurb })),
-      css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
-@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
+      css: `@media (max-width: 767.98px) { %root% { --dos-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --dos-arrow-size: 32px; } }
 .cargo-stock { block-size: 100%; padding: 1.1em; background: #f0f2f5; border-radius: 8px; }
 .cargo-stock .cargo-name { display: block; margin: 0 0 0.35em; font-size: 1em; line-height: 1.3; }
 .cargo-stock .cargo-sub { display: block; margin: 0; font-size: 0.9em; line-height: 1.5; color: #5f6368; }

@@ -55,7 +55,7 @@ let states = 0;
 // first pass at this reported fifteen white-on-white failures that were all fine.
 function controlContrast() {
   // getComputedStyle hands back rgb()/rgba() for real properties, but a custom
-  // property comes back as AUTHORED - `--cs-focus: #4a90e2` is the literal
+  // property comes back as AUTHORED - `--dos-focus: #4a90e2` is the literal
   // string. Digit-scraping that reads #4a90e2 as rgb(4, 90, 2), which is how a
   // first cut of the focus-ring check reported a navy ring as near-black and
   // failed three states that were fine. Handle hex before falling back.
@@ -101,7 +101,7 @@ function controlContrast() {
   const shown = (el) => el && !el.hidden && el.offsetParent !== null;
   const rgb = (c) => 'rgb(' + [c.r, c.g, c.b].map(Math.round).join(' ') + ')';
   const out = [];
-  for (const root of document.querySelectorAll('.cs')) {
+  for (const root of document.querySelectorAll('.dos')) {
     const label = root.getAttribute('aria-label') || '(unlabelled)';
     // Under 3 fails. Between 3 and 4.5 is reported but does not fail: Ford's
     // measured #919191 landed at 3.15 on white and walked under this gate by
@@ -114,8 +114,8 @@ function controlContrast() {
       else if (r < 4.5) out.push({ label, what, fg: rgb(fg), behind: rgb(behind), ratio: r, warn: true });
     };
     for (const [sel, what] of [
-      ['.cs-arrow', 'arrow'],
-      ['.cs-pause', 'pause button'],
+      ['.dos-arrow', 'arrow'],
+      ['.dos-pause', 'pause button'],
     ]) {
       const el = root.querySelector(sel);
       if (!shown(el)) continue;
@@ -123,14 +123,14 @@ function controlContrast() {
       add(what, parse(cs.color), over(parse(cs.backgroundColor), ground(el)));
     }
     for (const [sel, what] of [
-      ['.cs-dot:not(.cs-dot--current)', 'dot'],
-      ['.cs-dot--current', 'current dot'],
+      ['.dos-dot:not(.dos-dot--current)', 'dot'],
+      ['.dos-dot--current', 'current dot'],
     ]) {
       const el = root.querySelector(sel);
       if (!shown(el)) continue;
       add(what, parse(getComputedStyle(el, '::after').backgroundColor), ground(el));
     }
-    const thumb = root.querySelector('.cs-thumb[aria-selected="true"]');
+    const thumb = root.querySelector('.dos-thumb[aria-selected="true"]');
     if (shown(thumb)) add('selected thumb outline', parse(getComputedStyle(thumb).borderTopColor), ground(thumb));
 
     // The focus ring, which this audit had never measured - which is exactly
@@ -141,10 +141,10 @@ function controlContrast() {
     // behind it: measure against both grounds and keep the worse. Read off
     // :focus-visible rather than by focusing, so the audit stays read-only and
     // does not scroll the page it is measuring.
-    const ring = root.querySelector('.cs-arrow, .cs-dot, .cs-thumb');
+    const ring = root.querySelector('.dos-arrow, .dos-dot, .dos-thumb');
     if (shown(ring)) {
       const rs = getComputedStyle(ring);
-      const col = parse(rs.getPropertyValue('--cs-focus') || rs.outlineColor);
+      const col = parse(rs.getPropertyValue('--dos-focus') || rs.outlineColor);
       if (col.a > 0) {
         add('focus ring', col, ground(ring));
         const outer = root.parentElement ? ground(root) : { r: 255, g: 255, b: 255, a: 1 };
@@ -360,9 +360,9 @@ await page.waitForTimeout(700);
 // The preview is an iframe now, so these live in its document rather than
 // this one - and axe is run with the frame included below for the same reason.
 const stage = page.frameLocator('#wb-stage');
-await stage.locator('.cs-thumb').nth(2).click();
+await stage.locator('.dos-thumb').nth(2).click();
 await page.waitForTimeout(800);
-await stage.locator('.cs-slide:not([inert]) [data-video]').first().click();
+await stage.locator('.dos-slide:not([inert]) [data-video]').first().click();
 await page.waitForTimeout(600);
 await audit('video dialog open');
 await page.keyboard.press('Escape');

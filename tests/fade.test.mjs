@@ -1,5 +1,5 @@
 // F043: the hero offered "How many across", "Arrows move" and "Gap", which the
-// crossfade ignores - and they were not merely inert. data-cs-fade-on is set by
+// crossfade ignores - and they were not merely inert. data-dos-fade-on is set by
 // JS at init, so until the script runs the column classes are in charge: a hero
 // authored three across laid out as a three-across strip and jumped a whole
 // image height on init, which is also what a no-JS visitor was left with.
@@ -36,38 +36,38 @@ test.describe('a fading hero is one across before the script runs', () => {
     await host.setContent(hostHtml({ ...engine, engineJs: '', css: p.css, html: p.html, box: 1170 }), { waitUntil: 'load' });
     await host.waitForTimeout(150);
     const pre = await host.evaluate(() => {
-      const root = document.querySelector('#box .cs');
+      const root = document.querySelector('#box .dos');
       return {
-        perView: getComputedStyle(root).getPropertyValue('--cs-per-view').trim(),
+        perView: getComputedStyle(root).getPropertyValue('--dos-per-view').trim(),
         cls: root.className,
         height: +root.getBoundingClientRect().height.toFixed(1),
       };
     });
     assert.equal(pre.perView, '1', 'the engine does not pin a fading carousel to one across before init');
-    assert.match(pre.cls, /cs-xs-3/, 'the ladder class is gone, so this test is no longer measuring what it thinks');
+    assert.match(pre.cls, /dos-xs-3/, 'the ladder class is gone, so this test is no longer measuring what it thinks');
 
     await host.addScriptTag({ content: engine.engineJs });
     await host.waitForTimeout(250);
-    const post = await host.evaluate(() => +document.querySelector('#box .cs').getBoundingClientRect().height.toFixed(1));
+    const post = await host.evaluate(() => +document.querySelector('#box .dos').getBoundingClientRect().height.toFixed(1));
     assert.ok(Math.abs(post - pre.height) <= 1, `the hero jumped ${pre.height} -> ${post} on init`);
   });
 
   // A guard rather than a proof: this passes today and exists so that a later
-  // "simplification" to `.cs[data-cs-fade]` cannot silently pin a strip that
+  // "simplification" to `.dos[data-dos-fade]` cannot silently pin a strip that
   // has explicitly opted OUT of fading, which would cost it its column classes
   // and make it announce "Slide 1 of 3".
-  test('data-cs-fade="false" keeps its column classes', async () => {
+  test('data-dos-fade="false" keeps its column classes', async () => {
     await host.setContent(
       hostHtml({
         ...engine,
         engineJs: '',
-        html: '<div class="cs cs-xs-3" data-cs data-cs-fade="false" aria-label="t"><ul class="cs-track"><li class="cs-slide">a</li><li class="cs-slide">b</li><li class="cs-slide">c</li></ul></div>',
+        html: '<div class="dos dos-xs-3" data-dos data-dos-fade="false" aria-label="t"><ul class="dos-track"><li class="dos-slide">a</li><li class="dos-slide">b</li><li class="dos-slide">c</li></ul></div>',
         box: 1170,
       }),
       { waitUntil: 'load' },
     );
     await host.waitForTimeout(120);
-    const perView = await host.evaluate(() => getComputedStyle(document.querySelector('#box .cs')).getPropertyValue('--cs-per-view').trim());
+    const perView = await host.evaluate(() => getComputedStyle(document.querySelector('#box .dos')).getPropertyValue('--dos-per-view').trim());
     assert.equal(perView, '3', 'opting out of fade lost the column class');
   });
 });

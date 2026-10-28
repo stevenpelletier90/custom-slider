@@ -2,8 +2,8 @@
 //
 // The Download button used to build its filename back up from a "css"/"js"
 // attribute, against a map holding only the .min pair: Download on the
-// custom-slider.min.css row saved the MINIFIED bytes under the name
-// custom-slider.css. Four files go into one shared folder, so a designer who
+// dealeron-slider.min.css row saved the MINIFIED bytes under the name
+// dealeron-slider.css. Four files go into one shared folder, so a designer who
 // uploads what that button gave them puts minified code under the name meant
 // for the readable build - and neither the page, the file, nor the folder says
 // so. Nothing about it is visible in the rendered demo, which is why it took
@@ -11,7 +11,7 @@
 //
 // Both halves are checked: the filename the browser is told, and the bytes
 // behind it. Checked to fail against the code from before it was written -
-// where the panel had two Downloads and both named the file custom-slider.<ext>
+// where the panel had two Downloads and both named the file dealeron-slider.<ext>
 // whichever build they had actually fetched.
 import { test } from '@playwright/test';
 import assert from 'node:assert/strict';
@@ -25,7 +25,7 @@ let page, errors;
 // The four files the shared folder holds. `npm run build` writes exactly these,
 // so the panel has to offer exactly these or an upload taken from it leaves the
 // folder short of one.
-const DIST = ['custom-slider.css', 'custom-slider.js', 'custom-slider.min.css', 'custom-slider.min.js'];
+const DIST = ['dealeron-slider.css', 'dealeron-slider.js', 'dealeron-slider.min.css', 'dealeron-slider.min.js'];
 
 test.beforeAll(async ({ browser }) => {
   ({ page, errors } = await openBuilder(browser));
@@ -39,7 +39,7 @@ const saved = async (download) => ({ name: download.suggestedFilename(), body: a
 test.describe('the files the install panel hands over', () => {
   test('every Download saves the file its row is named after, byte for byte', async () => {
     // Walked by index rather than by label. It had to be when the panel had
-    // two columns and custom-slider.min.css appeared in each; the paste column
+    // two columns and dealeron-slider.min.css appeared in each; the paste column
     // is gone, but index-walking is still what makes this cover whatever rows
     // exist rather than a list written down twice.
     const buttons = page.locator('.ui-file [data-act="download"]');
@@ -56,7 +56,7 @@ test.describe('the files the install panel hands over', () => {
       const file = await saved(await wait);
 
       // The name the browser is told to save under. Before the fix this came
-      // back custom-slider.css for a row labelled custom-slider.min.css.
+      // back dealeron-slider.css for a row labelled dealeron-slider.min.css.
       assert.equal(file.name, label, `the ${label} row saves a file called ${file.name}`);
       assert.equal(attr, label, `the ${label} row asks for "${attr}" - data-file must name the file, never a kind`);
 
@@ -74,9 +74,9 @@ test.describe('the files the install panel hands over', () => {
   // Asserted rather than assumed: every filename check above is worthless if
   // the four files turn out to be four copies of the same bytes.
   test('the readable build and the minified build are different files', async () => {
-    const [css, min] = await Promise.all([served('custom-slider.css'), served('custom-slider.min.css')]);
-    assert.match(css, /^\.cs \{\s/, 'dist/custom-slider.css is not the readable build');
-    assert.match(min, /^\.cs\{/, 'dist/custom-slider.min.css is not the minified build');
+    const [css, min] = await Promise.all([served('dealeron-slider.css'), served('dealeron-slider.min.css')]);
+    assert.match(css, /^\.dos \{\s/, 'dist/dealeron-slider.css is not the readable build');
+    assert.match(min, /^\.dos\{/, 'dist/dealeron-slider.min.css is not the minified build');
   });
 
   test('Download all four saves each one, under its own name', async () => {
@@ -99,7 +99,7 @@ test.describe('the buttons the retag went through', () => {
   // same attribute. Both would fail quietly: Copy puts the wrong wrapper on,
   // View reads the file as the wrong language - neither throws.
   test('View still shows the file it names, highlighted as CSS', async () => {
-    await page.click('.ui-file:has(code:text-is("custom-slider.min.css")) [data-act="view"]');
+    await page.click('.ui-file:has(code:text-is("dealeron-slider.min.css")) [data-act="view"]');
     // The handler fetches before it fills the box, so the click resolves well
     // before the box does. Wait for the box, never for a timeout.
     await page.waitForSelector('#wb-file-view', { state: 'visible' });
@@ -110,7 +110,7 @@ test.describe('the buttons the retag went through', () => {
       return { hidden: box.hidden, text: box.querySelector('code').textContent, selectors: box.querySelectorAll('code .t-sel').length };
     });
     assert.equal(shown.hidden, false, 'View left the file box hidden');
-    assert.match(shown.text, /^\.cs\{--cs-per-view/, 'View showed something that is not the minified stylesheet');
+    assert.match(shown.text, /^\.dos\{--dos-per-view/, 'View showed something that is not the minified stylesheet');
     assert.ok(shown.selectors > 0, 'the stylesheet came back with no selector highlighting, so it was read as the wrong language');
   });
 
@@ -156,7 +156,7 @@ test.describe('the buttons the retag went through', () => {
     const names = await page.evaluate(() => [...document.querySelectorAll('.ui-get [data-file]')].map((b) => b.getAttribute('aria-label') ?? b.textContent.trim()));
     assert.ok(names.length >= 8, `only ${names.length} file buttons found in the install panel`);
     assert.deepEqual([...new Set(names)].sort(), names.slice().sort(), `two buttons share a name: ${names.join(', ')}`);
-    for (const n of names) assert.match(n, /custom-slider\.(min\.)?(css|js)$/, `"${n}" does not name the file it acts on`);
+    for (const n of names) assert.match(n, /dealeron-slider\.(min\.)?(css|js)$/, `"${n}" does not name the file it acts on`);
   });
 
   // README.md "Deployment status - the one place it is written down" ends "do
@@ -168,7 +168,7 @@ test.describe('the buttons the retag went through', () => {
     const text = await page.evaluate(() => document.querySelector('.ui-get').textContent);
     assert.doesNotMatch(text, /dl-carousel/, 'the install panel names the old build, which is a deployment status README owns');
     assert.doesNotMatch(text, /not yet|still serves|has not been uploaded/i, 'the install panel claims a deployment state that will go stale');
-    assert.match(text, /\.cs\{/, 'the self-check a reader runs instead of being told a status is gone');
+    assert.match(text, /\.dos\{/, 'the self-check a reader runs instead of being told a status is gone');
   });
 
   test('no page errors along the way', () => {

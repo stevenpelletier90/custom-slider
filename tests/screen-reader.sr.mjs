@@ -27,7 +27,7 @@ import { writeFileSync } from 'node:fs';
 const SILENCE = () => {
   const v = new URLSearchParams(location.search).get('sr');
   if (!v) return;
-  const sel = `[data-cargo="media-gallery"] ${v === 'status-off' ? '.cs-status' : '.cs-track'}`;
+  const sel = `[data-cargo="media-gallery"] ${v === 'status-off' ? '.dos-status' : '.dos-track'}`;
   const off = () => document.querySelectorAll(sel).forEach((el) => el.getAttribute('aria-live') !== 'off' && el.setAttribute('aria-live', 'off'));
   new MutationObserver(off).observe(document, { subtree: true, childList: true, attributes: true, attributeFilter: ['aria-live'] });
 };
@@ -49,7 +49,7 @@ test('what a screen reader says about the demo patterns', async ({ page, screenR
 
   const open = async (variant = '') => {
     await page.goto(`/demo/patterns.html${variant ? `?sr=${variant}` : ''}`, { waitUntil: 'load' });
-    await page.locator('[data-cargo="media-gallery"] .cs-thumb').first().waitFor();
+    await page.locator('[data-cargo="media-gallery"] .dos-thumb').first().waitFor();
     await page.waitForTimeout(800);
     await screenReader.navigateToWebContent();
   };
@@ -60,23 +60,23 @@ test('what a screen reader says about the demo patterns', async ({ page, screenR
       if (!a || a === document.body) return 'body';
       const cs = a.closest('[data-cargo]');
       const where = cs ? /** @type {HTMLElement} */ (cs).dataset.cargo : 'page';
-      const what = a.matches('.cs-dot--current')
+      const what = a.matches('.dos-dot--current')
         ? 'current dot'
-        : a.matches('.cs-dot')
+        : a.matches('.dos-dot')
           ? 'dot'
-          : a.matches('.cs-slide')
+          : a.matches('.dos-slide')
             ? 'panel'
-            : a.closest('.cs-slide')
+            : a.closest('.dos-slide')
               ? 'card'
-              : a.matches('.cs-thumb')
+              : a.matches('.dos-thumb')
                 ? `thumb ${[...a.parentElement.children].indexOf(a) + 1}`
-                : [...a.classList].find((c) => c.startsWith('cs-')) || a.tagName.toLowerCase();
+                : [...a.classList].find((c) => c.startsWith('dos-')) || a.tagName.toLowerCase();
       // Which slide shows and whether the status region is live, on every
       // slider step: under VoiceOver a Next press read only the button, and
       // without these the log could not say whether the slide moved and went
       // unannounced or never moved, nor whether the region had been switched.
-      const g = /** @type {any} */ (cs)?._cs;
-      const status = cs?.querySelector('.cs-status')?.getAttribute('aria-live');
+      const g = /** @type {any} */ (cs)?._dos;
+      const status = cs?.querySelector('.dos-status')?.getAttribute('aria-live');
       return `${where} ${what}${g ? `, showing ${g.current + 1}, status ${status}` : ''}`;
     });
   const press = async (key, step, ms = 1500) => {
@@ -121,10 +121,10 @@ test('what a screen reader says about the demo patterns', async ({ page, screenR
     for (const variant of ['status-off', 'track-off', '']) {
       const name = variant || 'as shipped';
       await open(variant);
-      await page.focus('[data-cargo="media-gallery"] .cs-thumb[aria-selected="true"]');
+      await page.focus('[data-cargo="media-gallery"] .dos-thumb[aria-selected="true"]');
       await page.waitForTimeout(800);
       for (let i = 1; i <= 2; i++) await press('ArrowRight', `thumbnail change ${i}, ${name}`, 3000);
-      await page.focus('[data-cargo="media-gallery"] .cs-arrow--next');
+      await page.focus('[data-cargo="media-gallery"] .dos-arrow--next');
       await page.waitForTimeout(800);
       await press('Enter', `Next arrow, ${name}`, 3000);
     }
@@ -135,7 +135,7 @@ test('what a screen reader says about the demo patterns', async ({ page, screenR
     // the hero does not, every paused autoplay slider is silent on VoiceOver.
     await open();
     for (const cargo of ['cards', 'hero']) {
-      await page.focus(`[data-cargo="${cargo}"] .cs-arrow--next`);
+      await page.focus(`[data-cargo="${cargo}"] .dos-arrow--next`);
       await page.waitForTimeout(1000);
       await press('Enter', `Next arrow, ${cargo}`, 3000);
       await press('Enter', `Next arrow again, ${cargo}`, 3000);

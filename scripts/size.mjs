@@ -12,7 +12,7 @@
 // Raised to 6.5 KB on 2026-08-27, again for accessibility. A carousel whose
 // slides all fit still rendered both arrows and a dot: two focusable controls
 // that do nothing, and a dot group announcing a one-of-one choice. Because
-// --cs-per-view is CSS, whether a strip fits changes at any resize, so the
+// --dos-per-view is CSS, whether a strip fits changes at any resize, so the
 // check has to live in _updateUI and cost real bytes (that, plus the CSS rule
 // letting [hidden] beat the controls' own display values, came to 49 B). The
 // alternative was shipping a known keyboard and screen-reader defect to stay
@@ -45,8 +45,8 @@ const DOWNLOAD_GUARD = 16384;
 // (scripts/build-patterns.mjs): every pattern's structural CSS, and the six
 // pattern scripts. Same rule - pattern wiring is not engine, so it is weighed
 // beside the budget, not against it.
-const cssAll = readFileSync('dist/custom-slider.min.css', 'utf8');
-const jsAll = readFileSync('dist/custom-slider.min.js', 'utf8');
+const cssAll = readFileSync('dist/dealeron-slider.min.css', 'utf8');
+const jsAll = readFileSync('dist/dealeron-slider.min.js', 'utf8');
 const split = (text, mark) => {
   const at = text.indexOf(mark);
   return at === -1 ? [text, ''] : [text.slice(0, at), text.slice(at)];
@@ -57,8 +57,8 @@ const [engineJs, patternsJs] = split(jsAll, '/*! patterns */');
 
 let total = 0;
 for (const [name, buf] of [
-  ['dist/custom-slider.min.js (engine)', Buffer.from(engineJs)],
-  ['dist/custom-slider.min.css (engine)', Buffer.from(engineCss)],
+  ['dist/dealeron-slider.min.js (engine)', Buffer.from(engineJs)],
+  ['dist/dealeron-slider.min.css (engine)', Buffer.from(engineCss)],
 ]) {
   const gz = gzipSync(buf, { level: 9 }).length;
   total += gz;

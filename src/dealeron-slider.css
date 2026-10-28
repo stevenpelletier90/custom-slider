@@ -1,18 +1,18 @@
 /* ==========================================================================
-   Custom Slider — custom-slider.css
+   DealerOn Slider — dealeron-slider.css
    The CSS owns layout AND physics: the track is a native scroll container
    with scroll-snap, so the strip works (swipe, scroll, snap) before any JS
    runs. JS only adds controls into space this file has already reserved.
-   Every knob is a --cs-* custom property; override them on .cs or a wrapper.
+   Every knob is a --dos-* custom property; override them on .dos or a wrapper.
    ========================================================================== */
 
-.cs {
+.dos {
   /* ---- knobs ---------------------------------------------------------- */
-  --cs-per-view: 1; /* slides visible at once (integer; set per breakpoint) */
-  --cs-gap: 1em; /* space between slides */
-  --cs-peek: 0px; /* sliver of next slide visible at the edges */
-  --cs-arrow-size: 44px; /* prev/next tap target */
-  --cs-arrow-fg: #fff;
+  --dos-per-view: 1; /* slides visible at once (integer; set per breakpoint) */
+  --dos-gap: 1em; /* space between slides */
+  --dos-peek: 0px; /* sliver of next slide visible at the edges */
+  --dos-arrow-size: 44px; /* prev/next tap target */
+  --dos-arrow-fg: #fff;
 
   /* Classic rgba(), not the slash form, in every custom property. The per-slider
      CSS the copy panel emits is pasted into Style Only, whose server-side minifier is
@@ -21,75 +21,75 @@
      serve the last sheet that did minify - silently, so the page keeps its
      previous styling and nothing reports an error. esbuild leaves a custom
      property's value alone, so what is written here is what ships. */
-  --cs-arrow-bg: rgba(0, 0, 0, 0.55);
-  --cs-arrow-fg-hover: #fff;
-  --cs-arrow-bg-hover: rgba(0, 0, 0, 0.8);
-  --cs-dot-size: 12px;
-  --cs-dot-fg: #757575; /* ≥3:1 on white (WCAG 1.4.11) */
-  --cs-dot-current: #333;
-  --cs-controls-space: 2.5em; /* reserved dot-row height — keeps CLS at 0 */
-  --cs-thumb-w: 88px;
-  --cs-thumb-h: 56px;
-  --cs-thumb-hover-scale: 1.06; /* thumb-strip zoom on hover; 1 turns it off */
-  --cs-focus: #1a5fb4;
-  --cs-fade-ms: 500ms; /* crossfade duration in fade mode */
+  --dos-arrow-bg: rgba(0, 0, 0, 0.55);
+  --dos-arrow-fg-hover: #fff;
+  --dos-arrow-bg-hover: rgba(0, 0, 0, 0.8);
+  --dos-dot-size: 12px;
+  --dos-dot-fg: #757575; /* ≥3:1 on white (WCAG 1.4.11) */
+  --dos-dot-current: #333;
+  --dos-controls-space: 2.5em; /* reserved dot-row height — keeps CLS at 0 */
+  --dos-thumb-w: 88px;
+  --dos-thumb-h: 56px;
+  --dos-thumb-hover-scale: 1.06; /* thumb-strip zoom on hover; 1 turns it off */
+  --dos-focus: #1a5fb4;
+  --dos-fade-ms: 500ms; /* crossfade duration in fade mode */
 
   /* Shared duration/easing for every control's state change. Deliberately a
      property LIST at each use site, never `transition: all`: `all` also
      animates layout and scroll-related properties, which fights the snap
      container and janks the strip mid-gesture. */
-  --cs-transition: 250ms ease-in-out;
+  --dos-transition: 250ms ease-in-out;
 
   /* Where the arrows sit down the strip: 0.5 is centred, 0.4 rides higher over
      a card whose text sits low. Declared rather than left to the var() fallback
      at the use site, because the Reference page tabulates the properties by
      READING this block out of the shipped stylesheet - a knob that exists only
      as a fallback is a knob nobody is told about. */
-  --cs-arrow-at: 0.5;
+  --dos-arrow-at: 0.5;
 
   position: relative;
 
   /* Dots (or the gallery thumb strip) are injected later, absolutely
      positioned into this reserved space, so JS init shifts nothing. */
-  padding-bottom: var(--cs-controls-space);
+  padding-bottom: var(--dos-controls-space);
 }
 
 /* Presence, not an engine-set marker, on purpose: the thumb strip's space has
    to be reserved BEFORE JS runs or every gallery shifts at init. The :not()
-   is what the fade rule below does too - data-cs-gallery="false" means not a
+   is what the fade rule below does too - data-dos-gallery="false" means not a
    gallery, and reserving the strip for it left an empty band under the track
    (2026-09-15 review; backlog). */
-.cs[data-cs-gallery]:not([data-cs-gallery="false"]) {
-  --cs-controls-space: calc(var(--cs-thumb-h) + 1em);
+.dos[data-dos-gallery]:not([data-dos-gallery="false"]) {
+  --dos-controls-space: calc(var(--dos-thumb-h) + 1em);
 }
 
 /* Fade is a 1-up stack, but the stacking only switches on when JS sets
-   data-cs-fade-on at init. Until then the column classes are in charge, so a
+   data-dos-fade-on at init. Until then the column classes are in charge, so a
    hero authored three across lays out as a three-across strip and jumps a whole
    image height the moment the script runs — measured 195.1px to 529.4px on a
    1170px page, and that is also what a no-JS visitor is left looking at.
 
-   Width ONLY. The opacity stack stays keyed to data-cs-fade-on, because keyed
+   Width ONLY. The opacity stack stays keyed to data-dos-fade-on, because keyed
    off the authored attribute instead, a visitor with no JavaScript would get
    every slide at opacity 0.
 
-   The :not() is load-bearing: data-cs-fade="false" means NOT fading, and
+   The :not() is load-bearing: data-dos-fade="false" means NOT fading, and
    without it _measure() would read this 1 straight back out of computed style,
-   so such a strip would silently lose its cs-xs-N and announce "Slide 1 of 3".
+   so such a strip would silently lose its dos-xs-N and announce "Slide 1 of 3".
 
-   Not guarded against data-cs-gallery on purpose: fade + gallery is an
+   Not guarded against data-dos-gallery on purpose: fade + gallery is an
    unsupported pairing the engine already warns about, and
-   :not([data-cs-gallery]) would also match data-cs-gallery="false" — dropping
+   :not([data-dos-gallery]) would also match data-dos-gallery="false" — dropping
    the pin on a real fading hero to tidy a case the engine refuses anyway. */
-.cs[data-cs-fade]:not([data-cs-fade="false"]) {
-  --cs-per-view: 1;
+.dos[data-dos-fade]:not([data-dos-fade="false"]) {
+  --dos-per-view: 1;
 }
 
-.cs-track {
+.dos-track {
   position: relative; /* slide offsets measured against the track */
   display: flex;
-  gap: var(--cs-gap);
-  padding: 0 var(--cs-peek);
+  gap: var(--dos-gap);
+  padding: 0 var(--dos-peek);
   margin: 0;
   overflow-x: auto;
 
@@ -117,7 +117,7 @@
 
   /* Snap on the track only — never the root scroller. */
   scroll-snap-type: x mandatory;
-  scroll-padding-inline: var(--cs-peek);
+  scroll-padding-inline: var(--dos-peek);
 
   /* Scrollbar hidden: arrows, dots, keyboard, and the peek remain as
      affordances. */
@@ -126,17 +126,17 @@
 
 /* Not redundant with scrollbar-width: Android WebView has no scrollbar-width
    support, and in-app browsers are real dealer traffic. Keep both. */
-.cs-track::-webkit-scrollbar {
+.dos-track::-webkit-scrollbar {
   display: none;
 }
 
-/* Cursor cues for mouse drag. JS marks a drag-enabled track data-cs-draggable at
-   init and data-cs-dragging only while a drag is live. Both rules must reach
+/* Cursor cues for mouse drag. JS marks a drag-enabled track data-dos-draggable at
+   init and data-dos-dragging only while a drag is live. Both rules must reach
    every child: links carry their own pointer cursor, so a cursor set on the
    track alone never shows the hand over the cards themselves — and the cards
    cover most of the strip.
 
-   Both are held off a strip that FITS. data-cs-fits is on the root whenever
+   Both are held off a strip that FITS. data-dos-fits is on the root whenever
    there is one stop, which is when the engine also hides the arrows, the dots
    and the pause button — there is nothing to drag TO, so an open hand promises
    a scroll that cannot happen. Every tabbed bar whose pane holds no more cards
@@ -146,19 +146,19 @@
    Written as :not() on the cue rather than as a cursor:auto override, because
    an override would have to reach every child too and would take the pointer
    cursor off the card links along with it. */
-.cs:not([data-cs-fits]) .cs-track[data-cs-draggable],
-.cs:not([data-cs-fits]) .cs-track[data-cs-draggable] * {
+.dos:not([data-dos-fits]) .dos-track[data-dos-draggable],
+.dos:not([data-dos-fits]) .dos-track[data-dos-draggable] * {
   cursor: grab;
 }
 
-.cs:not([data-cs-fits]) .cs-track[data-cs-dragging],
-.cs:not([data-cs-fits]) .cs-track[data-cs-dragging] * {
+.dos:not([data-dos-fits]) .dos-track[data-dos-dragging],
+.dos:not([data-dos-fits]) .dos-track[data-dos-dragging] * {
   cursor: grabbing !important;
 }
 
-.cs-slide {
+.dos-slide {
   /* Explicit flex basis — Safari mis-sizes snap items without one. */
-  flex: 0 0 calc((100% - (var(--cs-per-view) - 1) * var(--cs-gap)) / var(--cs-per-view));
+  flex: 0 0 calc((100% - (var(--dos-per-view) - 1) * var(--dos-gap)) / var(--dos-per-view));
   scroll-snap-align: start;
 
   /* scroll-snap-stop is deliberately left at its initial `normal`: 'always'
@@ -166,7 +166,7 @@
      initial value shipped bytes for nothing, so the note carries the intent. */
 }
 
-.cs-slide img {
+.dos-slide img {
   display: block;
   max-inline-size: 100%;
   block-size: auto;
@@ -174,35 +174,35 @@
 
 /* ---- generated controls (JS creates these; CSS already reserved room) -- */
 
-.cs-arrow:focus-visible,
-.cs-pause:focus-visible,
-.cs-dot:focus-visible,
-.cs-thumb:focus-visible,
-.cs-track:focus-visible {
-  outline: 3px solid var(--cs-focus);
+.dos-arrow:focus-visible,
+.dos-pause:focus-visible,
+.dos-dot:focus-visible,
+.dos-thumb:focus-visible,
+.dos-track:focus-visible {
+  outline: 3px solid var(--dos-focus);
   outline-offset: 2px;
 }
 
 /* When every slide already fits, the engine hides the arrows and dots. Their
    own display rules would otherwise beat [hidden]'s UA display:none. */
-.cs [hidden] {
+.dos [hidden] {
   display: none;
 }
 
 /* Every generated control is a <button>, and a UA button does NOT inherit
    typography — it takes 13.33px Arial. The spacing below is in em (so it
    tracks the host's type instead of <html>, which Bootstrap 3 pins to 10px),
-   and --cs-controls-space is read inside .cs-arrow to centre it. Without this
-   those em resolved against 13.33px while the same em on .cs resolved against
+   and --dos-controls-space is read inside .dos-arrow to centre it. Without this
+   those em resolved against 13.33px while the same em on .dos resolved against
    the real size, and the arrows sat off-centre by a few px. */
-.cs-arrow,
-.cs-pause,
-.cs-dot,
-.cs-thumb {
+.dos-arrow,
+.dos-pause,
+.dos-dot,
+.dos-thumb {
   font: inherit;
 }
 
-.cs-arrow {
+.dos-arrow {
   position: absolute;
 
   /* Centred on the CARD, and a slider may say otherwise.
@@ -214,21 +214,21 @@
      prescribes either and the design systems that document it disagree. What
      they DO agree on is that an arrow must stay legible over what is behind it,
      which is an argument against sitting it on the photograph.
-     So it is a knob rather than a decision baked in here. --cs-arrow-at is a
+     So it is a knob rather than a decision baked in here. --dos-arrow-at is a
      fraction of the same height this already measures, so the dot row and any
      strip padding stay accounted for: 0.5 is the middle, lower numbers move it
      up toward a card's picture.
      inset-block-start, like its siblings; the translateY below has no
      logical form and stays physical (v1 is horizontal LTR only). */
-  inset-block-start: calc((100% - var(--cs-controls-space)) * var(--cs-arrow-at, 0.5));
+  inset-block-start: calc((100% - var(--dos-controls-space)) * var(--dos-arrow-at, 0.5));
   z-index: 1;
   display: grid;
   place-items: center;
-  inline-size: var(--cs-arrow-size);
-  block-size: var(--cs-arrow-size);
-  color: var(--cs-arrow-fg);
+  inline-size: var(--dos-arrow-size);
+  block-size: var(--dos-arrow-size);
+  color: var(--dos-arrow-fg);
   cursor: pointer;
-  background: var(--cs-arrow-bg);
+  background: var(--dos-arrow-bg);
   border: 0;
   border-radius: 50%;
   transform: translateY(-50%);
@@ -237,32 +237,32 @@
 /* Flush, not inset. Every card look reserves the arrow's channel as
    padding-inline on the carousel (arrow-size + 0.25em or 0.4em) and that
    formula assumes the arrow starts at the edge; the old 0.5em default pushed
-   it 0.5em into the cards, so a markup-only paste - class="cs cargo-tile
-   cs-xs-2", no CSS, which README advertises - overlapped the first card by
+   it 0.5em into the cards, so a markup-only paste - class="dos cargo-tile
+   dos-xs-2", no CSS, which README advertises - overlapped the first card by
    4px on the tile and 1.6px on the vehicle card. Every builder snippet
    overrode this to 0, which was the sign the default itself was wrong. The
    pause button's own 0.5em below is unrelated and stays. */
-.cs-arrow--prev {
+.dos-arrow--prev {
   inset-inline-start: 0;
 }
 
-.cs-arrow--next {
+.dos-arrow--next {
   inset-inline-end: 0;
 }
 
 /* rewind:false parks the end arrows on aria-disabled (still focusable).
-   0.5, not 0.35: on the nine patterns that set --cs-arrow-bg: transparent the
+   0.5, not 0.35: on the nine patterns that set --dos-arrow-bg: transparent the
    glyph is the whole component, and 0.35 composited it to rgb(179) = 2.10:1,
    where 0.5 gives rgb(147) = 3.09:1. SC 1.4.11 exempts inactive components so
    this is not a compliance fix - it is the state a rewind:false keyboard user
    parks on at either end, and esbuild writes `.5` for `.35`, so it costs -1 B.
    Measured 2026-09-15. */
-.cs-arrow[aria-disabled="true"] {
+.dos-arrow[aria-disabled="true"] {
   cursor: default;
   opacity: 0.5;
 }
 
-.cs-pause {
+.dos-pause {
   position: absolute;
   inset-block-start: 0.5em;
   inset-inline-end: 0.5em;
@@ -271,14 +271,14 @@
   place-items: center;
   inline-size: 36px;
   block-size: 36px;
-  color: var(--cs-arrow-fg);
+  color: var(--dos-arrow-fg);
   cursor: pointer;
-  background: var(--cs-arrow-bg);
+  background: var(--dos-arrow-bg);
   border: 0;
   border-radius: 50%;
 }
 
-.cs-dots {
+.dos-dots {
   position: absolute;
   inset-block-end: 0;
   inset-inline: 0;
@@ -287,7 +287,7 @@
   justify-content: center;
 }
 
-.cs-dot {
+.dos-dot {
   display: grid;
   place-items: center;
 
@@ -300,16 +300,16 @@
   border: 0;
 }
 
-.cs-dot::after {
-  inline-size: var(--cs-dot-size);
-  block-size: var(--cs-dot-size);
+.dos-dot::after {
+  inline-size: var(--dos-dot-size);
+  block-size: var(--dos-dot-size);
   content: "";
-  background: var(--cs-dot-fg);
+  background: var(--dos-dot-fg);
   border-radius: 50%;
 }
 
-.cs-dot--current::after {
-  background: var(--cs-dot-current);
+.dos-dot--current::after {
+  background: var(--dos-dot-current);
 }
 
 /* Windows High Contrast forces every background to the canvas colour, and a dot
@@ -320,11 +320,11 @@
    The arrows and the pause button do NOT need this: their glyph is a currentColor
    SVG, which HCM forces to ButtonText and leaves legible either way. */
 @media (forced-colors: active) {
-  .cs-dot::after {
+  .dos-dot::after {
     background: ButtonText;
   }
 
-  .cs-dot--current::after {
+  .dos-dot--current::after {
     background: Highlight;
   }
 }
@@ -332,44 +332,44 @@
 /* ---- hover / motion ---------------------------------------------------- */
 
 /* Grouped so the property list ships once instead of four times. */
-.cs-arrow,
-.cs-pause,
-.cs-dot::after,
-.cs-thumb,
-.cs-thumb img {
+.dos-arrow,
+.dos-pause,
+.dos-dot::after,
+.dos-thumb,
+.dos-thumb img {
   transition:
-    color var(--cs-transition),
-    background-color var(--cs-transition),
-    border-color var(--cs-transition),
-    opacity var(--cs-transition),
-    transform var(--cs-transition);
+    color var(--dos-transition),
+    background-color var(--dos-transition),
+    border-color var(--dos-transition),
+    opacity var(--dos-transition),
+    transform var(--dos-transition);
 }
 
 /* A disabled end arrow (rewind:false) must not light up on hover. */
-.cs-arrow:hover:not([aria-disabled="true"]),
-.cs-pause:hover {
-  color: var(--cs-arrow-fg-hover);
-  background: var(--cs-arrow-bg-hover);
+.dos-arrow:hover:not([aria-disabled="true"]),
+.dos-pause:hover {
+  color: var(--dos-arrow-fg-hover);
+  background: var(--dos-arrow-bg-hover);
 }
 
-.cs-dot:hover::after {
-  background: var(--cs-dot-current);
+.dos-dot:hover::after {
+  background: var(--dos-dot-current);
 }
 
-.cs-thumb:hover {
-  border-color: var(--cs-dot-fg);
+.dos-thumb:hover {
+  border-color: var(--dos-dot-fg);
 }
 
 /* The thumb box never moves — only the picture inside it zooms, clipped by the
    thumb's own overflow:hidden. Scaling the button instead would shift its
    neighbours and nudge the scroll position of the strip it sits in. */
-.cs-thumb:hover img {
-  transform: scale(var(--cs-thumb-hover-scale));
+.dos-thumb:hover img {
+  transform: scale(var(--dos-thumb-hover-scale));
 }
 
 /* ---- gallery (tabbed) variant ------------------------------------------ */
 
-.cs-thumbs {
+.dos-thumbs {
   position: absolute;
   inset-block-end: 0;
   inset-inline: 0;
@@ -381,7 +381,7 @@
      cannot reach it and the first thumbs become unreachable. `safe` centres
      a short strip and falls back to start-aligned the moment it overflows. */
   justify-content: safe center;
-  block-size: var(--cs-thumb-h);
+  block-size: var(--dos-thumb-h);
   overflow-x: auto;
 
   /* The same shield the track carries, for the same reason: _revealThumb()
@@ -394,26 +394,26 @@
 }
 
 /* Same as the track: Android WebView needs the -webkit- rule too. */
-.cs-thumbs::-webkit-scrollbar {
+.dos-thumbs::-webkit-scrollbar {
   display: none;
 }
 
-/* JS keeps data-cs-overflow current; fading the clipped edge signals "more
+/* JS keeps data-dos-overflow current; fading the clipped edge signals "more
    thumbs this way" since the scrollbar is hidden. LTR (v1, like the engine). */
-.cs-thumbs[data-cs-overflow="start"] {
+.dos-thumbs[data-dos-overflow="start"] {
   mask-image: linear-gradient(to right, transparent, #000 32px);
 }
 
-.cs-thumbs[data-cs-overflow="end"] {
+.dos-thumbs[data-dos-overflow="end"] {
   mask-image: linear-gradient(to right, #000 calc(100% - 32px), transparent);
 }
 
-.cs-thumbs[data-cs-overflow="both"] {
+.dos-thumbs[data-dos-overflow="both"] {
   mask-image: linear-gradient(to right, transparent, #000 32px, #000 calc(100% - 32px), transparent);
 }
 
-.cs-thumb {
-  flex: 0 0 var(--cs-thumb-w);
+.dos-thumb {
+  flex: 0 0 var(--dos-thumb-w);
   padding: 0;
   overflow: hidden;
   cursor: pointer;
@@ -422,29 +422,29 @@
   border-radius: 4px;
 }
 
-.cs-thumb img {
+.dos-thumb img {
   display: block;
   inline-size: 100%;
   block-size: 100%;
   object-fit: cover;
 }
 
-.cs-thumb[aria-selected="true"] {
-  border-color: var(--cs-dot-current);
+.dos-thumb[aria-selected="true"] {
+  border-color: var(--dos-dot-current);
 }
 
 /* Both sit flush inside a scroll container, which clips anything drawn outside
    them — draw the ring inset or it's invisible (WCAG 2.4.7). The gallery
    tabpanel is focusable, so it needs this as much as the thumbs do. */
-.cs-thumb:focus-visible,
-.cs-slide:focus-visible {
-  outline: 3px solid var(--cs-focus);
+.dos-thumb:focus-visible,
+.dos-slide:focus-visible {
+  outline: 3px solid var(--dos-focus);
   outline-offset: -3px;
 }
 
 /* ---- visually hidden (status region) ----------------------------------- */
 
-.cs-sr-only {
+.dos-sr-only {
   position: absolute;
   inline-size: 1px;
   block-size: 1px;
@@ -460,40 +460,40 @@
 
 /* Stacked crossfade for 1-up heroes. The track stops being a scroll container
    entirely; slides pile up in one grid cell so the tallest defines the height
-   (no absolute positioning = no collapsed box, no CLS). JS owns .cs-slide--current. */
-.cs[data-cs-fade-on] .cs-track {
+   (no absolute positioning = no collapsed box, no CLS). JS owns .dos-slide--current. */
+.dos[data-dos-fade-on] .dos-track {
   display: grid;
   padding: 0;
   overflow: hidden;
   scroll-snap-type: none;
 }
 
-.cs[data-cs-fade-on] .cs-slide {
+.dos[data-dos-fade-on] .dos-slide {
   grid-area: 1 / 1;
   opacity: 0;
-  transition: opacity var(--cs-fade-ms, 500ms) ease;
+  transition: opacity var(--dos-fade-ms, 500ms) ease;
 }
 
-.cs[data-cs-fade-on] .cs-slide.cs-slide--current {
+.dos[data-dos-fade-on] .dos-slide.dos-slide--current {
   opacity: 1;
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .cs[data-cs-fade-on] .cs-slide {
+  .dos[data-dos-fade-on] .dos-slide {
     transition: none;
   }
 
   /* Not `none` — a 1ms transition still fires transitionend for listeners. */
-  .cs-arrow,
-  .cs-pause,
-  .cs-dot::after,
-  .cs-thumb,
-  .cs-thumb img {
+  .dos-arrow,
+  .dos-pause,
+  .dos-dot::after,
+  .dos-thumb,
+  .dos-thumb img {
     transition-duration: 1ms;
   }
 
   /* The zoom is motion, not just a fast transition — drop it entirely. */
-  .cs-thumb:hover img {
+  .dos-thumb:hover img {
     transform: none;
   }
 }

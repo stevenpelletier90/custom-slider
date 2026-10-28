@@ -1,4 +1,4 @@
-# Custom Slider
+# DealerOn Slider
 
 Dependency-free scroll-snap slider/carousel. **`npm run size` is the authority on every byte
 figure** and the only place one is written down: CI enforces a 6656 B gzip budget on the engine and
@@ -7,73 +7,73 @@ files and gzips them in the browser, so its number cannot go stale either. Nothi
 repeats a current size — a figure copied into prose was 50% low within six weeks, because the same
 two files grew the card styles and the shared pattern structure after it was written. No build step
 required to use, themed entirely with CSS custom properties. Built to be maintained in-house: the
-whole engine is one commented file, `src/custom-slider.js`.
+whole engine is one commented file, `src/dealeron-slider.js`.
 
 The browser owns the physics (touch, drag, momentum, snapping — CSS `scroll-snap`); the JS only
 wires controls, state, autoplay, and the gallery variant — plus the one physics gap browsers leave
-open: mouse drag-to-scroll (native scroll containers don't drag with a mouse; `data-cs-drag="false"`
-opts out). Rewind instead of infinite loop: no cloned slides, so no duplicate content for SEO and no
-screen-reader confusion.
+open: mouse drag-to-scroll (native scroll containers don't drag with a mouse;
+`data-dos-drag="false"` opts out). Rewind instead of infinite loop: no cloned slides, so no
+duplicate content for SEO and no screen-reader confusion.
 
 The demo page (`demo/index.html`) is a workbench: pick a pattern, set it up (how many across at each
 breakpoint, how many rows, brand preset, arrow colours, how many cards an arrow moves), and copy
 code generated from those same settings — so the snippet is always exactly the slider on screen. It
 also hands you all four `dist/` files themselves, to upload — the engine is linked, never pasted. It
-is live at **<https://stevenpelletier90.github.io/custom-slider/demo/>** (the bare `/custom-slider/`
-redirects there), the link shared with DealerOn developers. GitHub Pages serves `master` from the
-root with no build step, so a `src/` change is live only once `npm run build` has run and `dist/` is
-committed and pushed. The repo keeps the name `custom-slider` on purpose: the 2026-08-31 rename left
-it alone so this link survives. Never rename the repo.
+is live at **<https://stevenpelletier90.github.io/dealeron-slider/demo/>** (the bare
+`/dealeron-slider/` redirects there), the link shared with DealerOn developers. GitHub Pages serves
+`master` from the root with no build step, so a `src/` change is live only once `npm run build` has
+run and `dist/` is committed and pushed. The repo keeps the name `dealeron-slider` on purpose: the
+2026-08-31 rename left it alone so this link survives. Never rename the repo.
 
 ## Quick start (CMS / classic script)
 
 ```html
-<link rel="stylesheet" href="custom-slider.min.css">
-<script src="custom-slider.min.js" defer></script>
+<link rel="stylesheet" href="dealeron-slider.min.css">
+<script src="dealeron-slider.min.js" defer></script>
 
-<div class="cs my-slider cs-sm-2 cs-md-3" data-cs aria-label="Featured vehicles">
-  <ul class="cs-track" role="list">
-    <li class="cs-slide">…</li>
-    <li class="cs-slide">…</li>
+<div class="dos my-slider dos-sm-2 dos-md-3" data-dos aria-label="Featured vehicles">
+  <ul class="dos-track" role="list">
+    <li class="dos-slide">…</li>
+    <li class="dos-slide">…</li>
   </ul>
 </div>
 ```
 
-Every `[data-cs]` element initializes automatically. Slides-per-view is CSS, not a JS option: the
-`cs-xs-N` / `cs-sm-N` / `cs-md-N` / `cs-lg-N` classes ship in the stylesheet for N of 1–8, on
+Every `[data-dos]` element initializes automatically. Slides-per-view is CSS, not a JS option: the
+`dos-xs-N` / `dos-sm-N` / `dos-md-N` / `dos-lg-N` classes ship in the stylesheet for N of 1–8, on
 Bootstrap 3's tiers — **768 / 992 / 1200**, the grid the storefronts run today — and since
-2026-09-15 `cs-576-N` and `cs-1400-N` on Bootstrap 5's two extra tiers, **576 / 1400**, named by
+2026-09-15 `dos-576-N` and `dos-1400-N` on Bootstrap 5's two extra tiers, **576 / 1400**, named by
 their width because Bootstrap 5's letters mean different numbers (its `sm` is 576; ours is 768 and
 frozen). The three shared numbers mean the same thing in both grids, so one set of classes serves a
 site before and after the platform moves. One class per tier where the count changes; the engine's
-own default is one across, so `cs-xs-1` is never needed.
+own default is one across, so `dos-xs-1` is never needed.
 
-Setting `--cs-per-view` by hand in a media query does the same thing and is what the classes are
+Setting `--dos-per-view` by hand in a media query does the same thing and is what the classes are
 made of, but on a DealerOn page your CSS goes in the **Style Only** field as raw CSS — no `<style>`
-tags — so there is no in-page `<style>` block to put it in. Write `.my-slider.cs { … }` rather than
-`.my-slider { … }` there: a bare class ties with the engine's own `.cs`, and then source order,
+tags — so there is no in-page `<style>` block to put it in. Write `.my-slider.dos { … }` rather than
+`.my-slider { … }` there: a bare class ties with the engine's own `.dos`, and then source order,
 which you do not control, decides which wins.
 
 ## Quick start (ES module)
 
 ```js
-import { CustomSlider } from './src/custom-slider.js';
-const slider = new CustomSlider(document.querySelector('.my-slider'), { autoplay: 4000 });
+import { DealerOnSlider } from './src/dealeron-slider.js';
+const slider = new DealerOnSlider(document.querySelector('.my-slider'), { autoplay: 4000 });
 ```
 
 JS options override data attributes, which override defaults.
 
 ## Markup contract
 
-- Root: `class="cs"` (+ `data-cs` for auto-init) with `aria-label` or `aria-labelledby`.
+- Root: `class="dos"` (+ `data-dos` for auto-init) with `aria-label` or `aria-labelledby`.
 - Name: one more class of your own on the root — `my-slider` — which is what your settings hang off.
   **It must be unique on the page.** Two sliders sharing a name share their rules, and the second
   block's CSS wins for both: measured on a pair of model bars, the first strip took the second's 3em
   gap and its slides went from 208.6px to 180.6px, with nothing on the page saying so. The builder
   puts the field beside its copy buttons for this reason.
-- Track: one `.cs-track` child — `<ul role="list">` for card carousels, `<div>` for
-  `data-cs-gallery`. The role is not redundant here: see Accessibility behavior.
-- Slides: `.cs-slide` children. All real content (headings, links, images) goes in the HTML — the
+- Track: one `.dos-track` child — `<ul role="list">` for card carousels, `<div>` for
+  `data-dos-gallery`. The role is not redundant here: see Accessibility behavior.
+- Slides: `.dos-slide` children. All real content (headings, links, images) goes in the HTML — the
   engine never injects content, only controls.
 - Images: always `width`/`height`; first visible image eager (add `fetchpriority="high"` only if the
   slider is above the fold); later slides `loading="lazy" decoding="async"`; `sizes` = one slide's
@@ -82,17 +82,17 @@ JS options override data attributes, which override defaults.
 
 ## Options
 
-| Option            | Data attribute            | Default         | Effect                                                                                                                                                                                                          |
-| ----------------- | ------------------------- | --------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| `autoplay`        | `data-cs-autoplay="4000"` | `0`             | Advance every N ms; adds pause button (first in tab order)                                                                                                                                                      |
-| `rewind`          | `data-cs-rewind="false"`  | `true`          | Arrows wrap at the ends; `false` stops there and `aria-disable`s the end arrow (ignored with autoplay, which needs the wrap)                                                                                    |
-| `step`            | `data-cs-step="slide"`    | `"page"`        | `"slide"` advances one card per arrow click / autoplay tick instead of a full page; a positive integer (`data-cs-step="3"`) advances that many. Dots still represent pages, and the last stop is always the end |
-| `drag`            | `data-cs-drag="false"`    | `true`          | Mouse drag-to-scroll on the track (click-through suppressed after a real drag); touch/pen swiping is native and unaffected                                                                                      |
-| `fade`            | `data-cs-fade`            | `false`         | Stacked crossfade instead of a scrolling track — 1-up heroes; no drag/peek, ignored with `gallery`                                                                                                              |
-| `gallery`         | `data-cs-gallery`         | `false`         | Tabbed thumbnail gallery (thumbs generated from slide images)                                                                                                                                                   |
-| `roledescription` | `data-cs-roledescription` | `"carousel"`    | Empty string to omit                                                                                                                                                                                            |
-| `labels`          | `data-cs-label-*`         | English strings | Every announced string, one attribute each — see [Announced text and other languages](#announced-text-and-other-languages)                                                                                      |
-| —                 | `data-cs-init="manual"`   | auto            | Skip auto-init; construct via `new CustomSlider(el, opts)` from page script                                                                                                                                     |
+| Option            | Data attribute             | Default         | Effect                                                                                                                                                                                                           |
+| ----------------- | -------------------------- | --------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `autoplay`        | `data-dos-autoplay="4000"` | `0`             | Advance every N ms; adds pause button (first in tab order)                                                                                                                                                       |
+| `rewind`          | `data-dos-rewind="false"`  | `true`          | Arrows wrap at the ends; `false` stops there and `aria-disable`s the end arrow (ignored with autoplay, which needs the wrap)                                                                                     |
+| `step`            | `data-dos-step="slide"`    | `"page"`        | `"slide"` advances one card per arrow click / autoplay tick instead of a full page; a positive integer (`data-dos-step="3"`) advances that many. Dots still represent pages, and the last stop is always the end |
+| `drag`            | `data-dos-drag="false"`    | `true`          | Mouse drag-to-scroll on the track (click-through suppressed after a real drag); touch/pen swiping is native and unaffected                                                                                       |
+| `fade`            | `data-dos-fade`            | `false`         | Stacked crossfade instead of a scrolling track — 1-up heroes; no drag/peek, ignored with `gallery`                                                                                                               |
+| `gallery`         | `data-dos-gallery`         | `false`         | Tabbed thumbnail gallery (thumbs generated from slide images)                                                                                                                                                    |
+| `roledescription` | `data-dos-roledescription` | `"carousel"`    | Empty string to omit                                                                                                                                                                                             |
+| `labels`          | `data-dos-label-*`         | English strings | Every announced string, one attribute each — see [Announced text and other languages](#announced-text-and-other-languages)                                                                                       |
+| —                 | `data-dos-init="manual"`   | auto            | Skip auto-init; construct via `new DealerOnSlider(el, opts)` from page script                                                                                                                                    |
 
 ## Announced text and other languages
 
@@ -100,38 +100,38 @@ Every string the carousel announces is settable from the markup, because the CMS
 markup and never a constructor call — a page built in the block editor has no other route to a
 Spanish carousel.
 
-| Attribute                      | Default                         | Where it is heard                                                             |
-| ------------------------------ | ------------------------------- | ----------------------------------------------------------------------------- |
-| `data-cs-label-prev`           | `Previous slides`               | Previous arrow                                                                |
-| `data-cs-label-next`           | `Next slides`                   | Next arrow                                                                    |
-| `data-cs-label-pause`          | `Stop automatic slide show`     | Pause button (autoplay only)                                                  |
-| `data-cs-label-play`           | `Start automatic slide show`    | Same button once paused                                                       |
-| `data-cs-label-dots`           | `Choose slide`                  | The dot group                                                                 |
-| `data-cs-label-goto-slide`     | `Go to slide {n}`               | One dot, 1-up                                                                 |
-| `data-cs-label-goto-page`      | `Go to slides {from}–{to}`      | One dot, multi-card                                                           |
-| `data-cs-label-status-single`  | `Slide {n} of {total}`          | The live status region, 1-up                                                  |
-| `data-cs-label-status-multi`   | `Slides {from}–{to} of {total}` | The live status region, multi-card                                            |
-| `data-cs-label-thumbs`         | `Choose photo`                  | The thumb strip (`gallery`)                                                   |
-| `data-cs-label-photo`          | `Photo {n}`                     | One thumb (`gallery`)                                                         |
-| `data-cs-label-slide-position` | `{n} of {total}`                | A slide's own name, when the track is not a list and the slide has no heading |
-| `data-cs-label-slide`          | `slide`                         | The word for a slide on a track that is not a list, and for a `gallery` panel |
+| Attribute                       | Default                         | Where it is heard                                                             |
+| ------------------------------- | ------------------------------- | ----------------------------------------------------------------------------- |
+| `data-dos-label-prev`           | `Previous slides`               | Previous arrow                                                                |
+| `data-dos-label-next`           | `Next slides`                   | Next arrow                                                                    |
+| `data-dos-label-pause`          | `Stop automatic slide show`     | Pause button (autoplay only)                                                  |
+| `data-dos-label-play`           | `Start automatic slide show`    | Same button once paused                                                       |
+| `data-dos-label-dots`           | `Choose slide`                  | The dot group                                                                 |
+| `data-dos-label-goto-slide`     | `Go to slide {n}`               | One dot, 1-up                                                                 |
+| `data-dos-label-goto-page`      | `Go to slides {from}–{to}`      | One dot, multi-card                                                           |
+| `data-dos-label-status-single`  | `Slide {n} of {total}`          | The live status region, 1-up                                                  |
+| `data-dos-label-status-multi`   | `Slides {from}–{to} of {total}` | The live status region, multi-card                                            |
+| `data-dos-label-thumbs`         | `Choose photo`                  | The thumb strip (`gallery`)                                                   |
+| `data-dos-label-photo`          | `Photo {n}`                     | One thumb (`gallery`)                                                         |
+| `data-dos-label-slide-position` | `{n} of {total}`                | A slide's own name, when the track is not a list and the slide has no heading |
+| `data-dos-label-slide`          | `slide`                         | The word for a slide on a track that is not a list, and for a `gallery` panel |
 
 `{n}`, `{from}`, `{to}` and `{total}` are filled in; anything else is used verbatim. Set
-`data-cs-roledescription` too — a screen reader says the word "carousel" before any of these.
+`data-dos-roledescription` too — a screen reader says the word "carousel" before any of these.
 
 ```html
 <div
-  class="cs"
-  data-cs
+  class="dos"
+  data-dos
   lang="es"
   aria-label="Modelos"
-  data-cs-roledescription="carrusel"
-  data-cs-label-prev="Anteriores"
-  data-cs-label-next="Siguientes"
-  data-cs-label-dots="Elegir diapositiva"
-  data-cs-label-goto-slide="Ir a la diapositiva {n}"
-  data-cs-label-status-single="Diapositiva {n} de {total}"
-  data-cs-label-slide="diapositiva"
+  data-dos-roledescription="carrusel"
+  data-dos-label-prev="Anteriores"
+  data-dos-label-next="Siguientes"
+  data-dos-label-dots="Elegir diapositiva"
+  data-dos-label-goto-slide="Ir a la diapositiva {n}"
+  data-dos-label-status-single="Diapositiva {n} de {total}"
+  data-dos-label-slide="diapositiva"
 ></div>
 ```
 
@@ -139,7 +139,7 @@ The status region is also the shortest route to a **visible** "3 / 12" counter: 
 every move, so it only needs unhiding and wording.
 
 ```css
-.my-slider .cs-status {
+.my-slider .dos-status {
   position: static;
   inline-size: auto;
   block-size: auto;
@@ -149,7 +149,7 @@ every move, so it only needs unhiding and wording.
 ```
 
 ```html
-<div class="my-slider cs" data-cs data-cs-label-status-single="{n} / {total}" data-cs-label-status-multi="{from}–{to} / {total}"></div>
+<div class="my-slider dos" data-dos data-dos-label-status-single="{n} / {total}" data-dos-label-status-multi="{from}–{to} / {total}"></div>
 ```
 
 A JS `labels` option still wins over an attribute, so an existing manual-init page is unaffected.
@@ -158,44 +158,47 @@ A JS `labels` option still wins over an attribute, so an existing manual-init pa
 
 The two files are meant to live at one URL every site links, and the filenames carry no version — so
 a fix reaches every storefront at once, and so would a mistake. What makes that safe is the
-contract, not the filename: class names (`cs`, `cs-track`, `cs-slide`, the generated control
-classes), the data attributes, the `--cs-*` properties, the `cs:*` event payloads, the public
+contract, not the filename: class names (`dos`, `dos-track`, `dos-slide`, the generated control
+classes), the data attributes, the `--dos-*` properties, the `dos:*` event payloads, the public
 methods and the accessibility behaviours are frozen. **Adding is fine. Renaming or repurposing is
 not**, because the sites already linking the file cannot be edited to keep up.
 
 That rule was always written down. With a shared copy it stops being a preference and becomes the
-only thing standing between a rename and every storefront that links it.
+only thing standing between a rename and every storefront that links it. The names have moved twice,
+each time before any page was believed to use them: `dl-carousel` → `cs` on 2026-08-31, and `cs` →
+`dos` on 2026-10-27, when the product became DealerOn Slider. They are frozen again from the first
+upload of the `dealeron-slider` files.
 
-Files named `dl-carousel.js` / `dl-carousel.css` are **not** an older version of these. That was the
-pre-rename engine and it is a different contract — root class `dl-carousel`, `--dlc-*` properties,
-`window.DLCarousel`. A page linking those and pasting a snippet from the current builder gets an
-unstyled list, so they should be removed rather than left alongside. Note that the pre-rename build
-is currently served under the CURRENT filenames rather than its own — see "Deployment status" below
-for what is actually on the shared path today, and the rename map for moving a page across.
+Files named `dl-carousel.*` or `custom-slider.*` are **not** older versions of these. Each is a
+different contract — `dl-carousel` had root class `dl-carousel`, `--dlc-*` properties and
+`window.DLCarousel`; `custom-slider` had `cs`, `--cs-*` and `window.CustomSlider`. A page linking
+either and pasting a snippet from the current builder gets an unstyled list, so they should be
+removed rather than left alongside. See "Deployment status" below for what is on the shared path
+today, and the rename map for moving a page across.
 
 ## Card styles come with the stylesheet
 
-`dist/custom-slider.min.css` is the engine **plus** a small library of card styling: the seven card
-looks and a set of column classes (`npm run size` prints the share). The engine itself styles no
-cards on purpose — `cs-*` is mechanism, `cargo-*` is content — but every site that links it gets the
-card half too, so a slider is mostly just its markup:
+`dist/dealeron-slider.min.css` is the engine **plus** a small library of card styling: the seven
+card looks and a set of column classes (`npm run size` prints the share). The engine itself styles
+no cards on purpose — `dos-*` is mechanism, `cargo-*` is content — but every site that links it gets
+the card half too, so a slider is mostly just its markup:
 
 ```html
-<link rel="stylesheet" href="/path/custom-slider.min.css" />
-<script src="/path/custom-slider.min.js" defer></script>
+<link rel="stylesheet" href="/path/dealeron-slider.min.css" />
+<script src="/path/dealeron-slider.min.js" defer></script>
 
-<div class="cs cargo-tile cs-xs-2 cs-sm-3 cs-md-4 cs-lg-5" data-cs aria-label="Our models">
-  <ul class="cs-track" role="list">
+<div class="dos cargo-tile dos-xs-2 dos-sm-3 dos-md-4 dos-lg-5" data-dos aria-label="Our models">
+  <ul class="dos-track" role="list">
     …
   </ul>
 </div>
 ```
 
 Looks: `cargo-tile`, `cargo-vcard`, `cargo-wordmark`, `cargo-split`, `cargo-portrait`, `cargo-logo`,
-`cargo-location`. Columns: `cs-xs-N` / `cs-sm-N` / `cs-md-N` / `cs-lg-N` for N of 1–8, on Bootstrap
-3's tiers, plus `cs-576-N` / `cs-1400-N` on Bootstrap 5's two extra tiers. Anything you change from
-a look's defaults goes in a short `<style>` block beside the markup — the builder writes only the
-differences.
+`cargo-location`. Columns: `dos-xs-N` / `dos-sm-N` / `dos-md-N` / `dos-lg-N` for N of 1–8, on
+Bootstrap 3's tiers, plus `dos-576-N` / `dos-1400-N` on Bootstrap 5's two extra tiers. Anything you
+change from a look's defaults goes in a short `<style>` block beside the markup — the builder writes
+only the differences.
 
 The card half is **generated** from the same look definitions the builder draws with
 (`scripts/build-cards.mjs` appends it behind a `/*! cards */` marker), so the file and the preview
@@ -204,7 +207,7 @@ below — the budget's job is to show the engine undercuts Embla's core and Spli
 those ships a card library.
 
 There was a **Paste the card styles too** switch in the builder that inlined a look's rules into the
-snippet, for a page linking a `custom-slider.min.css` older than the card half. It went on
+snippet, for a page linking a `dealeron-slider.min.css` older than the card half. It went on
 2026-09-08, for the reason the paste-the-engine route went: an inlined copy can never be fixed, so
 patching a card style reaches every linked page and silently misses every inlined one, with nothing
 saying which pages are on which. The gap it covered closes with a re-upload — see "Deployment
@@ -263,12 +266,12 @@ legacy form.
 ## CSS custom properties
 
 Every one of them is tabulated with its live default on the Reference page, which reads them out of
-the shipped stylesheet rather than counting by hand: `--cs-per-view`, `--cs-gap`, `--cs-peek` (edge
-sliver of the next slide), `--cs-arrow-size/fg/bg`, `--cs-arrow-fg-hover/bg-hover`,
-`--cs-dot-size/fg/current`, `--cs-controls-space`, `--cs-thumb-w/h`, `--cs-thumb-hover-scale`
-(gallery thumb zoom on hover; `1` turns it off), `--cs-focus`, `--cs-transition` (duration+easing
-for control colour transitions), `--cs-fade-ms` (crossfade duration in fade mode). Set them on the
-`.cs` element or any wrapper.
+the shipped stylesheet rather than counting by hand: `--dos-per-view`, `--dos-gap`, `--dos-peek`
+(edge sliver of the next slide), `--dos-arrow-size/fg/bg`, `--dos-arrow-fg-hover/bg-hover`,
+`--dos-dot-size/fg/current`, `--dos-controls-space`, `--dos-thumb-w/h`, `--dos-thumb-hover-scale`
+(gallery thumb zoom on hover; `1` turns it off), `--dos-focus`, `--dos-transition` (duration+easing
+for control colour transitions), `--dos-fade-ms` (crossfade duration in fade mode). Set them on the
+`.dos` element or any wrapper.
 
 Spacing defaults are **`em`, never `rem`**. `rem` is locked to `<html>`, and Bootstrap 3 — which the
 storefronts run — sets `html { font-size: 10px }`, so every `rem` shipped at 62.5% of its intended
@@ -280,25 +283,25 @@ Arial, and `em` inside it would mean something different from `em` outside it.
 ## JS API
 
 Methods: `goTo(n)`, `next()`, `prev()`, `pause()`, `play()`, `destroy()`,
-`CustomSlider.autoInit(scope?)` — the same name whether loaded as a classic script
-(`window.CustomSlider`) or imported as an ES module. Instance is at `element._cs`. Events (bubble
-from the root): `cs:change` `{index, page, slidesInView}`, `cs:autoplay-start`, `cs:autoplay-stop`,
-`cs:destroy`.
+`DealerOnSlider.autoInit(scope?)` — the same name whether loaded as a classic script
+(`window.DealerOnSlider`) or imported as an ES module. Instance is at `element._dos`. Events (bubble
+from the root): `dos:change` `{index, page, slidesInView}`, `dos:autoplay-start`,
+`dos:autoplay-stop`, `dos:destroy`.
 
 `goTo(n)` takes a slide index: a finite whole number, clamped to the ends. A fraction truncates
 (`goTo(1.5)` is slide 1) and anything that is not a number — `NaN`, `Infinity`, a word, `undefined`
 — is a no-op rather than a throw. JS options beat data attributes for the CSS state too:
-constructing with `{ gallery: false }` or `{ fade: false }` over authored `data-cs-gallery` /
-`data-cs-fade` writes `="false"` onto the element, so the stylesheet stops reserving the thumb strip
-or pinning the slides one-up. `destroy()` puts the authored value back.
+constructing with `{ gallery: false }` or `{ fade: false }` over authored `data-dos-gallery` /
+`data-dos-fade` writes `="false"` onto the element, so the stylesheet stops reserving the thumb
+strip or pinning the slides one-up. `destroy()` puts the authored value back.
 
 `destroy()` puts the root's attributes back to what they were before init and restores the authored
 markup from a snapshot taken at init. The snapshot is a rebuild, not a mutation: the slides come
 back as new nodes, so listeners or state a page script attached to the original slide elements do
-not survive it. Re-attach after `cs:destroy` if you need them.
+not survive it. Re-attach after `dos:destroy` if you need them.
 
-`CustomSlider.wirePatterns()` is set by the pattern section of `custom-slider.min.js` (not by the
-engine, so it is absent from the ES module): it runs every pattern script again over the whole
+`DealerOnSlider.wirePatterns()` is set by the pattern section of `dealeron-slider.min.js` (not by
+the engine, so it is absent from the ES module): it runs every pattern script again over the whole
 document. It runs once by itself on load; call it only for pattern markup added afterwards, once per
 batch — a tab row wired twice answers a key twice.
 
@@ -319,11 +322,11 @@ batch — a tab row wired twice answers a key twice.
 - Dots are one per PAGE of slides, plain buttons (not tabs); the current dot carries
   `aria-current="true"` and stays an enabled, focusable button. Not `aria-disabled`, which it was
   until 2026-10-27: NVDA reads that as "button, unavailable", which sounds broken, where
-  `aria-current` reads "button, current". Style the current dot with `.cs-dot--current`.
-- When every slide already fits, the arrows and dots are hidden and the root gains `data-cs-fits` —
+  `aria-current` reads "button, current". Style the current dot with `.dos-dot--current`.
+- When every slide already fits, the arrows and dots are hidden and the root gains `data-dos-fits` —
   controls that cannot move anything must not be focusable, and a one-of-one dot group announces a
   choice that isn't one. It is re-evaluated on resize, because slides-per-view is CSS. Style on
-  `data-cs-fits` if you want the reserved control space to collapse too.
+  `data-dos-fits` if you want the reserved control space to collapse too.
 - Gallery: full APG tabbed-carousel — thumbs are a `tablist` with roving tabindex and arrow keys;
   non-visible panels are `inert`. The visible panel takes `tabindex="0"`: it holds no focusable
   content, and without it Chrome puts an unnamed tab stop on the scrolling track instead (it does
@@ -338,17 +341,17 @@ batch — a tab row wired twice answers a key twice.
   carve-out `gallery` mode has, and the reason the multi-card "never inert off-screen cards" rule
   does not apply here (fade is 1-up, so no count is corrupted). A slide containing focus is never
   inerted. Fade never scrolls, so `goTo()` is its commit point instead of `scrollend`.
-- Fade's stacking CSS is keyed to `data-cs-fade-on`, which **the engine sets at init** — never to
-  the authored `data-cs-fade`. JS decides which slide is visible, so if the stacking applied without
-  JS every slide would sit at opacity 0 and the whole carousel would vanish. With JS off the track
-  stays an ordinary scrollable strip with all slides visible. `destroy()` removes the marker. The
-  **width** is the one exception: `--cs-per-view: 1` is pinned in the stylesheet off the authored
-  `data-cs-fade`, so a fading carousel is one across from first paint and init shifts nothing.
-  Without it, a hero authored three across laid out as a three-across strip and jumped a whole image
-  height when the script ran — measured 195.1px to 529.4px on a 1170px page — and that is also what
-  a no-JS visitor was left looking at. It means the `cs-*-N` classes and your own `--cs-per-view`
-  are **ignored on a fading carousel**, which is intended: a crossfade is 1-up.
-  `data-cs-fade="false"` keeps its columns.
+- Fade's stacking CSS is keyed to `data-dos-fade-on`, which **the engine sets at init** — never to
+  the authored `data-dos-fade`. JS decides which slide is visible, so if the stacking applied
+  without JS every slide would sit at opacity 0 and the whole carousel would vanish. With JS off the
+  track stays an ordinary scrollable strip with all slides visible. `destroy()` removes the marker.
+  The **width** is the one exception: `--dos-per-view: 1` is pinned in the stylesheet off the
+  authored `data-dos-fade`, so a fading carousel is one across from first paint and init shifts
+  nothing. Without it, a hero authored three across laid out as a three-across strip and jumped a
+  whole image height when the script ran — measured 195.1px to 529.4px on a 1170px page — and that
+  is also what a no-JS visitor was left looking at. It means the `dos-*-N` classes and your own
+  `--dos-per-view` are **ignored on a fading carousel**, which is intended: a crossfade is 1-up.
+  `data-dos-fade="false"` keeps its columns.
 - Every programmatic scroll resolves smooth-vs-instant from `prefers-reduced-motion` at call time.
   Never add CSS `scroll-behavior: smooth` — but `auto` IS declared on the track and must stay:
   without it a host page's global `* { scroll-behavior: smooth }` captures every instant scroll the
@@ -356,42 +359,42 @@ batch — a tab row wired twice answers a key twice.
 
 ## Advanced use (escape hatches)
 
-- **Manual init:** add `data-cs-init="manual"` and construct from page script:
-  `new CustomSlider(el, { autoplay: 6000, labels: { next: 'Next vehicles' } })`.
-- **Custom callbacks:** listen for `cs:change` on the root (bubbles) — e.g. update a counter,
+- **Manual init:** add `data-dos-init="manual"` and construct from page script:
+  `new DealerOnSlider(el, { autoplay: 6000, labels: { next: 'Next vehicles' } })`.
+- **Custom callbacks:** listen for `dos:change` on the root (bubbles) — e.g. update a counter,
   lazy-init a map, sync anything to the current slide.
 - **Synchronized sliders:** wire two instances in page script:
-  `a.addEventListener('cs:change', e => b._cs.goTo(e.detail.index))` — `goTo` is idempotent, so
+  `a.addEventListener('dos:change', e => b._dos.goTo(e.detail.index))` — `goTo` is idempotent, so
   feedback loops settle naturally.
-- **OEM styling:** override `--cs-*` custom properties per site/brand — no engine edits.
+- **OEM styling:** override `--dos-*` custom properties per site/brand — no engine edits.
 
-## Swapping the engine later (the Custom Slider contract)
+## Swapping the engine later (the DealerOn Slider contract)
 
 The HTML on the sites is the stable API; this engine is an implementation detail. Any future engine
 (third-party or rewrite) must honor the same contract, and then replacing it = replacing the
 contents of the two dist files, with zero site edits:
 
-1. Consume `.cs[data-cs] > .cs-track > .cs-slide+` with all content authored in the HTML; generate
-   its own controls (never require control markup in the CMS).
-2. Honor the data attributes (`data-cs-autoplay`, `data-cs-rewind`, `data-cs-step`, `data-cs-drag`,
-   `data-cs-fade`, `data-cs-gallery`, `data-cs-roledescription`, `data-cs-init`) and the `--cs-*`
-   theming knobs.
-3. Emit the `cs:*` events with the same payloads and expose `goTo/next/prev/pause/play/destroy` +
-   `CustomSlider.autoInit`.
+1. Consume `.dos[data-dos] > .dos-track > .dos-slide+` with all content authored in the HTML;
+   generate its own controls (never require control markup in the CMS).
+2. Honor the data attributes (`data-dos-autoplay`, `data-dos-rewind`, `data-dos-step`,
+   `data-dos-drag`, `data-dos-fade`, `data-dos-gallery`, `data-dos-roledescription`,
+   `data-dos-init`) and the `--dos-*` theming knobs.
+3. Emit the `dos:*` events with the same payloads and expose `goTo/next/prev/pause/play/destroy` +
+   `DealerOnSlider.autoInit`.
 4. Keep the accessibility behaviors listed above — they are part of the contract, not this engine's
    private choices.
-5. Write the same attributes and classes back onto the page. The engine puts `data-cs-fits` on the
-   root when every slide already fits (and removes it again on `destroy()`), `data-cs-gallery` /
-   `data-cs-fade-on` on the root to let the CSS reserve space, and `data-cs-draggable` /
-   `data-cs-dragging` on the track for the grab cursor. Its generated controls are `.cs-controls`,
-   `.cs-arrow` + `.cs-arrow--prev` / `--next`, `.cs-pause`, `.cs-dots`, `.cs-dot` +
-   `.cs-dot--current`, `.cs-status.cs-sr-only`, `.cs-thumbs`, `.cs-thumb`.
-6. **The one class it writes onto markup the site authored is `cs-slide--current`**, on the visible
+5. Write the same attributes and classes back onto the page. The engine puts `data-dos-fits` on the
+   root when every slide already fits (and removes it again on `destroy()`), `data-dos-gallery` /
+   `data-dos-fade-on` on the root to let the CSS reserve space, and `data-dos-draggable` /
+   `data-dos-dragging` on the track for the grab cursor. Its generated controls are `.dos-controls`,
+   `.dos-arrow` + `.dos-arrow--prev` / `--next`, `.dos-pause`, `.dos-dots`, `.dos-dot` +
+   `.dos-dot--current`, `.dos-status.dos-sr-only`, `.dos-thumbs`, `.dos-thumb`.
+6. **The one class it writes onto markup the site authored is `dos-slide--current`**, on the visible
    slide in fade mode. It was a bare `is-current` until 2026-09-08 — renamed in the last window
-   before the contract froze, because a name with no `cs-` stem can collide with whatever the site's
-   own theme already calls things, and the collision shows as a slide stuck visible or invisible on
-   their page with nothing to explain it. A replacement engine must use the same name; nothing else
-   it writes may land outside its own generated elements.
+   before the contract froze, because a name with no `dos-` stem can collide with whatever the
+   site's own theme already calls things, and the collision shows as a slide stuck visible or
+   invisible on their page with nothing to explain it. A replacement engine must use the same name;
+   nothing else it writes may land outside its own generated elements.
 
 Everything in 5 and 6 was undocumented until 2026-09-08. Undocumented does not mean unfrozen — a
 site can already be relying on it.
@@ -403,46 +406,51 @@ replacement codes, per-OEM theming, and the ladder for each brand's model bar.
 
 ### Deployment status — the one place it is written down
 
-**As of 2026-09-08 all four files are on FTP.** The folder is
+**Since the 2026-10-27 rename to DealerOn Slider, the folder for these files is**
 
 ```text
-/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/
+/assets/shared/CustomHTMLFiles/Responsive/Apps/dealeronSlider/
 ```
 
-Measured that day, cache-busted against `www.karlchevrolet.com`: all four answered 200,
-`last-modified` 2026-09-08 14:01 GMT, and three of them were byte-identical to `dist/` as it then
-stood. The pre-rename `dl-carousel` build they replaced is gone — no `.dl-carousel{` or `--dlc-`
-anywhere at that path.
+**⚠ and nothing has been uploaded to it yet.** Until the four `dealeron-slider.*` files from `dist/`
+are there, a page pasting a snippet from the current builder links two files that do not exist and
+gets an unstyled list.
 
-**⚠ `src/` has changed since that upload, so the hosted files are a build behind.** Deliberately not
-restating which bytes: any commit touching `src/` puts the folder out of date, and a byte count
-written here goes stale the same day. **The rule, not the number: if
-`git log src/ demo/assets/patterns.js` has anything after the upload date above, re-upload.** Then
-update that date.
+The previous folder, `…/Apps/customSlider/`, holds the four `custom-slider.*` files uploaded on
+2026-09-08 — the `cs` contract, and a build behind even on its own names. Measured that day,
+cache-busted against `www.karlchevrolet.com`: all four answered 200, `last-modified` 2026-09-08
+14:01 GMT, three of them byte-identical to `dist/` as it then stood, and the `dl-carousel` build
+they replaced gone. Leave that folder until the pages linking it are known to be off it (see "Moving
+a page off an older contract" below), then delete it.
 
-**Do not expect `custom-slider.min.css` to match `dist/` byte for byte even when it is current** —
+**After the first upload, keep it current by rule, not by number:** if
+`git log src/ demo/assets/patterns.js` has anything after the upload date written here, re-upload,
+then update that date. Deliberately no byte figures: any commit touching `src/` puts the folder out
+of date, and a byte count written here goes stale the same day.
+
+**Do not expect `dealeron-slider.min.css` to match `dist/` byte for byte even when it is current** —
 the platform re-minifies CSS it is given: `:after` becomes `::after`, `.5s` becomes `500ms`, `.5`
 becomes `0.5`, `rgba(0,0,0,.8)` becomes `rgba(0,0,0,0.8)`, `background: none` becomes
-`background: 0`, and **`--cs-peek: 0px` becomes `--cs-peek: 0`**. Rendered side by side on a hostile
-host page at 1170px and four across, the two sheets resolved identically — slide 282px, flex basis
-`calc(25% - 10.5px)`, track padding `0px`, scroll padding `0px`, root `padding-bottom` 35px, snap
-type, overflow and dot colour all equal. Only the token differs. Compare the other three for a byte
-check, or prove the render; a byte difference in this one file is expected.
+`background: 0`, and **`--dos-peek: 0px` becomes `--dos-peek: 0`**. Rendered side by side on a
+hostile host page at 1170px and four across, the two sheets resolved identically — slide 282px, flex
+basis `calc(25% - 10.5px)`, track padding `0px`, scroll padding `0px`, root `padding-bottom` 35px,
+snap type, overflow and dot colour all equal. Only the token differs. Compare the other three for a
+byte check, or prove the render; a byte difference in this one file is expected.
 
 That unitless zero is worth reading twice, because it is **F003 arriving from the platform rather
-than from the builder**. It is harmless here — `--cs-peek` is only ever consumed by `padding` and
-`scroll-padding-inline` (`src/custom-slider.css:80`, `:90`), and both accept a unitless `0`. It
-would not be harmless on `--cs-gap`, which `src/custom-slider.css:119` feeds to
-`calc((100% - (var(--cs-per-view) - 1) * var(--cs-gap)) / var(--cs-per-view))` — subtracting a
+than from the builder**. It is harmless here — `--dos-peek` is only ever consumed by `padding` and
+`scroll-padding-inline` (`src/dealeron-slider.css:80`, `:90`), and both accept a unitless `0`. It
+would not be harmless on `--dos-gap`, which `src/dealeron-slider.css:119` feeds to
+`calc((100% - (var(--dos-per-view) - 1) * var(--dos-gap)) / var(--dos-per-view))` — subtracting a
 unitless number from a percentage is invalid, the declaration is dropped and the cards collapse to
 content width. So `okValue()` refusing a bare `0` is no longer an inference about what the minifier
 might do; the minifier has now been observed doing it.
 
 `npm run build` writes four files to `dist/`, each in three sections — the engine, then the card
 styles behind `/*! cards */` (CSS only), then the pattern structure and scripts behind
-`/*! patterns */`: `custom-slider.css` and `custom-slider.js` are the **readable** engine, for
-anyone opening the file to see what it does; `custom-slider.min.css` and `custom-slider.min.js` are
-the same code minified, and **the `.min` pair is what every page links** — the demo, the copy
+`/*! patterns */`: `dealeron-slider.css` and `dealeron-slider.js` are the **readable** engine, for
+anyone opening the file to see what it does; `dealeron-slider.min.css` and `dealeron-slider.min.js`
+are the same code minified, and **the `.min` pair is what every page links** — the demo, the copy
 panel's tags and the snippet at the top of this file all name it. The readable pair goes up beside
 it so the folder holds both; no page should link it. The other two documents defer to this section;
 do not restate a status in them.
@@ -457,34 +465,41 @@ that: a browser that already fetched the old one keeps it for up to three weeks.
    "First, get the four files up there" — the same bytes as `dist/`, saved under their own names, if
    that is easier to reach than the repo.
 3. Verify with a cache-busted request, not a browser reload:
-   `curl -s ".../custom-slider.min.css?cb=$RANDOM" | head -c 40` should begin `.cs{--cs-per-view`.
-   Check `last-modified` too — a 200 alone only says something is there, not that yours is.
-4. Do NOT expect `custom-slider.min.css` to match `dist/` byte for byte; the platform re-minifies it
-   (see above). The other three do match, so compare those if you want a byte check. What matters
+   `curl -s ".../dealeron-slider.min.css?cb=$RANDOM" | head -c 40` should begin
+   `.dos{--dos-per-view`. Check `last-modified` too — a 200 alone only says something is there, not
+   that yours is.
+4. Do NOT expect `dealeron-slider.min.css` to match `dist/` byte for byte; the platform re-minifies
+   it (see above). The other three do match, so compare those if you want a byte check. What matters
    for the `.min.css` is that it still renders the same — the paste-parity test in the verification
    checklist is the way to prove that.
 5. Anyone who opened a page linking the old file needs a hard refresh, or to wait out the TTL. Say
    so when you hand a test page over.
 
-### Moving a page off dl-carousel
+### Moving a page off an older contract
 
-The old contract is a different set of names throughout, so a page cannot be half-migrated. Rename
-map:
+The contract has had two earlier sets of names, and each is different throughout, so a page cannot
+be half-migrated. Rename map (— means the older engine had no such name on record):
 
-| Old (dl-carousel)   | Current (cs)          |
-| ------------------- | --------------------- |
-| `dl-carousel`       | `cs`                  |
-| `dl-carousel-track` | `cs-track`            |
-| `dl-carousel-slide` | `cs-slide`            |
-| `--dlc-*`           | `--cs-*`              |
-| `data-slider`       | `data-cs`             |
-| `data-slider-*`     | `data-cs-*`           |
-| `window.DLCarousel` | `window.CustomSlider` |
+| `dl-carousel` (to 2026-08-31) | `cs` (2026-08-31 to 2026-10-27) | Current (`dos`)                  |
+| ----------------------------- | ------------------------------- | -------------------------------- |
+| `dl-carousel`                 | `cs`                            | `dos`                            |
+| `dl-carousel-track`           | `cs-track`                      | `dos-track`                      |
+| `dl-carousel-slide`           | `cs-slide`                      | `dos-slide`                      |
+| —                             | `cs-*` (controls, columns)      | `dos-*`                          |
+| `--dlc-*`                     | `--cs-*`                        | `--dos-*`                        |
+| `data-slider`                 | `data-cs`                       | `data-dos`                       |
+| `data-slider-*`               | `data-cs-*`                     | `data-dos-*`                     |
+| —                             | `cs:*` events                   | `dos:*` events                   |
+| —                             | `element._cs`                   | `element._dos`                   |
+| `window.DLCarousel`           | `window.CustomSlider`           | `window.DealerOnSlider`          |
+| `dl-carousel.{css,js}`        | `custom-slider.{css,js,min.*}`  | `dealeron-slider.{css,js,min.*}` |
 
-Finding the pages that link the shared folder is Steven's, and nothing is believed to be live on it
-yet — the known consumer is a designer test page built on the old classes. Migrate a page by
-rebuilding its slider in the builder and re-pasting all three parts, rather than by editing class
-names in place: the snippet's CSS, markup and script have to agree with each other.
+The card classes, `cargo-*` and `data-cargo`, did not change in the 2026-10-27 rename.
+
+Finding the pages that link the shared folders is Steven's, and nothing is believed to be live on
+either yet — the known consumer is a designer test page built on the `dl-carousel` classes. Migrate
+a page by rebuilding its slider in the builder and re-pasting all three parts, rather than by
+editing class names in place: the snippet's CSS, markup and script have to agree with each other.
 
 ### Changing a slider that is already live
 
@@ -492,17 +507,17 @@ The builder cannot read a snippet back in — there is no import, and settings r
 there are two supported routes, and which one depends on what changed:
 
 - **Content** (a heading, a link, a photo, adding or removing a card): edit the **Custom HTML**
-  block directly. Copy an existing `<li class="cs-slide">…</li>` and change it. Nothing else has to
+  block directly. Copy an existing `<li class="dos-slide">…</li>` and change it. Nothing else has to
   move.
 - **Settings** (how many across, how many rows, gap, arrow colours, a different pattern): rebuild it
   in the builder and re-paste both parts — CSS and HTML. Re-pasting only the CSS leaves markup that
   no longer matches it.
 
 **A slider pasted before 2026-09-14 carries a script in Body Section, Bottom.** Since then a
-pattern's script ships inside `custom-slider.min.js` and its structure inside
-`custom-slider.min.css`, so when the shared files are re-uploaded that pasted script must come out,
-or the tabs are wired twice and a keyboard press moves two tabs. The pasted structure rules can stay
-(they say what the shared file says) or go; the values must stay.
+pattern's script ships inside `dealeron-slider.min.js` and its structure inside
+`dealeron-slider.min.css`, so when the shared files are re-uploaded that pasted script must come
+out, or the tabs are wired twice and a keyboard press moves two tabs. The pasted structure rules can
+stay (they say what the shared file says) or go; the values must stay.
 
 Either way **the class name must not change**. `.my-slider` is what the Style Only rules hook onto;
 rename it and every setting silently stops applying. Give a second slider on the same page a
@@ -540,7 +555,7 @@ npm run serve   # http://127.0.0.1:8137 (for Lighthouse)
 5. Screenshots at 375 / 768 / 1280 look right; slides-per-view matches the breakpoints.
 6. With JavaScript disabled the strips still scroll and all content is visible — **asserted by
    `npm test`** on authored markup.
-7. Widen until every slide fits: the arrows and dots disappear (the root gains `data-cs-fits`) and
+7. Widen until every slide fits: the arrows and dots disappear (the root gains `data-dos-fits`) and
    controls that cannot move anything are not focusable — **asserted by `npm test`**. Worth an eye
    at a real window anyway.
 8. Paste parity: drop a generated snippet into a page with hostile typography (serif, 19px,
@@ -552,7 +567,7 @@ npm run serve   # http://127.0.0.1:8137 (for Lighthouse)
 
 ## Known limitations (v1)
 
-- LTR only. No infinite loop — the ends rewind by default, or stop with `data-cs-rewind="false"`.
+- LTR only. No infinite loop — the ends rewind by default, or stop with `data-dos-rewind="false"`.
   `gallery` + `autoplay` together is unsupported (autoplay is ignored, console warning).
 - iOS flicks advance ~one slide per gesture (WebKit limitation) — arrows/dots are the primary
   traversal there.

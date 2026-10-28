@@ -139,21 +139,21 @@ for (const [id, look] of Object.entries(LOOKS)) {
 for (const [id, look] of Object.entries(LOOKS)) {
   const bg = look.settings?.['--strip-bg'] ?? '';
   if (!/^#|rgb/.test(bg)) continue; // transparent strip: no box, nothing to balance
-  if (!/%root% \.cs-track \{[^}]*padding-block-end/.test(look.css)) {
-    console.error(`  ${id}: paints --strip-bg ${bg} but reserves no space under the cards — add "%root% .cs-track { padding-block-end: … }"`);
+  if (!/%root% \.dos-track \{[^}]*padding-block-end/.test(look.css)) {
+    console.error(`  ${id}: paints --strip-bg ${bg} but reserves no space under the cards — add "%root% .dos-track { padding-block-end: … }"`);
     bad++;
   }
 }
 
 // Every card property a look exposes must be explained on the reference page.
 // A designer testing this got as far as "what is strip-pad-x for?" - the answer
-// existed nowhere, because the reference documents the ENGINE's --cs-* knobs and
+// existed nowhere, because the reference documents the ENGINE's --dos-* knobs and
 // the card's own were only ever row labels in the builder. Renaming the label
 // was not enough; the table is, and this keeps it complete.
 const guideSrc = readFileSync('demo/assets/guide.js', 'utf8');
 for (const [id, look] of Object.entries(LOOKS)) {
   for (const prop of Object.keys(look.settings ?? {})) {
-    if (prop.startsWith('--cs-')) continue; // engine property, documented from the shipped CSS
+    if (prop.startsWith('--dos-')) continue; // engine property, documented from the shipped CSS
     if (!guideSrc.includes(`'${prop}':`)) {
       console.error(`  ${id}: ${prop} has no entry in CARD_NOTES (demo/assets/guide.js) — a card setting nobody can look up`);
       bad++;
@@ -185,7 +185,7 @@ for (const m of patternsText.matchAll(/\n {4}([a-z-]+|'[a-z-]+'): \{([\s\S]*?)\n
   PATTERN_PROPS[pid] = Object.fromEntries([...(body.match(/props: \{[\s\S]*?\}/)?.[0] ?? '').matchAll(/'(--[a-z0-9-]+)'/g)].map(([, k]) => [k, true]));
   if (/\n {6}panes: \[/.test(body)) PATTERN_PANES.add(pid);
 }
-const ENGINE_KEYS = new Set([...(wbSrc.match(/const ENGINE_DEFAULTS = \{[\s\S]*?\n {2}\};/)?.[0] ?? '').matchAll(/'(--cs-[a-z0-9-]+)'/g)].map(([, k]) => k));
+const ENGINE_KEYS = new Set([...(wbSrc.match(/const ENGINE_DEFAULTS = \{[\s\S]*?\n {2}\};/)?.[0] ?? '').matchAll(/'(--dos-[a-z0-9-]+)'/g)].map(([, k]) => k));
 if (!Object.keys(PATTERN_PROPS).length || !ENGINE_KEYS.size) {
   console.error('  check-looks: could not read PATTERNS out of patterns.js or ENGINE_DEFAULTS out of workbench.js — the text scan needs updating');
   bad++;
@@ -197,7 +197,7 @@ if (!Object.keys(PATTERN_PROPS).length || !ENGINE_KEYS.size) {
 const seen = new Set();
 for (const propsMap of Object.values(PATTERN_PROPS)) {
   for (const prop of Object.keys(propsMap)) {
-    if (!/^--(?!cs-|cargo-)/.test(prop)) continue;
+    if (!/^--(?!dos-|cargo-)/.test(prop)) continue;
     if (seen.has(prop)) continue;
     seen.add(prop);
     if (Object.values(LOOKS).some((l) => prop in (l.settings ?? {}))) continue; // already checked above
@@ -248,7 +248,7 @@ for (const [id, b] of brands) {
         continue;
       }
       for (const k of Object.keys(vals)) {
-        if (!(k in LOOKS[lk].settings) && !k.startsWith('--cs-')) {
+        if (!(k in LOOKS[lk].settings) && !k.startsWith('--dos-')) {
           console.error(`  ${id}: styles.looks.${lk} sets ${k}, which the ${lk} look has no knob for`);
           bad++;
         }

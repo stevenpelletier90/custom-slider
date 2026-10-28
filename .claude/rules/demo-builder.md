@@ -27,7 +27,7 @@ controls), `vendor/tweakpane.js` (committed classic-script bundle from `scripts/
 failure), `cms-paths.js`, `highlight.js`, `theme.js`, `ui.css`.
 
 **Card styles are GENERATED, never hand-written.** `scripts/build-cards.mjs` builds the 7 looks plus
-`cs-{xs,sm,md,lg}-N` column classes from the same `LOOKS` the builder uses and appends them to the
+`dos-{xs,sm,md,lg}-N` column classes from the same `LOOKS` the builder uses and appends them to the
 engine stylesheet behind a `/*! cards */` marker. One file, because every site links it. The marker
 is load-bearing: `npm run size` splits on it to weigh the ENGINE alone. The builder emits
 shared-class markup with only the properties that differ from the look's defaults and offers no
@@ -44,7 +44,7 @@ engine's rules tie and lose on source order inside the one file; a designer's ru
 slider's name is one class higher and wins in any order — the sanctioned per-site override. A
 snippet is values and markup only: `cssFor()` emits pattern-own props as deltas against those
 defaults and no `.cargo-` rule but the gutter and the stacked-rows column; there is no JS part. The
-pattern scripts publish `CustomSlider.wirePatterns()` for markup added after load; the preview frame
+pattern scripts publish `DealerOnSlider.wirePatterns()` for markup added after load; the preview frame
 and the two catalogue pages call it once per build, a dealer page never does. A change to
 `patterns.js` is an upload, exactly like a change under `src/`.
 
@@ -110,7 +110,7 @@ element.
 **Two rules for pattern CSS.** Every card sets its own `font-size` and `line-height`, and any
 block-styled element says `display: block`, or the host page's typography makes the card taller than
 the preview. An arrow overlays media but never text: a text card reserves
-`padding-inline: calc(var(--cs-arrow-size) + 0.4em)`. Both are held by the paste-parity test: each
+`padding-inline: calc(var(--dos-arrow-size) + 0.4em)`. Both are held by the paste-parity test: each
 snippet in a hostile host page must match the preview to the pixel.
 
 **The tabbed bar is authored as PLAIN CONTENT; the script makes it a tab interface** (2026-09-15).
@@ -156,7 +156,7 @@ frame button is 390.
 
 **Code parity is structural, not policed.** `cssFor(sel)` and `htmlFor(cls)` in `workbench.js` are
 the ONLY producers of CSS and markup; preview is `cssFor('.wb-live')`, copy panel
-`cssFor('.my-slider')`. The preview adds exactly one thing: a `--cs-per-view` pin for the pressed
+`cssFor('.my-slider')`. The preview adds exactly one thing: a `--dos-per-view` pin for the pressed
 width button (`cssFor(sel, preview)`, appended after the media queries), because a media query asks
 the window and the preview is a box of the chosen grid's container width. The copied CSS ships the
 real ladder.
@@ -186,7 +186,7 @@ shown-at-nn% readout. Never clip, scroll or cap the frame. Below 50% (`FLOOR = 0
 **Six tiers, two grids (since 2026-09-15).** `BPS` in `workbench.js` is 576 / 768 / 992 / 1200 /
 1400: the platform's Bootstrap 3 three plus Bootstrap 5's two, because the platform is moving to
 Bootstrap 5 and the three shared numbers mean the same thing in both. The column classes keep the
-frozen `xs/sm/md/lg` names at the Bootstrap 3 numbers and add `cs-576-N` / `cs-1400-N`, named by
+frozen `xs/sm/md/lg` names at the Bootstrap 3 numbers and add `dos-576-N` / `dos-1400-N`, named by
 width because Bootstrap 5's letters mean different numbers (`TIER_CLASS`). A four-rung ladder in
 `looks.js`, `patterns.js` or a brand preset is filled out by `fullLadder()` (576 from the phone
 rung, 1400 from the desktop's), and a rung equal to the one below emits no class, so an untouched
@@ -241,15 +241,15 @@ use.
 `patterns.html` and `lint-generated-css.mjs` take that early return, and a helper below it is a
 `ReferenceError` in the generator.
 
-**Snippet rules on the carousel are written `.name.cs`, not `.name`.** A bare class ties with the
-engine's `.cs` and the shared `.cargo-<look>`, and where the platform emits its aggregated Style
+**Snippet rules on the carousel are written `.name.dos`, not `.name`.** A bare class ties with the
+engine's `.dos` and the shared `.cargo-<look>`, and where the platform emits its aggregated Style
 Only sheet relative to a head `<link>` is undocumented, so paste order would decide.
 
 **The shared card sheet weakens its own class with `:where()` — descendants only.** A designer's
 `.my-slider .cargo-name` ties at (0,2,0) with `.cargo-tile .cargo-name` on the same undocumented
 order. `weaken()` in `build-cards.mjs` wraps the look class wherever it is a PARENT, never where it
 is the whole selector — that rule carries the look's custom properties, and at (0,0,0) the engine's
-`.cs` block would outrank it.
+`.dos` block would outrank it.
 
 **The slider's name is the one setting about the PAGE, so it lives beside the copy buttons.** Two
 snippets sharing a name share rules and the second paste wins. Auto-numbering a repeat copy is wrong

@@ -1,13 +1,13 @@
 /**
- * CMS entry point: bundled to dist/custom-slider.js (classic script).
- * Auto-initializes every [data-cs] on the page; exposes the class
- * as window.CustomSlider for page-level scripting.
+ * CMS entry point: bundled to dist/dealeron-slider.js (classic script).
+ * Auto-initializes every [data-dos] on the page; exposes the class
+ * as window.DealerOnSlider for page-level scripting.
  */
-import { CustomSlider } from './custom-slider.js';
+import { DealerOnSlider } from './dealeron-slider.js';
 
-window.CustomSlider = CustomSlider;
+window.DealerOnSlider = DealerOnSlider;
 
-const run = () => CustomSlider.autoInit();
+const run = () => DealerOnSlider.autoInit();
 if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', run);
 } else {

@@ -23,12 +23,12 @@ test.beforeAll(async () => {
   engine = await engineFiles();
 });
 
-const slides = (n) => Array.from({ length: n }, (_, i) => `<li class="cs-slide"><a class="cargo-name" href="#m${i}">Model ${i + 1}</a></li>`).join('');
+const slides = (n) => Array.from({ length: n }, (_, i) => `<li class="dos-slide"><a class="cargo-name" href="#m${i}">Model ${i + 1}</a></li>`).join('');
 
-const slider = (n, attrs = '') => `<div class="cs" data-cs aria-label="Models" ${attrs}><ul class="cs-track">${slides(n)}</ul></div>`;
+const slider = (n, attrs = '') => `<div class="dos" data-dos aria-label="Models" ${attrs}><ul class="dos-track">${slides(n)}</ul></div>`;
 
 // One slider on a hostile host, per-view pinned so "does it fit" is decidable.
-const build = (n, perView, attrs = '', extra = {}) => hostHtml({ ...engine, css: `.cs{--cs-per-view:${perView}}`, html: slider(n, attrs), box: 1170, ...extra });
+const build = (n, perView, attrs = '', extra = {}) => hostHtml({ ...engine, css: `.dos{--dos-per-view:${perView}}`, html: slider(n, attrs), box: 1170, ...extra });
 
 test.describe('what the page gets with no JavaScript', () => {
   // README checklist 6. The CSS owns layout and physics precisely so the strip
@@ -41,13 +41,13 @@ test.describe('what the page gets with no JavaScript', () => {
     await page.setContent(build(8, 4), { waitUntil: 'load' });
     await page.waitForTimeout(250);
 
-    const n = await page.locator('.cs-slide').count();
+    const n = await page.locator('.dos-slide').count();
     assert.equal(n, 8, 'slides are missing with JavaScript off');
-    assert.equal(await page.locator('.cs-prev, .cs-next, .cs-dot, .cs-pause, .cs-arrow').count(), 0, 'controls were generated without JavaScript');
+    assert.equal(await page.locator('.dos-prev, .dos-next, .dos-dot, .dos-pause, .dos-arrow').count(), 0, 'controls were generated without JavaScript');
 
-    const track = await page.locator('.cs-track').boundingBox();
+    const track = await page.locator('.dos-track').boundingBox();
     const boxes = [];
-    for (let i = 0; i < n; i++) boxes.push(await page.locator('.cs-slide').nth(i).boundingBox());
+    for (let i = 0; i < n; i++) boxes.push(await page.locator('.dos-slide').nth(i).boundingBox());
 
     assert.equal(boxes.filter((b) => b && b.width > 10 && b.height > 10).length, n, 'a slide has no size with JavaScript off, so its content is unreachable');
     // The eighth card starts past the right edge of the track: the strip is a
@@ -64,8 +64,8 @@ test.describe('when every slide already fits', () => {
     await page.setContent(build(8, 4), { waitUntil: 'load' });
     await page.waitForTimeout(400);
     const before = await page.evaluate(() => ({
-      fits: document.querySelector('.cs').hasAttribute('data-cs-fits'),
-      reachable: [.../** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('.cs-arrow, .cs-dot, .cs-pause'))].filter(
+      fits: document.querySelector('.dos').hasAttribute('data-dos-fits'),
+      reachable: [.../** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('.dos-arrow, .dos-dot, .dos-pause'))].filter(
         (c) => c.checkVisibility({ checkVisibilityCSS: true }) && c.tabIndex >= 0,
       ).length,
     }));
@@ -76,16 +76,16 @@ test.describe('when every slide already fits', () => {
     await page.setContent(build(8, 8), { waitUntil: 'load' });
     await page.waitForTimeout(400);
     const after = await page.evaluate(() => ({
-      fits: document.querySelector('.cs').hasAttribute('data-cs-fits'),
+      fits: document.querySelector('.dos').hasAttribute('data-dos-fits'),
       // checkVisibility, not getComputedStyle(el).display: the engine hides the
       // dots by putting [hidden] on their CONTAINER, and a child of a
       // display:none parent still reports its own display, so reading the dot
       // itself says "inline-block" for something nobody can see or reach.
-      reachable: [.../** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('.cs-arrow, .cs-dot, .cs-pause'))]
+      reachable: [.../** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('.dos-arrow, .dos-dot, .dos-pause'))]
         .filter((c) => c.checkVisibility({ checkVisibilityCSS: true }) && !c.disabled && c.tabIndex >= 0)
         .map((c) => c.className),
     }));
-    assert.equal(after.fits, true, 'eight cards at eight across did not set data-cs-fits');
+    assert.equal(after.fits, true, 'eight cards at eight across did not set data-dos-fits');
     assert.deepEqual(after.reachable, [], `a control that cannot move anything is still focusable: ${after.reachable.join(', ')}`);
   });
 
@@ -98,11 +98,11 @@ test.describe('when every slide already fits', () => {
     await page.setContent(build(8, 8), { waitUntil: 'load' });
     await page.waitForTimeout(400);
     const fitted = await page.evaluate(() => {
-      const t = document.querySelector('.cs-track');
-      const a = document.querySelector('.cs-slide a');
+      const t = document.querySelector('.dos-track');
+      const a = document.querySelector('.dos-slide a');
       return {
-        fits: document.querySelector('.cs').hasAttribute('data-cs-fits'),
-        draggable: t.hasAttribute('data-cs-draggable'),
+        fits: document.querySelector('.dos').hasAttribute('data-dos-fits'),
+        draggable: t.hasAttribute('data-dos-draggable'),
         track: getComputedStyle(t).cursor,
         link: a ? getComputedStyle(a).cursor : 'pointer',
       };
@@ -119,7 +119,7 @@ test.describe('when every slide already fits', () => {
     // And the cue is still there when there IS somewhere to drag to.
     await page.setContent(build(8, 4), { waitUntil: 'load' });
     await page.waitForTimeout(400);
-    const scrolls = await page.evaluate(() => ({ fits: document.querySelector('.cs').hasAttribute('data-cs-fits'), track: getComputedStyle(document.querySelector('.cs-track')).cursor }));
+    const scrolls = await page.evaluate(() => ({ fits: document.querySelector('.dos').hasAttribute('data-dos-fits'), track: getComputedStyle(document.querySelector('.dos-track')).cursor }));
     assert.equal(scrolls.fits, false, 'eight across four is meant to scroll');
     assert.equal(scrolls.track, 'grab', 'a scrollable strip stopped offering the open hand');
   });
@@ -130,7 +130,7 @@ test.describe('keyboard', () => {
   // the cards come last: a keyboard user tabs past the controls into content,
   // never the other way round.
   test('tab order runs pause, prev, next, dots, then the cards', async ({ page, browserName }) => {
-    await page.setContent(build(8, 4, 'data-cs-autoplay="4000"'), { waitUntil: 'load' });
+    await page.setContent(build(8, 4, 'data-dos-autoplay="4000"'), { waitUntil: 'load' });
     await page.waitForTimeout(400);
     // Safari's Tab skips links by default; Option+Tab is its "every item"
     // key, and the cards are links. The order under test is the same.
@@ -142,16 +142,16 @@ test.describe('keyboard', () => {
       const here = await page.evaluate(() => {
         const a = document.activeElement;
         if (!a || a === document.body) return null;
-        if (a.closest('.cs-slide')) return 'card';
-        // Canonical labels. Prev and next are both `cs-arrow`, so they must be
+        if (a.closest('.dos-slide')) return 'card';
+        // Canonical labels. Prev and next are both `dos-arrow`, so they must be
         // told apart or the run-collapsing below merges them and a broken order
         // reads as a correct one. Dots go the other way: the first is
-        // `cs-dot--current`, and keeping that distinct would report the single
+        // `dos-dot--current`, and keeping that distinct would report the single
         // run of dots as two separate stops.
         const cls = [...a.classList];
-        if (cls.includes('cs-dot')) return 'cs-dot';
-        if (cls.includes('cs-arrow')) return cls.find((c) => c.startsWith('cs-arrow--')) ?? 'cs-arrow';
-        return cls.find((c) => c.startsWith('cs-')) ?? a.tagName.toLowerCase();
+        if (cls.includes('dos-dot')) return 'dos-dot';
+        if (cls.includes('dos-arrow')) return cls.find((c) => c.startsWith('dos-arrow--')) ?? 'dos-arrow';
+        return cls.find((c) => c.startsWith('dos-')) ?? a.tagName.toLowerCase();
       });
       if (here === null) break;
       // Runs of dots and runs of cards collapse to one entry; the named
@@ -165,9 +165,9 @@ test.describe('keyboard', () => {
     // day this file ran on Firefox), and on the demo's model bar NVDA read all
     // eight cards aloud there before the next Tab read the first one again
     // (2026-10-27). With cards to Tab into, the engine takes that stop away.
-    assert.ok(!seen.includes('cs-track'), `the track is a tab stop of its own: ${seen.join(' -> ')}`);
+    assert.ok(!seen.includes('dos-track'), `the track is a tab stop of its own: ${seen.join(' -> ')}`);
     const controls = seen.filter((s) => s !== 'card');
-    assert.deepEqual(controls, ['cs-pause', 'cs-arrow--prev', 'cs-arrow--next', 'cs-dot'], `tab order is ${seen.join(' -> ')}, not pause -> prev -> next -> dots -> cards`);
+    assert.deepEqual(controls, ['dos-pause', 'dos-arrow--prev', 'dos-arrow--next', 'dos-dot'], `tab order is ${seen.join(' -> ')}, not pause -> prev -> next -> dots -> cards`);
     // Playwright's WebKit never tabs into a link, Option+Tab included (there
     // is no macOS behind it), so the half about the cards can only be held on
     // the other two engines.
@@ -191,10 +191,10 @@ test.describe('dots', () => {
   test('the current dot is marked current, not disabled, and the mark follows the page', async ({ page }) => {
     await page.setContent(build(8, 4), { waitUntil: 'load' });
     await page.waitForTimeout(400);
-    const dots = () => page.evaluate(() => [...document.querySelectorAll('.cs-dot')].map((d) => `current=${d.getAttribute('aria-current')} disabled=${d.getAttribute('aria-disabled')}`));
+    const dots = () => page.evaluate(() => [...document.querySelectorAll('.dos-dot')].map((d) => `current=${d.getAttribute('aria-current')} disabled=${d.getAttribute('aria-disabled')}`));
     assert.deepEqual(await dots(), ['current=true disabled=null', 'current=null disabled=null'], 'the first page is not the one marked current');
-    await page.locator('.cs-dot').nth(1).click();
-    await page.waitForFunction(() => document.querySelector('.cs')._cs.current === 4, null, { timeout: 5000 });
+    await page.locator('.dos-dot').nth(1).click();
+    await page.waitForFunction(() => document.querySelector('.dos')._dos.current === 4, null, { timeout: 5000 });
     assert.deepEqual(await dots(), ['current=null disabled=null', 'current=true disabled=null'], 'the mark did not move to the page now showing');
   });
 });
@@ -203,27 +203,27 @@ test.describe('autoplay', () => {
   // README checklist 4, the half a machine can answer. Drag is left to a
   // person; focus, hover, the button and reduced motion are not.
   test('focus stops it and the button starts it again', async ({ page }) => {
-    await page.setContent(build(8, 4, 'data-cs-autoplay="300"'), { waitUntil: 'load' });
+    await page.setContent(build(8, 4, 'data-dos-autoplay="300"'), { waitUntil: 'load' });
     await page.waitForTimeout(300);
-    assert.equal(await page.evaluate(() => document.querySelector('.cs')._cs.rotating), true, 'autoplay never started');
+    assert.equal(await page.evaluate(() => document.querySelector('.dos')._dos.rotating), true, 'autoplay never started');
 
-    await page.locator('.cs-arrow--next').focus();
+    await page.locator('.dos-arrow--next').focus();
     await page.waitForTimeout(200);
-    assert.equal(await page.evaluate(() => document.querySelector('.cs')._cs.rotating), false, 'focus inside the slider did not stop the rotation');
+    assert.equal(await page.evaluate(() => document.querySelector('.dos')._dos.rotating), false, 'focus inside the slider did not stop the rotation');
     // The name has to follow the state, or a screen reader offers to stop
     // something that already stopped.
-    assert.match(await page.locator('.cs-pause').getAttribute('aria-label'), /^Start /, 'the stopped button does not offer to start');
+    assert.match(await page.locator('.dos-pause').getAttribute('aria-label'), /^Start /, 'the stopped button does not offer to start');
 
     // Focus + Enter, not click(). The strip may still be settling from the last
     // autoplay tick, and click() waits for the element to be "stable" - which a
     // moving control never is, so the mouse path times out on a button that is
     // perfectly usable. The keyboard path is also the one that matters here:
     // this is the control a keyboard user reaches for to stop the motion.
-    const pause = page.locator('.cs-pause');
+    const pause = page.locator('.dos-pause');
     await pause.focus();
     await pause.press('Enter');
     await page.waitForTimeout(250);
-    assert.equal(await page.evaluate(() => document.querySelector('.cs')._cs.rotating), true, 'the pause button did not restart it');
+    assert.equal(await page.evaluate(() => document.querySelector('.dos')._dos.rotating), true, 'the pause button did not restart it');
     assert.match(await pause.getAttribute('aria-label'), /^Stop /, 'the running button still offers to start what is already running');
   });
 
@@ -235,9 +235,9 @@ test.describe('autoplay', () => {
   test('play pressed under the pointer waits for the pointer to leave', async ({ page }) => {
     // Slides of a card's height. One line of text makes a slider so short that
     // the centred next arrow lands on the pause button and takes the press.
-    await page.setContent(build(8, 4, 'data-cs-autoplay="300"', { css: '.cs{--cs-per-view:4}.cs-slide{block-size:200px}' }), { waitUntil: 'load' });
+    await page.setContent(build(8, 4, 'data-dos-autoplay="300"', { css: '.dos{--dos-per-view:4}.dos-slide{block-size:200px}' }), { waitUntil: 'load' });
     await page.waitForTimeout(300);
-    const pause = page.locator('.cs-pause');
+    const pause = page.locator('.dos-pause');
     // hover() and click() refuse a button something else covers. The hover
     // hold starts here, and a tick already in flight is left to finish
     // scrolling before anything is read.
@@ -246,17 +246,17 @@ test.describe('autoplay', () => {
     await pause.click();
     assert.match(await pause.getAttribute('aria-label'), /^Start /, 'the first press did not stop the rotation');
     await pause.click();
-    assert.equal(await page.evaluate(() => document.querySelector('.cs')._cs.rotating), true, 'the second press did not restart it');
+    assert.equal(await page.evaluate(() => document.querySelector('.dos')._dos.rotating), true, 'the second press did not restart it');
     assert.match(await pause.getAttribute('aria-label'), /^Stop /, 'the running button still offers to start what is already running');
 
-    const scrolled = () => page.evaluate(() => document.querySelector('.cs-track').scrollLeft);
+    const scrolled = () => page.evaluate(() => document.querySelector('.dos-track').scrollLeft);
     const held = await scrolled();
     await page.waitForTimeout(1000);
     assert.equal(await scrolled(), held, 'the strip moved while the pointer was still over it');
 
     // Off the slider: #box is 1170px wide, so this point is beside it.
     await page.mouse.move(1250, 20);
-    await page.waitForFunction((from) => document.querySelector('.cs-track').scrollLeft !== from, held, { timeout: 3000 });
+    await page.waitForFunction((from) => document.querySelector('.dos-track').scrollLeft !== from, held, { timeout: 3000 });
   });
 
   // A paused autoplay slider still announces its slides in VoiceOver. The
@@ -268,31 +268,31 @@ test.describe('autoplay', () => {
   // existing element as unreliable, so a pause swaps in a fresh status that
   // is live from birth - same class, same text, so a visible counter stays.
   test('pausing hands the status to a fresh element that is live from birth', async ({ page }) => {
-    await page.setContent(build(8, 4, 'data-cs-autoplay="4000"'), { waitUntil: 'load' });
+    await page.setContent(build(8, 4, 'data-dos-autoplay="4000"'), { waitUntil: 'load' });
     await page.waitForTimeout(300);
     const status = () =>
       page.evaluate(() => {
-        const all = document.querySelectorAll('.cs-status');
+        const all = document.querySelectorAll('.dos-status');
         const w = /** @type {any} */ (window);
         return { count: all.length, live: all[0].getAttribute('aria-live'), same: all[0] === w.firstStatus, cls: all[0].className, text: all[0].textContent };
       });
     await page.evaluate(() => {
       const w = /** @type {any} */ (window);
-      w.firstStatus = document.querySelector('.cs-status');
+      w.firstStatus = document.querySelector('.dos-status');
     });
     assert.equal((await status()).live, 'off', 'a rotating slider should keep its status quiet');
-    await page.locator('.cs-arrow--next').focus();
+    await page.locator('.dos-arrow--next').focus();
     await page.waitForTimeout(200);
     const paused = await status();
     assert.equal(paused.count, 1, 'a pause left two status regions behind');
     assert.equal(paused.live, 'polite', 'a paused slider should announce');
     assert.equal(paused.same, false, 'the pause switched aria-live on the element that had been quiet - VoiceOver does not hear that');
-    assert.equal(paused.cls, 'cs-status cs-sr-only', 'the fresh status lost its class, and with it any site styling');
-    await page.locator('.cs-arrow--next').press('Enter');
+    assert.equal(paused.cls, 'dos-status dos-sr-only', 'the fresh status lost its class, and with it any site styling');
+    await page.locator('.dos-arrow--next').press('Enter');
     await page.waitForTimeout(800);
     assert.match((await status()).text, /^Slides 5–8 of 8$/, 'the fresh status stopped following the slides');
-    await page.locator('.cs-pause').focus();
-    await page.locator('.cs-pause').press('Enter');
+    await page.locator('.dos-pause').focus();
+    await page.locator('.dos-pause').press('Enter');
     await page.waitForTimeout(200);
     assert.equal((await status()).live, 'off', 'starting again should quiet the status');
   });
@@ -300,11 +300,11 @@ test.describe('autoplay', () => {
   test('nothing rotates under prefers-reduced-motion', async ({ browser }) => {
     const ctx = await browser.newContext({ reducedMotion: 'reduce', viewport: { width: 1400, height: 900 } });
     const page = await ctx.newPage();
-    await page.setContent(build(8, 4, 'data-cs-autoplay="200"'), { waitUntil: 'load' });
+    await page.setContent(build(8, 4, 'data-dos-autoplay="200"'), { waitUntil: 'load' });
     await page.waitForTimeout(300);
-    const start = await page.evaluate(() => document.querySelector('.cs-track').scrollLeft);
+    const start = await page.evaluate(() => document.querySelector('.dos-track').scrollLeft);
     await page.waitForTimeout(900);
-    const end = await page.evaluate(() => document.querySelector('.cs-track').scrollLeft);
+    const end = await page.evaluate(() => document.querySelector('.dos-track').scrollLeft);
     assert.equal(end, start, `the strip rotated under reduced motion: ${start} -> ${end}`);
     await ctx.close();
   });
@@ -314,19 +314,19 @@ test.describe('the contract, in the last window before it froze', () => {
   // The engine puts exactly one class on markup the DEALER wrote, and it used
   // to be a bare `is-current` - a name any site theme may already use, whose
   // collision would show as a slide stuck visible or invisible on their page
-  // with nothing here to explain it. Every other engine class carries the cs-
+  // with nothing here to explain it. Every other engine class carries the dos-
   // stem. Renamed 2026-09-08; after the first live page it could not have been.
-  test('the class the engine puts on an authored slide carries the cs- stem', async ({ page }) => {
-    await page.setContent(build(4, 1, 'data-cs-fade="true"'), { waitUntil: 'load' });
+  test('the class the engine puts on an authored slide carries the dos- stem', async ({ page }) => {
+    await page.setContent(build(4, 1, 'data-dos-fade="true"'), { waitUntil: 'load' });
     await page.waitForTimeout(400);
-    const classes = await page.evaluate(() => [...document.querySelectorAll('.cs-slide')].flatMap((s) => [...s.classList]));
-    const foreign = [...new Set(classes)].filter((c) => !c.startsWith('cs-') && !c.startsWith('cargo-'));
+    const classes = await page.evaluate(() => [...document.querySelectorAll('.dos-slide')].flatMap((s) => [...s.classList]));
+    const foreign = [...new Set(classes)].filter((c) => !c.startsWith('dos-') && !c.startsWith('cargo-'));
     assert.deepEqual(foreign, [], `the engine wrote ${foreign.join(', ')} onto an authored slide`);
-    assert.ok(classes.includes('cs-slide--current'), 'the current slide is not marked at all');
+    assert.ok(classes.includes('dos-slide--current'), 'the current slide is not marked at all');
   });
 
   // destroy() restores the snapshot and puts every root attribute back to what
-  // it was. data-cs-fits was written with toggleAttribute outside _setRootAttr,
+  // it was. data-dos-fits was written with toggleAttribute outside _setRootAttr,
   // so it was never registered and survived - left on the dealer's element,
   // still suppressing the controls of whatever was built there next. And until
   // 2026-09-15 only NAMES were kept: an authored role="group" the engine
@@ -336,17 +336,17 @@ test.describe('the contract, in the last window before it froze', () => {
     await page.setContent(build(8, 8, 'role="group" aria-roledescription="showcase"'), { waitUntil: 'load' });
     await page.waitForTimeout(400);
     const result = await page.evaluate(() => {
-      const el = document.querySelector('.cs');
+      const el = document.querySelector('.dos');
       const attrs = () => Object.fromEntries([...el.attributes].map((a) => [a.name, a.value]).sort());
       const during = attrs();
-      el._cs.destroy();
+      el._dos.destroy();
       return { during, after: attrs(), html: el.innerHTML };
     });
     assert.equal(result.during.role, 'region', 'the fixture never had its role overwritten, so this proves nothing');
     assert.equal(result.during['aria-roledescription'], 'carousel');
-    assert.equal(result.during['data-cs-fits'], '', 'the fixture never reached the fits state, so this proves nothing');
-    assert.deepEqual(result.after, { 'aria-label': 'Models', 'aria-roledescription': 'showcase', class: 'cs', 'data-cs': '', role: 'group' });
-    assert.doesNotMatch(result.html, /cs-arrow|cs-dots|cs-status/, 'the generated controls survived destroy');
+    assert.equal(result.during['data-dos-fits'], '', 'the fixture never reached the fits state, so this proves nothing');
+    assert.deepEqual(result.after, { 'aria-label': 'Models', 'aria-roledescription': 'showcase', class: 'dos', 'data-dos': '', role: 'group' });
+    assert.doesNotMatch(result.html, /dos-arrow|dos-dots|dos-status/, 'the generated controls survived destroy');
   });
 
   // The constructor's `step` came through unchecked while the data attribute
@@ -355,9 +355,9 @@ test.describe('the contract, in the last window before it froze', () => {
   // engine (this test times out) or reaches _stops() as something it cannot
   // step by. The valid ones prove the check lets real values through.
   test('a step the engine cannot walk by is a page, whichever way it arrives', async ({ page }) => {
-    await page.setContent(build(9, 3, 'data-cs-init="manual"'), { waitUntil: 'load' });
+    await page.setContent(build(9, 3, 'data-dos-init="manual"'), { waitUntil: 'load' });
     const seen = await page.evaluate(() => {
-      const src = document.querySelector('.cs');
+      const src = document.querySelector('.dos');
       const out = {};
       for (const [name, step] of [
         ['zero', 0],
@@ -373,7 +373,7 @@ test.describe('the contract, in the last window before it froze', () => {
       ]) {
         const el = /** @type {HTMLElement} */ (src.cloneNode(true));
         document.body.append(el);
-        const cs = new window.CustomSlider(el, { step });
+        const cs = new window.DealerOnSlider(el, { step });
         out[name] = { step: cs.opts.step, stops: cs._stops() };
         cs.destroy();
         el.remove();
@@ -404,13 +404,13 @@ test.describe('the contract, in the last window before it froze', () => {
   // only evidence that isIntersecting flips rather than staying true.
   test('autoplay waits for a quarter of the strip, and lets go again on the way down', async ({ page }) => {
     await page.setContent(
-      hostHtml({ ...engine, css: '.cs{--cs-per-view:4}', html: `<div style="height:3000px"></div>${slider(8, 'data-cs-autoplay="300"')}<div style="height:3000px"></div>`, box: 1170 }),
+      hostHtml({ ...engine, css: '.dos{--dos-per-view:4}', html: `<div style="height:3000px"></div>${slider(8, 'data-dos-autoplay="300"')}<div style="height:3000px"></div>`, box: 1170 }),
       { waitUntil: 'load' },
     );
     await page.waitForTimeout(300);
     const show = (fraction) =>
       page.evaluate(async (f) => {
-        const el = /** @type {HTMLElement} */ (document.querySelector('.cs'));
+        const el = /** @type {HTMLElement} */ (document.querySelector('.dos'));
         const top = el.getBoundingClientRect().top + scrollY;
         // The strip's top edge enters from the bottom of the window: f of its
         // height is inside when the window bottom sits at top + f * height.
@@ -418,7 +418,7 @@ test.describe('the contract, in the last window before it froze', () => {
         await new Promise((r) => setTimeout(r, 350));
         // `rotating` is the intent (the button, focus); off-screen is a HOLD on
         // top of it, so the hold is what is read.
-        return { visible: (innerHeight - el.getBoundingClientRect().top) / el.offsetHeight, held: el._cs._suspended.has('offscreen') };
+        return { visible: (innerHeight - el.getBoundingClientRect().top) / el.offsetHeight, held: el._dos._suspended.has('offscreen') };
       }, fraction);
     const offscreen = await show(0);
     assert.equal(offscreen.held, true, 'a strip below the fold was not held');
@@ -438,20 +438,20 @@ test.describe('the contract, in the last window before it froze', () => {
     assert.equal(gone.held, true, 'a strip scrolled fully out of view left autoplay running');
   });
 
-  // data-cs-gallery="false" means not a gallery to the JS, but the CSS reserved
+  // data-dos-gallery="false" means not a gallery to the JS, but the CSS reserved
   // the thumb strip's space on the attribute's presence - an empty band under
   // the track. The rule keys off presence on purpose (the space must exist
   // before JS runs, or every gallery shifts at init), so "false" is excluded
   // by name, the way the fade pin already does.
-  test('data-cs-gallery="false" reserves no thumb strip', async ({ page }) => {
+  test('data-dos-gallery="false" reserves no thumb strip', async ({ page }) => {
     const pad = async (attrs) => {
       await page.setContent(build(8, 4, attrs), { waitUntil: 'load' });
       await page.waitForTimeout(300);
-      return page.evaluate(() => ({ pad: parseFloat(getComputedStyle(document.querySelector('.cs')).paddingBottom), thumbs: document.querySelectorAll('.cs-thumb').length }));
+      return page.evaluate(() => ({ pad: parseFloat(getComputedStyle(document.querySelector('.dos')).paddingBottom), thumbs: document.querySelectorAll('.dos-thumb').length }));
     };
     const plain = await pad('');
-    const off = await pad('data-cs-gallery="false"');
-    const on = await pad('data-cs-gallery');
+    const off = await pad('data-dos-gallery="false"');
+    const on = await pad('data-dos-gallery');
     assert.ok(on.thumbs > 0 && on.pad > plain.pad, 'the fixture gallery reserved nothing, so this proves nothing');
     assert.equal(off.thumbs, 0, 'gallery="false" still built thumbs');
     assert.equal(off.pad, plain.pad, `gallery="false" reserved ${off.pad - plain.pad}px of strip it never draws`);
@@ -459,30 +459,30 @@ test.describe('the contract, in the last window before it froze', () => {
 
   // No rewind: the arrows stop at the ends instead of wrapping, and say so.
   test('without rewind the last stop disables next and the first disables prev', async ({ page }) => {
-    await page.setContent(build(8, 4, 'data-cs-rewind="false"'), { waitUntil: 'load' });
+    await page.setContent(build(8, 4, 'data-dos-rewind="false"'), { waitUntil: 'load' });
     await page.waitForTimeout(300);
     const state = () =>
       page.evaluate(() => {
         const off = (b) => b.disabled || b.getAttribute('aria-disabled') === 'true';
-        return { current: document.querySelector('.cs')._cs.current, prev: off(document.querySelector('.cs-arrow--prev')), next: off(document.querySelector('.cs-arrow--next')) };
+        return { current: document.querySelector('.dos')._dos.current, prev: off(document.querySelector('.dos-arrow--prev')), next: off(document.querySelector('.dos-arrow--next')) };
       });
     assert.deepEqual(await state(), { current: 0, prev: true, next: false });
-    await page.evaluate(() => document.querySelector('.cs')._cs.next());
+    await page.evaluate(() => document.querySelector('.dos')._dos.next());
     // Wait for the commit (scrollend, or the scroll fallback), not a guess at
     // how long a smooth scroll takes: Firefox's took longer than 700ms.
-    await page.waitForFunction(() => document.querySelector('.cs')._cs.current === 4, null, { timeout: 5000 });
+    await page.waitForFunction(() => document.querySelector('.dos')._dos.current === 4, null, { timeout: 5000 });
     await page.waitForTimeout(200);
     assert.deepEqual(await state(), { current: 4, prev: false, next: true }, 'the last page did not disable next');
-    await page.evaluate(() => document.querySelector('.cs')._cs.next());
+    await page.evaluate(() => document.querySelector('.dos')._dos.next());
     await page.waitForTimeout(1200);
     assert.equal((await state()).current, 4, 'next past the end moved, or wrapped');
 
     // The disabled state has to stay VISIBLE, not just be announced. On the
-    // nine patterns that set --cs-arrow-bg: transparent the glyph is the whole
+    // nine patterns that set --dos-arrow-bg: transparent the glyph is the whole
     // control, and the old 0.35 composited it to 2.10:1. 0.5 gives 3.09:1.
     // Read it settled: mid-transition this reads 0.994 (2026-09-15).
     const settled = await page.evaluate(() => {
-      const n = /** @type {HTMLButtonElement} */ (document.querySelector('.cs-arrow--next'));
+      const n = /** @type {HTMLButtonElement} */ (document.querySelector('.dos-arrow--next'));
       n.style.transition = 'none';
       return getComputedStyle(n).opacity;
     });
@@ -493,14 +493,14 @@ test.describe('the contract, in the last window before it froze', () => {
   // one place inert is allowed, because a gallery is 1-up and no count is
   // corrupted by it.
   test('a gallery thumb shows its slide and inerts the rest', async ({ page }) => {
-    await page.setContent(build(5, 1, 'data-cs-gallery'), { waitUntil: 'load' });
+    await page.setContent(build(5, 1, 'data-dos-gallery'), { waitUntil: 'load' });
     await page.waitForTimeout(400);
-    await page.locator('.cs-thumb').nth(3).click();
+    await page.locator('.dos-thumb').nth(3).click();
     await page.waitForTimeout(700);
     const r = await page.evaluate(() => ({
-      current: document.querySelector('.cs')._cs.current,
-      inert: [.../** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.cs-slide'))].map((s) => s.inert),
-      selected: [...document.querySelectorAll('.cs-thumb')].map((t) => t.getAttribute('aria-selected')),
+      current: document.querySelector('.dos')._dos.current,
+      inert: [.../** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.dos-slide'))].map((s) => s.inert),
+      selected: [...document.querySelectorAll('.dos-thumb')].map((t) => t.getAttribute('aria-selected')),
     }));
     assert.equal(r.current, 3);
     assert.deepEqual(r.inert, [true, true, true, false, true], 'the shown slide is inert, or a hidden one is not');
@@ -514,12 +514,12 @@ test.describe('the contract, in the last window before it froze', () => {
   // any scrollend - WebKit has not committed the new slide by then, and the
   // panels have to be right anyway.
   test('a gallery panel holding focus hands it on and goes inert at once', async ({ page }) => {
-    await page.setContent(build(5, 1, 'data-cs-gallery'), { waitUntil: 'load' });
+    await page.setContent(build(5, 1, 'data-dos-gallery'), { waitUntil: 'load' });
     await page.waitForTimeout(400);
-    await page.locator('.cs-slide').nth(0).locator('a').focus();
-    await page.evaluate(() => document.querySelector('.cs')._cs.goTo(2));
+    await page.locator('.dos-slide').nth(0).locator('a').focus();
+    await page.evaluate(() => document.querySelector('.dos')._dos.goTo(2));
     const r = await page.evaluate(() => {
-      const s = [.../** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.cs-slide'))];
+      const s = [.../** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.dos-slide'))];
       return { inert: s.map((x) => x.inert), focus: s.findIndex((x) => x.contains(document.activeElement)) };
     });
     assert.deepEqual(r.inert, [true, true, false, true, true], 'the panel that held focus is still exposed beside the one shown');
@@ -532,28 +532,28 @@ test.describe('the contract, in the last window before it froze', () => {
   // (2026-10-27), which is what the W3C tabbed-carousel example sets. VoiceOver
   // on iOS and TalkBack ignore roledescription, so phones hear what they did.
   test('every gallery panel is a tabpanel described as a slide', async ({ page }) => {
-    await page.setContent(build(5, 1, 'data-cs-gallery'), { waitUntil: 'load' });
+    await page.setContent(build(5, 1, 'data-dos-gallery'), { waitUntil: 'load' });
     await page.waitForTimeout(400);
-    const panels = await page.evaluate(() => [...document.querySelectorAll('.cs-slide')].map((s) => `${s.getAttribute('role')}/${s.getAttribute('aria-roledescription')}`));
+    const panels = await page.evaluate(() => [...document.querySelectorAll('.dos-slide')].map((s) => `${s.getAttribute('role')}/${s.getAttribute('aria-roledescription')}`));
     assert.deepEqual(panels, Array(5).fill('tabpanel/slide'), 'a gallery panel is announced by its bare role');
   });
 
   // "slide" was the one spoken word a site could not translate: "carousel"
-  // has data-cs-roledescription, every other string a data-cs-label-*. It is
+  // has data-dos-roledescription, every other string a data-dos-label-*. It is
   // spoken on every slide of a non-list track and every gallery panel, so a
   // Spanish page heard "diapositiva 1 de 6 … slide" (2026-10-27). Splide and
-  // Swiper both make it a string; here it is data-cs-label-slide.
-  test('data-cs-label-slide translates the word "slide" wherever the engine says it', async ({ page }) => {
-    const divs = (n) => Array.from({ length: n }, (_, i) => `<div class="cs-slide"><p>Review ${i + 1}</p></div>`).join('');
-    const said = () => page.evaluate(() => [...new Set([...document.querySelectorAll('.cs-slide')].map((s) => s.getAttribute('aria-roledescription')))]);
+  // Swiper both make it a string; here it is data-dos-label-slide.
+  test('data-dos-label-slide translates the word "slide" wherever the engine says it', async ({ page }) => {
+    const divs = (n) => Array.from({ length: n }, (_, i) => `<div class="dos-slide"><p>Review ${i + 1}</p></div>`).join('');
+    const said = () => page.evaluate(() => [...new Set([...document.querySelectorAll('.dos-slide')].map((s) => s.getAttribute('aria-roledescription')))]);
     for (const [kind, html] of [
-      ['non-list track', `<div class="cs" data-cs aria-label="Reviews" LABEL><div class="cs-track">${divs(4)}</div></div>`],
-      ['gallery', slider(4, 'data-cs-gallery LABEL')],
+      ['non-list track', `<div class="dos" data-dos aria-label="Reviews" LABEL><div class="dos-track">${divs(4)}</div></div>`],
+      ['gallery', slider(4, 'data-dos-gallery LABEL')],
     ]) {
-      await page.setContent(hostHtml({ ...engine, css: '.cs{--cs-per-view:1}', html: html.replace('LABEL', 'data-cs-label-slide="diapositiva"'), box: 1170 }), { waitUntil: 'load' });
+      await page.setContent(hostHtml({ ...engine, css: '.dos{--dos-per-view:1}', html: html.replace('LABEL', 'data-dos-label-slide="diapositiva"'), box: 1170 }), { waitUntil: 'load' });
       await page.waitForTimeout(300);
       assert.deepEqual(await said(), ['diapositiva'], `the ${kind} did not take the label`);
-      await page.setContent(hostHtml({ ...engine, css: '.cs{--cs-per-view:1}', html: html.replace('LABEL', ''), box: 1170 }), { waitUntil: 'load' });
+      await page.setContent(hostHtml({ ...engine, css: '.dos{--dos-per-view:1}', html: html.replace('LABEL', ''), box: 1170 }), { waitUntil: 'load' });
       await page.waitForTimeout(300);
       assert.deepEqual(await said(), ['slide'], `the ${kind} lost its default`);
     }
@@ -565,7 +565,7 @@ test.describe('the contract, in the last window before it froze', () => {
   test('dragging the track with a mouse moves it', async ({ page }) => {
     await page.setContent(build(12, 4), { waitUntil: 'load' });
     await page.waitForTimeout(300);
-    const box = await page.locator('.cs-track').boundingBox();
+    const box = await page.locator('.dos-track').boundingBox();
     const x = box.x + box.width / 2;
     const y = box.y + box.height / 2;
     await page.mouse.move(x, y);
@@ -573,7 +573,7 @@ test.describe('the contract, in the last window before it froze', () => {
     for (let i = 1; i <= 10; i++) await page.mouse.move(x - i * 30, y);
     await page.mouse.up();
     await page.waitForTimeout(700);
-    const left = await page.evaluate(() => document.querySelector('.cs-track').scrollLeft);
+    const left = await page.evaluate(() => document.querySelector('.dos-track').scrollLeft);
     assert.ok(left > 100, `a 300px drag moved the track ${left}px`);
   });
 
@@ -593,7 +593,7 @@ test.describe('the contract, in the last window before it froze', () => {
       const w = /** @type {any} */ (window);
       w.hits = { page: 0, card: 0 };
       document.addEventListener('click', () => w.hits.page++);
-      document.querySelectorAll('.cs-slide a').forEach((a) =>
+      document.querySelectorAll('.dos-slide a').forEach((a) =>
         a.addEventListener('click', (e) => {
           w.hits.card++;
           e.preventDefault();
@@ -602,7 +602,7 @@ test.describe('the contract, in the last window before it froze', () => {
     });
     // On a card link: the strip moves with the hand, so the same link is under
     // the pointer when it is released.
-    const link = await page.locator('.cs-slide a').nth(1).boundingBox();
+    const link = await page.locator('.dos-slide a').nth(1).boundingBox();
     const x = link.x + link.width / 2;
     const y = link.y + link.height / 2;
     const gesture = async (steps) => {
@@ -633,11 +633,11 @@ test.describe('the contract, in the last window before it froze', () => {
   // window now. Chromium only: the listener list is DevTools protocol.
   test('the track carries no listener that makes Chrome call it clickable', async ({ page, browserName }) => {
     test.skip(browserName !== 'chromium', 'reads listeners through the DevTools protocol');
-    for (const attrs of ['', 'data-cs-gallery']) {
+    for (const attrs of ['', 'data-dos-gallery']) {
       await page.setContent(build(5, 1, attrs), { waitUntil: 'load' });
       await page.waitForTimeout(300);
       const cdp = await page.context().newCDPSession(page);
-      const { result } = await cdp.send('Runtime.evaluate', { expression: 'document.querySelector(".cs-track")' });
+      const { result } = await cdp.send('Runtime.evaluate', { expression: 'document.querySelector(".dos-track")' });
       const { listeners } = await cdp.send('DOMDebugger.getEventListeners', { objectId: result.objectId });
       const clicky = listeners.map((l) => l.type).filter((t) => ['click', 'mousedown', 'mouseup'].includes(t));
       assert.deepEqual(clicky, [], `the ${attrs || 'card'} track listens for ${clicky.join(', ')}`);
@@ -645,15 +645,17 @@ test.describe('the contract, in the last window before it froze', () => {
     }
   });
 
-  // --cs-per-view is CSS, so a resize can make a strip fit or stop fitting at
+  // --dos-per-view is CSS, so a resize can make a strip fit or stop fitting at
   // any moment; the engine re-measures and the fits state follows.
   test('a resize that makes every slide fit takes the controls away, and back', async ({ page }) => {
     // The host's box follows the window here (a fixed 1170px box would keep
     // the root the same size across the viewport change, and it is the root's
     // resize the engine observes - a real page's container moves with the
     // window at every breakpoint a per-view query sits on).
-    await page.setContent(hostHtml({ ...engine, css: '#box{inline-size:auto}.cs{--cs-per-view:2}@media(min-width:1000px){.cs{--cs-per-view:4}}', html: slider(4), box: 1170 }), { waitUntil: 'load' });
-    const fits = () => page.evaluate(() => document.querySelector('.cs').hasAttribute('data-cs-fits'));
+    await page.setContent(hostHtml({ ...engine, css: '#box{inline-size:auto}.dos{--dos-per-view:2}@media(min-width:1000px){.dos{--dos-per-view:4}}', html: slider(4), box: 1170 }), {
+      waitUntil: 'load',
+    });
+    const fits = () => page.evaluate(() => document.querySelector('.dos').hasAttribute('data-dos-fits'));
     await page.waitForTimeout(300);
     assert.equal(await fits(), true, 'four slides four across did not fit');
     await page.setViewportSize({ width: 800, height: 700 });
@@ -679,8 +681,8 @@ test.describe('the contract, in the last window before it froze', () => {
       await page.setContent(build(8, 4).replace('<head>', '<head><style>*{scroll-behavior:smooth}</style>'), { waitUntil: 'load' });
       await page.waitForTimeout(350);
       const r = await page.evaluate(async (behavior) => {
-        const t = document.querySelector('.cs-track');
-        const cs = document.querySelector('.cs')._cs;
+        const t = document.querySelector('.dos-track');
+        const cs = document.querySelector('.dos')._dos;
         t.scrollLeft = 0;
         await new Promise((done) => setTimeout(done, 100));
         cs.goTo(2, { behavior });
@@ -699,12 +701,12 @@ test.describe('the contract, in the last window before it froze', () => {
 
   // A property used only through a var() fallback is invisible to the
   // Reference page, which tabulates the knobs by reading them out of the
-  // shipped stylesheet. --cs-arrow-at was such a knob. This guards the class of
+  // shipped stylesheet. --dos-arrow-at was such a knob. This guards the class of
   // gap, not the one instance.
-  test('every --cs-* the stylesheet uses is also declared in it', async () => {
-    const css = await readFile('dist/custom-slider.css', 'utf8');
-    const declared = new Set([...css.matchAll(/(--cs-[a-z0-9-]+)\s*:/g)].map((m) => m[1]));
-    const used = new Set([...css.matchAll(/var\(\s*(--cs-[a-z0-9-]+)/g)].map((m) => m[1]));
+  test('every --dos-* the stylesheet uses is also declared in it', async () => {
+    const css = await readFile('dist/dealeron-slider.css', 'utf8');
+    const declared = new Set([...css.matchAll(/(--dos-[a-z0-9-]+)\s*:/g)].map((m) => m[1]));
+    const used = new Set([...css.matchAll(/var\(\s*(--dos-[a-z0-9-]+)/g)].map((m) => m[1]));
     const undeclared = [...used].filter((p) => !declared.has(p)).sort();
     assert.deepEqual(undeclared, [], `used but never declared, so the Reference page cannot list it: ${undeclared.join(', ')}`);
   });
@@ -717,35 +719,35 @@ test.describe('the API boundary', () => {
   // documented precedence, but the CSS reads the AUTHORED attribute — it has
   // to, because the thumb strip's space and the one-up width must exist before
   // any script runs. Mirroring only the TRUE side meant { gallery: false } on
-  // authored data-cs-gallery markup built no gallery while the CSS went on
-  // reserving the strip, and { fade: false } on authored data-cs-fade left the
+  // authored data-dos-gallery markup built no gallery while the CSS went on
+  // reserving the strip, and { fade: false } on authored data-dos-fade left the
   // slides pinned one-up while the engine scrolled them normally.
   test('a false JS option overrides an authored data attribute in the CSS too', async ({ page }) => {
     const read = async (attrs, opts) => {
-      await page.setContent(hostHtml({ ...engine, css: '.cs{--cs-per-view:4}', html: `<div class="cs" aria-label="Models"${attrs}><ul class="cs-track">${slides(8)}</ul></div>`, box: 1170 }), {
+      await page.setContent(hostHtml({ ...engine, css: '.dos{--dos-per-view:4}', html: `<div class="dos" aria-label="Models"${attrs}><ul class="dos-track">${slides(8)}</ul></div>`, box: 1170 }), {
         waitUntil: 'load',
       });
       await page.waitForTimeout(250);
       return page.evaluate((o) => {
-        const el = document.querySelector('.cs');
-        const cs = new window.CustomSlider(el, o);
+        const el = document.querySelector('.dos');
+        const cs = new window.DealerOnSlider(el, o);
         return {
-          thumbs: el.querySelectorAll('.cs-thumb').length,
+          thumbs: el.querySelectorAll('.dos-thumb').length,
           pad: parseFloat(getComputedStyle(el).paddingBottom),
-          slide: Math.round(el.querySelector('.cs-slide').getBoundingClientRect().width),
-          track: Math.round(el.querySelector('.cs-track').clientWidth),
+          slide: Math.round(el.querySelector('.dos-slide').getBoundingClientRect().width),
+          track: Math.round(el.querySelector('.dos-track').clientWidth),
           gallery: cs.opts.gallery,
           fade: cs.opts.fade,
         };
       }, opts);
     };
     const plain = await read('', {});
-    const galleryOff = await read(' data-cs-gallery', { gallery: false });
+    const galleryOff = await read(' data-dos-gallery', { gallery: false });
     assert.equal(galleryOff.gallery, false, 'the JS option did not win in the JS');
     assert.equal(galleryOff.thumbs, 0, 'gallery:false still built thumbs');
     assert.equal(galleryOff.pad, plain.pad, `gallery:false reserved ${galleryOff.pad - plain.pad}px of thumb strip that is never drawn`);
 
-    const fadeOff = await read(' data-cs-fade', { fade: false });
+    const fadeOff = await read(' data-dos-fade', { fade: false });
     assert.equal(fadeOff.fade, false, 'the JS option did not win in the JS');
     assert.ok(fadeOff.slide < fadeOff.track * 0.5, `fade:false left the slides pinned one-up at ${fadeOff.slide} of a ${fadeOff.track} track`);
     assert.equal(fadeOff.slide, plain.slide, 'fade:false did not draw the same strip as markup that never mentioned fade');
@@ -759,7 +761,7 @@ test.describe('the API boundary', () => {
     await page.setContent(build(8, 4), { waitUntil: 'load' });
     await page.waitForTimeout(300);
     const r = await page.evaluate(() => {
-      const cs = document.querySelector('.cs')._cs;
+      const cs = document.querySelector('.dos')._dos;
       const out = {};
       for (const [name, n] of [
         ['fraction', 1.5],
@@ -803,15 +805,15 @@ test.describe('the API boundary', () => {
   // autoplay that goes from stop 0 to stop 0 forever, with the interval firing
   // no-op next() calls behind it.
   test('a strip that fits hides the pause button and suspends the timer', async ({ page }) => {
-    await page.setContent(build(3, 4, 'data-cs-autoplay="300"'), { waitUntil: 'load' });
+    await page.setContent(build(3, 4, 'data-dos-autoplay="300"'), { waitUntil: 'load' });
     await page.waitForTimeout(400);
     const fits = await page.evaluate(() => {
-      const el = document.querySelector('.cs');
+      const el = document.querySelector('.dos');
       return {
-        stops: el._cs._stops().length,
-        pause: /** @type {HTMLButtonElement} */ (document.querySelector('.cs-pause')).hidden,
-        held: el._cs._suspended.has('fits'),
-        arrows: /** @type {HTMLButtonElement} */ (document.querySelector('.cs-arrow--next')).hidden,
+        stops: el._dos._stops().length,
+        pause: /** @type {HTMLButtonElement} */ (document.querySelector('.dos-pause')).hidden,
+        held: el._dos._suspended.has('fits'),
+        arrows: /** @type {HTMLButtonElement} */ (document.querySelector('.dos-arrow--next')).hidden,
       };
     });
     assert.equal(fits.stops, 1, 'the fixture does not fit, so this proves nothing');
@@ -819,15 +821,15 @@ test.describe('the API boundary', () => {
     assert.equal(fits.pause, true, 'the pause button is still offered on a strip with one stop');
     assert.equal(fits.held, true, 'the autoplay timer still runs on a strip with one stop');
     // And it comes back: fits is re-evaluated on every _updateUI, because
-    // --cs-per-view is CSS and a narrower window makes the same strip stop
+    // --dos-per-view is CSS and a narrower window makes the same strip stop
     // fitting at any moment.
     const narrow = await page.evaluate(async () => {
-      const el = /** @type {HTMLElement} */ (document.querySelector('.cs'));
-      el.style.setProperty('--cs-per-view', '1');
-      el._cs._measure();
-      el._cs._updateUI();
+      const el = /** @type {HTMLElement} */ (document.querySelector('.dos'));
+      el.style.setProperty('--dos-per-view', '1');
+      el._dos._measure();
+      el._dos._updateUI();
       await new Promise((r) => setTimeout(r, 100));
-      return { pause: /** @type {HTMLButtonElement} */ (document.querySelector('.cs-pause')).hidden, held: el._cs._suspended.has('fits') };
+      return { pause: /** @type {HTMLButtonElement} */ (document.querySelector('.dos-pause')).hidden, held: el._dos._suspended.has('fits') };
     });
     assert.equal(narrow.pause, false, 'the pause button did not come back when the strip stopped fitting');
     assert.equal(narrow.held, false, 'the autoplay hold did not lift when the strip stopped fitting');
@@ -842,18 +844,18 @@ test.describe('the API boundary', () => {
     const html = (attrs = '') =>
       hostHtml({
         ...engine,
-        css: '.cs{--cs-per-view:4}',
-        html: `<div class="cs" data-cs aria-label="Modelos" ${attrs}><div class="cs-track">${Array.from({ length: 6 }, () => '<div class="cs-slide"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt=""></div>').join('')}</div></div>`,
+        css: '.dos{--dos-per-view:4}',
+        html: `<div class="dos" data-dos aria-label="Modelos" ${attrs}><div class="dos-track">${Array.from({ length: 6 }, () => '<div class="dos-slide"><img src="data:image/gif;base64,R0lGODlhAQABAAAAACw=" alt=""></div>').join('')}</div></div>`,
         box: 1170,
       });
     await page.setContent(html(), { waitUntil: 'load' });
     await page.waitForTimeout(300);
-    const dflt = await page.evaluate(() => [...document.querySelectorAll('.cs-slide')].map((s) => s.getAttribute('aria-label')));
+    const dflt = await page.evaluate(() => [...document.querySelectorAll('.dos-slide')].map((s) => s.getAttribute('aria-label')));
     assert.deepEqual(dflt.slice(0, 2), ['1 of 6', '2 of 6'], 'the default wording changed');
 
-    await page.setContent(html('data-cs-label-slide-position="Diapositiva {n} de {total}"'), { waitUntil: 'load' });
+    await page.setContent(html('data-dos-label-slide-position="Diapositiva {n} de {total}"'), { waitUntil: 'load' });
     await page.waitForTimeout(300);
-    const es = await page.evaluate(() => [...document.querySelectorAll('.cs-slide')].map((s) => s.getAttribute('aria-label')));
+    const es = await page.evaluate(() => [...document.querySelectorAll('.dos-slide')].map((s) => s.getAttribute('aria-label')));
     assert.deepEqual(es.slice(0, 2), ['Diapositiva 1 de 6', 'Diapositiva 2 de 6'], 'the slide position is not settable from HTML');
   });
 
@@ -863,11 +865,11 @@ test.describe('the API boundary', () => {
   // behavior, which defers to the property — and had no shield, so the same
   // host rule animated the rail, reduced-motion readers included.
   test('a host page with global smooth scroll cannot hijack the thumb rail either', async ({ page }) => {
-    await page.setContent(build(8, 1, 'data-cs-gallery').replace('<head>', '<head><style>*{scroll-behavior:smooth}</style>'), { waitUntil: 'load' });
+    await page.setContent(build(8, 1, 'data-dos-gallery').replace('<head>', '<head><style>*{scroll-behavior:smooth}</style>'), { waitUntil: 'load' });
     await page.waitForTimeout(350);
     const r = await page.evaluate(() => ({
-      track: getComputedStyle(document.querySelector('.cs-track')).scrollBehavior,
-      thumbs: getComputedStyle(document.querySelector('.cs-thumbs')).scrollBehavior,
+      track: getComputedStyle(document.querySelector('.dos-track')).scrollBehavior,
+      thumbs: getComputedStyle(document.querySelector('.dos-thumbs')).scrollBehavior,
     }));
     assert.equal(r.track, 'auto', 'the host page won the track scroll-behavior');
     assert.equal(r.thumbs, 'auto', 'the host page won the thumb rail scroll-behavior');

@@ -32,7 +32,7 @@ export const stageFrame = (page) => page.frameLocator('#wb-stage');
 
 export async function stageReady(page) {
   await page.waitForSelector('#wb-stage');
-  await stageFrame(page).locator('.cs-slide').first().waitFor({ state: 'attached', timeout: 15000 });
+  await stageFrame(page).locator('.dos-slide').first().waitFor({ state: 'attached', timeout: 15000 });
 }
 
 export const patternIds = (page) => page.evaluate(() => Object.keys(globalThis.CARGO.PATTERNS));
@@ -154,7 +154,7 @@ export function hostHtml({ engineCss, engineJs, css = '', html = '', js = '', bo
 }
 
 export async function engineFiles() {
-  const [engineCss, engineJs] = await Promise.all([fetch(`${ORIGIN}/dist/custom-slider.min.css`).then((r) => r.text()), fetch(`${ORIGIN}/dist/custom-slider.min.js`).then((r) => r.text())]);
+  const [engineCss, engineJs] = await Promise.all([fetch(`${ORIGIN}/dist/dealeron-slider.min.css`).then((r) => r.text()), fetch(`${ORIGIN}/dist/dealeron-slider.min.js`).then((r) => r.text())]);
   return { engineCss, engineJs };
 }
 
@@ -163,16 +163,16 @@ export async function engineFiles() {
 // that stopped being the size it should be.
 export const readSlider = (page, scope = '#box') =>
   page.evaluate((sel) => {
-    const root = document.querySelector(`${sel} .cs`);
-    const slide = document.querySelector(`${sel} .cs-slide`);
+    const root = document.querySelector(`${sel} .dos`);
+    const slide = document.querySelector(`${sel} .dos-slide`);
     if (!root || !slide) return null;
     const cs = getComputedStyle(root);
     return {
       cls: root.className.split(' ')[0],
       width: +slide.getBoundingClientRect().width.toFixed(1),
       basis: getComputedStyle(slide).flexBasis,
-      gap: cs.getPropertyValue('--cs-gap').trim(),
-      perView: cs.getPropertyValue('--cs-per-view').trim(),
-      arrowBg: cs.getPropertyValue('--cs-arrow-bg').trim(),
+      gap: cs.getPropertyValue('--dos-gap').trim(),
+      perView: cs.getPropertyValue('--dos-per-view').trim(),
+      arrowBg: cs.getPropertyValue('--dos-arrow-bg').trim(),
     };
   }, scope);

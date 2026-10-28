@@ -1,11 +1,11 @@
 /**
- * Custom Slider — dependency-free scroll-snap carousel engine.
+ * DealerOn Slider — dependency-free scroll-snap carousel engine.
  *
- * The CSS (custom-slider.css) owns layout and physics: the track is a native
+ * The CSS (dealeron-slider.css) owns layout and physics: the track is a native
  * scroll container with scroll-snap. This file only wires controls,
  * state, autoplay, and the gallery (tabbed) variant onto that.
  *
- * Markup contract (see README): .cs[data-cs] > .cs-track > .cs-slide+
+ * Markup contract (see README): .dos[data-dos] > .dos-track > .dos-slide+
  * Use <ul>/<li> for card carousels (list semantics announce counts),
  * plain <div>s for the gallery variant (slides become tabpanels).
  */
@@ -58,47 +58,47 @@ const ICONS = {
   play: '<svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>',
 };
 
-export class CustomSlider {
+export class DealerOnSlider {
   constructor(root, options = {}) {
     this.root = root;
-    this.track = root.querySelector('.cs-track');
+    this.track = root.querySelector('.dos-track');
     if (!this.track) {
-      console.error('[custom-slider] missing required .cs-track element in', root);
+      console.error('[dealeron-slider] missing required .dos-track element in', root);
       return;
     }
-    this.slides = [...this.track.querySelectorAll(':scope > .cs-slide')];
+    this.slides = [...this.track.querySelectorAll(':scope > .dos-slide')];
     if (!this.slides.length) {
-      console.error('[custom-slider] .cs-track has no .cs-slide children in', root);
+      console.error('[dealeron-slider] .dos-track has no .dos-slide children in', root);
       return;
     }
 
     this._snapshot = root.innerHTML; // destroy() restores this
-    this.uid = `cs-${++uidCounter}`;
+    this.uid = `dos-${++uidCounter}`;
     this.opts = this._parseOptions(options);
     this.current = 0;
     this._target = null; // pending goTo destination (rapid clicks)
     this._pointerDown = false;
     this._rootAttrs = new Map(); // name -> value before init (null: absent), for destroy()
-    // CSS reserves the thumb-strip space via [data-cs-gallery] and the one-up
-    // width via [data-cs-fade], both read off the AUTHORED attribute — so the
+    // CSS reserves the thumb-strip space via [data-dos-gallery] and the one-up
+    // width via [data-dos-fade], both read off the AUTHORED attribute — so the
     // documented precedence (JS option > data attribute) only holds if the
     // final option state is mirrored back BOTH ways. Mirroring only the true
-    // side left `new CustomSlider(el, { gallery: false })` on authored
-    // data-cs-gallery markup with no gallery and the thumb strip's space still
+    // side left `new DealerOnSlider(el, { gallery: false })` on authored
+    // data-dos-gallery markup with no gallery and the thumb strip's space still
     // reserved, and the same shape with fade left the slides pinned one-up
     // while the engine scrolled them normally (2026-09-15 review). "false" is
     // the off switch both selectors already carry a :not() for, and
     // _setRootAttr records the prior value, so destroy() puts it back.
-    if (this.opts.gallery) this._setRootAttr('data-cs-gallery', '');
-    else if (this.root.hasAttribute('data-cs-gallery')) this._setRootAttr('data-cs-gallery', 'false');
+    if (this.opts.gallery) this._setRootAttr('data-dos-gallery', '');
+    else if (this.root.hasAttribute('data-dos-gallery')) this._setRootAttr('data-dos-gallery', 'false');
     // Fade stacks the slides into one grid cell and JS owns which one is
-    // visible — so the STACKING CSS keys off data-cs-fade-on, an attribute only
+    // visible — so the STACKING CSS keys off data-dos-fade-on, an attribute only
     // the engine sets. Keyed off the authored one, a no-JS visitor gets every
     // slide at opacity 0 and the hero disappears. The authored attribute still
     // needs the same correction as gallery above, because the width rule reads
     // it directly.
-    if (this.opts.fade) this._setRootAttr('data-cs-fade-on', '');
-    else if (this.root.hasAttribute('data-cs-fade')) this._setRootAttr('data-cs-fade', 'false');
+    if (this.opts.fade) this._setRootAttr('data-dos-fade-on', '');
+    else if (this.root.hasAttribute('data-dos-fade')) this._setRootAttr('data-dos-fade', 'false');
     this._prm = matchMedia('(prefers-reduced-motion: reduce)');
     this._ac = new AbortController();
 
@@ -122,12 +122,12 @@ export class CustomSlider {
     this._listen();
     this._setupAutoplay();
     this._commit();
-    root._cs = this;
+    root._dos = this;
   }
 
   /** @param {ParentNode} [scope] */
   static autoInit(scope = document) {
-    return [.../** @type {NodeListOf<HTMLElement>} */ (scope.querySelectorAll('[data-cs]'))].filter((el) => !el._cs && el.dataset.csInit !== 'manual').map((el) => new CustomSlider(el));
+    return [.../** @type {NodeListOf<HTMLElement>} */ (scope.querySelectorAll('[data-dos]'))].filter((el) => !el._dos && el.dataset.dosInit !== 'manual').map((el) => new DealerOnSlider(el));
   }
 
   /* ---- options ---------------------------------------------------------- */
@@ -135,22 +135,22 @@ export class CustomSlider {
   _parseOptions(js) {
     const d = this.root.dataset;
     const data = {};
-    if (d.csAutoplay !== undefined) data.autoplay = parseInt(d.csAutoplay, 10) || 0;
-    if (d.csRewind !== undefined) data.rewind = d.csRewind !== 'false';
-    if (d.csStep !== undefined) data.step = +d.csStep > 0 ? +d.csStep : d.csStep === 'slide' ? 'slide' : 'page';
-    if (d.csDrag !== undefined) data.drag = d.csDrag !== 'false';
-    if (d.csGallery !== undefined) data.gallery = d.csGallery !== 'false';
-    if (d.csFade !== undefined) data.fade = d.csFade !== 'false';
-    if (d.csRoledescription !== undefined) data.roledescription = d.csRoledescription;
-    // Every announced string, settable from the HTML: data-cs-label-next,
-    // data-cs-label-status-multi and so on map to the same keys the labels
+    if (d.dosAutoplay !== undefined) data.autoplay = parseInt(d.dosAutoplay, 10) || 0;
+    if (d.dosRewind !== undefined) data.rewind = d.dosRewind !== 'false';
+    if (d.dosStep !== undefined) data.step = +d.dosStep > 0 ? +d.dosStep : d.dosStep === 'slide' ? 'slide' : 'page';
+    if (d.dosDrag !== undefined) data.drag = d.dosDrag !== 'false';
+    if (d.dosGallery !== undefined) data.gallery = d.dosGallery !== 'false';
+    if (d.dosFade !== undefined) data.fade = d.dosFade !== 'false';
+    if (d.dosRoledescription !== undefined) data.roledescription = d.dosRoledescription;
+    // Every announced string, settable from the HTML: data-dos-label-next,
+    // data-dos-label-status-multi and so on map to the same keys the labels
     // option takes. A generic sweep rather than a line per label, so a label
     // added to DEFAULTS is reachable the day it ships — and because the CMS
     // hands a designer markup, not a constructor call, this is the ONLY route
     // a Spanish-language page has to a Spanish carousel. It is also how the
     // visible "3 / 12" counter gets its wording.
     const dl = {};
-    for (const k in d) if (k.length > 7 && k.startsWith('csLabel')) dl[k[7].toLowerCase() + k.slice(8)] = d[k];
+    for (const k in d) if (k.length > 8 && k.startsWith('dosLabel')) dl[k[8].toLowerCase() + k.slice(9)] = d[k];
     const opts = { ...DEFAULTS, ...data, ...js, labels: { ...DEFAULTS.labels, ...dl, ...(js.labels || {}) } };
     // step is 'page', 'slide' or a positive whole number, checked on the MERGED
     // options: the data-attribute line above normalises its own route, and the
@@ -159,15 +159,15 @@ export class CustomSlider {
     // is a page (2026-09-15 review).
     if (opts.step !== 'page' && opts.step !== 'slide') opts.step = Number.isInteger(+opts.step) && +opts.step > 0 ? +opts.step : 'page';
     if (opts.gallery && opts.autoplay) {
-      console.warn('[custom-slider] autoplay is ignored in gallery mode', this.root);
+      console.warn('[dealeron-slider] autoplay is ignored in gallery mode', this.root);
       opts.autoplay = 0;
     }
     if (opts.fade && opts.gallery) {
-      console.warn('[custom-slider] fade is ignored in gallery mode', this.root);
+      console.warn('[dealeron-slider] fade is ignored in gallery mode', this.root);
       opts.fade = false;
     }
     if (opts.autoplay && !opts.rewind) {
-      console.warn('[custom-slider] rewind:false is ignored with autoplay', this.root);
+      console.warn('[dealeron-slider] rewind:false is ignored with autoplay', this.root);
       opts.rewind = true;
     }
     return opts;
@@ -188,7 +188,7 @@ export class CustomSlider {
     if (this.root.tagName !== 'SECTION') this._setRootAttr('role', 'region');
     if (this.opts.roledescription) this._setRootAttr('aria-roledescription', this.opts.roledescription);
     if (!this.root.hasAttribute('aria-label') && !this.root.hasAttribute('aria-labelledby')) {
-      console.warn('[custom-slider] give the slider an aria-label or aria-labelledby', this.root);
+      console.warn('[dealeron-slider] give the slider an aria-label or aria-labelledby', this.root);
     }
     if (this.opts.gallery) return; // gallery slides become tabpanels later
     // <ul>/<li> carries the count announcements — but our own CSS sets
@@ -228,10 +228,10 @@ export class CustomSlider {
   _buildControls() {
     const L = this.opts.labels;
     const c = document.createElement('div');
-    c.className = 'cs-controls';
+    c.className = 'dos-controls';
     if (this.opts.autoplay > 0) {
       // WCAG 2.2.2: a visible pause mechanism, FIRST in the tab sequence.
-      this.pauseBtn = this._btn('cs-pause', L.pause, ICONS.pause);
+      this.pauseBtn = this._btn('dos-pause', L.pause, ICONS.pause);
       this.pauseBtn.addEventListener(
         'click',
         () => {
@@ -241,7 +241,7 @@ export class CustomSlider {
       );
       c.append(this.pauseBtn);
     }
-    const prev = (this.prevBtn = this._btn('cs-arrow cs-arrow--prev', L.prev, ICONS.prev));
+    const prev = (this.prevBtn = this._btn('dos-arrow dos-arrow--prev', L.prev, ICONS.prev));
     prev.addEventListener(
       'click',
       () => {
@@ -250,7 +250,7 @@ export class CustomSlider {
       },
       { signal: this._ac.signal },
     );
-    const next = (this.nextBtn = this._btn('cs-arrow cs-arrow--next', L.next, ICONS.next));
+    const next = (this.nextBtn = this._btn('dos-arrow dos-arrow--next', L.next, ICONS.next));
     next.addEventListener(
       'click',
       () => {
@@ -262,7 +262,7 @@ export class CustomSlider {
     c.append(prev, next);
     if (!this.opts.gallery) {
       this.dots = document.createElement('div');
-      this.dots.className = 'cs-dots';
+      this.dots.className = 'dos-dots';
       this.dots.setAttribute('role', 'group');
       this.dots.setAttribute('aria-label', L.dots);
       c.append(this.dots);
@@ -270,7 +270,7 @@ export class CustomSlider {
     // Terse hidden status ("Slides 4–6 of 12"). Separate region, NOT the
     // track: a live track would announce every card on multi-card moves.
     this.status = document.createElement('div');
-    this.status.className = 'cs-status cs-sr-only';
+    this.status.className = 'dos-status dos-sr-only';
     this.status.setAttribute('aria-live', 'polite');
     c.append(this.status);
     // DOM order = tab order: [pause] → prev → next → dots → track.
@@ -293,7 +293,7 @@ export class CustomSlider {
     const r0 = s[0].getBoundingClientRect();
     this.stride = s.length > 1 ? s[1].getBoundingClientRect().left - r0.left : r0.width || 1;
     if (this.stride <= 0) this.stride = r0.width || 1; // LTR assumed (v1)
-    this.perView = Math.max(1, parseInt(getComputedStyle(this.root).getPropertyValue('--cs-per-view'), 10) || 1);
+    this.perView = Math.max(1, parseInt(getComputedStyle(this.root).getPropertyValue('--dos-per-view'), 10) || 1);
   }
 
   // Index of the slide nearest scroll position x, read from real offsets
@@ -383,7 +383,7 @@ export class CustomSlider {
       this.current = n;
       this._target = null;
       this._updateUI();
-      if (moved) this._emit('cs:change', { index: n, page: n, slidesInView: 1 });
+      if (moved) this._emit('dos:change', { index: n, page: n, slidesInView: 1 });
       return;
     }
     const t = this.track;
@@ -498,7 +498,7 @@ export class CustomSlider {
       // and at one threshold every such click was eaten — a video poster or a
       // lightbox button inside the track then opened only sometimes.
       far = false;
-    t.setAttribute('data-cs-draggable', ''); // grab-cursor hook — see the cursor rules in the CSS
+    t.setAttribute('data-dos-draggable', ''); // grab-cursor hook — see the cursor rules in the CSS
     t.addEventListener(
       'pointerdown',
       (e) => {
@@ -511,7 +511,7 @@ export class CustomSlider {
         // Closed hand from the instant the button goes down, not once the drag
         // threshold trips — pressing and holding without moving still has to
         // look grabbed, or the strip feels dead under the cursor.
-        t.setAttribute('data-cs-dragging', '');
+        t.setAttribute('data-dos-dragging', '');
       },
       { signal: sig },
     );
@@ -550,7 +550,7 @@ export class CustomSlider {
       this._dragActive = false;
       // Before the early return: a press that never became a drag still put the
       // closed hand up, so it still has to come back down.
-      t.removeAttribute('data-cs-dragging');
+      t.removeAttribute('data-dos-dragging');
       if (!this._dragMoved) return;
       t.style.userSelect = '';
       // This pointerup reaches the track before the window listener flips
@@ -617,7 +617,7 @@ export class CustomSlider {
     this.current = idx;
     this._updateUI();
     if (changed) {
-      this._emit('cs:change', { index: idx, page: this._currentPage(), slidesInView: this.perView });
+      this._emit('dos:change', { index: idx, page: this._currentPage(), slidesInView: this.perView });
     }
   }
 
@@ -625,15 +625,15 @@ export class CustomSlider {
     // Everything already fits: one stop means the arrows and dots are controls
     // that cannot do anything. Leaving them is a focus trap for keyboard users
     // and announces a "1 of 1" choice that isn't one. Re-evaluated here rather
-    // than at build time because --cs-per-view is CSS, so a resize across a
+    // than at build time because --dos-per-view is CSS, so a resize across a
     // breakpoint can make a strip fit (or stop fitting) at any moment.
     const fits = this._stops().length <= 1;
     // Registered, not just toggled: destroy() restores only what it finds in
     // _rootAttrs, and this was the one root attribute written outside
-    // _setRootAttr - so a destroyed slider left data-cs-fits behind on the
+    // _setRootAttr - so a destroyed slider left data-dos-fits behind on the
     // dealer's element, still hiding the controls of whatever was built next.
-    if (!this._rootAttrs.has('data-cs-fits')) this._rootAttrs.set('data-cs-fits', this.root.getAttribute('data-cs-fits'));
-    this.root.toggleAttribute('data-cs-fits', fits);
+    if (!this._rootAttrs.has('data-dos-fits')) this._rootAttrs.set('data-dos-fits', this.root.getAttribute('data-dos-fits'));
+    this.root.toggleAttribute('data-dos-fits', fits);
     if (this.prevBtn) this.prevBtn.hidden = this.nextBtn.hidden = fits;
     if (this.dots) this.dots.hidden = fits;
     // And the pause button, for the same reason: with one stop, next() goes
@@ -667,14 +667,14 @@ export class CustomSlider {
     // mode. Never inert a slide holding focus (it would strand the caret).
     this.slides.forEach((sl, i) => {
       const on = i === this.current;
-      // cs-slide--current, not a bare `is-current`. This is the ONE class the
+      // dos-slide--current, not a bare `is-current`. This is the ONE class the
       // engine puts on markup the dealer authored, and `is-current` is a name
       // any site theme or framework may already be using for something else -
       // a collision that would show as a slide stuck visible or invisible, on
       // their page, with nothing here to say why. Every other engine class
-      // carries the cs- stem; this one was the exception. Renamed 2026-09-08,
+      // carries the dos- stem; this one was the exception. Renamed 2026-09-08,
       // in the last window before the contract froze.
-      sl.classList.toggle('cs-slide--current', on);
+      sl.classList.toggle('dos-slide--current', on);
       if (on || sl.contains(document.activeElement)) sl.removeAttribute('inert');
       else sl.setAttribute('inert', '');
     });
@@ -701,7 +701,7 @@ export class CustomSlider {
         const from = start + 1,
           to = Math.min(start + this.perView, total);
         const label = this.perView > 1 ? fmt(L.gotoPage, { from, to }) : fmt(L.gotoSlide, { n: from });
-        const b = this._btn('cs-dot', label, '');
+        const b = this._btn('dos-dot', label, '');
         b.addEventListener(
           'click',
           () => {
@@ -724,7 +724,7 @@ export class CustomSlider {
     // (2026-10-27). The W3C carousel guide says aria-disabled; Swiper,
     // Bootstrap and Flickity ship aria-current. The class is the style hook.
     [...this.dots.children].forEach((b, i) => {
-      b.classList.toggle('cs-dot--current', i === page);
+      b.classList.toggle('dos-dot--current', i === page);
       i === page ? b.setAttribute('aria-current', 'true') : b.removeAttribute('aria-current');
     });
   }
@@ -832,7 +832,7 @@ export class CustomSlider {
     const L = this.opts.labels;
     this.pauseBtn.setAttribute('aria-label', this.rotating ? L.pause : L.play);
     this.pauseBtn.innerHTML = this.rotating ? ICONS.pause : ICONS.play;
-    if (!first) this._emit(this.rotating ? 'cs:autoplay-start' : 'cs:autoplay-stop', {});
+    if (!first) this._emit(this.rotating ? 'dos:autoplay-start' : 'dos:autoplay-stop', {});
   }
 
   /* ---- gallery (APG tabbed carousel) ------------------------------------ */
@@ -843,7 +843,7 @@ export class CustomSlider {
     // Per APG tabbed-carousel: the panels wrapper is a polite live region.
     this.track.setAttribute('aria-live', 'polite');
     const list = document.createElement('div');
-    list.className = 'cs-thumbs';
+    list.className = 'dos-thumbs';
     list.setAttribute('role', 'tablist');
     list.setAttribute('aria-label', L.thumbs);
     this.tabs = this.slides.map((s, i) => {
@@ -862,7 +862,7 @@ export class CustomSlider {
       // children — the track is one — so the strip announces its photo name
       // instead of an unnamed region. (inert keeps the other panels out.)
       s.tabIndex = 0;
-      const b = this._btn('cs-thumb', name, '');
+      const b = this._btn('dos-thumb', name, '');
       b.id = `${this.uid}-tab-${i}`;
       b.setAttribute('role', 'tab');
       b.setAttribute('aria-controls', s.id);
@@ -906,13 +906,13 @@ export class CustomSlider {
       { signal: sig },
     );
     // The strip scrolls with its scrollbar hidden — expose "more thumbs this
-    // way" via data-cs-overflow so the CSS can fade the clipped edge instead of
+    // way" via data-dos-overflow so the CSS can fade the clipped edge instead of
     // leaving thumbnails looking sliced off (mobile especially).
     this._syncThumbFade = () => {
       const max = list.scrollWidth - list.clientWidth - 1;
       const start = list.scrollLeft > 0,
         end = list.scrollLeft < max;
-      list.setAttribute('data-cs-overflow', start && end ? 'both' : end ? 'end' : start ? 'start' : 'none');
+      list.setAttribute('data-dos-overflow', start && end ? 'both' : end ? 'end' : start ? 'start' : 'none');
     };
     list.addEventListener('scroll', this._syncThumbFade, { passive: true, signal: sig });
     this.root.append(list);
@@ -958,7 +958,7 @@ export class CustomSlider {
 
   destroy() {
     if (!this._ac) return;
-    this._emit('cs:destroy', {});
+    this._emit('dos:destroy', {});
     this._ac.abort();
     clearInterval(this._timer);
     clearTimeout(this._debounce);
@@ -970,6 +970,6 @@ export class CustomSlider {
     // element, so each attribute goes back to what it was, or away.
     this.root.innerHTML = this._snapshot;
     for (const [a, v] of this._rootAttrs) v === null ? this.root.removeAttribute(a) : this.root.setAttribute(a, v);
-    delete this.root._cs;
+    delete this.root._dos;
   }
 }

@@ -1,12 +1,12 @@
-// Builds the card-styles half of dist/custom-slider.css and its .min twin,
+// Builds the card-styles half of dist/dealeron-slider.css and its .min twin,
 // and appends it to both.
 //
-// The engine styles no cards on purpose (cs-* is mechanism, cargo-* is content),
+// The engine styles no cards on purpose (dos-* is mechanism, cargo-* is content),
 // so without this every slider had to paste its own card CSS — 810 B gzip per
 // model bar, in the page HTML, repeated per slider and cached by nothing. With
 // the card styles in the linked stylesheet a slider becomes a markup paste:
 //
-//   <div class="cs cargo-tile cs-xs-2 cs-sm-3 cs-md-4 cs-lg-5" data-cs> …
+//   <div class="dos cargo-tile dos-xs-2 dos-sm-3 dos-md-4 dos-lg-5" data-dos> …
 //
 // and a preset nobody should edit — a Chevrolet model bar — can ship as HTML
 // with no style block at all, which is the point of a replacement code.
@@ -45,7 +45,7 @@ const { LOOKS } = sandbox.CARGO;
 // names and their numbers. Bootstrap 5, which the platform is moving to, has
 // the same three numbers under DIFFERENT letters (its sm is 576, md 768, lg
 // 992, xl 1200) plus two tiers we lacked: 576 and 1400. Those two are named by
-// their width (cs-576-N, cs-1400-N) on purpose - `sm` already means 768 here,
+// their width (dos-576-N, dos-1400-N) on purpose - `sm` already means 768 here,
 // and a second alphabet on the same element would make every class a guess
 // about which grid it came from (2026-09-15, Steven: match Bootstrap 5).
 // .98 because max-width:767px and min-width:768px leave a dead zone at any
@@ -80,24 +80,24 @@ const scope = (css, sel) =>
 // head <link> is undocumented, so that was a coin toss.
 //
 // Never where the class is the WHOLE selector. That rule carries the look's
-// custom properties, and at (0,0,0) the engine's own `.cs` block outranks it:
-// measured, the tall tile's --cs-arrow-bg reverted from rgba(255,255,255,0.14)
+// custom properties, and at (0,0,0) the engine's own `.dos` block outranks it:
+// measured, the tall tile's --dos-arrow-bg reverted from rgba(255,255,255,0.14)
 // to the engine's rgba(0,0,0,0.55) and put a dark arrow on its dark strip.
 const weaken = (css, sel) => css.replace(new RegExp(`(^|[{}\\n,]\\s*)${sel.replace('.', '\\.')}(?=\\s+[^{\\s])`, 'g'), (_, pre) => `${pre}:where(${sel})`);
 
 const out = [
-  '/*! Custom Slider — card styles. Generated from demo/assets/looks.js by',
+  '/*! DealerOn Slider — card styles. Generated from demo/assets/looks.js by',
   '   scripts/build-cards.mjs and appended to the engine stylesheet — do not',
   '   edit by hand, the next build overwrites everything below this line. */',
   '',
   '/* ---- columns ---------------------------------------------------------',
   '   Per-breakpoint so a ladder is a set of classes rather than one class per',
-  '   combination: cs-xs-2 cs-sm-3 cs-md-4 cs-lg-5. Slides-per-view stays a CSS',
+  '   combination: dos-xs-2 dos-sm-3 dos-md-4 dos-lg-5. Slides-per-view stays a CSS',
   "   decision, which is the engine's rule — these only set the property. */",
 ];
 
 for (const [name, bp] of TIERS) {
-  const rules = Array.from({ length: MAX_COLS }, (_, i) => `.cs-${name}-${i + 1} { --cs-per-view: ${i + 1}; }`);
+  const rules = Array.from({ length: MAX_COLS }, (_, i) => `.dos-${name}-${i + 1} { --dos-per-view: ${i + 1}; }`);
   out.push(bp ? `@media (min-width: ${bp}px) {\n${rules.map((r) => '  ' + r).join('\n')}\n}` : rules.join('\n'));
 }
 
@@ -145,8 +145,8 @@ const min = (await transform(css, { loader: 'css', minify: true })).code;
 // that means "smaller than Embla's core" into one that means something else.
 mkdirSync('dist', { recursive: true });
 for (const [file, cards] of [
-  ['dist/custom-slider.css', pretty],
-  ['dist/custom-slider.min.css', min],
+  ['dist/dealeron-slider.css', pretty],
+  ['dist/dealeron-slider.min.css', min],
 ]) {
   // Strip any cards half a previous build appended, so this is idempotent.
   const engine = readFileSync(file, 'utf8').replace(/\s*\/\*! cards \*\/[\s\S]*$/, '');
@@ -158,4 +158,4 @@ ${cards}
 `,
   );
 }
-console.log(`dist/custom-slider.min.css: engine + ${Object.keys(LOOKS).length} card styles, ${TIERS.length * MAX_COLS} column classes (${min.length} B of cards)`);
+console.log(`dist/dealeron-slider.min.css: engine + ${Object.keys(LOOKS).length} card styles, ${TIERS.length * MAX_COLS} column classes (${min.length} B of cards)`);

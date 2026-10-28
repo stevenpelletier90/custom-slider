@@ -48,17 +48,17 @@ test('a typed hex, rgba and transparent all keep a swatch', async () => {
 test('the picker writes legacy notation and the copied CSS carries it', async () => {
   await type('Arrow background', 'rgb(0 0 0 / 0.5)');
   const { css } = await copyParts(page);
-  assert.match(css, /--cs-arrow-bg:\s*rgba\(0, 0, 0, 0\.5\)/);
+  assert.match(css, /--dos-arrow-bg:\s*rgba\(0, 0, 0, 0\.5\)/);
   assert.doesNotMatch(css, /rgb\(0 0 0/);
 });
 
 test('alpha 1 is hex, alpha 0 is transparent', async () => {
   await type('Arrow background', 'rgba(22, 50, 79, 1)');
   let { css } = await copyParts(page);
-  assert.match(css, /--cs-arrow-bg:\s*#16324f/);
+  assert.match(css, /--dos-arrow-bg:\s*#16324f/);
   await type('Arrow background', 'rgba(22, 50, 79, 0)');
   ({ css } = await copyParts(page));
-  assert.match(css, /--cs-arrow-bg:\s*transparent/);
+  assert.match(css, /--dos-arrow-bg:\s*transparent/);
 });
 
 test('the opacity slider turns a hex into an rgba() without leaving the row', async () => {
@@ -71,7 +71,7 @@ test('the opacity slider turns a hex into an rgba() without leaving the row', as
   await page.waitForTimeout(120);
   assert.equal(await field('Arrow background').inputValue(), 'rgba(22, 50, 79, 0.4)');
   const { css } = await copyParts(page);
-  assert.match(css, /--cs-arrow-bg:\s*rgba\(22, 50, 79, 0\.4\)/);
+  assert.match(css, /--dos-arrow-bg:\s*rgba\(22, 50, 79, 0\.4\)/);
 });
 
 test('a swatch click writes the field, and the swatches include the colours in use', async () => {
@@ -89,20 +89,20 @@ test('Clear puts the default back and drops the declaration', async () => {
   await rowByLabel(page, 'Arrow background').locator('.tp-colv_clear').click();
   await page.waitForTimeout(120);
   const { css } = await copyParts(page);
-  assert.doesNotMatch(css, /--cs-arrow-bg:\s*#123456/);
+  assert.doesNotMatch(css, /--dos-arrow-bg:\s*#123456/);
   // The model bar sets its own Arrow background to transparent, which is not
   // the engine's default (rgba(0, 0, 0, 0.55)) - so Clear restores that
   // pattern default and the delta filter in cssFor() keeps the declaration
   // rather than dropping it. "Dropped" only holds where the default in play
   // IS the engine's; here the surviving declaration has to equal the pattern's.
-  assert.match(css, /--cs-arrow-bg:\s*transparent;/, "Clear did not restore the model bar's own default");
+  assert.match(css, /--dos-arrow-bg:\s*transparent;/, "Clear did not restore the model bar's own default");
 });
 
 test('currentcolor stays a text field', async () => {
   await type('Arrow colour', 'currentcolor');
   await page.waitForTimeout(120);
   const { css } = await copyParts(page);
-  assert.match(css, /--cs-arrow-fg:\s*currentcolor/);
+  assert.match(css, /--dos-arrow-fg:\s*currentcolor/);
   // Shown as typed, with no swatch colour invented for it: what it resolves to
   // is the dealer's page, not this panel.
   assert.equal(await field('Arrow colour').inputValue(), 'currentcolor');

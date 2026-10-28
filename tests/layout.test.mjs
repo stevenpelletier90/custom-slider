@@ -47,7 +47,7 @@ const stageBox = (page) =>
       // the container the slider gets inside it. Neither may move when the
       // picture is scaled.
       frameClient: frame.clientWidth,
-      rootWidth: Math.round(frame.contentDocument.querySelector('.cs')?.getBoundingClientRect().width ?? 0),
+      rootWidth: Math.round(frame.contentDocument.querySelector('.dos')?.getBoundingClientRect().width ?? 0),
       specVisible: document.querySelector('.ui-spec').getBoundingClientRect().bottom <= innerHeight,
       shownAt: document.getElementById('spec-scale-item').hidden ? null : document.getElementById('spec-scale').textContent,
     };
@@ -88,7 +88,7 @@ test('every section is open, and nothing can close one', async ({ browser }) => 
   }
   // The fold store is gone with the fold. A stale one would re-collapse a
   // folder that no longer has a toggle to open it again.
-  assert.equal(await page.evaluate(() => localStorage.getItem('cs-folders')), null, 'something still writes cs-folders');
+  assert.equal(await page.evaluate(() => localStorage.getItem('dos-folders')), null, 'something still writes dos-folders');
   assert.deepEqual(errors, []);
 });
 
@@ -113,7 +113,7 @@ test('all three numbered steps are headings, at one level, in order', async ({ b
   assert.deepEqual([...new Set(steps.map((s) => s.tag))], ['H3'], 'the three steps are not all at the same heading level');
 
   // Step 2 carries a legend about class prefixes. Inside the heading it became
-  // part of the name, so the heading read as two sentences about cs- and cargo-.
+  // part of the name, so the heading read as two sentences about dos- and cargo-.
   assert.doesNotMatch(steps[1].name, /cargo-/, "step 2's heading name swallowed the class-prefix legend");
 
   // The badge is decoration; the heading has to say something after it.
@@ -340,7 +340,7 @@ test('the preview runs the box model the storefront runs', async ({ browser }) =
   const box = await page.evaluate(() => {
     const d = globalThis.CARGO.sdoc();
     const win = globalThis.CARGO.swin();
-    const el = d.querySelector('.cs-slide') ?? d.body;
+    const el = d.querySelector('.dos-slide') ?? d.body;
     return { slide: win.getComputedStyle(el).boxSizing, html: win.getComputedStyle(d.documentElement).boxSizing };
   });
   assert.equal(box.slide, 'border-box', 'the preview frame is not running Bootstrap 3 box model');
@@ -359,7 +359,7 @@ test('no card is taller than the slide holding it, on any pattern', async ({ bro
       const win = globalThis.CARGO.swin();
       let over = 0;
       let who = '';
-      for (const slide of d.querySelectorAll('.cs-slide')) {
+      for (const slide of d.querySelectorAll('.dos-slide')) {
         const sr = slide.getBoundingClientRect();
         for (const el of slide.children) {
           const gap = +(el.getBoundingClientRect().bottom - sr.bottom).toFixed(2);
@@ -399,7 +399,7 @@ test('Fill drops the container and uses the whole width', async ({ browser }) =>
       return {
         frame: d.documentElement.clientWidth,
         root: Math.round(d.getElementById('wb-live-root').getBoundingClientRect().width),
-        slide: Math.round(d.querySelector('.cs-slide').getBoundingClientRect().width),
+        slide: Math.round(d.querySelector('.dos-slide').getBoundingClientRect().width),
       };
     });
 
@@ -609,14 +609,14 @@ test('every card strip shrinks its arrows on a phone', async ({ browser }) => {
   const { ctx, page, errors } = await at(browser, 'patterns.html', 320);
   const found = await page.evaluate(() => {
     const out = {};
-    for (const root of document.querySelectorAll('.cs')) {
+    for (const root of document.querySelectorAll('.dos')) {
       const host = /** @type {HTMLElement | null} */ (root.closest('[data-cargo]'));
       if (!host || out[host.dataset.cargo]) continue;
       // A card strip reserves a channel for its arrows; a full-bleed pattern
       // (the hero, the galleries, the lightbox) overlays them on the picture
       // and gets nothing back by shrinking them, so it is not asked to.
       if (parseFloat(getComputedStyle(root).paddingInlineStart) < 1) continue;
-      out[host.dataset.cargo] = getComputedStyle(root).getPropertyValue('--cs-arrow-size').trim();
+      out[host.dataset.cargo] = getComputedStyle(root).getPropertyValue('--dos-arrow-size').trim();
     }
     return out;
   });
@@ -641,10 +641,10 @@ test('no arrow lands on a card name at phone widths', async ({ browser }) => {
     const hits = await page.evaluate(() => {
       const bad = [];
       const overlaps = (a, b) => a.left < b.right && b.left < a.right && a.top < b.bottom && b.top < a.bottom;
-      for (const root of document.querySelectorAll('.cs')) {
+      for (const root of document.querySelectorAll('.dos')) {
         const host = /** @type {HTMLElement | null} */ (root.closest('[data-cargo]'));
-        const arrows = [.../** @type {NodeListOf<HTMLButtonElement>} */ (root.querySelectorAll('.cs-arrow'))].filter((a) => !a.hidden && a.offsetParent);
-        const track = root.querySelector('.cs-track');
+        const arrows = [.../** @type {NodeListOf<HTMLButtonElement>} */ (root.querySelectorAll('.dos-arrow'))].filter((a) => !a.hidden && a.offsetParent);
+        const track = root.querySelector('.dos-track');
         if (!arrows.length || !track) continue;
         const t = track.getBoundingClientRect();
         for (const name of root.querySelectorAll('.cargo-name')) {
@@ -653,7 +653,7 @@ test('no arrow lands on a card name at phone widths', async ({ browser }) => {
           // Only cards at REST inside the viewport. A card mid-scroll slides
           // under the arrow by design - the arrow overlays the strip - so
           // judging those would fail every pattern for doing the right thing.
-          const slide = name.closest('.cs-slide');
+          const slide = name.closest('.dos-slide');
           const s = slide && slide.getBoundingClientRect();
           if (!s || s.left < t.left - 1 || s.right > t.right + 1) continue;
           for (const arrow of arrows) {

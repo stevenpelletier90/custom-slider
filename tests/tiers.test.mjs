@@ -32,26 +32,26 @@ test.describe('the column classes', () => {
   test('the stylesheet ships all six tiers, the old four under their old names and numbers', async () => {
     // The shipped file, where a media block is one run of text: a class is
     // inside its tier if it appears between that min-width and the next `@`.
-    const css = await readFile('dist/custom-slider.min.css', 'utf8');
-    const inTier = (bp, cls, n) => new RegExp(`min-width:\\s*${bp}px\\)\\{[^@]*\\.${cls}\\{--cs-per-view:\\s*${n}\\}`).test(css);
+    const css = await readFile('dist/dealeron-slider.min.css', 'utf8');
+    const inTier = (bp, cls, n) => new RegExp(`min-width:\\s*${bp}px\\)\\{[^@]*\\.${cls}\\{--dos-per-view:\\s*${n}\\}`).test(css);
     // Bootstrap 3's names at Bootstrap 3's numbers, frozen.
-    assert.match(css, /\.cs-xs-2\{--cs-per-view:\s*2\}/);
-    assert.ok(inTier(768, 'cs-sm-3', 3), 'cs-sm-3 is not at 768');
-    assert.ok(inTier(992, 'cs-md-4', 4), 'cs-md-4 is not at 992');
-    assert.ok(inTier(1200, 'cs-lg-5', 5), 'cs-lg-5 is not at 1200');
+    assert.match(css, /\.dos-xs-2\{--dos-per-view:\s*2\}/);
+    assert.ok(inTier(768, 'dos-sm-3', 3), 'dos-sm-3 is not at 768');
+    assert.ok(inTier(992, 'dos-md-4', 4), 'dos-md-4 is not at 992');
+    assert.ok(inTier(1200, 'dos-lg-5', 5), 'dos-lg-5 is not at 1200');
     // The two Bootstrap 5 tiers, named by width.
-    assert.ok(inTier(576, 'cs-576-2', 2), 'cs-576-2 is not at 576');
-    assert.ok(inTier(1400, 'cs-1400-6', 6), 'cs-1400-6 is not at 1400');
+    assert.ok(inTier(576, 'dos-576-2', 2), 'dos-576-2 is not at 576');
+    assert.ok(inTier(1400, 'dos-1400-6', 6), 'dos-1400-6 is not at 1400');
     // Never Bootstrap 5's letters, which would mean a different width here.
-    assert.doesNotMatch(css, /\.cs-xl-|\.cs-xxl-/, 'a second alphabet on the same element');
+    assert.doesNotMatch(css, /\.dos-xl-|\.dos-xxl-/, 'a second alphabet on the same element');
   });
 
   test('an untouched pattern ships the classes it always did, and no new ones', async () => {
     await pick(page, 'modelbar');
     const { html } = await copyParts(page);
-    const cls = html.match(/class="[^"]*\bcs\b[^"]*"/)[0];
-    assert.doesNotMatch(cls, /cs-576-|cs-1400-/, `a new tier's class appeared on a slider nobody set it on: ${cls}`);
-    assert.match(cls, /cs-xs-2 cs-sm-3 cs-md-4 cs-lg-5/);
+    const cls = html.match(/class="[^"]*\bdos\b[^"]*"/)[0];
+    assert.doesNotMatch(cls, /dos-576-|dos-1400-/, `a new tier's class appeared on a slider nobody set it on: ${cls}`);
+    assert.match(cls, /dos-xs-2 dos-sm-3 dos-md-4 dos-lg-5/);
   });
 
   test('a rung set on the 576 tier reaches the copied markup and the preview honours it', async () => {
@@ -62,14 +62,18 @@ test.describe('the column classes', () => {
     await input.press('Enter');
     await page.waitForTimeout(400);
     const { html } = await copyParts(page);
-    assert.match(html.match(/class="[^"]*\bcs\b[^"]*"/)[0], /cs-576-3 cs-md-4/, 'the 576 rung did not reach the markup (and sm-3 is now redundant, so it goes)');
+    assert.match(html.match(/class="[^"]*\bdos\b[^"]*"/)[0], /dos-576-3 dos-md-4/, 'the 576 rung did not reach the markup (and sm-3 is now redundant, so it goes)');
     await page.click('.ui-widths button[data-w="576"]');
     await page.waitForTimeout(600);
-    const perView = await page.evaluate(() => getComputedStyle(globalThis.CARGO.sdoc().querySelector('.cs')).getPropertyValue('--cs-per-view').trim());
+    const perView = await page.evaluate(() => getComputedStyle(globalThis.CARGO.sdoc().querySelector('.dos')).getPropertyValue('--dos-per-view').trim());
     assert.equal(perView, '3', 'a 576px window did not draw the 576 rung');
     await page.click('.ui-widths button[data-w="390"]');
     await page.waitForTimeout(600);
-    assert.equal(await page.evaluate(() => getComputedStyle(globalThis.CARGO.sdoc().querySelector('.cs')).getPropertyValue('--cs-per-view').trim()), '2', 'the phone rung stopped applying under 576');
+    assert.equal(
+      await page.evaluate(() => getComputedStyle(globalThis.CARGO.sdoc().querySelector('.dos')).getPropertyValue('--dos-per-view').trim()),
+      '2',
+      'the phone rung stopped applying under 576',
+    );
     await page.click('.ui-widths button[data-w="1200"]');
   });
 });

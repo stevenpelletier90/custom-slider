@@ -572,17 +572,17 @@
             '--plate-pad': '5.6% 7.5% 0',
             '--img-hover-scale': '1.06',
             '--img-hover-speed': '0.1s',
-            '--strip-pad-x': 'var(--cs-arrow-size)',
+            '--strip-pad-x': 'var(--dos-arrow-size)',
           },
         },
         patterns: {
           tabs: {
             props: {
-              '--cs-gap': '0.1px',
-              '--cs-arrow-size': '2.5em',
-              '--cs-arrow-fg': 'rgba(255, 255, 255, 0.75)',
-              '--cs-arrow-fg-hover': '#fff',
-              '--cs-arrow-bg-hover': 'transparent',
+              '--dos-gap': '0.1px',
+              '--dos-arrow-size': '2.5em',
+              '--dos-arrow-fg': 'rgba(255, 255, 255, 0.75)',
+              '--dos-arrow-fg-hover': '#fff',
+              '--dos-arrow-bg-hover': 'transparent',
               // The bar sits on Cadillac's own bg-main band (--main-color
               // #282828 below), and the engine's #1a5fb4 focus ring is 2.34:1
               // there. Same value and same reason as the portrait look:
@@ -590,7 +590,7 @@
               // holds wherever the band's colour is overridden by the site's
               // theme. Found by the a11y audit once it learned to measure the
               // focus ring at all (2026-09-15).
-              '--cs-focus': '#4a90e2',
+              '--dos-focus': '#4a90e2',
               '--tab-size': '1.29em',
               '--tab-weight': '400',
               '--tab-leading': '1.4286',
@@ -717,16 +717,16 @@
         patterns: {
           tabs: {
             props: {
-              '--cs-gap': '0.1px',
-              '--cs-arrow-fg': '#666',
+              '--dos-gap': '0.1px',
+              '--dos-arrow-fg': '#666',
               // The site's own button colour, not its hex: the live bar draws
               // the arrow hover and the tab line from var(--cta-background-
               // color), a token every DealerOn theme defines (checked on the
               // Chevrolet, Toyota, BMW and Ford demos, 2026-09-14). Named the
               // same way here, the preset is right on any Chevrolet site, and
               // the builder's preview resolves it from `theme` below.
-              '--cs-arrow-fg-hover': 'var(--cta-background-color)',
-              '--cs-arrow-bg-hover': 'transparent',
+              '--dos-arrow-fg-hover': 'var(--cta-background-color)',
+              '--dos-arrow-bg-hover': 'transparent',
               '--tab-size': '1.29em',
               '--tab-weight': '700',
               '--tab-dim': '1',
@@ -868,14 +868,14 @@
             '--img-hover-scale': '1.06',
             '--img-hover-speed': '0.1s',
             // The arrow channel is exactly the arrow's width on the live bar.
-            '--strip-pad-x': 'var(--cs-arrow-size)',
+            '--strip-pad-x': 'var(--dos-arrow-size)',
           },
         },
         patterns: {
           tabs: {
             props: {
-              '--cs-gap': '0.1px',
-              '--cs-arrow-size': '2.5em',
+              '--dos-gap': '0.1px',
+              '--dos-arrow-size': '2.5em',
               // DEPARTURE from the live bar, 2026-09-15. forddemo1 draws its
               // resting arrow #919191, which is 3.15:1 on pure white - over
               // 1.4.11's 3:1 by 0.15 - and 2.77:1 on #f0f0f0, which is the very
@@ -886,9 +886,9 @@
               // every band down to #ddd: 4.54:1 on white, 3.99 on #f0f0f0,
               // 3.91 on #eee. The measured #6c6c6c hover is untouched, so the
               // resting -> hover step survives at 4.54 -> 5.25.
-              '--cs-arrow-fg': '#767676',
-              '--cs-arrow-fg-hover': '#6c6c6c',
-              '--cs-arrow-bg-hover': 'transparent',
+              '--dos-arrow-fg': '#767676',
+              '--dos-arrow-fg-hover': '#6c6c6c',
+              '--dos-arrow-bg-hover': 'transparent',
               '--tab-flex': '1 1 0%',
               '--tab-size': '1.14em',
               '--tab-size-narrow': '0.86em',
@@ -999,7 +999,7 @@
             // and baking one paints a dark box on a page that did not ask for
             // it. So the name inherits, and a dealer whose section is bg-main
             // gets white text from their own theme - which is also why there is
-            // no --cs-arrow-fg or --cs-focus override here any more: with no
+            // no --dos-arrow-fg or --dos-focus override here any more: with no
             // band of ours, the pattern's #262626 arrow is on the page's own
             // background and reads.
             //
@@ -1022,7 +1022,7 @@
         patterns: {
           modelbar: {
             props: {
-              '--cs-gap': '0.1px',
+              '--dos-gap': '0.1px',
             },
           },
         },
@@ -1095,13 +1095,13 @@
             // The live channel is exactly the arrow's width. Written against
             // the var, not a length, so it still tracks the look's responsive
             // arrow ladder down to the phone.
-            '--strip-pad-x': 'var(--cs-arrow-size)',
+            '--strip-pad-x': 'var(--dos-arrow-size)',
           },
         },
         patterns: {
           modelbar: {
             props: {
-              '--cs-gap': '0.1px',
+              '--dos-gap': '0.1px',
             },
           },
           // The roster is tagged with hondademo1's tab names - the example for
@@ -1198,7 +1198,7 @@
         patterns: {
           tabs: {
             props: {
-              '--cs-gap': '0.1px',
+              '--dos-gap': '0.1px',
               '--tab-size': '1em',
               '--tab-weight': '400',
               '--tab-leading': '1.4286',
@@ -1348,7 +1348,7 @@
         patterns: {
           tabs: {
             props: {
-              '--cs-gap': '0.1px',
+              '--dos-gap': '0.1px',
               '--tab-size': '1.2143em',
               // 14px of the 13px body below 992 - the platform's tablet tier.
               '--tab-size-narrow': '1.0769em',
@@ -1467,7 +1467,7 @@
   // 140px card - narrower than a cutout with a name under it can be.
   // Horizontal space a look takes before any card is drawn. The cutout tile
   // reserves the arrow gutter on both sides (--strip-pad-x is one arrow plus
-  // 0.25rem, and --cs-arrow-size defaults to 44px), which is 96px that never
+  // 0.25rem, and --dos-arrow-size defaults to 44px), which is 96px that never
   // belongs to a card. Leaving it out of the clamp is what let Acura's real
   // 5-across ladder through at 768px as a 134px card - measured in the browser,
   // where the workbench's own fit warning caught it.

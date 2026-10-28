@@ -46,22 +46,22 @@ for (const f of ['looks.js', 'brands.js', 'cms-paths.js', 'patterns.js', 'workbe
 const { PATTERNS, LOOKS, BRANDS, renderPattern, renderLook, ENGINE_DEFAULTS, variantsOf } = sandbox.CARGO;
 
 // cssFor() drops any value equal to an engine default, so that map has to BE
-// the engine. Read the real `.cs { … }` block out of src/custom-slider.css and
+// the engine. Read the real `.dos { … }` block out of src/dealeron-slider.css and
 // compare: a hand-kept copy would drift, and the only symptom would be a line
 // that quietly stopped being dropped from every snippet.
 // Comments out first: the block's own notes mention `--x:` declarations.
-const engineBlock = (readFileSync('src/custom-slider.css', 'utf8').match(/\.cs\s*\{([\s\S]*?)\n\}/)?.[1] ?? '').replace(/\/\*[\s\S]*?\*\//g, '');
+const engineBlock = (readFileSync('src/dealeron-slider.css', 'utf8').match(/\.dos\s*\{([\s\S]*?)\n\}/)?.[1] ?? '').replace(/\/\*[\s\S]*?\*\//g, '');
 const engineReal = Object.fromEntries([...engineBlock.matchAll(/(--[\w-]+):\s*([^;]+);/g)].map(([, k, v]) => [k, v.trim()]));
 let drift = 0;
 for (const [k, v] of Object.entries(engineReal)) {
-  if (!(k in ENGINE_DEFAULTS)) (console.error(`  ENGINE_DEFAULTS is missing ${k} (src/custom-slider.css says "${v}")`), drift++);
-  else if (ENGINE_DEFAULTS[k] !== v) (console.error(`  ENGINE_DEFAULTS[${k}] = "${ENGINE_DEFAULTS[k]}" but src/custom-slider.css says "${v}"`), drift++);
+  if (!(k in ENGINE_DEFAULTS)) (console.error(`  ENGINE_DEFAULTS is missing ${k} (src/dealeron-slider.css says "${v}")`), drift++);
+  else if (ENGINE_DEFAULTS[k] !== v) (console.error(`  ENGINE_DEFAULTS[${k}] = "${ENGINE_DEFAULTS[k]}" but src/dealeron-slider.css says "${v}"`), drift++);
 }
 for (const k of Object.keys(ENGINE_DEFAULTS)) {
-  if (!(k in engineReal)) (console.error(`  ENGINE_DEFAULTS has ${k}, which .cs in src/custom-slider.css does not set`), drift++);
+  if (!(k in engineReal)) (console.error(`  ENGINE_DEFAULTS has ${k}, which .dos in src/dealeron-slider.css does not set`), drift++);
 }
 if (drift) {
-  console.error(`\nlint-generated-css: ENGINE_DEFAULTS in demo/assets/workbench.js has drifted from src/custom-slider.css (${drift}).`);
+  console.error(`\nlint-generated-css: ENGINE_DEFAULTS in demo/assets/workbench.js has drifted from src/dealeron-slider.css (${drift}).`);
   process.exit(1);
 }
 
@@ -161,7 +161,7 @@ for (const [name, css] of sheets) {
   // Style Only takes no comments either. cssFor strips them, so a hit here
   // means a new route into the sheet that bypasses the scoping pass. The
   // shared section is a linked file, not a paste, and its section headers
-  // are for whoever reads dist/custom-slider.css; the minifier drops them.
+  // are for whoever reads dist/dealeron-slider.css; the minifier drops them.
   for (const c of name === 'shared pattern section' ? [] : css.match(/\/\*[\s\S]*?\*\//g) || []) {
     problems++;
     console.error(`  ${name} [comment-in-generated-css] ${JSON.stringify(c.slice(0, 60))} - Style Only takes raw CSS with no comments`);
@@ -193,12 +193,12 @@ for (const { id, bid, r } of variantPairs) {
   const entries = [...Object.entries(b.styles?.patterns?.[id]?.props ?? {}), ...(look ? Object.entries(b.styles?.looks?.[look] ?? {}) : [])];
   for (const [key, val] of entries) {
     // The same sources cssDefaults() merges in workbench.js, in the same
-    // order: a pattern's own prop (never --cs-*) is defaulted in the shared
+    // order: a pattern's own prop (never --dos-*) is defaulted in the shared
     // pattern section, a look that restates an engine value wins over the
     // engine, and --cargo-font has no engine entry to fall back on at all.
     const own = PATTERNS[id].props ?? {};
     const dflt =
-      key in own && !key.startsWith('--cs-') && !key.startsWith('--cargo-')
+      key in own && !key.startsWith('--dos-') && !key.startsWith('--cargo-')
         ? own[key]
         : look && key in LOOKS[look].settings
           ? LOOKS[look].settings[key]

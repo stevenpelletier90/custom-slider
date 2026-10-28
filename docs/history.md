@@ -731,3 +731,27 @@ switched, read "Slides 4–6 of 6". NVDA read both. Fixed in 7d8a48c: a pause cl
 `polite` on the clone before it is in the page, and swaps it in (same class and text, so a visible
 counter carries on). Heard after: VoiceOver "Slide 2 of 3", "Slide 3 of 3". +34 B; the engine is
 6636 B, 20 B under budget.
+
+## 2026-10-27 — Custom Slider becomes DealerOn Slider
+
+Steven named the product DealerOn Slider and moved every contract name from `cs` to `dos`: `.dos`,
+`dos-*`, `--dos-*`, `data-dos-*`, `dos:*`, `element._dos`, `window.DealerOnSlider`, files
+`dealeron-slider.*`, and a new shared folder `…/Apps/dealeronSlider/`. The map, the reasons and what
+was kept are in `docs/specs/2026-10-27-dealeron-slider-rename-design.md`. The contract had been
+frozen since 2026-09-08; it could move because nothing was believed live on the hosted copy, the
+same ground the 2026-08-31 rename stood on. `dos` was checked against all 32 stylesheets and scripts
+a live storefront (karlchevrolet.com) loads: no `.dos`, `--dos-` or `data-dos` anywhere. The
+platform's own code does use `do_`, which ruled out a bare `do-`.
+
+Entries above this one, the specs and the research keep the names of their day.
+
+Two things a find-and-replace would have got wrong. The engine read label attributes as
+`k.startsWith('csLabel')` and then `k[7]`, `k.slice(8)` — 7 being the length of `csLabel` — so a
+text swap alone would have dropped every `data-dos-label-*` attribute without an error; the offsets
+are 8 and 9 now. And `cs` is also the local name for a `getComputedStyle()` result, or a test's
+instance, in the tests, scripts and demo; those 121 lines were left alone. The longer prefix cost 13
+B: the engine is 6649 B, 7 B under budget.
+
+The same day, the repo's 229 GitHub deployment records — one per push to the single `github-pages`
+environment — were pruned to the one serving the site, and the six failed workflow runs were
+deleted.

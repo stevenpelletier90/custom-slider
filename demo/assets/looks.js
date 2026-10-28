@@ -72,7 +72,7 @@ const LOOKS = {
       '--strip-pad-end': '0.1px',
       // Reserves the gutter the arrows sit in. Without it transparent arrows
       // overlay the vehicles instead of standing beside them.
-      '--strip-pad-x': 'calc(var(--cs-arrow-size) + 0.25em)',
+      '--strip-pad-x': 'calc(var(--dos-arrow-size) + 0.25em)',
       '--name-color': '#222',
       '--name-size': '1em',
       '--name-weight': '600',
@@ -108,10 +108,10 @@ const LOOKS = {
       '--cta-fg': '#16324f',
     },
     css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
-%root% .cs-track { padding-block-end: var(--strip-pad-end); }
-@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
-@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
-@media (max-width: 380px) { %root% { --cs-per-view: 1; } }
+%root% .dos-track { padding-block-end: var(--strip-pad-end); }
+@media (max-width: 767.98px) { %root% { --dos-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --dos-arrow-size: 32px; } }
+@media (max-width: 380px) { %root% { --dos-per-view: 1; } }
 .cargo-card { display: flex; flex-direction: column; block-size: 100%; color: inherit; text-align: center; text-decoration: none; }
 .cargo-media { position: relative; display: block; overflow: hidden; }
 .cargo-badge { position: absolute; inset-block-start: 0.6em; inset-inline-start: 0.6em; padding: 0.25em 0.7em; font-size: 0.75em; font-weight: 700; line-height: 1.4; color: var(--badge-fg); background: var(--badge-bg); border-radius: 999px; }
@@ -154,7 +154,7 @@ const LOOKS = {
       '--strip-pad-end': '0.1px',
       // Reserves the gutter the arrows sit in. Without it a transparent
       // arrow lands on the card's own text instead of beside it.
-      '--strip-pad-x': 'calc(var(--cs-arrow-size) + 0.4em)',
+      '--strip-pad-x': 'calc(var(--dos-arrow-size) + 0.4em)',
       '--card-bg': '#fff',
       '--card-radius': '10px',
       '--name-color': '#1c1f23',
@@ -172,9 +172,9 @@ const LOOKS = {
       '--cta-fg': '#fff',
     },
     css: `%root% { padding-block-start: var(--strip-pad); padding-inline: var(--strip-pad-x); background: var(--strip-bg); }
-%root% .cs-track { padding-block-end: var(--strip-pad-end); }
-@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
-@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
+%root% .dos-track { padding-block-end: var(--strip-pad-end); }
+@media (max-width: 767.98px) { %root% { --dos-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --dos-arrow-size: 32px; } }
 .cargo-card { position: relative; display: flex; flex-direction: column; block-size: 100%; overflow: hidden; color: inherit; text-decoration: none; background: var(--card-bg); border: var(--card-border); border-radius: var(--card-radius); box-shadow: var(--card-shadow); }
 .cargo-media { position: relative; display: block; overflow: hidden; }
 .cargo-badge { position: absolute; inset-block-start: 0.6em; inset-inline-start: 0.6em; padding: 0.25em 0.7em; font-size: 0.75em; font-weight: 700; line-height: 1.4; color: var(--badge-fg); background: var(--badge-bg); border-radius: 999px; }
@@ -221,9 +221,9 @@ const LOOKS = {
       '--name-case': 'uppercase',
     },
     css: `%root% { padding-block-start: var(--strip-pad); background: var(--strip-bg); }
-%root% .cs-track { padding-block-end: var(--strip-pad-end); }
-@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
-@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
+%root% .dos-track { padding-block-end: var(--strip-pad-end); }
+@media (max-width: 767.98px) { %root% { --dos-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --dos-arrow-size: 32px; } }
 .cargo-card { display: block; color: var(--name-color); text-align: center; text-decoration: none; }
 .cargo-mark { display: block; margin-block-end: 0.6em; font-size: var(--mark-size); font-style: italic; font-weight: 700; line-height: 1.2; letter-spacing: 0.06em; }
 .cargo-card img { inline-size: 100%; block-size: auto; object-fit: contain; transition: transform 0.25s ease; }
@@ -269,8 +269,8 @@ const LOOKS = {
       '--pill-fg': '#222',
       '--card-shadow': 'none',
     },
-    css: `@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
-@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
+    css: `@media (max-width: 767.98px) { %root% { --dos-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --dos-arrow-size: 32px; } }
 .cargo-card { display: flex; overflow: hidden; color: var(--card-fg); text-decoration: none; background: var(--card-bg); border-radius: 8px; box-shadow: var(--card-shadow); }
 .cargo-card img { flex: 0 0 50%; inline-size: 50%; aspect-ratio: 1; object-fit: cover; }
 .cargo-copy { display: flex; flex-direction: column; gap: 0.5em; align-items: flex-start; min-inline-size: 0; padding: 28px; }
@@ -323,15 +323,15 @@ const LOOKS = {
       // The engine's default current dot is #333, drawn for a white page; on
       // this strip it was 1.43:1, invisible. Found by the repaired a11y audit
       // (2026-09-15); the arrows below had already been given their white.
-      '--cs-dot-current': '#fff',
+      '--dos-dot-current': '#fff',
       '--card-fg': '#fff',
       '--cta-bg': '#fff',
       '--cta-fg': '#14161b',
       '--img-aspect': '3 / 5',
       // Same reason as the logo panel: dark strip, so light arrows. 1.20:1 before.
-      '--cs-arrow-fg': '#fff',
-      '--cs-arrow-bg': 'rgba(255, 255, 255, 0.14)',
-      '--cs-arrow-bg-hover': 'rgba(255, 255, 255, 0.26)',
+      '--dos-arrow-fg': '#fff',
+      '--dos-arrow-bg': 'rgba(255, 255, 255, 0.14)',
+      '--dos-arrow-bg-hover': 'rgba(255, 255, 255, 0.26)',
       // Third control on this strip to need its own colour, and the one both
       // earlier rounds missed: the dots went white at 1.43:1 and the arrows at
       // 1.20:1, but nothing measures the FOCUS ring, so #1a5fb4 sat at 2.88:1
@@ -342,12 +342,12 @@ const LOOKS = {
       // on the page); #5b9bf3 is 2.83 on the page and #fff is 1.00.
       // portrait is the only look with a dark --strip-bg, so this is one line
       // in one place, not a sweep. Measured 2026-09-15.
-      '--cs-focus': '#4a90e2',
+      '--dos-focus': '#4a90e2',
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1.5em; background: var(--strip-bg); }
-%root% .cs-track { padding-block-end: 1.5em; }
-@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
-@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
+%root% .dos-track { padding-block-end: 1.5em; }
+@media (max-width: 767.98px) { %root% { --dos-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --dos-arrow-size: 32px; } }
 .cargo-card { display: block; color: var(--card-fg); text-align: center; text-decoration: none; }
 .cargo-name { min-block-size: 2.6em; margin: 0 0 0.5em; font-size: 1.25em; font-weight: 700; line-height: 1.3; color: var(--card-fg); text-align: start; text-transform: uppercase; letter-spacing: 0.08em; }
 .cargo-card img { display: block; inline-size: 100%; block-size: auto; aspect-ratio: var(--img-aspect); object-fit: cover; }
@@ -388,14 +388,14 @@ const LOOKS = {
       // Back to the engine's own dark arrows now the strip is not dark. A look
       // that sets its own background owns the contrast of the controls sitting
       // on it, and this one no longer sets one.
-      '--cs-arrow-fg': '#262626',
-      '--cs-arrow-bg': 'transparent',
+      '--dos-arrow-fg': '#262626',
+      '--dos-arrow-bg': 'transparent',
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1em; background: var(--strip-bg); }
-%root% .cs-track { padding-block-end: 1.5em; }
-@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
-@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
-@media (max-width: 460px) { %root% { --cs-per-view: 1; padding-block-start: 1em; padding-inline: 0.5em; } %root% .cs-track { padding-block-end: 1em; } }
+%root% .dos-track { padding-block-end: 1.5em; }
+@media (max-width: 767.98px) { %root% { --dos-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --dos-arrow-size: 32px; } }
+@media (max-width: 460px) { %root% { --dos-per-view: 1; padding-block-start: 1em; padding-inline: 0.5em; } %root% .dos-track { padding-block-end: 1em; } }
 .cargo-card { display: flex; align-items: center; justify-content: center; aspect-ratio: 3 / 2; padding: 1em; color: var(--card-fg); background: var(--card-bg); border: 1px solid rgba(0, 0, 0, 0.08); border-radius: 10px; transition: background 0.2s; }
 .cargo-card img { inline-size: 75%; block-size: auto; object-fit: contain; }`,
     markup: (m) => `<a class="cargo-card" href="${m.href}" aria-label="${m.alt}">
@@ -432,9 +432,9 @@ const LOOKS = {
       '--card-shadow': 'none',
     },
     css: `%root% { padding-block-start: 1.5em; padding-inline: 1em; background: var(--strip-bg); }
-%root% .cs-track { padding-block-end: 1.5em; }
-@media (max-width: 767.98px) { %root% { --cs-arrow-size: 36px; } }
-@media (max-width: 575.98px) { %root% { --cs-arrow-size: 32px; } }
+%root% .dos-track { padding-block-end: 1.5em; }
+@media (max-width: 767.98px) { %root% { --dos-arrow-size: 36px; } }
+@media (max-width: 575.98px) { %root% { --dos-arrow-size: 32px; } }
 .cargo-card { display: flex; flex-direction: column; align-items: center; block-size: 100%; padding: 1.25em; text-align: center; text-decoration: none; background: var(--card-bg); border-radius: 10px; box-shadow: var(--card-shadow); }
 /* Full width and cropped, not 55% and contained: that sizing was for a
    transparent cutout floating on the card, and a storefront photograph wants

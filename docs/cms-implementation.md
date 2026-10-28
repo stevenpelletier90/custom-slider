@@ -1,4 +1,4 @@
-# Putting Custom Slider on a DealerOn site
+# Putting DealerOn Slider on a DealerOn site
 
 > **Deployment status lives in ONE place:** the "Deployment status" section of
 > [../README.md](../README.md), which has what is hosted, the upload steps, the 21-day cache TTL and
@@ -15,10 +15,10 @@
 
 Two files, no dependencies, no build step on the site side:
 
-| File                    | What it does                                                                                                      |
-| ----------------------- | ----------------------------------------------------------------------------------------------------------------- |
-| `custom-slider.min.css` | Layout, scroll-snap physics, control styling — **plus** the card styles, the column classes and the pattern rules |
-| `custom-slider.min.js`  | Wires controls, state, autoplay, fade, drag — **plus** the six shared pattern scripts                             |
+| File                      | What it does                                                                                                      |
+| ------------------------- | ----------------------------------------------------------------------------------------------------------------- |
+| `dealeron-slider.min.css` | Layout, scroll-snap physics, control styling — **plus** the card styles, the column classes and the pattern rules |
+| `dealeron-slider.min.js`  | Wires controls, state, autoplay, fade, drag — **plus** the six shared pattern scripts                             |
 
 **No byte figure is written down here.** Run `npm run size` for the current pair, or read the demo
 masthead, which fetches both shipped files and gzips them in the browser. This table used to carry
@@ -28,12 +28,12 @@ gate that actually enforces one (6656 B gzip on the engine, a 16 KiB guard on th
 passing.
 
 Both come from `dist/` in this repo — never from `src/`, which is ES modules and does not run as a
-classic script. `dist/` also holds `custom-slider.css` and `custom-slider.js`, the same build
+classic script. `dist/` also holds `dealeron-slider.css` and `dealeron-slider.js`, the same build
 unminified, for reading; pages link the `.min` pair.
 
 ### Where they go
 
-**Settled: the shared path**, `/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/`,
+**Settled: the shared path**, `/assets/shared/CustomHTMLFiles/Responsive/Apps/dealeronSlider/`,
 alongside the platform's other shared slider code
 (`/assets/shared/CustomHTMLFiles/slick/slick.min.js`). One copy, every site gets fixes at once —
 which is the whole point of the frozen HTML contract: the engine can be replaced underneath every
@@ -42,15 +42,15 @@ site without touching a single page.
 See "Deployment status" in [../README.md](../README.md) for what is on that folder right now and the
 steps to change it. Deliberately not repeated here.
 
-Per-dealer Media Gallery (`#MISCPATH#custom-slider.min.js`) remains the fallback if a shared
+Per-dealer Media Gallery (`#MISCPATH#dealeron-slider.min.js`) remains the fallback if a shared
 location is ever unavailable, but it pins each site to whatever version it got and a fix means
 re-uploading to every one — treat it as temporary.
 
 ### How a page loads them
 
 ```html
-<link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.css">
-<script src="/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.js" defer></script>
+<link rel="stylesheet" href="/assets/shared/CustomHTMLFiles/Responsive/Apps/dealeronSlider/dealeron-slider.min.css">
+<script src="/assets/shared/CustomHTMLFiles/Responsive/Apps/dealeronSlider/dealeron-slider.min.js" defer></script>
 ```
 
 `defer` matters: the engine auto-initializes on `DOMContentLoaded`, and the CSS already reserves the
@@ -68,19 +68,19 @@ once into the sitewide Body Section, Bottom (or the footer include) instead of t
 <script>
   (function () {
     var boot = function () {
-      if (!document.querySelector('.cs')) return;
+      if (!document.querySelector('.dos')) return;
       var css = document.createElement('link');
       css.rel = 'stylesheet';
-      css.href = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.css';
+      css.href = '/assets/shared/CustomHTMLFiles/Responsive/Apps/dealeronSlider/dealeron-slider.min.css';
       // PREPEND, never append: the engine stylesheet carries the default
-      // --cs-* values at the same specificity as your recipe CSS, so it
+      // --dos-* values at the same specificity as your recipe CSS, so it
       // must land BEFORE the page's Style Only CSS in the cascade.
       // Appended at the end of <head> it silently overrides every recipe
-      // override (--cs-per-view snaps back to 1, peek to 0) — found live
+      // override (--dos-per-view snaps back to 1, peek to 0) — found live
       // on the spelletier test site, 2026-08-20.
       document.head.insertBefore(css, document.head.firstChild);
       var js = document.createElement('script');
-      js.src = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/custom-slider.min.js';
+      js.src = '/assets/shared/CustomHTMLFiles/Responsive/Apps/dealeronSlider/dealeron-slider.min.js';
       document.head.appendChild(js);
     };
     if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
@@ -89,13 +89,13 @@ once into the sitewide Body Section, Bottom (or the footer include) instead of t
 </script>
 ```
 
-It looks for a `.cs` on the page and injects the stylesheet and script only if it finds one. Pages
+It looks for a `.dos` on the page and injects the stylesheet and script only if it finds one. Pages
 with no slider load zero slider bytes.
 
 Injecting the engine this late is fine because its entry point does not blindly wait for
 `DOMContentLoaded`: it checks `document.readyState` and initializes **immediately** when the
 document has already finished parsing (see `src/auto.js`). A script tag added after the page loaded
-therefore still auto-inits every `[data-cs]` — there is no event it sits waiting for.
+therefore still auto-inits every `[data-dos]` — there is no event it sits waiting for.
 
 **The trade-off is real.** On pages that _do_ have a slider, the CSS now starts downloading only
 after the DOM is parsed — one extra round-trip — so the un-upgraded stacked list can show briefly
@@ -111,11 +111,11 @@ into "only slider pages pay, slightly later".
 There is nothing further to conditionally load. Autoplay and fade are not separate resources or
 plugins — both ship inside the same two files, and both are gated at runtime:
 
-- Autoplay setup early-returns before creating any timer or observer when `data-cs-autoplay` is
+- Autoplay setup early-returns before creating any timer or observer when `data-dos-autoplay` is
   absent, so a page without it executes essentially none of the autoplay code.
-- The fade transition CSS applies only under the `data-cs-fade-on` attribute, which the engine sets
-  only when a block opts in with `data-cs-fade`. Without it the rules never match and the transition
-  is inert.
+- The fade transition CSS applies only under the `data-dos-fade-on` attribute, which the engine sets
+  only when a block opts in with `data-dos-fade`. Without it the rules never match and the
+  transition is inert.
 
 A page that uses neither pays for neither beyond the bytes already counted above. The conditional
 loader is the whole story.
@@ -125,10 +125,10 @@ loader is the whole story.
 Everything the engine needs, and nothing it generates for you:
 
 ```html
-<div class="cs my-strip" data-cs aria-label="Featured vehicles">
-  <ul class="cs-track" role="list">
-    <li class="cs-slide">…authored content…</li>
-    <li class="cs-slide">…authored content…</li>
+<div class="dos my-strip" data-dos aria-label="Featured vehicles">
+  <ul class="dos-track" role="list">
+    <li class="dos-slide">…authored content…</li>
+    <li class="dos-slide">…authored content…</li>
   </ul>
 </div>
 ```
@@ -158,20 +158,20 @@ The styleCode minifier has two **probed** behaviors every recipe must respect, a
 has **not** been probed — see the note after them.
 
 - **Modern function values inside custom-property declarations fail the whole sheet.**
-  `--cs-peek: clamp(32px, 9vw, 60px)` and `--cs-arrow-bg: rgb(0 0 0 / 40%)` each kill minification —
-  and the storefront then **silently serves the last successfully-minified styleCode** (or nothing,
-  if there was none). No error surfaces anywhere; your CSS just never appears. The same functions
-  are fine in _normal_ properties (`width: clamp(...)`, `color: rgb(0 0 0 / 40%)`, slash-rgb in
-  box-shadows) — the failure is specific to `--*:` declarations. Every recipe in the library
-  therefore uses plain values and classic `rgba(r, g, b, a)` inside `--cs-*` declarations, with
-  media queries instead of `clamp()`.
+  `--dos-peek: clamp(32px, 9vw, 60px)` and `--dos-arrow-bg: rgb(0 0 0 / 40%)` each kill minification
+  — and the storefront then **silently serves the last successfully-minified styleCode** (or
+  nothing, if there was none). No error surfaces anywhere; your CSS just never appears. The same
+  functions are fine in _normal_ properties (`width: clamp(...)`, `color: rgb(0 0 0 / 40%)`,
+  slash-rgb in box-shadows) — the failure is specific to `--*:` declarations. Every recipe in the
+  library therefore uses plain values and classic `rgba(r, g, b, a)` inside `--dos-*` declarations,
+  with media queries instead of `clamp()`.
 - **Zero lengths lose their unit** (`0px` → `0`), and a unitless `0` invalidates every `calc()` that
   reads the variable — in **every** browser, Chrome included. **Never write a zero length in a `--*`
   declaration; write `0.1px`.** The visible failure is not a stray arrow, it is the strip:
-  `.cs-slide`'s
-  `flex: 0 0 calc((100% - (var(--cs-per-view) - 1) * var(--cs-gap)) / var(--cs-per-view))` falls
+  `.dos-slide`'s
+  `flex: 0 0 calc((100% - (var(--dos-per-view) - 1) * var(--dos-gap)) / var(--dos-per-view))` falls
   back to `auto` and every card collapses to its content width. Measured 2026-09-02 in the same
-  750px host, three per view: `--cs-gap: 0.1px` gives a 249.9px slide, `--cs-gap: 0` gives 42.0px.
+  750px host, three per view: `--dos-gap: 0.1px` gives a 249.9px slide, `--dos-gap: 0` gives 42.0px.
   Chromium and WebKit behave identically — an earlier version of this bullet called Chrome "lenient"
   here, which was wrong, and six patterns shipped `0px` on the strength of it. `0.1px` survives
   minification (it serves as `.1px`).
@@ -204,7 +204,7 @@ same sheet but left `0.4em` inside the calc untouched, and kept the spaces aroun
 `calc()` requires. That conservatism is presumably why the shape survives when `clamp()` does not.
 
 So the two rules above are the whole of it, and the builder's
-`--strip-pad-x: calc(var(--cs-arrow-size) + 0.4em)` is safe on every route. For the record, the
+`--strip-pad-x: calc(var(--dos-arrow-size) + 0.4em)` is safe on every route. For the record, the
 exposure was smaller than first counted: measured per route, the linked-engine route emits **zero**
 such declarations (the delta filter drops the value because it equals the look's own default) and
 "Paste the card styles too" emits **two** (tile and vcard). A third route, the deleted
@@ -222,13 +222,13 @@ Every variation is authored HTML plus site CSS over the same two files. The demo
 which card style it wears, and the code panel prints the markup and CSS for exactly what is on
 screen. `demo/patterns.html` shows all seventeen at once; `demo/reference.html` is the API.
 
-| You want                         | Use                                              |
-| -------------------------------- | ------------------------------------------------ |
-| Rotating homepage banner         | `data-cs-fade` + `data-cs-autoplay="5000"`, 1-up |
-| Model bar (cutouts, arrows only) | `data-cs-step="slide"`, dots hidden, `--cs-peek` |
-| Model bar grouped by body style  | The above, one instance per tab pane             |
-| Vehicle / service / offer cards  | Default page stepping, 1-2-3 per view            |
-| Photo gallery with thumbnails    | `data-cs-gallery`                                |
+| You want                         | Use                                                |
+| -------------------------------- | -------------------------------------------------- |
+| Rotating homepage banner         | `data-dos-fade` + `data-dos-autoplay="5000"`, 1-up |
+| Model bar (cutouts, arrows only) | `data-dos-step="slide"`, dots hidden, `--dos-peek` |
+| Model bar grouped by body style  | The above, one instance per tab pane               |
+| Vehicle / service / offer cards  | Default page stepping, 1-2-3 per view              |
+| Photo gallery with thumbnails    | `data-dos-gallery`                                 |
 
 **For a model bar, start from the brand preset.** The OEM demo estate shares one anatomy and differs
 only in how many cards are across at each width. Every one of the 32 brands is a preset in the
@@ -248,12 +248,12 @@ live in this repo until 2026-08-27.
 Override custom properties in `styleCode`. Never edit the engine:
 
 ```css
-.my-strip.cs {
-  --cs-gap: 1em;
-  --cs-peek: 60px;
-  --cs-arrow-bg: rgba(11, 42, 74, 1);
-  --cs-arrow-fg: #fff;
-  --cs-dot-current: #0b2a4a;
+.my-strip.dos {
+  --dos-gap: 1em;
+  --dos-peek: 60px;
+  --dos-arrow-bg: rgba(11, 42, 74, 1);
+  --dos-arrow-fg: #fff;
+  --dos-dot-current: #0b2a4a;
 }
 ```
 
@@ -261,13 +261,13 @@ Override custom properties in `styleCode`. Never edit the engine:
 sets `html { font-size: 10px }`, so a `1rem` gap written here ships at 62.5% of what it looked like.
 The repo's own linters fail on `rem` for exactly this reason; the docs used to show it anyway.
 
-**`.my-strip.cs`, not `.my-strip`.** A bare class ties with the engine's own `.cs` and with the
+**`.my-strip.dos`, not `.my-strip`.** A bare class ties with the engine's own `.dos` and with the
 shared `.cargo-*` card styles, so source order decides — and where the platform emits the aggregated
-Style Only sheet relative to a head `<link>` is not documented. Adding `.cs` costs nothing and
+Style Only sheet relative to a head `<link>` is not documented. Adding `.dos` costs nothing and
 settles it.
 
-Slides-per-view is not in that block: use the `cs-xs-N` / `cs-sm-N` / `cs-md-N` / `cs-lg-N` classes
-on the root, which ship in the stylesheet.
+Slides-per-view is not in that block: use the `dos-xs-N` / `dos-sm-N` / `dos-md-N` / `dos-lg-N`
+classes on the root, which ship in the stylesheet.
 
 Full list in the README under "CSS custom properties".
 
@@ -345,8 +345,8 @@ enforced — see §3.
   request against this repo, not a local copy. A forked copy silently opts that site out of every
   future fix.
 - **Do not add slider CSS to the block.** It belongs in `styleCode`.
-- **Do not rename the classes or data attributes.** `cs`, `-track`, `-slide`, the `data-*` options
-  and the `--cs-*` properties are a frozen contract precisely so the engine can be swapped later
+- **Do not rename the classes or data attributes.** `dos`, `-track`, `-slide`, the `data-*` options
+  and the `--dos-*` properties are a frozen contract precisely so the engine can be swapped later
   without editing any site.
 - **Do not add autoplay to a card strip.** Zero of the 55 OEM model bars autoplay. Rotation belongs
   on the hero and nowhere else.

@@ -23,7 +23,7 @@ const num = (label) => rowByLabel(page, label).locator('input[type=text], input[
 const unit = (label) => rowByLabel(page, label).locator('select').first();
 
 // The card's own resolved font size, which is what px<->em converts off.
-const fontPx = () => page.evaluate(() => parseFloat(getComputedStyle(globalThis.CARGO.sdoc().querySelector('.cs')).fontSize));
+const fontPx = () => page.evaluate(() => parseFloat(getComputedStyle(globalThis.CARGO.sdoc().querySelector('.dos')).fontSize));
 
 test('Gap is a number with a unit list, and the copied CSS carries the pair', async () => {
   await unit('Gap').selectOption('px');
@@ -31,7 +31,7 @@ test('Gap is a number with a unit list, and the copied CSS carries the pair', as
   await num('Gap').press('Enter');
   await page.waitForTimeout(120);
   const { css } = await copyParts(page);
-  assert.match(css, /--cs-gap:\s*12px/);
+  assert.match(css, /--dos-gap:\s*12px/);
 });
 
 test('both halves of the row have a name of their own', async () => {
@@ -49,16 +49,16 @@ test('px to em converts off the card font size', async () => {
   const want = String(+(16 / px).toFixed(3));
   assert.equal(await num('Gap').inputValue(), want);
   const { css } = await copyParts(page);
-  assert.match(css, new RegExp(`--cs-gap:\\s*${want}em`));
+  assert.match(css, new RegExp(`--dos-gap:\\s*${want}em`));
 });
 
 // The one knob that IS the carousel's font-size. An em in a font-size resolves
 // against the PARENT's, so converting it against the carousel is
-// self-referential: .cs computes 32px, 32/32 hands back 1em - half the size
+// self-referential: .dos computes 32px, 32/32 hands back 1em - half the size
 // asked for, and the value SHARED_DEFAULTS already holds, so the delta filter
 // drops the declaration and the knob silently does nothing.
 test('the card text size converts against the page around the carousel, not itself', async () => {
-  const outer = await page.evaluate(() => parseFloat(getComputedStyle(globalThis.CARGO.sdoc().querySelector('.cs').parentElement).fontSize));
+  const outer = await page.evaluate(() => parseFloat(getComputedStyle(globalThis.CARGO.sdoc().querySelector('.dos').parentElement).fontSize));
   await unit('Card text size').selectOption('px');
   await num('Card text size').fill(String(outer * 2));
   await num('Card text size').press('Enter');
@@ -80,8 +80,8 @@ test('a typed zero stores 0.1px, never a bare 0', async () => {
   await num('Gap').press('Enter');
   await page.waitForTimeout(120);
   const { css } = await copyParts(page);
-  assert.doesNotMatch(css, /--cs-gap:\s*0(px)?\s*;/);
-  assert.match(css, /--cs-gap:\s*0\.1px/);
+  assert.doesNotMatch(css, /--dos-gap:\s*0(px)?\s*;/);
+  assert.match(css, /--dos-gap:\s*0\.1px/);
 });
 
 // Peek's own off value is 0px, which is the ENGINE's default - so it is
@@ -93,7 +93,7 @@ test('a zero goes back to the default zero where the default is one', async () =
   await num('Peek').press('Enter');
   await page.waitForTimeout(150);
   const { css } = await copyParts(page);
-  assert.doesNotMatch(css, /--cs-peek/);
+  assert.doesNotMatch(css, /--dos-peek/);
 });
 
 test('switching to % keeps the number and changes only the unit', async () => {
@@ -104,7 +104,7 @@ test('switching to % keeps the number and changes only the unit', async () => {
   await page.waitForTimeout(120);
   assert.equal(await num('Gap').inputValue(), '5');
   const { css } = await copyParts(page);
-  assert.match(css, /--cs-gap:\s*5%/);
+  assert.match(css, /--dos-gap:\s*5%/);
 });
 
 // The arrows are how a length is nudged; a step must land on a real number
@@ -120,7 +120,7 @@ test('the arrow keys step the number and commit it', async () => {
   await page.waitForTimeout(120);
   assert.equal(await num('Gap').inputValue(), '2.9');
   const { css } = await copyParts(page);
-  assert.match(css, /--cs-gap:\s*2\.9em/);
+  assert.match(css, /--dos-gap:\s*2\.9em/);
 });
 
 // An arrow key is held down. Stepping past zero into a negative gap is not
@@ -138,8 +138,8 @@ test('the stepper stops at zero rather than going negative', async () => {
   await page.waitForTimeout(120);
   assert.ok(parseFloat(await num('Gap').inputValue()) >= 0, `the stepper went to ${await num('Gap').inputValue()}`);
   const { css } = await copyParts(page);
-  assert.doesNotMatch(css, /--cs-gap:\s*-/, 'the stepper shipped a negative length');
-  assert.match(css, /--cs-gap:\s*0\.1px/, 'stepping to the floor did not land on the zero the gap uses');
+  assert.doesNotMatch(css, /--dos-gap:\s*-/, 'the stepper shipped a negative length');
+  assert.match(css, /--dos-gap:\s*0\.1px/, 'stepping to the floor did not land on the zero the gap uses');
 });
 
 // Which switches convert and which do not is not guessable from the list.

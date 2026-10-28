@@ -53,7 +53,7 @@
     // it is an example of a button. Open it in place instead.
     //
     // AFTER the append, and that ordering is the whole trick: the slider is
-    // data-cs-init="manual" precisely because one measured while hidden has no
+    // data-dos-init="manual" precisely because one measured while hidden has no
     // width, so it has to be constructed once the dialog is both open AND in
     // the document. Built before either, it came out with no thumb strip and no
     // arrows - a static photo in a dark box, which is a different wrong example
@@ -70,8 +70,8 @@
         dlg.classList.add('gx-lb-inline');
         dlg.open = true;
         card.querySelector('.cargo-lb-open')?.setAttribute('hidden', '');
-        const root = dlg.querySelector('.cs');
-        if (root && !root._cs && globalThis.CustomSlider) new globalThis.CustomSlider(root);
+        const root = dlg.querySelector('.dos');
+        if (root && !root._dos && globalThis.DealerOnSlider) new globalThis.DealerOnSlider(root);
       }
     }
     index.push([`p-${id}`, SHORT?.[id] ?? p.label, `wb-glyph--${id}`, '']);
@@ -105,12 +105,12 @@
   // Init after every example is in the DOM, so each measures a real width. A
   // slider left uninitialised is a static row of cards that silently claims the
   // pattern does not scroll.
-  for (const root of /** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.gx-stage .cs'))) {
-    if (!root.dataset.csInit) live.push(new globalThis.CustomSlider(root));
+  for (const root of /** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('.gx-stage .dos'))) {
+    if (!root.dataset.dosInit) live.push(new globalThis.DealerOnSlider(root));
   }
 
   // The pattern scripts ship in the engine file since 2026-09-14 and ran
   // once when it loaded, before these stages existed; one more pass wires
   // what was just built. The same code a dealer page runs, not a copy.
-  globalThis.CustomSlider?.wirePatterns?.();
+  globalThis.DealerOnSlider?.wirePatterns?.();
 })();

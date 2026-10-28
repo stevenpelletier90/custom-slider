@@ -19,10 +19,10 @@ test.beforeAll(async ({ browser }) => {
 
 const strip = (page) =>
   page.evaluate(() => {
-    const root = globalThis.CARGO.sdoc().querySelector('.cs');
-    const track = root.querySelector('.cs-track').getBoundingClientRect();
+    const root = globalThis.CARGO.sdoc().querySelector('.dos');
+    const track = root.querySelector('.dos-track').getBoundingClientRect();
     return {
-      space: getComputedStyle(root).getPropertyValue('--cs-controls-space').trim(),
+      space: getComputedStyle(root).getPropertyValue('--dos-controls-space').trim(),
       below: +(root.getBoundingClientRect().bottom - track.bottom).toFixed(1),
       code: document.getElementById('wb-code').textContent,
       parts: document.getElementById('wb-parts').textContent,
@@ -50,9 +50,9 @@ test.describe('the dot row is taken away and given back unchanged', () => {
       }
       const off = await strip(page);
       assert.ok(off.below <= 1, `hiding the dots left ${off.below}px of blank strip`);
-      assert.match(off.code, /\.cs-dots \{ display: none; \}/, 'the snippet stopped hiding the dots');
-      assert.match(off.code, /--cs-controls-space: 0\.1px;/, 'the snippet does not collapse the reserved strip');
-      assert.equal((off.code.match(/--cs-controls-space:/g) || []).length, 1, 'the controls space is declared more than once');
+      assert.match(off.code, /\.dos-dots \{ display: none; \}/, 'the snippet stopped hiding the dots');
+      assert.match(off.code, /--dos-controls-space: 0\.1px;/, 'the snippet does not collapse the reserved strip');
+      assert.equal((off.code.match(/--dos-controls-space:/g) || []).length, 1, 'the controls space is declared more than once');
       assert.match(off.parts, /Dot row/, 'the parts list does not name the collapsed reservation');
 
       await box.click();
@@ -82,8 +82,8 @@ test.describe('the dots survive Windows High Contrast', () => {
       hostHtml({
         engineCss,
         engineJs,
-        css: '.cs{--cs-per-view:1}',
-        html: `<div class="cs" data-cs aria-label="HCM"><div class="cs-track">${[1, 2, 3].map((n) => `<div class="cs-slide"><p>Slide ${n}</p></div>`).join('')}</div></div>`,
+        css: '.dos{--dos-per-view:1}',
+        html: `<div class="dos" data-dos aria-label="HCM"><div class="dos-track">${[1, 2, 3].map((n) => `<div class="dos-slide"><p>Slide ${n}</p></div>`).join('')}</div></div>`,
         box: 1170,
       }),
       { waitUntil: 'load' },
@@ -91,8 +91,8 @@ test.describe('the dots survive Windows High Contrast', () => {
     await page.waitForTimeout(400);
 
     const seen = await page.evaluate(() => {
-      const dot = document.querySelector('.cs-dot:not(.cs-dot--current)');
-      const cur = document.querySelector('.cs-dot--current');
+      const dot = document.querySelector('.dos-dot:not(.dos-dot--current)');
+      const cur = document.querySelector('.dos-dot--current');
       if (!dot || !cur) return { error: 'no dot row' };
       const bg = (el) => getComputedStyle(el, '::after').backgroundColor;
       return { dot: bg(dot), current: bg(cur), canvas: getComputedStyle(document.body).backgroundColor };

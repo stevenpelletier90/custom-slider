@@ -55,8 +55,8 @@ in the code preview.
 
 Today the builder only runs forwards — settings produce a snippet. This is the inverse, and it needs
 a map from replacement code to the settings it stands for. Relevant:
-`#LOADCUSTOMFILE|Responsive|Apps|customSlider|<name>#` loads `…/<name>.html` from the shared folder,
-and those files may carry their own `<style>`.
+`#LOADCUSTOMFILE|Responsive|Apps|dealeronSlider|<name>#` loads `…/<name>.html` from the shared
+folder, and those files may carry their own `<style>`.
 
 ## 3. Audit the library, and test it
 
@@ -147,7 +147,7 @@ What is established:
 
 - **`modelbar` and `cards` are the same pattern** with a different card style pre-picked. Measured:
   model bar + Vehicle card produces byte-identical structure to Vehicle cards (`cargo-vcard`,
-  `cs-sm-2 cs-md-3`, same skeleton).
+  `dos-sm-2 dos-md-3`, same skeleton).
 - **No pattern curates the style picker.** `workbench.js` calls `pane.looks(style, LOOKS, …)` — all
   seven, always, on all four style-taking patterns. A Location card renders happily inside a
   Trucks/SUVs/Crossovers tab bar and means nothing.
@@ -246,7 +246,7 @@ media query breakpoints and match those, we are eventually switching the platfor
 ### DONE 2026-09-15 — six tiers, two grids
 
 The contract question was decided the way the inventory below suggested: the four old column classes
-keep their names and numbers, and the two Bootstrap 5 tiers ship as `cs-576-N` and `cs-1400-N`,
+keep their names and numbers, and the two Bootstrap 5 tiers ship as `dos-576-N` and `dos-1400-N`,
 named by width so no class is a guess about which grid it came from. Every ladder is six rungs (the
 new two filled from their neighbours, so an untouched slider emits what it always did), the builder
 has six width buttons and a **Grid** select that draws the preview in either platform's container
@@ -260,10 +260,10 @@ spells it `d-none d-sm-inline`) — a word, so it changes with the platform, and
 
 Not started — it is a contract question before it is a find-and-replace. Inventory of where a
 Bootstrap 3 number lives today (grep for `767.98|991.98|min-width: 992|750|970|1170` and the
-`cs-{xs,sm,md,lg}` names):
+`dos-{xs,sm,md,lg}` names):
 
 - **The column classes are the frozen HTML contract.** `scripts/build-cards.mjs` emits
-  `cs-xs-N / cs-sm-N / cs-md-N / cs-lg-N` at 0 / 768 / 992 / 1200 and README documents them. In
+  `dos-xs-N / dos-sm-N / dos-md-N / dos-lg-N` at 0 / 768 / 992 / 1200 and README documents them. In
   Bootstrap 5 those NAMES mean different widths: `sm` is 576, `md` 768, `lg` 992, `xl` 1200,
   `xxl` 1400. Renaming is forbidden ("add freely; rename or repurpose nothing"), so the BS5 set is a
   new ladder of classes alongside the old, or the old names keep their numbers and the README says

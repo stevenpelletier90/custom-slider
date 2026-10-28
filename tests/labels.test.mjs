@@ -5,7 +5,7 @@
 // announced English controls, and the visible "3 / 12" counter - which is
 // otherwise two lines of CSS away - could not be worded.
 //
-// One generic sweep over data-cs-label-* covers all eleven labels, so the test
+// One generic sweep over data-dos-label-* covers all eleven labels, so the test
 // that matters is that the MAPPING holds for every key in DEFAULTS, not that
 // some hand-picked three of them work.
 import { test } from '@playwright/test';
@@ -26,8 +26,8 @@ test.beforeAll(async ({ browser }) => {
 
 // A plain three-slide carousel, one card per view unless told otherwise.
 const slider = (attrs = '', perView = 1) =>
-  `<div class="cs demo" data-cs aria-label="Test" style="--cs-per-view:${perView}"${attrs ? ' ' + attrs : ''}>` +
-  `<ul class="cs-track">${[1, 2, 3, 4, 5, 6].map((n) => `<li class="cs-slide"><p>Card ${n}</p></li>`).join('')}</ul></div>`;
+  `<div class="dos demo" data-dos aria-label="Test" style="--dos-per-view:${perView}"${attrs ? ' ' + attrs : ''}>` +
+  `<ul class="dos-track">${[1, 2, 3, 4, 5, 6].map((n) => `<li class="dos-slide"><p>Card ${n}</p></li>`).join('')}</ul></div>`;
 
 const render = async (attrs, perView) => {
   await page.setContent(hostHtml({ ...engine, html: slider(attrs, perView) }), { waitUntil: 'load' });
@@ -38,15 +38,15 @@ const announced = () =>
   page.evaluate(() => {
     const q = (s) => document.querySelector(`#box ${s}`);
     return {
-      prev: q('.cs-arrow--prev')?.getAttribute('aria-label'),
-      next: q('.cs-arrow--next')?.getAttribute('aria-label'),
-      dots: q('.cs-dots')?.getAttribute('aria-label'),
-      dot0: q('.cs-dot')?.getAttribute('aria-label'),
-      status: q('.cs-status')?.textContent,
+      prev: q('.dos-arrow--prev')?.getAttribute('aria-label'),
+      next: q('.dos-arrow--next')?.getAttribute('aria-label'),
+      dots: q('.dos-dots')?.getAttribute('aria-label'),
+      dot0: q('.dos-dot')?.getAttribute('aria-label'),
+      status: q('.dos-status')?.textContent,
     };
   });
 
-test.describe('data-cs-label-* reaches every announced string', () => {
+test.describe('data-dos-label-* reaches every announced string', () => {
   test('the defaults are English and unchanged when no attribute is set', async () => {
     await render('');
     const a = await announced();
@@ -60,7 +60,7 @@ test.describe('data-cs-label-* reaches every announced string', () => {
   // The whole point: a dealer page in Spanish, with nothing but attributes.
   test('a Spanish page announces Spanish', async () => {
     await render(
-      'data-cs-label-prev="Anteriores" data-cs-label-next="Siguientes" data-cs-label-dots="Elegir diapositiva" data-cs-label-goto-slide="Ir a la diapositiva {n}" data-cs-label-status-single="Diapositiva {n} de {total}" data-cs-roledescription="carrusel"',
+      'data-dos-label-prev="Anteriores" data-dos-label-next="Siguientes" data-dos-label-dots="Elegir diapositiva" data-dos-label-goto-slide="Ir a la diapositiva {n}" data-dos-label-status-single="Diapositiva {n} de {total}" data-dos-roledescription="carrusel"',
     );
     const a = await announced();
     assert.equal(a.prev, 'Anteriores');
@@ -68,7 +68,7 @@ test.describe('data-cs-label-* reaches every announced string', () => {
     assert.equal(a.dots, 'Elegir diapositiva');
     assert.equal(a.dot0, 'Ir a la diapositiva 1');
     assert.equal(a.status, 'Diapositiva 1 de 6');
-    assert.equal(await page.getAttribute('#box .cs', 'aria-roledescription'), 'carrusel');
+    assert.equal(await page.getAttribute('#box .dos', 'aria-roledescription'), 'carrusel');
     assert.deepEqual(errors, []);
   });
 
@@ -77,9 +77,9 @@ test.describe('data-cs-label-* reaches every announced string', () => {
   // sweep can get wrong, and it fails silently when it does.
   test('every label in DEFAULTS is reachable, two-word names included', async () => {
     const KEYS = ['prev', 'next', 'pause', 'play', 'dots', 'gotoSlide', 'gotoPage', 'statusSingle', 'statusMulti', 'thumbs', 'photo'];
-    const attrs = KEYS.map((k) => `data-cs-label-${k.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase())}="X${k}"`).join(' ');
+    const attrs = KEYS.map((k) => `data-dos-label-${k.replace(/[A-Z]/g, (c) => '-' + c.toLowerCase())}="X${k}"`).join(' ');
     await render(attrs);
-    const seen = await page.evaluate(() => document.querySelector('#box .cs')._cs.opts.labels);
+    const seen = await page.evaluate(() => document.querySelector('#box .dos')._dos.opts.labels);
     for (const k of KEYS) assert.equal(seen[k], `X${k}`, `${k} did not arrive from its attribute`);
     assert.deepEqual(errors, []);
   });
@@ -87,9 +87,9 @@ test.describe('data-cs-label-* reaches every announced string', () => {
   // Multi-card wording is a different label from the 1-up one, and it is the
   // one a model bar actually uses.
   test('the multi-card status uses its own label and keeps updating', async () => {
-    await render('data-cs-label-status-multi="{from}-{to} / {total}"', 3);
+    await render('data-dos-label-status-multi="{from}-{to} / {total}"', 3);
     assert.equal((await announced()).status, '1-3 / 6');
-    await page.click('#box .cs-arrow--next');
+    await page.click('#box .dos-arrow--next');
     await page.waitForTimeout(700);
     assert.equal((await announced()).status, '4-6 / 6');
     assert.deepEqual(errors, []);
@@ -99,7 +99,7 @@ test.describe('data-cs-label-* reaches every announced string', () => {
   // other option: the attribute is the floor, not an override.
   test('a JS labels option still beats the attribute', async () => {
     await page.setContent(
-      hostHtml({ ...engine, html: slider('data-cs-init="manual" data-cs-label-next="FromAttr"'), js: `new CustomSlider(document.querySelector('#box .cs'), { labels: { next: 'FromJS' } });` }),
+      hostHtml({ ...engine, html: slider('data-dos-init="manual" data-dos-label-next="FromAttr"'), js: `new DealerOnSlider(document.querySelector('#box .dos'), { labels: { next: 'FromJS' } });` }),
       { waitUntil: 'load' },
     );
     await page.waitForTimeout(120);
@@ -109,10 +109,10 @@ test.describe('data-cs-label-* reaches every announced string', () => {
     assert.deepEqual(errors, []);
   });
 
-  // A bare data-cs-label- has no key to write to. It used to throw reading
+  // A bare data-dos-label- has no key to write to. It used to throw reading
   // charAt 7 of a 7-character string, which would take the whole slider down.
   test('a malformed attribute name does not take the slider down', async () => {
-    await render('data-cs-label- data-cs-label-nonsense="ignored"');
+    await render('data-dos-label- data-dos-label-nonsense="ignored"');
     const a = await announced();
     assert.equal(a.next, 'Next slides');
     assert.deepEqual(errors, []);

@@ -5,9 +5,11 @@ repository.
 
 ## What this is
 
-A dependency-free scroll-snap carousel (`cs`) built to replace third-party slider libraries on
-DealerOn CMS sites. Two shipped files, no runtime dependencies. `npm run size` prints the byte
-figures and is the authority — every figure written down elsewhere goes stale.
+DealerOn Slider (`dos`): a dependency-free scroll-snap carousel built to replace third-party slider
+libraries on DealerOn CMS sites. Two shipped files, no runtime dependencies. `npm run size` prints
+the byte figures and is the authority — every figure written down elsewhere goes stale. Until
+2026-10-27 it was Custom Slider, prefix `cs`; specs, research and history entries written before
+then keep those names, and README's rename map translates them.
 
 `README.md` is the public API reference (markup contract, options, CSS custom properties, JS API,
 accessibility behaviors, verification checklist) — read it before changing anything user-facing.
@@ -32,7 +34,7 @@ its row.
 npm run build          # src → dist via esbuild (bundle+minify JS, minify CSS), then appends the generated card styles to the CSS and the pattern structure + scripts to both
 npm run size           # build + gzip budget gate — FAILS at ≥ 6656 B total
 npm run validate       # stylelint (files + generated) + eslint + markdownlint + prettier --check + check:looks + check:vendor + typecheck  (fast; run before committing)
-npm run typecheck      # tsc (pinned typescript devDependency) over jsconfig.json: src, demo, scripts AND tests, held at zero errors; types/globals.d.ts declares what the engine hangs on the page (el._cs, window.CustomSlider)
+npm run typecheck      # tsc (pinned typescript devDependency) over jsconfig.json: src, demo, scripts AND tests, held at zero errors; types/globals.d.ts declares what the engine hangs on the page (el._dos, window.DealerOnSlider)
 npm run test           # @playwright/test browser checks on Chromium (`npx playwright test --list` for the count), starts its own server on 8137 (reuses one already running)
 npm run test:browsers  # tests/engine.test.mjs on Firefox and WebKit (npx playwright install firefox webkit once)
 npm run test:sr        # tests/*.sr.mjs: what NVDA (Windows) or VoiceOver (macOS) says about the demo; drives a real screen reader on the whole desktop — run it from .github/workflows/screen-reader.yml (on demand), not on a desktop in use
@@ -74,16 +76,19 @@ meaningless.
 
 ## Hard constraints
 
-**The HTML is the stable API; the engine is an implementation detail.** Class names (`cs`, `-track`,
-`-slide`, generated control classes), data attributes, `--cs-*` properties, `cs:*` event payloads,
-public methods and accessibility behaviors are a frozen contract — sites can't be edited when the
-engine changes (README "Swapping the engine later"). Add freely; rename or repurpose nothing.
+**The HTML is the stable API; the engine is an implementation detail.** Class names (`dos`,
+`-track`, `-slide`, generated control classes), data attributes, `--dos-*` properties, `dos:*` event
+payloads, public methods and accessibility behaviors are a frozen contract — sites can't be edited
+when the engine changes (README "Swapping the engine later"). Add freely; rename or repurpose
+nothing.
 
 Where it came from: James Jin (senior web dev) required the HTML contract to be the stable API, all
 behaviour to ship via two centrally hosted files, and engines to be swappable behind it so dealer
 sites never need editing. It froze when the four files went on the shared path on 2026-09-08; the
-2026-08-31 rename was possible only because nothing was hosted yet. The repo is public by Steven's
-choice, so DealerOn colleagues can see it.
+2026-08-31 rename was possible only because nothing was hosted yet, and the 2026-10-27 rename to
+DealerOn Slider (`cs` → `dos`, new folder `…/Apps/dealeronSlider/`) only because nothing was
+believed live on the hosted copy. It is frozen again from the first upload of the `dealeron-slider`
+files. The repo is public by Steven's choice, so DealerOn colleagues can see it.
 
 ## Conventions
 
@@ -93,10 +98,10 @@ choice, so DealerOn colleagues can see it.
   `--` modifiers. Logical properties (`inline-size`, `inset-inline`) are the house style.
 - Missing markup fails loudly: `console.error` for a missing track/slides, `console.warn` for a
   missing `aria-label` or a conflicting option combination. Keep that pattern for new validation.
-- Extending behavior belongs in page script, not the engine — listen for `cs:change` (bubbles from
-  the root) or read the instance at `element._cs`. The two video patterns carry their own `<dialog>`
-  and handler inside the emitted snippet (`patterns.js`) — the reference example: wiring ships with
-  the copied code, not the demo.
+- Extending behavior belongs in page script, not the engine — listen for `dos:change` (bubbles from
+  the root) or read the instance at `element._dos`. The two video patterns carry their own
+  `<dialog>` and handler inside the emitted snippet (`patterns.js`) — the reference example: wiring
+  ships with the copied code, not the demo.
 - A request naming a demo site means one slider on it; confirm which before touching code ("the
   Chevrolet demo" meant the tabbed model bar, and a hero built instead was reverted, 2026-09-14).
   "Measure" means computed styles at rest, on hover, mid-transition and after a click, plus what

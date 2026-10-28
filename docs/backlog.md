@@ -7,7 +7,7 @@ overtaken. Work that IS agreed sits in `roadmap.md`; the rules themselves are in
 `../README.md`.
 
 Pruned 2026-09-15 after an outside review re-found four of these: the size boundary (`>=` since the
-raise), `data-cs-fits` on destroy and `data-cs-gallery="false"` were fixed and are gone from here;
+raise), `data-dos-fits` on destroy and `data-dos-gallery="false"` were fixed and are gone from here;
 the IntersectionObserver "threshold does nothing" item was measured on all three engines and was
 never a bug (a single 0.25 threshold reports nothing at 0.1, and its entry's `isIntersecting` is
 false below the crossing). `docs/history.md` has the dates.
@@ -33,7 +33,7 @@ the picker out of the top layer so axe looks at what a person does. Stale and go
 lack trailing newline" (no `.svg` is tracked) and the gallery focus-guard entry (fixed before the
 rename; `tests/engine.test.mjs` holds it on all three engines now). The gallery's two live regions
 were listed twice and are one entry under Manual QA, where the listening pass settles them.
-`.cs-arrow` places itself with `inset-block-start` like its siblings now (−1 B; not one of 184
+`.dos-arrow` places itself with `inset-block-start` like its siblings now (−1 B; not one of 184
 arrows on the catalogue pages moved, on any engine); the knobs entry beside it became a decided no.
 Later the same day NVDA settled the three contract entries — Firefox's track stop, the current dot's
 `aria-disabled`, the gallery panels' missing `"slide"` — and all three shipped; the evidence is in
@@ -62,16 +62,16 @@ NVDA 2026.2 and VoiceOver, driven by guidepup over the demo's own patterns —
 ## 2026-09-15 — the phone pass, a decided no
 
 - **Peek on phones: measured no** (Steven, 2026-09-15). The phone pass proposed a phone-tier
-  `--cs-peek` default per card strip so a strip reads as scrollable. It is the bug this repo already
-  removed once: `--cs-peek` has one value at every width, and the old `%root% { --cs-peek: 1.5em }`
-  under 768 left 1.5em on phones while the Peek field read `0px` — a knob that lies, which is what
-  `tests/controls.test.mjs` exists to catch. Measured at 320 after the arrow change, a card strip
-  slide is 175px inside a 250px container with a 37.6px arrow channel showing each side; a 1.5em
-  sliver each side takes the card to 127px (−27%) to say what the two visible arrows already say.
-  The honest phone-only route if this ever comes back is a `--cs-peek-phone` prop on the pattern,
-  the same shape as `--tab-size-phone` / `--tab-pad-phone`, with the pattern sheet overriding
-  `.cs-track`'s `padding-inline` and `scroll-padding-inline` under 576 — a new knob row on about
-  twelve patterns. Not the media-query override.
+  `--dos-peek` default per card strip so a strip reads as scrollable. It is the bug this repo
+  already removed once: `--dos-peek` has one value at every width, and the old
+  `%root% { --dos-peek: 1.5em }` under 768 left 1.5em on phones while the Peek field read `0px` — a
+  knob that lies, which is what `tests/controls.test.mjs` exists to catch. Measured at 320 after the
+  arrow change, a card strip slide is 175px inside a 250px container with a 37.6px arrow channel
+  showing each side; a 1.5em sliver each side takes the card to 127px (−27%) to say what the two
+  visible arrows already say. The honest phone-only route if this ever comes back is a
+  `--dos-peek-phone` prop on the pattern, the same shape as `--tab-size-phone` / `--tab-pad-phone`,
+  with the pattern sheet overriding `.dos-track`'s `padding-inline` and `scroll-padding-inline`
+  under 576 — a new knob row on about twelve patterns. Not the media-query override.
 
 ## 2026-09-15 — first Firefox/WebKit run of the engine contract
 
@@ -84,7 +84,7 @@ NVDA 2026.2 and VoiceOver, driven by guidepup over the demo's own patterns —
   Tab-into-cards in stable Safari; one pre-26.2-iOS device (scrollend fallback). The live
   NVDA/VoiceOver pass is no longer manual: `.github/workflows/screen-reader.yml` runs both on hosted
   runners on demand (2026-10-27). What it cannot hear yet is VoiceOver on iOS, TalkBack and JAWS.
-- The gallery's two polite live regions, the track (per APG's tabbed carousel) and `.cs-status`:
+- The gallery's two polite live regions, the track (per APG's tabbed carousel) and `.dos-status`:
   answered 2026-10-27 — they do double up on both readers (see the entry above, decided no for now).
 - `escUrl` through a real DealerOn styleCode round-trip (2026-09-15). The generated markup is proven
   safe in `tests/builder.test.mjs`, but the platform's server-side processing has enough documented
@@ -97,11 +97,11 @@ NVDA 2026.2 and VoiceOver, driven by guidepup over the demo's own patterns —
 ## Minor findings for final review triage
 
 - **Knobs for the hardcoded sizes: decided no** (Steven, 2026-10-27). The dot's 24px hit box, the
-  36px pause button and the 4px thumb radius stay fixed in `custom-slider.css`. Measured: the three
-  as `--cs-pause-size`, `--cs-dot-hit` and `--cs-thumb-radius` cost 20 B of the 90 B left under the
-  budget, and every `--cs-*` property is frozen contract the day it ships, for a setting nobody has
-  asked for. `--cs-dot-hit` is the sharper no: the 24px is the WCAG 2.5.8 floor, and a knob would
-  let a slider go under it. Reopen one when a real slider needs it, never as a set.
+  36px pause button and the 4px thumb radius stay fixed in `dealeron-slider.css`. Measured: the
+  three as `--dos-pause-size`, `--dos-dot-hit` and `--dos-thumb-radius` cost 20 B of the 90 B left
+  under the budget, and every `--dos-*` property is frozen contract the day it ships, for a setting
+  nobody has asked for. `--dos-dot-hit` is the sharper no: the 24px is the WCAG 2.5.8 floor, and a
+  knob would let a slider go under it. Reopen one when a real slider needs it, never as a set.
 
 ## 2026-09-04 — workbench panel, deferred by Steven
 
@@ -126,7 +126,7 @@ ENGINE / PLATFORM (cited to MDN + BCD via Context7):
 
 BUILD (measured):
 
-- `--mangle-props='^_' --reserve-props='^(_cs|_stops)$'` measures 6177 -> 5958 B gzip (-219 B). Not
+- `--mangle-props='^_' --reserve-props='^(_dos|_stops)$'` measures 6177 -> 5958 B gzip (-219 B). Not
   applied: `dist/` is committed, so one new internal property reshuffles every mangled name and
   produces a large unreviewable dist diff, and it is the one change here that can break at runtime.
   We are 479 B under budget, so there is no pressure to take that trade.

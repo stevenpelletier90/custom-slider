@@ -66,8 +66,8 @@ test.describe('the three copy buttons', () => {
 });
 
 test.describe('values that must never reach the copied CSS', () => {
-  // Three findings, one broken slider: --cs-gap: 0px surviving minification as
-  // a unitless 0 (F003), a cleared field emitting `--cs-gap: ;` (F022), and a
+  // Three findings, one broken slider: --dos-gap: 0px surviving minification as
+  // a unitless 0 (F003), a cleared field emitting `--dos-gap: ;` (F022), and a
   // typed `10` (F028). Each invalidates the slide's flex basis, so the cards
   // collapse to their content width while the readout still claims otherwise.
   //
@@ -89,13 +89,13 @@ test.describe('values that must never reach the copied CSS', () => {
 
   const gapState = (page) =>
     page.evaluate(() => {
-      const slide = globalThis.CARGO.sdoc().querySelector('.cs-slide');
+      const slide = globalThis.CARGO.sdoc().querySelector('.dos-slide');
       const row = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === 'Gap');
       const n = /** @type {HTMLInputElement | null} */ (row?.querySelector('.tp-lenv input'))?.value ?? '';
       return {
         width: +slide.getBoundingClientRect().width.toFixed(1),
         basis: getComputedStyle(slide).flexBasis,
-        emitted: /--cs-gap:\s*([^;]*);/.exec(document.getElementById('wb-code').textContent)?.[1]?.trim() ?? null,
+        emitted: /--dos-gap:\s*([^;]*);/.exec(document.getElementById('wb-code').textContent)?.[1]?.trim() ?? null,
         shown: n === '' ? '' : n + /** @type {HTMLSelectElement} */ (row.querySelector('.tp-lenv select')).value,
       };
     });
@@ -138,7 +138,7 @@ test.describe('values that must never reach the copied CSS', () => {
     }));
     assert.doesNotMatch(r.code, /--[\w-]+:\s*;/, 'an empty declaration reached the copied CSS');
     assert.doesNotMatch(r.live, /--[\w-]+:\s*;/, 'an empty declaration reached the preview');
-    assert.match(r.code, /--cs-gap:\s*0\.5em;/, "the model bar's own default did not come back");
+    assert.match(r.code, /--dos-gap:\s*0\.5em;/, "the model bar's own default did not come back");
   });
 
   test('every settings field says what it falls back to', async () => {
@@ -176,7 +176,7 @@ test.describe('the slider name', () => {
       await page.waitForTimeout(100);
       assert.equal(await field.inputValue(), want, `"${typed}" was not written back cleaned`);
       const code = await page.evaluate(() => document.getElementById('wb-code').textContent);
-      assert.match(code, new RegExp(`^\\.${want}\\.cs \\{`, 'm'), `"${typed}" did not scope the CSS to .${want}`);
+      assert.match(code, new RegExp(`^\\.${want}\\.dos \\{`, 'm'), `"${typed}" did not scope the CSS to .${want}`);
       assert.match(code, new RegExp(`class="${want}[ "]`), `"${typed}" did not reach the markup`);
     }
   });
@@ -215,7 +215,7 @@ test.describe('the slider name', () => {
 });
 
 test.describe('the pasted block on a hostile host page', () => {
-  // F010: the snippet's root rules were (0,1,0), the same as the engine's `.cs`
+  // F010: the snippet's root rules were (0,1,0), the same as the engine's `.dos`
   // and the shared `.cargo-<look>`, so source order decided - and where the
   // platform emits its Style Only sheet relative to a head <link> is not
   // documented. Measured before the fix: service cards went from 347.6px at
@@ -250,12 +250,12 @@ test.describe('the pasted block on a hostile host page', () => {
       await host.setContent(hostHtml({ ...engine, css: p.css, html: p.html, js: p.js, box: 320 }), { waitUntil: 'load' });
       await host.waitForTimeout(250);
       const covered = await host.evaluate(() => {
-        const track = document.querySelector('.cs-track').getBoundingClientRect();
-        const walk = document.createTreeWalker(document.querySelector('.cs-track'), NodeFilter.SHOW_TEXT);
+        const track = document.querySelector('.dos-track').getBoundingClientRect();
+        const walk = document.createTreeWalker(document.querySelector('.dos-track'), NodeFilter.SHOW_TEXT);
         const texts = [];
         for (let n = walk.nextNode(); n; n = walk.nextNode()) if (n.textContent.trim()) texts.push(n);
         const hits = [];
-        for (const a of /** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('.cs-arrow'))) {
+        for (const a of /** @type {NodeListOf<HTMLButtonElement>} */ (document.querySelectorAll('.dos-arrow'))) {
           if (a.hidden) continue;
           const ar = a.getBoundingClientRect();
           for (const t of texts) {
@@ -292,9 +292,9 @@ test.describe('the pasted block on a hostile host page', () => {
   test('a hand-written card restyle wins whichever order the sheets land in', async () => {
     const MINE = '.my-slider .cargo-name { color: rgb(200, 16, 46); }';
     const HTML =
-      '<div class="my-slider cs cargo-tile cs-xs-2" data-cs aria-label="t"><ul class="cs-track">' +
-      '<li class="cs-slide"><a class="cargo-card" href="#"><p class="cargo-name">Tahoe</p></a></li>' +
-      '<li class="cs-slide"><a class="cargo-card" href="#"><p class="cargo-name">Traverse</p></a></li></ul></div>';
+      '<div class="my-slider dos cargo-tile dos-xs-2" data-dos aria-label="t"><ul class="dos-track">' +
+      '<li class="dos-slide"><a class="cargo-card" href="#"><p class="cargo-name">Tahoe</p></a></li>' +
+      '<li class="dos-slide"><a class="cargo-card" href="#"><p class="cargo-name">Traverse</p></a></li></ul></div>';
     const at = async (cssFirst) => {
       await host.setContent(hostHtml({ ...engine, css: MINE, html: HTML, cssFirst }), { waitUntil: 'load' });
       await host.waitForTimeout(150);
@@ -308,13 +308,13 @@ test.describe('the pasted block on a hostile host page', () => {
 
   // The other half of that change: the look's own class must keep its full
   // specificity where it IS the selector, because that rule carries the look's
-  // custom properties and the engine's `.cs` block sets some of the same ones.
+  // custom properties and the engine's `.dos` block sets some of the same ones.
   test('a card style still wins the engine defaults it overrides', async () => {
     const HTML =
-      '<div class="cs cargo-portrait cs-xs-2" data-cs aria-label="t"><ul class="cs-track"><li class="cs-slide"><a class="cargo-card" href="#"><p class="cargo-name">Giulia</p></a></li></ul></div>';
+      '<div class="dos cargo-portrait dos-xs-2" data-dos aria-label="t"><ul class="dos-track"><li class="dos-slide"><a class="cargo-card" href="#"><p class="cargo-name">Giulia</p></a></li></ul></div>';
     await host.setContent(hostHtml({ ...engine, html: HTML }), { waitUntil: 'load' });
     await host.waitForTimeout(150);
-    const bg = await host.evaluate(() => getComputedStyle(document.querySelector('.cs')).getPropertyValue('--cs-arrow-bg').trim());
+    const bg = await host.evaluate(() => getComputedStyle(document.querySelector('.dos')).getPropertyValue('--dos-arrow-bg').trim());
     assert.match(bg, /255/, `the tall tile lost its light arrow to the engine default (${bg}) — a dark arrow on its dark strip`);
   });
 
@@ -356,22 +356,22 @@ test.describe('the pasted block on a hostile host page', () => {
   test('a markup-only paste keeps the arrow out of the first card', async () => {
     for (const look of ['cargo-tile', 'cargo-vcard']) {
       const cards = [1, 2, 3, 4, 5, 6]
-        .map((n) => `<li class="cs-slide"><a class="cargo-card" href="#"><span class="cargo-media"><img src="/demo/img/chrome-tahoe.webp" alt=""></span><p class="cargo-name">Tahoe ${n}</p></a></li>`)
+        .map((n) => `<li class="dos-slide"><a class="cargo-card" href="#"><span class="cargo-media"><img src="/demo/img/chrome-tahoe.webp" alt=""></span><p class="cargo-name">Tahoe ${n}</p></a></li>`)
         .join('');
-      await host.setContent(hostHtml({ ...engine, html: `<div class="cs ${look} cs-xs-2 cs-sm-3 cs-md-4 cs-lg-5" data-cs aria-label="t"><ul class="cs-track">${cards}</ul></div>` }), {
+      await host.setContent(hostHtml({ ...engine, html: `<div class="dos ${look} dos-xs-2 dos-sm-3 dos-md-4 dos-lg-5" data-dos aria-label="t"><ul class="dos-track">${cards}</ul></div>` }), {
         waitUntil: 'load',
       });
       await host.waitForTimeout(200);
       const gap = await host.evaluate(() => {
-        const a = document.querySelector('.cs-arrow--prev').getBoundingClientRect();
-        const s = document.querySelector('.cs-slide').getBoundingClientRect();
+        const a = document.querySelector('.dos-arrow--prev').getBoundingClientRect();
+        const s = document.querySelector('.dos-slide').getBoundingClientRect();
         return +(s.left - a.right).toFixed(1);
       });
       assert.ok(gap >= 0, `${look}: the arrow overlaps the first card by ${-gap}px`);
     }
   });
 
-  // F024: the Tall photos marker queried .cs-dots the moment it ran, so pasted
+  // F024: the Tall photos marker queried .dos-dots the moment it ran, so pasted
   // at body bottom it found nothing and never wrote its counters - and that
   // marker is the pattern's only visible page indicator.
   // Since 2026-09-14 the pattern scripts ride in the engine file itself, after
@@ -385,10 +385,10 @@ test.describe('the pasted block on a hostile host page', () => {
     assert.match(engine.engineJs, /\/\*! patterns \*\//, 'the engine file carries no pattern section');
     await host.setContent(hostHtml({ ...engine, css: p.css, html: p.html }), { waitUntil: 'load' });
     await host.waitForTimeout(250);
-    const count = await host.evaluate(() => /** @type {HTMLElement | null} */ (document.querySelector('#box .cs-dots'))?.style.getPropertyValue('--bar-count') ?? '');
+    const count = await host.evaluate(() => /** @type {HTMLElement | null} */ (document.querySelector('#box .dos-dots'))?.style.getPropertyValue('--bar-count') ?? '');
     assert.notEqual(count, '', 'the marker never got its counters from the shared script');
     // And the structure came from the shared stylesheet: the bar is drawn.
-    const bar = await host.evaluate(() => getComputedStyle(document.querySelector('#box .cs-dots'), '::before').content);
+    const bar = await host.evaluate(() => getComputedStyle(document.querySelector('#box .dos-dots'), '::before').content);
     assert.equal(bar, '""', 'the marker bar is not drawn - the shared pattern CSS did not reach the host');
   });
 });
@@ -416,10 +416,10 @@ test.describe('the builder survives its own inputs', () => {
     await page.click('#wb-keep');
     await page.waitForTimeout(200);
     await page.evaluate(() => {
-      const v = JSON.parse(localStorage.getItem('cs-content'));
+      const v = JSON.parse(localStorage.getItem('dos-content'));
       const first = Object.values(v)[0];
       if (Array.isArray(first)) first[0].stars = 99;
-      localStorage.setItem('cs-content', JSON.stringify(v));
+      localStorage.setItem('dos-content', JSON.stringify(v));
     });
     await page.reload({ waitUntil: 'load' });
     await page.waitForTimeout(250);
@@ -473,7 +473,7 @@ test.describe('the tabbed bar keeps the no-JS promise', () => {
         panesInDoc: await p.locator('.cargo-pane').count(),
         panesVisible: await p.locator('.cargo-pane:visible').count(),
         tabsVisible: await p.locator('[role="tab"]:visible').count(),
-        slidesVisible: await p.locator('.cs-slide:visible').count(),
+        slidesVisible: await p.locator('.dos-slide:visible').count(),
         headingVisible: await p.locator('.cargo-title:visible').count(),
         buttonVisible: await p.locator('.cargo-more a:visible').count(),
       };
@@ -530,7 +530,7 @@ test.describe('the tabbed bar keeps the no-JS promise', () => {
           panes: panes.length,
           // Without the tab interface, each pane's content is still a named
           // region of its own — that is what makes it readable in sequence.
-          namedRegions: panes.filter((x) => x.querySelector('.cs[aria-label]')).length,
+          namedRegions: panes.filter((x) => x.querySelector('.dos[aria-label]')).length,
           danglingRefs: [...document.querySelectorAll('[aria-labelledby],[aria-controls]')].filter((el) => {
             const id = el.getAttribute('aria-labelledby') || el.getAttribute('aria-controls');
             return id && !document.getElementById(id);
@@ -644,7 +644,7 @@ test.describe('the copied markup is a list before any script runs', () => {
       for (const id of Object.keys(PATTERNS)) {
         for (const brand of [null, ...variantsOf(id)]) {
           const doc = new DOMParser().parseFromString(renderSnippet(id, { brand }).html, 'text/html');
-          for (const ul of doc.querySelectorAll('ul.cs-track')) {
+          for (const ul of doc.querySelectorAll('ul.dos-track')) {
             lists++;
             if (ul.getAttribute('role') !== 'list') out.push(brand ? `${id} × ${brand}` : id);
           }
@@ -653,7 +653,7 @@ test.describe('the copied markup is a list before any script runs', () => {
       return { lists, out: [...new Set(out)] };
     });
     assert.ok(missing.lists > 0, 'no <ul> track found in any snippet - the check is reading the wrong thing');
-    assert.deepEqual(missing.out, [], `<ul class="cs-track"> without role="list" in: ${missing.out.join(', ')}`);
+    assert.deepEqual(missing.out, [], `<ul class="dos-track"> without role="list" in: ${missing.out.join(', ')}`);
     await c.close();
   });
 });

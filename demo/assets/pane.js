@@ -43,7 +43,7 @@
   // A folder is a heading, not a drawer: every section is open, always, and
   // none of them can be shut. A section you cannot see is a section whose
   // settings you do not know are there, and the panel is the whole point of the
-  // page. The fold used to be remembered in localStorage['cs-folders'] so a
+  // page. The fold used to be remembered in localStorage['dos-folders'] so a
   // rebuild would not reopen what you closed; with nothing left to close, that
   // store is gone too - a stale one would re-collapse a folder that no longer
   // has a toggle to open it again, which is unreachable from the UI.

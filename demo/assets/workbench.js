@@ -111,7 +111,7 @@
     name: 'my-slider',
   };
 
-  // A look that sets --cs-* is choosing how the ENGINE's controls sit on the
+  // A look that sets --dos-* is choosing how the ENGINE's controls sit on the
   // background it brings, so those belong in props - where the panel edits them
   // as "Arrow colour" and the pattern's own values are overridden rather than
   // overriding. A logo panel that brings navy has to bring arrows you can see on
@@ -130,7 +130,7 @@
     state.look = id;
     state.lookProps = { ...LOOKS[id].settings };
     for (const k of Object.keys(state.lookProps)) {
-      if (k.startsWith('--cs-')) {
+      if (k.startsWith('--dos-')) {
         state.props[k] = state.lookProps[k];
         lookCs.push(k);
         delete state.lookProps[k];
@@ -151,7 +151,7 @@
   // A preset sets the roster, the ladder and - where the brand has been
   // measured - its values. Never markup: see the note at the top of brands.js.
   // Values land where the panel edits them: a card value in lookProps, unless
-  // it is an engine --cs-* property, which applyLook() already moves to props
+  // it is an engine --dos-* property, which applyLook() already moves to props
   // for the same reason; a pattern value in props; tab names in panes.
   //
   // null is "Start from the default": every key a variant could have touched
@@ -172,7 +172,7 @@
     const undo = (s) => {
       if (!s) return;
       for (const k of Object.keys(s.looks?.[state.look] ?? {})) {
-        if (k.startsWith('--cs-')) {
+        if (k.startsWith('--dos-')) {
           if (k in (p.props ?? {})) state.props[k] = p.props[k];
           else if (k in LOOKS[state.look].settings) state.props[k] = LOOKS[state.look].settings[k];
           else delete state.props[k];
@@ -202,7 +202,7 @@
     const s = b.styles;
     if (!s) return;
     for (const [k, v] of Object.entries(s.looks?.[state.look] ?? {})) {
-      if (k.startsWith('--cs-')) state.props[k] = v;
+      if (k.startsWith('--dos-')) state.props[k] = v;
       else if (k in state.lookProps) state.lookProps[k] = v;
     }
     Object.assign(state.props, s.patterns?.[state.pattern]?.props ?? {});
@@ -305,7 +305,7 @@
   // both run in the generator that patterns.html and lint-generated-css.mjs use.
   const rowsApply = () => {
     const p = PATTERNS[state.pattern];
-    return !p.cardGrid && !p.filters && p.track !== 'div' && state.data?.['data-cs-fade'] == null;
+    return !p.cardGrid && !p.filters && p.track !== 'div' && state.data?.['data-dos-fade'] == null;
   };
 
   // What a card will actually DO to the pictures it is given, or null when it
@@ -356,10 +356,10 @@
   let chosenW = 1200;
 
   const gapPx = () => {
-    const g = state.props['--cs-gap'] ?? '1em';
+    const g = state.props['--dos-gap'] ?? '1em';
     const n = parseFloat(g) || 0;
     if (!g.trim().endsWith('em')) return n;
-    const root = sdoc()?.querySelector('.cs');
+    const root = sdoc()?.querySelector('.dos');
     return n * (root ? parseFloat(swin().getComputedStyle(root).fontSize) : 16);
   };
 
@@ -373,7 +373,7 @@
     return !!(p.panes || p.filters || p.cardGrid || state.pattern === 'lightbox');
   };
 
-  // The card styles ship inside dist/custom-slider.min.css, which every site links,
+  // The card styles ship inside dist/dealeron-slider.min.css, which every site links,
   // so a snippet does not repeat them - it carries only what THIS slider changed
   // from its card style's defaults. The delta is computed, never trusted: a
   // value equal to the default is dropped, so the block cannot go stale against
@@ -389,9 +389,9 @@
   // drew a control that announced it did nothing.
   const shared = () => !!state.look;
 
-  // Every rule the snippet puts on the carousel itself is written `.name.cs`,
+  // Every rule the snippet puts on the carousel itself is written `.name.dos`,
   // not `.name`. Specificity, not source order, then decides against the two
-  // other rules that style that same element - the engine's `.cs` and the
+  // other rules that style that same element - the engine's `.dos` and the
   // shared stylesheet's `.cargo-<look>` - which are both (0,1,0), exactly what
   // a bare `.name` is. Where the platform emits its aggregated Style Only sheet
   // relative to a head <link> is not documented and may well vary, and with the
@@ -399,7 +399,7 @@
   // arrows and a 2.5em dot reservation, while service cards fell from three per
   // view to one. (0,2,0) costs nothing, is invisible to the designer, and takes
   // the question off the table. Descendant rules already outrank both.
-  const ROOT = '.cs';
+  const ROOT = '.dos';
 
   // Properties whose default is written by the shared stylesheet rather than by
   // the look's own settings, so restating them in a snippet is a line that
@@ -436,40 +436,40 @@
     '.bg-main{color:#fff;background-color:var(--main-color)}.bg-main .btn-cta{color:#fff;background-color:transparent;border-color:#fff}.bg-main .btn-cta:hover,.bg-main .btn-cta:focus{color:var(--main-color);background-color:#fff;border-color:#fff}' +
     '.heading-lg{font-size:42px;line-height:1.1}';
 
-  // The engine's own `.cs` defaults. A snippet restating one of these is a line
+  // The engine's own `.dos` defaults. A snippet restating one of these is a line
   // that changes nothing, and 48 such lines were being pasted across 15
-  // patterns - `--cs-gap: 1em`, `--cs-arrow-bg`, `--cs-arrow-fg` and a
-  // `--cs-per-view: 1` that is the engine's value anyway. The delta filter used
+  // patterns - `--dos-gap: 1em`, `--dos-arrow-bg`, `--dos-arrow-fg` and a
+  // `--dos-per-view: 1` that is the engine's value anyway. The delta filter used
   // to run only against a look's settings, so the 13 look-less patterns had
   // nothing to be filtered against and everything came through.
   //
-  // Kept in step with src/custom-slider.css by scripts/lint-generated-css.mjs, which
-  // reads the .cs block and fails if any value here disagrees. A hand-kept copy
+  // Kept in step with src/dealeron-slider.css by scripts/lint-generated-css.mjs, which
+  // reads the .dos block and fails if any value here disagrees. A hand-kept copy
   // would drift, and the drift would only show as a line that quietly stopped
   // being dropped.
   const ENGINE_DEFAULTS = {
-    '--cs-per-view': '1',
-    '--cs-gap': '1em',
-    '--cs-peek': '0px',
-    '--cs-arrow-size': '44px',
-    '--cs-arrow-fg': '#fff',
-    '--cs-arrow-bg': 'rgba(0, 0, 0, 0.55)',
-    '--cs-arrow-fg-hover': '#fff',
-    '--cs-arrow-bg-hover': 'rgba(0, 0, 0, 0.8)',
-    '--cs-dot-size': '12px',
-    '--cs-dot-fg': '#757575',
-    '--cs-dot-current': '#333',
-    '--cs-controls-space': '2.5em',
-    '--cs-thumb-w': '88px',
-    '--cs-thumb-h': '56px',
-    '--cs-thumb-hover-scale': '1.06',
-    '--cs-focus': '#1a5fb4',
-    '--cs-fade-ms': '500ms',
-    '--cs-transition': '250ms ease-in-out',
+    '--dos-per-view': '1',
+    '--dos-gap': '1em',
+    '--dos-peek': '0px',
+    '--dos-arrow-size': '44px',
+    '--dos-arrow-fg': '#fff',
+    '--dos-arrow-bg': 'rgba(0, 0, 0, 0.55)',
+    '--dos-arrow-fg-hover': '#fff',
+    '--dos-arrow-bg-hover': 'rgba(0, 0, 0, 0.8)',
+    '--dos-dot-size': '12px',
+    '--dos-dot-fg': '#757575',
+    '--dos-dot-current': '#333',
+    '--dos-controls-space': '2.5em',
+    '--dos-thumb-w': '88px',
+    '--dos-thumb-h': '56px',
+    '--dos-thumb-hover-scale': '1.06',
+    '--dos-focus': '#1a5fb4',
+    '--dos-fade-ms': '500ms',
+    '--dos-transition': '250ms ease-in-out',
     // Where the arrows sit down the strip; 0.5 is centred. Declared in the
     // engine stylesheet as of 2026-09-08 - it was previously only a var()
     // fallback at its use site, so nothing could see it was a knob at all.
-    '--cs-arrow-at': '0.5',
+    '--dos-arrow-at': '0.5',
   };
 
   const knobDefault = (key) => LOOKS[state.look]?.settings?.[key] ?? PATTERNS[state.pattern].props?.[key] ?? SHARED_DEFAULTS[key] ?? ENGINE_DEFAULTS[key];
@@ -477,7 +477,7 @@
   // A number with a unit on it, or nothing.
   const LENGTH = /^-?(?:\d*\.)?\d+(?:px|em|rem|%|vw|vh|vmin|vmax|ch|ex|cm|mm|in|pt|pc|q)$/i;
 
-  // Typing `10` into Gap shipped `--cs-gap: 10`, and a unitless number is not a
+  // Typing `10` into Gap shipped `--dos-gap: 10`, and a unitless number is not a
   // length: the gap goes invalid AND the slide's flex basis with it, so the
   // cards collapse to content width while the readout still claims 5 of 8. It
   // is the same broken slider that a `0px` (F003) and a cleared field (F022)
@@ -514,7 +514,7 @@
   // to one of these is a line that changes nothing, and 48 such lines were once
   // being pasted across 15 patterns. Engine first, then the look: a look that
   // deliberately restates an engine value (portrait and logo both set
-  // --cs-arrow-bg) must be the one that counts, or a designer returning a knob
+  // --dos-arrow-bg) must be the one that counts, or a designer returning a knob
   // to the engine's value would find the line silently dropped and the look's
   // value still winning. NOT the pattern's own props - those are the starting
   // point a designer edits, not a value that costs nothing to state.
@@ -523,13 +523,13 @@
   // typed zero may only keep its unit where the answer is that the zero will be
   // dropped, and a second copy of this expression would drift from the one
   // cssFor() actually filters with.
-  // A pattern's own props (--tab-*, never --cs-*/--cargo-*) are defaulted in
+  // A pattern's own props (--tab-*, never --dos-*/--cargo-*) are defaulted in
   // the shared stylesheet too, at (0,0,0) on the pattern's data-cargo
   // attribute (scripts/build-patterns.mjs), so a value equal to its default
   // is a line that changes nothing and is dropped like an engine default.
-  // Engine-keyed props a pattern sets (--cs-gap: 0.1px) are still measured
+  // Engine-keyed props a pattern sets (--dos-gap: 0.1px) are still measured
   // against the ENGINE's value, because that is what the shared file says.
-  const patternOwnDefaults = () => Object.fromEntries(Object.entries(PATTERNS[state.pattern].props ?? {}).filter(([k]) => !k.startsWith('--cs-') && !k.startsWith('--cargo-')));
+  const patternOwnDefaults = () => Object.fromEntries(Object.entries(PATTERNS[state.pattern].props ?? {}).filter(([k]) => !k.startsWith('--dos-') && !k.startsWith('--cargo-')));
   const cssDefaults = () => (shared() ? { ...ENGINE_DEFAULTS, ...SHARED_DEFAULTS, ...LOOKS[state.look].settings, ...patternOwnDefaults() } : { ...ENGINE_DEFAULTS, ...patternOwnDefaults() });
 
   function cssFor(sel, preview) {
@@ -537,27 +537,27 @@
     const defaults = cssDefaults();
     const merged = { ...state.lookProps, ...state.props };
     const kept = Object.fromEntries(Object.entries(merged).filter(([k, v]) => defaults[k] !== v));
-    // Per-view is always cs-xs-N / cs-sm-N classes now - see the ladder in
+    // Per-view is always dos-xs-N / dos-sm-N classes now - see the ladder in
     // htmlFor() - so it never appears as a declaration here.
     const base = kept;
     const usable = Object.entries(base)
-      // A value that is empty is not a value: `--cs-gap: ;` is an invalid
+      // A value that is empty is not a value: `--dos-gap: ;` is an invalid
       // declaration and takes the whole rule's meaning with it. Nothing should
       // reach here blank now that a cleared field restores its default, but
       // this is the one place every property passes through - so the length
       // check rides here too, and a knob left mid-typo falls back to its
       // default instead of shipping a slider that cannot lay itself out.
       .filter(([k, v]) => String(v).trim() !== '' && okValue(k, v));
-    // A pattern's OWN custom properties (not --cs-*/--cargo-*) can be consumed
+    // A pattern's OWN custom properties (not --dos-*/--cargo-*) can be consumed
     // outside the carousel itself - the tab row's --tab-* rules style
-    // .cargo-tabs, a SIBLING of the per-pane .cs roots, not a descendant of any
-    // of them, so declaring them there the way every --cs-*/look property
+    // .cargo-tabs, a SIBLING of the per-pane .dos roots, not a descendant of any
+    // of them, so declaring them there the way every --dos-*/look property
     // always has left them inheriting nothing (measured: an unselected tab's
     // opacity read 1, not --tab-dim's 0.65). Only a structural pattern has
     // anything outside the root to reach, so only there do its own properties
     // move to the wrap; everything else keeps declaring on the root exactly as
     // it always has.
-    const ownKey = (k) => k in (p.props ?? {}) && !k.startsWith('--cs-') && !k.startsWith('--cargo-');
+    const ownKey = (k) => k in (p.props ?? {}) && !k.startsWith('--dos-') && !k.startsWith('--cargo-');
     const decl = ([k, v]) => `  ${k}: ${v};`;
     const decls = usable
       .filter(([k]) => !hasWrap() || !ownKey(k))
@@ -583,7 +583,7 @@
     // column classes.
     const font = shared() ? '' : `  font-size: var(--cargo-font, 1em);`;
 
-    // The preview used to pin --cs-per-view here, because a media query could
+    // The preview used to pin --dos-per-view here, because a media query could
     // not fire inside a box. The frame is a real window now, so the ladder and
     // the card style's own narrow rules resolve themselves - and the preview
     // runs exactly the CSS that is copied, with nothing appended at all.
@@ -599,9 +599,13 @@
     // the reserved strip OUTSIDE the track and never overlaps anything. Move it
     // onto the photo and the track paints straight over it: measured with
     // elementsFromPoint, the stack at a dot's centre read IMG, .cargo-photo,
-    // .cs-slide, .cs-track, and only then the dot. The engine's own .cs-arrow
+    // .dos-slide, .dos-track, and only then the dot. The engine's own .dos-arrow
     // carries z-index: 1 for exactly this reason.
-    const dots = state.hideDots ? `${sel} .cs-dots { display: none; }` : state.dotsOver ? `${sel} .cs-dots { z-index: 1; }\n${sel} .cs-dot::after { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45); }` : '';
+    const dots = state.hideDots
+      ? `${sel} .dos-dots { display: none; }`
+      : state.dotsOver
+        ? `${sel} .dos-dots { z-index: 1; }\n${sel} .dos-dot::after { box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45); }`
+        : '';
     // No arrow-inset override any more: the engine's own default is 0, which
     // is what all 17 patterns and all 7 looks were restating. Three lines a
     // snippet, and the gutter formula every look uses (arrow-size + 0.25em)
@@ -647,7 +651,7 @@
     // setting rather than carried by one pattern, so the rule and the markup
     // that needs it can never be out of step - the two-row grid used to ship
     // the rule unconditionally and the markup only when `pairUp` was set.
-    const rowsCss = state.rows > 1 && rowsApply() ? `.cargo-col { display: grid; grid-template-rows: repeat(${state.rows}, auto); gap: var(--cs-gap); }` : '';
+    const rowsCss = state.rows > 1 && rowsApply() ? `.cargo-col { display: grid; grid-template-rows: repeat(${state.rows}, auto); gap: var(--dos-gap); }` : '';
     const body = [state.look && !shared() ? scope(LOOKS[state.look].css) : '', rowsCss ? scope(rowsCss) : ''].filter(Boolean).join('\n');
     // Arrows either sit in a gutter beside the content or float over it. Last
     // in the sheet so it beats the padding-inline a card look sets for itself -
@@ -659,7 +663,7 @@
     // after typing 7em into it.
     //
     // Both fallbacks matter. --strip-pad-x exists only where a card look
-    // defines it (tile and vcard); --cs-arrow-size is defined on .cs, and the
+    // defines it (tile and vcard); --dos-arrow-size is defined on .dos, and the
     // tab strip sits OUTSIDE the carousel, so without either the whole
     // declaration is dropped. The strip below keeps the literal for that
     // reason - it is a sibling of the carousel and never inherits the knob -
@@ -668,7 +672,7 @@
     //
     // Off stays a literal 0. `var(--strip-pad-x, 0)` would let a look's gutter
     // survive the toggle, and the phone rule below reads this literal.
-    const gw = state.gutter ? 'var(--strip-pad-x, calc(var(--cs-arrow-size, 44px) + 0.4em))' : '0';
+    const gw = state.gutter ? 'var(--strip-pad-x, calc(var(--dos-arrow-size, 44px) + 0.4em))' : '0';
     // Tabs and filter buttons sit outside the carousel, so they have to be told
     // about the gutter or they hang off the left edge of their own cards.
     //
@@ -712,7 +716,7 @@
       // knows how wide the channel is - the engine never sets that padding, the
       // pasted CSS does. Gated on autoplay so a slider with no pause button
       // does not carry a rule matching nothing.
-      gw !== '0' && +(state.data['data-cs-autoplay'] ?? 0) > 0 ? `${sel} .cs-pause { inset-inline-end: calc(0.5em + ${gw}); }` : '',
+      gw !== '0' && +(state.data['data-dos-autoplay'] ?? 0) > 0 ? `${sel} .dos-pause { inset-inline-end: calc(0.5em + ${gw}); }` : '',
       // The STRIP only, never the carousel. A tab row or a filter bar has no
       // arrows beside it to line up with, and at a phone width the channel it
       // was matching cost more than the alignment bought: ~42px a side, which
@@ -754,22 +758,22 @@
     // applied at the carousel element and nowhere else.
     //
     // The column ladder goes on EVERY pattern, not only the four with a card
-    // look. cs-xs-N / cs-sm-N / cs-md-N / cs-lg-N ship unscoped in
-    // custom-slider.min.css and say exactly what the hand-written ladder said - a
+    // look. dos-xs-N / dos-sm-N / dos-md-N / dos-lg-N ship unscoped in
+    // dealeron-slider.min.css and say exactly what the hand-written ladder said - a
     // root line plus three @media blocks, ten lines of CSS a snippet, and
     // two-thirds of the rungs repeated the tier below because a min-width rule
     // already carries upward. Only `cargo-<look>` still depends on the shared
     // stylesheet being linked, so only that one stays behind the toggle.
     const tiers = ['base', ...BPS].map((k) => [TIER_CLASS[k], k]);
-    // A rung is worth a class only where the count changes: cs-sm-2 already
+    // A rung is worth a class only where the count changes: dos-sm-2 already
     // applies at 992 and at 1200. The tier below the first one is the engine's
-    // own --cs-per-view: 1.
+    // own --dos-per-view: 1.
     let prev = 1;
     let ladder = '';
     for (const [t, k] of tiers) {
       const n = state.perView[k];
       if (n == null || n === prev) continue;
-      ladder += ` cs-${t}-${n}`;
+      ladder += ` dos-${t}-${n}`;
       prev = n;
     }
     const libCls = (shared() ? ` cargo-${state.look}` : '') + ladder;
@@ -833,18 +837,18 @@
     const cargo = hasWrap() ? '' : ` data-cargo="${state.pattern}"`;
     const carousel = (list, label, pad = '', onScreen = true) =>
       [
-        `${pad}<div class="${cls}${libCls} cs" data-cs${cargo}${attrs} aria-label="${label}">`,
+        `${pad}<div class="${cls}${libCls} dos" data-dos${cargo}${attrs} aria-label="${label}">`,
         // role="list" on a <ul> is redundant to a validator and not to WebKit:
         // the engine's list-style: none makes Safari drop the list, and the
         // engine only puts the role back once its script has run. Written
         // here, VoiceOver has its "list, N items" from first paint, and on a
         // page where the script never loads.
-        `${pad}  <${tag} class="cs-track"${tag === 'ul' ? ' role="list"' : ''}>`,
+        `${pad}  <${tag} class="dos-track"${tag === 'ul' ? ' role="list"' : ''}>`,
         // Indent the card's own lines to match, so what you paste is not a
         // wall of markup starting at column zero inside a nested list item.
         ...list.map((h, i) => {
           const inner = h.includes('\n') ? ['', h.replace(/^/gm, `${pad}      `), `${pad}    `].join('\n') : h;
-          return `${pad}    <${item} class="cs-slide">${onScreen ? eager(inner, i) : inner}</${item}>`;
+          return `${pad}    <${item} class="dos-slide">${onScreen ? eager(inner, i) : inner}</${item}>`;
         }),
         `${pad}  </${tag}>`,
         // Inside the carousel, not beside it, so the pattern CSS scopes to it
@@ -932,7 +936,7 @@
           // either: a tabpanel is part of a tab interface, and until the script
           // runs there is no tab interface — the row is withheld and every pane
           // is shown. Without JS a reader gets what the HTML says it is, a
-          // sequence of labelled carousel regions (each .cs carries the tab's
+          // sequence of labelled carousel regions (each .dos carries the tab's
           // name as its aria-label), not panels pointing at controls that are
           // not there. The script adds the tab semantics with the interface.
           // Each pane's carousel is a landmark, and its name is the tab's. On a
@@ -1100,11 +1104,11 @@
   // `outer` is for the one knob that IS that font-size. An em in a font-size
   // resolves against the PARENT's font size, never the element's own, so
   // converting --cargo-font against the carousel is self-referential: 32px on a
-  // 16px page computes 32px on .cs, and 32/32 hands back 1em - which is half
+  // 16px page computes 32px on .dos, and 32/32 hands back 1em - which is half
   // the size asked for, and is also SHARED_DEFAULTS['--cargo-font'], so the
   // delta filter then drops the declaration and the knob silently does nothing.
   const cardFontPx = (outer) => {
-    const root = sdoc()?.querySelector('.cs');
+    const root = sdoc()?.querySelector('.dos');
     const el = outer ? root?.parentElement : root;
     return el ? parseFloat((swin() ?? window).getComputedStyle(el).fontSize) || null : null;
   };
@@ -1127,7 +1131,7 @@
   globalThis.CARGO = Object.assign(globalThis.CARGO || {}, {
     PATTERNS,
     // Exported so scripts/lint-generated-css.mjs can read the engine's real
-    // .cs block and fail if this copy has drifted from it.
+    // .dos block and fail if this copy has drifted from it.
     ENGINE_DEFAULTS,
     // The index on patterns.html labels its tiles from the same map the rail
     // uses, so the two pages cannot call the same pattern different things.
@@ -1196,7 +1200,7 @@
       state.label = `${look.label} cards`;
       return { css: cssFor(`.${cls}`), html: htmlFor(cls) };
     },
-    // The preview's document. It is inside a frame now, so `#wb-stage .cs` no
+    // The preview's document. It is inside a frame now, so `#wb-stage .dos` no
     // longer finds anything from this page - the tests and anything else
     // inspecting the live slider go through here.
     sdoc: () => sdoc(),
@@ -1233,7 +1237,7 @@
     // preview that stands in for a dealer page should stand in for its
     // structure too, so what the audit reports is the snippet.
     '<!doctype html><html lang="en"><head><meta charset="utf-8"><title>Slider preview</title>' +
-    '<link rel="stylesheet" href="../dist/custom-slider.min.css">' +
+    '<link rel="stylesheet" href="../dist/dealeron-slider.min.css">' +
     // overflow:hidden on the frame's own root is a CORRECTNESS rule, not
     // tidying. A classic scrollbar - which real Chrome on Windows draws, and
     // headless Chromium does not, so this is invisible to the test suite - takes
@@ -1307,7 +1311,7 @@
     // content here; inventing one above them to satisfy a rule is scaffolding
     // pretending to be a page, and it made the audit noisier, not truer.
     '<body><main aria-label="Slider preview"><div id="wb-live-root"></div></main>' +
-    '<script src="../dist/custom-slider.min.js"><' +
+    '<script src="../dist/dealeron-slider.min.js"><' +
     '/script></body></html>';
 
   // Resolves when the frame has its engine. Everything that paints waits on it.
@@ -1536,20 +1540,20 @@
     root.innerHTML = htmlFor('wb-live');
     // The frame's OWN engine instance: the class inside the frame, over the
     // frame's document. The parent's copy would measure the wrong window.
-    live = swin().CustomSlider.autoInit(root);
+    live = swin().DealerOnSlider.autoInit(root);
 
     // A few patterns need page script - tabs, the gallery filter, the lightbox,
     // and now the two video patterns, whose dialog used to be wired by the demo
     // page instead of by the snippet.
     // The SAME string runs here and is printed in the code panel, so what you
     // copy is what you just watched work.
-    // The pattern scripts run from the linked dist/custom-slider.min.js since
+    // The pattern scripts run from the linked dist/dealeron-slider.min.js since
     // 2026-09-14 (scripts/build-patterns.mjs appends them behind the
     // /*! patterns */ marker), the same file the frame links - so what you
     // watch work is the shipped code, not a copy. They ran once when the
     // frame loaded, over an empty stage; this render just replaced every
     // element in it, so the pass is asked to run again over the new markup.
-    swin().CustomSlider.wirePatterns?.();
+    swin().DealerOnSlider.wirePatterns?.();
     wireOverlay();
     fitFrameHeight();
     checkFit();
@@ -1608,7 +1612,7 @@
     // adds rides one AbortController, and some of them are on the WINDOW - a
     // detached instance left behind would still be measuring on every resize,
     // once per lightbox opened.
-    overlayHost?.querySelector('.cs')?._cs?.destroy();
+    overlayHost?.querySelector('.dos')?._dos?.destroy();
     overlayHost?.remove();
     overlayHost = null;
   }
@@ -1652,12 +1656,12 @@
 
     const dlg = wrap.querySelector('dialog');
     dlg.showModal();
-    // AFTER showModal(). The gallery is data-cs-init="manual" precisely because
+    // AFTER showModal(). The gallery is data-dos-init="manual" precisely because
     // a slider measured while its container is display:none has no width, and
     // every slide comes out the same wrong size - built early it had no thumbs
     // and no arrows at all.
-    const root = dlg.querySelector('.cs');
-    if (root && globalThis.CustomSlider) new globalThis.CustomSlider(root);
+    const root = dlg.querySelector('.dos');
+    if (root && globalThis.DealerOnSlider) new globalThis.DealerOnSlider(root);
     dlg.querySelector('[data-lb-close]')?.addEventListener('click', () => dlg.close());
     // One listener for the Close button, Escape and a backdrop dismissal, since
     // all three end in the same event. Focus goes back to the control that was
@@ -1735,7 +1739,7 @@
     // An earlier "use the card-looks file" checkbox failed because it was a
     // question: greyed out on 13 of the 17 patterns, and where it did work it
     // still left 13-21 lines of CSS behind. The card styles now ship inside
-    // custom-slider.min.css, so using them is the default and no longer a decision
+    // dealeron-slider.min.css, so using them is the default and no longer a decision
     // anyone has to make - the toggle survives only as an escape hatch for a
     // page that cannot link the file, and it is never greyed out.
     const lines = (t) => t.trim().split('\n').length;
@@ -1743,7 +1747,7 @@
       ['HTML', lines(html), 'a <strong>Custom HTML</strong> block'],
       ['CSS', lines(css), '<strong>Style Only</strong> — raw CSS, no <code>&lt;style&gt;</code> tags'],
     ];
-    if (shared()) parts.push(['Card style', `.cargo-${state.look}`, 'comes from <strong>custom-slider.min.css</strong> — nothing to paste for it']);
+    if (shared()) parts.push(['Card style', `.cargo-${state.look}`, 'comes from <strong>dealeron-slider.min.css</strong> — nothing to paste for it']);
     // The same warning at paste time. The panel above is where the choice is
     // made; this is the last screen before the code leaves for a real page, and
     // a crop that trims a cutout renders perfectly and looks cheap.
@@ -1756,7 +1760,7 @@
     // Counted off the guarded script, which is the one that ships. "Either
     // side" is the point of the guard: the script no longer cares whether the
     // engine's line runs before or after it.
-    if (state.scriptText) parts.push(['JavaScript', lines(state.scriptText), '<strong>Body Section, Bottom</strong> — either side of the custom-slider.min.js line']);
+    if (state.scriptText) parts.push(['JavaScript', lines(state.scriptText), '<strong>Body Section, Bottom</strong> — either side of the dealeron-slider.min.js line']);
     // The demo images resolve to real platform paths, which is what makes them
     // usable - and exactly why this warning belongs here: they load perfectly
     // on any dealer's site and show the wrong thing, which is worse than a
@@ -1807,8 +1811,8 @@
     const warn = $('wb-warn');
     const spec = $('wb-spec');
     const set = (id, v) => ($(id).textContent = v);
-    const root = sdoc()?.querySelector('.cs');
-    const slide = sdoc()?.querySelector('.cs-slide');
+    const root = sdoc()?.querySelector('.dos');
+    const slide = sdoc()?.querySelector('.dos-slide');
     if (!root || !slide) return;
 
     const w = Math.round(slide.getBoundingClientRect().width);
@@ -1829,9 +1833,9 @@
 
     const cs = swin().getComputedStyle(root);
     const min = minCard();
-    const stops = root._cs ? root._cs._stops().length : 1;
-    const fits = root.hasAttribute('data-cs-fits');
-    const n = sdoc().querySelectorAll('.cs').length;
+    const stops = root._dos ? root._dos._stops().length : 1;
+    const fits = root.hasAttribute('data-dos-fits');
+    const n = sdoc().querySelectorAll('.dos').length;
 
     // F097: cards are sized in em off the host page's body text, by design - so
     // the same slider is 5 to 63px taller on a 19px-body site than it is here.
@@ -1849,12 +1853,12 @@
     // than the pattern has slides said "8 of 6", which is not a thing. The
     // engine shows every slide in that case and hides the controls, so the
     // honest reading is "6 of 6".
-    const slides = root.querySelectorAll('.cs-slide').length;
-    const across = Math.min(+cs.getPropertyValue('--cs-per-view').trim() || 1, slides);
+    const slides = root.querySelectorAll('.dos-slide').length;
+    const across = Math.min(+cs.getPropertyValue('--dos-per-view').trim() || 1, slides);
     // "3 sliders" is true of the card grid and misleading on the tabbed bar,
     // where the three carousels are one bar's three panes.
     set('spec-across', `${across} of ${slides}${n > 1 ? ` · ${n} ${PATTERNS[state.pattern].panes ? 'panes' : 'sliders'}` : ''}`);
-    set('spec-gap', cs.getPropertyValue('--cs-gap').trim() || '0');
+    set('spec-gap', cs.getPropertyValue('--dos-gap').trim() || '0');
     set('spec-stops', String(stops));
     set('spec-controls', fits ? 'nothing — they all fit' : 'arrows' + (state.hideDots ? '' : ' and dots'));
 
@@ -2006,7 +2010,7 @@
   };
 
   // Clearing a field means "go back to the default", not "ship nothing". An
-  // empty value used to be stored as-is and emitted as `--cs-gap: ;`, which is
+  // empty value used to be stored as-is and emitted as `--dos-gap: ;`, which is
   // an invalid declaration: the arrows fell to the page's text colour and a
   // cleared Gap invalidated the slide flex basis, so the cards collapsed to
   // content width - in the preview AND in the copied CSS. Restore the value the
@@ -2210,12 +2214,12 @@
     // The crossfade ignores how many across, the gap and the step. The hero is
     // the only pattern that carries the attribute today, but read it off the
     // state rather than the pattern id so a second fading pattern is covered.
-    const fading = state.data['data-cs-fade'] != null;
+    const fading = state.data['data-dos-fade'] != null;
     // A horizontal scroll strip, which is what the track's padding and snap
     // physics need to exist for. Derived from the same two attributes rather
     // than a hand-kept list of pattern ids, so a pattern added later is
     // classified the day it ships.
-    const scrolling = !fading && state.data['data-cs-gallery'] == null;
+    const scrolling = !fading && state.data['data-dos-gallery'] == null;
 
     // Every folder is created here, in the order a slider actually gets built:
     // what am I making, what that card looks like, how many fit, then the
@@ -2357,7 +2361,7 @@
     if (fading) {
       pane.note(
         grid,
-        'A crossfade stacks the slides and shows one at a time. The engine pins this to 1 in CSS, so the page looks the same before the script runs as after — a count above 1 still ships as a cs-xs-N class in the markup and does nothing.',
+        'A crossfade stacks the slides and shows one at a time. The engine pins this to 1 in CSS, so the page looks the same before the script runs as after — a count above 1 still ships as a dos-xs-N class in the markup and does nothing.',
       );
     }
 
@@ -2365,13 +2369,13 @@
     // same question as the count above them - does this fit - and they sat
     // under the arrows, which is not where anyone adjusting a crowded strip
     // went looking.
-    state.props['--cs-gap'] ??= '1em';
-    valueKnob(grid, fading ? 'Gap (a crossfade has no gap)' : 'Gap', '--cs-gap', state.props);
+    state.props['--dos-gap'] ??= '1em';
+    valueKnob(grid, fading ? 'Gap (a crossfade has no gap)' : 'Gap', '--dos-gap', state.props);
     // "Show a sliver of the next car" lands on a model bar as often as on the
     // pattern named after it, so the row is offered wherever it can do
     // something rather than only where the pattern pre-set it. Not under fade
-    // or gallery: `.cs[data-cs-fade-on] .cs-track` and the gallery's own track
-    // rule both win over `.cs-track { padding: 0 var(--cs-peek) }`, so the
+    // or gallery: `.dos[data-dos-fade-on] .dos-track` and the gallery's own track
+    // rule both win over `.dos-track { padding: 0 var(--dos-peek) }`, so the
     // field would move nothing and lie about it.
     //
     // Off is `0px`, not the dot row's `0.1px`. It is the engine's own default,
@@ -2379,8 +2383,8 @@
     // reaches the platform minifier to be stripped to a unitless `0`, and off
     // costs no declaration on any of the twelve patterns this now appears on.
     if (scrolling) {
-      state.props['--cs-peek'] ??= '0px';
-      valueKnob(grid, 'Peek', '--cs-peek', state.props);
+      state.props['--dos-peek'] ??= '0px';
+      valueKnob(grid, 'Peek', '--dos-peek', state.props);
     }
     // Everything inside a card is sized in em off this. `1em` inherits the host
     // page's body size, so the cards match the copy around them on whatever
@@ -2416,17 +2420,17 @@
       if (warn) pane.note(style, warn);
     }
 
-    colourKnob(colors, 'Arrow colour', '--cs-arrow-fg', state.props);
-    colourKnob(colors, 'Arrow background', '--cs-arrow-bg', state.props);
+    colourKnob(colors, 'Arrow colour', '--dos-arrow-fg', state.props);
+    colourKnob(colors, 'Arrow background', '--dos-arrow-bg', state.props);
     // Both hover colours have been in the engine and in the Reference all
     // along, with no way to reach them from here. Worse than merely absent:
-    // the portrait and logo looks already carry --cs-arrow-bg-hover in their
+    // the portrait and logo looks already carry --dos-arrow-bg-hover in their
     // settings, and applyLook moves it into state.props - so the value was
     // being shipped by two card styles with no control anywhere that could
     // show it, let alone change it.
-    colourKnob(colors, 'Arrow colour · hover', '--cs-arrow-fg-hover', state.props);
-    colourKnob(colors, 'Arrow background · hover', '--cs-arrow-bg-hover', state.props);
-    valueKnob(colors, 'Arrow size', '--cs-arrow-size', state.props);
+    colourKnob(colors, 'Arrow colour · hover', '--dos-arrow-fg-hover', state.props);
+    colourKnob(colors, 'Arrow background · hover', '--dos-arrow-bg-hover', state.props);
+    valueKnob(colors, 'Arrow size', '--dos-arrow-size', state.props);
     // Six designs resize the arrow inside a media query in their own CSS - the
     // tile and vehicle card at 36px on phones, the logo strip at 56px on wide
     // screens - and this field cannot reach a rule it does not own. Rather
@@ -2434,38 +2438,38 @@
     // and say what they set. The alternative was to give the knob a second
     // "on phones" field and take the value off the six designs, which is a
     // bigger change than showing what is already true.
-    for (const [, cond, val] of `${p.css || ''}\n${LOOKS[state.look]?.css || ''}`.matchAll(/@media\s*\(([^)]+)\)[^{]*\{[^}]*--cs-arrow-size:\s*([^;}]+)/g)) {
+    for (const [, cond, val] of `${p.css || ''}\n${LOOKS[state.look]?.css || ''}`.matchAll(/@media\s*\(([^)]+)\)[^{]*\{[^}]*--dos-arrow-size:\s*([^;}]+)/g)) {
       pane.note(colors, `This design also sets the arrow to ${val.trim()} at (${cond.trim()}), in its own CSS. The field above is the size everywhere else.`);
     }
     // Only worth showing when there are dots to make room for - this is the
     // reserved strip they are drawn into, and shrinking it puts them on the
     // card text. A gallery fills that same strip with the thumb rail instead,
-    // so it sizes itself off --cs-thumb-h and this knob would only confuse.
-    if (!state.hideDots && state.data['data-cs-gallery'] == null) {
-      state.props['--cs-controls-space'] ??= '2.5em'; // the engine's own default
-      valueKnob(colors, 'Room for the dots', '--cs-controls-space', state.props);
+    // so it sizes itself off --dos-thumb-h and this knob would only confuse.
+    if (!state.hideDots && state.data['data-dos-gallery'] == null) {
+      state.props['--dos-controls-space'] ??= '2.5em'; // the engine's own default
+      valueKnob(colors, 'Room for the dots', '--dos-controls-space', state.props);
       // Same story as the arrow hover colours: three engine properties the
       // Reference documents and the panel never offered. The hero even sets
-      // --cs-dot-current blind, in its pattern props, with nothing able to
+      // --dos-dot-current blind, in its pattern props, with nothing able to
       // show a designer what colour it picked or let them change it.
-      valueKnob(colors, 'Dot size', '--cs-dot-size', state.props);
-      colourKnob(colors, 'Dot colour', '--cs-dot-fg', state.props);
-      colourKnob(colors, 'Dot colour, current', '--cs-dot-current', state.props);
+      valueKnob(colors, 'Dot size', '--dos-dot-size', state.props);
+      colourKnob(colors, 'Dot colour', '--dos-dot-fg', state.props);
+      colourKnob(colors, 'Dot colour, current', '--dos-dot-current', state.props);
     }
     // F099: a gallery draws a thumbnail rail instead of dots, and both its size
     // knobs and the hover zoom were in the engine and in the Reference with no
     // way to reach them from here. Thumbs ABOVE the photo stays hand CSS and a
     // vertical rail is a deliberate no - the strip is laid out and auto-scrolled
     // horizontally, so there is nothing to turn.
-    if (state.data['data-cs-gallery'] != null) {
-      valueKnob(colors, 'Thumbnail width', '--cs-thumb-w', state.props);
-      valueKnob(colors, 'Thumbnail height', '--cs-thumb-h', state.props);
-      valueKnob(colors, 'Thumbnail zoom', '--cs-thumb-hover-scale', state.props);
+    if (state.data['data-dos-gallery'] != null) {
+      valueKnob(colors, 'Thumbnail width', '--dos-thumb-w', state.props);
+      valueKnob(colors, 'Thumbnail height', '--dos-thumb-h', state.props);
+      valueKnob(colors, 'Thumbnail zoom', '--dos-thumb-hover-scale', state.props);
     }
 
     // F102: the hero hard-codes the crossfade and its duration knob never
     // appeared, though both have been in the engine all along.
-    if (fading) valueKnob(colors, 'Crossfade time', '--cs-fade-ms', state.props);
+    if (fading) valueKnob(colors, 'Crossfade time', '--dos-fade-ms', state.props);
 
     // F018 (the half that needs no decision): the tab words were hard-coded,
     // so a Trucks/SUVs/Crossovers bar could not become New/Used/Certified
@@ -2527,21 +2531,21 @@
       );
     }
 
-    // A pattern's OWN props - the tab row's values today. Engine (--cs-*) and
+    // A pattern's OWN props - the tab row's values today. Engine (--dos-*) and
     // shared (--cargo-*) properties are drawn by their named rows elsewhere;
     // what is left is what the pattern added, and it goes in the pattern's
     // folder where one exists, or its own.
-    const ownProps = Object.keys(p.props ?? {}).filter((k) => !k.startsWith('--cs-') && !k.startsWith('--cargo-'));
+    const ownProps = Object.keys(p.props ?? {}).filter((k) => !k.startsWith('--dos-') && !k.startsWith('--cargo-'));
     if (ownProps.length) drawKnobs(names ?? pane.folder('This pattern'), state.props, ownProps);
 
     if (knobs) drawKnobs(knobs, state.lookProps, Object.keys(state.lookProps));
 
-    // data-cs-step takes a number as of 2026-08-27: how many cards one arrow
+    // data-dos-step takes a number as of 2026-08-27: how many cards one arrow
     // click moves. 'page' is a whole screenful; 'slide' is the old name for 1.
     pane.list(
       beh,
       fading ? 'Arrows move (a crossfade always moves 1)' : 'Arrows move',
-      state.data['data-cs-step'] ?? 'page',
+      state.data['data-dos-step'] ?? 'page',
       [
         ['page', 'a full page'],
         ['slide', '1 card'],
@@ -2550,13 +2554,13 @@
         ['4', '4 cards'],
       ],
       (v) => {
-        if (v === 'page') delete state.data['data-cs-step'];
-        else state.data['data-cs-step'] = v;
+        if (v === 'page') delete state.data['data-dos-step'];
+        else state.data['data-dos-step'] = v;
         render();
       },
     );
 
-    // data-cs-autoplay has been a first-class engine option all along, and the
+    // data-dos-autoplay has been a first-class engine option all along, and the
     // panel never showed it: the hero carried it hard-wired at 5000, and no
     // other pattern could turn it on. Slowing a hero, holding one still, or
     // rotating a testimonial strip all meant knowing the attribute and editing
@@ -2567,24 +2571,24 @@
     // own. Not offered in gallery mode: the engine throws autoplay away there
     // and says so in a console warning, and a control that writes an attribute
     // the engine discards is the plainest kind of lying control.
-    if (state.data['data-cs-gallery'] == null) {
+    if (state.data['data-dos-gallery'] == null) {
       pane.int(
         beh,
         'Rotate every (ms)',
-        +(state.data['data-cs-autoplay'] ?? 0),
+        +(state.data['data-dos-autoplay'] ?? 0),
         (n) => {
           // Whole milliseconds above zero, or no attribute at all. htmlFor
           // drops a data value into a double-quoted attribute unescaped, and
           // the engine's parseInt would take "5s" and rotate every 5
           // milliseconds.
           if (Number.isFinite(n) && n > 0) {
-            state.data['data-cs-autoplay'] = String(n);
+            state.data['data-dos-autoplay'] = String(n);
             // The engine forces rewind back on under autoplay - a strip that
             // rotates to the last slide and stops dead reads as broken - and
-            // warns when it does. Tall photos ships data-cs-rewind="false", so
+            // warns when it does. Tall photos ships data-dos-rewind="false", so
             // without this every dealer page running it would log that warning.
-            delete state.data['data-cs-rewind'];
-          } else delete state.data['data-cs-autoplay'];
+            delete state.data['data-dos-rewind'];
+          } else delete state.data['data-dos-autoplay'];
           rebuild(() => {
             buildPanel(); // "At the ends" reads the autoplay state as it is built
             render();
@@ -2605,18 +2609,18 @@
       );
     }
 
-    // data-cs-rewind has been in the engine and the reference all along; it was
+    // data-dos-rewind has been in the engine and the reference all along; it was
     // just unreachable from here, so the only way to stop at the ends was to
     // know the attribute and hand-edit the snippet.
     //
     // The engine ignores rewind:false under autoplay (a rotating strip that
     // stops dead at the last slide is a broken-looking page) and says so in a
     // console warning. Say it here instead of letting the control lie.
-    const autoplaying = state.data['data-cs-autoplay'] != null;
+    const autoplaying = state.data['data-dos-autoplay'] != null;
     pane.list(
       beh,
       autoplaying ? 'At the ends (autoplay always wraps)' : 'At the ends',
-      state.data['data-cs-rewind'] ?? '',
+      state.data['data-dos-rewind'] ?? '',
       [
         // F055: "Wrap around" reads as an endless loop to anyone coming from
         // slick, which loops by cloning - 51 of the 55 OEM model bars surveyed
@@ -2626,8 +2630,8 @@
         ['false', 'Stop at the ends'],
       ],
       (v) => {
-        if (v) state.data['data-cs-rewind'] = v;
-        else delete state.data['data-cs-rewind'];
+        if (v) state.data['data-dos-rewind'] = v;
+        else delete state.data['data-dos-rewind'];
         render();
       },
       {
@@ -2639,13 +2643,13 @@
     // Not offered in gallery mode: those four patterns draw a thumbnail strip
     // and have no dots at all, so the switch added a rule matching nothing and
     // a tick round trip left a dead controls-space line in the copied CSS.
-    const galleryMode = state.data['data-cs-gallery'] != null;
+    const galleryMode = state.data['data-dos-gallery'] != null;
     if (!galleryMode) {
       pane.bool(beh, 'Show dots', !state.hideDots, (on) => {
         state.hideDots = !on;
         // The dot row is a RESERVATION, not the dots: the engine holds
-        // --cs-controls-space of padding under the track from the moment the page
-        // paints (src/custom-slider.css), so starting the slider shifts nothing.
+        // --dos-controls-space of padding under the track from the moment the page
+        // paints (src/dealeron-slider.css), so starting the slider shifts nothing.
         // Hiding the dots without collapsing that reservation leaves its height
         // standing as blank page - measured 30px on the hero, 45px on Tall
         // photos, 37.5px on any pattern shipping no value of its own.
@@ -2654,16 +2658,16 @@
         // there, never the engine's 2.5em: a tick round trip used to rewrite the
         // pattern's own value. 0.1px and never 0, because the platform's
         // minifier turns 0px into a unitless 0 and that invalidates the arrow's
-        // centring calc(). The `.cs-dots { display: none }` rule stays either
+        // centring calc(). The `.dos-dots { display: none }` rule stays either
         // way - the dots are absolutely positioned at the bottom of the root, so
         // with the strip collapsed they would draw over the last line of text.
         if (state.hideDots) {
-          state.dotSpace = state.props['--cs-controls-space'] ?? null;
-          state.props['--cs-controls-space'] = '0.1px';
+          state.dotSpace = state.props['--dos-controls-space'] ?? null;
+          state.props['--dos-controls-space'] = '0.1px';
         } else {
           // A pattern that ships dots-off has never had a strip, so the first
           // tick has nothing to restore and takes the engine's own.
-          state.props['--cs-controls-space'] = state.dotSpace ?? '2.5em';
+          state.props['--dos-controls-space'] = state.dotSpace ?? '2.5em';
           state.dotSpace = null;
         }
         rebuild(() => {
@@ -2687,7 +2691,7 @@
     //
     // Measured before building it: taking the strip away leaves the photo the
     // same size (415.7px either way) and does not move the arrows (207.8px
-    // either way - .cs-arrow centres on 100% of a root that shrank by exactly
+    // either way - .dos-arrow centres on 100% of a root that shrank by exactly
     // the strip, so the formula corrects itself). The hero simply loses 30px.
     const photoSlides = (p.css || '').includes('cargo-photo');
     if (photoSlides && !galleryMode && !state.hideDots) {
@@ -2701,25 +2705,25 @@
             // Remember all three, because all three change together and a tick
             // round trip has to hand back exactly what was there.
             state.dotsWere = {
-              space: state.props['--cs-controls-space'] ?? null,
-              fg: state.props['--cs-dot-fg'] ?? null,
-              current: state.props['--cs-dot-current'] ?? null,
+              space: state.props['--dos-controls-space'] ?? null,
+              fg: state.props['--dos-dot-fg'] ?? null,
+              current: state.props['--dos-dot-current'] ?? null,
             };
             // 0.1px, never 0: the platform minifier turns 0px into a unitless 0
             // and that invalidates the arrow's centring calc().
-            state.props['--cs-controls-space'] = '0.1px';
+            state.props['--dos-controls-space'] = '0.1px';
             // The engine's #757575 is tuned for 3:1 on WHITE, and a photograph
             // is not white. Light dots are the only ones that read on an unknown
             // image, and they are written into the knobs rather than applied
             // behind them - a control has to show what the slider is using.
-            state.props['--cs-dot-fg'] = 'rgba(255, 255, 255, 0.55)';
-            state.props['--cs-dot-current'] = '#fff';
+            state.props['--dos-dot-fg'] = 'rgba(255, 255, 255, 0.55)';
+            state.props['--dos-dot-current'] = '#fff';
           } else {
             const was = state.dotsWere ?? {};
             for (const [k, v] of [
-              ['--cs-controls-space', was.space],
-              ['--cs-dot-fg', was.fg],
-              ['--cs-dot-current', was.current],
+              ['--dos-controls-space', was.space],
+              ['--dos-dot-fg', was.fg],
+              ['--dos-dot-current', was.current],
             ]) {
               if (v == null) delete state.props[k];
               else state.props[k] = v;
@@ -2763,8 +2767,8 @@
     // the name off the Reference and hand-editing the snippet. Both are rare
     // enough to sit at the end rather than among the settings people reach for
     // every time.
-    colourKnob(adv, 'Focus ring', '--cs-focus', state.props);
-    valueKnob(adv, 'Control transition', '--cs-transition', state.props);
+    colourKnob(adv, 'Focus ring', '--dos-focus', state.props);
+    valueKnob(adv, 'Control transition', '--dos-transition', state.props);
 
     // The one brand control (2026-09-10): a Default chip, a chip per brand
     // MEASURED for this pattern, a select for every other brand this card can
@@ -2957,7 +2961,7 @@
   // when the name matched: writing three service cards and then editing one
   // heading on a model bar overwrote the service text, silently, with nothing
   // on the page saying so.
-  const CKEY = 'cs-content';
+  const CKEY = 'dos-content';
   // Two stores, not one. THIS session's edits live in memory and follow you
   // from pattern to pattern; localStorage only holds what Keep has been pressed
   // on. Splitting them is what lets "not saved unless you save it" coexist with
@@ -3023,7 +3027,7 @@
   // neither: a designer came back to their own content under someone else's
   // card style, with the wrong class name, and nothing on the page saying why.
   // Same shape as the content store, keyed by pattern for the same reason.
-  const SKEY = 'cs-settings';
+  const SKEY = 'dos-settings';
   const SAVED = ['look', 'brand', 'perView', 'props', 'lookProps', 'data', 'hideDots', 'gutter', 'name', 'count', 'rows', 'panes', ...WORDS, 'dotsOver', 'dotsWere'];
 
   // Same split as the slides: what is on screen is the session's, what is in
@@ -3057,7 +3061,7 @@
   // of the attribute they land in: htmlFor() drops a data value straight into a
   // double-quoted attribute without escaping it.
   const PROP = /^--[a-z0-9-]+$/i;
-  const ATTR = /^data-cs-[a-z-]+$/i;
+  const ATTR = /^data-dos-[a-z-]+$/i;
   const okStored = (v) => typeof v === 'string' && v.length < 120 && !/["<>{};]/.test(v);
   const cleanMap = (m, keyRe) => {
     if (!isMap(m)) return null;
@@ -3158,7 +3162,7 @@
     baseline = null;
     const s = readSettings().byPattern[state.pattern];
     if (!isMap(s)) return;
-    // The look first: applyLook() hands the previous look's --cs-* values back
+    // The look first: applyLook() hands the previous look's --dos-* values back
     // before taking the new one's, so the props restored below have to land on
     // top of it, not under it. Only where the pattern HAS a look picker -
     // forcing one onto a pattern that draws its own cards would put a cargo-
@@ -3175,19 +3179,19 @@
         if (state.perView[k] != null && Number.isInteger(n) && n >= 1 && n <= 8) state.perView[k] = n;
       }
     }
-    // Only knobs the pattern still ships, or the engine's own --cs-* and the
-    // shared card-font knob (the panel adds --cs-peek and --cargo-font with ??=
+    // Only knobs the pattern still ships, or the engine's own --dos-* and the
+    // shared card-font knob (the panel adds --dos-peek and --cargo-font with ??=
     // AFTER this runs, so they are not in state.props yet). A merge of the
     // whole map let a kept `--bar-bg` outlive the knob (2026-09-15): the panel
     // had no row for it and the snippet still shipped it.
     const props = cleanMap(s.props, PROP);
-    if (props) for (const [k, v] of Object.entries(props)) if (k in state.props || k.startsWith('--cs-') || k in SHARED_DEFAULTS) state.props[k] = v;
+    if (props) for (const [k, v] of Object.entries(props)) if (k in state.props || k.startsWith('--dos-') || k in SHARED_DEFAULTS) state.props[k] = v;
     // A look knob this look no longer has must not add a row to the panel or a
     // line to the snippet, so only the keys it still ships come back.
     const lookProps = cleanMap(s.lookProps, PROP);
     if (lookProps) for (const k of Object.keys(state.lookProps)) if (k in lookProps) state.lookProps[k] = lookProps[k];
-    // Replaced, not merged: modelbar, tabs and service ship data-cs-step="slide"
-    // and Tall photos ships data-cs-rewind="false", and setting "Arrows move" to
+    // Replaced, not merged: modelbar, tabs and service ship data-dos-step="slide"
+    // and Tall photos ships data-dos-rewind="false", and setting "Arrows move" to
     // a full page DELETES the attribute. A merge would put the pattern's own
     // value back and leave the select saying "a full page" over a slider
     // stepping one card. A map that lost a key to the checks was not written by
@@ -3588,7 +3592,7 @@
   // One button per CMS field. A single Copy handed over
   // `<style>…</style>` + HTML + `<script>` as one blob for three different
   // fields, and left whole in Style Only the tag and the first rule parse as
-  // one invalid selector and are dropped - taking the slider's --cs-gap,
+  // one invalid selector and are dropped - taking the slider's --dos-gap,
   // arrow colours and per-view base with them, with nothing on screen to say
   // so. Each button copies the part its field can actually hold.
   for (const [id, get] of /** @type {[string, () => string][]} */ ([
@@ -3618,8 +3622,8 @@
   // The real shared path, not a "/path/" placeholder for the designer to fill
   // in - designers do not upload the engine, and a copied tag they have to edit
   // is a tag that ships wrong. One folder, every site.
-  const ENGINE_PATH = '/assets/shared/CustomHTMLFiles/Responsive/Apps/customSlider/';
-  const TAGS = [`<link rel="stylesheet" href="${ENGINE_PATH}custom-slider.min.css">`, `<script src="${ENGINE_PATH}custom-slider.min.js" defer></script>`].join('\n');
+  const ENGINE_PATH = '/assets/shared/CustomHTMLFiles/Responsive/Apps/dealeronSlider/';
+  const TAGS = [`<link rel="stylesheet" href="${ENGINE_PATH}dealeron-slider.min.css">`, `<script src="${ENGINE_PATH}dealeron-slider.min.js" defer></script>`].join('\n');
   $('wb-copy-tags').addEventListener('click', (e) => copyText(e.target, TAGS));
 
   // The engine files, fetched at click time from the very files this page is
@@ -3627,12 +3631,12 @@
   //
   // data-file names the FILE, never a kind. It used to say "css"/"js" against a
   // map holding only the .min pair, and the download built the name back up as
-  // `custom-slider.${kind}` - so Download on the custom-slider.min.css row
+  // `dealeron-slider.${kind}` - so Download on the dealeron-slider.min.css row
   // saved the MINIFIED bytes under the READABLE name. Upload that to the shared
-  // folder and custom-slider.css there holds minified code, with nothing on the
+  // folder and dealeron-slider.css there holds minified code, with nothing on the
   // page or in the folder to say so. One string now picks the bytes AND names
   // the file, so the two cannot disagree again.
-  const DIST = ['custom-slider.css', 'custom-slider.js', 'custom-slider.min.css', 'custom-slider.min.js'];
+  const DIST = ['dealeron-slider.css', 'dealeron-slider.js', 'dealeron-slider.min.css', 'dealeron-slider.min.js'];
   const isJs = (name) => name.endsWith('.js');
   const wait = (ms) => new Promise((done) => setTimeout(done, ms));
 
@@ -3787,6 +3791,6 @@
     });
     fitWidths();
   };
-  if (globalThis.CustomSlider) boot();
+  if (globalThis.DealerOnSlider) boot();
   else addEventListener('DOMContentLoaded', boot);
 })();

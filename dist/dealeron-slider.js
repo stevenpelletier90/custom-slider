@@ -1,5 +1,5 @@
 (() => {
-  // src/custom-slider.js
+  // src/dealeron-slider.js
   var uidCounter = 0;
   var fmt = (tpl, vals) => tpl.replace(/\{(\w+)\}/g, (_, k) => vals[k]);
   var setDisabled = (el, on) => {
@@ -49,30 +49,30 @@
     pause: '<svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16"><path d="M7 4h4v16H7zM13 4h4v16h-4z" fill="currentColor"/></svg>',
     play: '<svg viewBox="0 0 24 24" aria-hidden="true" width="16" height="16"><path d="M7 4l13 8-13 8z" fill="currentColor"/></svg>'
   };
-  var CustomSlider = class _CustomSlider {
+  var DealerOnSlider = class _DealerOnSlider {
     constructor(root, options = {}) {
       this.root = root;
-      this.track = root.querySelector(".cs-track");
+      this.track = root.querySelector(".dos-track");
       if (!this.track) {
-        console.error("[custom-slider] missing required .cs-track element in", root);
+        console.error("[dealeron-slider] missing required .dos-track element in", root);
         return;
       }
-      this.slides = [...this.track.querySelectorAll(":scope > .cs-slide")];
+      this.slides = [...this.track.querySelectorAll(":scope > .dos-slide")];
       if (!this.slides.length) {
-        console.error("[custom-slider] .cs-track has no .cs-slide children in", root);
+        console.error("[dealeron-slider] .dos-track has no .dos-slide children in", root);
         return;
       }
       this._snapshot = root.innerHTML;
-      this.uid = `cs-${++uidCounter}`;
+      this.uid = `dos-${++uidCounter}`;
       this.opts = this._parseOptions(options);
       this.current = 0;
       this._target = null;
       this._pointerDown = false;
       this._rootAttrs = /* @__PURE__ */ new Map();
-      if (this.opts.gallery) this._setRootAttr("data-cs-gallery", "");
-      else if (this.root.hasAttribute("data-cs-gallery")) this._setRootAttr("data-cs-gallery", "false");
-      if (this.opts.fade) this._setRootAttr("data-cs-fade-on", "");
-      else if (this.root.hasAttribute("data-cs-fade")) this._setRootAttr("data-cs-fade", "false");
+      if (this.opts.gallery) this._setRootAttr("data-dos-gallery", "");
+      else if (this.root.hasAttribute("data-dos-gallery")) this._setRootAttr("data-dos-gallery", "false");
+      if (this.opts.fade) this._setRootAttr("data-dos-fade-on", "");
+      else if (this.root.hasAttribute("data-dos-fade")) this._setRootAttr("data-dos-fade", "false");
       this._prm = matchMedia("(prefers-reduced-motion: reduce)");
       this._ac = new AbortController();
       this._setupAria();
@@ -82,38 +82,38 @@
       this._listen();
       this._setupAutoplay();
       this._commit();
-      root._cs = this;
+      root._dos = this;
     }
     /** @param {ParentNode} [scope] */
     static autoInit(scope = document) {
       return [.../** @type {NodeListOf<HTMLElement>} */
-      scope.querySelectorAll("[data-cs]")].filter((el) => !el._cs && el.dataset.csInit !== "manual").map((el) => new _CustomSlider(el));
+      scope.querySelectorAll("[data-dos]")].filter((el) => !el._dos && el.dataset.dosInit !== "manual").map((el) => new _DealerOnSlider(el));
     }
     /* ---- options ---------------------------------------------------------- */
     _parseOptions(js) {
       const d = this.root.dataset;
       const data = {};
-      if (d.csAutoplay !== void 0) data.autoplay = parseInt(d.csAutoplay, 10) || 0;
-      if (d.csRewind !== void 0) data.rewind = d.csRewind !== "false";
-      if (d.csStep !== void 0) data.step = +d.csStep > 0 ? +d.csStep : d.csStep === "slide" ? "slide" : "page";
-      if (d.csDrag !== void 0) data.drag = d.csDrag !== "false";
-      if (d.csGallery !== void 0) data.gallery = d.csGallery !== "false";
-      if (d.csFade !== void 0) data.fade = d.csFade !== "false";
-      if (d.csRoledescription !== void 0) data.roledescription = d.csRoledescription;
+      if (d.dosAutoplay !== void 0) data.autoplay = parseInt(d.dosAutoplay, 10) || 0;
+      if (d.dosRewind !== void 0) data.rewind = d.dosRewind !== "false";
+      if (d.dosStep !== void 0) data.step = +d.dosStep > 0 ? +d.dosStep : d.dosStep === "slide" ? "slide" : "page";
+      if (d.dosDrag !== void 0) data.drag = d.dosDrag !== "false";
+      if (d.dosGallery !== void 0) data.gallery = d.dosGallery !== "false";
+      if (d.dosFade !== void 0) data.fade = d.dosFade !== "false";
+      if (d.dosRoledescription !== void 0) data.roledescription = d.dosRoledescription;
       const dl = {};
-      for (const k in d) if (k.length > 7 && k.startsWith("csLabel")) dl[k[7].toLowerCase() + k.slice(8)] = d[k];
+      for (const k in d) if (k.length > 8 && k.startsWith("dosLabel")) dl[k[8].toLowerCase() + k.slice(9)] = d[k];
       const opts = { ...DEFAULTS, ...data, ...js, labels: { ...DEFAULTS.labels, ...dl, ...js.labels || {} } };
       if (opts.step !== "page" && opts.step !== "slide") opts.step = Number.isInteger(+opts.step) && +opts.step > 0 ? +opts.step : "page";
       if (opts.gallery && opts.autoplay) {
-        console.warn("[custom-slider] autoplay is ignored in gallery mode", this.root);
+        console.warn("[dealeron-slider] autoplay is ignored in gallery mode", this.root);
         opts.autoplay = 0;
       }
       if (opts.fade && opts.gallery) {
-        console.warn("[custom-slider] fade is ignored in gallery mode", this.root);
+        console.warn("[dealeron-slider] fade is ignored in gallery mode", this.root);
         opts.fade = false;
       }
       if (opts.autoplay && !opts.rewind) {
-        console.warn("[custom-slider] rewind:false is ignored with autoplay", this.root);
+        console.warn("[dealeron-slider] rewind:false is ignored with autoplay", this.root);
         opts.rewind = true;
       }
       return opts;
@@ -131,7 +131,7 @@
       if (this.root.tagName !== "SECTION") this._setRootAttr("role", "region");
       if (this.opts.roledescription) this._setRootAttr("aria-roledescription", this.opts.roledescription);
       if (!this.root.hasAttribute("aria-label") && !this.root.hasAttribute("aria-labelledby")) {
-        console.warn("[custom-slider] give the slider an aria-label or aria-labelledby", this.root);
+        console.warn("[dealeron-slider] give the slider an aria-label or aria-labelledby", this.root);
       }
       if (this.opts.gallery) return;
       if (/^(UL|OL)$/.test(this.track.tagName)) {
@@ -164,9 +164,9 @@
     _buildControls() {
       const L = this.opts.labels;
       const c = document.createElement("div");
-      c.className = "cs-controls";
+      c.className = "dos-controls";
       if (this.opts.autoplay > 0) {
-        this.pauseBtn = this._btn("cs-pause", L.pause, ICONS.pause);
+        this.pauseBtn = this._btn("dos-pause", L.pause, ICONS.pause);
         this.pauseBtn.addEventListener(
           "click",
           () => {
@@ -176,7 +176,7 @@
         );
         c.append(this.pauseBtn);
       }
-      const prev = this.prevBtn = this._btn("cs-arrow cs-arrow--prev", L.prev, ICONS.prev);
+      const prev = this.prevBtn = this._btn("dos-arrow dos-arrow--prev", L.prev, ICONS.prev);
       prev.addEventListener(
         "click",
         () => {
@@ -185,7 +185,7 @@
         },
         { signal: this._ac.signal }
       );
-      const next = this.nextBtn = this._btn("cs-arrow cs-arrow--next", L.next, ICONS.next);
+      const next = this.nextBtn = this._btn("dos-arrow dos-arrow--next", L.next, ICONS.next);
       next.addEventListener(
         "click",
         () => {
@@ -197,13 +197,13 @@
       c.append(prev, next);
       if (!this.opts.gallery) {
         this.dots = document.createElement("div");
-        this.dots.className = "cs-dots";
+        this.dots.className = "dos-dots";
         this.dots.setAttribute("role", "group");
         this.dots.setAttribute("aria-label", L.dots);
         c.append(this.dots);
       }
       this.status = document.createElement("div");
-      this.status.className = "cs-status cs-sr-only";
+      this.status.className = "dos-status dos-sr-only";
       this.status.setAttribute("aria-live", "polite");
       c.append(this.status);
       this.root.insertBefore(c, this.track);
@@ -222,7 +222,7 @@
       const r0 = s[0].getBoundingClientRect();
       this.stride = s.length > 1 ? s[1].getBoundingClientRect().left - r0.left : r0.width || 1;
       if (this.stride <= 0) this.stride = r0.width || 1;
-      this.perView = Math.max(1, parseInt(getComputedStyle(this.root).getPropertyValue("--cs-per-view"), 10) || 1);
+      this.perView = Math.max(1, parseInt(getComputedStyle(this.root).getPropertyValue("--dos-per-view"), 10) || 1);
     }
     // Index of the slide nearest scroll position x, read from real offsets
     // rather than index x stride. Several slides can share one offset - a
@@ -290,7 +290,7 @@
         this.current = n;
         this._target = null;
         this._updateUI();
-        if (moved) this._emit("cs:change", { index: n, page: n, slidesInView: 1 });
+        if (moved) this._emit("dos:change", { index: n, page: n, slidesInView: 1 });
         return;
       }
       const t = this.track;
@@ -382,7 +382,7 @@
     _wireDrag() {
       const sig = this._ac.signal, t = this.track;
       let startX = 0, startLeft = 0, far = false;
-      t.setAttribute("data-cs-draggable", "");
+      t.setAttribute("data-dos-draggable", "");
       t.addEventListener(
         "pointerdown",
         (e) => {
@@ -392,7 +392,7 @@
           far = false;
           startX = e.clientX;
           startLeft = t.scrollLeft;
-          t.setAttribute("data-cs-dragging", "");
+          t.setAttribute("data-dos-dragging", "");
         },
         { signal: sig }
       );
@@ -417,7 +417,7 @@
       const end = () => {
         if (!this._dragActive) return;
         this._dragActive = false;
-        t.removeAttribute("data-cs-dragging");
+        t.removeAttribute("data-dos-dragging");
         if (!this._dragMoved) return;
         t.style.userSelect = "";
         this._pointerDown = false;
@@ -461,13 +461,13 @@
       this.current = idx;
       this._updateUI();
       if (changed) {
-        this._emit("cs:change", { index: idx, page: this._currentPage(), slidesInView: this.perView });
+        this._emit("dos:change", { index: idx, page: this._currentPage(), slidesInView: this.perView });
       }
     }
     _updateUI() {
       const fits = this._stops().length <= 1;
-      if (!this._rootAttrs.has("data-cs-fits")) this._rootAttrs.set("data-cs-fits", this.root.getAttribute("data-cs-fits"));
-      this.root.toggleAttribute("data-cs-fits", fits);
+      if (!this._rootAttrs.has("data-dos-fits")) this._rootAttrs.set("data-dos-fits", this.root.getAttribute("data-dos-fits"));
+      this.root.toggleAttribute("data-dos-fits", fits);
       if (this.prevBtn) this.prevBtn.hidden = this.nextBtn.hidden = fits;
       if (this.dots) this.dots.hidden = fits;
       if (this.pauseBtn) {
@@ -486,7 +486,7 @@
     _updateFade() {
       this.slides.forEach((sl, i) => {
         const on = i === this.current;
-        sl.classList.toggle("cs-slide--current", on);
+        sl.classList.toggle("dos-slide--current", on);
         if (on || sl.contains(document.activeElement)) sl.removeAttribute("inert");
         else sl.setAttribute("inert", "");
       });
@@ -507,7 +507,7 @@
         pages.forEach((start) => {
           const from = start + 1, to = Math.min(start + this.perView, total);
           const label = this.perView > 1 ? fmt(L.gotoPage, { from, to }) : fmt(L.gotoSlide, { n: from });
-          const b = this._btn("cs-dot", label, "");
+          const b = this._btn("dos-dot", label, "");
           b.addEventListener(
             "click",
             () => {
@@ -525,7 +525,7 @@
       if (!this.dots) return;
       const page = this._currentPage();
       [...this.dots.children].forEach((b, i) => {
-        b.classList.toggle("cs-dot--current", i === page);
+        b.classList.toggle("dos-dot--current", i === page);
         i === page ? b.setAttribute("aria-current", "true") : b.removeAttribute("aria-current");
       });
     }
@@ -609,14 +609,14 @@
       const L = this.opts.labels;
       this.pauseBtn.setAttribute("aria-label", this.rotating ? L.pause : L.play);
       this.pauseBtn.innerHTML = this.rotating ? ICONS.pause : ICONS.play;
-      if (!first) this._emit(this.rotating ? "cs:autoplay-start" : "cs:autoplay-stop", {});
+      if (!first) this._emit(this.rotating ? "dos:autoplay-start" : "dos:autoplay-stop", {});
     }
     /* ---- gallery (APG tabbed carousel) ------------------------------------ */
     _buildGallery() {
       const L = this.opts.labels, sig = this._ac.signal;
       this.track.setAttribute("aria-live", "polite");
       const list = document.createElement("div");
-      list.className = "cs-thumbs";
+      list.className = "dos-thumbs";
       list.setAttribute("role", "tablist");
       list.setAttribute("aria-label", L.thumbs);
       this.tabs = this.slides.map((s, i) => {
@@ -627,7 +627,7 @@
         s.setAttribute("aria-roledescription", L.slide);
         s.setAttribute("aria-label", name);
         s.tabIndex = 0;
-        const b = this._btn("cs-thumb", name, "");
+        const b = this._btn("dos-thumb", name, "");
         b.id = `${this.uid}-tab-${i}`;
         b.setAttribute("role", "tab");
         b.setAttribute("aria-controls", s.id);
@@ -673,7 +673,7 @@
       this._syncThumbFade = () => {
         const max = list.scrollWidth - list.clientWidth - 1;
         const start = list.scrollLeft > 0, end = list.scrollLeft < max;
-        list.setAttribute("data-cs-overflow", start && end ? "both" : end ? "end" : start ? "start" : "none");
+        list.setAttribute("data-dos-overflow", start && end ? "both" : end ? "end" : start ? "start" : "none");
       };
       list.addEventListener("scroll", this._syncThumbFade, { passive: true, signal: sig });
       this.root.append(list);
@@ -705,7 +705,7 @@
     }
     destroy() {
       if (!this._ac) return;
-      this._emit("cs:destroy", {});
+      this._emit("dos:destroy", {});
       this._ac.abort();
       clearInterval(this._timer);
       clearTimeout(this._debounce);
@@ -714,13 +714,13 @@
       this._io?.disconnect();
       this.root.innerHTML = this._snapshot;
       for (const [a, v] of this._rootAttrs) v === null ? this.root.removeAttribute(a) : this.root.setAttribute(a, v);
-      delete this.root._cs;
+      delete this.root._dos;
     }
   };
 
   // src/auto.js
-  window.CustomSlider = CustomSlider;
-  var run = () => CustomSlider.autoInit();
+  window.DealerOnSlider = DealerOnSlider;
+  var run = () => DealerOnSlider.autoInit();
   if (document.readyState === "loading") {
     document.addEventListener("DOMContentLoaded", run);
   } else {
@@ -752,7 +752,7 @@
         dlg.addEventListener('close', () => { media.innerHTML = empty; });
       });
     } catch (e) {
-      console.error('custom-slider: the video pattern script failed', e);
+      console.error('dealeron-slider: the video pattern script failed', e);
     }
     try {
       document.querySelectorAll('[data-tabs]').forEach((wrap, w) => {
@@ -868,16 +868,16 @@
         sync();
       });
     } catch (e) {
-      console.error('custom-slider: the tabs pattern script failed', e);
+      console.error('dealeron-slider: the tabs pattern script failed', e);
     }
     try {
       document.querySelectorAll('[data-bar]').forEach((root) => {
         const sync = () => {
-          const bar = root.querySelector('.cs-dots');
+          const bar = root.querySelector('.dos-dots');
           if (!bar) return;
           const dots = [...bar.children];
           bar.style.setProperty('--bar-count', dots.length || 1);
-          bar.style.setProperty('--bar-index', Math.max(0, dots.findIndex((d) => d.classList.contains('cs-dot--current'))));
+          bar.style.setProperty('--bar-index', Math.max(0, dots.findIndex((d) => d.classList.contains('dos-dot--current'))));
         };
         // Watch the carousel, not the dot row: the dots are built by the engine and
         // may not exist yet, whatever order the two scripts loaded in. The same
@@ -887,28 +887,28 @@
         sync();
       });
     } catch (e) {
-      console.error('custom-slider: the models pattern script failed', e);
+      console.error('dealeron-slider: the models pattern script failed', e);
     }
     try {
       document.querySelectorAll('[data-filter-gallery]').forEach((wrap) => {
-        const root = wrap.querySelector('.cs');
-        const all = [...root.querySelectorAll('.cs-slide')].map((s) => s.cloneNode(true));
+        const root = wrap.querySelector('.dos');
+        const all = [...root.querySelectorAll('.dos-slide')].map((s) => s.cloneNode(true));
         wrap.querySelectorAll('[data-filter]').forEach((btn) => {
           btn.addEventListener('click', () => {
             const tag = btn.dataset.filter;
             wrap.querySelectorAll('[data-filter]').forEach((b) => b.setAttribute('aria-pressed', String(b === btn)));
-            if (root._cs) root._cs.destroy();
+            if (root._dos) root._dos.destroy();
             // Re-query AFTER destroy(). destroy() puts the root's original markup
             // back, so any element captured before it is now detached and writing
             // to it changes nothing you can see.
-            const track = root.querySelector('.cs-track');
+            const track = root.querySelector('.dos-track');
             track.replaceChildren(...all.filter((s) => !tag || s.querySelector('[data-tag]').dataset.tag === tag).map((s) => s.cloneNode(true)));
-            new CustomSlider(root);
+            new DealerOnSlider(root);
           });
         });
       });
     } catch (e) {
-      console.error('custom-slider: the gallery-filter pattern script failed', e);
+      console.error('dealeron-slider: the gallery-filter pattern script failed', e);
     }
     try {
       document.querySelectorAll('[data-video-dialog]').forEach((root) => {
@@ -932,25 +932,25 @@
         dlg.addEventListener('close', () => { media.innerHTML = empty; });
       });
     } catch (e) {
-      console.error('custom-slider: the media-gallery pattern script failed', e);
+      console.error('dealeron-slider: the media-gallery pattern script failed', e);
     }
     try {
       document.querySelectorAll('[data-lightbox]').forEach((wrap) => {
         const dlg = wrap.querySelector('dialog');
-        const root = dlg.querySelector('.cs');
+        const root = dlg.querySelector('.dos');
         wrap.querySelector('[data-lb-open]').addEventListener('click', () => {
           dlg.showModal();
           // Init AFTER the dialog is visible: a slider measured while display:none
           // has no width, so every slide would come out the same wrong size.
-          if (!root._cs) new CustomSlider(root);
+          if (!root._dos) new DealerOnSlider(root);
         });
         dlg.querySelector('[data-lb-close]').addEventListener('click', () => dlg.close());
       });
     } catch (e) {
-      console.error('custom-slider: the lightbox pattern script failed', e);
+      console.error('dealeron-slider: the lightbox pattern script failed', e);
     }
   };
-  if (window.CustomSlider) window.CustomSlider.wirePatterns = wire;
+  if (window.DealerOnSlider) window.DealerOnSlider.wirePatterns = wire;
   if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);
   else wire();
 })();

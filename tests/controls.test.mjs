@@ -51,16 +51,16 @@ const colorKnob = (page, label) =>
   }, label);
 
 test.describe('a knob shows what the slider is actually using', () => {
-  // F042: Tall photos set --cs-controls-space in its pattern CSS instead of its
+  // F042: Tall photos set --dos-controls-space in its pattern CSS instead of its
   // props, so the knob read the engine's 2.5em while the strip resolved 3em -
   // and the copied CSS shipped both, in sequence, with no edit at all.
   test('Room for the dots agrees with the strip, before anyone touches it', async () => {
     await pick(page, 'models');
     const shown = await knob(page, 'Room for the dots');
     const [resolved, occurrences] = await page.evaluate(() => {
-      const root = globalThis.CARGO.sdoc().querySelector('.cs');
+      const root = globalThis.CARGO.sdoc().querySelector('.dos');
       const code = document.getElementById('wb-code').textContent;
-      return [getComputedStyle(root).getPropertyValue('--cs-controls-space').trim(), (code.match(/--cs-controls-space:/g) || []).length];
+      return [getComputedStyle(root).getPropertyValue('--dos-controls-space').trim(), (code.match(/--dos-controls-space:/g) || []).length];
     });
     assert.equal(shown, resolved, 'the knob and the slider disagree');
     assert.equal(occurrences, 1, 'the copied CSS sets the controls space more than once');
@@ -124,7 +124,7 @@ test.describe('a control puts back everything it took', () => {
     // Read off the CODE, not off a picker: the card is the pattern now, so the
     // only place the choice is visible is the class the snippet ships.
     const after = await page.evaluate(() => ({
-      cls: document.getElementById('wb-code').textContent.match(/^\.([\w-]+)\.cs \{/m)?.[1],
+      cls: document.getElementById('wb-code').textContent.match(/^\.([\w-]+)\.dos \{/m)?.[1],
       lookClass: /cargo-(\w+)/.exec(document.getElementById('wb-code').textContent)?.[1],
     }));
     assert.equal(after.lookClass, look0, `the preset's card style survived the reset (${after.lookClass})`);
@@ -135,19 +135,19 @@ test.describe('a control puts back everything it took', () => {
     // exactly where they started rather than at a brand's.
     const props = await page.evaluate(() => ({ ...globalThis.CARGO.state.lookProps }));
     const own = await page.evaluate(() => globalThis.CARGO.LOOKS[globalThis.CARGO.state.look].settings);
-    for (const k of Object.keys(props)) if (!k.startsWith('--cs-')) assert.equal(props[k], own[k], `${k} did not come back to the look's own value`);
+    for (const k of Object.keys(props)) if (!k.startsWith('--dos-')) assert.equal(props[k], own[k], `${k} did not come back to the look's own value`);
   });
 });
 
 test.describe('a number field refuses what the engine cannot page', () => {
-  // F060: typing 2.5 emitted cs-lg-2 while the field went on showing 2.5, and
+  // F060: typing 2.5 emitted dos-lg-2 while the field went on showing 2.5, and
   // setting the property to 2.5 by hand makes the last page unreachable.
   test('a fractional count is not left showing in the field', async () => {
     await pick(page, 'modelbar');
     const field = await setField(page, 'Phone · under 576', '2.5');
     const shown = await field.inputValue();
     assert.ok(/^\d+$/.test(shown), `the field still shows "${shown}"`);
-    const cls = await page.evaluate(() => /class="[^"]*cs-xs-(\d+)/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null);
+    const cls = await page.evaluate(() => /class="[^"]*dos-xs-(\d+)/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null);
     if (cls !== null) assert.equal(cls, shown, 'the emitted column class disagrees with the field');
   });
 });
@@ -176,7 +176,7 @@ test.describe('a knob the page actually reads', () => {
   // drawn against the 47.75px the field named, unchanged after typing 7em.
   test('Side gutter changes the gutter the page draws', async () => {
     await pick(page, 'modelbar');
-    const drawn = () => page.evaluate(() => +getComputedStyle(globalThis.CARGO.sdoc().querySelector('.cs')).paddingLeft.replace('px', ''));
+    const drawn = () => page.evaluate(() => +getComputedStyle(globalThis.CARGO.sdoc().querySelector('.dos')).paddingLeft.replace('px', ''));
     const before = await drawn();
     await setField(page, 'Side gutter', '7em');
     const after = await drawn();
@@ -192,7 +192,7 @@ test.describe('a knob the page actually reads', () => {
     await pick(page, 'modelbar');
     await setField(page, 'Side gutter', 'banana');
     const r = await page.evaluate(() => {
-      const root = globalThis.CARGO.sdoc().querySelector('.cs');
+      const root = globalThis.CARGO.sdoc().querySelector('.dos');
       const input = [...document.querySelectorAll('#wb-settings .tp-lblv')].find((r) => r.querySelector('.tp-lblv_l')?.textContent.trim() === 'Side gutter')?.querySelector('input');
       return {
         pad: +getComputedStyle(root).paddingLeft.replace('px', ''),
@@ -207,7 +207,7 @@ test.describe('a knob the page actually reads', () => {
 });
 
 test.describe('the rotation the hero was born with is a control, not a literal', () => {
-  // F054: data-cs-autoplay has been a first-class engine option all along and
+  // F054: data-dos-autoplay has been a first-class engine option all along and
   // the panel never showed it. The hero shipped it hard-wired at 5000 and no
   // other pattern could turn it on, so slowing a hero, holding one still, or
   // rotating a testimonial strip all meant knowing the attribute and editing
@@ -224,19 +224,19 @@ test.describe('the rotation the hero was born with is a control, not a literal',
   test('the field shows the hero the timer it is actually running', async () => {
     await pick(page, 'hero');
     assert.equal(await rotate(page).inputValue(), '5000', 'the field invented its own value beside the hero 5000');
-    assert.match(await code(page), /data-cs-autoplay="5000"/, 'the hero stopped shipping its timer');
+    assert.match(await code(page), /data-dos-autoplay="5000"/, 'the hero stopped shipping its timer');
   });
 
   test('zero takes the attribute away instead of writing a zero', async () => {
     await pick(page, 'hero');
     await set(page, '0');
-    assert.doesNotMatch(await code(page), /data-cs-autoplay/, 'off still ships the attribute');
+    assert.doesNotMatch(await code(page), /data-dos-autoplay/, 'off still ships the attribute');
   });
 
   test('a strip that never rotated can be told to', async () => {
     await pick(page, 'reviews');
     await set(page, '7000');
-    assert.match(await code(page), /data-cs-autoplay="7000"/, 'the value never reached the snippet');
+    assert.match(await code(page), /data-dos-autoplay="7000"/, 'the value never reached the snippet');
   });
 
   // The reachable bad values are a negative (every engine guard is `> 0`, so it
@@ -249,22 +249,22 @@ test.describe('the rotation the hero was born with is a control, not a literal',
   test('a value the engine would misread is refused', async () => {
     await pick(page, 'reviews');
     await set(page, '3000');
-    assert.match(await code(page), /data-cs-autoplay="3000"/, 'the set-up value did not take');
+    assert.match(await code(page), /data-dos-autoplay="3000"/, 'the set-up value did not take');
     await set(page, '-500');
-    assert.doesNotMatch(await code(page), /data-cs-autoplay/, '"-500" reached the attribute');
+    assert.doesNotMatch(await code(page), /data-dos-autoplay/, '"-500" reached the attribute');
 
     await set(page, '3000');
     await set(page, '');
-    assert.doesNotMatch(await code(page), /data-cs-autoplay=""/, 'an empty box reached the attribute');
+    assert.doesNotMatch(await code(page), /data-dos-autoplay=""/, 'an empty box reached the attribute');
     assert.equal(await rotate(page).inputValue(), '3000', 'the field no longer shows the timer the snippet ships');
-    assert.match(await code(page), /data-cs-autoplay="3000"/, 'the snippet lost the timer the field still shows');
+    assert.match(await code(page), /data-dos-autoplay="3000"/, 'the snippet lost the timer the field still shows');
   });
 
   test('turning it on drops the rewind the engine would have overridden', async () => {
     await pick(page, 'models');
-    assert.match(await code(page), /data-cs-rewind="false"/, 'Tall photos no longer ships rewind=false, so this guards nothing');
+    assert.match(await code(page), /data-dos-rewind="false"/, 'Tall photos no longer ships rewind=false, so this guards nothing');
     await set(page, '4000');
-    assert.doesNotMatch(await code(page), /data-cs-rewind/, 'the snippet would console-warn on every page that runs it');
+    assert.doesNotMatch(await code(page), /data-dos-rewind/, 'the snippet would console-warn on every page that runs it');
   });
 
   test('it is not offered where the engine throws it away', async () => {
@@ -276,7 +276,7 @@ test.describe('the rotation the hero was born with is a control, not a literal',
 });
 
 test.describe('peek is offered wherever it can do something', () => {
-  // F058: the row appeared only where the pattern had already set --cs-peek,
+  // F058: the row appeared only where the pattern had already set --dos-peek,
   // which was the one pattern named after it. "Show a sliver of the next car"
   // lands on a model bar just as often.
   test('a scrolling strip can show a sliver of the next card', async () => {
@@ -290,17 +290,17 @@ test.describe('peek is offered wherever it can do something', () => {
     await pick(page, 'modelbar');
     assert.equal(await knob(page, 'Peek'), '0px', 'Peek does not start off');
     const { css } = await copyParts(page);
-    assert.doesNotMatch(css, /--cs-peek/, '0px is the engine default and should never be written');
+    assert.doesNotMatch(css, /--dos-peek/, '0px is the engine default and should never be written');
   });
 
   test('a value reaches the copied CSS and narrows the card', async () => {
     await pick(page, 'modelbar');
-    const wide = await page.evaluate(() => globalThis.CARGO.sdoc().querySelector('.cs-slide').getBoundingClientRect().width);
+    const wide = await page.evaluate(() => globalThis.CARGO.sdoc().querySelector('.dos-slide').getBoundingClientRect().width);
     await setLength(page, 'Peek', '2', 'em');
     await page.waitForTimeout(250);
-    const narrow = await page.evaluate(() => globalThis.CARGO.sdoc().querySelector('.cs-slide').getBoundingClientRect().width);
+    const narrow = await page.evaluate(() => globalThis.CARGO.sdoc().querySelector('.dos-slide').getBoundingClientRect().width);
     const { css } = await copyParts(page);
-    assert.match(css, /--cs-peek:\s*2em/, 'the value never reached the copied CSS');
+    assert.match(css, /--dos-peek:\s*2em/, 'the value never reached the copied CSS');
     assert.ok(narrow < wide, `the slide did not narrow: ${wide} -> ${narrow}`);
   });
 
@@ -319,15 +319,15 @@ test.describe('peek is offered wherever it can do something', () => {
     await setLength(page, 'Peek', '0', 'px');
     await page.waitForTimeout(250);
     const { css } = await copyParts(page);
-    assert.doesNotMatch(css, /--cs-peek/, 'a media query still sets peek where the knob cannot see it');
+    assert.doesNotMatch(css, /--dos-peek/, 'a media query still sets peek where the knob cannot see it');
   });
 });
 
 test.describe('a property the slider is already using has a control', () => {
   // F056 / F057: five engine properties the Reference documents and the panel
   // never offered. Two of them were worse than merely absent - the portrait
-  // and logo looks ship --cs-arrow-bg-hover in their settings, and the hero
-  // sets --cs-dot-current in its props, so those values were going out with
+  // and logo looks ship --dos-arrow-bg-hover in their settings, and the hero
+  // sets --dos-dot-current in its props, so those values were going out with
   // nothing able to show a designer what had been chosen for them.
   const ROWS = ['Arrow colour · hover', 'Arrow background · hover', 'Dot size', 'Dot colour', 'Dot colour, current'];
 
@@ -344,9 +344,9 @@ test.describe('a property the slider is already using has a control', () => {
     // value, the field shows that value.
     const look = await page.evaluate(() => {
       const { LOOKS, PATTERNS } = globalThis.CARGO;
-      const id = Object.keys(LOOKS).find((k) => LOOKS[k].settings['--cs-arrow-bg-hover']);
+      const id = Object.keys(LOOKS).find((k) => LOOKS[k].settings['--dos-arrow-bg-hover']);
       const at = id && Object.keys(PATTERNS).find((k) => PATTERNS[k].look === id);
-      return id && at ? { at, label: LOOKS[id].label, value: LOOKS[id].settings['--cs-arrow-bg-hover'] } : null;
+      return id && at ? { at, label: LOOKS[id].label, value: LOOKS[id].settings['--dos-arrow-bg-hover'] } : null;
     });
     assert.ok(look, 'no card ships an arrow hover colour, so this guards nothing');
     await pick(page, look.at);
@@ -364,14 +364,14 @@ test.describe('a property the slider is already using has a control', () => {
     await setField(page, 'Dot colour', '#c8102e');
     await page.waitForTimeout(250);
     // Not the first dot: that one is current, and correctly draws in
-    // --cs-dot-current rather than the colour under test.
-    const drawn = await page.evaluate(() => getComputedStyle(globalThis.CARGO.sdoc().querySelector('.cs-dot:not(.cs-dot--current)'), '::after').backgroundColor);
+    // --dos-dot-current rather than the colour under test.
+    const drawn = await page.evaluate(() => getComputedStyle(globalThis.CARGO.sdoc().querySelector('.dos-dot:not(.dos-dot--current)'), '::after').backgroundColor);
     const { css } = await copyParts(page);
-    assert.match(css, /--cs-dot-fg:\s*#c8102e/, 'the value never reached the copied CSS');
+    assert.match(css, /--dos-dot-fg:\s*#c8102e/, 'the value never reached the copied CSS');
     assert.equal(drawn, 'rgb(200, 16, 46)', `the dot is drawn ${drawn}`);
   });
 
-  // F056: --cs-arrow-size was reachable only by hand-editing the snippet, and
+  // F056: --dos-arrow-size was reachable only by hand-editing the snippet, and
   // six designs resize the arrow inside their own media queries - which the
   // field cannot own. Rather than imply one size at every width, the panel
   // reads those rules back and says what they set.
@@ -379,9 +379,9 @@ test.describe('a property the slider is already using has a control', () => {
     await pick(page, 'cards');
     await setLength(page, 'Arrow size', '60', 'px');
     await page.waitForTimeout(250);
-    const drawn = await page.evaluate(() => +globalThis.CARGO.sdoc().querySelector('.cs-arrow').getBoundingClientRect().width.toFixed(0));
+    const drawn = await page.evaluate(() => +globalThis.CARGO.sdoc().querySelector('.dos-arrow').getBoundingClientRect().width.toFixed(0));
     const { css } = await copyParts(page);
-    assert.match(css, /--cs-arrow-size:\s*60px/, 'the value never reached the copied CSS');
+    assert.match(css, /--dos-arrow-size:\s*60px/, 'the value never reached the copied CSS');
     assert.equal(drawn, 60, `the arrow is drawn ${drawn}px`);
   });
 
@@ -545,7 +545,7 @@ test.describe('every link on the Patterns page opens what it names', () => {
     // Put the model bar back: this file is serial on one page.
     await page.goto(`${ORIGIN}/demo/index.html?f074c#modelbar`, { waitUntil: 'load' });
     await page.waitForTimeout(500);
-    const ladder = await page.evaluate(() => [...document.querySelector('#wb-code').textContent.matchAll(/cs-xs-(\d+)/g)].map((m) => m[1])[0]);
+    const ladder = await page.evaluate(() => [...document.querySelector('#wb-code').textContent.matchAll(/dos-xs-(\d+)/g)].map((m) => m[1])[0]);
     assert.equal(ladder, '2', `the model bar was left at ${ladder} cards on a phone, so the cleanup did not take`);
   });
 });
@@ -641,10 +641,10 @@ test.describe('the hero can put its dots on the photo', () => {
 
   const geometry = (page) =>
     page.evaluate(() => {
-      const root = globalThis.CARGO.sdoc().querySelector('.cs');
+      const root = globalThis.CARGO.sdoc().querySelector('.dos');
       const img = root.querySelector('.cargo-photo img');
-      const dots = root.querySelector('.cs-dots');
-      const arrow = root.querySelector('.cs-arrow--prev');
+      const dots = root.querySelector('.dos-dots');
+      const arrow = root.querySelector('.dos-arrow--prev');
       const r = root.getBoundingClientRect();
       const i = img.getBoundingClientRect();
       return {
@@ -679,7 +679,7 @@ test.describe('the hero can put its dots on the photo', () => {
   // The one that matters, and the one that was missing: positioned over the
   // photo is not the same as PAINTED over it. The dot row takes no z-index of
   // its own, so the track painted straight over it - measured, the stack at a
-  // dot's centre was IMG, .cargo-photo, .cs-slide, .cs-track, then the dot.
+  // dot's centre was IMG, .cargo-photo, .dos-slide, .dos-track, then the dot.
   // Geometry and computed style both said the dots were fine; they were
   // invisible on the page.
   test('a dot is the topmost thing at its own centre', async () => {
@@ -689,19 +689,19 @@ test.describe('the hero can put its dots on the photo', () => {
       await overBox(page).check();
       await page.waitForTimeout(350);
     }
-    await stageFrame(page).locator('.cs-dots').first().scrollIntoViewIfNeeded();
+    await stageFrame(page).locator('.dos-dots').first().scrollIntoViewIfNeeded();
     await page.waitForTimeout(200);
     // Hit-tested inside the frame's own document. The preview is an iframe now,
     // so the parent's elementsFromPoint stops at the <iframe> element and would
     // report a clean stack for a dot buried under the photo.
     const stack = await page.evaluate(() => {
       const d = globalThis.CARGO.sdoc();
-      const dot = d.querySelector('.cs-dot');
+      const dot = d.querySelector('.dos-dot');
       const r = dot.getBoundingClientRect();
       return d.elementsFromPoint(r.left + r.width / 2, r.top + r.height / 2).map((e) => `${e.tagName}.${String(e.className).split(' ').filter(Boolean)[0] ?? ''}`);
     });
     assert.ok(stack.length, 'the dot is not in the viewport, so this proves nothing');
-    assert.match(stack[0], /cs-dot/, `the photo paints over the dots — stack was ${stack.slice(0, 4).join(' > ')}`);
+    assert.match(stack[0], /dos-dot/, `the photo paints over the dots — stack was ${stack.slice(0, 4).join(' > ')}`);
   });
 
   test('the dots turn light, and the knobs say so', async () => {
@@ -774,9 +774,9 @@ test.describe('the last engine properties reach the panel', () => {
     await pick(page, 'gallery');
     await setLength(page, 'Thumbnail width', '120', 'px');
     await page.waitForTimeout(300);
-    const drawn = await page.evaluate(() => Math.round(globalThis.CARGO.sdoc().querySelector('.cs-thumb')?.getBoundingClientRect().width ?? 0));
+    const drawn = await page.evaluate(() => Math.round(globalThis.CARGO.sdoc().querySelector('.dos-thumb')?.getBoundingClientRect().width ?? 0));
     const { css } = await copyParts(page);
-    assert.match(css, /--cs-thumb-w:\s*120px/, 'the value never reached the copied CSS');
+    assert.match(css, /--dos-thumb-w:\s*120px/, 'the value never reached the copied CSS');
     assert.equal(drawn, 120, `the thumbnail is drawn ${drawn}px`);
   });
 
@@ -790,7 +790,7 @@ test.describe('the last engine properties reach the panel', () => {
     const f = await setField(page, 'Phone · under 576', '9');
     const shown = await f.inputValue();
     assert.ok(+shown >= 1 && +shown <= 8, `the field still shows "${shown}"`);
-    const cls = await page.evaluate(() => /class="[^"]*cs-xs-(\d+)/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null);
+    const cls = await page.evaluate(() => /class="[^"]*dos-xs-(\d+)/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null);
     if (cls !== null) assert.equal(cls, shown, 'the emitted column class disagrees with the field');
   });
 
@@ -831,9 +831,9 @@ test.describe('picking a colour does not rebuild the slider', () => {
         if (sw.getAttribute('aria-expanded') !== 'true') sw.click();
         // Count on the class the preview runs. The stage is a srcdoc frame that
         // loads its own copy of the engine, so wrapping this page's
-        // CustomSlider counted nothing: a drag that tore the stage down on every
+        // DealerOnSlider counted nothing: a drag that tore the stage down on every
         // step still read 0 and 0 here.
-        const C = globalThis.CARGO.sdoc().defaultView.CustomSlider;
+        const C = globalThis.CARGO.sdoc().defaultView.DealerOnSlider;
         if (!C) return { none: true };
         let inits = 0,
           destroys = 0;
@@ -847,7 +847,7 @@ test.describe('picking a colour does not rebuild the slider', () => {
           destroys++;
           return D.apply(this, a);
         };
-        const first = globalThis.CARGO.sdoc().querySelector('.cs-slide');
+        const first = globalThis.CARGO.sdoc().querySelector('.dos-slide');
         const move = (el, v) => {
           el.value = v;
           el.dispatchEvent(new Event('input', { bubbles: true }));
@@ -858,7 +858,7 @@ test.describe('picking a colour does not rebuild the slider', () => {
         for (const v of vals) move(spectrum, v);
         C.autoInit = AI;
         C.prototype.destroy = D;
-        return { framed: C !== globalThis.CustomSlider, inits, destroys, sameNode: first === globalThis.CARGO.sdoc().querySelector('.cs-slide'), text: field.value };
+        return { framed: C !== globalThis.DealerOnSlider, inits, destroys, sameNode: first === globalThis.CARGO.sdoc().querySelector('.dos-slide'), text: field.value };
       },
       [label, values],
     );
@@ -911,16 +911,16 @@ test.describe('the preview resolves the phone rules for real', () => {
     const engine = await engineFiles();
 
     const READ = (root) => {
-      const slide = root.querySelector('.cs-slide');
+      const slide = root.querySelector('.dos-slide');
       const cs = getComputedStyle(root);
       const img = root.querySelector('img');
       return {
-        perView: cs.getPropertyValue('--cs-per-view').trim(),
-        arrow: cs.getPropertyValue('--cs-arrow-size').trim(),
+        perView: cs.getPropertyValue('--dos-per-view').trim(),
+        arrow: cs.getPropertyValue('--dos-arrow-size').trim(),
         rootPad: Math.round(parseFloat(cs.paddingInlineStart)),
         slideW: Math.round(slide.getBoundingClientRect().width),
         ratio: img ? getComputedStyle(img).aspectRatio : null,
-        stops: root._cs?._stops?.().length ?? null,
+        stops: root._dos?._stops?.().length ?? null,
       };
     };
 
@@ -929,12 +929,12 @@ test.describe('the preview resolves the phone rules for real', () => {
       await pick(page, id);
       await page.click('.ui-widths button[data-w="390"]');
       await page.waitForTimeout(300);
-      const shown = await stageFrame(page).locator('.cs').first().evaluate(READ);
+      const shown = await stageFrame(page).locator('.dos').first().evaluate(READ);
 
       const p = await copyParts(page);
       await real.setContent(hostHtml({ ...engine, css: p.css, html: p.html, js: p.js, box: PHONE }), { waitUntil: 'load' });
       await real.waitForTimeout(300);
-      const onPhone = await real.evaluate((fn) => new Function('root', `return (${fn})(root)`)(document.querySelector('#box .cs')), READ.toString());
+      const onPhone = await real.evaluate((fn) => new Function('root', `return (${fn})(root)`)(document.querySelector('#box .dos')), READ.toString());
 
       assert.deepEqual(shown, onPhone, `${id}: the preview and a real ${PHONE}px phone disagree`);
     }
@@ -962,7 +962,7 @@ test.describe('the preview resolves the phone rules for real', () => {
     await page.click('.ui-widths button[data-w="390"]');
     await page.waitForTimeout(200);
     const [live, copied] = await Promise.all([page.evaluate(() => globalThis.CARGO.sdoc().getElementById('wb-live-css').textContent), copyParts(page).then((p) => p.css)]);
-    const name = /^\.([\w-]+)\.cs/m.exec(copied)?.[1] ?? 'my-slider';
+    const name = /^\.([\w-]+)\.dos/m.exec(copied)?.[1] ?? 'my-slider';
     assert.equal(live.split(name).join('wb-live'), copied.split(name).join('wb-live'), 'the preview stylesheet is not the copied stylesheet');
   });
 });
@@ -994,7 +994,7 @@ test.describe('the ladder resolves without a pin', () => {
           // out of its own @media block and credits the next block's declaration
           // to this one, which is how the tile's 380px rule read as if it sat in
           // the 767.98px block.
-          const hit = [...String(l.css ?? '').matchAll(/@media[^{]*max-width:\s*(\d[\d.]*)px[^{]*\{[^}]*?--cs-per-view:\s*(\d+)/g)].filter((m) => +m[1] >= 390);
+          const hit = [...String(l.css ?? '').matchAll(/@media[^{]*max-width:\s*(\d[\d.]*)px[^{]*\{[^}]*?--dos-per-view:\s*(\d+)/g)].filter((m) => +m[1] >= 390);
           return hit.length ? { id, want: hit[hit.length - 1][2] } : null;
         })
         .filter(Boolean),
@@ -1010,7 +1010,7 @@ test.describe('the ladder resolves without a pin', () => {
       await fresh.click('.ui-widths button[data-w="390"]');
       await fresh.waitForTimeout(240);
       const seen = await fresh.evaluate(() => ({
-        perView: getComputedStyle(globalThis.CARGO.sdoc().querySelector('.cs')).getPropertyValue('--cs-per-view').trim(),
+        perView: getComputedStyle(globalThis.CARGO.sdoc().querySelector('.dos')).getPropertyValue('--dos-per-view').trim(),
         across: document.getElementById('spec-across').textContent,
       }));
       assert.equal(seen.perView, c.want, `${pat}/${c.id}: the 390 preview shows ${seen.perView} across where its own card sheet says ${c.want}`);
@@ -1026,11 +1026,11 @@ test.describe('the ladder resolves without a pin', () => {
     await page.click('.ui-widths button[data-w="390"]');
     await page.waitForTimeout(180);
     const parts = await copyParts(page);
-    // The model bar ships its ladder as the cs-xs/sm/md/lg column classes on
+    // The model bar ships its ladder as the dos-xs/sm/md/lg column classes on
     // the markup, not as emitted media queries - so what has to be proved is
     // that the PIN is absent and the ladder is still on the slides.
-    assert.doesNotMatch(parts.css, /--cs-per-view/, 'a per-view declaration leaked into the copied CSS');
-    assert.match(parts.html, /\bcs-(xs|sm|md|lg)-\d/, 'the copied markup lost its column classes');
+    assert.doesNotMatch(parts.css, /--dos-per-view/, 'a per-view declaration leaked into the copied CSS');
+    assert.match(parts.html, /\bdos-(xs|sm|md|lg)-\d/, 'the copied markup lost its column classes');
   });
 });
 
@@ -1085,9 +1085,9 @@ test.describe('the arrow placement switch is not overruled by a breakpoint', () 
     p.evaluate(() => {
       const d = globalThis.CARGO.sdoc();
       const w = globalThis.CARGO.swin();
-      const root = d.querySelector('.cs');
-      const slide = d.querySelector('.cs-slide');
-      const prev = d.querySelector('.cs-arrow--prev');
+      const root = d.querySelector('.dos');
+      const slide = d.querySelector('.dos-slide');
+      const prev = d.querySelector('.dos-arrow--prev');
       if (!root || !slide || !prev) return null;
       const sr = slide.getBoundingClientRect();
       const ar = prev.getBoundingClientRect();
@@ -1137,7 +1137,7 @@ test.describe('the arrow placement switch is not overruled by a breakpoint', () 
     }
     const parts = await copyParts(page);
     assert.match(parts.css, /@media \(max-width: 767\.98px\)[\s\S]*?cargo-tabs[^}]*padding-inline: 0/, 'the tab strip no longer drops its gutter on a phone');
-    assert.doesNotMatch(parts.css, /@media \(max-width: 767\.98px\) \{\s*\.[\w-]+\.cs \{ padding-inline: 0/, 'the phone rule is overruling the carousel again');
+    assert.doesNotMatch(parts.css, /@media \(max-width: 767\.98px\) \{\s*\.[\w-]+\.dos \{ padding-inline: 0/, 'the phone rule is overruling the carousel again');
   });
 });
 
@@ -1150,11 +1150,11 @@ test.describe('the arrow placement switch is not overruled by a breakpoint', () 
 test.describe('the pause button sits on the thing it pauses', () => {
   const placed = () =>
     stageFrame(page)
-      .locator('.cs')
+      .locator('.dos')
       .first()
       .evaluate((root) => {
-        const p = root.querySelector('.cs-pause');
-        const media = root.querySelector('img') ?? root.querySelector('.cs-slide');
+        const p = root.querySelector('.dos-pause');
+        const media = root.querySelector('img') ?? root.querySelector('.dos-slide');
         if (!p || !media) return null;
         const a = p.getBoundingClientRect();
         const b = media.getBoundingClientRect();
@@ -1192,7 +1192,7 @@ test.describe('the pause button sits on the thing it pauses', () => {
     await auto.fill('0');
     await page.waitForTimeout(400);
     const parts = await copyParts(page);
-    assert.doesNotMatch(parts.css, /cs-pause/, 'a slider with no pause button ships a rule for one');
+    assert.doesNotMatch(parts.css, /dos-pause/, 'a slider with no pause button ships a rule for one');
   });
 });
 
@@ -1207,8 +1207,8 @@ test.describe('a brand preset swaps the vehicles, never the pattern', () => {
   const cardState = () =>
     page.evaluate(() => {
       const d = globalThis.CARGO.sdoc();
-      const root = d?.querySelector('.cs');
-      const slide = d?.querySelector('.cs-slide');
+      const root = d?.querySelector('.dos');
+      const slide = d?.querySelector('.dos-slide');
       return {
         look: [...(root?.classList ?? [])].filter((c) => c.startsWith('cargo-')),
         // The elements the LOOK draws, in order. Sub text, badge and button
@@ -1358,7 +1358,7 @@ test.describe('one vocabulary for a card, whatever pattern it is in', () => {
       await page.waitForTimeout(200);
       const found = await page.evaluate(() => {
         const d = globalThis.CARGO.sdoc();
-        const slide = d?.querySelector('.cs-slide');
+        const slide = d?.querySelector('.dos-slide');
         if (!slide) return null;
         // A heading or a paragraph carrying no cargo- class is a role the
         // designer cannot target and cannot recognise from the last pattern.
@@ -1388,9 +1388,9 @@ test.describe('the lightbox is shown covering the page', () => {
         w: Math.round(r.width),
         h: Math.round(r.height),
         fits: r.height <= innerHeight && r.top >= 0,
-        slides: d.querySelectorAll('.cs-slide').length,
-        thumbs: d.querySelectorAll('.cs-thumb').length,
-        arrows: d.querySelectorAll('.cs-arrow').length,
+        slides: d.querySelectorAll('.dos-slide').length,
+        thumbs: d.querySelectorAll('.dos-thumb').length,
+        arrows: d.querySelectorAll('.dos-arrow').length,
         opener: d.parentElement.querySelectorAll('[data-lb-open]').length,
       };
     });
@@ -1404,7 +1404,7 @@ test.describe('the lightbox is shown covering the page', () => {
     const o = await overlay();
     assert.ok(o, 'pressing the trigger opened nothing on the page');
     assert.equal(o.modal, true, 'the dialog is not modal, so it is not covering anything');
-    // The gallery is data-cs-init="manual" because one measured while hidden has
+    // The gallery is data-dos-init="manual" because one measured while hidden has
     // no width. Built at the wrong moment it comes out with no thumbs and no
     // arrows - a static photo in a dark box, which is a different wrong example.
     assert.equal(o.slides, 6, `the dialog holds ${o.slides} slides`);

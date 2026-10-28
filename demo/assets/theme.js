@@ -23,7 +23,7 @@
     const next = current() === 'dark' ? 'light' : 'dark';
     root.dataset.theme = next;
     try {
-      localStorage.setItem('cs-theme', next);
+      localStorage.setItem('dos-theme', next);
     } catch {
       /* private mode: the choice just lasts this page view */
     }
@@ -52,7 +52,7 @@
     const stream = new Blob([buf]).stream().pipeThrough(new CompressionStream('gzip'));
     return (await new Response(stream).blob()).size;
   };
-  Promise.all(['../dist/custom-slider.min.css', '../dist/custom-slider.min.js'].map(gz))
+  Promise.all(['../dist/dealeron-slider.min.css', '../dist/dealeron-slider.min.js'].map(gz))
     .then(([css, js]) => {
       size.textContent = `Two small files, ${((css + js) / 1024).toFixed(1)} KB in all — nothing else to install`;
     })

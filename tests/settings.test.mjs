@@ -21,7 +21,7 @@ const shown = (page) =>
     // style picker, which went on 2026-09-08 - the card is the pattern now, so
     // the class in the CSS is the only place the choice is stated.
     look: /cargo-(\w+)/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null,
-    gap: /--cs-gap:\s*([^;]*);/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null,
+    gap: /--dos-gap:\s*([^;]*);/.exec(document.getElementById('wb-code').textContent)?.[1] ?? null,
     perView: [...document.querySelectorAll('#wb-settings .tp-lblv')]
       .filter((r) => /Phone|Tablet|Laptop|Desktop/.test(r.querySelector('.tp-lblv_l')?.textContent ?? ''))
       .map((r) => r.querySelector('input').value),
@@ -78,16 +78,16 @@ test.describe('the settings come back with the slides once they are kept', () =>
   test('a poisoned entry does not take the page down or reach the snippet', async () => {
     await pick(page, 'modelbar');
     await page.evaluate(() => {
-      const all = JSON.parse(localStorage.getItem('cs-settings')) ?? { byPattern: {} };
+      const all = JSON.parse(localStorage.getItem('dos-settings')) ?? { byPattern: {} };
       all.byPattern.modelbar = {
         look: 'a-look-that-does-not-exist',
         perView: { base: 2.5, 768: 99, 1200: 3 },
-        props: { '--cs-gap': '1em"><script>x</script>', 'javascript:evil': '1em', '--cs-arrow-fg': '#0a0' },
-        data: { 'data-cs-step': 'slide', onclick: 'evil()' },
+        props: { '--dos-gap': '1em"><script>x</script>', 'javascript:evil': '1em', '--dos-arrow-fg': '#0a0' },
+        data: { 'data-dos-step': 'slide', onclick: 'evil()' },
         name: '2024 Specials',
         count: 999,
       };
-      localStorage.setItem('cs-settings', JSON.stringify(all));
+      localStorage.setItem('dos-settings', JSON.stringify(all));
     });
     await page.reload({ waitUntil: 'load' });
     await stageReady(page);
@@ -100,32 +100,32 @@ test.describe('the settings come back with the slides once they are kept', () =>
     }));
     assert.ok(r.stage > 100, 'a poisoned settings entry blanked the Build page');
     assert.doesNotMatch(r.code, /<script>x/, 'a stored value broke out of the attribute it was written into');
-    assert.doesNotMatch(r.code, /javascript:evil|onclick/, 'a key that is not a --custom-property or data-cs- attribute was restored');
-    assert.match(r.code, /--cs-arrow-fg: #0a0;/, 'a legitimate stored property was thrown away with the bad ones');
+    assert.doesNotMatch(r.code, /javascript:evil|onclick/, 'a key that is not a --custom-property or data-dos- attribute was restored');
+    assert.match(r.code, /--dos-arrow-fg: #0a0;/, 'a legitimate stored property was thrown away with the bad ones');
     assert.equal(r.name, 'slider-2024-specials', 'a stored name skipped the sanitiser');
     assert.ok(r.rows <= 16, `the stored count of 999 produced ${r.rows} rows`);
     // 2.5 and 99 are refused; 3 is a real tier value and comes back.
-    assert.doesNotMatch(r.code, /cs-xs-2\.5|cs-sm-99/, 'an out-of-range stored ladder value was restored');
+    assert.doesNotMatch(r.code, /dos-xs-2\.5|dos-sm-99/, 'an out-of-range stored ladder value was restored');
   });
 
   // A kept knob the pattern no longer ships must not come back: --bar-bg was
   // removed from the tabbed bar on 2026-09-15 and a browser that had kept it
   // still shipped `--bar-bg: #0a0a0a` in the snippet with no row in the panel
-  // to see or clear it. The engine's own --cs-* and the shared card-font knob
+  // to see or clear it. The engine's own --dos-* and the shared card-font knob
   // still come back, because the panel adds those after the restore.
   test('a kept pattern knob the pattern no longer ships stays out of the snippet', async () => {
     await pick(page, 'tabs');
     await page.evaluate(() => {
-      const all = JSON.parse(localStorage.getItem('cs-settings')) ?? { byPattern: {} };
-      all.byPattern.tabs = { props: { '--bar-bg': '#0a0a0a', '--tab-gap': '2em', '--cs-peek': '1em', '--cargo-font': '1.2em' } };
-      localStorage.setItem('cs-settings', JSON.stringify(all));
+      const all = JSON.parse(localStorage.getItem('dos-settings')) ?? { byPattern: {} };
+      all.byPattern.tabs = { props: { '--bar-bg': '#0a0a0a', '--tab-gap': '2em', '--dos-peek': '1em', '--cargo-font': '1.2em' } };
+      localStorage.setItem('dos-settings', JSON.stringify(all));
     });
     await page.reload({ waitUntil: 'load' });
     await stageReady(page);
     const code = await page.evaluate(() => document.getElementById('wb-code').textContent);
     assert.doesNotMatch(code, /--bar-bg/, 'a knob the pattern no longer ships was restored from storage');
     assert.match(code, /--tab-gap: 2em;/, 'a kept pattern knob was thrown away with the stale one');
-    assert.match(code, /--cs-peek: 1em;/, 'a kept engine knob the panel adds after the restore was thrown away');
+    assert.match(code, /--dos-peek: 1em;/, 'a kept engine knob the panel adds after the restore was thrown away');
     assert.match(code, /--cargo-font: 1.2em;/, 'the kept card-font knob was thrown away');
   });
 
@@ -148,7 +148,7 @@ test.describe('the settings come back with the slides once they are kept', () =>
     // not do is write that tier back over the width the designer chose.
     await page.setViewportSize({ width: 600, height: 900 });
     await page.waitForTimeout(400);
-    const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('cs-settings') ?? '{}').frame);
+    const stored = await page.evaluate(() => JSON.parse(localStorage.getItem('dos-settings') ?? '{}').frame);
     assert.equal(stored, 1200, `a resize overwrote the chosen width with ${stored}`);
     assert.equal((await shown(page)).frame, '992', 'a 600px window did not step the preview down to a tier it can show');
     const scale = await page.evaluate(() => ({
@@ -200,7 +200,7 @@ test.describe('nothing is remembered across a reload unless it is kept', () => {
       dirty: !document.getElementById('wb-dirty').hidden,
       keep: !(/** @type {HTMLButtonElement} */ (document.getElementById('wb-keep')).disabled),
       reset: !(/** @type {HTMLButtonElement} */ (document.getElementById('wb-reset')).disabled),
-      stored: !!JSON.parse(localStorage.getItem('cs-settings') || '{}')?.byPattern?.cards,
+      stored: !!JSON.parse(localStorage.getItem('dos-settings') || '{}')?.byPattern?.cards,
     }));
 
   const fresh = async () => {

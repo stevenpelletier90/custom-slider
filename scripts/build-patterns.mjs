@@ -19,8 +19,8 @@
 // carousel root - and every shared rule hangs off that attribute at the LOWEST
 // specificity that still beats the engine:
 //   %wrap%     -> [data-cargo="id"]                    (0,1,0)
-//   %root%     -> [data-cargo="id"]:where(.cs)         (0,1,0)  rootless pattern
-//              -> :where([data-cargo="id"]) .cs        (0,1,0)  under a wrap
+//   %root%     -> [data-cargo="id"]:where(.dos)         (0,1,0)  rootless pattern
+//              -> :where([data-cargo="id"]) .dos        (0,1,0)  under a wrap
 //   .cargo-x   -> :where([data-cargo="id"]) .cargo-x   (0,1,0) + the rest
 // The engine's own rules are (0,1,0) and lose on source order, which is
 // deterministic because this section is appended after them in the same
@@ -29,8 +29,8 @@
 // sanctioned way to restyle a pattern on one site, and the only one. A
 // pattern's own prop defaults (--tab-size and friends) land at (0,0,0) on
 // :where([data-cargo="id"]) so the snippet's own declarations always beat
-// them; engine-keyed props (--cs-gap) stay in the snippet as deltas, because
-// the engine's `.cs` default is (0,1,0) and would beat a (0,0,0) here.
+// them; engine-keyed props (--dos-gap) stay in the snippet as deltas, because
+// the engine's `.dos` default is (0,1,0) and would beat a (0,0,0) here.
 //
 // Run from `npm run build`, after build-cards.mjs. lint-generated-css.mjs
 // imports the two builders below to lint exactly what ships.
@@ -76,7 +76,7 @@ export const scopeShared = (css, id, wrap) => {
     .replace(/^[ \t]*\n/gm, '')
     .replace(/(^|[{}\n,]\s*)(%root%|%wrap%|\.cargo[\w-]*)/g, (_, pre, tok) => {
       if (tok === '%wrap%') return `${pre}${attr}`;
-      if (tok === '%root%') return wrap ? `${pre}:where(${attr}) .cs` : `${pre}${attr}:where(.cs)`;
+      if (tok === '%root%') return wrap ? `${pre}:where(${attr}) .dos` : `${pre}${attr}:where(.dos)`;
       return `${pre}:where(${attr}) ${tok}`;
     });
 };
@@ -86,7 +86,7 @@ export function patternsCss(CARGO) {
   const out = [];
   for (const [id, p] of Object.entries(PATTERNS)) {
     const wrap = hasWrap(id, p);
-    const own = Object.entries(p.props ?? {}).filter(([k]) => !k.startsWith('--cs-') && !k.startsWith('--cargo-'));
+    const own = Object.entries(p.props ?? {}).filter(([k]) => !k.startsWith('--dos-') && !k.startsWith('--cargo-'));
     const parts = [];
     if (own.length) parts.push(`:where([data-cargo="${id}"]) {\n${own.map(([k, v]) => `  ${k}: ${v};`).join('\n')}\n}`);
     // The photo patterns' caption and link rules ship here unconditionally.
@@ -105,7 +105,7 @@ export function patternsCss(CARGO) {
 // readiness guard the copy panel used to wrap each in. Appended after the
 // engine's own auto-init, so nothing here can stop a carousel starting.
 //
-// The whole pass is also published as CustomSlider.wirePatterns(), for markup
+// The whole pass is also published as DealerOnSlider.wirePatterns(), for markup
 // added after the page loaded - the builder's preview frame re-renders its
 // stage on every change, and the Patterns and Brands pages build theirs from
 // script. It re-runs every pattern script over the whole document, so call it
@@ -117,14 +117,14 @@ export function patternsJs(CARGO) {
   const runs = [];
   for (const [id, p] of Object.entries(PATTERNS)) {
     if (!p.script) continue;
-    runs.push(`    try {\n${p.script.replace(/^/gm, '      ')}\n    } catch (e) {\n      console.error('custom-slider: the ${id} pattern script failed', e);\n    }`);
+    runs.push(`    try {\n${p.script.replace(/^/gm, '      ')}\n    } catch (e) {\n      console.error('dealeron-slider: the ${id} pattern script failed', e);\n    }`);
   }
   return [
     '(function () {',
     '  var wire = function () {',
     runs.join('\n'),
     '  };',
-    '  if (window.CustomSlider) window.CustomSlider.wirePatterns = wire;',
+    '  if (window.DealerOnSlider) window.DealerOnSlider.wirePatterns = wire;',
     "  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', wire);",
     '  else wire();',
     '})();',
@@ -144,10 +144,10 @@ async function main() {
   // weigh the ENGINE alone against its budget.
   const strip = (text) => text.replace(/\s*\/\*! patterns \*\/[\s\S]*$/, '');
   for (const [file, half] of [
-    ['dist/custom-slider.css', cssPretty],
-    ['dist/custom-slider.min.css', cssMin],
-    ['dist/custom-slider.js', jsPretty],
-    ['dist/custom-slider.min.js', jsMin],
+    ['dist/dealeron-slider.css', cssPretty],
+    ['dist/dealeron-slider.min.css', cssMin],
+    ['dist/dealeron-slider.js', jsPretty],
+    ['dist/dealeron-slider.min.js', jsMin],
   ]) {
     const base = strip(readFileSync(file, 'utf8'));
     writeFileSync(file, `${base.trimEnd()}\n${MARK}\n${half.trimEnd()}\n`);

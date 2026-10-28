@@ -12,7 +12,7 @@ test.beforeAll(async ({ browser }) => {
   errors = [];
   page.on('pageerror', (e) => errors.push(e.message));
   await page.goto(`${ORIGIN}/demo/brands.html`, { waitUntil: 'load' });
-  await page.waitForSelector('#b-chevrolet .cs-slide');
+  await page.waitForSelector('#b-chevrolet .dos-slide');
 });
 
 test('every brand has a tile, measured ones first, each with its logo', async () => {
@@ -51,13 +51,13 @@ test('every brand has a tile, measured ones first, each with its logo', async ()
 test('a measured brand has one live stage per pattern it is measured for', async () => {
   const got = await page.evaluate(() =>
     [.../** @type {NodeListOf<HTMLElement>} */ (document.querySelectorAll('#b-chevrolet .bb-stage'))].map((s) => {
-      const root = s.querySelector('.cs');
+      const root = s.querySelector('.dos');
       return {
         pattern: s.dataset.pattern,
-        // The engine sets element._cs on construction and deletes it on
+        // The engine sets element._dos on construction and deletes it on
         // destroy() - checking for it proves the slider was actually
         // initialised, not just that some prev/track markup exists.
-        live: !!(root && root._cs),
+        live: !!(root && root._dos),
         link: s.parentElement.querySelector('a.ui-btn')?.getAttribute('href'),
       };
     }),
@@ -108,7 +108,7 @@ test('every measured stage shows its code, closed, and it is byte for byte the b
   const wb = await ctx.newPage();
   await wb.goto(`${ORIGIN}/demo/index.html#tabs?brand=chevrolet`, { waitUntil: 'load' });
   await wb.waitForSelector('#wb-stage');
-  await wb.frameLocator('#wb-stage').locator('.cs-slide').first().waitFor({ state: 'attached', timeout: 15000 });
+  await wb.frameLocator('#wb-stage').locator('.dos-slide').first().waitFor({ state: 'attached', timeout: 15000 });
   await wb.waitForTimeout(500);
   const builder = await wb.evaluate(() => document.getElementById('wb-code').textContent);
   await ctx.close();
@@ -163,7 +163,7 @@ test('a roster-only brand shows its own cars on the model bar', async () => {
     return {
       count: document.querySelectorAll(`#b-${b} .bb-stage`).length,
       pattern: s?.dataset.pattern,
-      first: s?.querySelector('.cs-slide img')?.getAttribute('src'),
+      first: s?.querySelector('.dos-slide img')?.getAttribute('src'),
       link: s?.parentElement.querySelector('a.ui-btn')?.getAttribute('href'),
       note: document.querySelector(`#b-${b} .bb-note`)?.textContent,
     };
@@ -201,7 +201,7 @@ test('a black OEM mark gets a plate under it in dark mode, none in light', async
 
   const ctx = await browser.newContext({ viewport: { width: 1400, height: 900 } });
   const p = await ctx.newPage();
-  await p.addInitScript(() => localStorage.setItem('cs-theme', 'dark'));
+  await p.addInitScript(() => localStorage.setItem('dos-theme', 'dark'));
   await p.goto(`${ORIGIN}/demo/brands.html`, { waitUntil: 'load' });
   await p.waitForSelector('#b-chrysler .bb-logo');
   const dark = await p.evaluate(() => getComputedStyle(document.querySelector('#b-chrysler .bb-logo')).backgroundColor);
@@ -211,7 +211,7 @@ test('a black OEM mark gets a plate under it in dark mode, none in light', async
 
 test('the deep link lands on the brand and nothing threw', async () => {
   await page.goto(`${ORIGIN}/demo/brands.html#toyota`, { waitUntil: 'load' });
-  await page.waitForSelector('#b-toyota .cs-slide');
+  await page.waitForSelector('#b-toyota .dos-slide');
   await page.waitForTimeout(300);
   const near = await page.evaluate(() => Math.abs(document.getElementById('b-toyota').getBoundingClientRect().top) < 120);
   assert.equal(near, true);
