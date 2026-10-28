@@ -18,15 +18,13 @@ agreed but not started is `docs/roadmap.md`; findings triaged as non-blocking an
 decision are `docs/backlog.md`; the dated evidence behind the rules here is `docs/history.md`.
 
 **What this repo can actually replace is `docs/coverage.md`** — one row per replacement code, not
-per brand. The list of codes is not ours: it is the Salesforce Knowledge article "Model Bar
-Replacement Codes" (000001851), 49 codes in scope across 24 OEM sections — the article lists 56, but
-the seven GM multi-make combinations are work the team no longer does (2026-09-15) and are recorded
-at the foot of the ledger, counted nowhere. A brand is the wrong unit (GM ships ten; CDJR ships one
-code across four marques this repo holds as four presets), and ten of the 49 are not carousels at
-all — static grids and tabbed lists, where swapping in a slider is a design decision rather than a
-measurement. A row moves to **Replacement built** when a preset in `brands.js` gains a `styles`
-block and a `source`; the state is `brands.js` and that file is the readable view. Measure one, add
-its row.
+per brand (one brand ships several codes, and one code can span several presets). The list of codes
+is not ours: it is the Salesforce Knowledge article "Model Bar Replacement Codes" (000001851). The
+ledger's own table holds the counts in scope and built, and says which codes are out of scope (the
+GM multi-make combinations the team no longer does) or are not carousels at all (a design decision,
+not a measurement). A row moves to **Replacement built** when a preset in `brands.js` gains a
+`styles` block and a `source`; the state is `brands.js`, the ledger is the readable view, and
+`npm run check:looks` fails when the two disagree. Measure one, add its row.
 
 ## Commands
 
@@ -39,7 +37,7 @@ npm run test           # @playwright/test browser checks on Chromium (`npx playw
 npm run test:browsers  # tests/engine.test.mjs on Firefox and WebKit (npx playwright install firefox webkit once)
 npm run test:sr        # tests/*.sr.mjs: what NVDA (Windows) or VoiceOver (macOS) says about the demo; drives a real screen reader on the whole desktop — run it from .github/workflows/screen-reader.yml (on demand), not on a desktop in use
 npm run a11y           # axe over every pattern and page state; needs `npm run serve` up; not a gate, run it after rail or demo-page changes
-npm run check:looks    # asserts the demo data holds: 17 old skins -> 7 components, 32 brand presets, no cramped preset
+npm run check:looks    # asserts the demo data holds (old skins -> components, brand presets, no cramped preset) and prints the current counts
 npm run lint:css:generated # stylelints the CSS the copy panel ships (the card/pattern rules that live in JS template literals)
 npm run lint:css:fix   # stylelint --fix on src/**/*.css and demo/assets/*.css
 npm run lint:js:fix    # eslint --fix on src/**/*.js, demo/assets/*.js and scripts/
@@ -82,11 +80,10 @@ nothing.
 
 Where it came from: James Jin (senior web dev) required the HTML contract to be the stable API, all
 behaviour to ship via two centrally hosted files, and engines to be swappable behind it so dealer
-sites never need editing. It froze when the four files went on the shared path on 2026-09-08; the
-2026-08-31 rename was possible only because nothing was hosted yet, and the 2026-10-27 rename to
-DealerOn Slider (`cs` → `dos`, new folder `…/Apps/dealeronSlider/`) only because nothing was
-believed live on the hosted copy. It is frozen again from the first upload of the `dealeron-slider`
-files. The repo is public by Steven's choice, so DealerOn colleagues can see it.
+sites never need editing. The repo was renamed from custom-slider on 2026-10-27 (`cs` → `dos`, new
+folder `…/Apps/dealeronSlider/`), possible only because nothing was believed live on the hosted
+copy; the contract is frozen again from the first upload of the `dealeron-slider` files. The repo is
+public by Steven's choice, so DealerOn colleagues can see it.
 
 ## Conventions
 

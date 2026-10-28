@@ -17,7 +17,8 @@ settings panel, live stage, slide-content editor, code panel (`state.content` ho
 rows, null = example content, kept per pattern in localStorage). `demo/patterns.html` renders every
 pattern (`gallery.js`), `demo/brands.html` browses by OEM (`brandbook.js`), `demo/reference.html` is
 the technical guide (`guide.js`) — all built from the workbench's generator. Other `demo/assets/`:
-`looks.js` (7 card components), `brands.js` (32 brand presets), `patterns.js` (the 21 rail entries:
+`looks.js` (the card components), `brands.js` (the brand presets; `npm run check:looks` prints both
+counts), `patterns.js` (the rail entries, counted by `npm run lint:css:generated`:
 example rosters, each pattern's CSS, markup and page script — a new replacement code is an entry
 here), `workbench.js` (state and generators; reads `PATTERNS` off `globalThis.CARGO` like `LOOKS`
 and `BRANDS`), `pane.js` (the only Tweakpane contact), `tp-plugins.js` (`note`, length and colour
@@ -113,45 +114,35 @@ the preview. An arrow overlays media but never text: a text card reserves
 `padding-inline: calc(var(--dos-arrow-size) + 0.4em)`. Both are held by the paste-parity test: each
 snippet in a hostile host page must match the preview to the pixel.
 
-**The tabbed bar is authored as PLAIN CONTENT; the script makes it a tab interface** (2026-09-15).
-`htmlFor()` emits no `role="tab"`, `role="tabpanel"`, `role="tablist"`, id, `aria-controls`,
-`aria-labelledby` or `aria-selected` — a tabpanel is part of a tab interface, and until the script
-runs there is none for those to describe. What ships is a row of plain `<button>`s and a sequence of
-`.cargo-pane` divs, each holding a carousel carrying the tab's name as its own `aria-label`, so a
-reader with scripts off gets named regions in sequence rather than panels pointing at controls that
-are not presented. The script finds the row by CLASS (`.cargo-tabs`, and `:scope > button` for the
-tabs, so the engine's arrow buttons inside each pane are never mistaken for tabs) and applies every
-tab semantic at once. It also emits no `hidden`, the tab script sets `data-tabs-on` on the wrap and
-hides all but the current pane at wire time, and `%wrap%:not([data-tabs-on]) .cargo-tabs` keeps the
-tab row out of the page until then. The old markup carried `hidden` on every pane but the first, so
-a reader with scripts off got one pane and a row of buttons that switched nothing — three quarters
-of the lineup unreachable, and dead controls in the tab order, against the README's own promise that
-all content is visible without JS. The upgrade costs nothing to look at: measured frame by frame
-from first paint, the bar draws at one height (CLS 0.0004), because the deferred script lands before
-the first render. `tests/builder.test.mjs` holds both halves — the fallback and the no-flash.
+**The tabbed bar is authored as PLAIN CONTENT; the script makes it a tab interface.** `htmlFor()`
+emits no `role="tab"`, `role="tabpanel"`, `role="tablist"`, id, `aria-controls`, `aria-labelledby`,
+`aria-selected` or `hidden` — only a row of plain `<button>`s and a sequence of `.cargo-pane` divs,
+each holding a carousel carrying the tab's name as its own `aria-label`, so a reader with scripts off
+gets every pane as a named region (the README promises all content without JS). The script finds the
+row by CLASS (`.cargo-tabs`, and `:scope > button` for the tabs, so the engine's arrow buttons inside
+each pane are never mistaken for tabs), applies every tab semantic at once, sets `data-tabs-on` on
+the wrap and hides all but the current pane at wire time; `%wrap%:not([data-tabs-on]) .cargo-tabs`
+keeps the tab row out of the page until then. The deferred script lands before the first render, so
+nothing flashes. `tests/builder.test.mjs` holds both halves — the fallback and the no-flash.
 
 **The tab row shrinks to fit before it scrolls.** Everything across a tab is measured in its own em —
 padding, gap, divider — so one multiplier, `--tab-fit`, takes the whole row in proportionally, and
 the script converges on it in a pass or two against `clientWidth - 2` (aiming at the box exactly
 leaves 2–3px behind, because `scrollWidth` rounds). **12px is the floor**: below it a label stops
-being readable, and the row scrolls instead. Two things it is not allowed to paper over: a phone
-rule setting the whole `padding` shorthand undoes the 768 tier's `padding-inline: 0.5em` squeeze —
-that regression is what made the tabs look untouched on a phone — and type alone cannot save a bar
-whose WORDS are too long (five Chevrolet labels needed 5px at 320). Those get phone-short names
-through the `[bracket]` / `hidden-xs` convention, which is why Ford's bar always fitted. The
+being readable, and the row scrolls instead. A phone rule never sets the whole `padding` shorthand,
+which undoes the 768 tier's `padding-inline: 0.5em` squeeze. Type alone cannot save a bar whose WORDS
+are too long: those get phone-short names through the `[bracket]` / `hidden-xs` convention. The
 `ResizeObserver` watches the row **and every tab**: it reports an element's own box, the row is full
 width either way, and only the tabs feel a font landing or a preset repainting.
 
-**The tab row never wraps, at any width** (2026-09-15). `.cargo-tabs` is `nowrap` +
-`overflow-x: auto`, because the divider glyph hangs off the tab that FOLLOWS it, so every wrapped
-row started with a `|` dangling in the margin — and Chevrolet's five body styles wrapped at 992 as
-well as on a phone, which is why this is not a media query. `data-more`, set by the pattern script
-only while the row actually overflows, is what turns on the left alignment, the `flex: 0 0 auto` and
-the edge fade; a row that fits scrolls nowhere and stays centred, so no desktop bar moved. No
-`scroll-snap` on it: the snap area is the tab's border box, so snapping scrolled its `--tab-gap`
-margin off and left every bar resting 14–15px in. `tests/layout.test.mjs` holds all of it at six
-widths, and those 320px checks drive the catalogue pages directly because the builder's narrowest
-frame button is 390.
+**The tab row never wraps, at any width** — `.cargo-tabs` is `nowrap` + `overflow-x: auto`, not a
+media query, because the divider glyph hangs off the tab that FOLLOWS it and a wrapped row starts
+with a `|` dangling in the margin. `data-more`, set by the pattern script only while the row actually
+overflows, turns on the left alignment, the `flex: 0 0 auto` and the edge fade; a row that fits
+scrolls nowhere and stays centred. No `scroll-snap` on it: the snap area is the tab's border box, so
+snapping scrolls its `--tab-gap` margin off. `tests/layout.test.mjs` holds all of it at six widths,
+and its 320px checks drive the catalogue pages directly because the builder's narrowest frame button
+is 390.
 
 **Code parity is structural, not policed.** `cssFor(sel)` and `htmlFor(cls)` in `workbench.js` are
 the ONLY producers of CSS and markup; preview is `cssFor('.wb-live')`, copy panel
@@ -200,9 +191,10 @@ generator (`cssFor`) and stylelints its output, so what is checked is what ships
 `.stylelintrc.generated.json` turns off source-layout rules (the card CSS is deliberately compact)
 and keeps the semantic ones: property order, the `rem` ban, hex length, zero units.
 
-**`npm run validate` also guards the data.** `scripts/check-looks.mjs` asserts every one of the 17
-old skins is claimed by exactly one component, a component absorbing nothing is marked `isNew`, all
-32 brand presets name a real look and land on a card no narrower than it needs, and no look sets
+**`npm run validate` also guards the data.** `scripts/check-looks.mjs` (which prints the current
+counts) asserts every old skin is claimed by exactly one component, a component absorbing nothing is
+marked `isNew`, every brand preset names a real look and lands on a card no narrower than it needs,
+and no look sets
 `padding`, `padding-block`, `padding-bottom` or `padding-block-end` on the carousel root (any of
 them wipes the engine's `padding-bottom` dot-row reservation; `padding-block-start` and
 `padding-inline` are fine).

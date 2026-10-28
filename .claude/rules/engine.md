@@ -80,14 +80,10 @@ re-proposing them):
 - Never `scroll-snap-stop: always` — it blocks multi-slide flicks and hit a Firefox bug.
 - Never make the track the live region; the terse `.dos-status` region exists so multi-card moves
   don't announce every card.
-- Never "fix" the IntersectionObserver to read `intersectionRatio` instead of `e.isIntersecting`.
-  Three separate reviews have filed this on the reading that `isIntersecting` means "any pixel", so
-  a 0.25 threshold lets autoplay resume on a sliver. Browsers set `isIntersecting` from the
-  THRESHOLD INDEX: with a single 0.25 threshold it is false below that crossing. Probed directly on
-  Chromium, Firefox and WebKit (2026-09-15), walking a target 0 → 10% → 50% → 10% → 0 — every one
-  reports `{ ratio: 0.1, isIntersecting: false }` coming back DOWN through the threshold, and
-  reports nothing at all at 10% going up. `tests/engine.test.mjs` walks it in both directions now;
-  the ascending half alone proved nothing, because no callback fires there.
+- Never "fix" the IntersectionObserver to read `intersectionRatio` instead of `e.isIntersecting`:
+  browsers set `isIntersecting` from the THRESHOLD INDEX, so with a single 0.25 threshold it is
+  false below that crossing (probed on Chromium, Firefox and WebKit). `tests/engine.test.mjs` walks
+  it in both directions; only the descending half proves it, because no callback fires going up.
 - Never inject slide content. The engine generates controls only; headings, links and images come
   from the authored HTML (SEO + no-JS). Thumbs build a fresh `<img>` rather than cloning, so site
   ids/srcset don't leak.
@@ -101,13 +97,12 @@ re-proposing them):
   dead while Cadillac's identical override worked, because a brand's props land on `.dos` itself.
   Scope to `.dos`, or to the element (2026-09-15).
 - Never copy an OEM's weaknesses. A measured value is the FLOOR, not the target (Steven's standing
-  rule, 2026-09-15): record the live values in `brands.js` as the audit trail, then look at phone
-  and tablet as a designer would and fix what is weak (wrapped tab rows, cramped cards, oversized
-  arrows) as pattern defaults or knobs, and say in the report which choices depart from the live
-  site and why. "The live site does it too" is no reason to leave it. Colour is the sharpest case:
-  Ford's measured `#919191` arrow was 3.15:1 on white and 2.77:1 on the `#f0f0f0` its own tab cells
-  draw — a 1.4.11 failure, taken on by copying, against the pattern's own 15.13:1 default. Measure
-  the ratio against the band the control actually sits on, not against white.
+  rule): record the live values in `brands.js` as the audit trail, then look at phone and tablet as
+  a designer would and fix what is weak (wrapped tab rows, cramped cards, oversized arrows) as
+  pattern defaults or knobs, and say in the report which choices depart from the live site and why.
+  "The live site does it too" is no reason to leave it. Colour is the sharpest case: measure a
+  control's contrast against the band it actually sits on, not against white (a copied OEM arrow
+  colour once failed WCAG 1.4.11 on its own tab cells).
 
 **A card look owns the responsive arrow ladder, and a brand that sets `--dos-arrow-size` leaves it.**
 The looks shrink the arrow 44 → 36 at 767 → 32 at 575 from the shared card sheet at (0,1,0); a
