@@ -1,7 +1,9 @@
 // markdownlint-cli2 config — see https://github.com/DavidAnson/markdownlint-cli2
 {
   "globs": ["**/*.md"],
-  "ignores": ["node_modules", ".superpowers", ".playwright-mcp"],
+  // .claude/worktrees/ holds a full checkout per isolated agent session; it is
+  // gitignored (so Prettier skips it) but cli2 does not read .gitignore.
+  "ignores": ["node_modules", ".superpowers", ".playwright-mcp", ".claude/worktrees"],
   "config": {
     "default": true,
     "MD013": false,

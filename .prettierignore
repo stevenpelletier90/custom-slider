@@ -14,6 +14,11 @@ demo/assets/vendor/tweakpane.js
 # otherwise a table edited in a rule fails MD060 and nothing can fix it.
 .claude/settings*.json
 
+# Playwright MCP browser_run_code_unsafe bodies: the MCP wraps each file in
+# parentheses, so the trailing semicolon Prettier adds is a SyntaxError. Name a
+# new one *.mcp.js and this line covers it.
+**/*.mcp.js
+
 # Agent-managed scratch (git-ignored; rewritten by tooling, so checking it
 # would fail the gate on files that aren't even in the repo)
 .superpowers/
