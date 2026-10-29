@@ -7,8 +7,12 @@ dist/
 # Generated files
 package-lock.json
 demo/img/
-.claude/
 demo/assets/vendor/tweakpane.js
+
+# Claude Code writes its own settings files. The rules under .claude/ are
+# hand-written and markdownlint lints them, so Prettier formats them too:
+# otherwise a table edited in a rule fails MD060 and nothing can fix it.
+.claude/settings*.json
 
 # Agent-managed scratch (git-ignored; rewritten by tooling, so checking it
 # would fail the gate on files that aren't even in the repo)

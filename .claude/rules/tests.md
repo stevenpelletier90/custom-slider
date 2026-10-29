@@ -14,7 +14,7 @@ names the finding it guards and was checked to fail against the code before it. 
 what the slider actually uses), `content`, `engine` (the engine's contract on authored markup —
 no-JS, fits state, tab order, autoplay, reduced motion), `install` (saved name AND bytes; Copy hands
 over the file with no tag; the panel neither states a deployment status nor offers a paste route),
-`editor`, `dots`, `fade`, `settings`, `colour`, `labels`, `layout`, `length`, `pane`, `tiers`, `vendor`,
-`variants` (measured brand values reaching preview and copied CSS), `recipes` (every Reference
-restyle applied to a real pasted slider). It deliberately does NOT sweep every pattern at every
-width — a gate nobody runs is not a gate.
+`editor`, `dots`, `fade`, `settings`, `colour`, `labels`, `layout`, `length`, `pane`, `tiers`,
+`vendor`, `variants` (measured brand values reaching preview and copied CSS), `recipes` (every
+Reference restyle applied to a real pasted slider). It deliberately does NOT sweep every pattern at
+every width — a gate nobody runs is not a gate.

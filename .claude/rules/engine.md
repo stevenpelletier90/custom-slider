@@ -17,16 +17,17 @@ saved name and bytes together.
 
 ## Architecture
 
-**CSS owns layout and physics; JS only wires controls and state.** `src/dealeron-slider.css` makes the
-track a native `scroll-snap` container, so swipe/drag/momentum/snap work with JS disabled.
+**CSS owns layout and physics; JS only wires controls and state.** `src/dealeron-slider.css` makes
+the track a native `scroll-snap` container, so swipe/drag/momentum/snap work with JS disabled.
 `src/dealeron-slider.js` adds prev/next/dots/pause/thumbs into space the CSS reserved
 (`--dos-controls-space`) — why CLS is 0. Keep layout decisions out of JS. One exception:
 `_wireDrag()` adds mouse drag-to-scroll (`data-dos-drag="false"` opts out), disabling snap only
 during the gesture and restoring it in `_commit()`.
 
-**Two entry points, one class.** `src/dealeron-slider.js` exports `DealerOnSlider`; `src/auto.js` (the
-CMS entry) assigns `window.DealerOnSlider` and auto-inits on `DOMContentLoaded`; esbuild bundles it to
-`dist/dealeron-slider.min.js` as an IIFE. One class name in source and on the page — no second alias.
+**Two entry points, one class.** `src/dealeron-slider.js` exports `DealerOnSlider`; `src/auto.js`
+(the CMS entry) assigns `window.DealerOnSlider` and auto-inits on `DOMContentLoaded`; esbuild
+bundles it to `dist/dealeron-slider.min.js` as an IIFE. One class name in source and on the page —
+no second alias.
 
 **The engine is LINKED, never pasted.** A page gets the two `.min` files from two head tags and no
 other way: a pasted engine can never be fixed, and nothing records which sites carry which build.
@@ -104,8 +105,8 @@ re-proposing them):
   control's contrast against the band it actually sits on, not against white (a copied OEM arrow
   colour once failed WCAG 1.4.11 on its own tab cells).
 
-**A card look owns the responsive arrow ladder, and a brand that sets `--dos-arrow-size` leaves it.**
-The looks shrink the arrow 44 → 36 at 767 → 32 at 575 from the shared card sheet at (0,1,0); a
+**A card look owns the responsive arrow ladder, and a brand that sets `--dos-arrow-size` leaves
+it.** The looks shrink the arrow 44 → 36 at 767 → 32 at 575 from the shared card sheet at (0,1,0); a
 brand's props reach the snippet at (0,2,0) with no media query and win at every width. Measured
 2026-09-15: a plain paste goes 44/36/32 while `tabs × ford` renders 25×25 at 1280, 700 and 390
 alike. So set `--dos-arrow-size` in a preset only when the measurement genuinely needs it — an OEM's

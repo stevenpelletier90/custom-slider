@@ -18,10 +18,10 @@ rows, null = example content, kept per pattern in localStorage). `demo/patterns.
 pattern (`gallery.js`), `demo/brands.html` browses by OEM (`brandbook.js`), `demo/reference.html` is
 the technical guide (`guide.js`) — all built from the workbench's generator. Other `demo/assets/`:
 `looks.js` (the card components), `brands.js` (the brand presets; `npm run check:looks` prints both
-counts), `patterns.js` (the rail entries, counted by `npm run lint:css:generated`:
-example rosters, each pattern's CSS, markup and page script — a new replacement code is an entry
-here), `workbench.js` (state and generators; reads `PATTERNS` off `globalThis.CARGO` like `LOOKS`
-and `BRANDS`), `pane.js` (the only Tweakpane contact), `tp-plugins.js` (`note`, length and colour
+counts), `patterns.js` (the rail entries, counted by `npm run lint:css:generated`: example rosters,
+each pattern's CSS, markup and page script — a new replacement code is an entry here),
+`workbench.js` (state and generators; reads `PATTERNS` off `globalThis.CARGO` like `LOOKS` and
+`BRANDS`), `pane.js` (the only Tweakpane contact), `tp-plugins.js` (`note`, length and colour
 controls), `vendor/tweakpane.js` (committed classic-script bundle from `scripts/build-vendor.mjs`;
 `npm run check:vendor` fails `validate` after an `npm update` moves
 `esbuild`/`tweakpane`/`@tweakpane/core` until it is rebuilt and committed — the intended loud
@@ -45,8 +45,8 @@ engine's rules tie and lose on source order inside the one file; a designer's ru
 slider's name is one class higher and wins in any order — the sanctioned per-site override. A
 snippet is values and markup only: `cssFor()` emits pattern-own props as deltas against those
 defaults and no `.cargo-` rule but the gutter and the stacked-rows column; there is no JS part. The
-pattern scripts publish `DealerOnSlider.wirePatterns()` for markup added after load; the preview frame
-and the two catalogue pages call it once per build, a dealer page never does. A change to
+pattern scripts publish `DealerOnSlider.wirePatterns()` for markup added after load; the preview
+frame and the two catalogue pages call it once per build, a dealer page never does. A change to
 `patterns.js` is an upload, exactly like a change under `src/`.
 
 **Every card is a rail entry; there is no card-style picker.** All seven looks emit different
@@ -117,32 +117,33 @@ snippet in a hostile host page must match the preview to the pixel.
 **The tabbed bar is authored as PLAIN CONTENT; the script makes it a tab interface.** `htmlFor()`
 emits no `role="tab"`, `role="tabpanel"`, `role="tablist"`, id, `aria-controls`, `aria-labelledby`,
 `aria-selected` or `hidden` — only a row of plain `<button>`s and a sequence of `.cargo-pane` divs,
-each holding a carousel carrying the tab's name as its own `aria-label`, so a reader with scripts off
-gets every pane as a named region (the README promises all content without JS). The script finds the
-row by CLASS (`.cargo-tabs`, and `:scope > button` for the tabs, so the engine's arrow buttons inside
-each pane are never mistaken for tabs), applies every tab semantic at once, sets `data-tabs-on` on
-the wrap and hides all but the current pane at wire time; `%wrap%:not([data-tabs-on]) .cargo-tabs`
-keeps the tab row out of the page until then. The deferred script lands before the first render, so
-nothing flashes. `tests/builder.test.mjs` holds both halves — the fallback and the no-flash.
+each holding a carousel carrying the tab's name as its own `aria-label`, so a reader with scripts
+off gets every pane as a named region (the README promises all content without JS). The script finds
+the row by CLASS (`.cargo-tabs`, and `:scope > button` for the tabs, so the engine's arrow buttons
+inside each pane are never mistaken for tabs), applies every tab semantic at once, sets
+`data-tabs-on` on the wrap and hides all but the current pane at wire time;
+`%wrap%:not([data-tabs-on]) .cargo-tabs` keeps the tab row out of the page until then. The deferred
+script lands before the first render, so nothing flashes. `tests/builder.test.mjs` holds both halves
+— the fallback and the no-flash.
 
-**The tab row shrinks to fit before it scrolls.** Everything across a tab is measured in its own em —
-padding, gap, divider — so one multiplier, `--tab-fit`, takes the whole row in proportionally, and
+**The tab row shrinks to fit before it scrolls.** Everything across a tab is measured in its own em
+— padding, gap, divider — so one multiplier, `--tab-fit`, takes the whole row in proportionally, and
 the script converges on it in a pass or two against `clientWidth - 2` (aiming at the box exactly
 leaves 2–3px behind, because `scrollWidth` rounds). **12px is the floor**: below it a label stops
 being readable, and the row scrolls instead. A phone rule never sets the whole `padding` shorthand,
-which undoes the 768 tier's `padding-inline: 0.5em` squeeze. Type alone cannot save a bar whose WORDS
-are too long: those get phone-short names through the `[bracket]` / `hidden-xs` convention. The
-`ResizeObserver` watches the row **and every tab**: it reports an element's own box, the row is full
-width either way, and only the tabs feel a font landing or a preset repainting.
+which undoes the 768 tier's `padding-inline: 0.5em` squeeze. Type alone cannot save a bar whose
+WORDS are too long: those get phone-short names through the `[bracket]` / `hidden-xs` convention.
+The `ResizeObserver` watches the row **and every tab**: it reports an element's own box, the row is
+full width either way, and only the tabs feel a font landing or a preset repainting.
 
 **The tab row never wraps, at any width** — `.cargo-tabs` is `nowrap` + `overflow-x: auto`, not a
 media query, because the divider glyph hangs off the tab that FOLLOWS it and a wrapped row starts
-with a `|` dangling in the margin. `data-more`, set by the pattern script only while the row actually
-overflows, turns on the left alignment, the `flex: 0 0 auto` and the edge fade; a row that fits
-scrolls nowhere and stays centred. No `scroll-snap` on it: the snap area is the tab's border box, so
-snapping scrolls its `--tab-gap` margin off. `tests/layout.test.mjs` holds all of it at six widths,
-and its 320px checks drive the catalogue pages directly because the builder's narrowest frame button
-is 390.
+with a `|` dangling in the margin. `data-more`, set by the pattern script only while the row
+actually overflows, turns on the left alignment, the `flex: 0 0 auto` and the edge fade; a row that
+fits scrolls nowhere and stays centred. No `scroll-snap` on it: the snap area is the tab's border
+box, so snapping scrolls its `--tab-gap` margin off. `tests/layout.test.mjs` holds all of it at six
+widths, and its 320px checks drive the catalogue pages directly because the builder's narrowest
+frame button is 390.
 
 **Code parity is structural, not policed.** `cssFor(sel)` and `htmlFor(cls)` in `workbench.js` are
 the ONLY producers of CSS and markup; preview is `cssFor('.wb-live')`, copy panel
@@ -167,10 +168,10 @@ rules give 750/970/1170 inside it. Fill drops the container (`html[data-fill] #w
 (1,1,1) over the bare id's (1,0,0)) as well as widening the frame; widening alone draws the same
 picture as Desktop.
 
-**The workbench preview scales to fit; it never clips.** The iframe keeps its true
-CSS width so media queries fire honestly, and `transform: scale(k)` fits it to the stage with a
-shown-at-nn% readout. Never clip, scroll or cap the frame. Below 50% (`FLOOR = 0.5` in
-`workbench.js`) `shownTier()` previews the next tier down.
+**The workbench preview scales to fit; it never clips.** The iframe keeps its true CSS width so
+media queries fire honestly, and `transform: scale(k)` fits it to the stage with a shown-at-nn%
+readout. Never clip, scroll or cap the frame. Below 50% (`FLOOR = 0.5` in `workbench.js`)
+`shownTier()` previews the next tier down.
 
 **Six tiers, two grids (since 2026-09-15).** `BPS` in `workbench.js` is 576 / 768 / 992 / 1200 /
 1400: the platform's Bootstrap 3 three plus Bootstrap 5's two, because the platform is moving to
@@ -194,9 +195,8 @@ and keeps the semantic ones: property order, the `rem` ban, hex length, zero uni
 **`npm run validate` also guards the data.** `scripts/check-looks.mjs` (which prints the current
 counts) asserts every old skin is claimed by exactly one component, a component absorbing nothing is
 marked `isNew`, every brand preset names a real look and lands on a card no narrower than it needs,
-and no look sets
-`padding`, `padding-block`, `padding-bottom` or `padding-block-end` on the carousel root (any of
-them wipes the engine's `padding-bottom` dot-row reservation; `padding-block-start` and
+and no look sets `padding`, `padding-block`, `padding-bottom` or `padding-block-end` on the carousel
+root (any of them wipes the engine's `padding-bottom` dot-row reservation; `padding-block-start` and
 `padding-inline` are fine).
 
 ## Architecture
